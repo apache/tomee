@@ -19,9 +19,9 @@
 TOMEE.ApplicationTabWebservices = function () {
     "use strict";
 
-    var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {})),
-        active = false;
+    var channel = TOMEE.ApplicationChannel;
+    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {}));
+    var active = false;
 
     channel.bind('ui-actions', 'window-F5-pressed', function () {
         triggerRefresh();
@@ -37,9 +37,9 @@ TOMEE.ApplicationTabWebservices = function () {
     });
 
     function buildTableData(data) {
-        var rest = TOMEE.utils.getArray(data.rest),
-            soap = TOMEE.utils.getArray(data.soap),
-            result = [];
+        var rest = TOMEE.utils.getArray(data.rest);
+        var soap = TOMEE.utils.getArray(data.soap);
+        var result = [];
 
         function buildAppData(app, wsType) {
             var services = TOMEE.utils.getArray(app.services);

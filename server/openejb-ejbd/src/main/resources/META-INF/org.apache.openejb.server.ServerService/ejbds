@@ -6,3 +6,4 @@ threads     = 200
 backlog     = 200
 secure      = true
 discovery   = ejb:ejbds://{bind}:{port}
+gzip        = false

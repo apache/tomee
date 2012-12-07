@@ -18,6 +18,7 @@
 package org.apache.tomee.arquillian.webapp;
 
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.RemoteInitialContextObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionObserver;
 import org.apache.openejb.arquillian.common.deployment.DeploymentExceptionProvider;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -25,16 +26,42 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class TomEEWebappExtension implements LoadableExtension {
+
     private static final String ADAPTER = "tomee-webapp";
+    private static final AtomicBoolean registered = new AtomicBoolean(false);
+    private static final ReentrantLock lock = new ReentrantLock();
 
     @Override
-    public void register(ExtensionBuilder builder) {
+    public void register(final ExtensionBuilder builder) {
         if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
-            builder.service(DeployableContainer.class, TomEEWebappContainer.class)
-                .service(AuxiliaryArchiveAppender.class, TomEEWebappEJBEnricherArchiveAppender.class)
-                .observer(DeploymentExceptionObserver.class)
-                .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+
+            final ReentrantLock l = lock;
+            l.lock();
+
+            try {
+
+                if (!registered.getAndSet(true)) {
+
+                    try {
+                        builder.observer(DeploymentExceptionObserver.class);
+                        builder.observer(RemoteInitialContextObserver.class);
+
+                        builder.service(DeployableContainer.class, TomEEWebappContainer.class)
+                                .service(AuxiliaryArchiveAppender.class, TomEEWebappEJBEnricherArchiveAppender.class)
+                                .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+                    } catch (IllegalArgumentException e) {
+                        Logger.getLogger(TomEEWebappExtension.class.getName()).log(Level.WARNING, "TomEEWebappExtension: " + e.getMessage());
+                    }
+                }
+            } finally {
+                l.unlock();
+            }
         }
     }
 }

@@ -40,6 +40,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class TomEEClusterListener extends ClusterListener {
+    public static final TomEEClusterListener INSTANCE = new TomEEClusterListener();
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
     private static final Properties IC_PROPS = new Properties();
 

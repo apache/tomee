@@ -63,7 +63,8 @@ public class ReloadableEntityManagerFactoryTest {
         return p;
     }
 
-    @Test public void reload() {
+    @Test
+    public void reload() {
         final ReloadableEntityManagerFactory remft = (ReloadableEntityManagerFactory) emf;
         final EntityManagerFactory originalEmf = remft.getDelegate();
         assertEquals("false", emf.getProperties().get("openjpa.DataCache"));
@@ -80,13 +81,14 @@ public class ReloadableEntityManagerFactoryTest {
 
     private void select() {
         emf.createEntityManager()
-            .createQuery("select m from ReloadableEntityManagerFactoryTest$MyEntity m")
-            .getResultList();
+                .createQuery("select m from ReloadableEntityManagerFactoryTest$MyEntity m")
+                .getResultList();
     }
 
     @Entity
     public static class MyEntity {
-        @Id @GeneratedValue
+        @Id
+        @GeneratedValue
         private long id;
 
         public long getId() {

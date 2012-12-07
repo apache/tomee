@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.KeepAliveStyle;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
@@ -43,6 +44,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @version $Rev$ $Date$
@@ -57,13 +59,20 @@ public class KeepAliveServer implements ServerService {
     private final ConcurrentHashMap<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
     private BlockingQueue<Runnable> threadQueue;
     private Timer timer;
+    private final boolean gzip;
 
     public KeepAliveServer() {
         this(new EjbServer());
     }
 
+    @Deprecated
     public KeepAliveServer(final ServerService service) {
+        this(service, false);
+    }
+
+    public KeepAliveServer(final ServerService service, final boolean gzip) {
         this.service = service;
+        this.gzip = gzip;
     }
 
     private void closeInactiveSessions() {
@@ -195,8 +204,15 @@ public class KeepAliveServer implements ServerService {
             int i = -1;
 
             try {
-                final InputStream in = new BufferedInputStream(socket.getInputStream());
-                final OutputStream out = new BufferedOutputStream(socket.getOutputStream());
+                final InputStream in;
+                final OutputStream out;
+                if (!gzip) {
+                    in = new BufferedInputStream(socket.getInputStream());
+                    out = new BufferedOutputStream(socket.getOutputStream());
+                } else {
+                    in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
+                    out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
+                }
 
                 while (running.get()) {
                     try {

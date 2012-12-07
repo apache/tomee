@@ -14,50 +14,22 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- "use strict";
  */
 
+"use strict";
+
 (function () {
-    var winConsole = window.console,
+    var noOp = function() {};
 
-        // These are the available methods. Add more to this list if necessary.
-        consoleEmpty = {
-            error:function () {},
-            log:function () {}
-        },
+    if(!window.console) {
+        window.console = {};
+    }
 
-        consoleProxy = (function () {
-            // This object wraps the "window.console"
-            var consoleWrapper = {};
+    if(!window.console.error) {
+        window.console.error = noOp;
+    }
 
-            function buildMethodProxy(key) {
-                if (winConsole[key] && typeof winConsole[key] === 'function') {
-                    consoleWrapper[key] = function () {
-                        var cFunc = winConsole[key];
-                        cFunc.call(winConsole, arguments);
-                    };
-                } else {
-                    consoleWrapper[key] = function () {
-                        consoleEmpty[key]();
-                    };
-                }
-            }
-
-            // Checking if the browser has the "console" object
-            if (winConsole) {
-                // Only the methods defined by the consoleMock
-                // are available for use.
-                for (var key in consoleEmpty) {
-                    if (consoleEmpty.hasOwnProperty(key)) {
-                        buildMethodProxy(key);
-                    }
-                }
-            } else {
-                consoleWrapper = consoleEmpty;
-            }
-
-            return consoleWrapper;
-        })();
-
-    window.console = consoleProxy;
+    if(!window.console.log) {
+        window.console.log = noOp;
+    }
 })();

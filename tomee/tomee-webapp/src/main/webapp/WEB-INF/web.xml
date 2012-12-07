@@ -24,7 +24,7 @@
   <display-name>Tomee Application</display-name>
 
   <listener>
-    <listener-class>org.apache.tomee.webapp.listeners.SessionListener</listener-class>
+    <listener-class>org.apache.tomee.webapp.listeners.ApplicationListener</listener-class>
   </listener>
 
   <servlet>
@@ -50,7 +50,7 @@
   </servlet>
   <servlet>
     <servlet-name>InstallerServlet</servlet-name>
-    <servlet-class>org.apache.tomee.installer.InstallerServlet</servlet-class>
+    <servlet-class>org.apache.tomee.webapp.servlet.AutoInstallerServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>FileUploadServlet</servlet-name>
@@ -98,7 +98,7 @@
 
   <!-- ************************************************************************************** -->
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 
   <error-page>
@@ -109,38 +109,4 @@
       /error
     </location>
   </error-page>
-  <!-- basic security to replace context.xml and allow remote accesses -->
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Application</web-resource-name>
-      <url-pattern>/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>tomee-admin</role-name>
-    </auth-constraint>
-  </security-constraint>
-
-  <!-- /ejb/* has no auth-constraint. It is has public access. -->
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Server EJB</web-resource-name>
-      <url-pattern>/ejb/*</url-pattern>
-    </web-resource-collection>
-  </security-constraint>
-
-  <!-- /socket has no auth-constraint. It is has public access. -->
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Socket</web-resource-name>
-      <url-pattern>/socket</url-pattern>
-    </web-resource-collection>
-  </security-constraint>
-
-  <login-config>
-    <auth-method>BASIC</auth-method>
-    <realm-name>TomEE Webapp</realm-name>
-  </login-config>
-  <security-role>
-    <role-name>tomee-admin</role-name>
-  </security-role>
 </web-app>

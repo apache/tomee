@@ -47,7 +47,8 @@ public class CheckClassLoading extends ValidationBase {
 
     protected AppModule appModule;
 
-    @Override public void validate(AppModule appModule) {
+    @Override
+    public void validate(AppModule appModule) {
         this.appModule = appModule;
         module = appModule;
         check(appModule.getClassLoader());
@@ -86,16 +87,18 @@ public class CheckClassLoading extends ValidationBase {
         check(webModule.getClassLoader());
     }
 
-    @Override public void validate(ClientModule clientModule) {
+    @Override
+    public void validate(ClientModule clientModule) {
         check(clientModule.getClassLoader());
     }
 
-    @Override public void validate(EjbModule ejbModule) {
+    @Override
+    public void validate(EjbModule ejbModule) {
         check(ejbModule.getClassLoader());
     }
 
     public static class Classes {
-        private static final String[] CLASS_EXTENSION = new String[] { ".class" };
+        private static final String[] CLASS_EXTENSION = new String[]{".class"};
 
         private final Map<String, Collection<String>> fileByArchive = new TreeMap<String, Collection<String>>();
 
@@ -208,7 +211,7 @@ public class CheckClassLoading extends ValidationBase {
             final String str = "both files " + file1 + '\''
                     + " and " + file2 + '\'';
             if (SystemInstance.get().getOptions().get(OPENEJB_CHECK_CLASSLOADER_VERBOSE, false)) {
-                    return str + " contains files=" + files;
+                return str + " contains files=" + files;
             }
             return str;
         }
@@ -219,7 +222,8 @@ public class CheckClassLoading extends ValidationBase {
             super(inter, dir1, dir2);
         }
 
-        @Override public String toScreen() {
+        @Override
+        public String toScreen() {
             return getFile1() + " contains " + getFile2();
         }
     }
@@ -229,7 +233,8 @@ public class CheckClassLoading extends ValidationBase {
             super(files, file1, file2);
         }
 
-        @Override public String toScreen() {
+        @Override
+        public String toScreen() {
             return getFile1() + " is included inside " + getFile2();
         }
     }
@@ -239,7 +244,8 @@ public class CheckClassLoading extends ValidationBase {
             super(files, file1, file2);
         }
 
-        @Override public String toScreen() {
+        @Override
+        public String toScreen() {
             return getFile1() + " is the same than " + getFile2();
         }
     }
@@ -247,6 +253,7 @@ public class CheckClassLoading extends ValidationBase {
     public static class DiffItemComparator implements Comparator<DiffItem> {
         private static final DiffItemComparator INSTANCE = new DiffItemComparator();
         private static final Map<Class<?>, Integer> ORDER = new HashMap<Class<?>, Integer>();
+
         static {
             ORDER.put(SameItem.class, 0);
             ORDER.put(IncludedItem.class, 1);
@@ -259,7 +266,8 @@ public class CheckClassLoading extends ValidationBase {
             return INSTANCE;
         }
 
-        @Override public int compare(DiffItem o1, DiffItem o2) {
+        @Override
+        public int compare(DiffItem o1, DiffItem o2) {
             int index1 = ORDER.get(o1.getClass());
             int index2 = ORDER.get(o2.getClass());
             if (index1 == index2) {

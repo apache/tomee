@@ -72,10 +72,15 @@
           <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/org.apache.webbeans.spi.plugins.OpenWebBeansPlugin"/>
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProviderFactory"/>
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigResourceProviderFactory"/>
-          <exclude name="tomee/tomee-webapp/src/main/webapp/js/jquery/jquery-1.7.1.js"/>
           <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
           <exclude name="tomee/tomee-jdbc/src/test/resources/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/Mock" />
-          <exclude name="tomee/tomee-webapp/src/main/webapp/lib/jquery/jquery-1.7.2.min.js" /> <!-- minimize so ignored -->
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/bootstrap/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/codemirror/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/handlebars/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/jquery/**" /> 
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/less/**" />
+          <!-- TODO check if that's really excluded -->
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/js/templates/**" />
 
           <!-- user-owned config files.  see httpds default.httpd.conf for precident --> 
           <exclude name="**/default.openejb.conf"/> 

@@ -42,49 +42,49 @@ import java.util.zip.ZipOutputStream;
  */
 public class IO {
 
-    public static String readString(URL url) throws IOException {
+    public static String readString(final URL url) throws IOException {
         final InputStream in = url.openStream();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             return reader.readLine();
         } finally {
             close(in);
         }
     }
 
-    public static String readString(File file) throws IOException {
+    public static String readString(final File file) throws IOException {
         final FileReader in = new FileReader(file);
         try {
-            BufferedReader reader = new BufferedReader(in);
+            final BufferedReader reader = new BufferedReader(in);
             return reader.readLine();
         } finally {
             close(in);
         }
     }
 
-    public static String slurp(String fileName) throws IOException {
+    public static String slurp(final String fileName) throws IOException {
         return slurp(new File(fileName));
     }
 
-    public static String slurp(File file) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final File file) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
         return new String(out.toByteArray());
     }
 
-    public static String slurp(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final InputStream in) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
         return new String(out.toByteArray(), "UTF-8");
     }
 
-    public static String slurp(URL url) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public static String slurp(final URL url) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(url.openStream(), out);
         return new String(out.toByteArray());
     }
 
-    public static void writeString(File file, String string) throws IOException {
+    public static void writeString(final File file, final String string) throws IOException {
         final FileWriter out = new FileWriter(file);
         try {
             final BufferedWriter bufferedWriter = new BufferedWriter(out);
@@ -99,7 +99,7 @@ public class IO {
         }
     }
 
-    public static void copy(File from, OutputStream to) throws IOException {
+    public static void copy(final File from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
             copy(read, to);
@@ -108,7 +108,7 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to) throws IOException {
+    public static void copy(final InputStream from, final File to) throws IOException {
         final OutputStream write = write(to);
         try {
             copy(from, write);
@@ -117,7 +117,7 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, File to, boolean append) throws IOException {
+    public static void copy(final InputStream from, final File to, final boolean append) throws IOException {
         final OutputStream write = write(to, append);
         try {
             copy(from, write);
@@ -126,8 +126,8 @@ public class IO {
         }
     }
 
-    public static void copy(InputStream from, OutputStream to) throws IOException {
-        byte[] buffer = new byte[1024];
+    public static void copy(final InputStream from, final OutputStream to) throws IOException {
+        final byte[] buffer = new byte[1024];
         int length = 0;
         while ((length = from.read(buffer)) != -1) {
             to.write(buffer, 0, length);
@@ -135,17 +135,17 @@ public class IO {
         to.flush();
     }
 
-    public static ZipOutputStream zip(File file) throws IOException {
+    public static ZipOutputStream zip(final File file) throws IOException {
         final OutputStream write = write(file);
         return new ZipOutputStream(write);
     }
 
-    public static ZipInputStream unzip(File file) throws IOException {
+    public static ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
         return new ZipInputStream(read);
     }
 
-    public static void close(Closeable closeable) throws IOException {
+    public static void close(final Closeable closeable) throws IOException {
         if (closeable == null) return;
         try {
             if (closeable instanceof Flushable) {
@@ -159,7 +159,7 @@ public class IO {
         }
     }
 
-    public static boolean delete(File file) {
+    public static boolean delete(final File file) {
         if (file == null) return false;
         if (!file.delete()) {
             System.err.println("Delete failed " + file.getAbsolutePath());
@@ -169,17 +169,17 @@ public class IO {
         return true;
     }
 
-    public static OutputStream write(File destination) throws FileNotFoundException {
+    public static OutputStream write(final File destination) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static OutputStream write(File destination, boolean append) throws FileNotFoundException {
+    public static OutputStream write(final File destination, final boolean append) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination, append);
         return new BufferedOutputStream(out, 32768);
     }
 
-    public static InputStream read(File source) throws FileNotFoundException {
+    public static InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
     }

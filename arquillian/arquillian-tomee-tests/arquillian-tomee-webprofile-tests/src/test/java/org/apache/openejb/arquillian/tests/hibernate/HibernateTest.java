@@ -28,17 +28,17 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenResolutionFilter;
-import org.jboss.shrinkwrap.resolver.api.maven.filter.ScopeFilter;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
+import org.jboss.shrinkwrap.resolver.api.maven.strategy.AcceptScopesStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
@@ -47,50 +47,51 @@ public class HibernateTest {
     public static WebArchive war() {
         File[] hibernate;
         try { // try offline first since it is generally faster
-            hibernate = DependencyResolvers.use(MavenDependencyResolver.class)
-                .goOffline()
-                .loadEffectivePom("src/test/resources/hibernate-pom.xml")
-                .importAnyDependencies(new ScopeFilter("compile"))
-                .resolveAsFiles();
+            hibernate = Maven.resolver()
+                    .offline(true)
+                    .loadPomFromFile("src/test/resources/hibernate-pom.xml")
+                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                    .asFile();
         } catch (ResolutionException re) { // try on central
-            hibernate = DependencyResolvers.use(MavenDependencyResolver.class)
-                    .loadEffectivePom("src/test/resources/hibernate-pom.xml")
-                    .importAnyDependencies(new ScopeFilter("compile"))
-                    .resolveAsFiles();
+            hibernate = Maven.resolver()
+                    .loadPomFromFile("src/test/resources/hibernate-pom.xml")
+                    .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                    .asFile();
         }
 
         return ShrinkWrap.create(WebArchive.class, "hibernate-app.war")
-                    .addAsWebInfResource(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                            "<persistence version=\"2.0\"\n" +
-                            "    xmlns=\"http://java.sun.com/xml/ns/persistence\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                            "    xsi:schemaLocation=\"http://java.sun.com/xml/ns/persistence" +
-                            "                         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\">\n" +
-                            "  <persistence-unit name=\"hibernate\">\n" +
-                            "    <provider>org.hibernate.ejb.HibernatePersistence</provider>\n" +
-                            "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
-                            "    <properties>\n" +
-                            "      <property name=\"hibernate.hbm2ddl.auto\" value=\"create-drop\" />\n" +
-                            "    </properties>\n" +
-                            "  </persistence-unit>\n" +
-                            "</persistence>"), ArchivePaths.create("persistence.xml"))
-                    .addAsLibraries(hibernate)
-                    .addAsLibraries(JarLocation.jarLocation(ResolutionException.class))
-                    .addAsLibraries(JarLocation.jarLocation(MavenResolutionFilter.class));
+                .addAsWebInfResource(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<persistence version=\"2.0\"\n" +
+                        "    xmlns=\"http://java.sun.com/xml/ns/persistence\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                        "    xsi:schemaLocation=\"http://java.sun.com/xml/ns/persistence" +
+                        "                         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\">\n" +
+                        "  <persistence-unit name=\"hibernate\">\n" +
+                        "    <provider>org.hibernate.ejb.HibernatePersistence</provider>\n" +
+                        "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
+                        "    <properties>\n" +
+                        "      <property name=\"hibernate.hbm2ddl.auto\" value=\"create-drop\" />\n" +
+                        "    </properties>\n" +
+                        "  </persistence-unit>\n" +
+                        "</persistence>"), ArchivePaths.create("persistence.xml"))
+                .addAsLibraries(hibernate)
+                .addAsLibraries(JarLocation.jarLocation(ResolutionException.class))
+                .addAsLibraries(JarLocation.jarLocation(org.jboss.shrinkwrap.resolver.api.maven.filter.MavenResolutionFilter.class));
     }
 
     @Test // using an internal lookup because in tomee embedded new InitialContext() is not guaranteed
     public void checkEmIsHibernateOne() throws Exception {
         AppInfo info = null;
-        for (AppInfo app : SystemInstance.get().getComponent(Assembler.class).getDeployedApplications()) {
+        for (final AppInfo app : SystemInstance.get().getComponent(Assembler.class).getDeployedApplications()) {
             if (app.appId.endsWith("hibernate-app")) {
                 info = app;
                 break;
             }
         }
 
+        assertNotNull(info);
         final EntityManagerFactory emf = (EntityManagerFactory)
-            SystemInstance.get().getComponent(ContainerSystem.class)
-                .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + info.persistenceUnits.iterator().next().id);
+                SystemInstance.get().getComponent(ContainerSystem.class)
+                        .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + info.persistenceUnits.iterator().next().id);
         assertTrue(((ReloadableEntityManagerFactory) emf).getDelegate().getClass().getName().startsWith("org.hibernate."));
     }
 }

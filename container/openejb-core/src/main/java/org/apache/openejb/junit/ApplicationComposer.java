@@ -54,6 +54,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
@@ -61,6 +62,7 @@ import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.rules.MethodRule;
@@ -72,6 +74,8 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 import javax.naming.Context;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -402,12 +406,12 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 } else if (obj instanceof Persistence) {
 
                     final Persistence persistence = (Persistence) obj;
-                    appModule.addPersistenceModule(new PersistenceModule("", persistence));
+                    appModule.addPersistenceModule(new PersistenceModule(implicitRootUrl(), persistence));
 
                 } else if (obj instanceof PersistenceUnit) {
 
                     final PersistenceUnit unit = (PersistenceUnit) obj;
-                    appModule.addPersistenceModule(new PersistenceModule("", new Persistence(unit)));
+                    appModule.addPersistenceModule(new PersistenceModule(implicitRootUrl(), new Persistence(unit)));
 
                 } else if (obj instanceof Beans) {
 
@@ -605,6 +609,28 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             if (module.getId() != null) return module;
             module.setId(name);
             return module;
+        }
+    }
+
+    private static String implicitRootUrl() {
+        final ResourceFinder finder = new ResourceFinder("", Thread.currentThread().getContextClassLoader());
+        try {
+            final URL url = DeploymentLoader.altDDSources(DeploymentLoader.mapDescriptors(finder), false).get("persistence.xml");
+            if (url == null) {
+                return "";
+            }
+
+            final File file = URLs.toFile(url);
+            if (file.getName().endsWith("persistence.xml")) {
+                final String parent = file.getParentFile().getName();
+                if (parent.equalsIgnoreCase("META-INF")) {
+                    return file.getParentFile().getParentFile().getAbsolutePath();
+                }
+                return file.getParentFile().getAbsolutePath();
+            }
+            return url.toExternalForm();
+        } catch (IOException e) {
+            return "";
         }
     }
 

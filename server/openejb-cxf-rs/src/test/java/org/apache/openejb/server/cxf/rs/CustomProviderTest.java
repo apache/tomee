@@ -45,7 +45,8 @@ import static junit.framework.Assert.assertEquals;
 public class CustomProviderTest {
     private static EJBContainer container;
 
-    @BeforeClass public static void start() throws Exception {
+    @BeforeClass
+    public static void start() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
         properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
@@ -53,28 +54,34 @@ public class CustomProviderTest {
         container = EJBContainer.createEJBContainer(properties);
     }
 
-    @AfterClass public static void close() throws Exception {
+    @AfterClass
+    public static void close() throws Exception {
         if (container != null) {
             container.close();
         }
     }
 
-    @Test public void customProvider() {
+    @Test
+    public void customProvider() {
         String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/reverse")
-            .path("/custom1/reverse").get(String.class);
+                .path("/custom1/reverse").get(String.class);
         assertEquals("provider", response);
     }
 
-    @Test public void customSpecificProvider() {
+    @Test
+    public void customSpecificProvider() {
         String response = WebClient.create("http://localhost:4204/openejb-cxf-rs").accept("openejb/constant")
-            .path("/custom2/constant").get(String.class);
+                .path("/custom2/constant").get(String.class);
         assertEquals("it works!", response);
     }
 
     @Singleton
     @Path("/custom1")
     public static class CustomService {
-        @GET @Path("/reverse") @Produces("openejb/reverse") public String go() {
+        @GET
+        @Path("/reverse")
+        @Produces("openejb/reverse")
+        public String go() {
             return "redivorp";
         }
     }
@@ -82,7 +89,10 @@ public class CustomProviderTest {
     @Singleton
     @Path("/custom2")
     public static class CustomSpecificService {
-        @GET @Path("/constant") @Produces("openejb/constant") public String go() {
+        @GET
+        @Path("/constant")
+        @Produces("openejb/constant")
+        public String go() {
             return "will be overriden";
         }
     }

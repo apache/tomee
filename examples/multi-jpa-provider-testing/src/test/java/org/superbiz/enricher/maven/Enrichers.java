@@ -17,12 +17,11 @@
  */
 package org.superbiz.enricher.maven;
 
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveProcessor;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.jboss.shrinkwrap.resolver.api.maven.filter.ScopeFilter;
+import org.jboss.shrinkwrap.api.container.LibraryContainer;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
+import org.jboss.shrinkwrap.resolver.api.maven.strategy.AcceptScopesStrategy;
+import org.jboss.shrinkwrap.resolver.api.maven.strategy.TransitiveStrategy;
 
 import javax.enterprise.inject.ResolutionException;
 import java.io.File;
@@ -33,31 +32,33 @@ public final class Enrichers {
     private static final Map<String, File[]> CACHE = new HashMap<String, File[]>();
 
     private Enrichers() {
-     // no-op
+        // no-op
     }
 
     public static File[] resolve(final String pom) {
         if (!CACHE.containsKey(pom)) {
-            try { // try offline first since it is generally faster
-                CACHE.put(pom, DependencyResolvers.use(MavenDependencyResolver.class)
-                        .goOffline()
-                        .loadEffectivePom(pom)
-                        .importAnyDependencies(new ScopeFilter("compile"))
-                        .resolveAsFiles());
+            try {
+
+                // try offline first since it is generally faster
+                CACHE.put(pom, Maven.resolver()
+                        .offline(true)
+                        .loadPomFromFile(pom)
+                        .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                        .asFile());
             } catch (ResolutionException re) { // try on central
-                CACHE.put(pom, DependencyResolvers.use(MavenDependencyResolver.class)
-                        .loadEffectivePom(pom)
-                        .importAnyDependencies(new ScopeFilter("compile"))
-                        .resolveAsFiles());
+                CACHE.put(pom, Maven.resolver()
+                        .loadPomFromFile(pom)
+                        .importRuntimeAndTestDependencies(new AcceptScopesStrategy(ScopeType.COMPILE))
+                        .asFile());
             }
         }
         return CACHE.get(pom);
     }
 
-    public static WebArchive wrap(final Archive<?> archive) {
-        if (!(archive instanceof WebArchive)) {
-            throw new IllegalArgumentException("not supported kind of archive: " + archive.getClass().getName());
+    public static LibraryContainer wrap(final org.jboss.shrinkwrap.api.Archive<?> archive) {
+        if (!(LibraryContainer.class.isInstance(archive))) {
+            throw new IllegalArgumentException("Unsupported archive type: " + archive.getClass().getName());
         }
-        return (WebArchive) archive;
+        return (LibraryContainer) archive;
     }
 }

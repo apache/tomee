@@ -19,11 +19,19 @@
 TOMEE.ApplicationTabLog = function () {
     "use strict";
 
-    var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {})),
-        selectedFile = null,
-        active = false,
-        locked = true;
+    var channel = TOMEE.ApplicationChannel;
+    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
+    var selectedFile = null;
+    var active = false;
+    var locked = true;
+
+    function setLocked(value) {
+        locked = value;
+        channel.send('ui-actions', 'locked-change', {
+            locked: value,
+            panel:'log'
+        });
+    }
 
     channel.bind('ui-actions', 'container-resized', function (data) {
         var consoleOutput = container.find('.tomee-log-output'),
@@ -77,17 +85,17 @@ TOMEE.ApplicationTabLog = function () {
 
     channel.bind('server-command-callback-success', 'Login', function (params) {
         if (params.output.loginSuccess) {
-            locked = false;
+            setLocked(false);
         } else {
-            locked = true;
+            setLocked(true);
         }
     });
 
     channel.bind('server-command-callback-success', 'session', function (params) {
         if (params.data.userName) {
-            locked = false;
+            setLocked(false);
         } else {
-            locked = true;
+            setLocked(true);
         }
     });
 

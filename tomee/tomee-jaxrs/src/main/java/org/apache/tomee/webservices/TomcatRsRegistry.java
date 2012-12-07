@@ -57,34 +57,13 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public AddressInfo createRsHttpListener(String root, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
-        String path = completePath;
+    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
+        String path = webContext;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
         }
         if (listener == null) {
             throw new NullPointerException("listener is null");
-        }
-
-        // parsing could be optimized a bit...
-        String realRoot = root;
-        if (!root.startsWith("/")) {
-            realRoot = "/" + root;
-        }
-        if (realRoot.length() > 1) {
-            int idx = realRoot.substring(1).indexOf('/');
-            if (idx > 0) {
-                realRoot = realRoot.substring(0, idx + 1);
-            }
-        }
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-        if (!"/".equals(realRoot)) {
-            path = path.substring(realRoot.length(), path.length());
-        }
-        if (!path.startsWith("/")) {
-            path = "/" + path;
         }
 
         // find the existing host (we do not auto-create hosts)
@@ -95,14 +74,14 @@ public class TomcatRsRegistry implements RsRegistry {
         }
 
         // get the webapp context
-        Context context = (Context) host.findChild(realRoot);
+        Context context = (Context) host.findChild(webContext);
 
-        if (context == null && "/".equals(realRoot)) { // ROOT
+        if (context == null && "/".equals(webContext)) { // ROOT
             context = (Context) host.findChild("");
         }
 
         if (context == null) {
-            throw new IllegalStateException("Invalid context '" + realRoot + "'.  Cannot find context in host " + host.getName());
+            throw new IllegalStateException("Invalid context '" + webContext + "'.  Cannot find context in host " + host.getName());
         }
 
         Wrapper wrapper = context.createWrapper();
@@ -110,20 +89,26 @@ public class TomcatRsRegistry implements RsRegistry {
         wrapper.setName(name);
         wrapper.setServletClass(RsServlet.class.getName());
 
-        final String mapping = path.replace("/.*", "/*");
         context.addChild(wrapper);
-        wrapper.addMapping(mapping);
-        context.addServletMapping(mapping, name);
+        wrapper.addMapping(removeWebContext(webContext, completePath));
+        context.addServletMapping(completePath, name);
 
         final String listenerId = wrapper.getName() + RsServlet.class.getName() + listener.hashCode();
         wrapper.addInitParameter(HttpListener.class.getName(), listenerId);
         context.getServletContext().setAttribute(listenerId, listener);
 
-        path = address(connectors, host.getName(), realRoot);
+        path = address(connectors, host.getName(), webContext);
         final String key = address(connectors, host.getName(), completePath);
         listeners.put(key, listener);
 
         return new AddressInfo(path, key);
+    }
+
+    private static String removeWebContext(final String webContext, final String completePath) {
+        if (webContext == null) {
+            return completePath;
+        }
+        return completePath.substring(webContext.length());
     }
 
     private static String address(final Collection<Connector> connectors, final String host, final String path) {

@@ -24,13 +24,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>apache-tomcat</artifactId>
   <name>OpenEJB :: TomEE :: Apache Tomcat</name>
-  <version>7.0.32-SNAPSHOT</version>
+  <version>7.0.34</version>
   <packaging>pom</packaging>
 
   <build>
@@ -106,7 +106,9 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
     <!-- using a proxy is generally better -->
-    <tomcat.url>http://www.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</tomcat.url>
+    <tomcat.url>https://dist.apache.org/repos/dist/dev/tomcat/tomcat-7/v7.0.34/bin/apache-tomcat-7.0.34.zip</tomcat.url>
+<!--
+<tomcat.url>http://www.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</tomcat.url>-->
     <tomcat.tmp>${project.build.directory}/apache-tomcat-${tomcat.bundle.version}.zip</tomcat.tmp>
     <artifact.path>${settings.localRepository}/org/apache/openejb/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}.zip</artifact.path>
   </properties>

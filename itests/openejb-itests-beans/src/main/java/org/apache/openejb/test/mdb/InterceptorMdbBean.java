@@ -18,8 +18,11 @@
 
 package org.apache.openejb.test.mdb;
 
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJBException;
@@ -34,19 +37,12 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.naming.InitialContext;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-
-import org.apache.openejb.test.TestFailureException;
-
-@Interceptors ({MdbInterceptor.class})
+@Interceptors({MdbInterceptor.class})
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName="destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName="destination", propertyValue = "InterceptorMdbBean")})
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "InterceptorMdbBean")})
 public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
 
     private boolean classLevelBusinessMethodInterception = false;
@@ -57,17 +53,18 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     private Session session;
     private Connection connection;
     protected MdbInvoker mdbInvoker;
-    @Resource(name="jms", type=javax.jms.QueueConnectionFactory.class)
+    @Resource(name = "jms", type = javax.jms.QueueConnectionFactory.class)
     private ConnectionFactory connectionFactory;
 
-    public void onMessage(Message msg) {
+    @Override
+    public void onMessage(final Message msg) {
         try {
             classLevelBusinessMethodInterception = msg.getBooleanProperty("ClassLevelBusinessMethodInterception");
             methodLevelBusinessMethodInterception = msg.getBooleanProperty("MethodLevelBusinessMethodInterception");
             try {
                 msg.acknowledge();
             } catch (JMSException e) {
-              e.printStackTrace();
+                e.printStackTrace();
             }
             mdbInvoker.onMessage(msg);
         } catch (Throwable e) {
@@ -76,23 +73,21 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     }
 
     @AroundInvoke
-    public Object mdbInterceptor(InvocationContext ctx) throws Exception
-    {
-       Object[] objArr = ctx.getParameters();
-       Message msg = (Message)objArr[0];
-       msg.setBooleanProperty("MethodLevelBusinessMethodInterception",true);
-       ctx.setParameters(objArr);
-       return ctx.proceed();
+    public Object aroundInvoke(final InvocationContext ctx) throws Exception {
+        final Object[] objArr = ctx.getParameters();
+        final Message msg = (Message) objArr[0];
+        msg.setBooleanProperty("MethodLevelBusinessMethodInterception", true);
+        ctx.setParameters(objArr);
+        return ctx.proceed();
     }
 
     @PostConstruct
-    public void ejbCreate() throws EJBException
-    {
+    public void ejbCreate() throws EJBException {
         methodLevelCreateMethodInterception = true;
     }
 
 
-    public void checkMethodLevelBusinessMethodInterception() throws TestFailureException{
+    public void checkMethodLevelBusinessMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Method Level Business Method Interception failed for Mdb", methodLevelBusinessMethodInterception);
         } catch (AssertionFailedError afe) {
@@ -100,7 +95,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
         }
     }
 
-    public void checkMethodLevelCreateMethodInterception() throws TestFailureException{
+    public void checkMethodLevelCreateMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Method Level Business Method Interception failed for Mdb", methodLevelCreateMethodInterception);
         } catch (AssertionFailedError afe) {
@@ -109,7 +104,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     }
 
 
-    public void checkClassLevelBusinessMethodInterception() throws TestFailureException{
+    public void checkClassLevelBusinessMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Class Level Business Method Interception failed for Mdb", classLevelBusinessMethodInterception);
         } catch (AssertionFailedError afe) {
@@ -117,7 +112,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
         }
     }
 
-    public void checkClassLevelCreateMethodInterception() throws TestFailureException{
+    public void checkClassLevelCreateMethodInterception() throws TestFailureException {
         try {
             Assert.assertTrue("Class Level Business Method Interception failed for Mdb", classLevelCreateMethodInterception);
         } catch (AssertionFailedError afe) {
@@ -126,12 +121,17 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     }
 
 
+    @Override
     public void ejbRemove() throws EJBException {
         // TODO Auto-generated method stub
 
+        if (null != mdbInvoker) {
+            mdbInvoker.destroy();
+        }
     }
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
+    @Override
+    public void setMessageDrivenContext(final MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         try {
             mdbInvoker = new MdbInvoker(connectionFactory, this);

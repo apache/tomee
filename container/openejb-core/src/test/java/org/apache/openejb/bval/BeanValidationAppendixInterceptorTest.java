@@ -16,16 +16,6 @@
  */
 package org.apache.openejb.bval;
 
-import java.io.Serializable;
-import java.util.Properties;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Empty;
@@ -36,19 +26,34 @@ import org.apache.openejb.junit.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.LocalBean;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Properties;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class BeanValidationAppendixInterceptorTest {
-    @Local public static interface Manager {
+    @Local
+    public static interface Manager {
         String drive(Person person, @Min(18) int age);
+
         Person create(@NotNull String name);
     }
 
-    @Remote public static interface ManagerRemote {
+    @Remote
+    public static interface ManagerRemote {
         String drive(Person person, @Min(16) int age);
+
         Person create(String name);
     }
 
@@ -64,7 +69,8 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @Stateless public static class ManagerBean implements Manager {
+    @Stateless
+    public static class ManagerBean implements Manager {
         public String drive(Person person, int age) {
             return "vroom";
         }
@@ -76,7 +82,8 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @Stateless public static class ManagerBean2 implements Manager, ManagerRemote {
+    @Stateless
+    public static class ManagerBean2 implements Manager, ManagerRemote {
         public String drive(Person person, int age) {
             return "vroom";
         }
@@ -88,18 +95,22 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @Stateless @LocalBean public static class ManagerLocalBean {
+    @Stateless
+    @LocalBean
+    public static class ManagerLocalBean {
         public void foo(@NotNull String bar) {
             // no-op
         }
     }
 
-    @Test public void valid() {
+    @Test
+    public void valid() {
         Person p = mgr.create("foo");
         mgr.drive(p, 18);
     }
 
-    @Test public void notValid() {
+    @Test
+    public void notValid() {
         Person p = null;
         try {
             p = mgr.create(null);
@@ -119,13 +130,15 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @Test public void validRemote() {
+    @Test
+    public void validRemote() {
         Person p = mgrRemote.create(null);
         mgrRemote.drive(p, 26);
         mgrRemote.drive(p, 17);
     }
 
-    @Test public void notValidRemote() {
+    @Test
+    public void notValidRemote() {
         Person p = mgrRemote.create("bar");
         try {
             mgrRemote.drive(p, 15);
@@ -137,7 +150,8 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @Test public void localBean() {
+    @Test
+    public void localBean() {
         mgrLB.foo("ok");
         try {
             mgrLB.foo(null);
@@ -149,17 +163,22 @@ public class BeanValidationAppendixInterceptorTest {
         }
     }
 
-    @EJB private Manager mgr;
-    @EJB private ManagerRemote mgrRemote;
-    @EJB private ManagerLocalBean mgrLB;
+    @EJB
+    private Manager mgr;
+    @EJB
+    private ManagerRemote mgrRemote;
+    @EJB
+    private ManagerLocalBean mgrLB;
 
-    @Configuration public Properties config() {
+    @Configuration
+    public Properties config() {
         final Properties p = new Properties();
         p.put(BeanContext.USER_INTERCEPTOR_KEY, BeanValidationAppendixInterceptor.class.getName());
         return p;
     }
 
-    @Module public EjbJar app() throws Exception {
+    @Module
+    public EjbJar app() throws Exception {
         EjbJar ejbJar = new EjbJar("bval-interceptor");
 
         final StatelessBean bean1 = new StatelessBean(ManagerBean.class);

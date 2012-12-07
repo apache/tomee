@@ -18,14 +18,14 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
@@ -320,13 +320,13 @@ public class EjbRefTest extends TestCase {
     }
 
 
-    public void ear(Class ... beans) throws Exception {
+    public void ear(Class... beans) throws Exception {
         EjbJar ejbJar = ejbjar(beans);
         ear(ejbJar);
     }
 
     private void ear(EjbJar... ejbJars) throws OpenEJBException, NamingException, IOException {
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-"+ejbJars.hashCode());
+        AppModule app = new AppModule(this.getClass().getClassLoader(), "classpath-" + ejbJars.hashCode());
         for (EjbJar ejbJar : ejbJars) {
             app.getEjbModules().add(new EjbModule(ejbJar));
         }
@@ -466,8 +466,10 @@ public class EjbRefTest extends TestCase {
     }
 
     public static class YellowGreenBean implements YellowGreen {
-        @EJB Color yellow;
-        @EJB Color green;
+        @EJB
+        Color yellow;
+        @EJB
+        Color green;
 
         public String getGreen() {
             return green.getColor();
@@ -480,6 +482,7 @@ public class EjbRefTest extends TestCase {
 
     public static interface YellowGreen {
         String getYellow();
+
         String getGreen();
     }
 

@@ -44,7 +44,8 @@ public class BeanValidationAppendixInterceptor {
 
     private SessionContext sessionContext;
 
-    @AroundInvoke public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
+    @AroundInvoke
+    public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
         Object validatorObject = null;
         Validator validator = null;
         try {
@@ -68,29 +69,29 @@ public class BeanValidationAppendixInterceptor {
         if (APACHE_BVAL_METHOD_CLASS != null && validator != null) {
             validatorObject = validator.unwrap(APACHE_BVAL_METHOD_CLASS);
             violations = call(Set.class, validatorObject, "validateParameters",
-                new Object[]{
-                    bvalClazzToValidate, method, ejbContext.getParameters(), new Class[0]
-                },
-                new Class<?>[]{
-                    Class.class, Method.class, Object[].class, Class[].class
-                });
+                    new Object[]{
+                            bvalClazzToValidate, method, ejbContext.getParameters(), new Class[0]
+                    },
+                    new Class<?>[]{
+                            Class.class, Method.class, Object[].class, Class[].class
+                    });
         } else if (HIBERNATE_METHOD_CLASS != null && validator != null) {
             validatorObject = validator.unwrap(HIBERNATE_METHOD_CLASS);
             violations = call(Set.class, validatorObject, "validateAllParameters",
-                new Object[]{
-                    ejbContext.getTarget(), ejbContext.getMethod(), ejbContext.getParameters(), new Class[0]
-                },
-                new Class<?>[]{
-                    Object.class, Method.class, Object[].class, Class[].class
-                });
+                    new Object[]{
+                            ejbContext.getTarget(), ejbContext.getMethod(), ejbContext.getParameters(), new Class[0]
+                    },
+                    new Class<?>[]{
+                            Object.class, Method.class, Object[].class, Class[].class
+                    });
         } else { // a warning message to inform Apache Bean Validation is not present
             if (validator == null) {
                 logger.error("can't find validator");
             } else {
                 logger.warning("Apache Bean Validation is not present, "
-                    + BeanValidationAppendixInterceptor.class.getName() + " will not work. "
-                    + "Please put it if you want to validate your parameters and returned values "
-                    + "with bean validation JSR.");
+                        + BeanValidationAppendixInterceptor.class.getName() + " will not work. "
+                        + "Please put it if you want to validate your parameters and returned values "
+                        + "with bean validation JSR.");
             }
         }
 
@@ -103,20 +104,20 @@ public class BeanValidationAppendixInterceptor {
         violations = Collections.emptySet();
         if (validatorObject != null && APACHE_BVAL_METHOD_CLASS != null) {
             violations = call(Set.class, validatorObject, "validateReturnedValue",
-                new Object[]{
-                    bvalClazzToValidate, method, returnedValue, new Class[0]
-                },
-                new Class<?>[]{
-                    Class.class, Method.class, Object.class, Class[].class
-                });
+                    new Object[]{
+                            bvalClazzToValidate, method, returnedValue, new Class[0]
+                    },
+                    new Class<?>[]{
+                            Class.class, Method.class, Object.class, Class[].class
+                    });
         } else if (validatorObject != null && HIBERNATE_METHOD_CLASS != null) {
             violations = call(Set.class, validatorObject, "validateReturnValue",
-                new Object[]{
-                    ejbContext.getTarget(), ejbContext.getMethod(), returnedValue, new Class[0]
-                },
-                new Class<?>[]{
-                    Object.class, Method.class, Object.class, Class[].class
-                });
+                    new Object[]{
+                            ejbContext.getTarget(), ejbContext.getMethod(), returnedValue, new Class[0]
+                    },
+                    new Class<?>[]{
+                            Object.class, Method.class, Object.class, Class[].class
+                    });
         }
 
         if (violations.size() > 0) {

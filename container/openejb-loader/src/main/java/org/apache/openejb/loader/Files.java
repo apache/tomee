@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
  */
 public class Files {
 
-    public static File path(String... parts) {
+    public static File path(final String... parts) {
         File dir = null;
-        for (String part : parts) {
+        for (final String part : parts) {
             if (dir == null) {
                 dir = new File(part);
             } else {
@@ -39,15 +39,25 @@ public class Files {
             }
         }
 
-        return dir;
+        return null != dir ? dir.getAbsoluteFile() : dir;
     }
 
-    public static File path(File dir, String... parts) {
-        for (String part : parts) {
-            dir = new File(dir, part);
+    public static File path(final File dir, final String... parts) {
+        File base = dir;
+        int idx = 0;
+        if (parts.length >= 1) {
+            final File partFile = new File(parts[0]);
+            if (partFile.exists() && partFile.isAbsolute()) {
+                base = partFile;
+                idx = 1;
+            }
         }
 
-        return dir;
+        for (int i = idx; i < parts.length; i++) {
+            base = new File(base, parts[i]);
+        }
+
+        return base.getAbsoluteFile();
     }
 
     public static List<File> collect(final File dir, final String regex) {
@@ -57,64 +67,74 @@ public class Files {
     public static List<File> collect(final File dir, final Pattern pattern) {
         return collect(dir, new FileFilter() {
             @Override
-            public boolean accept(File file) {
+            public boolean accept(final File file) {
                 return pattern.matcher(file.getName()).matches();
             }
         });
     }
 
 
-    public static List<File> collect(File dir, FileFilter filter) {
+    public static List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<File>();
         if (filter.accept(dir)) accepted.add(dir);
 
         final File[] files = dir.listFiles();
-        if (files != null) for (File file : files) {
+        if (files != null) for (final File file : files) {
             accepted.addAll(collect(file, filter));
         }
 
         return accepted;
     }
 
-    public static File exists(File file, String s) {
-        if (!file.exists()) throw new FileRuntimeException(s + " does not exist: " + file.getAbsolutePath());
+    public static File exists(final File file, final String s) {
+        if (!file.exists()) throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File exists(File file) {
-        if (!file.exists()) throw new FileRuntimeException("Does not exist: " + file.getAbsolutePath());
+    public static File exists(final File file) {
+        if (!file.exists()) throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File dir(File file) {
+    public static File dir(final File file) {
         if (!file.isDirectory()) throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File file(File file) {
+    public static File file(final File file) {
         exists(file);
         if (!file.isFile()) throw new FileRuntimeException("Not a file: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File writable(File file) {
+    public static File notHidden(final File file) {
+        exists(file);
+        if (file.isHidden()) throw new FileRuntimeException("File is hidden: " + file.getAbsolutePath());
+        return file;
+    }
+
+    public static File writable(final File file) {
         if (!file.canWrite()) throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File readable(File file) {
+    public static File readable(final File file) {
         if (!file.canRead()) throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
         return file;
     }
 
-    public static File readableFile(File file) {
+    public static File readableFile(final File file) {
         return readable(file(file));
     }
 
-    public static File mkdir(File file) {
+    public static File mkdir(final File file) {
         if (file.exists()) return file;
         if (!file.mkdirs()) throw new FileRuntimeException("Cannot mkdir: " + file.getAbsolutePath());
         return file;
+    }
+
+    public static File mkdir(final File file, final String name) {
+        return mkdir(new File(file, name));
     }
 
     public static File tmpdir() {
@@ -129,12 +149,12 @@ public class Files {
         }
     }
 
-    public static File mkparent(File file) {
+    public static File mkparent(final File file) {
         mkdirs(file.getParentFile());
         return file;
     }
 
-    public static File mkdirs(File file) {
+    public static File mkdirs(final File file) {
 
         if (!file.exists()) {
 
@@ -151,51 +171,82 @@ public class Files {
     static final List<String> delete = new ArrayList<String>();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                delete();
-            }
-        });
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(Files.class.getClassLoader());
+        try {
+            final Thread deleteShutdownHook = new Thread() {
+                @Override
+                public void run() {
+                    delete();
+                }
+            };
+            Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
+        } finally {
+            Thread.currentThread().setContextClassLoader(loader);
+        }
     }
 
-    public static void deleteOnExit(File file) {
+    public static void deleteOnExit(final File file) {
         delete.add(file.getAbsolutePath());
     }
 
     private static void delete() {
-        for (String path : delete) {
+        for (final String path : delete) {
             delete(new File(path));
         }
     }
 
-    public static void delete(File file) {
+    public static void delete(final File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                for (File f : file.listFiles()) {
-                    delete(f);
+                final File[] files = file.listFiles();
+                if (null != files) {
+                    for (final File f : files) {
+                        delete(f);
+                    }
                 }
             }
 
-            if(!file.delete()){
-                file.deleteOnExit();
+            if (!file.delete()) {
+                try {
+                    file.deleteOnExit();
+                } catch (Throwable e) {
+                    //Ignore
+                }
             }
         }
     }
 
-    public static File select(File dir, String pattern) {
+    public static void remove(final File file) {
+        if (file == null) return;
+        if (!file.exists()) return;
+
+        if (file.isDirectory()) {
+            final File[] files = file.listFiles();
+            if (files != null) {
+                for (final File child : files) {
+                    remove(child);
+                }
+            }
+        }
+        if (!file.delete()) {
+            throw new IllegalStateException("Could not delete file: " + file.getAbsolutePath());
+        }
+    }
+
+    public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
         if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));
         if (matches.size() > 1) throw new IllegalStateException(String.format("Too many found '%s': %s", pattern, join(", ", matches)));
         return matches.get(0);
     }
 
-    private static String join(String delimiter, Collection<File> collection) {
+    private static String join(final String delimiter, final Collection<File> collection) {
         if (collection.size() == 0) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (File obj : collection) {
+        final StringBuilder sb = new StringBuilder();
+        for (final File obj : collection) {
             sb.append(obj.getName()).append(delimiter);
         }
         return sb.substring(0, sb.length() - delimiter.length());
@@ -210,4 +261,15 @@ public class Files {
             super(e);
         }
     }
+
+    public static class FileDoesNotExistException extends FileRuntimeException {
+        public FileDoesNotExistException(final String str) {
+            super(str);
+        }
+
+        public FileDoesNotExistException(final Exception e) {
+            super(e);
+        }
+    }
+
 }

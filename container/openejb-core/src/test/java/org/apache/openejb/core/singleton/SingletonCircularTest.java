@@ -16,17 +16,7 @@
  */
 package org.apache.openejb.core.singleton;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -37,11 +27,19 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
 public class SingletonCircularTest extends TestCase {
-    
+
     private static final String one = "one";
     private static final String two = "two";
 
@@ -58,7 +56,7 @@ public class SingletonCircularTest extends TestCase {
 
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
-        
+
         actual.clear();
 
         EjbJar ejbJar = new EjbJar();
@@ -79,8 +77,9 @@ public class SingletonCircularTest extends TestCase {
     @Startup
     public static class One {
 
-        @EJB Two two;
-        
+        @EJB
+        Two two;
+
         @PostConstruct
         @PreDestroy
         public void callback() {
@@ -92,13 +91,14 @@ public class SingletonCircularTest extends TestCase {
     @Startup
     public static class Two {
 
-        @EJB One one;
-        
+        @EJB
+        One one;
+
         @PostConstruct
         @PreDestroy
         public void callback() {
             actual.add(two);
         }
     }
-   
+
 }

@@ -39,7 +39,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -56,34 +55,32 @@ public class TomEEJarScanner extends StandardJarScanner {
 
     static {
         final Set<String> defaultJarsToSkip = new HashSet<String>();
-        String jarList = System.getProperty(Constants.SKIP_JARS_PROPERTY);
+        final String jarList = System.getProperty(Constants.SKIP_JARS_PROPERTY);
         if (jarList != null) {
-            StringTokenizer tokenizer = new StringTokenizer(jarList, ",");
+            final StringTokenizer tokenizer = new StringTokenizer(jarList, ",");
             while (tokenizer.hasMoreElements()) {
                 defaultJarsToSkip.add(tokenizer.nextToken());
             }
         }
 
         final Set<String[]> ignoredJarsTokens = new HashSet<String[]>();
-        for (String pattern : defaultJarsToSkip) {
+        for (final String pattern : defaultJarsToSkip) {
             ignoredJarsTokens.add(Matcher.tokenizePathAsArray(pattern));
         }
         DEFAULT_JARS_TO_SKIP = ignoredJarsTokens;
     }
 
     @Override
-    public void scan(ServletContext context, ClassLoader classLoader, JarScannerCallback callback, Set<String> jarsToIgnore) {
+    public void scan(final ServletContext context, final ClassLoader classLoader, final JarScannerCallback callback, final Set<String> jarsToIgnore) {
         if ("FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
-            EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
+            final EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
         } else if ("TldJarScannerCallback".equals(callback.getClass().getSimpleName())) {
 
             // Scan WEB-INF/lib
-            Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
+            final Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
             if (dirList != null) {
-                Iterator<String> it = dirList.iterator();
-                while (it.hasNext()) {
-                    String path = it.next();
+                for (final String path : dirList) {
                     if (path.endsWith(Constants.JAR_EXT) &&
                             !Matcher.matchPath(DEFAULT_JARS_TO_SKIP,
                                     path.substring(path.lastIndexOf('/') + 1))) {
@@ -92,13 +89,13 @@ public class TomEEJarScanner extends StandardJarScanner {
                         try {
                             // File URLs are always faster to work with so use them
                             // if available.
-                            String realPath = context.getRealPath(path);
+                            final String realPath = context.getRealPath(path);
                             if (realPath == null) {
                                 url = context.getResource(path);
                             } else {
                                 url = (new File(realPath)).toURI().toURL();
                             }
-                            process(callback, url);
+                            this.process(callback, url);
                         } catch (IOException e) {
                             log.warn(sm.getString("jarScan.webinflibFail", url), e);
                         }
@@ -111,7 +108,7 @@ public class TomEEJarScanner extends StandardJarScanner {
             }
 
             // Scan the classpath
-            if (isScanClassPath()) {
+            if (this.isScanClassPath()) {
                 if (log.isTraceEnabled()) {
                     log.trace(sm.getString("jarScan.classloaderStart"));
                 }
@@ -121,10 +118,10 @@ public class TomEEJarScanner extends StandardJarScanner {
                     final ClassLoader loader = Thread.currentThread().getContextClassLoader();
                     final Set<URL> tldFileUrls = TldScanner.scan(loader);
 
-                    final Set<URL> jarUlrs = discardFilePaths(tldFileUrls);
+                    final Set<URL> jarUlrs = this.discardFilePaths(tldFileUrls);
 
-                    for (URL url : jarUlrs) {
-                        String jarName = getJarName(url);
+                    for (final URL url : jarUlrs) {
+                        final String jarName = this.getJarName(url);
 
                         // Skip JARs known not to be interesting and JARs
                         // in WEB-INF/lib we have already scanned
@@ -134,7 +131,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                                 log.debug(sm.getString("jarScan.classloaderJarScan", url));
                             }
                             try {
-                                process(callback, url);
+                                this.process(callback, url);
                             } catch (IOException ioe) {
                                 log.warn(sm.getString(
                                         "jarScan.classloaderFail", url), ioe);
@@ -181,15 +178,15 @@ public class TomEEJarScanner extends StandardJarScanner {
 //        super.scan(context, classLoader, callback, newIgnores);
     }
 
-    private Set<URL> discardFilePaths(Set<URL> tldFileUrls) {
+    private Set<URL> discardFilePaths(final Set<URL> tldFileUrls) {
         final Set<String> jarPaths = new HashSet<String>();
 
-        for (URL tldFileUrl : tldFileUrls) {
+        for (final URL tldFileUrl : tldFileUrls) {
             jarPaths.add(URLs.toFilePath(tldFileUrl));
         }
 
         final Set<URL> jars = new HashSet<URL>();
-        for (String jarPath : jarPaths) {
+        for (final String jarPath : jarPaths) {
             try {
                 final URL url = new File(jarPath).toURI().toURL();
                 jars.add(url);
@@ -204,7 +201,7 @@ public class TomEEJarScanner extends StandardJarScanner {
     * Scan a URL for JARs with the optional extensions to look at all files
     * and all directories.
     */
-    private void process(JarScannerCallback callback, URL url) throws IOException {
+    private void process(final JarScannerCallback callback, final URL url) throws IOException {
 
         if (log.isTraceEnabled()) {
             log.trace(sm.getString("jarScan.jarUrlStart", url));
@@ -231,13 +228,13 @@ public class TomEEJarScanner extends StandardJarScanner {
 
                         final File f = new File(url.toURI());
 
-                        if (f.isFile() && isScanAllFiles()) {
+                        if (f.isFile() && this.isScanAllFiles()) {
 
                             // Treat this file as a JAR
                             final URL jarURL = new URL("jar:" + urlStr + "!/");
                             callback.scan((JarURLConnection) jarURL.openConnection());
 
-                        } else if (f.isDirectory() && isScanAllDirectories()) {
+                        } else if (f.isDirectory() && this.isScanAllDirectories()) {
 
                             final File metainf = new File(f.getAbsoluteFile() + File.separator + "META-INF");
 
@@ -247,7 +244,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                         }
                     } catch (URISyntaxException e) {
                         // Wrap the exception and re-throw
-                        IOException ioe = new IOException();
+                        final IOException ioe = new IOException();
                         ioe.initCause(e);
                         throw ioe;
                     }
@@ -260,17 +257,17 @@ public class TomEEJarScanner extends StandardJarScanner {
     /*
      * Extract the JAR name, if present, from a URL
      */
-    private String getJarName(URL url) {
+    private String getJarName(final URL url) {
 
         String name = null;
 
-        String path = url.getPath();
-        int end = path.indexOf(Constants.JAR_EXT);
+        final String path = url.getPath();
+        final int end = path.indexOf(Constants.JAR_EXT);
         if (end != -1) {
-            int start = path.lastIndexOf('/', end);
+            final int start = path.lastIndexOf('/', end);
             name = path.substring(start + 1, end + 4);
-        } else if (isScanAllDirectories()) {
-            int start = path.lastIndexOf('/');
+        } else if (this.isScanAllDirectories()) {
+            final int start = path.lastIndexOf('/');
             name = path.substring(start + 1);
         }
 

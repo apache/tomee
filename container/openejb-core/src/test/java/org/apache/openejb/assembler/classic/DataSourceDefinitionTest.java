@@ -28,7 +28,6 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,23 +47,27 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(ApplicationComposer.class)
 public class DataSourceDefinitionTest {
 
-    @EJB private DatasourceDefinitionBean uniqueDataSource;
-    @EJB private DatasourceDefinitionsBean multipleDatasources;
+    @EJB
+    private DatasourceDefinitionBean uniqueDataSource;
+    @EJB
+    private DatasourceDefinitionsBean multipleDatasources;
 
-    @Module public Class<?>[] app() throws Exception {
-        return new Class<?>[]{ DatasourceDefinitionBean.class, DatasourceDefinitionsBean.class };
+    @Module
+    public Class<?>[] app() throws Exception {
+        return new Class<?>[]{DatasourceDefinitionBean.class, DatasourceDefinitionsBean.class};
     }
 
     @DataSourceDefinition(
-        name = "java:comp/env/superDS",
-        className = "org.hsqldb.jdbc.JDBCDataSource",
-        user = "sa",
-        password = "",
-        url = "jdbc:hsqldb:mem:superDS"
+            name = "java:comp/env/superDS",
+            className = "org.hsqldb.jdbc.JDBCDataSource",
+            user = "sa",
+            password = "",
+            url = "jdbc:hsqldb:mem:superDS"
     )
     @Singleton
     public static class DatasourceDefinitionBean {
-        @Resource(name = "java:comp/env/superDS") private DataSource ds;
+        @Resource(name = "java:comp/env/superDS")
+        private DataSource ds;
 
         public DataSource getDs() {
             return ds;
@@ -72,25 +75,27 @@ public class DataSourceDefinitionTest {
     }
 
     @DataSourceDefinitions({
-        @DataSourceDefinition(
-            name = "java:comp/env/superMegaDS",
-            className = "org.hsqldb.jdbc.JDBCDataSource",
-            user = "sa",
-            password = "",
-            url = "jdbc:hsqldb:mem:superDS"
-        ),
-        @DataSourceDefinition(
-            name = "java:comp/env/superGigaDS",
-            className = "org.hsqldb.jdbc.JDBCDataSource",
-            user = "sa",
-            password = "",
-            url = "jdbc:hsqldb:mem:superDS"
-        )
+            @DataSourceDefinition(
+                    name = "java:comp/env/superMegaDS",
+                    className = "org.hsqldb.jdbc.JDBCDataSource",
+                    user = "sa",
+                    password = "",
+                    url = "jdbc:hsqldb:mem:superDS"
+            ),
+            @DataSourceDefinition(
+                    name = "java:comp/env/superGigaDS",
+                    className = "org.hsqldb.jdbc.JDBCDataSource",
+                    user = "sa",
+                    password = "",
+                    url = "jdbc:hsqldb:mem:superDS"
+            )
     })
     @Stateless
     public static class DatasourceDefinitionsBean {
-        @Resource(name = "java:comp/env/superMegaDS") private DataSource mega;
-        @Resource(name = "java:comp/env/superGigaDS") private DataSource giga;
+        @Resource(name = "java:comp/env/superMegaDS")
+        private DataSource mega;
+        @Resource(name = "java:comp/env/superGigaDS")
+        private DataSource giga;
 
         public DataSource getMega() {
             return mega;
@@ -101,11 +106,13 @@ public class DataSourceDefinitionTest {
         }
     }
 
-    @Test public void assertDataSourceDefinition() throws Exception {
+    @Test
+    public void assertDataSourceDefinition() throws Exception {
         assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.JDBCDataSource", "sa", "");
     }
 
-    @Test public void assertDatasourceDefinitions() throws Exception {
+    @Test
+    public void assertDatasourceDefinitions() throws Exception {
         assertDataSourceDefinitionValues(multipleDatasources.getMega(), "org.hsqldb.jdbc.JDBCDataSource", "foo1", "bar1");
         assertDataSourceDefinitionValues(multipleDatasources.getGiga(), "org.hsqldb.jdbc.JDBCDataSource", "foo2", "bar2");
     }

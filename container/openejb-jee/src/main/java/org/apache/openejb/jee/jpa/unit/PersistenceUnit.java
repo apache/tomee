@@ -275,6 +275,16 @@ public class PersistenceUnit {
     }
 
     public ValidationMode getValidationMode() {
+        if (validationMode == null) {
+            final String propConfig = getProperty("javax.persistence.validation.mode");
+            if (propConfig != null) {
+                try {
+                    validationMode = ValidationMode.valueOf(propConfig.toUpperCase());
+                } catch (IllegalArgumentException iae) { // can happen since some provider allow more than the enum
+                    // no-op
+                }
+            }
+        }
         return (validationMode == null) ? ValidationMode.AUTO : validationMode;
     }
 

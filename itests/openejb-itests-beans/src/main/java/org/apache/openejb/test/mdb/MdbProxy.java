@@ -17,63 +17,65 @@
  */
 package org.apache.openejb.test.mdb;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
 import javax.jms.Connection;
-import javax.jms.Session;
-import javax.jms.MessageProducer;
-import javax.jms.Destination;
+import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
-import javax.jms.ObjectMessage;
-import javax.jms.MessageConsumer;
+import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MdbProxy {
     @SuppressWarnings({"unchecked"})
-    public static <T> T newProxyInstance(Class<T> type, ConnectionFactory connectionFactory, String requestQueueName) throws JMSException {
+    public static <T> T newProxyInstance(final Class<T> type, final ConnectionFactory connectionFactory, final String requestQueueName) throws JMSException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = type.getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
 
-        InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueueName);
-        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
+        final InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueueName);
+        final Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
         return (T) proxy;
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T> T newProxyInstance(Class<T> type, ConnectionFactory connectionFactory, Destination requestQueue) throws JMSException {
+    public static <T> T newProxyInstance(final Class<T> type, final ConnectionFactory connectionFactory, final Destination requestQueue) throws JMSException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = type.getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
 
-        InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueue);
-        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
+        final InvocationHandler invocationHandler = new MdbInvocationHandler(connectionFactory, requestQueue);
+        final Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{type}, invocationHandler);
         return (T) proxy;
     }
 
-    public static void destroyProxy(Object proxy) {
-        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
-        if (handler instanceof MdbProxy) {
-            MdbInvocationHandler mdbInvocationHandler = (MdbInvocationHandler) handler;
+    public static void destroyProxy(final Object proxy) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        if (MdbProxy.class.isInstance(handler)) {
+            final MdbInvocationHandler mdbInvocationHandler = (MdbInvocationHandler) handler;
             mdbInvocationHandler.destroy();
         }
     }
 
     private static class MdbInvocationHandler implements InvocationHandler {
-        private static final int MAX_RESPONSE_WAIT = 30000;
+        private static final int MAX_RESPONSE_WAIT = Integer.parseInt(System.getProperty("max.response.wait", "45000"));
         private Connection connection;
         private Session session;
         private MessageProducer producer;
-        private Destination requestQueue;
+        private final Destination requestQueue;
 
-        public MdbInvocationHandler(ConnectionFactory connectionFactory, String requestQueueName) throws JMSException {
+        public MdbInvocationHandler(final ConnectionFactory connectionFactory, final String requestQueueName) throws JMSException {
             // open a connection
             connection = connectionFactory.createConnection();
             connection.start();
@@ -89,7 +91,7 @@ public class MdbProxy {
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         }
 
-        public MdbInvocationHandler(ConnectionFactory connectionFactory, Destination requestQueue) throws JMSException {
+        public MdbInvocationHandler(final ConnectionFactory connectionFactory, final Destination requestQueue) throws JMSException {
             this.requestQueue = requestQueue;
 
             // open a connection
@@ -121,70 +123,69 @@ public class MdbProxy {
             return producer;
         }
 
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Session session = getSession();
-            if (session == null) throw new IllegalStateException("Proxy has been destroyed");
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            final Session tempSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            if (tempSession == null) throw new IllegalStateException("Proxy has been destroyed");
 
             // create request
-            Map<String,Object> request = new TreeMap<String,Object>();
-            String signature = MdbUtil.getSignature(method);
+            final Map<String, Object> request = new TreeMap<String, Object>();
+            final String signature = MdbUtil.getSignature(method);
             request.put("method", signature);
             request.put("args", args);
 
             // create a new temp response queue and consumer
             // this is very inefficient, but eliminates a whole class of errors
-            Destination responseQueue = session.createTemporaryQueue();
+            final String correlationId = UUID.randomUUID().toString();
 
-            // Create a messages
-            ObjectMessage requestMessage = session.createObjectMessage();
-            requestMessage.setJMSReplyTo(responseQueue);
-            String correlationId = UUID.randomUUID().toString();
-            requestMessage.setJMSCorrelationID(correlationId);
-            requestMessage.setObject((Serializable) request);
-
+            //final Destination responseQueue = tempSession.createTemporaryQueue();
+            final Destination responseQueue = tempSession.createQueue(correlationId);
 
             // create a producer and consumers used to send requests and receive response
             MessageConsumer consumer = null;
             try {
+
+                // Wait for a message
+                // Again this is quite inefficient
+                consumer = tempSession.createConsumer(responseQueue);
+
+                // Create a message
+                final ObjectMessage requestMessage = tempSession.createObjectMessage();
+                requestMessage.setJMSReplyTo(responseQueue);
+                requestMessage.setJMSCorrelationID(correlationId);
+                requestMessage.setObject((Serializable) request);
+
                 // Send the request
                 getProducer().send(requestMessage);
 
-//                System.out.println("\n" + "***************************************\n" +
-//                        "Sent request message: " + requestMessage + "\n" +
-//                        "         request map: " + request + "\n" +
-//                        "            to queue: " + requestQueue + "\n" +
-//                        "***************************************\n\n");
-//
-                // Wait for a message
-                // Again this is quite inefficient
-                consumer = session.createConsumer(responseQueue);
-
                 // wait for the message
-                Message message = consumer.receive(MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT);
+                final Message message = consumer.receive(MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT);
 
                 // verify message
-                if (message == null) throw new NullPointerException("Did not get a response withing " + MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT + "ms");
+                if (message == null) throw new NullPointerException("Did not get a response within " + MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT + "ms");
                 if (!correlationId.equals(message.getJMSCorrelationID())) {
                     throw new IllegalStateException("Received a response message with the wrong correlation id");
                 }
                 if (!(message instanceof ObjectMessage)) throw new IllegalArgumentException("Expected a ObjectMessage response but got a " + message.getClass().getName());
-                ObjectMessage resMessage = (ObjectMessage) message;
-                Serializable object = resMessage.getObject();
+                final ObjectMessage resMessage = (ObjectMessage) message;
+                final Serializable object = resMessage.getObject();
                 if (object == null) throw new NullPointerException("object in ObjectMessage is null");
                 if (!(object instanceof Map)) {
-                    if (message instanceof ObjectMessage) throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage response but got a " + object.getClass().getName());
+                    if (ObjectMessage.class.isInstance(message))
+                        throw new IllegalArgumentException("Expected a Map contained in the ObjectMessage response but got a " + object.getClass().getName());
                 }
-                Map response = (Map) object;
+                final Map response = (Map) object;
 
                 // process results
-                boolean exception = response.containsKey("exception");
-                Object returnValue = response.get("return");
+                final boolean exception = response.containsKey("exception");
+                final Object returnValue = response.get("return");
                 if (exception) {
                     throw (Throwable) returnValue;
                 }
                 return returnValue;
             } finally {
                 MdbUtil.close(consumer);
+                MdbUtil.close(tempSession);
             }
         }
     }

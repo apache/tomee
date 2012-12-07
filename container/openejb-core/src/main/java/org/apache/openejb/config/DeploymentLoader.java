@@ -24,21 +24,8 @@ import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.JavaWsdlMapping;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.JspConfig;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.Taglib;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
@@ -61,6 +48,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -95,6 +83,7 @@ import static org.apache.openejb.util.URLs.toFile;
 public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
+
     private static final String ddDir = "META-INF/";
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
@@ -118,7 +107,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         try {
             // determine the module type
-            Class<? extends DeploymentModule> moduleClass;
+            final Class<? extends DeploymentModule> moduleClass;
 
             try {
                 doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader());
@@ -143,7 +132,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                final URL[] urls = new URL[] { baseUrl };
+                final URL[] urls = new URL[]{baseUrl};
 
                 SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
@@ -233,7 +222,6 @@ public class DeploymentLoader implements DeploymentFilterable {
             // We can safely destroy this class loader in either case, as it was not use by any modules
             if (null != doNotUseClassLoader) {
                 ClassLoaderUtil.destroyClassLoader(doNotUseClassLoader);
-                doNotUseClassLoader = null;
 
                 //Really try and flush this classloader out
 //                System.gc();
@@ -245,6 +233,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return ParentClassLoaderFinder.Helper.get();
     }
 
+    @SuppressWarnings("unchecked")
     private void addWebPersistenceDD(final String name, final Map<String, Object> otherDD, final AppModule appModule) {
         if (otherDD.containsKey(name)) {
             List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get(name);
@@ -351,7 +340,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                             webModules.put(entry.getKey(), entry.getValue());
                         }
                     } catch (UnsupportedOperationException e) {
-                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
+                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                        logger.info("Ignoring unknown module type: " + entry.getKey());
+                    } catch (UnknownModuleTypeException e) {
+                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                        logger.info("Ignoring unknown module type: " + entry.getKey());
                     } catch (Exception e) {
                         throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
                     }
@@ -523,7 +516,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
 
-            for (DeploymentModule module : appModule.getDeploymentModule()) {
+            for (final DeploymentModule module : appModule.getDeploymentModule()) {
                 module.setStandaloneModule(false);
             }
 
@@ -633,6 +626,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         addWebModule(webModule, appModule);
     }
 
+    @SuppressWarnings("unchecked")
     public static void addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
         // create and add the WebModule
         appModule.getWebModules().add(webModule);
@@ -680,7 +674,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final IAnnotationFinder finder = new org.apache.xbean.finder.AnnotationFinder(new ClassesArchive());
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
-                }  else {
+                } else {
                     final IAnnotationFinder finder = FinderFactory.createFinder(webModule);
                     webModule.setFinder(finder);
                     webEjbModule.setFinder(finder);
@@ -700,10 +694,10 @@ public class DeploymentLoader implements DeploymentFilterable {
      * then per specification we use the web.xml metadata-complete setting
      * to imply the same for EJBs.
      *
-     * @param webModule
-     * @param ejbModule
+     * @param webModule WebModule
+     * @param ejbModule EjbModule
      */
-    private static void fillEjbJar(WebModule webModule, EjbModule ejbModule) {
+    private static void fillEjbJar(final WebModule webModule, final EjbModule ejbModule) {
         final Object o = webModule.getAltDDs().get("ejb-jar.xml");
         if (o != null) return;
         if (ejbModule.getEjbJar() != null) return;
@@ -716,7 +710,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         ejbModule.setEjbJar(ejbJar);
     }
 
-    private static boolean isMetadataComplete(WebModule webModule, EjbModule ejbModule) {
+    private static boolean isMetadataComplete(final WebModule webModule, final EjbModule ejbModule) {
         if (webModule.getWebApp() == null) return false;
         if (!webModule.getWebApp().isMetadataComplete()) return false;
 
@@ -724,9 +718,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         // We need to determine if there are cdi or ejb xml files
         if (webModule.getAltDDs().get("beans.xml") == null) return true;
         if (ejbModule.getEjbJar() == null) return true;
-        if (!ejbModule.getEjbJar().isMetadataComplete()) return false;
+        return ejbModule.getEjbJar().isMetadataComplete();
 
-        return true;
     }
 
     public WebModule createWebModule(final String appId, final String warPath, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
@@ -789,7 +782,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return webModule;
     }
 
-    public static List<URL> filterWebappUrls(final URL[] webUrls, URL exclusions) {
+    public static List<URL> filterWebappUrls(final URL[] webUrls, final URL exclusions) {
         Filter excludeFilter = null;
         if (exclusions != null) {
             try {
@@ -1033,7 +1026,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     /**
      * Finds all faces configuration files and stores them in the WebModule
      *
-     * @param webModule
+     * @param webModule WebModule
      * @throws OpenEJBException
      */
     private void addFacesConfigs(final WebModule webModule) throws OpenEJBException {
@@ -1245,7 +1238,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private static Map<String, URL> mapDescriptors(final ResourceFinder finder)
+    public static Map<String, URL> mapDescriptors(final ResourceFinder finder)
             throws IOException {
         final Map<String, URL> map = finder.getResourcesMap(ddDir);
 
@@ -1264,8 +1257,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     /**
      * Modifies the map passed in with all the alt dd URLs found
      *
-     * @param map
-     * @param log
+     * @param map Map
+     * @param log boolean
      * @return the same map instance updated with alt dds
      */
     public static Map<String, URL> altDDSources(final Map<String, URL> map, final boolean log) {
@@ -1357,11 +1350,21 @@ public class DeploymentLoader implements DeploymentFilterable {
             // file path has trailing !/ that must be stripped off
             pathname = pathname.substring(0, pathname.lastIndexOf('!'));
 
-            pathname = URLDecoder.decode(pathname);
+            try {
+                pathname = URLDecoder.decode(pathname, "UTF-8");
+            } catch (Exception e) {
+                //noinspection deprecation
+                pathname = URLDecoder.decode(pathname);
+            }
             return new File(pathname);
         } else if ("file".equals(warUrl.getProtocol())) {
             final String pathname = warUrl.getPath();
-            return new File(URLDecoder.decode(pathname));
+            try {
+                return new File(URLDecoder.decode(pathname, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                //noinspection deprecation
+                return new File(URLDecoder.decode(pathname));
+            }
         } else {
             return null;
         }
@@ -1414,6 +1417,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         return discoverModuleType(baseUrl, classLoader, search);
     }
 
+    @SuppressWarnings("unchecked")
     public Class<? extends DeploymentModule> discoverModuleType(final URL baseUrl, final ClassLoader classLoader, final Set<RequireDescriptors> requireDescriptor) throws IOException, UnknownModuleTypeException {
         final boolean scanPotentialEjbModules = !requireDescriptor.contains(RequireDescriptors.EJB);
         final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
@@ -1487,6 +1491,15 @@ public class DeploymentLoader implements DeploymentFilterable {
             return PersistenceModule.class;
         }
 
+        //#TOMEE-613
+        final File file = URLs.toFile(baseUrl);
+        if (DeploymentsResolver.isValidDirectory(file)) {
+
+            final File[] files = file.listFiles();
+            if (containsEarAssets(files)) return AppModule.class;
+            if (containsWebAssets(files)) return WebModule.class;
+        }
+
         final Class<? extends DeploymentModule> defaultType = (Class<? extends DeploymentModule>) SystemInstance.get().getOptions().get("openejb.default.deployment-module", (Class<?>) null);
         if (defaultType != null) {
             // should we do a better filtering? it seems enough for common cases.
@@ -1499,6 +1512,30 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
     }
+
+    private static boolean containsWebAssets(final File[] files) {
+        if (files != null) {
+            for (final File file : files) {
+                final String fn = file.getName().toLowerCase();
+                if (fn.endsWith(".jsp")) return true;
+                if (fn.endsWith(".html")) return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsEarAssets(final File[] files) {
+        if (files != null) {
+            for (final File file : files) {
+                final String fn = file.getName().toLowerCase();
+                if (fn.endsWith(".jar")) return true;
+                if (fn.endsWith(".war")) return true;
+                if (fn.endsWith(".rar")) return true;
+            }
+        }
+        return false;
+    }
+
 
     private Map<String, URL> getDescriptors(final ClassLoader classLoader, final URL pathToScanDescriptors)
             throws IOException {

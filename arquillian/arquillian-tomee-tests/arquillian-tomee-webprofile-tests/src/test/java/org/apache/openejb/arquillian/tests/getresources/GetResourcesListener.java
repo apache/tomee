@@ -30,7 +30,8 @@ import java.util.Enumeration;
  */
 @WebListener
 public class GetResourcesListener implements ServletContextListener {
-    @Override public void contextInitialized(ServletContextEvent sce) {
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
         GetResourcesHolder.RESOURCE_NUMBER = 0;
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -44,7 +45,8 @@ public class GetResourcesListener implements ServletContextListener {
         }
     }
 
-    @Override public void contextDestroyed(ServletContextEvent sce) {
-         // no-op
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // no-op
     }
 }

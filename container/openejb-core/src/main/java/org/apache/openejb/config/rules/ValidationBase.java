@@ -40,13 +40,22 @@ public abstract class ValidationBase implements ValidationRule {
     DeploymentModule module;
 
     public void validate(AppModule appModule) {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            module = ejbModule;
-            validate(ejbModule);
-        }
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            module = clientModule;
-            validate(clientModule);
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try {
+            for (EjbModule ejbModule : appModule.getEjbModules()) {
+                Thread.currentThread().setContextClassLoader(ejbModule.getClassLoader());
+
+                module = ejbModule;
+                validate(ejbModule);
+            }
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                Thread.currentThread().setContextClassLoader(clientModule.getClassLoader());
+
+                module = clientModule;
+                validate(clientModule);
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(loader);
         }
     }
 

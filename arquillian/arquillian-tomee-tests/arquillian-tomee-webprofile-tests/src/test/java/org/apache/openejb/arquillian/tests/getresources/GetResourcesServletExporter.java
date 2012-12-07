@@ -28,7 +28,8 @@ import java.io.PrintWriter;
 
 @WebServlet(name = "get-resources", urlPatterns = "/get-resources")
 public class GetResourcesServletExporter extends HttpServlet {
-    @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/plain");
         final PrintWriter writer = resp.getWriter();
         writer.write("foundFromListener=" + GetResourcesHolder.RESOURCE_NUMBER);

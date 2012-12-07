@@ -27,9 +27,6 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.NamingResources;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.loader.TomcatHelper;
 

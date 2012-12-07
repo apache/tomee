@@ -1,0 +1,10 @@
+<form class="form-horizontal status-lines">
+    {{#properties}}
+    <div class="control-group">
+        <label class="control-label" for="{{uniqueId}}-{{this.key}}">{{this.key}}</label>
+        <div class="controls">
+            <input type="text" id="{{uniqueId}}-{{this.key}}" class="path" param-key="{{this.key}}" value="{{this.value}}">
+        </div>
+    </div>
+    {{/properties}}
+</form>

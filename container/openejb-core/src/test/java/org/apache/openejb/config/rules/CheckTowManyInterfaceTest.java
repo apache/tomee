@@ -20,11 +20,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.transaction.UserTransaction;
 import java.util.concurrent.Callable;
 
 /**
@@ -33,7 +29,7 @@ import java.util.concurrent.Callable;
 @RunWith(ValidationRunner.class)
 public class CheckTowManyInterfaceTest {
 
-    @Keys( @Key("too.many.interfaces") )
+    @Keys(@Key("too.many.interfaces"))
     public EjbJar testSLSBwithUserTransaction() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TwoManyInterface.class));
@@ -42,8 +38,12 @@ public class CheckTowManyInterfaceTest {
 
     @Stateless
     public static class TwoManyInterface implements Callable, Runnable {
-        public Object call() throws Exception { return null; }
-        @Override public void run() {}
-    }
+        public Object call() throws Exception {
+            return null;
+        }
 
+        @Override
+        public void run() {
+        }
+    }
 }

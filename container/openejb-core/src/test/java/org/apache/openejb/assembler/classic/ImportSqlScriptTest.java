@@ -59,7 +59,8 @@ public class ImportSqlScriptTest {
         return bean;
     }
 
-    @Module public Persistence persistence() {
+    @Module
+    public Persistence persistence() {
         final PersistenceUnit unit = new PersistenceUnit("ImportSqlScriptTest");
         unit.addClass(Something.class);
         unit.setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
@@ -90,7 +91,7 @@ public class ImportSqlScriptTest {
     }
 
     @Test
-    public void checkImportData()  {
+    public void checkImportData() {
         assertEquals(3, persister.count());
     }
 }

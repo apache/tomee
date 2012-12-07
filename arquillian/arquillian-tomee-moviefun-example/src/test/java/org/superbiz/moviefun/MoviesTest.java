@@ -32,9 +32,10 @@ import static org.junit.Assert.assertTrue;
 
 public class MoviesTest {
     private static EJBContainer ejbContainer;
-	private static MoviesRemote movies;
+    private static MoviesRemote movies;
 
-    @BeforeClass public static void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         final Properties props = new Properties();
         props.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*arquillian-tomee-moviefun-example.*"); // arquillian-tomee excluded by default
         ejbContainer = EJBContainer.createEJBContainer(props);
@@ -44,34 +45,38 @@ public class MoviesTest {
         movies = (MoviesRemote) object;
     }
 
-    @AfterClass public static void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         if (ejbContainer != null) {
             ejbContainer.close();
         }
     }
 
-    @Before @After public void clean() {
+    @Before
+    @After
+    public void clean() {
         movies.clean();
     }
 
-	@Test public void testShouldAddAMovie() throws Exception {
-		Movie movie = new Movie();
-		movie.setDirector("Michael Bay");
-		movie.setGenre("Action");
-		movie.setRating(9);
-		movie.setTitle("Bad Boys");
-		movie.setYear(1995);
-		movies.addMovie(movie);
-		
-		assertEquals(1, movies.count());
-		List<Movie> moviesFound = movies.findByTitle("Bad Boys");
-		
-		assertEquals(1, moviesFound.size());
-		assertEquals("Michael Bay", moviesFound.get(0).getDirector());
-		assertEquals("Action", moviesFound.get(0).getGenre());
-		assertEquals(9, moviesFound.get(0).getRating());
-		assertEquals("Bad Boys", moviesFound.get(0).getTitle());
-		assertEquals(1995, moviesFound.get(0).getYear());
-	}
-	
+    @Test
+    public void testShouldAddAMovie() throws Exception {
+        Movie movie = new Movie();
+        movie.setDirector("Michael Bay");
+        movie.setGenre("Action");
+        movie.setRating(9);
+        movie.setTitle("Bad Boys");
+        movie.setYear(1995);
+        movies.addMovie(movie);
+
+        assertEquals(1, movies.count());
+        List<Movie> moviesFound = movies.findByTitle("Bad Boys");
+
+        assertEquals(1, moviesFound.size());
+        assertEquals("Michael Bay", moviesFound.get(0).getDirector());
+        assertEquals("Action", moviesFound.get(0).getGenre());
+        assertEquals(9, moviesFound.get(0).getRating());
+        assertEquals("Bad Boys", moviesFound.get(0).getTitle());
+        assertEquals(1995, moviesFound.get(0).getYear());
+    }
+
 }
