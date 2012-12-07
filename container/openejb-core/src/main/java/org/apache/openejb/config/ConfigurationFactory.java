@@ -109,7 +109,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static final String OFFLINE_PROPERTY = "openejb.offline";
 
     public ConfigurationFactory() {
-        this(shouldAutoDeploy());
+        this(!shouldAutoDeploy());
     }
 
     private static boolean shouldAutoDeploy() {
