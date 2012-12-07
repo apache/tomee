@@ -72,18 +72,18 @@ public class ServiceDaemon implements ServerService {
     private Properties props;
     private String[] enabledCipherSuites;
 
-    public ServiceDaemon(ServerService next) {
+    public ServiceDaemon(final ServerService next) {
         this.next = next;
     }
 
-    public ServiceDaemon(ServerService next, int port, String ip) {
+    public ServiceDaemon(final ServerService next, final int port, final String ip) {
         this.port = port;
         this.ip = ip;
         this.inetAddress = getAddress(ip);
         this.next = next;
     }
 
-    public static InetAddress getAddress(String host) {
+    public static InetAddress getAddress(final String host) {
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {
@@ -96,87 +96,87 @@ public class ServiceDaemon implements ServerService {
      * daemon is listening on.
      */
     public InetAddress getInetAddress() {
-        return inetAddress;
+        return this.inetAddress;
     }
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
 
         this.props = props;
 
-        String formatString = props.getProperty("discovery");
+        final String formatString = props.getProperty("discovery");
         if (formatString != null) {
-            discoveryUriFormat = new StringTemplate(formatString);
+            this.discoveryUriFormat = new StringTemplate(formatString);
         }
 
-        ip = props.getProperty("bind");
+        this.ip = props.getProperty("bind");
 
-        inetAddress = getAddress(ip);
+        this.inetAddress = getAddress(this.ip);
 
-        Options options = new Options(props);
+        final Options options = new Options(props);
 
-        port = options.get("port", 0);
+        this.port = options.get("port", 0);
 
-        int threads = options.get("threads", 100);
+        final int threads = options.get("threads", 100);
 
-        backlog = options.get("backlog", threads);
+        this.backlog = options.get("backlog", threads);
 
-        secure = options.get("secure", false);
+        this.secure = options.get("secure", false);
 
-        timeout = options.get("timeout", timeout);
+        this.timeout = options.get("timeout", this.timeout);
 
-        enabledCipherSuites = options.get("enabledCipherSuites", "SSL_DH_anon_WITH_RC4_128_MD5").split(",");
+        this.enabledCipherSuites = options.get("enabledCipherSuites", "SSL_DH_anon_WITH_RC4_128_MD5").split(",");
 
-        next.init(props);
+        this.next.init(props);
     }
 
     @Override
     public void start() throws ServiceException {
         synchronized (this) {
             // Don't bother if we are already started/starting
-            if (socketListener != null) {
+            if (this.socketListener != null) {
                 return;
             }
 
-            next.start();
+            this.next.start();
 
-            ServerSocket serverSocket;
+            final ServerSocket serverSocket;
             try {
-                if (secure) {
-                    ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
-                    serverSocket = factory.createServerSocket(port, backlog, inetAddress);
-                    ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
+                if (this.secure) {
+                    final ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
+                    serverSocket = factory.createServerSocket(this.port, this.backlog, this.inetAddress);
+                    ((SSLServerSocket) serverSocket).setEnabledCipherSuites(this.enabledCipherSuites);
                 } else {
                     serverSocket = new ServerSocket();
                     serverSocket.setReuseAddress(true);
-                    serverSocket.bind(new InetSocketAddress(inetAddress, port), backlog);
+                    serverSocket.bind(new InetSocketAddress(this.inetAddress, this.port), this.backlog);
                 }
 
-                serverSocket.setSoTimeout(timeout);
-                port = serverSocket.getLocalPort();
+                serverSocket.setSoTimeout(this.timeout);
+                this.port = serverSocket.getLocalPort();
 
             } catch (Exception e) {
                 throw new ServiceException("Service failed to open socket", e);
             }
 
-            socketListener = new SocketListener(next, serverSocket);
-            Thread thread = new Thread(socketListener);
-            thread.setName("service." + getName() + "@" + socketListener.hashCode());
+            this.socketListener = new SocketListener(this.next, serverSocket);
+            final Thread thread = new Thread(this.socketListener);
+            thread.setName("service." + this.getName() + "@" + this.socketListener.hashCode());
             thread.setDaemon(true);
             thread.start();
 
-            DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
-            if (agent != null && discoveryUriFormat != null) {
-                Map<String, String> map = new HashMap<String, String>();
+            final DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
+            if (agent != null && this.discoveryUriFormat != null) {
+                final Map<String, String> map = new HashMap<String, String>();
 
                 // add all the properties that were used to construct this service
-                for (Map.Entry<Object, Object> entry : props.entrySet()) {
+                for (final Map.Entry<Object, Object> entry : this.props.entrySet()) {
                     map.put(entry.getKey().toString(), entry.getValue().toString());
                 }
 
-                map.put("port", Integer.toString(port));
+                map.put("port", Integer.toString(this.port));
 
-                String address = ip;
+                String address = this.ip;
 
                 if ("0.0.0.0".equals(address)) {
                     try {
@@ -188,12 +188,12 @@ public class ServiceDaemon implements ServerService {
 
                 map.put("host", address);
                 map.put("bind", address);
-                String uriString = discoveryUriFormat.apply(map);
+                final String uriString = this.discoveryUriFormat.apply(map);
                 try {
-                    serviceUri = new URI(uriString);
-                    agent.registerService(serviceUri);
+                    this.serviceUri = new URI(uriString);
+                    agent.registerService(this.serviceUri);
                 } catch (Exception e) {
-                    log.error("Cannot register service '" + getName() + "' with DiscoveryAgent.", e);
+                    log.error("Cannot register service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
 
@@ -205,25 +205,25 @@ public class ServiceDaemon implements ServerService {
     public void stop() throws ServiceException {
 
         synchronized (this) {
-            DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
-            if (agent != null && discoveryUriFormat != null && serviceUri != null) {
+            final DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
+            if (agent != null && this.discoveryUriFormat != null && this.serviceUri != null) {
                 try {
-                    agent.unregisterService(serviceUri);
+                    agent.unregisterService(this.serviceUri);
                 } catch (IOException e) {
-                    log.error("Cannot unregister service '" + getName() + "' with DiscoveryAgent.", e);
+                    log.error("Cannot unregister service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
-            next.stop();
-            if (socketListener != null) {
-                socketListener.stop();
-                socketListener = null;
+            this.next.stop();
+            if (this.socketListener != null) {
+                this.socketListener.stop();
+                this.socketListener = null;
             }
         }
     }
 
     @Override
     public String getIP() {
-        return ip;
+        return this.ip;
     }
 
     /**
@@ -233,55 +233,56 @@ public class ServiceDaemon implements ServerService {
     @Override
     @Managed
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     @Managed
     public String getBind() {
-        return ip;
+        return this.ip;
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
     }
 
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
     @Override
     public String getName() {
-        return next.getName();
+        return this.next.getName();
     }
 
     private static class SocketListener implements Runnable {
         private final ServerService serverService;
         private final ServerSocket serverSocket;
-        private AtomicBoolean stop = new AtomicBoolean();
-        private Lock lock = new ReentrantLock();
+        private final AtomicBoolean stop = new AtomicBoolean();
+        private final Lock lock = new ReentrantLock();
 
-        public SocketListener(ServerService serverService, ServerSocket serverSocket) {
+        public SocketListener(final ServerService serverService, final ServerSocket serverSocket) {
             this.serverService = serverService;
             this.serverSocket = serverSocket;
         }
 
         public void stop() {
-            stop.set(true);
+            this.stop.set(true);
             boolean b = false;
+            final Lock l = this.lock;
             try {
                 //This lock is here to try and be fair to the serverService on a shutdown
-                b = lock.tryLock(10, TimeUnit.SECONDS);
+                b = l.tryLock(10, TimeUnit.SECONDS);
             } catch (Throwable e) {
                 //Ignore
             } finally {
 
                 try {
-                    serverSocket.close();
+                    this.serverSocket.close();
                 } catch (Throwable e) {
                     //Ignore
                 } finally {
                     if (b) {
-                        lock.unlock();
+                        l.unlock();
                     }
                 }
             }
@@ -289,25 +290,26 @@ public class ServiceDaemon implements ServerService {
 
         @Override
         public void run() {
-            while (!stop.get()) {
-                Socket socket = null;
+            while (!this.stop.get()) {
                 try {
-                    socket = serverSocket.accept();
-                    socket.setSoLinger(true, 10);
-                    socket.setTcpNoDelay(true);
+                    final Socket socket = this.serverSocket.accept();
 
                     if (socket.isClosed()) {
                         continue;
                     }
 
-                    if (!stop.get()) {
+                    socket.setSoLinger(true, 10);
+                    socket.setTcpNoDelay(true);
+
+                    if (!this.stop.get()) {
                         // the server service is responsible
                         // for closing the socket.
+                        final Lock l = this.lock;
+                        l.lock();
                         try {
-                            lock.lock();
-                            serverService.service(socket);
+                            this.serverService.service(socket);
                         } finally {
-                            lock.unlock();
+                            l.unlock();
                         }
                     }
 
@@ -318,44 +320,44 @@ public class ServiceDaemon implements ServerService {
                 } catch (SocketTimeoutException e) {
                     // Ignore - Should not get here on serverSocket.setSoTimeout(0)
                 } catch (SocketException e) {
-                    if (!stop.get()) {
+                    if (!this.stop.get()) {
                         log.debug("Socket error", e);
                     }
                 } catch (Throwable e) {
-                    if (!stop.get()) {
+                    if (!this.stop.get()) {
                         log.debug("Unexpected error", e);
                     }
                 }
             }
 
             try {
-                serverSocket.close();
+                this.serverSocket.close();
             } catch (Throwable e) {
                 log.debug("Error cleaning up socked", e);
             }
         }
 
-        public void setSoTimeout(int timeout) throws SocketException {
-            serverSocket.setSoTimeout(timeout);
+        public void setSoTimeout(final int timeout) throws SocketException {
+            this.serverSocket.setSoTimeout(timeout);
         }
 
         public int getSoTimeout() throws IOException {
-            return serverSocket.getSoTimeout();
+            return this.serverSocket.getSoTimeout();
         }
 
         public ServerSocket getServerSocket() {
-            return serverSocket;
+            return this.serverSocket;
         }
     }
 
     @Managed
     public URI getServiceUri() {
-        return serviceUri;
+        return this.serviceUri;
     }
 
     @Managed
     public boolean isSecure() {
-        return secure;
+        return this.secure;
     }
 
     @Managed
@@ -365,27 +367,27 @@ public class ServiceDaemon implements ServerService {
     public class AddressMonitor {
         @Managed
         public String getHostName() {
-            return inetAddress.getHostName();
+            return ServiceDaemon.this.inetAddress.getHostName();
         }
 
         @Managed
         public String getCanonicalHostName() {
-            return inetAddress.getCanonicalHostName();
+            return ServiceDaemon.this.inetAddress.getCanonicalHostName();
         }
 
         @Managed
         public String getHostAddress() {
-            return inetAddress.getHostAddress();
+            return ServiceDaemon.this.inetAddress.getHostAddress();
         }
 
         @Managed
         public byte[] getAddress() {
-            return inetAddress.getAddress();
+            return ServiceDaemon.this.inetAddress.getAddress();
         }
     }
 
     public ServerSocket getServerSocket() {
-        return socketListener.getServerSocket();
+        return this.socketListener.getServerSocket();
     }
 
     @Managed
@@ -395,52 +397,52 @@ public class ServiceDaemon implements ServerService {
     public class SocketMonitor {
         @Managed
         public int getLocalPort() {
-            return getServerSocket().getLocalPort();
+            return ServiceDaemon.this.getServerSocket().getLocalPort();
         }
 
         @Managed
         public boolean getReuseAddress() throws SocketException {
-            return getServerSocket().getReuseAddress();
+            return ServiceDaemon.this.getServerSocket().getReuseAddress();
         }
 
         @Managed
         public int getSoTimeout() throws IOException {
-            return getServerSocket().getSoTimeout();
+            return ServiceDaemon.this.getServerSocket().getSoTimeout();
         }
 
         @Managed
         public boolean isClosed() {
-            return getServerSocket().isClosed();
+            return ServiceDaemon.this.getServerSocket().isClosed();
         }
 
         @Managed
         public boolean isBound() {
-            return getServerSocket().isBound();
+            return ServiceDaemon.this.getServerSocket().isBound();
         }
 
         @Managed
         public int getReceiveBufferSize() throws SocketException {
-            return getServerSocket().getReceiveBufferSize();
+            return ServiceDaemon.this.getServerSocket().getReceiveBufferSize();
         }
 
         @Managed
-        public void setReceiveBufferSize(int size) throws SocketException {
-            getServerSocket().setReceiveBufferSize(size);
+        public void setReceiveBufferSize(final int size) throws SocketException {
+            ServiceDaemon.this.getServerSocket().setReceiveBufferSize(size);
         }
 
         @Managed
-        public void setPerformancePreferences(int connectionTime, int latency, int bandwidth) {
-            getServerSocket().setPerformancePreferences(connectionTime, latency, bandwidth);
+        public void setPerformancePreferences(final int connectionTime, final int latency, final int bandwidth) {
+            ServiceDaemon.this.getServerSocket().setPerformancePreferences(connectionTime, latency, bandwidth);
         }
 
         @Managed
-        public void setReuseAddress(boolean on) throws SocketException {
-            getServerSocket().setReuseAddress(on);
+        public void setReuseAddress(final boolean on) throws SocketException {
+            ServiceDaemon.this.getServerSocket().setReuseAddress(on);
         }
 
         @Managed
-        public void setSoTimeout(int timeout) throws SocketException {
-            getServerSocket().setSoTimeout(timeout);
+        public void setSoTimeout(final int timeout) throws SocketException {
+            ServiceDaemon.this.getServerSocket().setSoTimeout(timeout);
         }
     }
 }
