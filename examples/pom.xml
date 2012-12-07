@@ -146,7 +146,6 @@
     <module>webservice-ws-with-resources-config</module>
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
-    <module>moviefun</module>
   </modules>
   <profiles>
     <profile>
