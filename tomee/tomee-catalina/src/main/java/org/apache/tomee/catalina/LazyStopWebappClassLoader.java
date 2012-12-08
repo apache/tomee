@@ -91,6 +91,8 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 return OpenEJB.class.getClassLoader().loadClass(name);
             } catch (ClassNotFoundException e) {
                 return super.loadClass(name);
+            } catch (NoClassDefFoundError ncdfe) {
+                return super.loadClass(name);
             }
         }
         return super.loadClass(name);
