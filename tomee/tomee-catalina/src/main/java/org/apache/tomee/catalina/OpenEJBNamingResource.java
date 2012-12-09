@@ -27,8 +27,14 @@ import org.apache.catalina.deploy.MessageDestinationRef;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class OpenEJBNamingResource extends NamingResources {
     private static final String JAVA_PREFIX = "java:";
+
+    private boolean isTomcatResource = false;
+    private final Collection<ResourceBase> tomcatResources = new ArrayList<ResourceBase>();
 
     @Override
     public void addEnvironment(ContextEnvironment environment) {
@@ -58,6 +64,9 @@ public class OpenEJBNamingResource extends NamingResources {
     public void addResource(ContextResource ref) {
         normalize(ref);
         super.addResource(ref);
+        if (isTomcatResource) {
+            pushResourceToAddInOpenEJB(ref);
+        }
     }
 
     @Override
@@ -93,5 +102,17 @@ public class OpenEJBNamingResource extends NamingResources {
         if (ref.getType() == null) {
             ref.setType("");
         }
+    }
+
+    public void setTomcatResource(final boolean tomcatResource) {
+        isTomcatResource = tomcatResource;
+    }
+
+    private void pushResourceToAddInOpenEJB(final ContextResource ref) {
+        tomcatResources.add(ref);
+    }
+
+    public Collection<ResourceBase> getTomcatResources() {
+        return tomcatResources;
     }
 }

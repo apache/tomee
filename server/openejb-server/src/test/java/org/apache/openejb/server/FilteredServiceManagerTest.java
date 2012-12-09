@@ -37,7 +37,7 @@ public class FilteredServiceManagerTest {
 
     @Test
     public void checkEjbd() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "ejbd" });
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[] { "http" });
         assertTrue(fsm.accept("httpejbd"));
     }
 

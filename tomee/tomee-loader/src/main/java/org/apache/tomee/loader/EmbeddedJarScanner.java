@@ -19,6 +19,7 @@ package org.apache.tomee.loader;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.util.URLs;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.res.StringManager;
@@ -69,6 +70,10 @@ public class EmbeddedJarScanner implements JarScanner {
             // scan = scan.exclude(".*/WEB-INF/lib/.*"); // doing it simply prevent ServletContainerInitializer to de discovered
 
             for (URL url : scan) {
+                if (isWebInfClasses(url)) {
+                    continue;
+                }
+
                 // Need to scan this JAR
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString("jarScan.webinflibJarScan", url.toExternalForm()));
@@ -83,6 +88,16 @@ public class EmbeddedJarScanner implements JarScanner {
         } catch (IOException e) {
             log.warn(sm.getString("jarScan.classloaderFail", new URL[]{}), e);
         }
+    }
+
+    private static boolean isWebInfClasses(final URL url) {
+        final File file = URLs.toFile(url);
+        if (file == null || !file.exists() || ! "classes".equals(file.getName())) {
+            return false;
+        }
+
+        final File webInf = file.getParentFile();
+        return webInf != null && !(!webInf.exists() || !"WEB-INF".equals(webInf.getName()));
     }
 
     /*

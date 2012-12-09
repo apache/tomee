@@ -89,7 +89,8 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     protected void addShutdownHooks(final RemoteServer server) {
         if (synchronization != null) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     timer.cancel();
                 }
             });

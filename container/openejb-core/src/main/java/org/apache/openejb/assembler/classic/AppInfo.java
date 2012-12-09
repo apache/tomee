@@ -17,6 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -30,6 +32,7 @@ public class AppInfo extends InfoObject {
 
     public String appId;
     public String path;
+    public Set<String> paths = new LinkedHashSet<String>();
     public boolean autoDeploy = true;
     public boolean delegateFirst = true;
     public boolean standaloneModule;

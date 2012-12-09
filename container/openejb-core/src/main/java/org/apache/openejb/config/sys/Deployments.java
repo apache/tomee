@@ -48,9 +48,20 @@ public class Deployments {
     @XmlAttribute
     protected String dir;
     @XmlAttribute
-    protected String jar;
+    protected String file;
+    @XmlAttribute
+    protected boolean autoDeploy;
+
     @XmlTransient
     protected ClassLoader classpath;
+
+    public boolean isAutoDeploy() {
+        return autoDeploy;
+    }
+
+    public void setAutoDeploy(boolean autoDeploy) {
+        this.autoDeploy = autoDeploy;
+    }
 
     /**
      * Gets the value of the dir property.
@@ -72,14 +83,20 @@ public class Deployments {
         this.dir = value;
     }
 
+
+    public Deployments dir(String name) {
+        setDir(name);
+        return this;
+    }
+
     /**
      * Gets the value of the jar property.
      *
      * @return possible object is
      *         {@link String }
      */
-    public String getJar() {
-        return jar;
+    public String getFile() {
+        return file;
     }
 
     /**
@@ -88,8 +105,13 @@ public class Deployments {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setJar(String value) {
-        this.jar = value;
+    public void setFile(String value) {
+        this.file = value;
+    }
+
+    public Deployments file(String name) {
+        setFile(name);
+        return this;
     }
 
 

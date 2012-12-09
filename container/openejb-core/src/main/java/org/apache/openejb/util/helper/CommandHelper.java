@@ -39,7 +39,7 @@ public class CommandHelper {
         Lines lines = new Lines(cr);
         lines.add(new Line("Name", "Class", "Interface Type", "Bean Type"));
         for (BeanContext bc : cs.deployments()) {
-            if (BeanContext.Comp.class.equals(bc.getBeanClass())) {
+            if (bc.isHidden()) {
                 continue;
             }
 

@@ -30,6 +30,7 @@ import org.apache.webbeans.spi.FailOverService;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.web.context.WebContextsService;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.servlet.ServletContextEvent;
@@ -213,5 +214,6 @@ public class WebBeansListener implements ServletContextListener, ServletRequestL
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        // no-op
     }
 }

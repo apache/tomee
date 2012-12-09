@@ -20,6 +20,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.SystemInstance;
@@ -83,12 +84,31 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 }
             }
         }
+
+        // avoid to redefine classes from server in this classloader is it not already loaded
+        if (URLClassLoaderFirst.shouldSkip(name)) {
+            try {
+                return OpenEJB.class.getClassLoader().loadClass(name);
+            } catch (ClassNotFoundException e) {
+                return super.loadClass(name);
+            } catch (NoClassDefFoundError ncdfe) {
+                return super.loadClass(name);
+            }
+        }
         return super.loadClass(name);
     }
 
     public void internalStop() throws LifecycleException {
         if (isStarted()) {
-            super.stop();
+            // reset classloader because of tomcat classloaderlogmanager
+            // to be sure we reset the right loggers
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(this);
+            try {
+                super.stop();
+            } finally {
+                Thread.currentThread().setContextClassLoader(loader);
+            }
         }
     }
 

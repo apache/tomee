@@ -17,9 +17,6 @@
 
 package org.apache.openejb.arquillian.tests.getresources;
 
-import java.io.IOException;
-import java.net.URL;
-import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -30,6 +27,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.net.URL;
 
 import static org.apache.openejb.arquillian.tests.Tests.assertOutput;
 
@@ -51,11 +51,12 @@ public class GetResourcesTest {
                 .addAsResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources")
                 .addAsResource(Thread.currentThread().getContextClassLoader().getResource("test.getresources"), "/config/test.getresources2")
                 .setWebXML(new StringAsset(
-                      Descriptors.create(WebAppDescriptor.class)
-                        .version("3.0").exportAsString()));
+                        Descriptors.create(WebAppDescriptor.class)
+                                .version("3.0").exportAsString()));
     }
 
-    @Test public void check() throws IOException {
+    @Test
+    public void check() throws IOException {
         assertOutput(url.toExternalForm() + "get-resources", "foundFromListener=1");
         assertOutput(url.toExternalForm() + "get-resources", "servletContextGetResource=ok");
     }

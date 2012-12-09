@@ -38,8 +38,8 @@ public class JPATest {
     @Deployment
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-                        .addClass(Person.class)
-                        .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"));
+                .addClass(Person.class)
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"));
     }
 
     @PersistenceContext

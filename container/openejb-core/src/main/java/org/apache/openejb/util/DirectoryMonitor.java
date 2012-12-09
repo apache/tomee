@@ -31,17 +31,17 @@ public class DirectoryMonitor {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DirectoryMonitor.class.getPackage().getName());
 
-    private final int pollIntervalMillis;
+    private final long pollIntervalMillis;
 
     private final File target;
 
     private final Listener listener;
 
-    private final Map files = new HashMap();
+    private final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
 
     private final Timer timer;
 
-    public DirectoryMonitor(final File target, final Listener listener, final int pollIntervalMillis) {
+    public DirectoryMonitor(final File target, final Listener listener, final long pollIntervalMillis) {
         assert listener == null : "No listener specified";
         assert target.isDirectory() : "File specified is not a directory. " + target.getAbsolutePath();
         assert target.canRead() : "Directory specified cannot be read. " + target.getAbsolutePath();
@@ -59,7 +59,7 @@ public class DirectoryMonitor {
         return logger;
     }
 
-    public int getPollIntervalMillis() {
+    public long getPollIntervalMillis() {
         return pollIntervalMillis;
     }
 
@@ -80,12 +80,12 @@ public class DirectoryMonitor {
 
         getLogger().debug("Scanner running.  Polling every " + pollIntervalMillis + " milliseconds.");
 
-        timer.scheduleAtFixedRate(new TimerTask(){
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
             public void run() {
                 try {
                     scan();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     getLogger().error("Scan failed.", e);
                 }
             }
@@ -96,7 +96,7 @@ public class DirectoryMonitor {
     private void initialize() {
         getLogger().debug("Doing initial scan of " + target.getAbsolutePath());
 
-        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
 
         if (files != null) {
             for (final File file : files) {
@@ -111,6 +111,17 @@ public class DirectoryMonitor {
         }
     }
 
+    public void addFile(final File file) {
+        newInfo(file);
+    }
+
+    public void removeFile(final File file) {
+        final FileInfo fileInfo = oldInfo(file);
+        if (fileInfo != null) {
+            files.remove(fileInfo.getPath());
+        }
+    }
+
     private FileInfo newInfo(final File child) {
         final FileInfo fileInfo = child.isDirectory() ? new DirectoryInfo(child) : new FileInfo(child);
         files.put(fileInfo.getPath(), fileInfo);
@@ -122,7 +133,7 @@ public class DirectoryMonitor {
      */
     public void scan() {
 
-        final File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
+        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
 
         final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
 
@@ -174,7 +185,7 @@ public class DirectoryMonitor {
     }
 
     private FileInfo oldInfo(final File file) {
-        return (FileInfo) files.get(file.getAbsolutePath());
+        return files.get(file.getAbsolutePath());
     }
 
     /**
@@ -234,7 +245,7 @@ public class DirectoryMonitor {
      * Provides details about a file.
      */
     private static class FileInfo implements Serializable {
-        private String path;
+        private final String path;
 
         private long size;
 

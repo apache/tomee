@@ -153,11 +153,25 @@ public class OpenEjbContainer extends EJBContainer {
         } catch (NamingException e) {
             throw new IllegalStateException(e);
         }
+
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        if (assembler != null) {
+            for (AppInfo info : assembler.getDeployedApplications()) {
+                try {
+                    assembler.destroyApplication(info);
+                } catch (UndeployException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+
         try {
             stopContexts(webBeanContext.getContextsService(), servletContext, session);
         } catch (Exception e) {
             logger.warning("can't stop all CDI contexts", e);
         }
+
+        logger.info("Destroying OpenEJB container");
         OpenEJB.destroy();
         instance = null;
     }

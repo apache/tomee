@@ -16,22 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.util.URLs.toFile;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
-
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.ClassInfo;
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.MethodInfo;
 import org.apache.openejb.loader.IO;
@@ -42,6 +26,21 @@ import org.codehaus.swizzle.confluence.Page;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static org.apache.openejb.util.URLs.toFile;
+
 /**
  * This class is not meant to be a container for tests. Its an audit tool which generates a report of how many of the keys listed in
  * org.apache.openejb.config.rules.Messages.properties have tests written for them
@@ -51,20 +50,20 @@ public class ValidationKeysAuditorTest {
 
     @BeforeClass
     public static void init() {
-        ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
+        final ResourceBundle bundle = ResourceBundle.getBundle("org.apache.openejb.config.rules.Messages");
         allKeys = bundle.keySet();
         allKeys = stripPrefixes(allKeys);
     }
 
     @Test
     public void audit() {
-        URL resource = ValidationKeysAuditorTest.class.getResource("/org/apache/openejb/config/rules/Keys.class");
-        File file = toFile(resource);
-        KeysAnnotationVisitor visitor = new KeysAnnotationVisitor();
+        final URL resource = ValidationKeysAuditorTest.class.getResource("/org/apache/openejb/config/rules/Keys.class");
+        final File file = toFile(resource);
+        final KeysAnnotationVisitor visitor = new KeysAnnotationVisitor();
         dir(file.getParentFile(), visitor);
         try {
             generateReport(file, visitor);
-            String confluenceOutput = generateConfluenceReport(file, visitor);
+            final String confluenceOutput = generateConfluenceReport(file, visitor);
             writeToConfluence(confluenceOutput);
         } catch (IOException e) {
             // ignore it
@@ -75,18 +74,18 @@ public class ValidationKeysAuditorTest {
     /**
      * This method will write to confluence only if you supply the system properties confluenceUsername and confluencePassword example usage mvn test
      * -Dtest=ValidationKeysAuditorTest -DconfluenceUsername=<<your username>> -DconfluencePassword=<<your password>>
-     * 
+     *
      * @param confluenceOutput
      */
-    private void writeToConfluence(String confluenceOutput) {
-        String username = System.getProperty("confluenceUsername");
-        String password = System.getProperty("confluencePassword");
+    private void writeToConfluence(final String confluenceOutput) {
+        final String username = System.getProperty("confluenceUsername");
+        final String password = System.getProperty("confluencePassword");
         if (validate(username) && validate(password)) {
             try {
-                String endpoint = "https://cwiki.apache.org/confluence/rpc/xmlrpc";
-                Confluence confluence = new Confluence(endpoint);
+                final String endpoint = "https://cwiki.apache.org/confluence/rpc/xmlrpc";
+                final Confluence confluence = new Confluence(endpoint);
                 confluence.login(username, password);
-                Page page = confluence.getPage("OPENEJB", "Validation Keys Audit Report");
+                final Page page = confluence.getPage("OPENEJB", "Validation Keys Audit Report");
                 page.setContent(confluenceOutput);
                 confluence.storePage(page);
                 confluence.logout();
@@ -96,7 +95,7 @@ public class ValidationKeysAuditorTest {
         }
     }
 
-    private boolean validate(String str) {
+    private boolean validate(final String str) {
         if (str == null)
             return false;
         if ("true".equalsIgnoreCase(str))
@@ -108,10 +107,10 @@ public class ValidationKeysAuditorTest {
         return true;
     }
 
-    private String generateConfluenceReport(File file, KeysAnnotationVisitor visitor) throws IOException {
-        StringBuilder output = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
-        Set<String> testedKeys = getTestedKeys(visitor.classInfos);
+    private String generateConfluenceReport(final File file, final KeysAnnotationVisitor visitor) throws IOException {
+        final StringBuilder output = new StringBuilder();
+        final String newLine = System.getProperty("line.separator");
+        final Set<String> testedKeys = getTestedKeys(visitor.classInfos);
         Set<String> untestedKeys = getUntestedKeys(testedKeys);
         untestedKeys = new TreeSet<String>(untestedKeys);// sort the keys
         prepareConfluenceSummary(untestedKeys, output, newLine);
@@ -121,34 +120,34 @@ public class ValidationKeysAuditorTest {
         return output.toString();
     }
 
-    private void prepareConfluenceTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) {
-        TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
+    private void prepareConfluenceTestedKeysDetailedReport(final HashSet<ClassInfo> classInfos, final StringBuilder output, final String newLine) {
+        final TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
         output.append("h2.List of keys which have been tested.").append(newLine);
         output.append("{table-plus:autoNumber=true}").append(newLine);
         output.append("|| Key | Method which tests the key ||").append(newLine);
-        for (ClassInfo classInfo : classInfos) {
-            HashSet<MethodInfo> methuds = classInfo.methuds;
-            for (MethodInfo methodInfo : methuds) {
-                HashSet<String> keys = methodInfo.keys;
-                for (String key : keys) {
+        for (final ClassInfo classInfo : classInfos) {
+            final HashSet<MethodInfo> methuds = classInfo.methuds;
+            for (final MethodInfo methodInfo : methuds) {
+                final HashSet<String> keys = methodInfo.keys;
+                for (final String key : keys) {
                     if (!info.containsKey(key)) {
-                        TreeSet<String> set = new TreeSet<String>();
+                        final TreeSet<String> set = new TreeSet<String>();
                         set.add(createConfluenceLink(classInfo.clazz + "." + methodInfo.methud + "()"));
                         info.put(key, set);
                     } else {
-                        TreeSet<String> set = info.get(key);
+                        final TreeSet<String> set = info.get(key);
                         set.add(createConfluenceLink(classInfo.clazz + "." + methodInfo.methud + "()"));
                     }
                 }
             }
         }
-        Set<Entry<String, TreeSet<String>>> entrySet = info.entrySet();
-        for (Entry<String, TreeSet<String>> entry : entrySet) {
-            String key = entry.getKey();
+        final Set<Entry<String, TreeSet<String>>> entrySet = info.entrySet();
+        for (final Entry<String, TreeSet<String>> entry : entrySet) {
+            final String key = entry.getKey();
             output.append("| ").append(key).append(" | ");
             int count = 0;
-            TreeSet<String> values = entry.getValue();
-            for (String value : values) {
+            final TreeSet<String> values = entry.getValue();
+            for (final String value : values) {
                 if (count > 0) {
                     output.append(" \\\\ ");
                 }
@@ -160,78 +159,78 @@ public class ValidationKeysAuditorTest {
         output.append("{table-plus}").append(newLine);
     }
 
-    private String createConfluenceLink(String string) {
+    private String createConfluenceLink(final String string) {
         String link = "[" + string + " | ";
-        String temp = string.substring(0, string.lastIndexOf("."));
-        String location = "https://svn.apache.org/viewvc/openejb/trunk/openejb3/container/openejb-core/src/test/java/" + temp + ".java?revision=HEAD&view=markup ]";
+        final String temp = string.substring(0, string.lastIndexOf("."));
+        final String location = "https://svn.apache.org/viewvc/openejb/trunk/openejb3/container/openejb-core/src/test/java/" + temp + ".java?revision=HEAD&view=markup ]";
         link = link + location;
         return link;
     }
 
-    private void prepareConfluenceUntestedKeyList(Set<String> untestedKeys, StringBuilder output, String newLine) {
+    private void prepareConfluenceUntestedKeyList(final Set<String> untestedKeys, final StringBuilder output, final String newLine) {
         output.append("{table-plus:autoNumber=true}").append(newLine);
         output.append("|| h2.List of untested keys \\\\ ||").append(newLine);
-        for (String key : untestedKeys) {
+        for (final String key : untestedKeys) {
             output.append(" | ").append(key).append(" | ").append(newLine);
         }
         output.append("{table-plus}").append(newLine);
     }
 
-    private void prepareConfluenceSummary(Set<String> untestedKeys, StringBuilder output, String newLine) {
-        int total = allKeys.size();
-        int untested = untestedKeys.size();
-        int tested = total - untested;
-        double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
+    private void prepareConfluenceSummary(final Set<String> untestedKeys, final StringBuilder output, final String newLine) {
+        final int total = allKeys.size();
+        final int untested = untestedKeys.size();
+        final int tested = total - untested;
+        final double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
         output.append("{warning:title=Warning}This page is auto-generated. Any manual changes would be over-written the next time this page is regenerated{warning}").append(
                 newLine);
-        output.append("{info:title=Audit Result}h2.Out of a total of " + total + " keys, " + tested + " have been tested. Test coverage for keys is " + coverage + " %.{info}")
+        output.append("{info:title=Audit Result}h2.Out of a total of ").append(total).append(" keys, ").append(tested).append(" have been tested. Test coverage for keys is ").append(coverage).append(" %.{info}")
                 .append(newLine);
     }
 
-    private void generateReport(File file, KeysAnnotationVisitor visitor) throws IOException {
-        StringBuilder output = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
-        Set<String> testedKeys = getTestedKeys(visitor.classInfos);
+    private void generateReport(final File file, final KeysAnnotationVisitor visitor) throws IOException {
+        final StringBuilder output = new StringBuilder();
+        final String newLine = System.getProperty("line.separator");
+        final Set<String> testedKeys = getTestedKeys(KeysAnnotationVisitor.classInfos);
         Set<String> untestedKeys = getUntestedKeys(testedKeys);
         untestedKeys = new TreeSet<String>(untestedKeys);// sort the keys
         prepareSummary(untestedKeys, output, newLine);
         prepareUntestedKeyList(untestedKeys, output, newLine);
-        prepareTestedKeysDetailedReport(visitor.classInfos, output, newLine);
+        prepareTestedKeysDetailedReport(KeysAnnotationVisitor.classInfos, output, newLine);
         writeToFile(file, output, "ValidationKeyAuditReport.txt");
     }
 
-    private void prepareTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) throws IOException {
+    private void prepareTestedKeysDetailedReport(final HashSet<ClassInfo> classInfos, final StringBuilder output, final String newLine) throws IOException {
         output.append("================================================================================================").append(newLine);
         output.append("List of all keys tested. Next to each is the the test method which tests the key").append(newLine);
         output.append("================================================================================================").append(newLine);
-        TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
-        for (ClassInfo classInfo : classInfos) {
-            HashSet<MethodInfo> methuds = classInfo.methuds;
-            for (MethodInfo methodInfo : methuds) {
-                HashSet<String> keys = methodInfo.keys;
-                for (String key : keys) {
+        final TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
+        for (final ClassInfo classInfo : classInfos) {
+            final HashSet<MethodInfo> methuds = classInfo.methuds;
+            for (final MethodInfo methodInfo : methuds) {
+                final HashSet<String> keys = methodInfo.keys;
+                for (final String key : keys) {
                     if (!info.containsKey(key)) {
-                        TreeSet<String> set = new TreeSet<String>();
+                        final TreeSet<String> set = new TreeSet<String>();
                         set.add(classInfo.clazz + "." + methodInfo.methud + "()");
                         info.put(key, set);
                     } else {
-                        TreeSet<String> set = info.get(key);
+                        final TreeSet<String> set = info.get(key);
                         set.add(classInfo.clazz + "." + methodInfo.methud + "()");
                     }
                 }
             }
         }
-        Set<Entry<String, TreeSet<String>>> entrySet = info.entrySet();
-        for (Entry<String, TreeSet<String>> entry : entrySet) {
-            String key = entry.getKey();
+        final Set<Entry<String, TreeSet<String>>> entrySet = info.entrySet();
+        for (final Entry<String, TreeSet<String>> entry : entrySet) {
+            final String key = entry.getKey();
             output.append(key).append(" --> ");
             int count = 0;
-            TreeSet<String> values = entry.getValue();
-            for (String value : values) {
+            final TreeSet<String> values = entry.getValue();
+            for (final String value : values) {
                 if (count > 0) {
                     // put as many spaces as there are characters in the key to indent and align multiple values for the same key
-                    StringBuilder spaces = new StringBuilder();
-                    for(int i=0;i<key.length();i++){
+                    final StringBuilder spaces = new StringBuilder();
+                    for (int i = 0; i < key.length(); i++) {
                         spaces.append(" ");
                     }
                     output.append(spaces).append(" --> ");
@@ -242,54 +241,66 @@ public class ValidationKeysAuditorTest {
         }
     }
 
-    private void writeToFile(File file, StringBuilder output, String fileName) throws IOException {
-        File surefireReports = new File(dir(file), "surefire-reports");
+    private void writeToFile(final File file, final StringBuilder output, final String fileName) throws IOException {
+        final File surefireReports = new File(dir(file), "surefire-reports");
         if (!surefireReports.exists()) {
             surefireReports.mkdir();
         }
-        File auditResults = new File(surefireReports, fileName);
+        final File auditResults = new File(surefireReports, fileName);
         BufferedWriter bw = null;
         try {
-            FileWriter writer = new FileWriter(auditResults);
+            final FileWriter writer = new FileWriter(auditResults);
             bw = new BufferedWriter(writer);
             bw.append(output.toString());
         } finally {
-            bw.flush();
-            bw.close();
+            if (bw != null) {
+                try {
+                    bw.flush();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
     }
 
-    private void prepareUntestedKeyList(Set<String> untestedKeys, StringBuilder output, String newLine) {
+    private void prepareUntestedKeyList(final Set<String> untestedKeys, final StringBuilder output, final String newLine) {
         output.append("================================================================================================").append(newLine);
         output.append("List of all keys which have not been tested yet.").append(newLine);
         output.append("================================================================================================").append(newLine);
-        for (String key : untestedKeys) {
+        for (final String key : untestedKeys) {
             output.append(key).append(newLine);
         }
     }
 
-    private Set<String> getUntestedKeys(Set<String> testedKeys) {
-        Set<String> untestedKeys = new HashSet<String>();
-        for (String key : allKeys) {
+    private Set<String> getUntestedKeys(final Set<String> testedKeys) {
+        final Set<String> untestedKeys = new HashSet<String>();
+        for (final String key : allKeys) {
             if (!testedKeys.contains(key))
                 untestedKeys.add(key);
         }
         return untestedKeys;
     }
 
-    private Set<String> getTestedKeys(HashSet<ClassInfo> classInfos) {
-        Set<String> testedKeys = new HashSet<String>();
-        for (ClassInfo classInfo : classInfos) {
-            HashSet<MethodInfo> methuds = classInfo.methuds;
-            for (MethodInfo methodInfo : methuds) {
+    private Set<String> getTestedKeys(final HashSet<ClassInfo> classInfos) {
+        final Set<String> testedKeys = new HashSet<String>();
+        for (final ClassInfo classInfo : classInfos) {
+            final HashSet<MethodInfo> methuds = classInfo.methuds;
+            for (final MethodInfo methodInfo : methuds) {
                 testedKeys.addAll(methodInfo.keys);
             }
         }
         return testedKeys;
     }
 
-    private static Set<String> stripPrefixes(Set<String> allKeys) {
-        Set<String> keys = new HashSet<String>();
+    private static Set<String> stripPrefixes(final Set<String> allKeys) {
+        final Set<String> keys = new HashSet<String>();
         for (String key : allKeys) {
             key = key.substring(key.indexOf(".") + 1);
             if (!keys.contains(key))
@@ -298,13 +309,13 @@ public class ValidationKeysAuditorTest {
         return keys;
     }
 
-    private void prepareSummary(Set<String> untestedKeys, StringBuilder output, String newLine) {
-        int total = allKeys.size();
-        int untested = untestedKeys.size();
-        int tested = total - untested;
-        double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
+    private void prepareSummary(final Set<String> untestedKeys, final StringBuilder output, final String newLine) {
+        final int total = allKeys.size();
+        final int untested = untestedKeys.size();
+        final int tested = total - untested;
+        final double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
         output.append("================================================================================================").append(newLine);
-        output.append("Out of a total of " + total + " keys, " + tested + " have been tested. Test coverage for keys is " + coverage + " %.").append(newLine);
+        output.append("Out of a total of ").append(total).append(" keys, ").append(tested).append(" have been tested. Test coverage for keys is ").append(coverage).append(" %.").append(newLine);
         output.append("================================================================================================").append(newLine);
     }
 
@@ -320,10 +331,10 @@ public class ValidationKeysAuditorTest {
         return null;
     }
 
-    private static void dir(File dir, KeysAnnotationVisitor visitor) {
+    private static void dir(final File dir, final KeysAnnotationVisitor visitor) {
         final File[] files = dir.listFiles();
         if (files != null) {
-            for (File file : files) {
+            for (final File file : files) {
                 if (file.isDirectory()) {
                     dir(file, visitor);
                 } else if (file.getName().endsWith(".class")) {
@@ -333,11 +344,11 @@ public class ValidationKeysAuditorTest {
         }
     }
 
-    private static void file(File file, KeysAnnotationVisitor visitor) {
+    private static void file(final File file, final KeysAnnotationVisitor visitor) {
         try {
-            InputStream in = IO.read(file);
+            final InputStream in = IO.read(file);
             try {
-                ClassReader classReader = new ClassReader(in);
+                final ClassReader classReader = new ClassReader(in);
                 classReader.accept(visitor, ClassWriter.COMPUTE_MAXS);
             } finally {
                 IO.close(in);

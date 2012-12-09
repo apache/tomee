@@ -15,7 +15,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -24,11 +23,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.5.1-SNAPSHOT</version>
+    <version>4.5.1</version>
   </parent>
 
   <groupId>org.apache.openejb.maven</groupId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Maven Plugins</name>
@@ -36,11 +35,9 @@
   <modules>
     <module>tomee-maven-plugin</module>
     <module>tomee-embedded-maven-plugin</module>
-    <module>dd-maven-plugin</module>
     <module>openejb-embedded-maven-plugin</module>
     <module>maven-util</module>
-    <module>spi-helper-maven-plugin</module>
-    <module>spi-helper-jee6-profile</module>
+    <module>tomee-webapp-archetype</module>
   </modules>
 
   <dependencyManagement>

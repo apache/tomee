@@ -262,23 +262,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     @Override
     public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException {
         try {
-            String tmpDir = configuration.getAppWorkingDir();
-            File file, folderFile;
-            int i = 0;
-            do { // be sure we don't override something existing
-                file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
-                if (file.isDirectory() || !file.getName().endsWith("ar")) {
-                	folderFile = file;
-                } else {
-                	final String name = file.getName();
-                	folderFile = new File(file.getParentFile(), name.substring(0, name.length() - 4));
-                }
-            } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
-            if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                LOGGER.warning("can't create " + file.getParent());
-            }
-
-            archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+            final File file = dumpFile(archive);
 
             final String fileName = file.getName();
             if (fileName.endsWith(".war")) { // ??
@@ -324,6 +308,32 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
+    }
+
+    protected File dumpFile(final Archive<?> archive) {
+        String tmpDir = configuration.getAppWorkingDir();
+        Files.deleteOnExit(new File(tmpDir));
+
+        File file, folderFile;
+        int i = 0;
+        do { // be sure we don't override something existing
+            file = new File(tmpDir + File.separator + i++ + File.separator + archive.getName());
+            if (file.isDirectory() || !file.getName().endsWith("ar")) {
+                folderFile = file;
+            } else {
+                final String name = file.getName();
+                folderFile = new File(file.getParentFile(), name.substring(0, name.length() - 4));
+            }
+        } while (file.getParentFile().exists()); // we will delete the parent (to clean even complicated unpacking)
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            LOGGER.warning("can't create " + file.getParent());
+        }
+
+        Files.deleteOnExit(file.getParentFile());
+
+        archiveWithTestInfo(archive).as(ZipExporter.class).exportTo(file, true);
+
+        return file;
     }
 
     private Collection<String> apps() {

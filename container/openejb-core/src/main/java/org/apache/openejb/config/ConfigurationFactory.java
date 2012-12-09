@@ -16,56 +16,10 @@
  */
 package org.apache.openejb.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import javax.ejb.embeddable.EJBContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
-import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
-import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.FacilitiesInfo;
-import org.apache.openejb.assembler.classic.HandlerChainInfo;
-import org.apache.openejb.assembler.classic.HandlerInfo;
-import org.apache.openejb.assembler.classic.JndiContextInfo;
-import org.apache.openejb.assembler.classic.ManagedContainerInfo;
-import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.AdditionalDeployments;
@@ -108,6 +62,25 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
+
+import javax.ejb.embeddable.EJBContainer;
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -465,24 +438,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        final List<String> declaredApps = getDeclaredApps();
+        final List<File> declaredApps = getDeclaredApps();
 
-        for (final String pathname : declaredApps) {
+        for (final File jarFile : declaredApps) {
             try {
-                try {
-                    final File jarFile;
-                    if (pathname.startsWith("file:/")) {
-                        jarFile = new File(new URI(pathname));
-                    } else {
-                        jarFile = new File(pathname);
-                    }
 
-                    final AppInfo appInfo = configureApplication(jarFile);
-                    sys.containerSystem.applications.add(appInfo);
+                final AppInfo appInfo = configureApplication(jarFile);
+                sys.containerSystem.applications.add(appInfo);
 
-                } catch (URISyntaxException e) {
-                    logger.error("Invalid declaredApp URI '" + pathname + "'", e);
-                }
             } catch (OpenEJBException alreadyHandled) {
                 final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                 exceptionManager.pushDelpoymentException(alreadyHandled);
@@ -528,6 +491,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        for (Deployments deployments : openejb.getDeployments()) {
+            if (deployments.isAutoDeploy()) {
+                if (deployments.getDir() != null) {
+                    sys.containerSystem.autoDeploy.add(deployments.getDir());
+                }
+            }
+        }
+
         final OpenEjbConfiguration finished = sys;
         sys = null;
         openejb = null;
@@ -535,71 +506,72 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return finished;
     }
 
-    private List<String> getDeclaredApps() {
+    private List<File> getDeclaredApps() {
         // make a copy of the list because we update it
         final List<Deployments> deployments = new ArrayList<Deployments>();
+
         if (openejb != null) {
             deployments.addAll(openejb.getDeployments());
         }
-        File additionalDeploymentFile;
+
         try {
-            additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
-        } catch (IOException e) {
-            additionalDeploymentFile = null;
-        }
-        if (additionalDeploymentFile.exists()) {
-            InputStream fis = null;
-            try {
-                fis = IO.read(additionalDeploymentFile);
-                final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
-                deployments.addAll(additionalDeployments.getDeployments());
-            } catch (Exception e) {
-                logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
-            } finally {
-                IO.close(fis);
+            final File additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
+
+            if (additionalDeploymentFile.exists()) {
+                InputStream fis = null;
+                try {
+                    fis = IO.read(additionalDeploymentFile);
+                    final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
+                    deployments.addAll(additionalDeployments.getDeployments());
+                } catch (Exception e) {
+                    logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
+                } finally {
+                    IO.close(fis);
+                }
             }
+        } catch (Exception e) {
+            logger.info("No additional deployments found: " + e);
         }
 
         // resolve jar locations //////////////////////////////////////  BEGIN  ///////
 
         final FileUtils base = SystemInstance.get().getBase();
 
-        final List<URL> declaredAppsUrls = new ArrayList<URL>();
-        try {
-            for (final Deployments deployment : deployments) {
+        final List<Deployments> autoDeploy = new ArrayList<Deployments>();
+
+        final List<File> declaredAppsUrls = new ArrayList<File>();
+
+        for (final Deployments deployment : deployments) {
+            try {
                 DeploymentsResolver.loadFrom(deployment, base, declaredAppsUrls);
+                if (deployment.isAutoDeploy()) autoDeploy.add(deployment);
+            } catch (SecurityException se) {
+                logger.warning("Security check failed on deployment: " + deployment.getFile(), se);
             }
-        } catch (SecurityException ignored) {
         }
-        return toString(declaredAppsUrls);
+
+        if (autoDeploy.size() > 0) {
+            SystemInstance.get().addObserver(new AutoDeployer(this, autoDeploy));
+        }
+
+        return declaredAppsUrls;
     }
 
-    public ArrayList<File> getModulesFromClassPath(List<String> declaredApps, final ClassLoader classLoader) {
+    public ArrayList<File> getModulesFromClassPath(List<File> declaredApps, final ClassLoader classLoader) {
         final FileUtils base = SystemInstance.get().getBase();
-        if (declaredApps == null) {
-            declaredApps = getDeclaredApps();
-        }
+
         final List<URL> classpathAppsUrls = new ArrayList<URL>();
         DeploymentsResolver.loadFromClasspath(base, classpathAppsUrls, classLoader);
 
         final ArrayList<File> jarFiles = new ArrayList<File>();
         for (final URL path : classpathAppsUrls) {
-            if (declaredApps.contains(URLs.toFilePath(path))) continue;
+            final File file = URLs.toFile(path);
 
-            jarFiles.add(new File(URLs.toFilePath(path)));
+            if (declaredApps != null && declaredApps.contains(file)) continue;
+
+            jarFiles.add(file);
         }
         return jarFiles;
-    }
-
-    private List<String> toString(final List<URL> urls) {
-        final List<String> toReturn = new ArrayList<String>(urls.size());
-        for (final URL url : urls) {
-            try {
-                toReturn.add(url.toString());
-            } catch (Exception ignore) {
-            }
-        }
-        return toReturn;
     }
 
     public ContainerInfo createContainerInfo(final Container container) throws OpenEJBException {
@@ -608,8 +580,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             throw new OpenEJBException(messages.format("unrecognizedContainerType", container.getType()));
         }
 
-        final ContainerInfo info = configureService(container, infoClass);
-        return info;
+        return configureService(container, infoClass);
     }
 
     private void loadPropertiesDeclaredConfiguration(final Openejb openejb) {
@@ -644,8 +615,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final URI uri = new URI(value);
 
-        final Object service = toConfigDeclaration(name, uri);
-        return service;
+        return toConfigDeclaration(name, uri);
     }
 
     public Object toConfigDeclaration(final String id, final URI uri) throws OpenEJBException {
@@ -678,7 +648,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             } else if (object instanceof Deployments) {
                 final Deployments deployments = (Deployments) object;
                 deployments.setDir(map.remove("dir"));
-                deployments.setJar(map.remove("jar"));
+                deployments.setFile(map.remove("jar"));
                 final String cp = map.remove("classpath");
                 if (cp != null) {
                     final String[] paths = cp.split(File.pathSeparator);
@@ -701,7 +671,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         try {
             final AppModule appModule = deploymentLoader.load(jarFile);
-            return configureApplication(appModule);
+            final AppInfo appInfo = configureApplication(appModule);
+
+            // TODO This is temporary -- we need to do this in AppInfoBuilder
+            appInfo.paths.add(appInfo.path);
+            appInfo.paths.add(jarFile.getAbsolutePath());
+            return appInfo;
         } catch (ValidationFailedException e) {
             logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
             throw e;
@@ -1088,8 +1063,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     private <T extends ServiceInfo> void specialProcessing(final T info) {
-        final ServiceInfo serviceInfo = info;
-        TopicOrQueueDefaults.process(serviceInfo);
+        TopicOrQueueDefaults.process(info);
     }
 
 
@@ -1308,7 +1282,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return null;
     }
 
-    private boolean isResourceType(final String service, final List<String> types, final String type) {
+    public static boolean isResourceType(final String service, final List<String> types, final String type) {
         return type == null || service != null && types.contains(type);
     }
 

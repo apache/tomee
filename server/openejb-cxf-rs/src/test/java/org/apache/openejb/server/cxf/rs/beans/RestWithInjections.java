@@ -24,10 +24,14 @@ import javax.ws.rs.core.UriInfo;
 
 @Path("/inject")
 public class RestWithInjections {
-    @EJB private SimpleEJB simple;
-    @Context UriInfo uriInfo;
+    @EJB
+    private SimpleEJB simple;
+    @Context
+    UriInfo uriInfo;
 
-    @Path("/ejb") @GET public boolean ejb() {
+    @Path("/ejb")
+    @GET
+    public boolean ejb() {
         return simple != null && "ok".equals(simple.ok()) && uriInfo != null;
     }
 }

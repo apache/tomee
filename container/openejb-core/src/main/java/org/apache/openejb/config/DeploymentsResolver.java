@@ -17,8 +17,8 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Deployments;
-import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
@@ -30,146 +30,156 @@ import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.openejb.util.URLs.toFile;
+import static org.apache.openejb.util.URLs.toFileUrl;
 
 /**
  * @version $Rev$ $Date$
  */
 public class DeploymentsResolver implements DeploymentFilterable {
+
     private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
-
+    private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
     private static final Logger logger = DeploymentLoader.logger;
+    private static File lib = null;
 
-    public static void loadFrom(final Deployments dep, final FileUtils path, final List<URL> jarList) {
-
-        ////////////////////////////////
-        //
-        //  Expand the path of a jar
-        //
-        ////////////////////////////////
-        if (dep.getDir() == null && dep.getJar() != null) {
-            try {
-                final File jar = path.getFile(dep.getJar(), false);
-                final URL url = jar.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (Exception ignored) {
-            }
-            return;
-        }
-
-        File dir = null;
+    static {
         try {
-            dir = path.getFile(dep.getDir(), false);
-        } catch (Exception ignored) {
+            lib = SystemInstance.get().getHome().getDirectory("lib", false);
+        } catch (IOException e) {
+            //Ignore
+        }
+    }
+
+    protected static boolean isValidDirectory(final File file) {
+
+        if (file.isDirectory() && !file.isHidden() && !file.equals(lib)) {
+
+            final String fn = file.getName();
+
+            for (final String dir : ignoreDirs) {
+                if (fn.equalsIgnoreCase(dir)) {
+                    return false;
+                }
+            }
+
+            final String[] files = file.list();
+
+            return (null != files && files.length > 0);
         }
 
-        if (dir == null || !dir.isDirectory()) return;
+        return false;
+    }
 
-        ////////////////////////////////
-        //
-        //  Unpacked "Jar" directory with descriptor
-        //
-        ////////////////////////////////
-        final File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
-        if (ejbJarXml.exists()) {
+    public static void loadFrom(final Deployments dep, final FileUtils path, final List<File> jarList) {
+
+        if (dep.getDir() != null) {
+
             try {
-                final URL url = dir.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (MalformedURLException ignore) {
-            }
-            return;
-        }
 
-        final File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
-        if (appXml.exists()) {
+                loadFromDir(dep, path, jarList);
+
+            } catch (Files.FileDoesNotExistException e) {
+                logger.warning("<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage());
+
+            } catch (RuntimeException e) {
+                final String message = "<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage();
+
+                logger.error(message);
+                throw new DeploymentsConfigurationException(message);
+            }
+
+        } else if (dep.getFile() != null) {
+
             try {
-                final URL url = dir.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
-                }
-            } catch (MalformedURLException ignore) {
+
+                loadFromFile(dep, path, jarList);
+
+            } catch (RuntimeException e) {
+                final String message = "<Deployments file=\"" + dep.getFile() + "\"> - " + e.getMessage();
+                logger.error(message);
+                throw new DeploymentsConfigurationException(message);
             }
-            return;
-        }
 
-        final File raXml = new File(dir, "META-INF" + File.separator + "ra.xml");
-        if (raXml.exists()) {
-            try {
-                final URL url = dir.toURI().toURL();
-                if (!jarList.contains(url)) {
-                    jarList.add(url);
+        }
+    }
+
+    public static class DeploymentsConfigurationException extends RuntimeException {
+        public DeploymentsConfigurationException(final String message) {
+            super(message);
+        }
+    }
+
+    private static void loadFromFile(final Deployments dep, final FileUtils path, final List<File> jarList) {
+        final File file = Files.path(path.getDirectory(), dep.getFile());
+
+        Files.exists(file);
+        Files.readable(file);
+        Files.file(file);
+
+        if (!jarList.contains(file)) {
+            jarList.add(file);
+        }
+    }
+
+    private static void loadFromDir(final Deployments dep, final FileUtils path, final List<File> jarList) {
+        final File dir = Files.path(path.getDirectory(), dep.getDir());
+
+        Files.exists(dir);
+        Files.readable(dir);
+        Files.dir(dir);
+        Files.notHidden(dir);
+
+        final Map<String, File> files = new LinkedHashMap<String, java.io.File>();
+        final File[] list = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File f) {
+                if (f.isDirectory()) {
+                    return DeploymentsResolver.isValidDirectory(f);
                 }
-            } catch (MalformedURLException ignore) {
+                return true;
             }
-            return;
-        }
+        });
 
-        ////////////////////////////////
-        //
-        //  Directory contains Jar files
-        //
-        ////////////////////////////////
-        boolean hasNestedArchives = false;
-        final File[] dirFiles = dir.listFiles();
+        if (list != null) {
+            for (final File file : list) {
 
-        if (null != dirFiles) {
-            for (final File file : dirFiles) {
-                try {
-
-                    final URL url = file.toURI().toURL();
-                    if (jarList.contains(url)) continue;
-
-                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".war") || file.getName().endsWith(".rar") || file.getName().endsWith(".ear")) {
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    } else if (new File(file, "META-INF").exists()) { // Unpacked ear or jar
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    } else if (new File(file, "WEB-INF").exists()) {  // Unpacked webapp
-                        jarList.add(url);
-                        hasNestedArchives = true;
-                    }
-                } catch (Exception e) {
-                    logger.debug("loadFrom", e);
-                }
+                files.put(file.getAbsolutePath(), file);
             }
-        }
 
-        ////////////////////////////////
-        //
-        //  Unpacked "Jar" directory w/o descriptor
-        //
-        ////////////////////////////////
-        if (!hasNestedArchives) {
-            final HashMap<String, URL> files = new HashMap<String, URL>();
-            DeploymentLoader.scanDir(dir, files, "");
-            for (final String fileName : files.keySet()) {
-                if (fileName.endsWith(".class")) {
-                    try {
-                        final URL url = dir.toURI().toURL();
-                        if (!jarList.contains(url)) {
-                            jarList.add(url);
-                        }
-                    } catch (MalformedURLException ignore) {
-                    }
-                    return;
-                }
+            // Ignore any unpacked versions
+            for (final File file : list) {
+                if (!isArchive(file)) continue;
+                final String archive = file.getAbsolutePath();
+                files.remove(archive.substring(0, archive.length() - 4));
             }
         }
+
+        for (final File file : files.values()) {
+            if (!jarList.contains(file)) {
+                jarList.add(file);
+            }
+        }
+    }
+
+    private static boolean isArchive(final File file) {
+        if (!file.isFile()) return false;
+        if (!file.getName().toLowerCase().endsWith("ar")) return false;
+
+        final String name = file.getName();
+        final char c = name.charAt(name.length() - 4);
+        return c == '.';
     }
 
     /**
@@ -316,100 +326,8 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     }
 
-    /**
-     * The regular expressions involved in filtering can be costly
-     * In the normal case we will not scan anyway, so if not
-     * no point in optimizing the list of urls in the classpath
-     *
-     * @param include
-     * @param exclude
-     * @param requireDescriptors
-     * @return
-     */
-    private static boolean shouldFilter(final String include, final String exclude, final Set<RequireDescriptors> requireDescriptors) {
-        final boolean includeNothing = include.equals("");
-        final boolean excludeEverything = exclude.equals(".*");
-
-        //  If we are going to eliminate the entire classpath from
-        //  scanning anyway, no sense in taking the time to do it
-        //  bit by bit.  Return false
-        if (includeNothing && excludeEverything) return false;
-
-        //  If we are forcably requiring descriptors for all possible file types
-        //  then there is also no scanning and no point in filtering the
-        //  classpath down bit by bit.  Return false
-        return requireDescriptors.size() != RequireDescriptors.values().length;
-    }
-
-    private static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
-
-        urlSet = urlSet.exclude(".*/activation(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/activeio-core(-[\\d.]+)?(-incubator)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/activemq-(core|ra)(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/annotations-api-6.[01].[\\d.]+.jar(!/)?");
-        urlSet = urlSet.exclude(".*/asm-(all|commons|util|tree)?[\\d.]+.jar(!/)?");
-        urlSet = urlSet.exclude(".*/avalon-framework(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/axis2-jaxws-api(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/backport-util-concurrent(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/bcprov-jdk15(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/catalina(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/cglib-(nodep-)?[\\d.]+.jar(!/)?");
-        urlSet = urlSet.exclude(".*/com\\.ibm\\.ws\\.[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/commons-(logging|logging-api|cli|pool|lang|collections|dbcp|dbcp-all)(-[\\d.r-]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/cxf-bundle(-[\\d.]+)?(incubator)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/openejb-cxf-bundle(-[\\d.]+)?(incubator)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/derby(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/ejb31-api-experimental(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/geronimo-(connector|transaction)(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/geronimo-[^/]+_spec(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/geronimo-javamail_([\\d.]+)_mail(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/hibernate-(entitymanager|annotations)?(-[\\d.]+(ga)?)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/howl(-[\\d.-]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/hsqldb(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/idb(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/idea_rt.jar(!/)?");
-        urlSet = urlSet.exclude(".*/javaee-api(-embedded)?-[\\d.-]+.jar(!/)?");
-        urlSet = urlSet.exclude(".*/javassist[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jaxb-(impl|api)(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jboss-[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jbossall-[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jbosscx-[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jbossjts-?[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jbosssx-[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/jmdns(-[\\d.]+)?(-RC\\d)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/juli(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/junit(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/log4j(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/logkit(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/mail(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/neethi(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/org\\.eclipse\\.persistence\\.[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/org\\.junit_.[^/]*.jar(!/)?");
-        urlSet = urlSet.exclude(".*/openjpa-(jdbc|kernel|lib|persistence|persistence-jdbc)(-5)?(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/openjpa(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/opensaml(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/quartz(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/saaj-impl(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/serp(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/servlet-api(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/slf4j-api(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/slf4j-jdk14(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/stax-api(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/swizzle-stream(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/sxc-(jaxb|runtime)(-[\\d.]+)?(-SNAPSHOT)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/wsdl4j(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/wss4j(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/wstx-asl(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/xbean-(reflect|naming|finder)-(shaded-)?[\\d.]+.jar(!/)?");
-        urlSet = urlSet.exclude(".*/xmlParserAPIs(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/xmlunit(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/xmlsec(-[\\d.]+)?.jar(!/)?");
-        urlSet = urlSet.exclude(".*/XmlSchema(-[\\d.]+)?.jar(!/)?");
-        return urlSet;
-    }
-
     public static void processUrls(final List<URL> urls, final ClassLoader classLoader, final Set<RequireDescriptors> requireDescriptors, final FileUtils base, final List<URL> jarList) {
-        for (URL url : urls) {
+        for (final URL url : urls) {
 
             final String urlProtocol = url.getProtocol();
             //Currently, we only support jar and file protocol
@@ -419,8 +337,6 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 continue;
             }
 
-            final Deployments deployment;
-            String path = "";
             try {
 
                 final DeploymentLoader deploymentLoader = new DeploymentLoader();
@@ -428,30 +344,13 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 final Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
 
-                    if (AppModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
+                    final URL archive = toFileUrl(url);
 
-                        deployment = JaxbOpenejb.createDeployments();
-
-                        if (urlProtocol.equals("jar")) {
-                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                            final File file = toFile(url);
-                            path = file.getAbsolutePath();
-                            deployment.setJar(path);
-                        } else if (urlProtocol.equals("file")) {
-                            final File file = toFile(url);
-                            path = file.getAbsolutePath();
-                            deployment.setDir(path);
-                        }
-
-                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
-
-                        loadFrom(deployment, base, jarList);
-                    } else {
-                        if (!jarList.contains(url)) {
-                            jarList.add(url);
-                        }
+                    if (!jarList.contains(archive)) {
+                        jarList.add(archive);
+                        final File file = toFile(archive);
+                        logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + file.getAbsolutePath());
                     }
-
                 }
             } catch (IOException e) {
                 logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);

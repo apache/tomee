@@ -36,6 +36,7 @@ import java.util.Properties;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RemoteServer {
     private static final Options options = new Options(System.getProperties());
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
@@ -68,7 +69,7 @@ public class RemoteServer {
         this(options.get("connect.tries", 60), options.get("verbose", false));
     }
 
-    public RemoteServer(int tries, boolean verbose) {
+    public RemoteServer(final int tries, final boolean verbose) {
         this.tries = tries;
         this.verbose = verbose;
         home = getHome();
@@ -79,7 +80,7 @@ public class RemoteServer {
         host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
     }
 
-    public void init(Properties props) {
+    public void init(final Properties props) {
         properties = props;
 
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
@@ -88,12 +89,12 @@ public class RemoteServer {
         props.put("java.naming.security.credentials", "testpassword");
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         assert args.length > 0 : "no arguments supplied: valid argumen -efts are 'start' or 'stop'";
         if (args[0].equalsIgnoreCase("start")){
             new RemoteServer().start();
         } else if (args[0].equalsIgnoreCase("stop")) {
-            RemoteServer remoteServer = new RemoteServer();
+            final RemoteServer remoteServer = new RemoteServer();
             remoteServer.serverHasAlreadyBeenStarted = false;
             remoteServer.stop();
         } else {
@@ -112,11 +113,11 @@ public class RemoteServer {
         start(Collections.EMPTY_LIST, "start", true);
     }
 
-    public void start(final List<String> additionalArgs, final String cmd, boolean checkPortAvailable) {
+    public void start(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
         cmd(additionalArgs, cmd, checkPortAvailable);
     }
 
-    private void cmd(final List<String> additionalArgs, final String cmd, boolean checkPortAvailable) {
+    private void cmd(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
         boolean ok = true;
         if (checkPortAvailable) {
             ok = !connect();
@@ -127,11 +128,11 @@ public class RemoteServer {
                     System.out.println("[] " + cmd.toUpperCase() + " SERVER");
                 }
 
-                File home = getHome();
-                String javaVersion = System.getProperty("java.version");
+                final File home = getHome();
+                final String javaVersion = System.getProperty("java.version");
                 if (verbose) {
                     System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
-                    String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
+                    final String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
                     System.out.println("SYSTEM_INFO  = "+systemInfo);
                 }
 
@@ -156,7 +157,7 @@ public class RemoteServer {
 
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
-                String[] args;
+                final String[] args;
                 final int debugPort = options.get(SERVER_DEBUG_PORT, 5005);
                 if (!tomcat) {
                     if (debug) {
@@ -179,23 +180,23 @@ public class RemoteServer {
                         };
                     }
                 } else {
-                    File bin = new File(home, "bin");
-                    File tlib = new File(home, "lib");
-                    File bootstrapJar = new File(bin, "bootstrap.jar");
-                    File juliJar = new File(bin, "tomcat-juli.jar");
-                    File commonsLoggingJar = new File(bin, "commons-logging-api.jar");
+                    final File bin = new File(home, "bin");
+                    final File tlib = new File(home, "lib");
+                    final File bootstrapJar = new File(bin, "bootstrap.jar");
+                    final File juliJar = new File(bin, "tomcat-juli.jar");
+                    final File commonsLoggingJar = new File(bin, "commons-logging-api.jar");
 
-                    File conf = new File(home, "conf");
-                    File loggingProperties = new File(conf, "logging.properties");
+                    final File conf = new File(home, "conf");
+                    final File loggingProperties = new File(conf, "logging.properties");
 
 
                     File endorsed = new File(home, "endorsed");
                     if (javaVersion != null && javaVersion.startsWith("1.7.")) { // java 7
                         endorsed = new File(home, "endorsed7"); // doesn't exist but just to ignore it with j7
                     }
-                    File temp = new File(home, "temp");
+                    final File temp = new File(home, "temp");
 
-                    List<String> argsList = new ArrayList<String>() {};
+                    final List<String> argsList = new ArrayList<String>() {};
                     argsList.add(java);
                     argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
@@ -215,15 +216,15 @@ public class RemoteServer {
 
                     if (javaOpts != null) {
                         final String[] strings = javaOpts.split(" +");
-                        for (String string : strings) {
+                        for (final String string : strings) {
                             argsList.add(string);
                         }
                     }
 
                     final Map<String, String> addedArgs = new HashMap<String, String>();
                     if (additionalArgs != null) {
-                        for (String arg : additionalArgs) {
-                            String[] values = arg.split("=");
+                        for (final String arg : additionalArgs) {
+                            final String[] values = arg.split("=");
                             if (values.length == 1) {
                                 addedArgs.put(values[0], "null");
                             } else {
@@ -274,7 +275,7 @@ public class RemoteServer {
 
                     argsList.add("-ea");
                     argsList.add("-classpath");
-                    String ps = File.pathSeparator;
+                    final String ps = File.pathSeparator;
                     final StringBuilder cp = new StringBuilder(bootstrapJar.getAbsolutePath()).append(ps).append(juliJar.getAbsolutePath());
                     if (commonsLoggingJar.exists()) {
                         cp.append(ps).append(commonsLoggingJar.getAbsolutePath());
@@ -327,7 +328,7 @@ public class RemoteServer {
 
     // debugging method (mainly for buildbot), don't let it activated when all is fine
     private void kill3UNIXDebug() {
-        Thread t = new Thread() {
+        final Thread t = new Thread() {
             @Override
             public void run() {
                 setName("[DEBUG] Dump Observer");
@@ -368,18 +369,18 @@ public class RemoteServer {
         try {
             final Field f = server.getClass().getDeclaredField("pid");
             f.setAccessible(true);
-            int pid = (Integer) f.get(server);
+            final int pid = (Integer) f.get(server);
             Pipe.pipe(Runtime.getRuntime().exec("kill -3 " + pid));
         } catch (Exception e1) {
             e1.printStackTrace();
         }
     }
 
-    private File lib(String name, File... dirs) {
-        for (File dir : dirs) {
+    private File lib(final String name, final File... dirs) {
+        for (final File dir : dirs) {
             final File[] files = dir.listFiles();
             if (files != null) {
-                for (File file : files) {
+                for (final File file : files) {
                     if (!file.isFile()) continue;
                     if (!file.getName().endsWith(".jar")) continue;
                     if (file.getName().startsWith(name)) return file;
@@ -387,7 +388,7 @@ public class RemoteServer {
             }
         }
 
-        for (File dir : dirs) {
+        for (final File dir : dirs) {
             dumpLibs(dir);
         }
         throw new IllegalStateException("Cannot find the " + name + " jar");
@@ -401,7 +402,7 @@ public class RemoteServer {
         }
         final File[] files = dir.listFiles();
         if (files != null) {
-            for (File lib : files) {
+            for (final File lib : files) {
                 System.out.println(lib.getAbsolutePath());
             }
         }
@@ -411,7 +412,7 @@ public class RemoteServer {
         return server;
     }
 
-    private void addIfSet(List<String> argsList, String key) {
+    private void addIfSet(final List<String> argsList, final String key) {
         if (System.getProperties().containsKey(key)) {
             argsList.add("-D" + key + "=" + System.getProperty(key));
         }
@@ -422,7 +423,7 @@ public class RemoteServer {
             return home;
         }
 
-        String openejbHome = System.getProperty("openejb.home");
+        final String openejbHome = System.getProperty("openejb.home");
 
         if (openejbHome != null) {
             home = new File(openejbHome);
@@ -465,12 +466,12 @@ public class RemoteServer {
     }
 
     private void forceShutdown() throws Exception {
-        String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
+        final String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
 
         Socket socket = null;
         try {
             socket= new Socket(host, shutdownPort);
-            OutputStream out = socket.getOutputStream();
+            final OutputStream out = socket.getOutputStream();
             out.write(fcommand.getBytes());
             out.flush();
         } finally {
@@ -544,7 +545,7 @@ public class RemoteServer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                for (Process server : kill) {
+                for (final Process server : kill) {
                     try {
                         if (server != null) {
                             server.destroy();

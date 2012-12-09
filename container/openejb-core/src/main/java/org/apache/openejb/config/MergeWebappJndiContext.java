@@ -26,6 +26,7 @@ import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.TransactionType;
 
 import javax.ejb.EJBContext;
@@ -84,34 +85,38 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             mergeUserTransaction(webApp.getResourceEnvRefMap(), bean.getResourceEnvRefMap(), bean);
         }
 
+        final SessionBean aggregator = new SessionBean(); // easy way to get a JndiConsumer
+
         for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
+            aggregator.getEnvEntryMap().putAll(a.getEnvEntryMap());
+            aggregator.getEjbRefMap().putAll(a.getEjbRefMap());
+            aggregator.getEjbLocalRefMap().putAll(a.getEjbLocalRefMap());
+            aggregator.getServiceRefMap().putAll(a.getServiceRefMap());
+            aggregator.getResourceRefMap().putAll(a.getResourceRefMap());
+            aggregator.getResourceEnvRefMap().putAll(a.getResourceEnvRefMap());
+            aggregator.getMessageDestinationRefMap().putAll(a.getMessageDestinationRefMap());
+            aggregator.getPersistenceContextRefMap().putAll(a.getPersistenceContextRefMap());
+            aggregator.getPersistenceUnitRefMap().putAll(a.getPersistenceUnitRefMap());
+        }
 
-            // Merge the bean namespaces together too
-            for (EnterpriseBean b : ejbJar.getEnterpriseBeans()) {
-                if (a == b) continue;
+        for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
+            merge(a.getEnvEntryMap(), aggregator.getEnvEntryMap());
+            merge(a.getEjbRefMap(), aggregator.getEjbRefMap());
+            merge(a.getEjbLocalRefMap(), aggregator.getEjbLocalRefMap());
+            merge(a.getServiceRefMap(), aggregator.getServiceRefMap());
+            merge(a.getResourceRefMap(), aggregator.getResourceRefMap());
+            merge(a.getResourceEnvRefMap(), aggregator.getResourceEnvRefMap());
+            merge(a.getMessageDestinationRefMap(), aggregator.getMessageDestinationRefMap());
+            merge(a.getPersistenceContextRefMap(), aggregator.getPersistenceContextRefMap());
+            merge(a.getPersistenceUnitRefMap(), aggregator.getPersistenceUnitRefMap());
 
-                merge(a.getEnvEntryMap(), b.getEnvEntryMap());
-                merge(a.getEjbRefMap(), b.getEjbRefMap());
-                merge(a.getEjbLocalRefMap(), b.getEjbLocalRefMap());
-                merge(a.getServiceRefMap(), b.getServiceRefMap());
-                merge(a.getResourceRefMap(), b.getResourceRefMap());
-                merge(a.getResourceEnvRefMap(), b.getResourceEnvRefMap());
-                merge(a.getMessageDestinationRefMap(), b.getMessageDestinationRefMap());
-                merge(a.getPersistenceContextRefMap(), b.getPersistenceContextRefMap());
-                merge(a.getPersistenceUnitRefMap(), b.getPersistenceUnitRefMap());
-
-                mergeUserTransaction(a.getResourceRefMap(), b.getResourceRefMap(), b);
-                mergeUserTransaction(a.getResourceEnvRefMap(), b.getResourceEnvRefMap(), b);
-            }
+            mergeUserTransaction(aggregator.getResourceRefMap(), a.getResourceRefMap(), a);
+            mergeUserTransaction(aggregator.getResourceEnvRefMap(), a.getResourceEnvRefMap(), a);
         }
     }
 
     /**
      * Bidirectional a-b merge
-     *
-     * @param a
-     * @param b
-     * @param <R>
      */
     private <R extends JndiReference> void merge(Map<String, R> a, Map<String, R> b) {
         copy(a, b);

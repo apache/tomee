@@ -30,5 +30,5 @@ table creations and the insertion of the "admin" "tomee" with the password "tome
 
 ## Test it
 
-Go to http://localhost:8080/realm-in-tomee-1.1-SNAPSHOT/, then connect using
+Go to http://localhost:8080/realm-in-tomee-1.1.0-SNAPSHOT/, then connect using
 the login/password tomee/tomee. You should see "Home".

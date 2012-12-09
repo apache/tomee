@@ -23,6 +23,7 @@ import org.apache.tomee.webapp.command.UserNotAuthenticated;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -30,6 +31,7 @@ import java.util.Properties;
 public class Application {
     private static final Application INSTANCE = new Application();
 
+    private String rootPath;
     private final Map<String, Session> sessions = new HashMap<String, Session>();
 
     private Application() {
@@ -38,6 +40,14 @@ public class Application {
 
     public static Application getInstance() {
         return INSTANCE;
+    }
+
+    public String getRootPath() {
+        return rootPath;
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 
     public Session getExistingSession(String id) {
@@ -53,7 +63,7 @@ public class Application {
         synchronized (this.sessions) {
             session = this.sessions.get(id);
             if (session == null) {
-                session = new Session();
+                session = new Session(new File(rootPath));
                 this.sessions.put(id, session);
             }
         }
@@ -68,15 +78,21 @@ public class Application {
 
     public class Session {
         private Context context;
+        private final File rootFolder;
+
+        public Session(File rootFolder) {
+            this.rootFolder = rootFolder;
+        }
 
         public Context getContext() {
             return context;
         }
 
-        public Context login(String user, String pass) {
+        public Context login(String user, String pass, String protocol, String port) {
+            final String addr = protocol + "://127.0.0.1:" + port + "/" + this.rootFolder.getName() + "/ejb";
             final Properties props = new Properties();
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "http://127.0.0.1:8080/tomee/ejb");
+            props.put("java.naming.provider.url", addr);
             props.setProperty(Context.SECURITY_PRINCIPAL, user);
             props.setProperty(Context.SECURITY_CREDENTIALS, pass);
             try {

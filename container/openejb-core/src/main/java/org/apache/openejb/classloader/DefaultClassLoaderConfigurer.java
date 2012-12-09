@@ -61,7 +61,7 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
             if (parent.exists()) {
                 final File[] files = parent.listFiles();
                 if (files != null) {
-                    for (File f : files) {
+                    for (final File f : files) {
                         final String name = f.getName();
                         if (f.isDirectory() || name.endsWith(".zip") || name.endsWith(".jar")) {
                             addedList.add(f.getAbsolutePath());
@@ -73,7 +73,7 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
 
         added = new URL[addedList.size()];
         int i = 0;
-        for (String path : addedList) {
+        for (final String path : addedList) {
             try {
                 added[i++] = new File(path).toURI().toURL();
             } catch (MalformedURLException e) {

@@ -33,12 +33,10 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.5.1-SNAPSHOT</version>
+  <version>4.5.1</version>
 
   <name>Apache OpenEJB</name>
-  <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
-    Server.
-  </description>
+  <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
   <url>http://openejb.apache.org/</url>
   <inceptionYear>1999</inceptionYear>
 
@@ -90,8 +88,8 @@
 
   <properties>
 
-    <openejb.version>4.5.1-SNAPSHOT</openejb.version>
-    <tomee.version>1.5.1-SNAPSHOT</tomee.version>
+    <openejb.version>4.5.1</openejb.version>
+    <tomee.version>1.5.1</tomee.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -119,11 +117,11 @@
     <jaxb.version>2.2.6</jaxb.version>
 
     <!-- Used mainly in assembly/openejb-tomcat* projects  -->
-    <tomcat.bundle.version>7.0.32-SNAPSHOT</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
-    <tomcat.version>7.0.32</tomcat.version>
+    <tomcat.bundle.version>7.0.34</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
+    <tomcat.version>7.0.34</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.7.0</cxf.version>
+    <cxf.version>2.6.3</cxf.version>
     <ehcache.version>2.6.0</ehcache.version> <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
@@ -145,11 +143,11 @@
     <junit.version>4.9</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <org.apache.openwebbeans.version>1.1.6</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.1.7</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.1.9</myfaces.version>
+    <myfaces.version>2.1.10</myfaces.version>
     <slf4j.version>1.7.2</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
@@ -353,6 +351,45 @@
       </modules>
     </profile>
     <profile>
+      <id>style</id>
+      <modules>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.9.1</version>
+            <configuration>
+              <sourceDirectory>${project.build.directory}/../container/openejb-core/src/main/java/org/apache/openejb/config</sourceDirectory>
+              <configLocation>checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <enableRulesSummary>false</enableRulesSummary>
+              <failsOnError>true</failsOnError>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <repositories>
+        <repository>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <id>Codehaus Snapshots</id>
+          <url>http://snapshots.repository.codehaus.org/</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <id>Codehaus Snapshots</id>
+          <url>http://snapshots.repository.codehaus.org/</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <profile>
       <id>rat</id>
       <modules>
         <module>deps</module>
@@ -439,6 +476,14 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>OWB-1.1.7</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-117/</url>
+    </repository>
+    <repository>
+      <id>tomcat-7.0.34</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomcat-113/</url>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>

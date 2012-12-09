@@ -222,7 +222,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
             instance = createEjb(creationalContext);
         } else {
             final InstanceBean<T> bean = new InstanceBean<T>(this);
-            if (webBeansContext.getWebBeansUtil().isScopeTypeNormal(scopeClass)) {
+            if (webBeansContext.getBeanManagerImpl().isScopeTypeNormal(scopeClass)) {
                 instance = (T) webBeansContext.getProxyFactory().createNormalScopedBeanProxy(bean, creationalContext);
             } else {
                 final Context context = webBeansContext.getBeanManagerImpl().getContext(scopeClass);

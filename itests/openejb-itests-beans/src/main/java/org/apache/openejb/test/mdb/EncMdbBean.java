@@ -55,17 +55,19 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
 	private MessageDrivenContext mdbContext = null;
     private MdbInvoker mdbInvoker;
 
-    public void setMessageDrivenContext(MessageDrivenContext ctx) throws EJBException {
+    @Override
+    public void setMessageDrivenContext(final MessageDrivenContext ctx) throws EJBException {
         this.mdbContext = ctx;
         try {
-            ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
+            final ConnectionFactory connectionFactory = (ConnectionFactory) new InitialContext().lookup("java:comp/env/jms");
             mdbInvoker = new MdbInvoker(connectionFactory, this);
         } catch (Exception e) {
             throw new EJBException(e);
         }
     }
 
-    public void onMessage(Message message) {
+    @Override
+    public void onMessage(final Message message) {
         try {
 //            System.out.println("\n" +
 //                    "***************************************\n" +
@@ -82,16 +84,17 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupEntityBean() throws TestFailureException {
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicBmpHome home = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/bmp_entity"), BasicBmpHome.class );
+            final BasicBmpHome home = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/bmp_entity"), BasicBmpHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicBmpObject object = home.createObject("Enc Bean");
+            final BasicBmpObject object = home.createObject("Enc Bean");
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -101,16 +104,17 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatefulBean() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful"), BasicStatefulHome.class );
+            final BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful"), BasicStatefulHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicStatefulObject object = home.createObject("Enc Bean");
+            final BasicStatefulObject object = home.createObject("Enc Bean");
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -120,16 +124,17 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatelessBean() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateless"), BasicStatelessHome.class );
+            final BasicStatelessHome home = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateless"), BasicStatelessHome.class );
             Assert.assertNotNull("The EJBHome looked up is null",home);
 
-            BasicStatelessObject object = home.createObject();
+            final BasicStatelessObject object = home.createObject();
             Assert.assertNotNull("The EJBObject is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -139,14 +144,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatelessBusinessLocal() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-                Object o = ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-local");
-                BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
+                final Object o = ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-local");
+                final BasicStatelessBusinessLocal object = (BasicStatelessBusinessLocal) o;
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
             } catch (Exception e){
                 e.printStackTrace();
@@ -157,13 +163,14 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatelessBusinessRemote() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class );
+            final BasicStatelessBusinessRemote object = (BasicStatelessBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateless-business-remote"), BasicStatelessBusinessRemote.class );
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -173,13 +180,14 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatefulBusinessLocal() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
+            final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -189,13 +197,14 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStatefulBusinessRemote() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class );
+            final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateless/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class );
             Assert.assertNotNull("The EJB BusinessRemote is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
@@ -205,14 +214,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupStringEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            String expected = new String("1");
-            String actual   = (String)ctx.lookup("java:comp/env/stateless/references/String");
+            final String expected = "1";
+            final String actual   = (String)ctx.lookup("java:comp/env/stateless/references/String");
 
             Assert.assertNotNull("The String looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -225,14 +235,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupDoubleEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Double expected = new Double(1.0D);
-            Double actual   = (Double)ctx.lookup("java:comp/env/stateless/references/Double");
+            final Double expected = 1.0D;
+            final Double actual   = (Double)ctx.lookup("java:comp/env/stateless/references/Double");
 
             Assert.assertNotNull("The Double looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -245,14 +256,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupLongEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Long expected = new Long(1L);
-            Long actual   = (Long)ctx.lookup("java:comp/env/stateless/references/Long");
+            final Long expected = 1L;
+            final Long actual   = (Long)ctx.lookup("java:comp/env/stateless/references/Long");
 
             Assert.assertNotNull("The Long looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -265,14 +277,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupFloatEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Float expected = new Float(1.0F);
-            Float actual   = (Float)ctx.lookup("java:comp/env/stateless/references/Float");
+            final Float expected = 1.0F;
+            final Float actual   = (Float)ctx.lookup("java:comp/env/stateless/references/Float");
 
             Assert.assertNotNull("The Float looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -285,14 +298,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupIntegerEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Integer expected = new Integer(1);
-            Integer actual   = (Integer)ctx.lookup("java:comp/env/stateless/references/Integer");
+            final Integer expected = 1;
+            final Integer actual   = (Integer)ctx.lookup("java:comp/env/stateless/references/Integer");
 
             Assert.assertNotNull("The Integer looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -305,14 +319,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupShortEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Short expected = new Short((short)1);
-            Short actual   = (Short)ctx.lookup("java:comp/env/stateless/references/Short");
+            final Short expected = (short) 1;
+            final Short actual   = (Short)ctx.lookup("java:comp/env/stateless/references/Short");
 
             Assert.assertNotNull("The Short looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -325,14 +340,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupBooleanEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Boolean expected = new Boolean(true);
-            Boolean actual = (Boolean)ctx.lookup("java:comp/env/stateless/references/Boolean");
+            final Boolean expected = true;
+            final Boolean actual = (Boolean)ctx.lookup("java:comp/env/stateless/references/Boolean");
 
             Assert.assertNotNull("The Boolean looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -345,14 +361,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupByteEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Byte expected = new Byte((byte)1);
-            Byte actual   = (Byte)ctx.lookup("java:comp/env/stateless/references/Byte");
+            final Byte expected = (byte) 1;
+            final Byte actual   = (Byte)ctx.lookup("java:comp/env/stateless/references/Byte");
 
             Assert.assertNotNull("The Byte looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -365,14 +382,15 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupCharacterEntry() throws TestFailureException{
         try{
             try{
-            InitialContext ctx = new InitialContext();
+            final InitialContext ctx = new InitialContext();
             Assert.assertNotNull("The InitialContext is null", ctx );
 
-            Character expected = new Character('D');
-            Character actual   = (Character)ctx.lookup("java:comp/env/stateless/references/Character");
+            final Character expected = 'D';
+            final Character actual   = (Character)ctx.lookup("java:comp/env/stateless/references/Character");
 
             Assert.assertNotNull("The Character looked up is null", actual );
             Assert.assertEquals(expected, actual );
@@ -385,12 +403,13 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupResource() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                Object obj = ctx.lookup("java:comp/env/datasource");
+                final Object obj = ctx.lookup("java:comp/env/datasource");
                 Assert.assertNotNull("The DataSource is null", obj);
                 Assert.assertTrue("Not an instance of DataSource", obj instanceof DataSource);
             } catch (Exception e){
@@ -401,27 +420,28 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupJMSConnectionFactory() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
                 Object obj = ctx.lookup("java:comp/env/jms");
                 Assert.assertNotNull("The JMS ConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of ConnectionFactory", obj instanceof ConnectionFactory);
-                ConnectionFactory connectionFactory = (ConnectionFactory) obj;
+                final ConnectionFactory connectionFactory = (ConnectionFactory) obj;
                 testJmsConnection(connectionFactory.createConnection());
 
                 obj = ctx.lookup("java:comp/env/TopicCF");
                 Assert.assertNotNull("The JMS TopicConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of TopicConnectionFactory", obj instanceof TopicConnectionFactory);
-                TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
+                final TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory) obj;
                 testJmsConnection(topicConnectionFactory.createConnection());
 
                 obj = ctx.lookup("java:comp/env/QueueCF");
                 Assert.assertNotNull("The JMS QueueConnectionFactory is null", obj);
                 Assert.assertTrue("Not an instance of QueueConnectionFactory", obj instanceof QueueConnectionFactory);
-                QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
+                final QueueConnectionFactory queueConnectionFactory = (QueueConnectionFactory) obj;
                 testJmsConnection(queueConnectionFactory.createConnection());
             } catch (Exception e){
                 e.printStackTrace();
@@ -432,22 +452,23 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
-    private void testJmsConnection(javax.jms.Connection connection) throws JMSException {
-        Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Topic topic = session.createTopic("test");
-        MessageProducer producer = session.createProducer(topic);
+    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+        final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+        final Topic topic = session.createTopic("test");
+        final MessageProducer producer = session.createProducer(topic);
         producer.send(session.createMessage());
         producer.close();
         session.close();
         connection.close();
     }
 
+    @Override
     public void lookupPersistenceUnit() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
+                final EntityManagerFactory emf = (EntityManagerFactory)ctx.lookup("java:comp/env/persistence/TestUnit");
                 Assert.assertNotNull("The EntityManagerFactory is null", emf );
 
             } catch (Exception e){
@@ -458,12 +479,13 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupPersistenceContext() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
-                EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
+                final EntityManager em = (EntityManager)ctx.lookup("java:comp/env/persistence/TestContext");
                 Assert.assertNotNull("The EntityManager is null", em);
 
                 // call a do nothing method to assure entity manager actually exists
@@ -476,18 +498,19 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
         }
     }
 
+    @Override
     public void lookupMessageDrivenContext() throws TestFailureException{
         try{
             try{
-                InitialContext ctx = new InitialContext();
+                final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
                 // lookup in enc
-                MessageDrivenContext messageDrivenContext = (MessageDrivenContext)ctx.lookup("java:comp/env/mdbcontext");
+                final MessageDrivenContext messageDrivenContext = (MessageDrivenContext)ctx.lookup("java:comp/env/mdbcontext");
                 Assert.assertNotNull("The SessionContext got from java:comp/env/mdbcontext is null", messageDrivenContext );
 
                 // lookup using global name
-                EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
+                final EJBContext ejbCtx = (EJBContext)ctx.lookup("java:comp/EJBContext");
                 Assert.assertNotNull("The SessionContext got from java:comp/EJBContext is null ", ejbCtx );
 
                 // verify context was set via legacy set method
@@ -504,6 +527,11 @@ public class EncMdbBean implements EncMdbObject, MessageDrivenBean, MessageListe
     public void ejbCreate() throws javax.ejb.CreateException{
     }
 
+    @Override
     public void ejbRemove() throws EJBException {
+
+        if(null != mdbInvoker){
+            mdbInvoker.destroy();
+        }
     }
 }

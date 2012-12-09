@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
@@ -31,9 +31,20 @@
   <name>OpenEJB :: TomEE :: Webapp</name>
   <build>
     <plugins>
+      <plugin> <!-- the jar is only for resources and other classes are for the gui -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <includes>
+            <include>META-INF/**/*</include>
+            <include>juli.properties</include>
+          </includes>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-		    <version>2.2.2</version>
+	      <version>2.2.2</version>
         <executions>
           <execution>
             <id>war</id>
@@ -212,7 +223,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${tomee.version}</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openejb</groupId>
