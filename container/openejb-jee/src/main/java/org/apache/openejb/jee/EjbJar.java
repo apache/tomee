@@ -90,7 +90,7 @@ public class EjbJar implements NamedModule {
     @XmlTransient
     protected Map<String,EnterpriseBean> enterpriseBeans = new LinkedHashMap<String,EnterpriseBean>();
 
-    private Interceptors interceptors;
+    protected Interceptors interceptors;
     protected Relationships relationships;
     @XmlElement(name = "assembly-descriptor")
     protected AssemblyDescriptor assemblyDescriptor;
