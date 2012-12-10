@@ -250,6 +250,7 @@ public class Container {
 
     public void stop() throws Exception {
         tomcat.stop();
+        tomcat.destroy();
         deleteTree(base);
         OpenEJB.destroy();
     }
