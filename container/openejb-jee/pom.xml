@@ -30,7 +30,8 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Java EE</name>
 
-  <properties>
+
+ <properties>
       <openejb.osgi.import.pkg>
         org.apache.geronimo.specs.jpa;resolution:=optional,
         org.apache.geronimo.specs.activation;resolution:=optional,
@@ -40,32 +41,6 @@
 
   <build>
     <plugins>
-<!--
-      <plugin>
-        <groupId>com.envoisolutions.sxc</groupId>
-        <artifactId>sxc-jaxb-maven-plugin</artifactId>
-        <version>0.7.2</version>
-        <executions>
-          <execution>
-              <configuration>
-                <classes>
-                  <class>org.apache.openejb.jee</class>
-                  <class>org.apache.openejb.jee.jba</class>
-                  <class>org.apache.openejb.jee.jba.cmp</class>
-                  <class>org.apache.openejb.jee.jpa</class>
-                  <class>org.apache.openejb.jee.oejb2</class>
-                  <class>org.apache.openejb.jee.oejb3</class>
-                  <class>org.apache.openejb.jee.sun</class>
-                  <class>org.apache.openejb.jee.wls</class>
-                </classes>
-              </configuration>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>rat-maven-plugin</artifactId>
@@ -78,30 +53,6 @@
     </plugins>
   </build>
   <dependencies>
-<!--
-    <dependency>
-      <groupId>com.envoisolutions.sxc</groupId>
-      <artifactId>sxc-jaxb</artifactId>
-      <version>0.7.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
--->
-    <!--<dependency>-->
-      <!--<groupId>org.codehaus.woodstox</groupId>-->
-      <!--<artifactId>woodstox-core-asl</artifactId>-->
-      <!--<version>4.0.8</version>-->
-      <!--<exclusions>-->
-        <!--<exclusion>-->
-          <!--<groupId>javax.xml.stream</groupId>-->
-          <!--<artifactId>stax-api</artifactId>-->
-        <!--</exclusion>-->
-      <!--</exclusions>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>

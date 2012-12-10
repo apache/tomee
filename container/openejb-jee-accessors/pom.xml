@@ -38,51 +38,15 @@
     </openejb.osgi.import.pkg>
   </properties>
 
-  <build>
-    <plugins>
-      <!-- this configures the surefire plugin to run your tests with the javaagent enabled -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
-          <argLine>-javaagent:${basedir}/target/openejb-jaxbagent-${project.version}.jar=${project.build.directory}/classes/</argLine>
-          <workingDirectory>${basedir}/target</workingDirectory>
-        </configuration>
-      </plugin>
-
-      <!-- this tells maven to copy the openejb-javaagent jar into your target/ directory -->
-      <!-- where surefire can see it -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.openejb</groupId>
-                  <artifactId>openejb-jaxbagent</artifactId>
-                  <version>${project.version}</version>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jee</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -95,6 +59,29 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.metatype.sxc</groupId>
+      <artifactId>sxc-jaxb-core</artifactId>
+      <version>0.8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>woodstox-core-asl</artifactId>
+      <version>4.0.8</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.stream</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>
