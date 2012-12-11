@@ -25,11 +25,11 @@ public class ConnectionPoolTimeoutException extends IOException {
     public ConnectionPoolTimeoutException() {
     }
 
-    public ConnectionPoolTimeoutException(String s, Exception e) {
+    public ConnectionPoolTimeoutException(final String s, final Exception e) {
         super(s, e);
     }
 
-    public ConnectionPoolTimeoutException(String s) {
+    public ConnectionPoolTimeoutException(final String s) {
         super(s);
     }
 }
