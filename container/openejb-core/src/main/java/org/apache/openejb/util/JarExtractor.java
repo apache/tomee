@@ -59,9 +59,9 @@ public class JarExtractor {
             unpackDir = base.getDirectory(properties.getProperty(key), true);
         }
 
-        final File docBase = new File(unpackDir, pathname);
+        File docBase = new File(unpackDir, pathname);
 
-        extract(file, docBase);
+        docBase = extract(file, docBase);
         return docBase;
     }
 
@@ -73,17 +73,22 @@ public class JarExtractor {
      * @param destinationDir the directory in which the jar will be unpacked; must not exist
      * @throws java.io.IOException if an input/output error was encountered during expansion
      */
-    public static void extract(final File file, final File destinationDir) throws IOException {
+    public static File extract(final File file, File destinationDir) throws IOException {
         if (destinationDir.exists()) {
 
             if (destinationDir.lastModified() > file.lastModified()) {
                 // Ear file is already installed
                 // Unpacked dir is newer than archive
-                return;
+                return destinationDir.getAbsoluteFile();
             }
 
             if (!deleteDir(destinationDir)) {
-                throw new IOException("Failed to delete: " + destinationDir);
+                Files.deleteOnExit(destinationDir);
+                final File pf = destinationDir.getParentFile();
+                final String name = destinationDir.getName() + System.currentTimeMillis();
+                destinationDir = new File(pf, name);
+                destinationDir.deleteOnExit();
+                Files.deleteOnExit(destinationDir);
             }
         }
 
@@ -98,14 +103,14 @@ public class JarExtractor {
         try {
             Zips.unzip(file, destinationDir);
         } catch (IOException e) {
-            // If something went wrong, delete extracted dir to keep things
-            // clean
-            deleteDir(destinationDir);
+            // If something went wrong, delete extracted dir to keep things clean
+            Files.delete(destinationDir);
             throw e;
         }
 
         // Return the absolute path to our new document base directory
         logger.info("Extracted path: " + destinationDir.getAbsolutePath());
+        return destinationDir.getAbsoluteFile();
     }
 
 
