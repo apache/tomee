@@ -1318,11 +1318,30 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
 
-        final WebBeansListener webBeansListener = getWebBeansContext(contextInfo);
+        final WebBeansContext webBeansContext = getWebBeansContext(contextInfo);
+        if (webBeansContext != null) {
+            // it is important to have a begin and a end listener
+            // to be sure to create contexts before other listeners
+            // and destroy contexts after other listeners
 
-        if (webBeansListener != null) {
-            standardContext.addApplicationEventListener(webBeansListener);
-            standardContext.addApplicationLifecycleListener(webBeansListener);
+            final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+            final Object[] newEventListeners = new Object[appEventListeners.length + 2];
+
+            final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+            final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
+
+            final BeginWebBeansListener beginWebBeansListener = new BeginWebBeansListener(webBeansContext);
+            final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
+
+            newEventListeners[0] = beginWebBeansListener;
+            System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+            newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+            standardContext.setApplicationEventListeners(newEventListeners);
+
+            newLifecycleListeners[0] = beginWebBeansListener;
+            System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+            newLifecycleListeners[newEventListeners.length - 1] = endWebBeansListener;
+            standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
         }
 
         LinkageErrorProtection.preload(standardContext);
@@ -1363,7 +1382,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
-    private WebBeansListener getWebBeansContext(final ContextInfo contextInfo) {
+    private WebBeansContext getWebBeansContext(final ContextInfo contextInfo) {
         final AppContext appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
 
         if (appContext == null) return null;
@@ -1385,9 +1404,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
 
-        if (webBeansContext == null) webBeansContext = appContext.getWebBeansContext();
+        if (webBeansContext == null) {
+            webBeansContext = appContext.getWebBeansContext();
+        }
 
-        return new WebBeansListener(webBeansContext);
+        return webBeansContext;
     }
 
     private static String removeFirstSlashAndWar(final String name) {
