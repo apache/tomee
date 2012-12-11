@@ -180,7 +180,11 @@ public class Files {
                     delete();
                 }
             };
-            Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
+            try {
+                Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
+            } catch (Throwable e) {
+                //Ignore
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(loader);
         }
@@ -188,6 +192,26 @@ public class Files {
 
     public static void deleteOnExit(final File file) {
         delete.add(file.getAbsolutePath());
+        flagForDeleteOnExit(file);
+    }
+
+    public static void flagForDeleteOnExit(final File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                final File[] files = file.listFiles();
+                if (null != files) {
+                    for (final File f : files) {
+                        flagForDeleteOnExit(f);
+                    }
+                }
+            }
+
+            try {
+                file.deleteOnExit();
+            } catch (SecurityException e) {
+                //Ignore
+            }
+        }
     }
 
     private static void delete() {
@@ -206,13 +230,12 @@ public class Files {
                     }
                 }
             }
-
-            if (!file.delete()) {
-                try {
+            try {
+                if (!file.delete()) {
                     file.deleteOnExit();
-                } catch (Throwable e) {
-                    //Ignore
                 }
+            } catch (Throwable e) {
+                //Ignore
             }
         }
     }
