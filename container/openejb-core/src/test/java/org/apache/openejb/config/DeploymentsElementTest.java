@@ -497,7 +497,7 @@ public class DeploymentsElementTest extends Assert {
     @Test
     public void invalidDir_notReadable() throws Exception {
 
-        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")) {
 
             //File.setReadable(false) does nothing on win platforms
 
@@ -553,7 +553,7 @@ public class DeploymentsElementTest extends Assert {
     @Test
     public void invalidFile_notReadable() throws Exception {
 
-        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows")) {
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")) {
 
             //File.setReadable(false) does nothing on win platforms
 
