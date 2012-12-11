@@ -107,11 +107,11 @@ class AppInfoBuilder {
 
     private EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
 
-    public AppInfoBuilder(ConfigurationFactory configFactory) {
+    public AppInfoBuilder(final ConfigurationFactory configFactory) {
         this.configFactory = configFactory;
     }
 
-    public AppInfo build(AppModule appModule) throws OpenEJBException {
+    public AppInfo build(final AppModule appModule) throws OpenEJBException {
         final AppInfo appInfo = new AppInfo();
         appInfo.appId = appModule.getModuleId();
         appInfo.path = appModule.getJarLocation();
@@ -125,25 +125,25 @@ class AppInfoBuilder {
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;
 
-        buildPojoConfiguration(appModule, appInfo);
+        this.buildPojoConfiguration(appModule, appInfo);
 
-        buildAppResources(appModule, appInfo);
-        buildAppServices(appModule, appInfo);
+        this.buildAppResources(appModule, appInfo);
+        this.buildAppServices(appModule, appInfo);
 
         //
         //  J2EE Connectors
         //
-        buildConnectorModules(appModule, appInfo);
+        this.buildConnectorModules(appModule, appInfo);
 
         //
         //  Persistence Units
         //
-        buildPersistenceModules(appModule, appInfo);
+        this.buildPersistenceModules(appModule, appInfo);
 
 
-        final List<String> containerIds = configFactory.getContainerIds();
-        for (ConnectorInfo connectorInfo : appInfo.connectors) {
-            for (MdbContainerInfo containerInfo : connectorInfo.inbound) {
+        final List<String> containerIds = this.configFactory.getContainerIds();
+        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
+            for (final MdbContainerInfo containerInfo : connectorInfo.inbound) {
                 containerIds.add(containerInfo.id);
             }
         }
@@ -152,15 +152,15 @@ class AppInfoBuilder {
         //  EJB Jars
         //
         final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<EjbModule, EjbJarInfo>();
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             try {
-                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
+                final EjbJarInfo ejbJarInfo = this.ejbJarInfoBuilder.buildInfo(ejbModule);
                 ejbJarInfo.mbeans = ejbModule.getMbeans();
 
-                Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+                final Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
-                for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
-                    EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
+                for (final EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
+                    final EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
 
                     /*
                      * JRG - there's probably a better way of handling this, but this code handles the case when:
@@ -172,15 +172,15 @@ class AppInfoBuilder {
                      * 
                      */
                     if (bean instanceof MessageDrivenBeanInfo && !containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
-                		MessageDrivenBeanInfo mdb = (MessageDrivenBeanInfo) bean;
-                		String newContainerId = d.getContainerId() + "-" + mdb.mdbInterface;
+                		final MessageDrivenBeanInfo mdb = (MessageDrivenBeanInfo) bean;
+                		final String newContainerId = d.getContainerId() + "-" + mdb.mdbInterface;
                 		if (containerIds.contains(newContainerId)) {
                 			d.setContainerId(newContainerId);
                 		}
                     }
 
                     if (!containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
-                        String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
+                        final String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
                         logger.fatal(msg);
                         throw new OpenEJBException(msg);
                     }
@@ -189,7 +189,7 @@ class AppInfoBuilder {
                 }
 
 
-                for (PojoDeployment pojoDeployment : ejbModule.getOpenejbJar().getPojoDeployment()) {
+                for (final PojoDeployment pojoDeployment : ejbModule.getOpenejbJar().getPojoDeployment()) {
                     final IdPropertiesInfo info = new IdPropertiesInfo();
                     info.id = pojoDeployment.getClassName();
                     info.properties.putAll(pojoDeployment.getProperties());
@@ -197,9 +197,9 @@ class AppInfoBuilder {
                 }
 
                 ejbJarInfo.validationInfo = ValidatorBuilder.getInfo(ejbModule.getValidationConfig());
-                ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
+                ejbJarInfo.portInfos.addAll(this.configureWebservices(ejbModule.getWebservices()));
                 ejbJarInfo.uniqueId = ejbModule.getUniqueId();
-                configureWebserviceSecurity(ejbJarInfo, ejbModule);
+                this.configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
 
@@ -221,17 +221,17 @@ class AppInfoBuilder {
 
         final List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
         // Build the JNDI tree for each ejb
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
-            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule);
+            final EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule);
 
-            Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
+            final Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
-            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+            for (final EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                 beans.add(beanInfo);
 
                 // Get the ejb-jar.xml object
-                EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
+                final EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
 
                 // Build the JNDI info tree for the EJB
                 jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleName, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
@@ -244,11 +244,13 @@ class AppInfoBuilder {
         // Check for circular references in Singleton @DependsOn
         try {
             References.sort(beans, new References.Visitor<EnterpriseBeanInfo>(){
-                public String getName(EnterpriseBeanInfo bean) {
+                @Override
+                public String getName(final EnterpriseBeanInfo bean) {
                     return bean.ejbDeploymentId;
                 }
 
-                public Set<String> getReferences(EnterpriseBeanInfo bean) {
+                @Override
+                public Set<String> getReferences(final EnterpriseBeanInfo bean) {
                     return new LinkedHashSet<String>(bean.dependsOn);
                 }
             });
@@ -260,20 +262,20 @@ class AppInfoBuilder {
         //
         //  Application Clients
         //
-        buildClientModules(appModule, appInfo, jndiEncInfoBuilder);
+        this.buildClientModules(appModule, appInfo, jndiEncInfoBuilder);
 
         //
         //  Webapps
         //
-        buildWebModules(appModule, jndiEncInfoBuilder, appInfo);
+        this.buildWebModules(appModule, jndiEncInfoBuilder, appInfo);
 
 
         //
         //  Final AppInfo creation
         //
         final List<URL> additionalLibraries = appModule.getAdditionalLibraries();
-        for (URL url : additionalLibraries) {
-            File file = toFile(url);
+        for (final URL url : additionalLibraries) {
+            final File file = toFile(url);
             try {
                 appInfo.libs.add(file.getCanonicalPath());
             } catch (IOException e) {
@@ -289,7 +291,7 @@ class AppInfoBuilder {
             }
         }
 
-        ReportValidationResults reportValidationResults = new ReportValidationResults();
+        final ReportValidationResults reportValidationResults = new ReportValidationResults();
         reportValidationResults.deploy(appModule);
 
         logger.info("config.appLoaded", appInfo.path);
@@ -301,7 +303,7 @@ class AppInfoBuilder {
     }
 
     private void buildPojoConfiguration(final AppModule appModule, final AppInfo appInfo) {
-        for (Map.Entry<String, PojoConfiguration> config : appModule.getPojoConfigurations().entrySet()) {
+        for (final Map.Entry<String, PojoConfiguration> config : appModule.getPojoConfigurations().entrySet()) {
             final IdPropertiesInfo info = new IdPropertiesInfo();
             info.id = config.getKey();
             info.properties.putAll(config.getValue().getProperties());
@@ -311,14 +313,14 @@ class AppInfoBuilder {
 
     private void buildAppServices(final AppModule appModule, final AppInfo appInfo) throws OpenEJBException {
         final Collection<org.apache.openejb.config.sys.Service> services = appModule.getServices();
-        for (org.apache.openejb.config.sys.Service service : services) {
-            final ServiceInfo info = configFactory.configureService(service, ServiceInfo.class);
+        for (final org.apache.openejb.config.sys.Service service : services) {
+            final ServiceInfo info = this.configFactory.configureService(service, ServiceInfo.class);
             appInfo.services.add(info);
         }
     }
 
-    private void buildAppResources(AppModule module, AppInfo info) {
-        for (Resource def : module.getResources()) {
+    private void buildAppResources(final AppModule module, final AppInfo info) {
+        for (final Resource def : module.getResources()) {
             // the resource is already deployed
             // however we keep its id to be able to undeployed it later
             // note: if ApplicationWide property was specified
@@ -331,10 +333,10 @@ class AppInfoBuilder {
         }
     }
 
-    private void buildClientModules(AppModule appModule, AppInfo appInfo, JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            ApplicationClient applicationClient = clientModule.getApplicationClient();
-            ClientInfo clientInfo = new ClientInfo();
+    private void buildClientModules(final AppModule appModule, final AppInfo appInfo, final JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {
+        for (final ClientModule clientModule : appModule.getClientModules()) {
+            final ApplicationClient applicationClient = clientModule.getApplicationClient();
+            final ClientInfo clientInfo = new ClientInfo();
             clientInfo.description = applicationClient.getDescription();
             clientInfo.displayName = applicationClient.getDisplayName();
             clientInfo.path = clientModule.getJarLocation();
@@ -352,10 +354,10 @@ class AppInfoBuilder {
         }
     }
 
-    private void buildWebModules(AppModule appModule, JndiEncInfoBuilder jndiEncInfoBuilder, AppInfo appInfo) throws OpenEJBException {
-        for (WebModule webModule : appModule.getWebModules()) {
-            WebApp webApp = webModule.getWebApp();
-            WebAppInfo webAppInfo = new WebAppInfo();
+    private void buildWebModules(final AppModule appModule, final JndiEncInfoBuilder jndiEncInfoBuilder, final AppInfo appInfo) throws OpenEJBException {
+        for (final WebModule webModule : appModule.getWebModules()) {
+            final WebApp webApp = webModule.getWebApp();
+            final WebAppInfo webAppInfo = new WebAppInfo();
             webAppInfo.description = webApp.getDescription();
             webAppInfo.displayName = webApp.getDisplayName();
             webAppInfo.path = webModule.getJarLocation();
@@ -369,14 +371,14 @@ class AppInfoBuilder {
             webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
             webAppInfo.jaxRsProviders.addAll(webModule.getJaxrsProviders());
 
-            for (Map.Entry<String, Set<String>> entry : webModule.getWebAnnotatedClasses().entrySet()) {
+            for (final Map.Entry<String, Set<String>> entry : webModule.getWebAnnotatedClasses().entrySet()) {
                 final ClassListInfo info = new ClassListInfo();
                 info.name = entry.getKey();
                 info.list.addAll(entry.getValue());
                 webAppInfo.webAnnotatedClasses.add(info);
             }
 
-            for (Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
+            for (final Map.Entry<String, Set<String>> entry : webModule.getJsfAnnotatedClasses().entrySet()) {
                 final ClassListInfo info = new ClassListInfo();
                 info.name = entry.getKey();
                 info.list.addAll(entry.getValue());
@@ -393,29 +395,29 @@ class AppInfoBuilder {
 
             jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId, webModule.getModuleUri(), webAppInfo.jndiEnc, webAppInfo.jndiEnc);
 
-            webAppInfo.portInfos.addAll(configureWebservices(webModule.getWebservices()));
+            webAppInfo.portInfos.addAll(this.configureWebservices(webModule.getWebservices()));
             // configureWebserviceSecurity(webAppInfo, webModule);: was empty
 
-            for (Servlet servlet : webModule.getWebApp().getServlet()) {
-                ServletInfo servletInfo = new ServletInfo();
+            for (final Servlet servlet : webModule.getWebApp().getServlet()) {
+                final ServletInfo servletInfo = new ServletInfo();
                 servletInfo.servletName = servlet.getServletName();
                 servletInfo.servletClass = servlet.getServletClass();
                 servletInfo.mappings = webModule.getWebApp().getServletMappings(servletInfo.servletName);
                 webAppInfo.servlets.add(servletInfo);
             }
 
-            for (Listener listener : webModule.getWebApp().getListener()) {
+            for (final Listener listener : webModule.getWebApp().getListener()) {
                 final ListenerInfo listenerInfo = new ListenerInfo();
                 listenerInfo.classname = listener.getListenerClass();
                 webAppInfo.listeners.add(listenerInfo);
             }
 
-            for (Filter filter : webModule.getWebApp().getFilter()) {
+            for (final Filter filter : webModule.getWebApp().getFilter()) {
                 final FilterInfo filterInfo = new FilterInfo();
                 filterInfo.name = filter.getFilterName();
                 filterInfo.classname = filter.getFilterClass();
                 filterInfo.mappings = webModule.getWebApp().getFilterMappings(filter.getFilterName());
-                for (ParamValue pv : filter.getInitParam()) {
+                for (final ParamValue pv : filter.getInitParam()) {
                     filterInfo.initParams.put(pv.getParamName(), pv.getParamValue());
                 }
                 webAppInfo.filters.add(filterInfo);
@@ -425,18 +427,18 @@ class AppInfoBuilder {
         }
     }
 
-    private void buildConnectorModules(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
-        String appId = appModule.getModuleId();
+    private void buildConnectorModules(final AppModule appModule, final AppInfo appInfo) throws OpenEJBException {
+        final String appId = appModule.getModuleId();
 
-        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
+        for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
             // the id generation code in AutoConfig$AppResources
             //
 
-            Connector connector = connectorModule.getConnector();
+            final Connector connector = connectorModule.getConnector();
 
-            ConnectorInfo connectorInfo = new ConnectorInfo();
+            final ConnectorInfo connectorInfo = new ConnectorInfo();
             connectorInfo.description = connector.getDescription();
             connectorInfo.displayName = connector.getDisplayName();
             connectorInfo.path = connectorModule.getJarLocation();
@@ -446,9 +448,9 @@ class AppInfoBuilder {
             connectorInfo.uniqueId = connectorModule.getUniqueId();
             connectorInfo.mbeans = connectorModule.getMbeans();
 
-            List<URL> libraries = connectorModule.getLibraries();
-            for (URL url : libraries) {
-                File file = toFile(url);
+            final List<URL> libraries = connectorModule.getLibraries();
+            for (final URL url : libraries) {
+                final File file = toFile(url);
                 try {
                     connectorInfo.libs.add(file.getCanonicalPath());
                 } catch (IOException e) {
@@ -456,29 +458,29 @@ class AppInfoBuilder {
                 }
             }
 
-            ResourceAdapter resourceAdapter = connector.getResourceAdapter();
+            final ResourceAdapter resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
-                String id = getId(connectorModule);
-                String className = resourceAdapter.getResourceAdapterClass();
+                final String id = this.getId(connectorModule);
+                final String className = resourceAdapter.getResourceAdapterClass();
 
-                ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
                 provider.getTypes().add(className);
 
                 ServiceUtils.registerServiceProvider(appId, provider);
 
-                Resource resource = new Resource(id, className, appId + "#" + id);
+                final Resource resource = new Resource(id, className, appId + "#" + id);
 
-                for (ConfigProperty property : resourceAdapter.getConfigProperty()) {
-                    String name = property.getConfigPropertyName();
-                    String value = property.getConfigPropertyValue();
+                for (final ConfigProperty property : resourceAdapter.getConfigProperty()) {
+                    final String name = property.getConfigPropertyName();
+                    final String value = property.getConfigPropertyValue();
                     if (value != null) {
                         resource.getProperties().setProperty(name, value);
                     }
                 }
-                connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
+                connectorInfo.resourceAdapter = this.configFactory.configureService(resource, ResourceInfo.class);
             }
 
-            OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
+            final OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
                 switch (outbound.getTransactionSupport()) {
@@ -492,22 +494,22 @@ class AppInfoBuilder {
                         transactionSupport = "xa";
                         break;
                 }
-                for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
+                for (final ConnectionDefinition connection : outbound.getConnectionDefinition()) {
 
-                    String id = getId(connection, outbound, connectorModule);
-                    String className = connection.getManagedConnectionFactoryClass();
-                    String type = connection.getConnectionFactoryInterface();
+                    final String id = this.getId(connection, outbound, connectorModule);
+                    final String className = connection.getManagedConnectionFactoryClass();
+                    final String type = connection.getConnectionFactoryInterface();
 
-                    ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                    final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
                     provider.getTypes().add(type);
 
                     ServiceUtils.registerServiceProvider(appId, provider);
 
-                    Resource resource = new Resource(id, type, appId + "#" + id);
-                    Properties properties = resource.getProperties();
-                    for (ConfigProperty property : connection.getConfigProperty()) {
-                        String name = property.getConfigPropertyName();
-                        String value = property.getConfigPropertyValue();
+                    final Resource resource = new Resource(id, type, appId + "#" + id);
+                    final Properties properties = resource.getProperties();
+                    for (final ConfigProperty property : connection.getConfigProperty()) {
+                        final String name = property.getConfigPropertyName();
+                        final String value = property.getConfigPropertyValue();
                         if (value != null) {
                             properties.setProperty(name, value);
                         }
@@ -517,49 +519,49 @@ class AppInfoBuilder {
                     	properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
                     }
 
-                    ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+                    final ResourceInfo resourceInfo = this.configFactory.configureService(resource, ResourceInfo.class);
                     connectorInfo.outbound.add(resourceInfo);
                 }
             }
 
-            InboundResourceadapter inbound = resourceAdapter.getInboundResourceAdapter();
+            final InboundResourceadapter inbound = resourceAdapter.getInboundResourceAdapter();
             if (inbound != null) {
-                for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
-                    String id = getId(messageListener, inbound, connectorModule);
+                for (final MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
+                    final String id = this.getId(messageListener, inbound, connectorModule);
 
-                    Container container = new Container(id, "MESSAGE", null);
+                    final Container container = new Container(id, "MESSAGE", null);
 
-                    Properties properties = container.getProperties();
+                    final Properties properties = container.getProperties();
                     properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
                     properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
                     properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
 
-                    MdbContainerInfo mdbContainerInfo = configFactory.configureService(container, MdbContainerInfo.class);
+                    final MdbContainerInfo mdbContainerInfo = this.configFactory.configureService(container, MdbContainerInfo.class);
                     connectorInfo.inbound.add(mdbContainerInfo);
                 }
             }
 
-            for (AdminObject adminObject : resourceAdapter.getAdminObject()) {
+            for (final AdminObject adminObject : resourceAdapter.getAdminObject()) {
 
-                String id = getId(adminObject, resourceAdapter, connectorModule);
-                String className = adminObject.getAdminObjectClass();
-                String type = adminObject.getAdminObjectInterface();
+                final String id = this.getId(adminObject, resourceAdapter, connectorModule);
+                final String className = adminObject.getAdminObjectClass();
+                final String type = adminObject.getAdminObjectInterface();
 
-                ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
                 provider.getTypes().add(type);
 
                 ServiceUtils.registerServiceProvider(appId, provider);
 
-                Resource resource = new Resource(id, type, appId + "#" + id);
-                Properties properties = resource.getProperties();
-                for (ConfigProperty property : adminObject.getConfigProperty()) {
-                    String name = property.getConfigPropertyName();
-                    String value = property.getConfigPropertyValue();
+                final Resource resource = new Resource(id, type, appId + "#" + id);
+                final Properties properties = resource.getProperties();
+                for (final ConfigProperty property : adminObject.getConfigProperty()) {
+                    final String name = property.getConfigPropertyName();
+                    final String value = property.getConfigPropertyValue();
                     if (value != null) {
                         properties.setProperty(name, value);
                     }
                 }
-                ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+                final ResourceInfo resourceInfo = this.configFactory.configureService(resource, ResourceInfo.class);
                 connectorInfo.adminObject.add(resourceInfo);
             }
 
@@ -567,8 +569,8 @@ class AppInfoBuilder {
         }
     }
 
-    private String getId(AdminObject adminObject, ResourceAdapter resourceAdapter, ConnectorModule connectorModule) {
-        String id;
+    private String getId(final AdminObject adminObject, final ResourceAdapter resourceAdapter, final ConnectorModule connectorModule) {
+        final String id;
         if (adminObject.getId() != null) {
             id = adminObject.getId();
         } else if (resourceAdapter.getAdminObject().size() == 1) {
@@ -579,8 +581,8 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(MessageListener messageListener, InboundResourceadapter inbound, ConnectorModule connectorModule) {
-        String id;
+    private String getId(final MessageListener messageListener, final InboundResourceadapter inbound, final ConnectorModule connectorModule) {
+        final String id;
         if (messageListener.getId() != null) {
             id = messageListener.getId();
         } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
@@ -591,8 +593,8 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectionDefinition connection, OutboundResourceAdapter outbound, ConnectorModule connectorModule) {
-        String id;
+    private String getId(final ConnectionDefinition connection, final OutboundResourceAdapter outbound, final ConnectorModule connectorModule) {
+        final String id;
         if (connection.getId() != null) {
             id = connection.getId();
         } else if (outbound.getConnectionDefinition().size() == 1) {
@@ -603,7 +605,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectorModule connectorModule) {
+    private String getId(final ConnectorModule connectorModule) {
         String id = connectorModule.getConnector().getResourceAdapter().getId();
         if (id == null) {
             id = connectorModule.getModuleId() + "RA";
@@ -611,12 +613,12 @@ class AppInfoBuilder {
         return id;
     }
 
-    private void buildPersistenceModules(AppModule appModule, AppInfo appInfo) {
-        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            String rootUrl = persistenceModule.getRootUrl();
-            Persistence persistence = persistenceModule.getPersistence();
-            for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
-                PersistenceUnitInfo info = new PersistenceUnitInfo();
+    private void buildPersistenceModules(final AppModule appModule, final AppInfo appInfo) {
+        for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            final String rootUrl = persistenceModule.getRootUrl();
+            final Persistence persistence = persistenceModule.getPersistence();
+            for (final PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+                final PersistenceUnitInfo info = new PersistenceUnitInfo();
                 info.id = persistenceUnit.getName() + " " + rootUrl.hashCode();
                 info.name = persistenceUnit.getName();
                 info.watchedResources.addAll(persistenceModule.getWatchedResources());
@@ -624,7 +626,7 @@ class AppInfoBuilder {
                 info.provider = persistenceUnit.getProvider();
                 info.transactionType = persistenceUnit.getTransactionType().toString();
 
-                Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
+                final Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
                 info.excludeUnlistedClasses = persistenceUnit.isScanned() || (excludeUnlistedClasses != null && excludeUnlistedClasses);
 
                 info.jtaDataSource = persistenceUnit.getJtaDataSource();
@@ -750,15 +752,15 @@ class AppInfoBuilder {
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "toplink");
 
-                String lookupProperty = "toplink.target-server";
-                String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
+                final String lookupProperty = "toplink.target-server";
+                final String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
 
                 final String prefix = info.properties.getProperty(TABLE_PREFIX);
                 if (prefix != null) {
                     logger.warning("table prefix feature is not supported for toplink");
                 }
 
-                String className = info.properties.getProperty(lookupProperty);
+                final String className = info.properties.getProperty(lookupProperty);
 
                 if (className == null || className.startsWith("oracle.toplink.transaction")){
                     info.properties.setProperty(lookupProperty, openejbLookupClass);
@@ -769,10 +771,10 @@ class AppInfoBuilder {
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "eclipselink");
 
-                String lookupProperty = "eclipselink.target-server";
-                String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
+                final String lookupProperty = "eclipselink.target-server";
+                final String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
 
-                String className = info.properties.getProperty(lookupProperty);
+                final String className = info.properties.getProperty(lookupProperty);
 
                 if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
                     if (classLoader.getResource(ClassLoaderUtil.resourceName(openejbLookupClass)) != null) {
@@ -799,7 +801,7 @@ class AppInfoBuilder {
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "openjpa");
 
-                String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
+                final String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
 
                 if (existing == null){
                     info.properties.setProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES, DEFAULT_RUNTIME_UNENHANCED_CLASSES);
@@ -826,12 +828,12 @@ class AppInfoBuilder {
                 }
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
-                for (String key : keys) {
+                for (final String key : keys) {
                     if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
                         final Object o = info.properties.remove(key);
                         logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + key + "=" + o + "  [not valid in a container environment]");
                     } else { // try to convert it if necessary
-                        JPAPropertyConverter.Pair pair = JPAPropertyConverter.toOpenJPAValue(key, info.properties.getProperty(key), info.properties);
+                        final JPAPropertyConverter.Pair pair = JPAPropertyConverter.toOpenJPAValue(key, info.properties.getProperty(key), info.properties);
                         if (pair != null && !info.properties.containsKey(pair.getKey())) {
                             logger.info("Converting PersistenceUnit(name=" + info.name + ") property "
                                     + key + "=" + info.properties.getProperty(key) +  " to " + pair.toString());
@@ -846,7 +848,7 @@ class AppInfoBuilder {
             override(info);
         }
 
-        private static void overrideFromSystemProp(PersistenceUnitInfo info) {
+        private static void overrideFromSystemProp(final PersistenceUnitInfo info) {
             if (providerEnv != null) {
                 info.provider = providerEnv;
             }
@@ -864,15 +866,15 @@ class AppInfoBuilder {
             }
         }
 
-        private static void override(PersistenceUnitInfo info) {
+        private static void override(final PersistenceUnitInfo info) {
             override(info, info.name);
         }
 
-        private static void override(PersistenceUnitInfo info, String prefix) {
+        private static void override(final PersistenceUnitInfo info, final String prefix) {
 
-            Properties overrides = ConfigurationFactory.getSystemProperties(prefix, "PersistenceUnit");
+            final Properties overrides = ConfigurationFactory.getSystemProperties(prefix, "PersistenceUnit");
 
-            for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+            for (final Map.Entry<Object, Object> entry : overrides.entrySet()) {
                 final String property = (String) (prefix.equalsIgnoreCase(info.name) ? entry.getKey() : prefix + "." + entry.getKey());
                 final String value = (String) entry.getValue();
 
@@ -894,25 +896,25 @@ class AppInfoBuilder {
         }
     }
 
-    private static String getClientModuleId(ClientModule clientModule) {
+    private static String getClientModuleId(final ClientModule clientModule) {
         return clientModule.getModuleId();
     }
 
 
-    private List<PortInfo> configureWebservices(Webservices webservices) {
-        List<PortInfo> portMap = new ArrayList<PortInfo>();
+    private List<PortInfo> configureWebservices(final Webservices webservices) {
+        final List<PortInfo> portMap = new ArrayList<PortInfo>();
         if (webservices == null) {
             return portMap;
         }
 
-        for (WebserviceDescription desc : webservices.getWebserviceDescription()) {
-            String wsdlFile = desc.getWsdlFile();
-            String serviceName = desc.getWebserviceDescriptionName();
+        for (final WebserviceDescription desc : webservices.getWebserviceDescription()) {
+            final String wsdlFile = desc.getWsdlFile();
+            final String serviceName = desc.getWebserviceDescriptionName();
 
-            for (PortComponent port : desc.getPortComponent()) {
-                PortInfo portInfo = new PortInfo();
+            for (final PortComponent port : desc.getPortComponent()) {
+                final PortInfo portInfo = new PortInfo();
 
-                ServiceImplBean serviceImplBean = port.getServiceImplBean();
+                final ServiceImplBean serviceImplBean = port.getServiceImplBean();
                 portInfo.serviceId = desc.getId();
                 portInfo.portId = port.getId();
                 portInfo.serviceLink = serviceImplBean.getEjbLink();
@@ -930,7 +932,7 @@ class AppInfoBuilder {
                 portInfo.wsdlService = port.getWsdlService();
                 portInfo.location = port.getLocation();
 
-                List<HandlerChainInfo> handlerChains = ConfigurationFactory.toHandlerChainInfo(port.getHandlerChains());
+                final List<HandlerChainInfo> handlerChains = ConfigurationFactory.toHandlerChainInfo(port.getHandlerChains());
                 portInfo.handlerChains.addAll(handlerChains);
 
                 // todo configure jaxrpc mappings here
@@ -944,21 +946,21 @@ class AppInfoBuilder {
     /*
      * left package-local for a unit test
      */
-    void configureWebserviceSecurity(EjbJarInfo ejbJarInfo, EjbModule ejbModule) {
-        Object altDD = ejbModule.getOpenejbJar();
-	List<PortInfo> infoList = ejbJarInfo.portInfos;
-	
-	configureWebserviceScurity(infoList, altDD);
+    void configureWebserviceSecurity(final EjbJarInfo ejbJarInfo, final EjbModule ejbModule) {
+        final Object altDD = ejbModule.getOpenejbJar();
+	final List<PortInfo> infoList = ejbJarInfo.portInfos;
+
+        this.configureWebserviceScurity(infoList, altDD);
     }
     
-    private void configureWebserviceScurity(List<PortInfo> infoList, Object altDD) {
+    private void configureWebserviceScurity(final List<PortInfo> infoList, final Object altDD) {
         if (altDD == null || (! (altDD instanceof OpenejbJar))) return;
         
-        OpenejbJar openejbJar = (OpenejbJar) altDD;
-        Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();
+        final OpenejbJar openejbJar = (OpenejbJar) altDD;
+        final Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();
         
-        for (PortInfo portInfo : infoList) {
-            EjbDeployment deployment = deploymentsByEjbName.get(portInfo.serviceLink);
+        for (final PortInfo portInfo : infoList) {
+            final EjbDeployment deployment = deploymentsByEjbName.get(portInfo.serviceLink);
             
             if (deployment == null) continue;
             portInfo.realmName = deployment.getProperties().getProperty("webservice.security.realm");
@@ -978,7 +980,7 @@ class AppInfoBuilder {
         }
     }
     
-    private static boolean skipMdb(EnterpriseBeanInfo bean) {
+    private static boolean skipMdb(final EnterpriseBeanInfo bean) {
         return bean instanceof MessageDrivenBeanInfo && SystemInstance.get().hasProperty("openejb.geronimo");
     }
 
