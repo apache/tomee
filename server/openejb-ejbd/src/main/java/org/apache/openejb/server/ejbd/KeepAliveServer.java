@@ -61,6 +61,7 @@ public class KeepAliveServer implements ServerService {
     private Timer timer;
     private final boolean gzip;
 
+    @SuppressWarnings("deprecation")
     public KeepAliveServer() {
         this(new EjbServer());
     }
@@ -81,7 +82,7 @@ public class KeepAliveServer implements ServerService {
             return;
         }
 
-        final BlockingQueue<Runnable> queue = getQueue();
+        final BlockingQueue<Runnable> queue = this.getQueue();
         if (queue == null) return;
 
         int backlog = queue.size();
@@ -94,11 +95,11 @@ public class KeepAliveServer implements ServerService {
 
         for (final Session session : current) {
 
-            final Lock l = session.usage;
+            final Lock l = session.lock;
 
             if (l.tryLock()) {
                 try {
-                    if (now - session.lastRequest > timeout) {
+                    if (now - session.lastRequest > this.timeout) {
 
                         backlog--;
 
@@ -107,7 +108,7 @@ public class KeepAliveServer implements ServerService {
                         } catch (Throwable e) {
                             //Ignore
                         } finally {
-                            removeSession(session);
+                            this.removeSession(session);
                         }
                     }
                 } finally {
@@ -127,7 +128,7 @@ public class KeepAliveServer implements ServerService {
 
         for (final Session session : current) {
 
-            final Lock l = session.usage;
+            final Lock l = session.lock;
 
             if (l.tryLock()) {
                 try {
@@ -135,7 +136,7 @@ public class KeepAliveServer implements ServerService {
                 } catch (Throwable e) {
                     //Ignore
                 } finally {
-                    removeSession(session);
+                    this.removeSession(session);
                     l.unlock();
                 }
             } else if (logger.isDebugEnabled()) {
@@ -183,7 +184,7 @@ public class KeepAliveServer implements ServerService {
 
         private final Thread thread;
         private final KeepAliveServer kas;
-        private final Lock usage = new ReentrantLock();
+        private final Lock lock = new ReentrantLock();
 
         // only used inside the Lock
         private long lastRequest;
@@ -206,7 +207,7 @@ public class KeepAliveServer implements ServerService {
             try {
                 final InputStream in;
                 final OutputStream out;
-                if (!gzip) {
+                if (!KeepAliveServer.this.gzip) {
                     in = new BufferedInputStream(socket.getInputStream());
                     out = new BufferedOutputStream(socket.getOutputStream());
                 } else {
@@ -214,7 +215,7 @@ public class KeepAliveServer implements ServerService {
                     out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
                 }
 
-                while (running.get()) {
+                while (KeepAliveServer.this.running.get()) {
                     try {
                         i = in.read();
                     } catch (SocketException e) {
@@ -227,9 +228,10 @@ public class KeepAliveServer implements ServerService {
                     }
                     final KeepAliveStyle style = KeepAliveStyle.values()[i];
 
-                    final Lock l = this.usage;
+                    final Lock l = this.lock;
+                    l.lock();
+
                     try {
-                        l.lock();
 
                         switch (style) {
                             case PING_PING: {
@@ -244,7 +246,7 @@ public class KeepAliveServer implements ServerService {
                         }
 
                         try {
-                            service.service(new Input(in), new Output(out));
+                            KeepAliveServer.this.service.service(new Input(in), new Output(out));
                             out.flush();
                         } catch (SocketException e) {
                             // Socket closed.
@@ -277,17 +279,17 @@ public class KeepAliveServer implements ServerService {
 
     @Override
     public String getIP() {
-        return service.getIP();
+        return this.service.getIP();
     }
 
     @Override
     public String getName() {
-        return service.getName();
+        return this.service.getName();
     }
 
     @Override
     public int getPort() {
-        return service.getPort();
+        return this.service.getPort();
     }
 
     @Override
@@ -316,7 +318,7 @@ public class KeepAliveServer implements ServerService {
 
     @Override
     public void init(final Properties props) throws Exception {
-        service.init(props);
+        this.service.init(props);
     }
 
     public class Input extends java.io.FilterInputStream {
@@ -337,7 +339,7 @@ public class KeepAliveServer implements ServerService {
 
         @Override
         public void close() throws IOException {
-            flush();
+            this.flush();
         }
     }
 

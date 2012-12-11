@@ -58,14 +58,16 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private int size = 5;
     private long timeoutPool = 1000;
     private int timeoutSocket = 500;
+    private int timeoutLinger;
     private String[] enabledCipherSuites;
 
     public SocketConnectionFactory() {
 
-        this.size = getSize();
-        this.timeoutPool = getTimeoutPool();
-        this.timeoutSocket = getTimeoutSocket();
-        this.enabledCipherSuites = getEnabledCipherSuites();
+        this.size = this.getSize();
+        this.timeoutPool = this.getTimeoutPool();
+        this.timeoutSocket = this.getTimeoutSocket();
+        this.timeoutLinger = this.getTimeoutLinger();
+        this.enabledCipherSuites = this.getEnabledCipherSuites();
         try {
             String property = System.getProperty(PROPERTY_KEEPALIVE);
             if (property != null) {
@@ -91,6 +93,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
         long timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT, this.timeoutPool);
         timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT2, timeout);
         return timeout;
+    }
+
+    private int getTimeoutLinger() {
+        long pool = this.timeoutPool;
+        if (pool < 1000) {
+            pool = 1000;
+        }
+
+        return (int) (pool / 1000);
     }
 
     private int getTimeoutSocket() {
@@ -130,7 +141,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     @Override
     public Connection getConnection(final URI uri) throws java.io.IOException {
 
-        final Pool pool = getPool(uri);
+        final Pool pool = this.getPool(uri);
 
         SocketConnection conn = pool.get();
         if (conn == null) {
@@ -144,7 +155,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
 
         try {
-            conn.lock.tryLock(2, TimeUnit.SECONDS);
+            if (!conn.lock.tryLock(2, TimeUnit.SECONDS)) {
+                throw new InterruptedException();
+            }
         } catch (InterruptedException e) {
             Thread.interrupted();
             pool.put(conn);
@@ -154,7 +167,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
         final OutputStream ouputStream = conn.getOuputStream();
         if (conn.socket.isClosed()) {
             pool.put(null);
-            return getConnection(uri);
+            return this.getConnection(uri);
         }
 
         try {
@@ -184,7 +197,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private Pool getPool(final URI uri) {
         Pool pool = connections.get(uri);
         if (pool == null) {
-            pool = new Pool(uri, getSize(), this.timeoutPool);
+            pool = new Pool(uri, this.getSize(), this.timeoutPool);
             connections.put(uri, pool);
         }
         return pool;
@@ -212,7 +225,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
             try {
 
-                cleanUp();
+                this.cleanUp();
 
             } finally {
                 super.finalize();
@@ -220,25 +233,25 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
 
         private void cleanUp() {
-            if (null != in) {
+            if (null != this.in) {
                 try {
-                    in.close();
+                    this.in.close();
                 } catch (Throwable e) {
                     //Ignore
                 }
             }
 
-            if (null != out) {
+            if (null != this.out) {
                 try {
-                    out.close();
+                    this.out.close();
                 } catch (Throwable e) {
                     //Ignore
                 }
             }
 
-            if (null != socket) {
+            if (null != this.socket) {
                 try {
-                    socket.close();
+                    this.socket.close();
                 } catch (Throwable e) {
                     //Ignore
                 }
@@ -256,7 +269,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 final String scheme = uri.getScheme();
                 if (scheme.equalsIgnoreCase("ejbds") || scheme.equalsIgnoreCase("zejbds")) {
                     final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
-                    sslSocket.setEnabledCipherSuites(enabledCipherSuites);
+                    sslSocket.setEnabledCipherSuites(SocketConnectionFactory.this.enabledCipherSuites);
                     this.socket = sslSocket;
 
                 } else {
@@ -264,11 +277,11 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 }
 
                 if (scheme.startsWith("z")) {
-                    gzip = true;
+                    this.gzip = true;
                 }
 
                 this.socket.setTcpNoDelay(true);
-                this.socket.setSoLinger(true, 10);
+                this.socket.setSoLinger(true, SocketConnectionFactory.this.timeoutLinger);
                 this.socket.connect(address, SocketConnectionFactory.this.timeoutSocket);
 
                 Client.fireEvent(new ConnectionOpened(uri));
@@ -296,10 +309,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
         @Override
         public void discard() {
             try {
-                pool.put(null);
+                this.pool.put(null);
             } finally {
-                discarded = true;
-                cleanUp();
+                this.discarded = true;
+                this.cleanUp();
             }
 
             // don't bother unlocking it
@@ -308,15 +321,19 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         @Override
         public URI getURI() {
-            return uri;
+            return this.uri;
         }
 
         @Override
         public void close() throws IOException {
-            if (discarded) return;
+            if (this.discarded) return;
 
-            pool.put(this);
-            lock.unlock();
+            this.pool.put(this);
+            try {
+                this.lock.unlock();
+            } catch (IllegalMonitorStateException e) {
+                //Ignore
+            }
         }
 
         @Override
@@ -325,15 +342,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Open input streams */
             /*----------------------------------*/
             try {
-                if (in == null) {
-                    if (!gzip) {
-                        in = new BufferedInputStream(socket.getInputStream());
+                if (this.in == null) {
+                    if (!this.gzip) {
+                        this.in = new BufferedInputStream(this.socket.getInputStream());
                     } else {
-                        in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
+                        this.in = new GZIPInputStream(new BufferedInputStream(this.socket.getInputStream()));
                     }
                 }
 
-                return new Input(in);
+                return new Input(this.in);
 
             } catch (StreamCorruptedException e) {
                 throw this.failure("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName(), e);
@@ -351,15 +368,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
             try {
 
-                if (out == null) {
-                    if (!gzip) {
-                        out = new BufferedOutputStream(socket.getOutputStream());
+                if (this.out == null) {
+                    if (!this.gzip) {
+                        this.out = new BufferedOutputStream(this.socket.getOutputStream());
                     } else {
-                        out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
+                        this.out = new BufferedOutputStream(new FlushableGZIPOutputStream(this.socket.getOutputStream()));
                     }
                 }
 
-                return new Output(out);
+                return new Output(this.out);
 
             } catch (IOException e) {
                 throw this.failure("Cannot open output stream to server: " + e.getClass().getName(), e);
@@ -388,7 +405,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         @Override
         public void close() throws IOException {
-            flush();
+            this.flush();
         }
     }
 
@@ -409,38 +426,38 @@ public class SocketConnectionFactory implements ConnectionFactory {
             this.timeUnit = TimeUnit.MILLISECONDS;
 
             for (int i = 0; i < size; i++) {
-                pool.push(null);
+                this.pool.push(null);
             }
 
-            Client.fireEvent(new ConnectionPoolCreated(uri, size, timeout, timeUnit));
+            Client.fireEvent(new ConnectionPoolCreated(uri, size, timeout, this.timeUnit));
         }
 
         public SocketConnection get() throws IOException {
             try {
-                if (semaphore.tryAcquire(timeout, timeUnit)) {
-                    return pool.pop();
+                if (this.semaphore.tryAcquire(this.timeout, this.timeUnit)) {
+                    return this.pool.pop();
                 }
             } catch (InterruptedException e) {
                 Thread.interrupted();
             }
 
-            final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
+            final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + this.size + ").  Waited for " + this.timeout + " milliseconds for a connection.");
             exception.fillInStackTrace();
-            Client.fireEvent(new ConnectionPoolTimeout(uri, size, timeout, timeUnit, exception));
+            Client.fireEvent(new ConnectionPoolTimeout(this.uri, this.size, this.timeout, this.timeUnit, exception));
             throw exception;
         }
 
         public void put(final SocketConnection connection) {
-            pool.push(connection);
-            semaphore.release();
+            this.pool.push(connection);
+            this.semaphore.release();
         }
 
         @Override
         public String toString() {
             return "Pool{" +
-                    "size=" + size +
-                    ", available=" + semaphore.availablePermits() +
-                    ", uri=" + uri +
+                    "size=" + this.size +
+                    ", available=" + this.semaphore.availablePermits() +
+                    ", uri=" + this.uri +
                     '}';
         }
     }
