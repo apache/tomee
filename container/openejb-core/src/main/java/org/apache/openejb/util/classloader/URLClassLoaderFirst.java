@@ -191,8 +191,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (org.startsWith("apache.")) {
                 final String apache = org.substring("apache.".length());
 
-                if (apache.equals("commons.logging.impl.LogFactoryImpl")) return false;
-
                 // the following block is classes which enrich webapp classloader
                 if (apache.startsWith("webbeans.jsf")) return false;
                 if (apache.startsWith("tomee.mojarra.")) return false;
@@ -230,7 +228,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (commons.startsWith("digester")) return true;
                     if (commons.startsWith("jocl")) return true;
                     if (commons.startsWith("lang")) return true;
-                    if (commons.startsWith("logging")) return true;
+                    if (commons.startsWith("logging")) return false;
                     if (commons.startsWith("pool")) return true;
                     if (commons.startsWith("net") && SKIP_COMMONS_NET) return true;
 
