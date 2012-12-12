@@ -24,6 +24,7 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class DiscoveryHostTest {
     public void test() throws Exception {
 
         // To run in an IDE, uncomment and update this line
-        //System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
+        //System.setProperty("version", OpenEjbVersion.get().getVersion());
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");

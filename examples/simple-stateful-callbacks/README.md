@@ -216,7 +216,7 @@ This example shows how to create a stateful session bean that uses the @PrePassi
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Sat Jul 21 08:18:28 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.1.0-SNAPSHOT
+    INFO - Version: 4.1.0
     INFO - Build date: 20120721
     INFO - Build time: 04:06
     INFO - ********************************************************************************

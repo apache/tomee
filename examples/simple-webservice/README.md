@@ -192,7 +192,7 @@ When run you should see output similar to the following.
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Sat Feb 18 19:11:50 PST 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.0.0-beta-3-SNAPSHOT
+    INFO - Version: 4.0.0-beta-3
     INFO - Build date: 20120218
     INFO - Build time: 03:32
     INFO - ********************************************************************************

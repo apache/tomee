@@ -71,7 +71,7 @@ public class RoundRobinConnectionStrategyTest {
     public void test() throws Exception {
 
 //        To run in an IDE, uncomment and update this line
-//        System.setProperty("version", "4.0.0-beta-3-SNAPSHOT");
+//        System.setProperty("version", OpenEjbVersion.get().getVersion());
         System.setProperty("openejb.client.connection.strategy", "roundrobin");
 
         final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");

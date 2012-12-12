@@ -32,6 +32,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
 
 import java.io.BufferedInputStream;
@@ -89,7 +90,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.skipCurrentProject", defaultValue = "false")
     protected boolean skipCurrentProject;
 
-    @Parameter(property = "tomee-plugin.version", defaultValue = "1.5.1-SNAPSHOT")
+    @Parameter(property = "tomee-plugin.version", defaultValue = "-1")
     protected String tomeeVersion;
 
     @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.openejb")
@@ -204,6 +205,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if ("-1".equals(tomeeVersion)) {
+            final String version = OpenEjbVersion.get().getVersion();
+            tomeeVersion = "1" + version.substring(1, version.length());
+        }
+
         unzip(resolve(), catalinaBase);
         if (removeDefaultWebapps) { // do it first to let add other war
             removeDefaultWebapps(removeTomeeWebapp);

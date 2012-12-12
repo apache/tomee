@@ -9,7 +9,7 @@ To be able to use it you need to import the mbean api (annotations):
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
+      <version>4.5.0</version>
       <scope>provided</scope>
     </dependency>
 

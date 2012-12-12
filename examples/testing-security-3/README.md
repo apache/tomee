@@ -278,7 +278,7 @@ Title: Testing Security 3
     INFO - OpenEJB http://openejb.apache.org/
     INFO - Startup: Fri Jul 20 08:42:53 EDT 2012
     INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-    INFO - Version: 4.1.0-SNAPSHOT
+    INFO - Version: 4.1.0
     INFO - Build date: 20120720
     INFO - Build time: 08:33
     INFO - ********************************************************************************

@@ -24,6 +24,7 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -70,7 +71,7 @@ public class ReconnectDelayListSelfTest {
     public void test() throws Exception {
 
         // To run in an IDE, uncomment and update this line
-        System.setProperty("version", "4.1.0-SNAPSHOT");
+        System.setProperty("version", OpenEjbVersion.get().getVersion());
 
         Duration reconnectDelay = new Duration("1 second");
 
