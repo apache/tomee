@@ -57,6 +57,7 @@ import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
+import org.apache.naming.ResourceRef;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ClassLoaderUtil;
@@ -113,6 +114,8 @@ import javax.el.ELResolver;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.StringRefAddr;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.jsp.JspApplicationContext;
@@ -961,6 +964,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         newResource.getProperties().setProperty("jndiName", newResource.getId());
                         newResource.getProperties().setProperty("appName", getId(standardContext));
                         newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
+
+                        final Reference reference = createReference(resource);
+                        if (reference != null) {
+                            newResource.getProperties().put("reference", reference);
+                        }
                         appModule.getResources().add(newResource);
                     }
                 }
@@ -1103,6 +1111,26 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
         }
+    }
+
+    private static Reference createReference(final ResourceBase resource) {
+        if (resource instanceof ContextResource) {
+            final ContextResource cr = (ContextResource) resource;
+            final Reference ref = new ResourceRef
+                    (resource.getType(), resource.getDescription(),
+                            cr.getScope(), cr.getAuth(),
+                            cr.getSingleton());
+
+            final Iterator<String> params = resource.listProperties();
+            while (params.hasNext()) {
+                String paramName = params.next();
+                String paramValue = (String) resource.getProperty(paramName);
+                StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+                ref.add(refAddr);
+            }
+            return ref;
+        }
+        return null;
     }
 
     private static void updateInjections(final Collection<Injection> injections, final ClassLoader classLoader, final boolean keepInjection) {
