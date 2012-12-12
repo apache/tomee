@@ -79,7 +79,7 @@ Fire up the test, and we should see a 'Entering method: getMoviesList' printed i
 [Download as zip](${zip}) 
 
 #Tests
-    Apache OpenEJB 4.0.0-beta-2-SNAPSHOT    build: 20111103-01:00
+    Apache OpenEJB 4.0.0-beta-2    build: 20111103-01:00
     http://openejb.apache.org/
     INFO - openejb.home = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
     INFO - openejb.base = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors

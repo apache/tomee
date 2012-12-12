@@ -152,7 +152,7 @@ Running the example should generate output similar to the following
     Infos - OpenEJB http://openejb.apache.org/
     Infos - Startup: Tue Aug 14 13:28:12 CEST 2012
     Infos - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-    Infos - Version: 4.1.0-SNAPSHOT
+    Infos - Version: 4.1.0
     Infos - Build date: 20120814
     Infos - Build time: 01:06
     Infos - ********************************************************************************
