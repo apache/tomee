@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.loader.SystemInstance;
+
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -42,7 +44,8 @@ public class Status {
 
     private boolean connect(int tries) {
         try {
-            Socket socket = new Socket("localhost", 4201);
+            final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
+            Socket socket = new Socket("localhost", port);
             OutputStream out = socket.getOutputStream();
         } catch (Exception e) {
             if (tries < 2) {

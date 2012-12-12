@@ -55,14 +55,14 @@ public class OverlyStickyConnectionTest extends TestCase {
         p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         p.put("java.naming.provider.url", uri);
 
-        InitialContext context = new InitialContext(p);
-        return context;
+        return new InitialContext(p);
     }
 
     private final ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
 
     public class MockConnectionFactory implements ConnectionFactory {
 
+        @Override
         public Connection getConnection(final URI uri) throws IOException {
             return new Connection() {
                 private ByteArrayInputStream in;
@@ -80,21 +80,26 @@ public class OverlyStickyConnectionTest extends TestCase {
                     out.reset();
                 }
 
+                @Override
                 public URI getURI() {
                     return uri;
                 }
 
+                @Override
                 public void discard() {
                 }
 
+                @Override
                 public void close() throws IOException {
                 }
 
+                @Override
                 public InputStream getInputStream() throws IOException {
                     return in;
                 }
 
-                public OutputStream getOuputStream() throws IOException {
+                @Override
+                public OutputStream getOutputStream() throws IOException {
                     return out;
                 }
             };

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Connect;
 
 import java.io.File;
@@ -30,9 +31,15 @@ public class Start {
 
     public static void main(String[] args) {
 
-//        System.exit(new Start().start()?0:1);
+        //        System.exit(new Start().start()?0:1);
 
         new Start().start();
+
+    }
+
+    public static boolean connect() {
+        final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
+        return Connect.connect(1, "localhost", port);
 
     }
 
@@ -41,8 +48,8 @@ public class Start {
         if (!connect()) {
 
             forkServerProcess();
-
-            return Connect.connect(10, "localhost", 4201);
+            final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
+            return Connect.connect(10, "localhost", port);
 
         } else {
 
@@ -133,6 +140,7 @@ public class Start {
 
     }
 
+    @SuppressWarnings("unchecked")
     private String getClasspath() {
 
         String classpath = System.getProperty("java.class.path");
@@ -163,16 +171,9 @@ public class Start {
 
     }
 
-    public static boolean connect() {
-
-        return Connect.connect(1, "localhost", 4201);
-
-    }
-
     private static final class Pipe implements Runnable {
 
         private final InputStream is;
-
         private final OutputStream out;
 
         private Pipe(InputStream is, OutputStream out) {

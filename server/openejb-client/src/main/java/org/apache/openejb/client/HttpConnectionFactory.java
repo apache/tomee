@@ -106,7 +106,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
         }
 
-        public OutputStream getOuputStream() throws IOException {
+        public OutputStream getOutputStream() throws IOException {
             if (outputStream == null) {
                 outputStream = httpURLConnection.getOutputStream();
             }

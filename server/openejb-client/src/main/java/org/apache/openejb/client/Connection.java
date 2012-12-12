@@ -16,14 +16,9 @@
  */
 package org.apache.openejb.client;
 
-import javax.naming.NamingException;
-import javax.naming.AuthenticationException;
-import javax.transaction.RollbackException;
-import javax.ejb.EJBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.NotSerializableException;
 import java.net.URI;
 
 public interface Connection {
@@ -36,6 +31,6 @@ public interface Connection {
 
     public InputStream getInputStream() throws IOException;
 
-    public OutputStream getOuputStream() throws IOException;
+    public OutputStream getOutputStream() throws IOException;
 
 }
