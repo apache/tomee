@@ -150,7 +150,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
-                out = conn.getOuputStream();
+                out = conn.getOutputStream();
 
             } catch (IOException e) {
                 throw newIOException("Cannot open output stream to server: ", e);

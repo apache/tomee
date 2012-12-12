@@ -28,6 +28,8 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class javaURLContextFactory implements ObjectFactory {
+
+    @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
         RemoteInitialContextFactory context = new RemoteInitialContextFactory();
 

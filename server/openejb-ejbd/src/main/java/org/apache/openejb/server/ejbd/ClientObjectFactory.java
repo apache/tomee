@@ -46,6 +46,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         }
     }
 
+    @Override
     public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
 
@@ -56,6 +57,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return metaData;
     }
 
+    @Override
     public javax.ejb.Handle getHandle(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
         BeanContext beanContext = info.getBeanContext();
@@ -72,9 +74,9 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
         Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
+        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
 
-        return new EJBObjectHandle(hanlder.createEJBObjectProxy());
+        return new EJBObjectHandle(handler.createEJBObjectProxy());
     }
 
     private ServerMetaData getServerMetaData() {
@@ -85,6 +87,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return serverMetaData;
     }
 
+    @Override
     public javax.ejb.HomeHandle getHomeHandle(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
         BeanContext beanContext = info.getBeanContext();
@@ -105,6 +108,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return new EJBHomeHandle(hanlder.createEJBHomeProxy());
     }
 
+    @Override
     public javax.ejb.EJBObject getEJBObject(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
         BeanContext beanContext = info.getBeanContext();
@@ -126,6 +130,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
 
+    @Override
     public Object getBusinessObject(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
         BeanContext beanContext = info.getBeanContext();
@@ -170,6 +175,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return null;
     }
 
+    @Override
     public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
         CallContext call = CallContext.getCallContext();
         BeanContext beanContext = info.getBeanContext();

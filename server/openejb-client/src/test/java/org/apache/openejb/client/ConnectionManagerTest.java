@@ -53,7 +53,7 @@ public class ConnectionManagerTest extends TestCase{
             throw new UnsupportedOperationException();
         }
 
-        public OutputStream getOuputStream() throws IOException {
+        public OutputStream getOutputStream() throws IOException {
             throw new UnsupportedOperationException();
         }
 

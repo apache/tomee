@@ -164,7 +164,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             throw new IOException("Connection busy");
         }
 
-        final OutputStream ouputStream = conn.getOuputStream();
+        final OutputStream ouputStream = conn.getOutputStream();
         if (conn.socket.isClosed()) {
             pool.put(null);
             return this.getConnection(uri);
@@ -364,7 +364,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
 
         @Override
-        public OutputStream getOuputStream() throws IOException {
+        public OutputStream getOutputStream() throws IOException {
 
             try {
 
