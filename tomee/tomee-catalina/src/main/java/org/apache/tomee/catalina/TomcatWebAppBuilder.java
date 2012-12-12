@@ -1324,24 +1324,28 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             // to be sure to create contexts before other listeners
             // and destroy contexts after other listeners
 
-            final Object[] appEventListeners = standardContext.getApplicationEventListeners();
-            final Object[] newEventListeners = new Object[appEventListeners.length + 2];
-
-            final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
-            final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
-
             final BeginWebBeansListener beginWebBeansListener = new BeginWebBeansListener(webBeansContext);
             final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
 
-            newEventListeners[0] = beginWebBeansListener;
-            System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
-            newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
-            standardContext.setApplicationEventListeners(newEventListeners);
+            {
+                final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+                final Object[] newEventListeners = new Object[appEventListeners.length + 2];
 
-            newLifecycleListeners[0] = beginWebBeansListener;
-            System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
-            newLifecycleListeners[newEventListeners.length - 1] = endWebBeansListener;
-            standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+                newEventListeners[0] = beginWebBeansListener;
+                System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationEventListeners(newEventListeners);
+            }
+
+            {
+                final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+                final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
+
+                newLifecycleListeners[0] = beginWebBeansListener;
+                System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+            }
         }
 
         LinkageErrorProtection.preload(standardContext);
