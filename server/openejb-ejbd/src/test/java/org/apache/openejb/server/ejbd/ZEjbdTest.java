@@ -24,6 +24,7 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.EnableServices;
 import org.apache.openejb.junit.Module;
+import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,6 +39,7 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("ejbd")
 @RunWith(ApplicationComposer.class)
 public class ZEjbdTest {
+
     @Configuration
     public Properties configuration() {
         final Properties configuration = new Properties();
@@ -66,9 +68,10 @@ public class ZEjbdTest {
     }
 
     private void remoteCall(final String scheme) throws NamingException {
+        final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
         final Context ctx = new InitialContext(new Properties() {{
             setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-            setProperty(Context.PROVIDER_URL, scheme + "://localhost:4201");
+            setProperty(Context.PROVIDER_URL, scheme + "://localhost:" + port);
         }});
         assertEquals("hello", ((AppClientTest.OrangeBusinessRemote) ctx.lookup("OrangeRemote")).echo("olleh"));
     }
