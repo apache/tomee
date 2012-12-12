@@ -57,6 +57,7 @@ import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.catalina.users.MemoryUserDatabase;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
+import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.ResourceRef;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -1114,23 +1115,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static Reference createReference(final ResourceBase resource) {
+        final Reference ref;
         if (resource instanceof ContextResource) {
             final ContextResource cr = (ContextResource) resource;
-            final Reference ref = new ResourceRef
-                    (resource.getType(), resource.getDescription(),
-                            cr.getScope(), cr.getAuth(),
-                            cr.getSingleton());
-
-            final Iterator<String> params = resource.listProperties();
-            while (params.hasNext()) {
-                String paramName = params.next();
-                String paramValue = (String) resource.getProperty(paramName);
-                StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
-                ref.add(refAddr);
-            }
-            return ref;
+            ref = new ResourceRef(resource.getType(), resource.getDescription(), cr.getScope(), cr.getAuth(), cr.getSingleton());
+        } else {
+            ref = new ResourceEnvRef(resource.getType());
         }
-        return null;
+
+        final Iterator<String> params = resource.listProperties();
+        while (params.hasNext()) {
+            String paramName = params.next();
+            String paramValue = (String) resource.getProperty(paramName);
+            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+            ref.add(refAddr);
+        }
+
+        return ref;
     }
 
     private static void updateInjections(final Collection<Injection> injections, final ClassLoader classLoader, final boolean keepInjection) {
