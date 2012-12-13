@@ -87,23 +87,61 @@ public class ScriptLoginModule implements LoginModule {
         return new UserData(user, password);
     }
 
-    @Override
-    public boolean login() throws LoginException {
-        String scriptURI = (String) this.options.get("scriptURI");
-        if(scriptURI == null || "".equals(scriptURI.trim())) {
-            scriptURI = System.getProperty("openejb.ScriptLoginModule.scriptURI");
-
-            if(scriptURI == null || "".equals(scriptURI.trim())) {
-                throw new LoginException("No login script defined");
+    private File getScriptFile(String path) {
+        if (path == null  || "".equals(path)) {
+            final File result = new File(System.getProperty("openejb.home"), "conf/loginscript.js");
+            if (result.exists()) {
+                return result;
+            } else {
+                return null;
             }
         }
 
-        final URI uri = URI.create(scriptURI);
+        try {
+            final URI uri = URI.create(path);
+            final File result = new File(uri);
+            if (result.exists()) {
+                return result;
+            }
+        } catch (Exception e) {
+            // no-op
+        }
+
+        {
+            final File result = new File(path);
+            if (result.exists()) {
+                return result;
+            }
+        }
+
+        {
+            final File openEjbConf = new File(System.getProperty("openejb.home"), "conf");
+            final File result = new File(openEjbConf, path);
+            if (result.exists()) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean login() throws LoginException {
+        File script = getScriptFile((String) this.options.get("scriptURI"));
+        if (script == null) {
+            script = getScriptFile(System.getProperty("openejb.ScriptLoginModule.scriptURI"));
+            if (script == null) {
+                script = getScriptFile(System.getProperty(null));
+            }
+        }
+        if (script == null) {
+            throw new LoginException("No login script defined");
+        }
         final String scriptText;
         try {
-            scriptText = new Scanner(new File(uri)).useDelimiter("\\Z").next();
+            scriptText = new Scanner(script).useDelimiter("\\Z").next();
         } catch (FileNotFoundException e) {
-            throw new LoginException("Invalid login script URI. Value: " + scriptURI);
+            throw new LoginException("Invalid login script URI.");
         }
 
         this.userData = getUserData();
