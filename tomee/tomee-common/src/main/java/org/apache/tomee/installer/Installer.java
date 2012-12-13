@@ -163,6 +163,7 @@ public class Installer {
 
         installJavaagent();
 
+        commentDeploymentDir();
         installConfigFiles();
 
         removeTomcatLibJar("annotations-api.jar");
@@ -173,8 +174,6 @@ public class Installer {
         addTomEEAdminConfInTomcatUsers();
 
         addTomEELinkToTomcatHome();
-
-        commentDeploymentDir();
 
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
