@@ -702,7 +702,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
-        standardContext.setNamingResources(new OpenEJBNamingResource());
+        standardContext.setNamingResources(new OpenEJBNamingResource(standardContext.getNamingResources()));
 
         String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY + "." + standardContext.getName(), (String) null);
         if (sessionManager == null) {
