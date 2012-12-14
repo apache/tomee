@@ -36,6 +36,41 @@ public class OpenEJBNamingResource extends NamingResources {
     private boolean isTomcatResource = false;
     private final Collection<ResourceBase> tomcatResources = new ArrayList<ResourceBase>();
 
+    public OpenEJBNamingResource() {
+        // no-op
+    }
+
+    public OpenEJBNamingResource(final NamingResources namingResources) {
+        if (namingResources != null) {
+            isTomcatResource = true;
+            for (ContextResource resource : namingResources.findResources()) {
+                addResource(resource);
+            }
+            for (ContextResourceEnvRef resource : namingResources.findResourceEnvRefs()) {
+                addResourceEnvRef(resource);
+            }
+            for (ContextEjb ejb : namingResources.findEjbs()) {
+                addEjb(ejb);
+            }
+            for (ContextLocalEjb ejb : namingResources.findLocalEjbs()) {
+                addLocalEjb(ejb);
+            }
+            for (ContextResourceLink link : namingResources.findResourceLinks()) {
+                addResourceLink(link);
+            }
+            for (ContextService service : namingResources.findServices()) {
+                addService(service);
+            }
+            for (MessageDestinationRef ref : namingResources.findMessageDestinationRefs()) {
+                addMessageDestinationRef(ref);
+            }
+            for (ContextEnvironment env : namingResources.findEnvironments()) {
+                addEnvironment(env);
+            }
+            isTomcatResource = false;
+        }
+    }
+
     @Override
     public void addEnvironment(ContextEnvironment environment) {
         normalize(environment);
