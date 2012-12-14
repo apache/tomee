@@ -104,6 +104,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
     private final boolean offline;
+    private final boolean serviceTypeIsAdjustable; // offline is a bit different from this and offline could be off and this on
+
     private static final String CLASSPATH_AS_EAR = "openejb.deployments.classpath.ear";
     static final String WEBSERVICES_ENABLED = "openejb.webservices.enabled";
     static final String OFFLINE_PROPERTY = "openejb.offline";
@@ -124,6 +126,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory(final boolean offline, final DynamicDeployer preAutoConfigDeployer) {
         this.offline = offline;
+        this.serviceTypeIsAdjustable = SystemInstance.get().getOptions().get("openejb.service-type-adjustement", true);
         this.deploymentLoader = new DeploymentLoader();
 
         LocalMBeanServer.reset();
@@ -261,6 +264,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this.deploymentLoader = new DeploymentLoader();
         this.deployer = deployerChain;
         this.sys = configuration;
+        this.serviceTypeIsAdjustable = true;
     }
 
     public static List<HandlerChainInfo> toHandlerChainInfo(final HandlerChains chains) {
@@ -812,7 +816,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         for (final EjbModule ejb : appModule.getEjbModules()) {
             try {
                 final URL url = ejb.getModuleUri().toURL();
-                if (!libs.contains(url)) {
+                if (libs != null && !libs.contains(url)) {
                     EventHelper.installExtensions(new ResourceFinder("META-INF", url));
                 }
             } catch (IllegalArgumentException iae) {
@@ -1094,6 +1098,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (service.getProvider() != null) {
             return ServiceUtils.getServiceProvider(service.getProvider());
+        }
+
+        if (service.getType() == null && serviceTypeIsAdjustable) {
+            // try to guess quickly for know type
+            // DataSource
+            if ((service.getProperties().containsKey("JdbcDriver") || service.getProperties().containsKey("url"))
+                    && service.getProperties().containsKey("JtaManaged")) {
+                service.setType("javax.sql.DataSource");
+            }
         }
 
         if (service.getType() != null) {
