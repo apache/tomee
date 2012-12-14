@@ -187,7 +187,7 @@ public class Installer {
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<tomee>\n" +
                 "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n" +
-                "</tomee\n", alerts);
+                "</tomee>\n", alerts);
         }
     }
 
