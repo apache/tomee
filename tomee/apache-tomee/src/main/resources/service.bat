@@ -44,11 +44,11 @@ rem ---------------------------------------------------------------------------
 
 SET proc=undefined
 
-IF /i %PROCESSOR_ARCHITECTURE% EQU X86 SET proc="%~dp0TomEE.%PROCESSOR_ARCHITECTURE%.exe"
-IF /i %PROCESSOR_ARCHITECTURE% EQU AMD64 SET proc="%~dp0TomEE.%PROCESSOR_ARCHITECTURE%.exe"
-IF /i %PROCESSOR_ARCHITECTURE% EQU IA64 SET proc="%~dp0TomEE.%PROCESSOR_ARCHITECTURE%.exe"
+IF /i %PROCESSOR_ARCHITECTURE% EQU X86 SET "proc=%~dp0TomEE.x86.exe"
+IF /i %PROCESSOR_ARCHITECTURE% EQU AMD64 SET "proc=%~dp0TomEE.amd64.exe"
+IF /i %PROCESSOR_ARCHITECTURE% EQU IA64 SET "proc=%~dp0TomEE.ia64.exe"
 
-IF /i %proc% EQU undefined (
+IF /i "%proc%" EQU undefined (
 	ECHO Failed to determine OS architecture
 	GOTO end
 )
@@ -110,7 +110,7 @@ if "x%1x" == "xx" goto checkServiceCmd
 if "x%1x" == "x/userx" goto runAsUser
 if "x%1x" == "x--userx" goto runAsUser
 set SERVICE_NAME=%1
-set PR_DISPLAYNAME=TomEE %1
+set PR_DISPLAYNAME=Apache TomEE (%1)
 shift
 if "x%1x" == "xx" goto checkServiceCmd
 goto checkUser
@@ -166,19 +166,19 @@ set PR_JVM=auto
 :foundJvm
 echo Using JVM:              "%PR_JVM%"
 
-echo "%EXECUTABLE%" //IS//%SERVICE_NAME%
-
-"%EXECUTABLE%" //IS//%SERVICE_NAME%  ^
-	--DisplayName="%SERVICE_NAME%" ^
-	--StartClass org.apache.catalina.startup.Bootstrap ^
-	--StopClass org.apache.catalina.startup.Bootstrap ^
-	--StartParams start ^
-	--StopParams stop ^
-	--Startup auto ^
-	--LogLevel Info ^
-	--LogPrefix TomEE
-
-	if not errorlevel 1 goto installed
+"%EXECUTABLE%" //IS//%SERVICE_NAME% ^
+    --DisplayName=%SERVICE_NAME% ^
+    --StartClass org.apache.catalina.startup.Bootstrap ^
+    --StopClass org.apache.catalina.startup.Bootstrap ^
+    --StartParams start ^
+    --StopParams stop ^
+    --Startup auto ^
+    --LogLevel Info ^
+    --LogPrefix TomEE
+    
+echo Installed, will now configure TomEE
+    
+if not errorlevel 1 goto installed
 echo Failed installing '%SERVICE_NAME%' service
 goto end
 
@@ -193,11 +193,9 @@ set PR_JVM=
 
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions=-Dcatalina.base="%CATALINA_BASE%" ^
-	++JvmOptions=-Dcatalina.home="%CATALINA_HOME%" ^
-	++JvmOptions=-Djava.endorsed.dirs="%CATALINA_HOME%\endorsed" ^
-	--StartMode jvm ^
-	--StopMode jvm
+	++JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\endorsed" ^
+    --StartMode jvm ^
+    --StopMode jvm
 
 rem More extra parameters
 set "PR_LOGPATH=%CATALINA_BASE%\logs"
@@ -207,14 +205,7 @@ set PR_STDERROR=auto
 rem before this option was added: "++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^"
 rem the drawback was it was preventing custom native lib to be loaded even if added to Path
 "%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions=-Djava.io.tmpdir="%CATALINA_BASE%\temp" ^
-	++JvmOptions=-Djava.util.logging.manager="org.apache.juli.ClassLoaderLogManager" ^
-	++JvmOptions=-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties" ^
-	++JvmOptions=-Xmx1024M ^
-	++JvmOptions=-Djava.awt.headless=true ^
-	++JvmOptions=-XX:+UseParallelGC ^
-	++JvmOptions=-XX:MaxPermSize=256M ^
-	++JvmOptions=-Xss2048k
+	++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties;-Djava.awt.headless=true;-XX:+UseParallelGC;-XX:MaxPermSize=256M;-Xss2048k;-Xmx1024m"
 
 echo The service '%SERVICE_NAME%' has been installed.
 
