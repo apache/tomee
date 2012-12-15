@@ -36,6 +36,7 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
@@ -64,11 +65,14 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
+import javax.naming.NameNotFoundException;
 import javax.persistence.EntityManagerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -253,7 +257,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         this.moduleContext = moduleContext;
-        this.jndiContext = jndiContext;
+        this.jndiContext = (Context) Proxy.newProxyInstance(BeanContext.class.getClassLoader(), new Class[]{ Context.class }, new ContextHandler(jndiContext));
         this.localbean = localBean;
         this.componentType = componentType;
         this.beanClass = beanClass;
@@ -1683,5 +1687,29 @@ public class BeanContext extends DeploymentContext {
         private Class localHomeInterface;
         private Class localInterface;
         private Method createMethod;
+    }
+
+    private static class ContextHandler implements InvocationHandler {
+        private final Context delegate;
+
+        public ContextHandler(final Context jndiContext) {
+            delegate = jndiContext;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            try {
+                return method.invoke(delegate, args);
+            } catch (InvocationTargetException nnfe) {
+                if (nnfe.getTargetException() instanceof NameNotFoundException && "lookup".equals(method.getName())) {
+                    try {
+                        return method.invoke(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext(), args);
+                    } catch (InvocationTargetException nnfe2) {
+                        // ignore, let it be thrown
+                    }
+                }
+                throw nnfe;
+            }
+        }
     }
 }
