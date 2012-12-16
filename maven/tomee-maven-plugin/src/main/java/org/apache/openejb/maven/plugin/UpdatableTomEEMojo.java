@@ -81,6 +81,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 synchronization.setExtensions(Arrays.asList(".html", ".css", ".js", ".xhtml"));
             }
             startSynchronizer();
+
+            if (reloadOnUpdate) {
+                // force it since we rely on it for reload
+                deployOpenEjbApplication = true;
+            }
         }
         super.run();
     }

@@ -186,6 +186,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.remove-default-webapps", defaultValue = "true")
     protected boolean removeDefaultWebapps;
 
+    @Parameter(property = "tomee-plugin.deploy-openejb-internal-application", defaultValue = "false")
+    protected boolean deployOpenEjbApplication;
+
     @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "false")
     protected boolean removeTomeeWebapp;
 
@@ -510,13 +513,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             System.setProperty("server.debug.port", Integer.toString(debugPort));
         }
 
+        final String deployOpenEjbAppKey = "openejb.system.apps";
+
         final List<String> strings = new ArrayList<String>();
         if (systemVariables != null) {
             for (Map.Entry<String, String> entry : systemVariables.entrySet()) {
+                final String key = entry.getKey();
                 if (entry.getValue().contains(" ")) {
-                    strings.add(String.format("'-D%s=%s'", entry.getKey(), entry.getValue()));
+                    strings.add(String.format("'-D%s=%s'", key, entry.getValue()));
                 } else {
-                    strings.add(String.format("-D%s=%s", entry.getKey(), entry.getValue()));
+                    strings.add(String.format("-D%s=%s", key, entry.getValue()));
+                }
+
+                if (deployOpenEjbAppKey.equals(key)) {
+                    deployOpenEjbApplication = true;
                 }
             }
         }
@@ -528,6 +538,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         if (quickSession) {
             strings.add("-Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
+        }
+        if (!deployOpenEjbApplication) { // true is the default so don't need to set the property
+            if (args == null || !args.contains("-D" + deployOpenEjbAppKey)) {
+                strings.add("-D" + deployOpenEjbAppKey + "=false");
+            }
         }
 
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
