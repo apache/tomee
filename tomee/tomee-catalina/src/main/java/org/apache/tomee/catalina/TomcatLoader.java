@@ -321,7 +321,7 @@ public class TomcatLoader implements Loader {
     }
 
     private void setIfNull(Properties properties, String key, String value) {
-        if (!properties.containsKey(key)) properties.setProperty(key, value);
+        if (!properties.containsKey(key) && !System.getProperties().containsKey(key)) properties.setProperty(key, value);
     }
 
     /**
