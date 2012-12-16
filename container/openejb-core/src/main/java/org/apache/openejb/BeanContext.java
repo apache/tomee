@@ -1708,7 +1708,7 @@ public class BeanContext extends DeploymentContext {
                         // ignore, let it be thrown
                     }
                 }
-                throw nnfe;
+                throw nnfe.getTargetException();
             }
         }
     }
