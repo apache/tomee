@@ -73,9 +73,16 @@ public class EarTest {
 
     @Test
     public void test() throws Exception {
-        System.out.println(url);
 
         final URL servlet = new URL(url, "/red/green/blue");
+
+//        boolean bob = true;
+//
+//        while(bob){
+//            Thread.sleep(1000);
+//        }
+
+        System.out.println(servlet.toExternalForm());
         final String slurp = IO.slurp(servlet);
         Assert.assertEquals(Test.class.getName(), slurp);
         System.out.println(slurp);

@@ -46,6 +46,7 @@ class HelloSpecification extends Specification {
             assertNotNull hello
 
         then:
+            println("Compare 'hi' to '" + hello.hi() + "'")
             assertEquals "hi", hello.hi()
     }
 }

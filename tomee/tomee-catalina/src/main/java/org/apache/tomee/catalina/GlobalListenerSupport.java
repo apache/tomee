@@ -75,8 +75,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      * @param contextListener context listener instance
      */
     public GlobalListenerSupport(StandardServer standardServer, ContextListener contextListener) {
-        if (standardServer == null) throw new NullPointerException("standardServer is null");
-        if (contextListener == null) throw new NullPointerException("contextListener is null");
+        if (standardServer == null)
+            throw new NullPointerException("standardServer is null");
+        if (contextListener == null)
+            throw new NullPointerException("contextListener is null");
         this.standardServer = standardServer;
         this.contextListener = contextListener; // this.contextListener is now an instance of TomcatWebAppBuilder
     }
@@ -89,23 +91,23 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         if (source instanceof StandardContext) {
             StandardContext standardContext = (StandardContext) source;
             String type = event.getType();
-            
+
             if (INIT_EVENT.equals(type) || Lifecycle.BEFORE_INIT_EVENT.equals(type)) {
-            	contextListener.init(standardContext);
+                contextListener.init(standardContext);
             } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
                 contextListener.beforeStart(standardContext);
             } else if (Lifecycle.START_EVENT.equals(type)) {
-            	if (TomcatHelper.isTomcat7()) {
-            		standardContext.addParameter("openejb.start.late", "true");
-            	}
-            	
+                if (TomcatHelper.isTomcat7()) {
+                    standardContext.addParameter("openejb.start.late", "true");
+                }
+
                 contextListener.start(standardContext);
             } else if (Lifecycle.AFTER_START_EVENT.equals(type)) {
                 contextListener.afterStart(standardContext);
-                
+
                 if (TomcatHelper.isTomcat7()) {
-            		standardContext.removeParameter("openejb.start.late");
-            	}
+                    standardContext.removeParameter("openejb.start.late");
+                }
             } else if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
                 contextListener.beforeStop(standardContext);
             } else if (Lifecycle.STOP_EVENT.equals(type)) {
@@ -117,13 +119,13 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.CONFIGURE_START_EVENT.equals(type)) {
                 contextListener.configureStart(standardContext);
             }
-        } else if (source instanceof StandardHost) {
+        } else if (StandardHost.class.isInstance(source)) {
             StandardHost standardHost = (StandardHost) source;
             String type = event.getType();
             if (Lifecycle.PERIODIC_EVENT.equals(type)) {
                 contextListener.checkHost(standardHost);
             }
-        } else if (source instanceof StandardServer) {
+        } else if (StandardServer.class.isInstance(source)) {
             StandardServer standardServer = (StandardServer) source;
             String type = event.getType();
 
@@ -132,10 +134,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             }
 
             if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
-            	TomcatHelper.setStopping(true);
+                TomcatHelper.setStopping(true);
                 TomEEClusterListener.stop();
             }
-            
+
             if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
                 contextListener.afterStop(standardServer);
             }
@@ -160,7 +162,6 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     public void stop() {
         standardServer.removePropertyChangeListener(this);
     }
-
 
     /**
      * Service is added.
@@ -232,7 +233,6 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             }
         }
     }
-
 
     /**
      * Host is removed.
@@ -366,6 +366,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
     //Hashmap for monitoring children of engine and host
     public static class MoniterableHashMap extends HashMap<Object, Object> {
+
         private final Object source;
         private final String propertyName;
         private final PropertyChangeListener listener;

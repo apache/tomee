@@ -38,6 +38,7 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class WebModule extends Module implements WsModule, RESTModule {
+
     private final ValidationContext validation;
 
     private WebApp webApp;
@@ -57,21 +58,23 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> webAnnotatedClasses = new HashMap<String, Set<String>>();
 
-    private ID id;
+    private final ID id;
 
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
     private List<URL> urls;
     private List<URL> scannableUrls;
 
-    public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
+    public WebModule(final WebApp webApp, String contextRoot, final ClassLoader classLoader, final String jarLocation, final String moduleId) {
         this.webApp = webApp;
 
-        File file = (jarLocation == null) ? null : new File(jarLocation);
+        final File file = (jarLocation == null) ? null : new File(jarLocation);
         this.id = new ID(null, webApp, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
 
         if (contextRoot == null) {
-            contextRoot = jarLocation.substring(jarLocation.lastIndexOf(System.getProperty("file.separator")));
+
+            contextRoot = null != jarLocation ? jarLocation.substring(jarLocation.lastIndexOf(File.separator)) : ".";
+
             if (contextRoot.endsWith(".unpacked")) {
                 contextRoot = contextRoot.substring(0, contextRoot.length() - ".unpacked".length());
             }
@@ -79,27 +82,41 @@ public class WebModule extends Module implements WsModule, RESTModule {
                 contextRoot = contextRoot.substring(0, contextRoot.length() - ".war".length());
             }
         }
-        if (contextRoot.startsWith("/")) contextRoot = contextRoot.substring(1);
+
+        while (contextRoot.startsWith("/")) {
+            contextRoot = contextRoot.substring(1);
+        }
+
+        while (contextRoot.startsWith("\\")) {
+            contextRoot = contextRoot.substring(1);
+        }
+
         this.contextRoot = contextRoot;
         setClassLoader(classLoader);
 
-        if (webApp != null) webApp.setContextRoot(contextRoot);
+        if (webApp != null) {
+            webApp.setContextRoot(contextRoot);
+        }
 
         host = SystemInstance.get().getProperty(id.getName() + ".host", (String) null);
     }
 
+    @Override
     public String getJarLocation() {
         return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
 
+    @Override
     public String getModuleId() {
         return id.getName();
     }
 
+    @Override
     public File getFile() {
         return id.getLocation();
     }
 
+    @Override
     public URI getModuleUri() {
         return id.getUri();
     }
@@ -108,7 +125,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
         return urls;
     }
 
-    public void setUrls(List<URL> urls) {
+    public void setUrls(final List<URL> urls) {
         this.urls = urls;
     }
 
@@ -116,10 +133,11 @@ public class WebModule extends Module implements WsModule, RESTModule {
         return finder;
     }
 
-    public void setFinder(IAnnotationFinder finder) {
+    public void setFinder(final IAnnotationFinder finder) {
         this.finder = finder;
     }
 
+    @Override
     public ValidationContext getValidation() {
         return validation;
     }
@@ -128,16 +146,19 @@ public class WebModule extends Module implements WsModule, RESTModule {
         return webApp;
     }
 
-    public void setWebApp(WebApp webApp) {
+    public void setWebApp(final WebApp webApp) {
         this.webApp = webApp;
-        if (webApp != null) webApp.setContextRoot(contextRoot);
+        if (webApp != null)
+            webApp.setContextRoot(contextRoot);
     }
 
+    @Override
     public Webservices getWebservices() {
         return webservices;
     }
 
-    public void setWebservices(Webservices webservices) {
+    @Override
+    public void setWebservices(final Webservices webservices) {
         this.webservices = webservices;
     }
 
@@ -145,25 +166,25 @@ public class WebModule extends Module implements WsModule, RESTModule {
         return contextRoot;
     }
 
-    public void setContextRoot(String contextRoot) {
-        if (webApp != null) webApp.setContextRoot(contextRoot);
+    public void setContextRoot(final String contextRoot) {
+        if (webApp != null)  {
+            webApp.setContextRoot(contextRoot); }
         this.contextRoot = contextRoot;
     }
-
 
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
-
 
     public List<TldTaglib> getTaglibs() {
         return taglibs;
     }
 
+    @Override
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
@@ -175,9 +196,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
     @Override
     public String toString() {
         return "WebModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                ", contextRoot='" + contextRoot + '\'' +
-                '}';
+               "moduleId='" + id.getName() + '\'' +
+               ", contextRoot='" + contextRoot + '\'' +
+               '}';
     }
 
     @Override
@@ -204,7 +225,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
         return scannableUrls;
     }
 
-    public void setScannableUrls(List<URL> scannableUrls) {
+    public void setScannableUrls(final List<URL> scannableUrls) {
         this.scannableUrls = scannableUrls;
     }
 

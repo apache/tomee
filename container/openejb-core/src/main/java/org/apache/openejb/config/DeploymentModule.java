@@ -66,7 +66,7 @@ public interface DeploymentModule {
          */
         private final Set<String> locations = new LinkedHashSet<String>();
 
-        public ID(NamedModule vendorDd, NamedModule specDd, String name, File location, URI uri, DeploymentModule module) {
+        public ID(final NamedModule vendorDd, final NamedModule specDd, final String name, final File location, final URI uri, final DeploymentModule module) {
             this.name = name(vendorDd, specDd, uri, location, name, module);
             this.location = location(location, uri);
             this.uri = uri(uri, location, this.name);
@@ -79,19 +79,19 @@ public interface DeploymentModule {
             return locations;
         }
 
-        private URI uri(URI uri, File location, String name) {
+        private URI uri(final URI uri, final File location, final String name) {
             if (uri != null) return uri;
             if (location != null) return location.toURI();
             return URI.create(name);
         }
 
-        private File location(File location, URI uri) {
+        private File location(final File location, final URI uri) {
             if (location != null) return location;
             if (uri != null && uri.isAbsolute()) return new File(uri);
             return null;
         }
 
-        private String name(NamedModule vendor, NamedModule spec, URI uri, File location, String name, DeploymentModule module) {
+        private String name(final NamedModule vendor, final NamedModule spec, final URI uri, final File location, final String name, final DeploymentModule module) {
             if (location != null) {
                 final String systPropName = SystemInstance.get().getOptions().get(location.getName() + ".moduleId", (String) null);
                 if (systPropName != null) {
@@ -117,7 +117,7 @@ public interface DeploymentModule {
         }
 
         private String moduleName(File location) {
-            List<String> invalid = new ArrayList<String>();
+            final List<String> invalid = new ArrayList<String>();
             invalid.add("classes");
             invalid.add("test-classes");
             invalid.add("target");
@@ -131,9 +131,9 @@ public interface DeploymentModule {
             return stripExtension(location.getName());
         }
 
-        private String stripExtension(String name) {
-            String[] exts = {".jar", ".zip", ".ear", ".war", ".rar", ".unpacked"};
-            for (String ext : exts) {
+        private String stripExtension(final String name) {
+            final String[] exts = {".jar", ".zip", ".ear", ".war", ".rar", ".unpacked"};
+            for (final String ext : exts) {
                 if (name.endsWith(ext)) {
                     return name.substring(0, name.length() - ext.length());
                 }
