@@ -2133,6 +2133,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
+        private static boolean logged = false;
+
         private final Map<String, List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>>();
 
         @Override
@@ -2149,8 +2151,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     transformers.add(classFileTransformer);
                 }
-            } else {
-                logger.error("assembler.noAgent");
+            } else if (!logged) {
+                logger.warning("assembler.noAgent");
+                logged = true;
             }
         }
 
