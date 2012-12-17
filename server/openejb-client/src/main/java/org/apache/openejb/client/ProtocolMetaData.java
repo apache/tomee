@@ -17,18 +17,18 @@
 
 package org.apache.openejb.client;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.EOFException;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
- *
+ * <p/>
  * OEJP uses a "<major>.<minor>" numbering scheme to indicate versions of the protocol.
- *
- *     Protocol-Version   = "OEJP" "/" 1*DIGIT "." 1*DIGIT
- *
+ * <p/>
+ * Protocol-Version   = "OEJP" "/" 1*DIGIT "." 1*DIGIT
+ * <p/>
  * Some compatability is guaranteed with the major part of the version number.
  *
  * @version $Revision$ $Date$
@@ -45,18 +45,21 @@ public class ProtocolMetaData {
     }
 
     public ProtocolMetaData(final String version) {
-        init(OEJB+"/"+version);
+        init(OEJB + "/" + version);
     }
 
     private void init(final String spec) {
-        assert spec.matches("^OEJP/[0-9]\\.[0-9]$"): "Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ]";
+
+        if (!spec.matches("^OEJP/[0-9]\\.[0-9]$")) {
+            throw new RuntimeException("Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ]");
+        }
 
         final char[] chars = new char[8];
         spec.getChars(0, chars.length, chars, 0);
 
         this.id = new String(chars, 0, 4);
-        this.major = Integer.parseInt(new String(chars, 5,1));
-        this.minor = Integer.parseInt(new String(chars, 7,1));
+        this.major = Integer.parseInt(new String(chars, 5, 1));
+        this.minor = Integer.parseInt(new String(chars, 7, 1));
     }
 
     public String getId() {
@@ -72,11 +75,11 @@ public class ProtocolMetaData {
     }
 
     public String getVersion() {
-        return major+"."+minor;
+        return major + "." + minor;
     }
 
     public String getSpec() {
-        return id+"/"+major+"."+minor;
+        return id + "/" + major + "." + minor;
     }
 
     public void writeExternal(final OutputStream out) throws IOException {
@@ -88,10 +91,10 @@ public class ProtocolMetaData {
         final byte[] spec = new byte[8];
         for (int i = 0; i < spec.length; i++) {
             spec[i] = (byte) in.read();
-            if (spec[i] == -1){
+            if (spec[i] == -1) {
                 throw new EOFException("Unable to read protocol version.  Reached the end of the stream.");
             }
         }
-        init(new String(spec,"UTF-8"));
+        init(new String(spec, "UTF-8"));
     }
 }

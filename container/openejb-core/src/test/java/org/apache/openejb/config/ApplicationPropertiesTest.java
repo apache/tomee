@@ -71,9 +71,9 @@ public class ApplicationPropertiesTest extends TestCase {
 
     /**
      * A child module META-INF/application.properties sets color to white
-     *
+     * <p/>
      * In the root ear META-INF/application.properties color is set to orange
-     *
+     * <p/>
      * The root ear META-INF/application.properties wins
      *
      * @throws Exception
@@ -96,11 +96,11 @@ public class ApplicationPropertiesTest extends TestCase {
 
             final Map<String, String> appFiles = new HashMap<String, String>();
             appFiles.put("META-INF/application.xml", "" +
-                    "<application id=\"fooApp\">\n" +
-                    "  <module>\n" +
-                    "    <ejb>"+module.getName()+"</ejb>\n" +
-                    "  </module>\n" +
-                    "</application>");
+                                                     "<application id=\"fooApp\">\n" +
+                                                     "  <module>\n" +
+                                                     "    <ejb>" + module.getName() + "</ejb>\n" +
+                                                     "  </module>\n" +
+                                                     "</application>");
 
             appFiles.put("META-INF/application.properties", "color=orange");
             final File app = Archives.fileArchive(appFiles);
@@ -226,8 +226,9 @@ public class ApplicationPropertiesTest extends TestCase {
 
     /**
      * Not implemented.  Don't do it if you want deterministic behavior
-     *
+     * <p/>
      * Use one or the other, use both and no guarantee is made
+     *
      * @throws Exception
      */
     public void _testOverrideUnprefixedVsPrefixedTomEEAndOpenEJB() throws Exception {

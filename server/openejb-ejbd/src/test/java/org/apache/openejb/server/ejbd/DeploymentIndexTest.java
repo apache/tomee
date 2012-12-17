@@ -24,6 +24,7 @@ import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.InterfaceType;
 import org.apache.openejb.loader.SystemInstance;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,23 +41,24 @@ public class DeploymentIndexTest {
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
         beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
-        deploymentIndex = new DeploymentIndex(new BeanContext[] {beanContext, beanContext});
+        deploymentIndex = new DeploymentIndex(new BeanContext[]{beanContext, beanContext});
     }
 
     @Test
     public void testGetDeploymentEJBRequest() throws RemoteException {
-        EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null, null);
-        EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null);
-        BeanContext info = deploymentIndex.getDeployment(request);
-        assert beanContext.equals(info);
-        assert request.getDeploymentId().equals(info.getDeploymentID());
+        final EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null);
+        final BeanContext info = deploymentIndex.getDeployment(request);
+
+        Assert.assertEquals(beanContext, info);
+        Assert.assertEquals(request.getDeploymentId(), info.getDeploymentID());
     }
 
     @Test(expected = RemoteException.class)
     public void testGetDeploymentEJBRequestRemoteException() throws RemoteException {
         // 0 causes DeploymentIndex to move further
-        EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, InterfaceType.BUSINESS_REMOTE, null, null);
-        EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null);
+        final EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, InterfaceType.BUSINESS_REMOTE, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null);
         deploymentIndex.getDeployment(request);
     }
 
