@@ -19,21 +19,8 @@ package org.apache.openejb.client;
 import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.omg.CORBA.ORB;
 
-import javax.naming.AuthenticationException;
-import javax.naming.Binding;
-import javax.naming.CompoundName;
-import javax.naming.ConfigurationException;
+import javax.naming.*;
 import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.Reference;
-import javax.naming.ServiceUnavailableException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
@@ -47,9 +34,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
-/** 
+/**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfObsoleteCollectionType")
 public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
@@ -67,7 +55,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     /*
      * A neater version of clone
      */
-    public JNDIContext(JNDIContext that) {
+    public JNDIContext(final JNDIContext that) {
         this.tail = that.tail;
         this.server = that.server;
         this.client = that.client;
@@ -76,10 +64,10 @@ public class JNDIContext implements InitialContextFactory, Context {
         this.clientIdentity = that.clientIdentity;
     }
 
-    private JNDIResponse request(JNDIRequest req) throws Exception {
+    private JNDIResponse request(final JNDIRequest req) throws Exception {
         req.setServerHash(server.buildHash());
-        
-        JNDIResponse response = new JNDIResponse();
+
+        final JNDIResponse response = new JNDIResponse();
         Client.request(req, response, server);
         if (null != response.getServer()) {
             server.merge(response.getServer());
@@ -87,19 +75,20 @@ public class JNDIContext implements InitialContextFactory, Context {
         return response;
     }
 
-    protected AuthenticationResponse requestAuthorization(AuthenticationRequest req) throws RemoteException {
+    protected AuthenticationResponse requestAuthorization(final AuthenticationRequest req) throws RemoteException {
         return (AuthenticationResponse) Client.request(req, new AuthenticationResponse(), server);
     }
 
-    public Context getInitialContext(Hashtable environment) throws NamingException {
+    @Override
+    public Context getInitialContext(final Hashtable environment) throws NamingException {
         if (environment == null) {
             throw new NamingException("Invalid argument, hashtable cannot be null.");
         } else {
             env = (Hashtable) environment.clone();
         }
 
-        String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
-        String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
+        final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
+        final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
         moduleId = (String) env.get("openejb.client.moduleId");
 
@@ -133,7 +122,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     /**
      * Add missing parts - expected only part of the required providerUrl
-     *  
+     * <p/>
      * TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
      * This method (class in general) doesn't really know what is required as far as connection details go
      * Assuming that java.net.URI or java.net.URL are going to be used is overly stated
@@ -142,15 +131,19 @@ public class JNDIContext implements InitialContextFactory, Context {
         if (providerUrl == null || providerUrl.length() == 0) {
             providerUrl = DEFAULT_PROVIDER_URL;
         } else {
-            int colonIndex = providerUrl.indexOf(":");
-            int slashesIndex = providerUrl.indexOf("//");
+
+            final int colonIndex = providerUrl.indexOf(":");
+            final int slashesIndex = providerUrl.indexOf("//");
+
+            final int port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
+
             if (colonIndex == -1 && slashesIndex == -1) {   // hostname or ip address only
-                providerUrl = "ejbd://" + providerUrl + ":4201";
+                providerUrl = "ejbd://" + providerUrl + ":" + port;
             } else if (colonIndex == -1) {
-                URI providerUri = new URI(providerUrl);                
-                String scheme = providerUri.getScheme();
+                final URI providerUri = new URI(providerUrl);
+                final String scheme = providerUri.getScheme();
                 if (!(scheme.equals("http") || scheme.equals("https"))) {
-                    providerUrl = providerUrl + ":4201";                        
+                    providerUrl = providerUrl + ":" + port;
                 }
             } else if (slashesIndex == -1) {
                 providerUrl = "ejbd://" + providerUrl;
@@ -158,14 +151,14 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
         return providerUrl;
     }
-    
-    public void authenticate(String userID, String psswrd) throws AuthenticationException {
+
+    public void authenticate(final String userID, final String psswrd) throws AuthenticationException {
 
         // May be null
-        String realmName = (String) env.get("openejb.authentication.realmName");
+        final String realmName = (String) env.get("openejb.authentication.realmName");
 
-        AuthenticationRequest req = new AuthenticationRequest(realmName, userID, psswrd);
-        AuthenticationResponse res = null;
+        final AuthenticationRequest req = new AuthenticationRequest(realmName, userID, psswrd);
+        final AuthenticationResponse res;
 
         try {
             res = requestAuthorization(req);
@@ -186,31 +179,36 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
-    public EJBHomeProxy createEJBHomeProxy(EJBMetaDataImpl ejbData) {
-        EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
-        EJBHomeProxy proxy = handler.createEJBHomeProxy();
+    public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
+        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
+        final EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
 
         return proxy;
 
     }
 
-    private Object createBusinessObject(Object result) {
-        EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
-        Object primaryKey = ejb.getPrimaryKey();
+    private Object createBusinessObject(final Object result) {
+        final EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
+        final Object primaryKey = ejb.getPrimaryKey();
 
-        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
         return handler.createEJBObjectProxy();
     }
 
+    @Override
     public Object lookup(String name) throws NamingException {
 
-        if (name == null) throw new InvalidNameException("The name cannot be null");
-        else if (name.equals("")) return new JNDIContext(this);
-        else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/")) name = tail + name;
+        if (name == null)
+            throw new InvalidNameException("The name cannot be null");
+        else if (name.equals(""))
+            return new JNDIContext(this);
+        else if (name.startsWith("java:"))
+            name = name.replaceFirst("^java:", "");
+        else if (!name.startsWith("/"))
+            name = tail + name;
 
-        String prop = name.replaceFirst("comp/env/", "");
+        final String prop = name.replaceFirst("comp/env/", "");
         String value = System.getProperty(prop);
         if (value != null) {
             return parseEntry(prop, value);
@@ -220,12 +218,12 @@ public class JNDIContext implements InitialContextFactory, Context {
             return getDefaultOrb();
         }
 
-        JNDIRequest req = new JNDIRequest();
+        final JNDIRequest req = new JNDIRequest();
         req.setRequestMethod(RequestMethodCode.JNDI_LOOKUP);
         req.setRequestString(name);
         req.setModuleId(moduleId);
 
-        JNDIResponse res = null;
+        final JNDIResponse res;
         try {
             res = request(req);
         } catch (Exception e) {
@@ -250,8 +248,9 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return res.getResult();
 
             case ResponseCodes.JNDI_CONTEXT:
-                JNDIContext subCtx = new JNDIContext(this);
-                if (!name.endsWith("/")) name += '/';
+                final JNDIContext subCtx = new JNDIContext(this);
+                if (!name.endsWith("/"))
+                    name += '/';
                 subCtx.tail = name;
                 return subCtx;
 
@@ -262,7 +261,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return createWebservice((WsMetaData) res.getResult());
 
             case ResponseCodes.JNDI_RESOURCE:
-                String type = (String) res.getResult();
+                final String type = (String) res.getResult();
                 value = System.getProperty("Resource/" + type);
                 if (value == null) {
                     return null;
@@ -270,7 +269,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return parseEntry(prop, value);
 
             case ResponseCodes.JNDI_REFERENCE:
-                Reference ref = (Reference)res.getResult();
+                final Reference ref = (Reference) res.getResult();
                 try {
                     return NamingManager.getObjectInstance(ref, getNameParser(name).parse(name), this, env);
                 } catch (Exception e) {
@@ -281,7 +280,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
 
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
-                Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
                 if (throwable instanceof NamingException) {
                     throw (NamingException) throwable;
                 }
@@ -298,10 +297,10 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
-    private Object parseEntry(String name, String value) throws NamingException {
+    private Object parseEntry(final String name, String value) throws NamingException {
         try {
             URI uri = new URI(value);
-            String scheme = uri.getScheme();
+            final String scheme = uri.getScheme();
             if (scheme.equals("link")) {
                 value = System.getProperty(uri.getSchemeSpecificPart());
                 if (value == null) {
@@ -310,8 +309,8 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return parseEntry(name, value);
             } else if (scheme.equals("datasource")) {
                 uri = new URI(uri.getSchemeSpecificPart());
-                String driver = uri.getScheme();
-                String url = uri.getSchemeSpecificPart();
+                final String driver = uri.getScheme();
+                final String url = uri.getSchemeSpecificPart();
                 return new ClientDataSource(driver, url, null, null);
             } else if (scheme.equals("connectionfactory")) {
                 return build(uri);
@@ -333,11 +332,13 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     private Object build(final URI inputUri) throws URISyntaxException {
         final URI uri = new URI(inputUri.getSchemeSpecificPart());
-        String driver = uri.getScheme();
-        String url = uri.getSchemeSpecificPart();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) getClass().getClassLoader();
-        if (classLoader == null) ClassLoader.getSystemClassLoader();
+        final String driver = uri.getScheme();
+        final String url = uri.getSchemeSpecificPart();
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null)
+            getClass().getClassLoader();
+        if (classLoader == null)
+            ClassLoader.getSystemClassLoader();
         try {
             final Class<?> clazz = Class.forName(driver, true, classLoader);
             final Constructor<?> constructor = clazz.getConstructor(String.class);
@@ -347,11 +348,11 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
-    private DataSource createDataSource(DataSourceMetaData dataSourceMetaData) {
+    private DataSource createDataSource(final DataSourceMetaData dataSourceMetaData) {
         return new ClientDataSource(dataSourceMetaData);
     }
 
-    private Object createWebservice(WsMetaData webserviceMetaData) throws NamingException {
+    private Object createWebservice(final WsMetaData webserviceMetaData) throws NamingException {
         try {
             return webserviceMetaData.createWebservice();
         } catch (Exception e) {
@@ -363,19 +364,25 @@ public class JNDIContext implements InitialContextFactory, Context {
         return ORB.init();
     }
 
-    public Object lookup(Name name) throws NamingException {
+    @Override
+    public Object lookup(final Name name) throws NamingException {
         return lookup(name.toString());
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-        if (name == null) throw new InvalidNameException("The name cannot be null");
-        else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/")) name = tail + name;
+        if (name == null)
+            throw new InvalidNameException("The name cannot be null");
+        else if (name.startsWith("java:"))
+            name = name.replaceFirst("^java:", "");
+        else if (!name.startsWith("/"))
+            name = tail + name;
 
-        JNDIRequest req = new JNDIRequest(RequestMethodCode.JNDI_LIST, name);
+        final JNDIRequest req = new JNDIRequest(RequestMethodCode.JNDI_LIST, name);
         req.setModuleId(moduleId);
 
-        JNDIResponse res = null;
+        final JNDIResponse res;
         try {
             res = request(req);
         } catch (Exception e) {
@@ -398,7 +405,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 throw new NameNotFoundException(name);
 
             case ResponseCodes.JNDI_NAMING_EXCEPTION:
-                Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                final Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
                 if (throwable instanceof NamingException) {
                     throw (NamingException) throwable;
                 }
@@ -413,19 +420,22 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     }
 
-    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+    @Override
+    public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
-        Object o = lookup(name);
+    @SuppressWarnings("unchecked")
+    @Override
+    public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
+        final Object o = lookup(name);
         if (o instanceof Context) {
-            Context context = (Context) o;
-            NamingEnumeration<NameClassPair> enumeration = context.list("");
-            List<NameClassPair> bindings = new ArrayList<NameClassPair>();
+            final Context context = (Context) o;
+            final NamingEnumeration<NameClassPair> enumeration = context.list("");
+            final List<NameClassPair> bindings = new ArrayList<NameClassPair>();
 
             while (enumeration.hasMoreElements()) {
-                NameClassPair pair = enumeration.nextElement();
+                final NameClassPair pair = enumeration.nextElement();
                 bindings.add(new LazyBinding(pair.getName(), pair.getClassName(), context));
             }
 
@@ -438,140 +448,168 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     private static class LazyBinding extends Binding {
+
         private static final long serialVersionUID = 1L;
         private RuntimeException failed;
         private Context context;
 
-        public LazyBinding(String name, String className, Context context) {
+        public LazyBinding(final String name, final String className, final Context context) {
             super(name, className, null);
             this.context = context;
         }
 
+        @Override
         public synchronized Object getObject() {
-            if (super.getObject() == null){
-                if (failed != null) throw failed;
+            if (super.getObject() == null) {
+                if (failed != null)
+                    throw failed;
                 try {
                     super.setObject(context.lookup(getName()));
                 } catch (NamingException e) {
-                    throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '"+getName()+"'", e);
+                    throw failed = new ClientRuntimeException("Failed to lazily fetch the binding '" + getName() + "'", e);
                 }
             }
             return super.getObject();
         }
     }
 
-    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException{
+    @Override
+    public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
         return listBindings(name.toString());
     }
 
-    public Object lookupLink(String name) throws NamingException {
+    @Override
+    public Object lookupLink(final String name) throws NamingException {
         return lookup(name);
     }
 
-    public Object lookupLink(Name name) throws NamingException {
+    @Override
+    public Object lookupLink(final Name name) throws NamingException {
         return lookupLink(name.toString());
     }
 
-    public NameParser getNameParser(String name) throws NamingException {
+    @Override
+    public NameParser getNameParser(final String name) throws NamingException {
         return new SimpleNameParser();
     }
 
-    public NameParser getNameParser(Name name) throws NamingException {
+    @Override
+    public NameParser getNameParser(final Name name) throws NamingException {
         return new SimpleNameParser();
     }
 
-    public String composeName(String name, String prefix) throws NamingException {
+    @Override
+    public String composeName(final String name, final String prefix) throws NamingException {
         throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
-    public Name composeName(Name name, Name prefix) throws NamingException {
+    @Override
+    public Name composeName(final Name name, final Name prefix) throws NamingException {
         throw new OperationNotSupportedException("TODO: Needs to be implemented");
     }
 
-    public Object addToEnvironment(String key, Object value) throws NamingException {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object addToEnvironment(final String key, final Object value) throws NamingException {
         return env.put(key, value);
     }
 
-    public Object removeFromEnvironment(String key) throws NamingException {
+    @Override
+    public Object removeFromEnvironment(final String key) throws NamingException {
         return env.remove(key);
     }
 
+    @Override
     public Hashtable getEnvironment() throws NamingException {
         return (Hashtable) env.clone();
     }
 
+    @Override
     public String getNameInNamespace() throws NamingException {
         return "";
     }
 
+    @Override
     public void close() throws NamingException {
     }
 
-    public void bind(String name, Object obj) throws NamingException {
+    @Override
+    public void bind(final String name, final Object obj) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void bind(Name name, Object obj) throws NamingException {
+    @Override
+    public void bind(final Name name, final Object obj) throws NamingException {
         bind(name.toString(), obj);
     }
 
-    public void rebind(String name, Object obj) throws NamingException {
+    @Override
+    public void rebind(final String name, final Object obj) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void rebind(Name name, Object obj) throws NamingException {
+    @Override
+    public void rebind(final Name name, final Object obj) throws NamingException {
         rebind(name.toString(), obj);
     }
 
-    public void unbind(String name) throws NamingException {
+    @Override
+    public void unbind(final String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void unbind(Name name) throws NamingException {
+    @Override
+    public void unbind(final Name name) throws NamingException {
         unbind(name.toString());
     }
 
-    public void rename(String oldname, String newname) throws NamingException {
+    @Override
+    public void rename(final String oldname, final String newname) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void rename(Name oldname, Name newname) throws NamingException {
+    @Override
+    public void rename(final Name oldname, final Name newname) throws NamingException {
         rename(oldname.toString(), newname.toString());
     }
 
-    public void destroySubcontext(String name) throws NamingException {
+    @Override
+    public void destroySubcontext(final String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public void destroySubcontext(Name name) throws NamingException {
+    @Override
+    public void destroySubcontext(final Name name) throws NamingException {
         destroySubcontext(name.toString());
     }
 
-    public Context createSubcontext(String name) throws NamingException {
+    @Override
+    public Context createSubcontext(final String name) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
-    public Context createSubcontext(Name name) throws NamingException {
+    @Override
+    public Context createSubcontext(final Name name) throws NamingException {
         return createSubcontext(name.toString());
     }
 
     private static final class SimpleNameParser implements NameParser {
-         private static final Properties PARSER_PROPERTIES = new Properties();
 
-         static {
-             PARSER_PROPERTIES.put("jndi.syntax.direction", "left_to_right");
-             PARSER_PROPERTIES.put("jndi.syntax.separator", "/");
-         }
+        private static final Properties PARSER_PROPERTIES = new Properties();
 
+        static {
+            PARSER_PROPERTIES.put("jndi.syntax.direction", "left_to_right");
+            PARSER_PROPERTIES.put("jndi.syntax.separator", "/");
+        }
 
-         private SimpleNameParser() {
-         }
+        private SimpleNameParser() {
+        }
 
-         public Name parse(String name) throws NamingException {
-             return new CompoundName(name, PARSER_PROPERTIES);
-         }
-     }
-
+        @Override
+        public Name parse(final String name) throws NamingException {
+            return new CompoundName(name, PARSER_PROPERTIES);
+        }
+    }
 
 }
 

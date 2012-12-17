@@ -467,7 +467,7 @@ public class StandaloneServer {
         final ServerService ejbd = getServerService("ejbd");
 
         int port = ejbd.getPort();
-        if (port == 0) port = 4201;
+        if (port == 0) port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
 
         String host = ejbd.getBind();
         if (host == null || host.length() == 0) host = "localhost";
