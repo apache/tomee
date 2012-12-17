@@ -84,7 +84,8 @@ public class RemoteServer {
         properties = props;
 
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put("java.naming.provider.url", options.get("java.naming.provider.url", "127.0.0.1:4201"));
+        final int port = options.get("ejbd.port", 4201);
+        props.put("java.naming.provider.url", options.get("java.naming.provider.url", "127.0.0.1:" + port));
         props.put("java.naming.security.principal", "testuser");
         props.put("java.naming.security.credentials", "testpassword");
     }

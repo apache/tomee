@@ -38,18 +38,20 @@ public class TelephoneBean implements Telephone {
             "You don't say!",
     };
 
-    private List<String> conversation = new ArrayList<String>();
+    private final List<String> conversation = new ArrayList<String>();
 
-    public void speak(String words) {
+    @Override
+    public void speak(final String words) {
         conversation.add(words);
     }
 
+    @Override
     public String listen() {
         if (conversation.size() == 0) {
             return "Nothing has been said";
         }
 
-        String lastThingSaid = conversation.get(conversation.size() - 1);
+        final String lastThingSaid = conversation.get(conversation.size() - 1);
         return answers[Math.abs(lastThingSaid.hashCode()) % answers.length];
     }
 }

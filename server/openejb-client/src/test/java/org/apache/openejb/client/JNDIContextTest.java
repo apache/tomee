@@ -16,59 +16,62 @@
  */
 package org.apache.openejb.client;
 
-import java.util.Hashtable;
+import org.junit.Test;
 
 import javax.naming.Context;
-
-import org.junit.Test;
+import java.util.Hashtable;
 
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfObsoleteCollectionType")
 public class JNDIContextTest {
 
     @Test
     public void testGetInitialContext() throws Exception {
-        JNDIContext jndiContext = new JNDIContext();
-        Hashtable<String, String> env = new Hashtable<String, String>();
 
-        assertEquals(jndiContext, "ejbd://localhost:4201");
+        final int port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
+
+        final JNDIContext jndiContext = new JNDIContext();
+        final Hashtable<String, String> env = new Hashtable<String, String>();
+
+        assertEquals(jndiContext, "ejbd://localhost:" + port);
 
         assertEquals(jndiContext, "http://localhost");
 
-        assertEquals(jndiContext, "anything://localhost:4201");
+        assertEquals(jndiContext, "anything://localhost:" + port);
 
-        assertEquals(jndiContext, "//localhost:4201");
+        assertEquals(jndiContext, "//localhost:" + port);
 
-        assertEquals(jndiContext, "localhost", "ejbd://localhost:4201");
+        assertEquals(jndiContext, "localhost", "ejbd://localhost:" + port);
 
-        assertEquals(jndiContext, "localhost:4201", "ejbd://localhost:4201");
+        assertEquals(jndiContext, "localhost:" + port, "ejbd://localhost:" + port);
 
-        assertEquals(jndiContext, "", "ejbd://localhost:4201");
+        assertEquals(jndiContext, "", "ejbd://localhost:" + port);
 
-        assertEquals(jndiContext, "ejbd://127.0.0.1:4201");
+        assertEquals(jndiContext, "ejbd://127.0.0.1:" + port);
 
         assertEquals(jndiContext, "http://127.0.0.1");
 
-        assertEquals(jndiContext, "anything://127.0.0.1:4201");
+        assertEquals(jndiContext, "anything://127.0.0.1:" + port);
 
-        assertEquals(jndiContext, "//127.0.0.1:4201");
+        assertEquals(jndiContext, "//127.0.0.1:" + port);
 
-        assertEquals(jndiContext, "127.0.0.1", "ejbd://127.0.0.1:4201");
+        assertEquals(jndiContext, "127.0.0.1", "ejbd://127.0.0.1:" + port);
 
-        assertEquals(jndiContext, "127.0.0.1:4201", "ejbd://127.0.0.1:4201");
+        assertEquals(jndiContext, "127.0.0.1:" + port, "ejbd://127.0.0.1:" + port);
 
     }
 
-    private void assertEquals(JNDIContext jndiContext, String providerUrl) throws Exception {
+    private void assertEquals(final JNDIContext jndiContext, final String providerUrl) throws Exception {
         assertEquals(jndiContext, providerUrl, providerUrl);
     }
 
-    private void assertEquals(JNDIContext jndiContext, String providerUrl, String expectedProviderUrl) throws Exception {
-        Hashtable<String, String> env = new Hashtable<String, String>();
+    private void assertEquals(final JNDIContext jndiContext, final String providerUrl, final String expectedProviderUrl) throws Exception {
+        final Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.PROVIDER_URL, providerUrl);
-        JNDIContext ctx = (JNDIContext) jndiContext.getInitialContext(env);
-        String actualProviderUrl = ctx.addMissingParts(providerUrl);
+        final JNDIContext ctx = (JNDIContext) jndiContext.getInitialContext(env);
+        final String actualProviderUrl = ctx.addMissingParts(providerUrl);
         assert expectedProviderUrl.equals(actualProviderUrl) : "Expected " + expectedProviderUrl + " but was " + actualProviderUrl;
     }
 }
