@@ -29,6 +29,8 @@ import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.net.URLDecoder.decode;
 
@@ -36,6 +38,7 @@ import static java.net.URLDecoder.decode;
 /* Tomcat ClassLoader Support */
 /*-------------------------------------------------------*/
 
+@SuppressWarnings("unchecked")
 public class TomcatClassPath extends BasicURLClassPath {
 
     private final ClassLoader commonLoader;
@@ -62,9 +65,10 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
 
         ClassLoader serverLoader = getServerLoader(getContextClassLoader());
-        if (serverLoader != null && serverLoader != commonLoader){
+        if (serverLoader != null && serverLoader != commonLoader) {
             this.serverLoader = serverLoader;
-        } else this.serverLoader = null;
+        } else
+            this.serverLoader = null;
 
     }
 
@@ -97,17 +101,21 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
     }
 
+    @Override
     public ClassLoader getClassLoader() {
-        return (serverLoader != null)? serverLoader: commonLoader;
-//        return commonLoader;
+        return (serverLoader != null) ? serverLoader : commonLoader;
+        //        return commonLoader;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public ClassLoader getCommonLoader() {
         return commonLoader;
     }
 
+    @Override
     public void addJarsToPath(File dir) throws Exception {
         String[] jarNames = dir.list(new java.io.FilenameFilter() {
+            @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith(".jar") || name.endsWith(".zip"));
             }
@@ -123,6 +131,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         rebuild();
     }
 
+    @Override
     public void addJarToPath(URL jar) throws Exception {
         this._addJarToPath(jar);
         rebuild();
@@ -131,7 +140,7 @@ public class TomcatClassPath extends BasicURLClassPath {
     public void _addJarToPath(URL jar) throws Exception {
         ClassLoader classLoader = commonLoader;
 
-        if (serverLoader != null && useServerClassLoader(jar)){
+        if (serverLoader != null && useServerClassLoader(jar)) {
             classLoader = serverLoader;
         }
 
@@ -156,6 +165,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
 
+            @Override
             public Method run() {
                 try {
                     Object cp = getURLClassPath((URLClassLoader) getClassLoader());
@@ -174,31 +184,46 @@ public class TomcatClassPath extends BasicURLClassPath {
         try {
             Object cp = getURLClassPath((URLClassLoader) getClassLoader());
             Method getURLsMethod = getGetURLsMethod();
-            URL[] urls = (URL[])getURLsMethod.invoke(cp, null);
+            //noinspection NullArgumentToVariableArgMethod
+            URL[] urls = (URL[]) getURLsMethod.invoke(cp, (Object) null);
 
             if (urls.length < 1)
                 return;
 
-            StringBuffer path = new StringBuffer(urls.length * 32);
+            StringBuilder path = new StringBuilder(urls.length * 32);
 
-            File s = new File(URLDecoder.decode(urls[0].getFile()));
+            File s;
+            try {
+                s = new File(URLDecoder.decode(urls[0].getFile(), "UTF-8"));
+            } catch (Exception e) {
+                //noinspection deprecation
+                s = new File(URLDecoder.decode(urls[0].getFile()));
+            }
+
             path.append(s.getPath());
 
             for (int i = 1; i < urls.length; i++) {
                 path.append(File.pathSeparator);
 
-                s = new File(URLDecoder.decode(urls[i].getFile()));
+                try {
+                    s = new File(URLDecoder.decode(urls[i].getFile(), "UTF-8"));
+                } catch (Exception e) {
+                    //noinspection deprecation
+                    s = new File(URLDecoder.decode(urls[i].getFile()));
+                }
 
                 path.append(s.getPath());
             }
             System.setProperty("java.class.path", path.toString());
         } catch (Exception e) {
+            Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "rebuild", e);
         }
 
     }
 
     private Method getAddURLMethod() throws Exception {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 Method method = null;
                 try {
@@ -215,6 +240,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     private Method getAddRepositoryMethod() throws Exception {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
             public Method run() {
                 Method method;
                 try {
@@ -234,7 +260,9 @@ public class TomcatClassPath extends BasicURLClassPath {
         return (file.length() > 0 && file.charAt(file.length() - 1) == '/');
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static URL findResource(String resourceName, URL... search) {
+
         for (int i = 0; i < search.length; i++) {
             URL currentUrl = search[i];
             if (currentUrl == null) {
@@ -247,8 +275,8 @@ public class TomcatClassPath extends BasicURLClassPath {
             try {
                 currentUrl = new URL("jar", "", -1, currentUrl.toString() + "!/");
             } catch (MalformedURLException e) {
+                Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "findResource", e);
             }
-
 
             JarFile jarFile;
             try {
@@ -281,12 +309,12 @@ public class TomcatClassPath extends BasicURLClassPath {
                             continue;
                         }
                         sepIdx += 2;
-                        StringBuffer sb = new StringBuffer(file.length() - sepIdx + resourceName.length());
+                        StringBuilder sb = new StringBuilder(file.length() - sepIdx + resourceName.length());
                         sb.append(file.substring(sepIdx));
                         sb.append(resourceName);
                         entryName = sb.toString();
                     }
-                    if (entryName.equals("META-INF/") && jarFile.getEntry("META-INF/MANIFEST.MF") != null){
+                    if (entryName.equals("META-INF/") && jarFile.getEntry("META-INF/MANIFEST.MF") != null) {
                         return targetURL(currentUrl, "META-INF/MANIFEST.MF");
                     }
                     if (jarFile.getEntry(entryName) != null) {
@@ -299,7 +327,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                     if (host != null) {
                         hostLength = host.length();
                     }
-                    StringBuffer buf = new StringBuffer(2 + hostLength + baseFile.length() + resourceName.length());
+                    StringBuilder buf = new StringBuilder(2 + hostLength + baseFile.length() + resourceName.length());
 
                     if (hostLength > 0) {
                         buf.append("//").append(host);
@@ -314,7 +342,13 @@ public class TomcatClassPath extends BasicURLClassPath {
                     buf.append(fixedResName);
                     String filename = buf.toString();
                     File file = new File(filename);
-                    File file2 = new File(decode(filename));
+                    File file2;
+                    try {
+                        file2 = new File(decode(filename, "UTF-8"));
+                    } catch (Exception e) {
+                        //noinspection deprecation
+                        file2 = new File(decode(filename));
+                    }
                     if (file.exists() || file2.exists()) {
                         return targetURL(currentUrl, fixedResName);
                     }
@@ -340,15 +374,15 @@ public class TomcatClassPath extends BasicURLClassPath {
                 }
             } catch (MalformedURLException e) {
                 // Keep iterating through the URL list
-            } catch (IOException e) {
-            } catch (SecurityException e) {
+            } catch (Exception e) {
+                Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "findResource", e);
             }
         }
         return null;
     }
 
     private static URL targetURL(URL base, String name) throws MalformedURLException {
-        StringBuffer sb = new StringBuffer(base.getFile().length() + name.length());
+        StringBuilder sb = new StringBuilder(base.getFile().length() + name.length());
         sb.append(base.getFile());
         sb.append(name);
         String file = sb.toString();
