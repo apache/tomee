@@ -98,6 +98,7 @@ import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.JndiTreeBrowser;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -1443,6 +1444,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.warning("can't unbind resource '{0}'", id);
             }
         }
+        for (final String id : appInfo.resourceAliases) {
+            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+            try {
+                globalContext.unbind(name);
+            } catch (NamingException e) {
+                logger.warning("can't unbind resource '{0}'", id);
+            }
+        }
 
         containerSystem.removeAppContext(appInfo.appId);
 
@@ -1852,7 +1861,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
-        final String name = OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id;
+        bindResource(serviceInfo.id, service);
+        for (String alias : serviceInfo.aliases) {
+            bindResource(alias, service);
+        }
+
+        // Update the config tree
+        config.facilities.resources.add(serviceInfo);
+
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+    }
+
+    private void bindResource(final String id, final Object service) throws OpenEJBException {
+        final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
         try {
             containerSystem.getJNDIContext().bind(name, service);
         } catch (NameAlreadyBoundException nabe) {
@@ -1861,16 +1882,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystem.getJNDIContext().unbind(name);
                 containerSystem.getJNDIContext().bind(name, service);
             } catch (NamingException e) {
-                throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
+                throw new OpenEJBException("Cannot bind resource adapter with id " + id, e);
             }
         } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
+            throw new OpenEJBException("Cannot bind resource adapter with id " + id, e);
         }
-
-        // Update the config tree
-        config.facilities.resources.add(serviceInfo);
-
-        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private static String extractHost(final String url) { // can be enhanced
@@ -2079,7 +2095,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private ObjectRecipe createRecipe(final ServiceInfo info) {
         final Logger serviceLogger = logger.getChildLogger("service");
-        serviceLogger.info("createService", info.service, info.id, info.className);
+
+        if (info instanceof ResourceInfo) {
+            final List<String> aliasesList = ((ResourceInfo) info).aliases;
+            if (!aliasesList.isEmpty()) {
+                String aliases = Join.join(", ", aliasesList);
+                serviceLogger.info("createServiceWithAliases", info.service, info.id, aliases);
+            } else {
+                serviceLogger.info("createService", info.service, info.id);
+            }
+        } else {
+            serviceLogger.info("createService", info.service, info.id);
+        }
+
         final ObjectRecipe serviceRecipe = prepareRecipe(info);
         serviceRecipe.setAllProperties(info.properties);
 

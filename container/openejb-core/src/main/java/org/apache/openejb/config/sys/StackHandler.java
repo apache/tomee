@@ -42,7 +42,7 @@ public class StackHandler extends DefaultHandler {
     }
 
     protected void checkAttributes(Attributes attributes, String... allowed) throws SAXException {
-        checkAttributes(attributes, new ArrayList(Arrays.asList(allowed)));
+        checkAttributes(attributes, Arrays.asList(allowed));
     }
 
     protected void checkAttributes(Attributes attributes, List<String> allowed) throws SAXException {
@@ -174,6 +174,11 @@ public class StackHandler extends DefaultHandler {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             service.setJndi(attributes.getValue("jndi"));
+
+            final String aliases = attributes.getValue("aliases");
+            if (aliases != null) {
+                service.getAliases().addAll(Arrays.asList(aliases.split(",")));
+            }
         }
 
         @Override
@@ -186,6 +191,7 @@ public class StackHandler extends DefaultHandler {
         protected List<String> getAttributes() {
             final List<String> attributes = super.getAttributes();
             attributes.add("jndi");
+            attributes.add("aliases");
             return attributes;
         }
     }

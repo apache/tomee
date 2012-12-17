@@ -654,6 +654,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setClassName(map.remove("class-name"));
                 service.setConstructor(map.remove("constructor"));
                 service.setFactoryName(map.remove("factory-name"));
+
+                if (object instanceof Resource) {
+                    final String aliases = map.remove("aliases");
+                    if (aliases != null) {
+                        ((Resource) object).getAliases().addAll(Arrays.asList(aliases.split(",")));
+                    }
+                }
+
                 service.getProperties().putAll(map);
             } else if (object instanceof Deployments) {
                 final Deployments deployments = (Deployments) object;
@@ -1031,6 +1039,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.constructorArgs.addAll(parseConstructorArgs(provider));
             if (info instanceof ResourceInfo && service instanceof Resource) {
                 ((ResourceInfo) info).jndiName = ((Resource) service).getJndi();
+                ((ResourceInfo) info).aliases.addAll(((Resource) service).getAliases());
             }
 
             specialProcessing(info);
@@ -1254,6 +1263,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
                 if (isResourceType(resourceInfo.service, resourceInfo.types, type) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
+                    resourceIds.addAll(resourceInfo.aliases);
                 }
             }
         }
@@ -1262,6 +1272,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             for (final ResourceInfo resourceInfo : sys.facilities.resources) {
                 if (isResourceType(resourceInfo.service, resourceInfo.types, type) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
+                    resourceIds.addAll(resourceInfo.aliases);
                 }
             }
 
@@ -1275,6 +1286,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                     if (isResourceType("Resource", types, type) && implies(required, resource.getProperties())) {
                         resourceIds.add(resource.getId());
+                        resourceIds.addAll(resource.getAliases());
                     }
                 }
             }
@@ -1289,6 +1301,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 if (id.equals(resourceInfo.id)) {
                     return resourceInfo;
                 }
+                for (String alias : resourceInfo.aliases) {
+                    if (alias.equals(id)) {
+                        return resourceInfo;
+                    }
+                }
             }
         }
 
@@ -1296,6 +1313,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             for (final ResourceInfo resourceInfo : sys.facilities.resources) {
                 if (id.equals(resourceInfo.id)) {
                     return resourceInfo;
+                }
+                for (String alias : resourceInfo.aliases) {
+                    if (alias.equals(id)) {
+                        return resourceInfo;
+                    }
                 }
             }
         }

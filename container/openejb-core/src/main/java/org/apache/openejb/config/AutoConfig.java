@@ -1503,6 +1503,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         configureImplicitDataSource(nonJtaResourceInfo);
                         nonJtaResourceInfo.id = jtaResourceInfo.id + "NonJta";
                         nonJtaResourceInfo.originAppName = jtaResourceInfo.originAppName;
+                        suffixAliases(nonJtaResourceInfo, "NonJta");
 
                         Properties overrides = ConfigurationFactory.getSystemProperties(nonJtaResourceInfo.id, nonJtaResourceInfo.service);
                         nonJtaResourceInfo.properties.putAll(overrides);
@@ -1558,6 +1559,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         ResourceInfo jtaResourceInfo = copy(nonJtaResourceInfo);
                         configureImplicitDataSource(jtaResourceInfo);
                         jtaResourceInfo.id = nonJtaResourceInfo.id + "Jta";
+                        suffixAliases(jtaResourceInfo, "Jta");
 
                         Properties overrides = ConfigurationFactory.getSystemProperties(jtaResourceInfo.id, jtaResourceInfo.service);
                         jtaResourceInfo.properties.putAll(overrides);
@@ -1595,6 +1597,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (jtaDataSourceId != null) setJtaDataSource(unit, jtaDataSourceId);
             if (nonJtaDataSourceId != null) setNonJtaDataSource(unit, nonJtaDataSourceId);
         }
+    }
+
+    private static void suffixAliases(final ResourceInfo ri, final String suffix) {
+        final Collection<String> aliases = ri.aliases;
+        final List<String> newAliases = new ArrayList<String>();
+        for (String alias : aliases) {
+            newAliases.add(alias + suffix);
+        }
+        ri.aliases = newAliases;
     }
 
     private static void configureImplicitDataSource(final ResourceInfo copy) {
@@ -1660,7 +1671,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private ResourceInfo copy(ResourceInfo a) {
-        ResourceInfo b = new ResourceInfo();
+        final ResourceInfo b = new ResourceInfo();
+
         b.id = a.id;
         b.service = a.service;
         b.className = a.className;
@@ -1673,6 +1685,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         b.types.addAll(a.types);
         b.properties = new SuperProperties();
         b.properties.putAll(a.properties);
+        //b.aliases.addAll(a.aliases);
 
         return b;
     }

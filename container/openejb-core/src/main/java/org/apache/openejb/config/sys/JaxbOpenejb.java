@@ -245,7 +245,7 @@ public abstract class JaxbOpenejb {
             } else {
                 in = IO.read(new File(configFile));
             }
-            return SaxOpenejb.parse(new InputSource(in));
+            return readConfig(new InputSource(in));
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve location " + configFile, e);
         } catch (Exception e) {
@@ -253,6 +253,10 @@ public abstract class JaxbOpenejb {
         } finally {
             IO.close(in);
         }
+    }
+
+    public static Openejb readConfig(final InputSource in) throws IOException, SAXException, ParserConfigurationException {
+        return SaxOpenejb.parse(in);
     }
 
     public static void writeConfig(String configFile, Openejb openejb) throws OpenEJBException {
