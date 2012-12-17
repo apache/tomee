@@ -100,15 +100,15 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         }
 
         for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
-            merge(a.getEnvEntryMap(), aggregator.getEnvEntryMap());
-            merge(a.getEjbRefMap(), aggregator.getEjbRefMap());
-            merge(a.getEjbLocalRefMap(), aggregator.getEjbLocalRefMap());
-            merge(a.getServiceRefMap(), aggregator.getServiceRefMap());
-            merge(a.getResourceRefMap(), aggregator.getResourceRefMap());
-            merge(a.getResourceEnvRefMap(), aggregator.getResourceEnvRefMap());
-            merge(a.getMessageDestinationRefMap(), aggregator.getMessageDestinationRefMap());
-            merge(a.getPersistenceContextRefMap(), aggregator.getPersistenceContextRefMap());
-            merge(a.getPersistenceUnitRefMap(), aggregator.getPersistenceUnitRefMap());
+            copy(aggregator.getEnvEntryMap(), a.getEnvEntryMap());
+            copy(aggregator.getEjbRefMap(), a.getEjbRefMap());
+            copy(aggregator.getEjbLocalRefMap(), a.getEjbLocalRefMap());
+            copy(aggregator.getServiceRefMap(), a.getServiceRefMap());
+            copy(aggregator.getResourceRefMap(), a.getResourceRefMap());
+            copy(aggregator.getResourceEnvRefMap(), a.getResourceEnvRefMap());
+            copy(aggregator.getMessageDestinationRefMap(), a.getMessageDestinationRefMap());
+            copy(aggregator.getPersistenceContextRefMap(), a.getPersistenceContextRefMap());
+            copy(aggregator.getPersistenceUnitRefMap(), a.getPersistenceUnitRefMap());
 
             mergeUserTransaction(aggregator.getResourceRefMap(), a.getResourceRefMap(), a);
             mergeUserTransaction(aggregator.getResourceEnvRefMap(), a.getResourceEnvRefMap(), a);
