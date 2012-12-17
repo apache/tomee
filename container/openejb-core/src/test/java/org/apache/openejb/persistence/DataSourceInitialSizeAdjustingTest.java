@@ -17,7 +17,6 @@
 
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -29,8 +28,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

@@ -329,6 +329,7 @@ class AppInfoBuilder {
             // so we skip the undeployement skipping the id
             if (!def.getProperties().containsKey("ApplicationWide")) {
                 info.resourceIds.add(def.getId());
+                info.resourceAliases.addAll(def.getAliases());
             }
         }
     }

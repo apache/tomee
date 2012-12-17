@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -129,7 +130,7 @@ class SaxOpenejb extends StackHandler {
 
         @Override
         protected List<String> getAttributes() {
-            final List<String> attributes = super.getAttributes();
+            final List<String> attributes = new ArrayList<String>(super.getAttributes());
             attributes.add("ctype");
             return attributes;
         }

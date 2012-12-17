@@ -19,8 +19,11 @@ package org.apache.openejb.config.sys;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -47,6 +50,9 @@ import javax.xml.bind.annotation.XmlType;
 public class Resource extends AbstractService {
     @XmlAttribute
     protected String jndi;
+
+    @XmlElement(name = "aliases")
+    protected List<String> aliases = new ArrayList<String>();
 
     public Resource(String id) {
         super(id);
@@ -83,6 +89,9 @@ public class Resource extends AbstractService {
         this.jndi = value;
     }
 
+    public List<String> getAliases() {
+        return aliases;
+    }
 
     @Override
     public boolean equals(Object o) {
