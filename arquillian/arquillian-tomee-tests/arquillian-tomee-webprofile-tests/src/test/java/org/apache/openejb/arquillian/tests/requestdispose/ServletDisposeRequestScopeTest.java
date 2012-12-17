@@ -65,7 +65,7 @@ public class ServletDisposeRequestScopeTest {
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         int bytesRead;
-        byte[] buffer = new byte[512];
+        final byte[] buffer = new byte[512];
         while ((bytesRead = is.read(buffer)) > -1) {
             os.write(buffer, 0, bytesRead);
         }
