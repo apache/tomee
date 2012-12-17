@@ -16,6 +16,14 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
+import org.apache.openejb.core.cmp.cmp2.CmrField;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.UrlCache;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -24,25 +32,18 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
-import org.apache.openejb.core.cmp.cmp2.CmrField;
-import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.UrlCache;
-
 /**
  * Creates a jar file which contains the CMP implementation classes and the cmp entity mappings xml file.
  */
 public class CmpJarBuilder {
+
     private final ClassLoader tempClassLoader;
 
     private File jarFile;
     private final Set<String> entries = new TreeSet<String>();
     private final AppInfo appInfo;
 
-    public CmpJarBuilder(AppInfo appInfo, ClassLoader classLoader) {
+    public CmpJarBuilder(final AppInfo appInfo, final ClassLoader classLoader) {
         this.appInfo = appInfo;
         tempClassLoader = ClassLoaderUtil.createTempClassLoader(classLoader);
     }
@@ -55,12 +56,12 @@ public class CmpJarBuilder {
     }
 
     /**
-     * Generate the CMP jar file associated with this 
-     * deployed application.  The generated jar file will 
-     * contain generated classes and metadata that will 
-     * allow the JPA engine to manage the bean persistence. 
-     * 
-     * @exception IOException
+     * Generate the CMP jar file associated with this
+     * deployed application.  The generated jar file will
+     * contain generated classes and metadata that will
+     * allow the JPA engine to manage the bean persistence.
+     *
+     * @throws IOException
      */
     private void generate() throws IOException {
         // Don't generate an empty jar.  If there are no container-managed beans defined in this 
@@ -70,13 +71,13 @@ public class CmpJarBuilder {
         }
 
         boolean threwException = false;
-        JarOutputStream jarOutputStream = openJarFile();
+        final JarOutputStream jarOutputStream = openJarFile();
         try {
             // Generate CMP implementation classes
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+                for (final EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                     if (beanInfo instanceof EntityBeanInfo) {
-                        EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
+                        final EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
                         if ("CONTAINER".equalsIgnoreCase(entityBeanInfo.persistenceType)) {
                             generateClass(jarOutputStream, entityBeanInfo);
                         }
@@ -93,27 +94,29 @@ public class CmpJarBuilder {
         } finally {
             close(jarOutputStream);
             if (threwException) {
-                jarFile.delete();
+                if (!jarFile.delete()) {
+                    jarFile.deleteOnExit();
+                }
                 jarFile = null;
             }
         }
     }
 
     /**
-     * Test if an application contains and CMP beans that 
-     * need to be mapped to the JPA persistence engine.  This 
-     * will search all of the ejb jars contained within 
-     * the application looking for Entity beans with 
-     * a CONTAINER persistence type. 
-     * 
-     * @return true if the application uses container managed beans, 
+     * Test if an application contains and CMP beans that
+     * need to be mapped to the JPA persistence engine.  This
+     * will search all of the ejb jars contained within
+     * the application looking for Entity beans with
+     * a CONTAINER persistence type.
+     *
+     * @return true if the application uses container managed beans,
      *         false if none are found.
      */
     private boolean hasCmpBeans() {
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            for (final EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
                 if (beanInfo instanceof EntityBeanInfo) {
-                    EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
+                    final EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
                     if ("CONTAINER".equalsIgnoreCase(entityBeanInfo.persistenceType)) {
                         return true;
                     }
@@ -124,21 +127,18 @@ public class CmpJarBuilder {
     }
 
     /**
-     * Generate a class file for a CMP bean, writing the 
-     * byte data for the generated class into the jar file 
-     * we're constructing. 
-     * 
-     * @param jarOutputStream
-     *               The target jarfile.
-     * @param entityBeanInfo
-     *               The descriptor for the entity bean we need to wrapper.
-     * 
-     * @exception IOException
+     * Generate a class file for a CMP bean, writing the
+     * byte data for the generated class into the jar file
+     * we're constructing.
+     *
+     * @param jarOutputStream The target jarfile.
+     * @param entityBeanInfo  The descriptor for the entity bean we need to wrapper.
+     * @throws IOException
      */
-    private void generateClass(JarOutputStream jarOutputStream, EntityBeanInfo entityBeanInfo) throws IOException {
+    private void generateClass(final JarOutputStream jarOutputStream, final EntityBeanInfo entityBeanInfo) throws IOException {
         // don't generate if there is aleady an implementation class
-        String cmpImplClass = CmpUtil.getCmpImplClassName(entityBeanInfo.abstractSchemaName, entityBeanInfo.ejbClass);
-        String entryName = cmpImplClass.replace(".", "/") + ".class";
+        final String cmpImplClass = CmpUtil.getCmpImplClassName(entityBeanInfo.abstractSchemaName, entityBeanInfo.ejbClass);
+        final String entryName = cmpImplClass.replace(".", "/") + ".class";
         if (entries.contains(entryName) || tempClassLoader.getResource(entryName) != null) {
             return;
         }
@@ -148,7 +148,7 @@ public class CmpJarBuilder {
         try {
             beanClass = tempClassLoader.loadClass(entityBeanInfo.ejbClass);
         } catch (ClassNotFoundException e) {
-            throw (IOException)new IOException("Could not find entity bean class " + beanClass).initCause(e);
+            throw (IOException) new IOException("Could not find entity bean class " + beanClass).initCause(e);
         }
 
         // and the primary key class, if defined.  
@@ -157,15 +157,15 @@ public class CmpJarBuilder {
             try {
                 primKeyClass = tempClassLoader.loadClass(entityBeanInfo.primKeyClass);
             } catch (ClassNotFoundException e) {
-                throw (IOException)new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass).initCause(e);
+                throw (IOException) new IOException("Could not find entity primary key class " + entityBeanInfo.primKeyClass).initCause(e);
             }
         }
 
         // now generate a class file using the appropriate level of CMP generator.  
-        byte[] bytes;
+        final byte[] bytes;
         // NB:  We'll need to change this test of CMP 3 is ever defined!
         if (entityBeanInfo.cmpVersion != 2) {
-            Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
+            final Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
             // A primary key class defined as Object is an unknown key.  Mark it that 
             // way so the generator will create the automatically generated key. 
             if ("java.lang.Object".equals(entityBeanInfo.primKeyClass)) {
@@ -175,22 +175,22 @@ public class CmpJarBuilder {
         } else {
 
             // generate the implementation class
-            Cmp2Generator cmp2Generator = new Cmp2Generator(cmpImplClass,
-                    beanClass,
-                    entityBeanInfo.primKeyField,
-                    primKeyClass,
-                    entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
+            final Cmp2Generator cmp2Generator = new Cmp2Generator(cmpImplClass,
+                                                                  beanClass,
+                                                                  entityBeanInfo.primKeyField,
+                                                                  primKeyClass,
+                                                                  entityBeanInfo.cmpFieldNames.toArray(new String[entityBeanInfo.cmpFieldNames.size()]));
 
             // we need to have a complete set of the defined CMR fields available for the 
             // generation process as well. 
-            for (CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
-                EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
-                CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
-                        cmrFieldInfo.fieldType,
-                        CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
-                        roleSource.local,
-                        cmrFieldInfo.mappedBy.fieldName,
-                        cmrFieldInfo.synthetic);
+            for (final CmrFieldInfo cmrFieldInfo : entityBeanInfo.cmrFields) {
+                final EntityBeanInfo roleSource = cmrFieldInfo.mappedBy.roleSource;
+                final CmrField cmrField = new CmrField(cmrFieldInfo.fieldName,
+                                                       cmrFieldInfo.fieldType,
+                                                       CmpUtil.getCmpImplClassName(roleSource.abstractSchemaName, roleSource.ejbClass),
+                                                       roleSource.local,
+                                                       cmrFieldInfo.mappedBy.fieldName,
+                                                       cmrFieldInfo.synthetic);
                 cmp2Generator.addCmrField(cmrField);
             }
             bytes = cmp2Generator.generate();
@@ -200,22 +200,20 @@ public class CmpJarBuilder {
         addJarEntry(jarOutputStream, entryName, bytes);
     }
 
-    
     /**
-     * Insert a file resource into the generated jar file. 
-     * 
-     * @param jarOutputStream
-     *                 The target jar file.
-     * @param fileName The name we're inserting.
-     * @param bytes    The file byte data.
-     * 
-     * @exception IOException
+     * Insert a file resource into the generated jar file.
+     *
+     * @param jarOutputStream The target jar file.
+     * @param fileName        The name we're inserting.
+     * @param bytes           The file byte data.
+     * @throws IOException
      */
-    private void addJarEntry(JarOutputStream jarOutputStream, String fileName, byte[] bytes) throws IOException {
-        // add all missing directory entried
+    private void addJarEntry(final JarOutputStream jarOutputStream, String fileName, final byte[] bytes) throws IOException {
+        // add all missing directory entries
+        fileName = fileName.replace('\\', '/');
         String path = "";
-        for (StringTokenizer tokenizer = new StringTokenizer(fileName, "/"); tokenizer.hasMoreTokens();) {
-            String part = tokenizer.nextToken();
+        for (StringTokenizer tokenizer = new StringTokenizer(fileName, "/"); tokenizer.hasMoreTokens(); ) {
+            final String part = tokenizer.nextToken();
             if (tokenizer.hasMoreTokens()) {
                 path += part + "/";
                 if (!entries.contains(path)) {
@@ -247,11 +245,10 @@ public class CmpJarBuilder {
         Thread.yield();
 
         jarFile.deleteOnExit();
-        JarOutputStream jarOutputStream = new JarOutputStream(IO.write(jarFile));
-        return jarOutputStream;
+        return new JarOutputStream(IO.write(jarFile));
     }
 
-    private void close(JarOutputStream jarOutputStream) {
+    private void close(final JarOutputStream jarOutputStream) {
         if (jarOutputStream != null) {
             try {
                 jarOutputStream.close();
