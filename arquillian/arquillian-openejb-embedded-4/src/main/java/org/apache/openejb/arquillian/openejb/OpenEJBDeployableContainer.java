@@ -36,7 +36,6 @@ import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -95,7 +94,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private InstanceProducer<AppContext> appContextProducer;
 
     @Inject
-    @ContainerScoped
+    @SuiteScoped
     private InstanceProducer<Context> contextProducer;
 
     @Inject
