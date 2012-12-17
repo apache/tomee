@@ -128,14 +128,15 @@ public class JNDIContext implements InitialContextFactory, Context {
      * Assuming that java.net.URI or java.net.URL are going to be used is overly stated
      */
     String addMissingParts(String providerUrl) throws URISyntaxException {
+
+        final int port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
+
         if (providerUrl == null || providerUrl.length() == 0) {
-            providerUrl = DEFAULT_PROVIDER_URL;
+            providerUrl = "ejbd://localhost:" + port;
         } else {
 
             final int colonIndex = providerUrl.indexOf(":");
             final int slashesIndex = providerUrl.indexOf("//");
-
-            final int port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
 
             if (colonIndex == -1 && slashesIndex == -1) {   // hostname or ip address only
                 providerUrl = "ejbd://" + providerUrl + ":" + port;

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.Context;
@@ -72,6 +73,6 @@ public class JNDIContextTest {
         env.put(Context.PROVIDER_URL, providerUrl);
         final JNDIContext ctx = (JNDIContext) jndiContext.getInitialContext(env);
         final String actualProviderUrl = ctx.addMissingParts(providerUrl);
-        assert expectedProviderUrl.equals(actualProviderUrl) : "Expected " + expectedProviderUrl + " but was " + actualProviderUrl;
+        Assert.assertEquals("Expected " + expectedProviderUrl + " but was " + actualProviderUrl, expectedProviderUrl, actualProviderUrl);
     }
 }
