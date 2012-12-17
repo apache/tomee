@@ -37,12 +37,12 @@ public class MessageDrivenMetaTest {
     public void test() {
     }
 
-
     @MessageDriven
     @Metatype
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     public static @interface MessageConsumer {
+
     }
 
     /**
@@ -50,6 +50,7 @@ public class MessageDrivenMetaTest {
      */
     @MessageDriven
     public static class ExpectedBean implements MessageListener {
+
         @Override
         public void onMessage(final Message message) {
         }
@@ -60,6 +61,7 @@ public class MessageDrivenMetaTest {
      */
     @MessageConsumer
     public static class ActualBean implements MessageListener {
+
         @Override
         public void onMessage(final Message message) {
         }
