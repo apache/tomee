@@ -70,24 +70,24 @@ public class ClassLoaderUtil {
         });
     }
 
-    public static File getUrlCachedName(String appId, URL url) {
+    public static File getUrlCachedName(final String appId, final URL url) {
         return localUrlCache.getUrlCachedName(appId, url);
     }
 
-    public static boolean isUrlCached(String appId, URL url) {
+    public static boolean isUrlCached(final String appId, final URL url) {
         return localUrlCache.isUrlCached(appId, url);
     }
 
-    public static URL getUrlKeyCached(String appId, File file) {
-    	return localUrlCache.getUrlKeyCached(appId, file);
+    public static URL getUrlKeyCached(final String appId, final File file) {
+        return localUrlCache.getUrlKeyCached(appId, file);
     }
 
-    public static URLClassLoader createClassLoaderFirst(String appId, URL[] urls, ClassLoader parent) {
+    public static URLClassLoader createClassLoaderFirst(final String appId, final URL[] urls, final ClassLoader parent) {
         return cacheClassLoader(appId, new URLClassLoaderFirst(localUrlCache.cacheUrls(appId, urls), parent));
     }
 
-    public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
-       return cacheClassLoader(appId, new URLClassLoader(localUrlCache.cacheUrls(appId, urls), parent));
+    public static URLClassLoader createClassLoader(final String appId, final URL[] urls, final ClassLoader parent) {
+        return cacheClassLoader(appId, new URLClassLoader(localUrlCache.cacheUrls(appId, urls), parent));
     }
 
     private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
@@ -113,17 +113,17 @@ public class ClassLoaderUtil {
      *
      * @param classLoader ClassLoader to destroy.
      */
-    public static void destroyClassLoader(ClassLoader classLoader) {
+    public static void destroyClassLoader(final ClassLoader classLoader) {
         logger.debug("Destroying classLoader " + toString(classLoader));
 
         // remove from the indexes
-        Set<String> apps = appsByClassLoader.remove(classLoader);
+        final Set<String> apps = appsByClassLoader.remove(classLoader);
 
         if (apps != null) {
 
             List<ClassLoader> classLoaders;
 
-            for (String appId : apps) {
+            for (final String appId : apps) {
 
                 classLoaders = classLoadersByApp.get(appId);
 
@@ -145,8 +145,6 @@ public class ClassLoaderUtil {
         for (final String jar : getClosedJarFiles(classLoader)) {
             clearSunJarFileFactoryCache(jar);
         }
-
-        classLoader = null;
     }
 
     /**
@@ -162,16 +160,16 @@ public class ClassLoaderUtil {
         if (null != cl && cl instanceof URLClassLoader) {
 
             final URLClassLoader ucl = (URLClassLoader) cl;
-            Class clazz = java.net.URLClassLoader.class;
+            final Class clazz = java.net.URLClassLoader.class;
 
             try {
 
-                java.lang.reflect.Field ucp = clazz.getDeclaredField("ucp");
+                final java.lang.reflect.Field ucp = clazz.getDeclaredField("ucp");
                 ucp.setAccessible(true);
-                Object cp = ucp.get(ucl);
-                java.lang.reflect.Field loaders = cp.getClass().getDeclaredField("loaders");
+                final Object cp = ucp.get(ucl);
+                final java.lang.reflect.Field loaders = cp.getClass().getDeclaredField("loaders");
                 loaders.setAccessible(true);
-                java.util.Collection c = (java.util.Collection) loaders.get(cp);
+                final java.util.Collection c = (java.util.Collection) loaders.get(cp);
                 java.lang.reflect.Field loader;
                 java.util.jar.JarFile jf;
 
@@ -194,10 +192,10 @@ public class ClassLoaderUtil {
         return files;
     }
 
-    public boolean finalizeNativeLibs(ClassLoader cl) {
+    public boolean finalizeNativeLibs(final ClassLoader cl) {
 
         boolean res = false;
-        Class classClassLoader = ClassLoader.class;
+        final Class classClassLoader = ClassLoader.class;
         java.lang.reflect.Field nativeLibraries = null;
 
         try {
@@ -224,12 +222,10 @@ public class ClassLoaderUtil {
         }
 
         res = true;
-        Vector java_lang_ClassLoader_NativeLibrary = (Vector) obj;
+        final Vector java_lang_ClassLoader_NativeLibrary = (Vector) obj;
         java.lang.reflect.Method finalize;
 
         for (final Object lib : java_lang_ClassLoader_NativeLibrary) {
-
-            finalize = null;
 
             try {
                 finalize = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
@@ -251,10 +247,10 @@ public class ClassLoaderUtil {
         return res;
     }
 
-    public static void destroyClassLoader(String appId) {
+    public static void destroyClassLoader(final String appId) {
 
         logger.debug("Destroying classLoaders for application " + appId);
-        List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
+        final List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
 
         if (classLoaders != null) {
 
@@ -277,8 +273,6 @@ public class ClassLoaderUtil {
                     it.remove();
                     appsByClassLoader.remove(cl);
                     destroyClassLoader(cl);
-                    cl = null;
-
                     System.gc();
                 } else {
                     logger.debug("ClassLoader " + toString(cl) + " held open by the applications: " + apps);
@@ -290,11 +284,11 @@ public class ClassLoaderUtil {
         clearSunJarFileFactoryCache(appId);
     }
 
-    public static URLClassLoader createTempClassLoader(ClassLoader parent) {
+    public static URLClassLoader createTempClassLoader(final ClassLoader parent) {
         return new TempClassLoader(parent);
     }
 
-    public static URLClassLoader createTempClassLoader(String appId, URL[] rawUrls, ClassLoader parent) {
+    public static URLClassLoader createTempClassLoader(final String appId, final URL[] rawUrls, final ClassLoader parent) {
         String updatedAppId = appId;
         if (appId != null) { // here we often get the full path of the app as id where later it is simply the name of the file/dir
             final File file = new File(appId);
@@ -313,7 +307,7 @@ public class ClassLoaderUtil {
         }
         if (configurer != null) {
             final Collection<URL> urlList = new ArrayList<URL>();
-            for (URL rawUrl : rawUrls) {
+            for (final URL rawUrl : rawUrls) {
                 if (configurer.accept(rawUrl)) {
                     urlList.add(rawUrl);
                 }
@@ -462,8 +456,8 @@ public class ClassLoaderUtil {
         }
     }
 
-    private static boolean isParent(String jarLocation, File file) {
-        File dir = new File(jarLocation);
+    private static boolean isParent(final String jarLocation, File file) {
+        final File dir = new File(jarLocation);
         while (file != null) {
             if (file.equals(dir)) {
                 return true;
@@ -482,10 +476,10 @@ public class ClassLoaderUtil {
      * @param clazz     the name of the class containing the cache field
      * @param fieldName the name of the cache field
      */
-    public static void clearSunSoftCache(final Class clazz, String fieldName) {
+    public static void clearSunSoftCache(final Class clazz, final String fieldName) {
         synchronized (clazz) {
             try {
-                Field field = clazz.getDeclaredField(fieldName);
+                final Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
                 final Map cache = (Map) field.get(null);
                 cache.clear();
@@ -495,17 +489,17 @@ public class ClassLoaderUtil {
         }
     }
 
-    public static void cleanOpenJPACache(ClassLoader classLoader) {
+    public static void cleanOpenJPACache(final ClassLoader classLoader) {
         try {
-            Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
-            Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
+            final Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
+            final Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
             deRegisterMethod.invoke(null, classLoader);
         } catch (Throwable ignored) {
             // there is nothing a user could do about this anyway
         }
     }
 
-    private static String toString(ClassLoader classLoader) {
+    private static String toString(final ClassLoader classLoader) {
         if (classLoader == null) {
             return "null";
         } else {
@@ -519,7 +513,7 @@ public class ClassLoaderUtil {
 
     public static ClassLoaderConfigurer configurer(final String rawId) {
         String id = rawId;
-        if (id != null && id.startsWith("/") && !new File(id).exists() && id.length() > 1) {
+        if (id != null && (id.startsWith("/") || id.startsWith("\\")) && !new File(id).exists() && id.length() > 1) {
             id = id.substring(1);
         }
 
@@ -567,10 +561,10 @@ public class ClassLoaderUtil {
     private static ClassLoaderConfigurer createConfigurer(final String key, final String impl) {
         try {
             final ObjectRecipe recipe = new ObjectRecipe(impl);
-            for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
-                String entryKey = entry.getKey().toString();
+            for (final Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+                final String entryKey = entry.getKey().toString();
                 if (entryKey.startsWith(key)) {
-                    String newKey = entryKey.substring(key.length());
+                    final String newKey = entryKey.substring(key.length());
                     if (!"clazz".equals(newKey)) {
                         recipe.setProperty(newKey, entry.getValue());
                     }
