@@ -17,38 +17,41 @@
  */
 package org.apache.openejb.javaagent;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
-import java.io.Closeable;
-import java.lang.instrument.Instrumentation;
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
-import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Permission;
 import java.security.ProtectionDomain;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Agent {
+
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
     private static String agentArgs;
     private static Instrumentation instrumentation;
     private static boolean initialized = false;
 
-    public static void premain(String agentArgs, Instrumentation instrumentation) {
-        if (Agent.instrumentation != null) return;
+    public static void premain(final String agentArgs, final Instrumentation instrumentation) {
+        if (Agent.instrumentation != null)
+            return;
 
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
@@ -57,8 +60,9 @@ public class Agent {
         instrumentation.addTransformer(new BootstrapTransformer());
     }
 
-    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
-        if (Agent.instrumentation != null) return;
+    public static void agentmain(final String agentArgs, final Instrumentation instrumentation) {
+        if (Agent.instrumentation != null)
+            return;
 
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
@@ -66,8 +70,9 @@ public class Agent {
     }
 
     public static synchronized String getAgentArgs() {
-        SecurityManager sm = System.getSecurityManager();
-        if (sm != null) sm.checkPermission(ACCESS_PERMISSION);
+        final SecurityManager sm = System.getSecurityManager();
+        if (sm != null)
+            sm.checkPermission(ACCESS_PERMISSION);
         checkInitialization();
         return agentArgs;
     }
@@ -75,11 +80,13 @@ public class Agent {
     /**
      * Gets the instrumentation instance.
      * You must have java.lang.ReflectPermission(suppressAccessChecks) to call this method
+     *
      * @return the instrumentation instance
      */
     public static synchronized Instrumentation getInstrumentation() {
-        SecurityManager sm = System.getSecurityManager();
-        if (sm != null) sm.checkPermission(ACCESS_PERMISSION);
+        final SecurityManager sm = System.getSecurityManager();
+        if (sm != null)
+            sm.checkPermission(ACCESS_PERMISSION);
         checkInitialization();
         return instrumentation;
     }
@@ -98,42 +105,44 @@ public class Agent {
     }
 
     private static void checkSystemClassPath() throws NoSuchFieldException, IllegalAccessException {
-        if (instrumentation != null) return;
+        if (instrumentation != null)
+            return;
 
-        Class<?> systemAgentClass = null;
+        final Class<?> systemAgentClass;
         try {
-            ClassLoader systemCl = ClassLoader.getSystemClassLoader();
+            final ClassLoader systemCl = ClassLoader.getSystemClassLoader();
             systemAgentClass = systemCl.loadClass(Agent.class.getName());
         } catch (ClassNotFoundException e) {
             // java-agent jar was not on the system class path
             return;
         }
 
-        Field instrumentationField = systemAgentClass.getDeclaredField("instrumentation");
+        final Field instrumentationField = systemAgentClass.getDeclaredField("instrumentation");
         instrumentationField.setAccessible(true);
         instrumentation = (Instrumentation) instrumentationField.get(null);
 
-        Field agentArgsField = systemAgentClass.getDeclaredField("agentArgs");
+        final Field agentArgsField = systemAgentClass.getDeclaredField("agentArgs");
         agentArgsField.setAccessible(true);
         agentArgs = (String) agentArgsField.get(null);
     }
 
-    private static void dynamicLoadAgent() throws Exception{
-        if (instrumentation != null) return;
+    private static void dynamicLoadAgent() throws Exception {
+        if (instrumentation != null)
+            return;
 
         try {
-            Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
-            Method attachMethod = vmClass.getMethod("attach", String.class);
-            Method loadAgentMethod = vmClass.getMethod("loadAgent", String.class);
+            final Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+            final Method attachMethod = vmClass.getMethod("attach", String.class);
+            final Method loadAgentMethod = vmClass.getMethod("loadAgent", String.class);
 
             // find the agentJar
-            String agentPath = getAgentJar();
+            final String agentPath = getAgentJar();
 
             // get the pid of the current process (for attach command)
-            String pid = getPid();
+            final String pid = getPid();
 
             // attach to the vm
-            Object vm = attachMethod.invoke(null, new String[] { pid });
+            final Object vm = attachMethod.invoke(null, new String[]{pid});
 
             // load our agent
             loadAgentMethod.invoke(vm, agentPath);
@@ -154,9 +163,9 @@ public class Agent {
         // there appears to be no other way to obtain the
         // current process' id, which we need for the attach
         // process
-        RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        final RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
         String pid = bean.getName();
-        if (pid.indexOf("@") != -1) {
+        if (pid.contains("@")) {
             pid = pid.substring(0, pid.indexOf("@"));
         }
         return pid;
@@ -167,18 +176,18 @@ public class Agent {
      * file for the sole purpose of specifying an Agent-Class to load into the JVM.
      */
     private static String getAgentJar() throws IOException {
-        URL resource = Agent.class.getClassLoader().getResource(Agent.class.getName().replace('.', '/') + ".class");
+        final URL resource = Agent.class.getClassLoader().getResource(Agent.class.getName().replace('.', '/') + ".class");
         if (resource == null) {
             throw new IllegalStateException("Could not find Agent class file in class path");
         }
 
-        URLConnection urlConnection = resource.openConnection();
+        final URLConnection urlConnection = resource.openConnection();
         if (urlConnection instanceof JarURLConnection) {
-            JarURLConnection jarURLConnection = (JarURLConnection) urlConnection;
+            final JarURLConnection jarURLConnection = (JarURLConnection) urlConnection;
             return jarURLConnection.getJarFile().getName();
         }
 
-        InputStream in = urlConnection.getInputStream();
+        final InputStream in = urlConnection.getInputStream();
         ZipOutputStream out = null;
         File file = null;
         try {
@@ -190,7 +199,7 @@ public class Agent {
             // write manifest
             out.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
             try {
-                PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
+                final PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 writer.println("Agent-Class: " + Agent.class.getName());
                 writer.println("Can-Redefine-Classes: true");
                 writer.println("Can-Retransform-Classes: true");
@@ -202,7 +211,7 @@ public class Agent {
             // write agent class
             out.putNextEntry(new ZipEntry(Agent.class.getName().replace('.', '/') + ".class"));
             try {
-                byte[] buffer = new byte[4096];
+                final byte[] buffer = new byte[4096];
                 for (int count = in.read(buffer); count >= 0; count = in.read(buffer)) {
                     out.write(buffer, 0, count);
                 }
@@ -213,7 +222,9 @@ public class Agent {
             return file.getAbsolutePath();
         } catch (IOException e) {
             if (file != null) {
-                file.delete();
+                if (!file.delete()) {
+                    file.deleteOnExit();
+                }
             }
             throw e;
         } finally {
@@ -222,7 +233,7 @@ public class Agent {
         }
     }
 
-    private static void close(Closeable closeable) {
+    private static void close(final Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -232,9 +243,11 @@ public class Agent {
     }
 
     private static class BootstrapTransformer implements ClassFileTransformer {
+
         private boolean done;
 
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        @Override
+        public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
 
             try {
                 bootstrap(loader);
@@ -245,11 +258,12 @@ public class Agent {
             return classfileBuffer;
         }
 
-        private void bootstrap(ClassLoader loader) {
-            if (loader == null || done) return;
+        private void bootstrap(final ClassLoader loader) {
+            if (loader == null || done)
+                return;
 
-            String bootstrapClassName = "org.apache.openejb.persistence.PersistenceBootstrap";
-            String bootstrapClassFile = "org/apache/openejb/persistence/PersistenceBootstrap.class";
+            final String bootstrapClassName = "org.apache.openejb.persistence.PersistenceBootstrap";
+            final String bootstrapClassFile = "org/apache/openejb/persistence/PersistenceBootstrap.class";
 
             if (loader.getResource(bootstrapClassFile) == null) {
                 return;
@@ -261,10 +275,11 @@ public class Agent {
             done = true;
 
             try {
-                Class<?> bootstrapClass = loader.loadClass(bootstrapClassName);
-                Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
+                final Class<?> bootstrapClass = loader.loadClass(bootstrapClassName);
+                final Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
             } catch (Throwable e) {
+                Logger.getLogger(Agent.class.getName()).log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage());
             }
         }
     }

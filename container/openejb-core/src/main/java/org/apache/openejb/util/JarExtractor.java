@@ -35,6 +35,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class JarExtractor {
+
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
 
     /**
@@ -113,7 +114,6 @@ public class JarExtractor {
         return destinationDir.getAbsoluteFile();
     }
 
-
     /**
      * Copy the specified file or directory to the destination.
      *
@@ -166,7 +166,6 @@ public class JarExtractor {
 
     }
 
-
     /**
      * Delete the specified directory, including all of its contents and
      * subdirectories recursively.
@@ -177,7 +176,6 @@ public class JarExtractor {
         return deleteDir(dir);
     }
 
-
     /**
      * Delete the specified directory, including all of its contents and
      * subdirectories recursively.
@@ -185,7 +183,8 @@ public class JarExtractor {
      * @param dir File object representing the directory to be deleted
      */
     public static boolean deleteDir(final File dir) {
-        if (dir == null) return true;
+        if (dir == null)
+            return true;
 
         if (dir.isDirectory()) {
             final File[] files = dir.listFiles();
@@ -198,7 +197,6 @@ public class JarExtractor {
 
         return dir.delete();
     }
-
 
     /**
      * Extract the specified input stream into the specified directory, creating
@@ -216,8 +214,7 @@ public class JarExtractor {
         final File file = new File(docBase, name);
         BufferedOutputStream output = null;
         try {
-            output =
-                    new BufferedOutputStream(new FileOutputStream(file));
+            output = new BufferedOutputStream(new FileOutputStream(file));
             final byte[] buffer = new byte[2048];
             while (true) {
                 final int n = input.read(buffer);
@@ -237,6 +234,5 @@ public class JarExtractor {
 
         return file;
     }
-
 
 }

@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.core.managed;
 
-import java.io.File;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.EnvProps;
 import org.apache.openejb.loader.IO;
@@ -29,8 +23,14 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Map;
+import java.util.Properties;
 
 public class SimplePassivater implements PassivationStrategy {
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private File sessionDirectory;
 
@@ -38,12 +38,13 @@ public class SimplePassivater implements PassivationStrategy {
         init(null);
     }
 
+    @Override
     public void init(Properties props) throws SystemException {
         if (props == null) {
             props = new Properties();
         }
 
-        String dir = props.getProperty(EnvProps.IM_PASSIVATOR_PATH_PREFIX);
+        final String dir = props.getProperty(EnvProps.IM_PASSIVATOR_PATH_PREFIX);
 
         try {
             if (dir != null) {
@@ -57,14 +58,14 @@ public class SimplePassivater implements PassivationStrategy {
         }
     }
 
-    public void passivate(Object primaryKey, Object state) throws SystemException {
+    public void passivate(final Object primaryKey, final Object state) throws SystemException {
         try {
-            String filename = primaryKey.toString().replace(':', '=');
+            final String filename = primaryKey.toString().replace(':', '=');
 
-            File sessionFile = new File(sessionDirectory, filename);
+            final File sessionFile = new File(sessionDirectory, filename);
 
             logger.info("Passivating to file " + sessionFile);
-            ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
+            final ObjectOutputStream oos = new ObjectOutputStream(IO.write(sessionFile));
 
             oos.writeObject(state);// passivate just the bean instance
             oos.close();
@@ -78,25 +79,29 @@ public class SimplePassivater implements PassivationStrategy {
         }
     }
 
-    public void passivate(Map hash) throws SystemException {
-        for (Object id : hash.keySet()) {
+    @Override
+    public void passivate(final Map hash) throws SystemException {
+        for (final Object id : hash.keySet()) {
             passivate(id, hash.get(id));
         }
     }
 
-    public Object activate(Object primaryKey) throws SystemException {
+    @Override
+    public Object activate(final Object primaryKey) throws SystemException {
         try {
-            String filename = primaryKey.toString().replace(':', '=');
+            final String filename = primaryKey.toString().replace(':', '=');
 
-            File sessionFile = new File(sessionDirectory, filename);
+            final File sessionFile = new File(sessionDirectory, filename);
 
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                ObjectInputStream ois = new ObjectInputStream(IO.read(sessionFile));
-                Object state = ois.readObject();
+                final ObjectInputStream ois = new ObjectInputStream(IO.read(sessionFile));
+                final Object state = ois.readObject();
                 ois.close();
-                sessionFile.delete();
+                if (!sessionFile.delete()) {
+                    sessionFile.deleteOnExit();
+                }
                 return state;
             } else {
                 logger.info("Activation failed: file not found " + sessionFile);
