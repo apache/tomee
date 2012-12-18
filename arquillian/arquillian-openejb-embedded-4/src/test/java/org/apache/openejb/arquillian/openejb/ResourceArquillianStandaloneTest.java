@@ -31,8 +31,8 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class ResourceArquillianStandaloneTest {
-    @Resource
-    private DataSource defaultDs;
+    @Resource(name = "db1")
+    private DataSource db1;
 
     @Deployment
     public static JavaArchive archive() {
@@ -42,6 +42,6 @@ public class ResourceArquillianStandaloneTest {
 
     @Test
     public void checkInjections() {
-        assertNotNull(defaultDs);
+        assertNotNull(db1);
     }
 }

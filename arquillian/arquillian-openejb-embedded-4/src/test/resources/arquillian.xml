@@ -23,8 +23,8 @@
     <configuration>
       <property name="properties">
         # used to not have a single DataSource and be able to test the resource resolution
-        db1 = new://Resource?type=Resource
-        db1 = jdbc:hsqldb:mem:db1
+        db1 = new://Resource?type=DataSource
+        db1.JdbcUrl = jdbc:hsqldb:mem:db1
 
         java\:global/db = new://Resource?type=DataSource
         java\:global/db.JdbcUrl = jdbc:hsqldb:mem:global
