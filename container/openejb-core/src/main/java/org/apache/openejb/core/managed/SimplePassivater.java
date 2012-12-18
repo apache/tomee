@@ -55,7 +55,6 @@ public class SimplePassivater implements PassivationStrategy {
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
                 throw new java.io.IOException("Failed to create directory: " + sessionDirectory.getAbsolutePath());
-
             }
 
             logger.info("Using directory " + sessionDirectory + " for stateful session passivation");
