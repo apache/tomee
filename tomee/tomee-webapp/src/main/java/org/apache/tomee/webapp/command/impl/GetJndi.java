@@ -17,14 +17,12 @@
 
 package org.apache.tomee.webapp.command.impl;
 
-import org.apache.tomee.webapp.Application;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.webapp.command.Command;
 import org.apache.tomee.webapp.command.IsProtected;
 
-import javax.naming.Context;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,32 +34,18 @@ public class GetJndi implements Command {
     @Override
     public Object execute(final Map<String, Object> params) throws Exception {
         final String sessionId = (String) params.get("sessionId");
-        final Application.Session session = Application.getInstance().getSession(sessionId);
         final List<String> jndi = new ArrayList<String>();
 
-        list(session.getContext(), jndi, "");
-        final Map<String, Object> json = new HashMap<String, Object>();
-        json.put("jndi", jndi);
-
-        return json;
-    }
-
-    private void list(final Context context, final List<String> jndi, String path) throws NamingException {
-        final NamingEnumeration<NameClassPair> namingEnum = context.list("");
-        while (namingEnum.hasMore()) {
-            final NameClassPair pair = namingEnum.next();
-
-            String namePath = (path + "/" + pair.getName()).trim();
-            if (namePath.startsWith("/")) {
-                namePath = namePath.substring(1);
-            }
-            jndi.add(namePath);
-
-            final Object obj = context.lookup(pair.getName());
-            if (Context.class.isInstance(obj)) {
-                list((Context) obj, jndi, namePath);
+        ContainerSystem container = SystemInstance.get().getComponent(ContainerSystem.class);
+        BeanContext[] deployments = container.deployments();
+        if (deployments != null) {
+            for (BeanContext beanContext : deployments) {
+                jndi.add(String.valueOf(beanContext.getDeploymentID()));
             }
         }
-    }
 
+        final Map<String, Object> json = new HashMap<String, Object>();
+        json.put("jndi", jndi);
+        return json;
+    }
 }
