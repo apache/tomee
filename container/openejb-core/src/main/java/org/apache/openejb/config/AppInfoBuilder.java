@@ -626,6 +626,7 @@ class AppInfoBuilder {
                 info.persistenceUnitRootUrl = rootUrl;
                 info.provider = persistenceUnit.getProvider();
                 info.transactionType = persistenceUnit.getTransactionType().toString();
+                info.webappName = findRelatedWebApp(appModule, rootUrl);
 
                 final Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
                 info.excludeUnlistedClasses = persistenceUnit.isScanned() || (excludeUnlistedClasses != null && excludeUnlistedClasses);
@@ -651,6 +652,20 @@ class AppInfoBuilder {
                 appInfo.persistenceUnits.add(info);
             }
         }
+    }
+
+    private String findRelatedWebApp(final AppModule appModule, final String rootUrl) {
+        for (WebModule webModule : appModule.getWebModules()) {
+            final List<URL> pXmls = (List<URL>) webModule.getAltDDs().get("ear-webapp-persistence-xml-jars");
+            if (pXmls != null) {
+                for (URL url : pXmls) {
+                    if (url.toExternalForm().contains(rootUrl)) {
+                        return webModule.getModuleId();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public static class PersistenceProviderProperties {

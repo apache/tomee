@@ -31,7 +31,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
-    private final ClassLoader appClassLoader;
+    private ClassLoader appClassLoader;
 
     public EntityManagerFactoryCallable(String persistenceProviderClassName, PersistenceUnitInfoImpl unitInfo, ClassLoader cl) {
         this.persistenceProviderClassName = persistenceProviderClassName;
@@ -76,5 +76,9 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     public PersistenceUnitInfoImpl getUnitInfo() {
         return unitInfo;
+    }
+
+    public void overrideClassLoader(final ClassLoader loader) {
+        appClassLoader = loader;
     }
 }

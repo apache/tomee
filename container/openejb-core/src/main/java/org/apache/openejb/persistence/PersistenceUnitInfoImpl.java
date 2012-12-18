@@ -22,7 +22,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URISyntaxException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +124,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     private String jtaDataSourceName;
     /** just to be able to dump this PU at runtime */
     private String nonJtaDataSourceName;
+
+    /** does it need to be created lazily (not in constructor) */
+    private boolean lazilyInitialized;
 
     public PersistenceUnitInfoImpl() {
         this.persistenceClassLoaderHandler = null;
@@ -288,6 +290,15 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         } else {
             return null;
         }
+    }
+
+    // for emf in webapp of ears
+    public boolean isLazilyInitialized() {
+        return lazilyInitialized;
+    }
+
+    public void setLazilyInitialized(final boolean lazilyInitialized) {
+        this.lazilyInitialized = lazilyInitialized;
     }
 
     public static class PersistenceClassFileTransformer implements ClassFileTransformer {

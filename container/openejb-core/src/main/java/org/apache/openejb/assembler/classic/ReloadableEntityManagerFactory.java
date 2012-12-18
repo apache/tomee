@@ -68,6 +68,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
@@ -79,6 +80,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL = "openejb.jpa.criteria.log.jpql";
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL = "openejb.jpa.criteria.log.jpql.level";
 
+    private final PersistenceUnitInfoImpl unitInfoImpl;
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
     private EntityManagerFactoryCallable entityManagerFactoryCallable;
@@ -87,22 +89,41 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private boolean logCriteriaJpql;
     private String logCriteriaJpqlLevel;
 
-    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactoryCallable callable, final Properties props) {
+    public ReloadableEntityManagerFactory(final ClassLoader cl, final EntityManagerFactoryCallable callable, final PersistenceUnitInfoImpl unitInfo) {
         classLoader = cl;
         entityManagerFactoryCallable = callable;
-        createDelegate();
+        unitInfoImpl = unitInfo;
+        final Properties properties = unitInfo.getProperties();
+        logCriteriaJpql = logCriteriaQueryJpql(properties);
+        logCriteriaJpqlLevel = logCriteriaQueryJpqlLevel(properties);
 
-        logCriteriaJpql = logCriteriaQueryJpql(props);
-        logCriteriaJpqlLevel = logCriteriaQueryJpqlLevel(props);
+        if (!callable.getUnitInfo().isLazilyInitialized()) {
+            createDelegate();
+        }
     }
 
-    private void createDelegate() {
+    public void overrideClassLoader(final ClassLoader loader) {
+        classLoader = loader;
+        entityManagerFactoryCallable.overrideClassLoader(loader);
+        unitInfoImpl.setClassLoader(loader);
+    }
+
+    public void createDelegate() {
         JPAThreadContext.infos.put("properties", entityManagerFactoryCallable.getUnitInfo().getProperties());
+        final long start = System.nanoTime();
         try {
             delegate = entityManagerFactoryCallable.call();
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         } finally {
+            final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
+            LOGGER.info("assembler.buildingPersistenceUnit", unitInfoImpl.getPersistenceUnitName(), unitInfoImpl.getPersistenceProviderClassName(), time + "");
+            if (LOGGER.isDebugEnabled()) {
+                for (Map.Entry<Object, Object> entry : unitInfoImpl.getProperties().entrySet()) {
+                    LOGGER.debug(entry.getKey() + "=" + entry.getValue());
+                }
+            }
+
             JPAThreadContext.infos.clear();
         }
     }
