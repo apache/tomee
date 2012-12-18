@@ -829,10 +829,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             boolean skip = false;
-            for (WebAppInfo webapp : appInfo.webApps) {
-                if ((webappId == null && ejbJar.moduleId.equals(webapp.moduleId))
-                        || (webappId != null && !ejbJar.moduleId.equals(webappId))) {
-                    skip = true;
+            if (!appInfo.webAppAlone) {
+                for (WebAppInfo webapp : appInfo.webApps) {
+                    if ((webappId == null && ejbJar.moduleId.equals(webapp.moduleId))
+                            || (webappId != null && !ejbJar.moduleId.equals(webappId))) {
+                        skip = true;
+                    }
                 }
             }
             if (skip) {
