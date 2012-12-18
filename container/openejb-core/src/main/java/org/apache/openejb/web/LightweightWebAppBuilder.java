@@ -17,9 +17,11 @@
 package org.apache.openejb.web;
 
 import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.FilterInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
@@ -28,6 +30,7 @@ import org.apache.openejb.assembler.classic.ListenerInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -55,10 +58,10 @@ import javax.servlet.annotation.WebServlet;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +102,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
 
         for (WebAppInfo webAppInfo : appInfo.webApps) {
-            final Collection<Injection> injections = appContext.getInjections();
+            final Set<Injection> injections = new HashSet<Injection>(appContext.getInjections());
             injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
             final Map<String, Object> bindings = new HashMap<String, Object>();
@@ -118,6 +121,14 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);
+
+            if (!appInfo.webAppAlone) {
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
+                appContext.getBeanContexts().addAll(beanContexts);
+                new CdiBuilder().build(appInfo, appContext, appContext.getBeanContexts(), webContext);
+                assembler.startEjbs(true, beanContexts);
+            }
 
             final ServletContextEvent sce = new MockServletContextEvent();
             servletContextEvents.put(webAppInfo, sce);
