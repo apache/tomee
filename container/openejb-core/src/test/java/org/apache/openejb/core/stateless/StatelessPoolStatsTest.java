@@ -269,7 +269,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("Flushes", 1L);
 
         CounterBean.constructed.await(10, TimeUnit.SECONDS);
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         assertAttribute("Replaced", 3L);
     }
@@ -309,7 +309,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("Flushes", 1L);
 
         CounterBean.constructed.await(10, TimeUnit.SECONDS);
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         assertAttribute("Replaced", 8L);
     }
@@ -390,7 +390,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("Aged", 5L);
 
         CounterBean.constructed.await(10, TimeUnit.SECONDS);
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         assertAttribute("Replaced", 3L);
     }
@@ -426,7 +426,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("Aged", 5L);
 
         CounterBean.constructed.await(10, TimeUnit.SECONDS);
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         assertAttribute("Replaced", 5L);
     }
@@ -519,7 +519,7 @@ public class StatelessPoolStatsTest extends TestCase {
         assertAttribute("IdleTimeouts", 0L);
 
         CounterBean.discarded.await(10, TimeUnit.SECONDS);
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         assertAttribute("InstancesPooled", 3);
         assertAttribute("IdleTimeouts", 2L);

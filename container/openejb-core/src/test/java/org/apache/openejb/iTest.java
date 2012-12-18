@@ -20,12 +20,12 @@ package org.apache.openejb;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.TestManager;
-import org.apache.openejb.test.singleton.SingletonLocalTestSuite;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
 import org.apache.openejb.test.entity.cmr.CmrTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
+import org.apache.openejb.test.singleton.SingletonLocalTestSuite;
 import org.apache.openejb.test.stateful.StatefulLocalTestSuite;
 import org.apache.openejb.test.stateless.StatelessLocalTestSuite;
 
@@ -36,6 +36,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
 
     /**
      * To run this from your ide, set -Dopenejb.home=target/test-classes/
+     *
      * @throws Exception
      */
     @Override
@@ -47,7 +48,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
             // do nothing - exception ignored
         }
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
-//        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
         System.setProperty("openejb.test.jms", org.apache.openejb.test.ActiveMqLocalTestJms.class.getName());
 
@@ -77,7 +78,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
     }
 
     public static Test suite() {
-        TestSuite suite = new iTest();
+        final TestSuite suite = new iTest();
         suite.addTest(SingletonLocalTestSuite.suite());
         suite.addTest(StatelessLocalTestSuite.suite());
         suite.addTest(StatefulLocalTestSuite.suite());
