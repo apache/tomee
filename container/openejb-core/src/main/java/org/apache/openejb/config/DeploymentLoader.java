@@ -24,8 +24,21 @@ import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.Taglib;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
@@ -515,6 +528,17 @@ public class DeploymentLoader implements DeploymentFilterable {
             final List<URL> filteredUrls = new ArrayList<URL>();
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
+
+            for (WebModule webModule : appModule.getWebModules()) {
+                final List<URL> scannableUrls = webModule.getScannableUrls();
+                final List<URL> foundRootUrls = new ArrayList<URL>();
+                for (URL url : scannableUrls) {
+                    if (!addPersistenceUnits(appModule, url).isEmpty()) {
+                        foundRootUrls.add(url);
+                    }
+                }
+                webModule.getAltDDs().put("ear-webapp-persistence-xml-jars", foundRootUrls);
+            }
 
             for (final DeploymentModule module : appModule.getDeploymentModule()) {
                 module.setStandaloneModule(false);
@@ -1140,7 +1164,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected static void addPersistenceUnits(final AppModule appModule, final URL... urls) throws OpenEJBException {
+    protected static Collection<URL> addPersistenceUnits(final AppModule appModule, final URL... urls) throws OpenEJBException {
+        final Collection<URL> added = new ArrayList<URL>();
 
         // OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been
         // processed by the altdd code, so anything in here should not cause OPENEJB-1059
@@ -1154,6 +1179,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             persistenceUrls = new ArrayList<URL>();
             persistenceUrls.add(URL.class.cast(value));
+            added.add(persistenceUrls.iterator().next());
 
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
@@ -1189,6 +1215,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
 
                 persistenceUrls.add(descriptor);
+                added.add(descriptor);
             }
         }
 
@@ -1214,8 +1241,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
 
                 persistenceFragmentsUrls.add(descriptor);
+                added.add(descriptor);
             }
         }
+
+        return added;
     }
 
     public static Map<String, URL> getDescriptors(final URL moduleUrl) throws OpenEJBException {

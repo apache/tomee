@@ -65,6 +65,8 @@ public class PersistenceBuilder {
         // Exclude Unlisted Classes
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
+        unitInfo.setLazilyInitialized(info.webappName != null);
+
         Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
 
         // JTA Datasource
@@ -144,19 +146,8 @@ public class PersistenceBuilder {
         String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
         unitInfo.setPersistenceProviderClassName(persistenceProviderClassName);
 
-        final long start = System.nanoTime();
-        try {
-            final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader);
-            return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo.getProperties());
-        } finally {
-            final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
-            logger.info("assembler.buildingPersistenceUnit", unitInfo.getPersistenceUnitName(), unitInfo.getPersistenceProviderClassName(), time+"");
-            if (logger.isDebugEnabled()) {
-                for (Map.Entry<Object, Object> entry : unitInfo.getProperties().entrySet()) {
-                    logger.debug(entry.getKey() + "=" + entry.getValue());
-                }
-            }
-        }
+        final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader);
+        return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo);
     }
 
     public static String getOpenEJBJndiName(String unit) {

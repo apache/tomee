@@ -74,6 +74,8 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
@@ -93,6 +95,7 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomcat.InstanceManager;
@@ -114,6 +117,7 @@ import javax.ejb.spi.HandleDelegate;
 import javax.el.ELResolver;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -1067,6 +1071,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     jndiBuilder.mergeJndi();
                 } finally {
                     NamingUtil.setCurrentContext(null);
+                }
+
+                // create EMF included in this webapp when nested in an ear
+                for (PersistenceUnitInfo unitInfo : contextInfo.appInfo.persistenceUnits) {
+                    if (unitInfo.webappName != null && unitInfo.webappName.equals(webAppInfo.moduleId)) {
+                        try {
+                            final ReloadableEntityManagerFactory remf =
+                                (ReloadableEntityManagerFactory) SystemInstance.get().getComponent(ContainerSystem.class)
+                                        .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                            remf.overrideClassLoader(standardContext.getLoader().getClassLoader());
+                            remf.createDelegate();
+                        } catch (NameNotFoundException nnfe) {
+                            logger.warning("Can't find " + unitInfo.id + " persistence unit");
+                        }
+                    }
                 }
 
                 // add WebDeploymentInfo to ContainerSystem
