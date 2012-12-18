@@ -25,7 +25,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Messages;
 
 import javax.naming.Context;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -45,24 +44,24 @@ public class EjbJarBuilder {
         this.context = context;
     }
 
-    public HashMap<String, BeanContext> build(EjbJarInfo ejbJar, Collection<Injection> appInjections) throws OpenEJBException {
-        InjectionBuilder injectionBuilder = new InjectionBuilder(context.getClassLoader());
+    public HashMap<String, BeanContext> build(final EjbJarInfo ejbJar, final Collection<Injection> appInjections, final ClassLoader classLoader) throws OpenEJBException {
+        InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
         List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
         moduleInjections.addAll(appInjections);
-        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context.getClassLoader())
+        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader)
             .build(JndiEncBuilder.JndiScope.module);
 
         HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
 
-        ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext);
+        ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader);
         moduleContext.getProperties().putAll(ejbJar.properties);
-        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
+        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
         MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
         
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, moduleContext, moduleInjections);
                 BeanContext bean = deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(bean, ejbInfo);

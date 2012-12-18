@@ -47,16 +47,14 @@ import java.util.concurrent.TimeUnit;
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
-    private final List<String> defaultInterceptors;
     private final BeanType ejbType;
     private final List<Exception> warnings = new ArrayList<Exception>();
     private final ModuleContext moduleContext;
     private final List<Injection> moduleInjections;
 
-    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections) {
+    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, ModuleContext moduleContext, List<Injection> moduleInjections) {
         this.moduleContext = moduleContext;
         this.bean = bean;
-        this.defaultInterceptors = defaultInterceptors;
         this.moduleInjections = moduleInjections;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {

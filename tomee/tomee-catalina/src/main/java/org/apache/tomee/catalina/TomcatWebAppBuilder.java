@@ -500,8 +500,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 if (classLoader != null) {
                     standardContext.setParentClassLoader(classLoader);
                     standardContext.setDelegate(true);
-                    //standardContext.setLoader(new TomEEWebappLoader(appInfo.path, classLoader));
-                    //standardContext.getLoader().setDelegate(true);
                 }
 
                 String host = webApp.host;
@@ -1043,7 +1041,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             for (final ClassListInfo info : webAppInfo.jsfAnnotatedClasses) {
                 scannedJsfClasses.put(info.name, info.list);
             }
-            jsfClasses.put(standardContext.getLoader().getClassLoader(), scannedJsfClasses);
+            jsfClasses.put(classLoader, scannedJsfClasses);
 
             try {
 
@@ -1080,7 +1078,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                             final ReloadableEntityManagerFactory remf =
                                 (ReloadableEntityManagerFactory) SystemInstance.get().getComponent(ContainerSystem.class)
                                         .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-                            remf.overrideClassLoader(standardContext.getLoader().getClassLoader());
+                            remf.overrideClassLoader(classLoader);
                             remf.createDelegate();
                         } catch (NameNotFoundException nnfe) {
                             logger.warning("Can't find " + unitInfo.id + " persistence unit");
@@ -1100,7 +1098,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 cs.addWebContext(webContext);
 
                 if (!contextInfo.appInfo.webAppAlone) {
+                    final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
+                    assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, beanContexts, webAppInfo.moduleId  );
+                    appContext.getBeanContexts().addAll(beanContexts);
                     new CdiBuilder().build(contextInfo.appInfo, appContext, appContext.getBeanContexts(), webContext);
+                    assembler.startEjbs(true, beanContexts);
                 }
 
                 standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
