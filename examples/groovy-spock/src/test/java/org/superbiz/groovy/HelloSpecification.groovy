@@ -22,14 +22,13 @@ import org.jboss.shrinkwrap.api.ArchivePaths
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.asset.EmptyAsset
 import org.jboss.shrinkwrap.api.spec.WebArchive
-import spock.lang.Specification
 
 import javax.inject.Inject
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
-class HelloSpecification extends Specification {
+class HelloSpecification extends spock.lang.Specification {
     @Inject
     private Hello hello
 
