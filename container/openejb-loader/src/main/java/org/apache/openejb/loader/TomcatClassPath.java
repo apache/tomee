@@ -51,7 +51,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         this(getCommonLoader(getContextClassLoader()));
     }
 
-    public TomcatClassPath(ClassLoader classLoader) {
+    public TomcatClassPath(final ClassLoader classLoader) {
         this.commonLoader = classLoader;
         try {
             addRepositoryMethod = getAddRepositoryMethod();
@@ -64,7 +64,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             }
         }
 
-        ClassLoader serverLoader = getServerLoader(getContextClassLoader());
+        final ClassLoader serverLoader = getServerLoader(getContextClassLoader());
         if (serverLoader != null && serverLoader != commonLoader) {
             this.serverLoader = serverLoader;
         } else
@@ -93,7 +93,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         return loader;
     }
 
-    private static ClassLoader getServerLoader(ClassLoader loader) {
+    private static ClassLoader getServerLoader(final ClassLoader loader) {
         try {
             return loader.loadClass("org.apache.catalina.Container").getClassLoader();
         } catch (ClassNotFoundException e) {
@@ -113,10 +113,10 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     @Override
-    public void addJarsToPath(File dir) throws Exception {
-        String[] jarNames = dir.list(new java.io.FilenameFilter() {
+    public void addJarsToPath(final File dir) throws Exception {
+        final String[] jarNames = dir.list(new java.io.FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(final File dir, final String name) {
                 return (name.endsWith(".jar") || name.endsWith(".zip"));
             }
         });
@@ -125,19 +125,19 @@ public class TomcatClassPath extends BasicURLClassPath {
             return;
         }
 
-        for (String jarName : jarNames) {
+        for (final String jarName : jarNames) {
             this.addJarToPath(new File(dir, jarName).toURI().toURL());
         }
         rebuild();
     }
 
     @Override
-    public void addJarToPath(URL jar) throws Exception {
+    public void addJarToPath(final URL jar) throws Exception {
         this._addJarToPath(jar);
         rebuild();
     }
 
-    public void _addJarToPath(URL jar) throws Exception {
+    public void _addJarToPath(final URL jar) throws Exception {
         ClassLoader classLoader = commonLoader;
 
         if (serverLoader != null && useServerClassLoader(jar)) {
@@ -145,16 +145,16 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
 
         if (addRepositoryMethod != null) {
-            String path = jar.toExternalForm();
+            final String path = jar.toExternalForm();
             addRepositoryMethod.invoke(classLoader, path);
         } else {
             addURLMethod.invoke(classLoader, jar);
         }
     }
 
-    private boolean useServerClassLoader(URL jar) {
+    private boolean useServerClassLoader(final URL jar) {
         try {
-            URL url = findResource("META-INF/org.apache.openejb.tomcat/ServerClassLoader", jar);
+            final URL url = findResource("META-INF/org.apache.openejb.tomcat/ServerClassLoader", jar);
             return url != null;
         } catch (Exception e) {
             return false;
@@ -168,8 +168,8 @@ public class TomcatClassPath extends BasicURLClassPath {
             @Override
             public Method run() {
                 try {
-                    Object cp = getURLClassPath((URLClassLoader) getClassLoader());
-                    Class<?> clazz = cp.getClass();
+                    final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
+                    final Class<?> clazz = cp.getClass();
                     return clazz.getDeclaredMethod("getURLs", URL.class);
                 } catch (Exception e) {
                     throw new LoaderRuntimeException(e);
@@ -182,15 +182,15 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     protected void rebuild() {
         try {
-            Object cp = getURLClassPath((URLClassLoader) getClassLoader());
-            Method getURLsMethod = getGetURLsMethod();
+            final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
+            final Method getURLsMethod = getGetURLsMethod();
             //noinspection NullArgumentToVariableArgMethod
-            URL[] urls = (URL[]) getURLsMethod.invoke(cp, (Object) null);
+            final URL[] urls = (URL[]) getURLsMethod.invoke(cp, (Object) null);
 
             if (urls.length < 1)
                 return;
 
-            StringBuilder path = new StringBuilder(urls.length * 32);
+            final StringBuilder path = new StringBuilder(urls.length * 32);
 
             File s;
             try {
@@ -227,7 +227,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             public Method run() {
                 Method method = null;
                 try {
-                    Class clazz = URLClassLoader.class;
+                    final Class clazz = URLClassLoader.class;
                     method = clazz.getDeclaredMethod("addURL", URL.class);
                     method.setAccessible(true);
                 } catch (Exception e2) {
@@ -242,9 +242,9 @@ public class TomcatClassPath extends BasicURLClassPath {
         return AccessController.doPrivileged(new PrivilegedAction<Method>() {
             @Override
             public Method run() {
-                Method method;
+                final Method method;
                 try {
-                    Class clazz = getClassLoader().getClass();
+                    final Class clazz = getClassLoader().getClass();
                     method = clazz.getDeclaredMethod("addRepository", String.class);
                     method.setAccessible(true);
                     return method;
@@ -255,13 +255,13 @@ public class TomcatClassPath extends BasicURLClassPath {
         });
     }
 
-    private static boolean isDirectory(URL url) {
-        String file = url.getFile();
+    private static boolean isDirectory(final URL url) {
+        final String file = url.getFile();
         return (file.length() > 0 && file.charAt(file.length() - 1) == '/');
     }
 
     @SuppressWarnings("ConstantConditions")
-    private static URL findResource(String resourceName, URL... search) {
+    private static URL findResource(final String resourceName, final URL... search) {
 
         for (int i = 0; i < search.length; i++) {
             URL currentUrl = search[i];
@@ -278,18 +278,18 @@ public class TomcatClassPath extends BasicURLClassPath {
                 Logger.getLogger(TomcatClassPath.class.getName()).log(Level.FINE, "findResource", e);
             }
 
-            JarFile jarFile;
+            final JarFile jarFile;
             try {
-                String protocol = currentUrl.getProtocol();
+                final String protocol = currentUrl.getProtocol();
                 if (protocol.equals("jar")) {
                     /*
                     * If the connection for currentUrl or resURL is
                     * used, getJarFile() will throw an exception if the
                     * entry doesn't exist.
                     */
-                    URL jarURL = ((JarURLConnection) currentUrl.openConnection()).getJarFileURL();
+                    final URL jarURL = ((JarURLConnection) currentUrl.openConnection()).getJarFileURL();
                     try {
-                        JarURLConnection juc = (JarURLConnection) new URL("jar", "", jarURL.toExternalForm() + "!/").openConnection();
+                        final JarURLConnection juc = (JarURLConnection) new URL("jar", "", jarURL.toExternalForm() + "!/").openConnection();
                         jarFile = juc.getJarFile();
                     } catch (IOException e) {
                         // Don't look for this jar file again
@@ -297,11 +297,11 @@ public class TomcatClassPath extends BasicURLClassPath {
                         throw e;
                     }
 
-                    String entryName;
+                    final String entryName;
                     if (currentUrl.getFile().endsWith("!/")) {
                         entryName = resourceName;
                     } else {
-                        String file = currentUrl.getFile();
+                        final String file = currentUrl.getFile();
                         int sepIdx = file.lastIndexOf("!/");
                         if (sepIdx == -1) {
                             // Invalid URL, don't look here again
@@ -309,7 +309,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                             continue;
                         }
                         sepIdx += 2;
-                        StringBuilder sb = new StringBuilder(file.length() - sepIdx + resourceName.length());
+                        final StringBuilder sb = new StringBuilder(file.length() - sepIdx + resourceName.length());
                         sb.append(file.substring(sepIdx));
                         sb.append(resourceName);
                         entryName = sb.toString();
@@ -321,13 +321,13 @@ public class TomcatClassPath extends BasicURLClassPath {
                         return targetURL(currentUrl, resourceName);
                     }
                 } else if (protocol.equals("file")) {
-                    String baseFile = currentUrl.getFile();
-                    String host = currentUrl.getHost();
+                    final String baseFile = currentUrl.getFile();
+                    final String host = currentUrl.getHost();
                     int hostLength = 0;
                     if (host != null) {
                         hostLength = host.length();
                     }
-                    StringBuilder buf = new StringBuilder(2 + hostLength + baseFile.length() + resourceName.length());
+                    final StringBuilder buf = new StringBuilder(2 + hostLength + baseFile.length() + resourceName.length());
 
                     if (hostLength > 0) {
                         buf.append("//").append(host);
@@ -340,8 +340,8 @@ public class TomcatClassPath extends BasicURLClassPath {
                         fixedResName = fixedResName.substring(1);
                     }
                     buf.append(fixedResName);
-                    String filename = buf.toString();
-                    File file = new File(filename);
+                    final String filename = buf.toString();
+                    final File file = new File(filename);
                     File file2;
                     try {
                         file2 = new File(decode(filename, "UTF-8"));
@@ -353,8 +353,8 @@ public class TomcatClassPath extends BasicURLClassPath {
                         return targetURL(currentUrl, fixedResName);
                     }
                 } else {
-                    URL resourceURL = targetURL(currentUrl, resourceName);
-                    URLConnection urlConnection = resourceURL.openConnection();
+                    final URL resourceURL = targetURL(currentUrl, resourceName);
+                    final URLConnection urlConnection = resourceURL.openConnection();
 
                     try {
                         urlConnection.getInputStream().close();
@@ -367,7 +367,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                         return resourceURL;
                     }
 
-                    int code = ((HttpURLConnection) urlConnection).getResponseCode();
+                    final int code = ((HttpURLConnection) urlConnection).getResponseCode();
                     if (code >= 200 && code < 300) {
                         return resourceURL;
                     }
@@ -381,11 +381,11 @@ public class TomcatClassPath extends BasicURLClassPath {
         return null;
     }
 
-    private static URL targetURL(URL base, String name) throws MalformedURLException {
-        StringBuilder sb = new StringBuilder(base.getFile().length() + name.length());
+    private static URL targetURL(final URL base, final String name) throws MalformedURLException {
+        final StringBuilder sb = new StringBuilder(base.getFile().length() + name.length());
         sb.append(base.getFile());
         sb.append(name);
-        String file = sb.toString();
+        final String file = sb.toString();
         return new URL(base.getProtocol(), base.getHost(), base.getPort(), file, null);
     }
 
