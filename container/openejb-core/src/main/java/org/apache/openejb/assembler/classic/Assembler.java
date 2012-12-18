@@ -708,102 +708,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             List<BeanContext> allDeployments = new ArrayList<BeanContext>();
 
-            // EJB
-            final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
-            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
-                final HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, injections);
-
-                final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
-                final PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
-                jaccPermissionsBuilder.install(policyContext);
-
-                final TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
-                for (final BeanContext beanContext : deployments.values()) {
-
-                    beanContext.setTransactionPolicyFactory(transactionPolicyFactory);
-                }
-
-                final MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
-                methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
-
-                final MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
-                methodConcurrencyBuilder.build(deployments, ejbJar.methodConcurrency);
-
-                for (final BeanContext beanContext : deployments.values()) {
-                    containerSystem.addDeployment(beanContext);
-                }
-
-                //bind ejbs into global jndi
-                jndiBuilder.build(ejbJar, deployments);
-
-                // setup timers/asynchronous methods - must be after transaction attributes are set
-                for (final BeanContext beanContext : deployments.values()) {
-                    if (beanContext.getComponentType() != BeanType.STATEFUL) {
-                        final Method ejbTimeout = beanContext.getEjbTimeout();
-                        boolean timerServiceRequired = false;
-                        if (ejbTimeout != null) {
-                            // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
-                            if (beanContext.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
-                                beanContext.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
-                            }
-                            timerServiceRequired = true;
-                        }
-                        for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                            final Map.Entry<Method, MethodContext> entry = it.next();
-                            final MethodContext methodContext = entry.getValue();
-                            if (methodContext.getSchedules().size() > 0) {
-                                timerServiceRequired = true;
-                                final Method method = entry.getKey();
-                                //TODO Need ?
-                                if (beanContext.getTransactionType(method) == TransactionType.RequiresNew) {
-                                    beanContext.setMethodTransactionAttribute(method, TransactionType.Required);
-                                }
-                            }
-                        }
-                        if (timerServiceRequired) {
-                            // Create the timer
-                            final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
-                            //Load auto-start timers
-                            final TimerStore timerStore = timerService.getTimerStore();
-                            for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                                final Map.Entry<Method, MethodContext> entry = it.next();
-                                final MethodContext methodContext = entry.getValue();
-                                for (final ScheduleData scheduleData : methodContext.getSchedules()) {
-                                    timerStore.createCalendarTimer(timerService, (String) beanContext.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
-                                }
-                            }
-                            beanContext.setEjbTimerService(timerService);
-                        } else {
-                            beanContext.setEjbTimerService(new NullEjbTimerServiceImpl());
-                        }
-                    }
-                    //set asynchronous methods transaction
-                    //TODO ???
-                    for (Iterator<Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
-                        final Entry<Method, MethodContext> entry = it.next();
-                        if (entry.getValue().isAsynchronous() && beanContext.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
-                            beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
-                        }
-                    }
-                }
-                // process application exceptions
-                for (final ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
-                    try {
-                        final Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
-                        for (final BeanContext beanContext : deployments.values()) {
-                            beanContext.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
-                        }
-                    } catch (ClassNotFoundException e) {
-                        logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());
-                    }
-                }
-
-                allDeployments.addAll(deployments.values());
-            }
-
-            allDeployments = sort(allDeployments);
-
-            appContext.getBeanContexts().addAll(allDeployments);
+            initEjbs(classLoader, appInfo, appContext, injections, allDeployments, null);
 
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
@@ -812,46 +717,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
             appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
 
-            // now that everything is configured, deploy to the container
-            if (start) {
-                final Collection<BeanContext> toStart = new ArrayList<BeanContext>();
-
-                // deploy
-                for (final BeanContext deployment : allDeployments) {
-                    try {
-                        final Container container = deployment.getContainer();
-                        if (container.getBeanContext(deployment.getDeploymentID()) == null) {
-                            container.deploy(deployment);
-                            if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                                && !deployment.isHidden()) {
-                                logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
-                            }
-                            if (logger.isDebugEnabled()) {
-                                for (final Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
-                                    logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
-                                }
-                            }
-                            toStart.add(deployment);
-                        }
-                    } catch (Throwable t) {
-                        throw new OpenEJBException("Error deploying '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
-                    }
-                }
-
-                // start
-                for (final BeanContext deployment : toStart) {
-                    try {
-                        final Container container = deployment.getContainer();
-                        container.start(deployment);
-                        if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                            && !deployment.isHidden()) {
-                            logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
-                        }
-                    } catch (Throwable t) {
-                        throw new OpenEJBException("Error starting '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
-                    }
-                }
-            }
+            startEjbs(start, allDeployments);
 
             // App Client
             for (final ClientInfo clientInfo : appInfo.clients) {
@@ -957,6 +823,158 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    public List<BeanContext> initEjbs(final ClassLoader classLoader, final AppInfo appInfo, final AppContext appContext,
+                         final Set<Injection> injections, final List<BeanContext> allDeployments, final String webappId) throws OpenEJBException {
+        final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            boolean skip = false;
+            for (WebAppInfo webapp : appInfo.webApps) {
+                if ((webappId == null && ejbJar.moduleId.equals(webapp.moduleId))
+                        || (webappId != null && !ejbJar.moduleId.equals(webappId))) {
+                    skip = true;
+                }
+            }
+            if (skip) {
+                continue;
+            }
+
+            final HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, injections, classLoader);
+
+            final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
+            final PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
+            jaccPermissionsBuilder.install(policyContext);
+
+            final TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
+            for (final BeanContext beanContext : deployments.values()) {
+                beanContext.setTransactionPolicyFactory(transactionPolicyFactory);
+            }
+
+            final MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
+            methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
+
+            final MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
+            methodConcurrencyBuilder.build(deployments, ejbJar.methodConcurrency);
+
+            for (final BeanContext beanContext : deployments.values()) {
+                containerSystem.addDeployment(beanContext);
+            }
+
+            //bind ejbs into global jndi
+            jndiBuilder.build(ejbJar, deployments);
+
+            // setup timers/asynchronous methods - must be after transaction attributes are set
+            for (final BeanContext beanContext : deployments.values()) {
+                if (beanContext.getComponentType() != BeanType.STATEFUL) {
+                    final Method ejbTimeout = beanContext.getEjbTimeout();
+                    boolean timerServiceRequired = false;
+                    if (ejbTimeout != null) {
+                        // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
+                        if (beanContext.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
+                            beanContext.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
+                        }
+                        timerServiceRequired = true;
+                    }
+                    for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+                        final Map.Entry<Method, MethodContext> entry = it.next();
+                        final MethodContext methodContext = entry.getValue();
+                        if (methodContext.getSchedules().size() > 0) {
+                            timerServiceRequired = true;
+                            final Method method = entry.getKey();
+                            //TODO Need ?
+                            if (beanContext.getTransactionType(method) == TransactionType.RequiresNew) {
+                                beanContext.setMethodTransactionAttribute(method, TransactionType.Required);
+                            }
+                        }
+                    }
+                    if (timerServiceRequired) {
+                        // Create the timer
+                        final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
+                        //Load auto-start timers
+                        final TimerStore timerStore = timerService.getTimerStore();
+                        for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+                            final Map.Entry<Method, MethodContext> entry = it.next();
+                            final MethodContext methodContext = entry.getValue();
+                            for (final ScheduleData scheduleData : methodContext.getSchedules()) {
+                                timerStore.createCalendarTimer(timerService, (String) beanContext.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
+                            }
+                        }
+                        beanContext.setEjbTimerService(timerService);
+                    } else {
+                        beanContext.setEjbTimerService(new NullEjbTimerServiceImpl());
+                    }
+                }
+                //set asynchronous methods transaction
+                //TODO ???
+                for (Iterator<Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
+                    final Entry<Method, MethodContext> entry = it.next();
+                    if (entry.getValue().isAsynchronous() && beanContext.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
+                        beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
+                    }
+                }
+            }
+            // process application exceptions
+            for (final ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
+                try {
+                    final Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
+                    for (final BeanContext beanContext : deployments.values()) {
+                        beanContext.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
+                    }
+                } catch (ClassNotFoundException e) {
+                    logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());
+                }
+            }
+
+            allDeployments.addAll(deployments.values());
+        }
+
+        final List<BeanContext> ejbs = sort(allDeployments);
+        appContext.getBeanContexts().addAll(ejbs);
+        return ejbs;
+    }
+
+    public void startEjbs(final boolean start, final List<BeanContext> allDeployments) throws OpenEJBException {
+        // now that everything is configured, deploy to the container
+        if (start) {
+            final Collection<BeanContext> toStart = new ArrayList<BeanContext>();
+
+            // deploy
+            for (final BeanContext deployment : allDeployments) {
+                try {
+                    final Container container = deployment.getContainer();
+                    if (container.getBeanContext(deployment.getDeploymentID()) == null) {
+                        container.deploy(deployment);
+                        if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
+                                && !deployment.isHidden()) {
+                            logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        }
+                        if (logger.isDebugEnabled()) {
+                            for (final Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
+                                logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
+                            }
+                        }
+                        toStart.add(deployment);
+                    }
+                } catch (Throwable t) {
+                    throw new OpenEJBException("Error deploying '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
+                }
+            }
+
+            // start
+            for (final BeanContext deployment : toStart) {
+                try {
+                    final Container container = deployment.getContainer();
+                    container.start(deployment);
+                    if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
+                            && !deployment.isHidden()) {
+                        logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                    }
+                } catch (Throwable t) {
+                    throw new OpenEJBException("Error starting '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
+                }
+            }
         }
     }
 

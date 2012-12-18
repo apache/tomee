@@ -28,13 +28,19 @@ public class ModuleContext extends DeploymentContext {
     private final Context moduleJndiContext;
     private final String uniqueId;
     private final URI moduleURI;
+    private final ClassLoader loader;
 
-    public ModuleContext(String id, URI moduleURI, String uniqueId, AppContext appContext, Context moduleJndiContext) {
+    public ModuleContext(String id, URI moduleURI, String uniqueId, AppContext appContext, Context moduleJndiContext, ClassLoader classLoader) {
         super(id, appContext.getOptions());
         this.moduleURI = moduleURI;
         this.appContext = appContext;
         this.moduleJndiContext = moduleJndiContext;
         this.uniqueId = uniqueId;
+        if (classLoader != null) {
+            this.loader = classLoader;
+        } else { // in tests for instance but shouldn't be the case in main part of the program
+            this.loader = Thread.currentThread().getContextClassLoader();
+        }
     }
 
     public AppContext getAppContext() {
@@ -42,7 +48,7 @@ public class ModuleContext extends DeploymentContext {
     }
 
     public ClassLoader getClassLoader() {
-        return appContext.getClassLoader();
+        return loader;
     }
 
     public Context getModuleJndiContext() {
