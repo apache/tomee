@@ -706,9 +706,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            List<BeanContext> allDeployments = new ArrayList<BeanContext>();
-
-            initEjbs(classLoader, appInfo, appContext, injections, allDeployments, null);
+            List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
 
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
