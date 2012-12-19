@@ -109,6 +109,11 @@ public class AppModule implements DeploymentModule {
         return properties;
     }
 
+    @Override
+    public AppModule appModule() {
+        return this;
+    }
+
     public AppModule(ClassLoader classLoader, String jarLocation, Application application, boolean standaloneModule) {
         this.classLoader = classLoader;
         this.application = application;

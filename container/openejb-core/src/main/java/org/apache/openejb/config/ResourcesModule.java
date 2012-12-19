@@ -52,4 +52,9 @@ public class ResourcesModule extends Module implements DeploymentModule {
     public Set<String> getWatchedResources() {
         return null;
     }
+
+    @Override
+    public AppModule appModule() {
+        return super.getAppModule();
+    }
 }

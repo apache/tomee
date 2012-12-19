@@ -156,7 +156,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
                 try {
                     Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, source.get());
-                    PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
+                    PersistenceModule persistenceModule = new PersistenceModule(appModule, rootUrl, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if (url && "file".equals(((URL) persistenceUrl).getProtocol())) {
                         persistenceModule.getWatchedResources().add(path);

@@ -407,12 +407,12 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 } else if (obj instanceof Persistence) {
 
                     final Persistence persistence = (Persistence) obj;
-                    appModule.addPersistenceModule(new PersistenceModule(implicitRootUrl(), persistence));
+                    appModule.addPersistenceModule(new PersistenceModule(appModule, implicitRootUrl(), persistence));
 
                 } else if (obj instanceof PersistenceUnit) {
 
                     final PersistenceUnit unit = (PersistenceUnit) obj;
-                    appModule.addPersistenceModule(new PersistenceModule(implicitRootUrl(), new Persistence(unit)));
+                    appModule.addPersistenceModule(new PersistenceModule(appModule, implicitRootUrl(), new Persistence(unit)));
 
                 } else if (obj instanceof Beans) {
 

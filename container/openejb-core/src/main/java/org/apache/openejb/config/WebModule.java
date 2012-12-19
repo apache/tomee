@@ -240,4 +240,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
     public Set<String> getJaxrsProviders() {
         return jaxrsProviders;
     }
+
+    @Override
+    public AppModule appModule() {
+        return super.getAppModule();
+    }
 }

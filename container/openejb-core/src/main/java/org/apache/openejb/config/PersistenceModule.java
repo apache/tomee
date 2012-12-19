@@ -30,9 +30,15 @@ public class PersistenceModule implements DeploymentModule {
     private Persistence persistence;
     private final Set<String> watchedResources = new TreeSet<String>();
     private URI uri;
+    private AppModule appModule;
 
-    public PersistenceModule(String rootUrl, Persistence persistence) {
+    public PersistenceModule(final String rootUrl, final Persistence persistence) {
+        this(null, rootUrl, persistence);
+    }
+
+    public PersistenceModule(final AppModule module, final String rootUrl, final Persistence persistence) {
         setRootUrl(rootUrl);
+        this.appModule = module;
         this.persistence = persistence;
     }
 
@@ -88,6 +94,11 @@ public class PersistenceModule implements DeploymentModule {
     @Override
     public Properties getProperties() {
         return null;
+    }
+
+    @Override
+    public AppModule appModule() {
+        return appModule;
     }
 
     @Override

@@ -178,4 +178,9 @@ public class EjbModule extends Module implements WsModule {
                 "moduleId='" + id.getName() + '\'' +
                 '}';
     }
+
+    @Override
+    public AppModule appModule() {
+        return super.getAppModule();
+    }
 }

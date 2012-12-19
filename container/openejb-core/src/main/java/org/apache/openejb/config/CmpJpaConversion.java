@@ -171,7 +171,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             persistence.setVersion("1.0");
             persistence.getPersistenceUnit().add(persistenceUnit);
 
-            PersistenceModule persistenceModule = new PersistenceModule(getPersistenceModuleId(appModule), persistence);
+            PersistenceModule persistenceModule = new PersistenceModule(appModule, getPersistenceModuleId(appModule), persistence);
             appModule.addPersistenceModule(persistenceModule);
         }
         return persistenceUnit;
