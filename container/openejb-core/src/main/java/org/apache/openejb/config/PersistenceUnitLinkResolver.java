@@ -67,7 +67,7 @@ public class PersistenceUnitLinkResolver extends LinkResolver<PersistenceUnit> {
     }
 
     private boolean isIn(final PersistenceUnit value, final WebModule war) {
-        final Collection<URL> urls = (Collection<URL>) war.getAltDDs().get("ear-webapp-persistence-xml-jars");
+        final Collection<URL> urls = (Collection<URL>) war.getAltDDs().get(DeploymentLoader.EAR_WEBAPP_PERSISTENCE_XML_JARS);
         if (urls == null || urls.isEmpty()) {
             return false;
         }
@@ -113,7 +113,7 @@ public class PersistenceUnitLinkResolver extends LinkResolver<PersistenceUnit> {
         }
 
         for (WebModule webModule : module.getWebModules()) {
-            if (isParent(new File(webModule.getJarLocation()), moduleFile, appModuleFile)) { // isParent()
+            if (isParent(new File(webModule.getJarLocation()), moduleFile, appModuleFile)) {
                 return webModule;
             }
         }
