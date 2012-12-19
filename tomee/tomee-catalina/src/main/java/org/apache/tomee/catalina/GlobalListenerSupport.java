@@ -89,8 +89,12 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     public void lifecycleEvent(LifecycleEvent event) {
         Object source = event.getSource();
         if (source instanceof StandardContext) {
-            StandardContext standardContext = (StandardContext) source;
-            String type = event.getType();
+            final StandardContext standardContext = (StandardContext) source;
+            if (standardContext instanceof IgnoredStandardContext) {
+                return;
+            }
+
+            final String type = event.getType();
 
             if (INIT_EVENT.equals(type) || Lifecycle.BEFORE_INIT_EVENT.equals(type)) {
                 contextListener.init(standardContext);

@@ -687,6 +687,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void init(final StandardContext standardContext) {
+        if (isIgnored(standardContext)) return;
+
         // just adding a carriage return to get logs more readable
         logger.info("-------------------------\nTomcatWebAppBuilder.init " + finalName(standardContext.getPath()));
 
@@ -1485,7 +1487,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // useful to disable web applications deployment
         // it can be placed in the context.xml file, server.xml, ...
         // see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html#Context_Parameters
-        return standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null || standardContext.getServletContext().getInitParameter(IGNORE_CONTEXT) != null;
+        return standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null
+                || standardContext.getServletContext().getInitParameter(IGNORE_CONTEXT) != null
+                || standardContext instanceof IgnoredStandardContext;
     }
 
     /**

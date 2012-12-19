@@ -207,7 +207,7 @@ public class TomcatJndiBuilder {
         TomcatWebAppBuilder.ContextInfo contextInfo = null;
         if (builder != null) {
             contextInfo = builder.getContextInfo(standardContext);
-            if (webContext == null && contextInfo.appInfo != null) { // can happen if deployed from apps/
+            if (webContext == null && contextInfo != null && contextInfo.appInfo != null) { // can happen if deployed from apps/
                 for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     if (webAppInfo.path != null && webAppInfo.path.equals(standardContext.getDocBase())) {
                         webContext = cs.getWebContext(webAppInfo.moduleId);
@@ -292,10 +292,8 @@ public class TomcatJndiBuilder {
 
             if (webContext != null) {
                 comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
-            } else { // possible?
-                comp.rebind("BeanManager", cs.getAppContext(
-                        ((TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class))
-                            .getContextInfo(standardContext).appInfo.appId).getBeanManager());
+            } else if (contextInfo != null) {
+                comp.rebind("BeanManager", cs.getAppContext(contextInfo.appInfo.appId).getBeanManager());
             }
         } catch (Exception ignored) {
             ignored.printStackTrace();
