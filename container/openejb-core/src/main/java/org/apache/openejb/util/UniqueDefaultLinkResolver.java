@@ -18,23 +18,12 @@
 
 package org.apache.openejb.util;
 
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.util.LinkResolver;
-
 import java.net.URI;
 
 /**
  * @version $Rev$ $Date$
  */
 public class UniqueDefaultLinkResolver<E> extends LinkResolver<E> {
-    public UniqueDefaultLinkResolver() {
-        this(null);
-    }
-
-    public UniqueDefaultLinkResolver(final AppModule appModule) {
-        super(appModule);
-    }
-
     public E resolveLink(String link, URI moduleUri) {
         //jpa anyway has a default matching rule
         if (link == null || link.length() == 0) {

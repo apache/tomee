@@ -102,7 +102,7 @@ public class UriResolver {
             if (uriFile.exists()) {
                 relative = uriFile.toURI();
             } else {
-                relative = new URI(FileArchive.decode(uriStr));
+                relative = new URI(uriStr.replace(" ", "%20"));
             }
 
             if (relative.isAbsolute()) {
