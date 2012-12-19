@@ -165,6 +165,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     // making all these call inline if far more costly than factorizing packages
+    //
+    // /!\ please check org.apache.openejb.persistence.PersistenceUnitInfoImpl.isServerClass() too
+    // when updating this method
     public static boolean shouldSkip(final String name) {
         for (String prefix : FORCED_SKIP) {
             if (name.startsWith(prefix)) {
