@@ -18,8 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.UniqueDefaultLinkResolver;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 // TODO: review if some more info shouldn't be propagated to module tree to make it faster
-public class PersistenceUnitLinkResolver extends LinkResolver<PersistenceUnit> {
+public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<PersistenceUnit> {
     public PersistenceUnitLinkResolver(final AppModule appModule) {
         super(appModule);
     }
