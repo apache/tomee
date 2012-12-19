@@ -99,7 +99,7 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
     }
 
     private WebModule extractWebApp(final URI moduleUri) {
-        if (module == null) {
+        if (module == null || module.getJarLocation() == null) {
             return null;
         }
 
@@ -113,7 +113,7 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
         }
 
         for (WebModule webModule : module.getWebModules()) {
-            if (isParent(new File(webModule.getJarLocation()), moduleFile, appModuleFile)) {
+            if (webModule.getJarLocation() != null && isParent(new File(webModule.getJarLocation()), moduleFile, appModuleFile)) {
                 return webModule;
             }
         }
