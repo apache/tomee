@@ -33,6 +33,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
@@ -40,6 +41,7 @@ import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.TomEERuntimeException;
+import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.net.URI;
@@ -170,7 +172,7 @@ public class TomcatWsRegistry implements WsRegistry {
         // build contexts
         // - old way (/*)
         if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
-            deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses);
+            deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, webContext);
         }
 
         // - new way (/<webappcontext>/webservices/<name>) if webcontext is specified
@@ -190,24 +192,26 @@ public class TomcatWsRegistry implements WsRegistry {
                     addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses, false);
                 }
             } else if (!WEBSERVICE_OLDCONTEXT_ACTIVE) { // deploying in a jar
-                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses);
+                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, webContext);
             }
         }
         return addresses;
     }
 
-    private void deployInFakeWebapp(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, Container host, HttpListener httpListener, List<String> addresses) {
-        final Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
+    private void deployInFakeWebapp(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, Container host, HttpListener httpListener, List<String> addresses, String name) {
+        final Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName, name);
         host.addChild(context);
         addServlet(host, context, "/*", httpListener, path, addresses, true);
     }
 
-    private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName) {
+    private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, String name) {
         final StandardContext context = new IgnoredStandardContext();
         context.setPath(path);
         context.setDocBase("");
         context.setParentClassLoader(classLoader);
         context.setDelegate(true);
+        context.setName(name);
+        ((TomcatWebAppBuilder) SystemInstance.get().getComponent(WebAppBuilder.class)).initJ2EEInfo(context);
 
         // Configure security
         if (authMethod != null) {

@@ -168,8 +168,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
     private static final Digester CONTEXT_DIGESTER = createDigester();
+
+    public static final String DEFAULT_J2EE_SERVER = "Apache TomEE";
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
     public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
+    public static final String TOMEE_INIT_J2EE_INFO = "tomee.init-J2EE-info";
 
     /**
      * Context information for web applications
@@ -218,6 +221,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private Set<CatalinaCluster> clusters = new HashSet<CatalinaCluster>();
 
     private ClassLoader parentClassLoader;
+    private boolean initJEEInfo = true;
 
     /**
      * Creates a new web application builder
@@ -225,6 +229,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     public TomcatWebAppBuilder() {
         SystemInstance.get().setComponent(WebAppBuilder.class, this);
+        initJEEInfo = "true".equalsIgnoreCase(SystemInstance.get().getProperty(TOMEE_INIT_J2EE_INFO, "true"));
 
         // TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
 
@@ -692,6 +697,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // just adding a carriage return to get logs more readable
         logger.info("-------------------------\nTomcatWebAppBuilder.init " + finalName(standardContext.getPath()));
 
+        final String name = standardContext.getName();
+
+        initJ2EEInfo(standardContext);
+
         File warFile = warPath(standardContext);
         if (!warFile.isDirectory()) {
             try {
@@ -708,7 +717,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
         standardContext.setNamingResources(new OpenEJBNamingResource(standardContext.getNamingResources()));
 
-        String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY + "." + standardContext.getName(), (String) null);
+        String sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY + "." + name, (String) null);
         if (sessionManager == null) {
             sessionManager = SystemInstance.get().getOptions().get(OPENEJB_SESSION_MANAGER_PROPERTY, (String) null);
         }
@@ -749,13 +758,33 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // force manually the namingContextListener to merge jndi in an easier way
         final NamingContextListener ncl = new NamingContextListener();
-        ncl.setName(standardContext.getName());
+        ncl.setName(name);
         standardContext.setNamingContextListener(ncl);
         standardContext.addLifecycleListener(ncl);
         standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
 
         // listen some events
         standardContext.addContainerListener(new TomEEContainerListener());
+    }
+
+    public void initJ2EEInfo(final StandardContext standardContext) {
+        if (initJEEInfo) {
+            standardContext.setJ2EEServer(DEFAULT_J2EE_SERVER);
+
+            final ContextInfo contextInfo = getContextInfo(standardContext);
+            if (contextInfo == null || contextInfo.appInfo == null || contextInfo.appInfo.path == null) {
+                standardContext.setJ2EEApplication(standardContext.getName());
+            } else {
+                standardContext.setJ2EEApplication(shortName(contextInfo.appInfo.path));
+            }
+        }
+    }
+
+    private String shortName(final String path) {
+        if (path.contains("/")) {
+            return path.substring(path.lastIndexOf('/'), path.length());
+        }
+        return path;
     }
 
     private static String finalName(final String path) {
@@ -1489,7 +1518,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html#Context_Parameters
         return standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null
                 || standardContext.getServletContext().getInitParameter(IGNORE_CONTEXT) != null
-                || standardContext instanceof IgnoredStandardContext;
+                || standardContext instanceof IgnoredStandardContext
+                || isExcludedBySystemProperty(standardContext);
+    }
+
+    private static boolean isExcludedBySystemProperty(final StandardContext standardContext) {
+        String name = standardContext.getName();
+        if (name == null) {
+            name = standardContext.getPath();
+            if (name == null) { // possible ?
+                name = "";
+            }
+        }
+
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".tomcat-only", "false"));
     }
 
     /**
