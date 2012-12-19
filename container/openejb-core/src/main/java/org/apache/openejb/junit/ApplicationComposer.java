@@ -322,7 +322,8 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             int webModulesNb = 0;
 
             // Invoke the @Module producer methods to build out the AppModule
-            for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
+            final List<FrameworkMethod> moduleMethods = testClass.getAnnotatedMethods(Module.class);
+            for (FrameworkMethod method : moduleMethods) {
 
                 final Object obj = method.invokeExplosively(testInstance);
                 final Classes classesAnnotation = method.getAnnotation(Classes.class);
@@ -486,6 +487,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
             if (webModulesNb > 0 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
                 SystemInstance.get().setComponent(WebAppBuilder.class, new LightweightWebAppBuilder());
+            }
+
+            if (moduleMethods.size() == 1 && webModulesNb == 1) {
+                appModule.setStandloneWebModule();
             }
 
             try {

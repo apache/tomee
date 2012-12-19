@@ -111,6 +111,7 @@ public class RestDeploymentTest {
         appModule.getWebModules().add(webModule);
         appModule.getEjbModules().add(new EjbModule(ejbJar));
         appModule.getEjbModules().iterator().next().setModuleId(webModule.getModuleId());
+        appModule.setStandloneWebModule();
         annotationDeployer.deploy(appModule);
 
         AppInfo appInfo = factory.configureApplication(appModule);
