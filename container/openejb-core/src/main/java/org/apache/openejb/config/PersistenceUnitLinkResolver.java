@@ -31,8 +31,10 @@ import java.util.Iterator;
 
 // TODO: review if some more info shouldn't be propagated to module tree to make it faster
 public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<PersistenceUnit> {
+    private final AppModule module;
+
     public PersistenceUnitLinkResolver(final AppModule appModule) {
-        super(appModule);
+        module = appModule;
     }
 
     @Override

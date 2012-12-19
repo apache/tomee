@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.config.AppModule;
 import org.apache.xbean.finder.archive.FileArchive;
 
 import java.net.URI;
@@ -30,15 +29,6 @@ import java.util.TreeMap;
 public class LinkResolver<E> {
     private final Map<URI, E> byFullName = new TreeMap<URI, E>();
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
-    protected final AppModule module;
-
-    public LinkResolver() {
-        this(null);
-    }
-
-    public LinkResolver(final AppModule o) {
-        module = o;
-    }
 
     public boolean add(String modulePackageName, String name, E value) {
         return add(URI.create(modulePackageName), name, value);
@@ -67,7 +57,7 @@ public class LinkResolver<E> {
     }
 
     private URI resolve(URI moduleURI, String name) {
-        name = FileArchive.decode(name);
+        name = name.replace(" ", "%20");
         return moduleURI.resolve("#" + name);
     }
 
