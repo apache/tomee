@@ -93,6 +93,11 @@ public class ConnectorModule extends Module implements DeploymentModule {
     }
 
     @Override
+    public AppModule appModule() {
+        return super.getAppModule();
+    }
+
+    @Override
     public String toString() {
         return "ConnectorModule{" +
                 "moduleId='" + id.getName() + '\'' +

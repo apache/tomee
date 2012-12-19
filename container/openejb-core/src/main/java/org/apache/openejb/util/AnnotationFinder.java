@@ -23,6 +23,7 @@ import org.apache.xbean.asm.ClassVisitor;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.MethodVisitor;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.archive.FileArchive;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -40,7 +41,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
-import java.util.logging.*;
 
 /**
  * ClassFinder searches the classpath of the specified classloader for
@@ -61,7 +61,6 @@ public class AnnotationFinder {
     private final ClassLoader classLoader;
     private final List<String> classesNotLoaded = new ArrayList<String>();
     private final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
-    private final Collection<URL> urls;
     private List<String> classNames;
 
     /**
@@ -112,7 +111,6 @@ public class AnnotationFinder {
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
         this.classLoader = classLoader;
-        this.urls = urls;
         classNames = new ArrayList<String>();
         for (final URL location : urls) {
             if (location == null) {
@@ -162,6 +160,7 @@ public class AnnotationFinder {
             try {
                 readClassDef(className, annotationVisitor);
             } catch (NotFoundException e) {
+                // no-op
             } catch (FoundException e) {
                 return true;
             }
@@ -220,12 +219,12 @@ public class AnnotationFinder {
 
     private List<String> jar(final URL location) throws IOException {
         String jarPath = location.getFile();
-        if (jarPath.indexOf("!") > -1){
+        if (jarPath.contains("!")){
             jarPath = jarPath.substring(0, jarPath.indexOf("!"));
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
-            final JarFile jarFile = new JarFile(url.getFile().replace("%20", " "));
+            final JarFile jarFile = new JarFile(FileArchive.decode(url.getFile()));
             return jar(jarFile);
         } else {
             InputStream in = url.openStream();

@@ -570,12 +570,12 @@ public class OpenEjbContainer extends EJBContainer {
                     } else if (modules instanceof Persistence) {
 
                         final Persistence persistence = (Persistence) modules;
-                        appModule.addPersistenceModule(new PersistenceModule("", persistence));
+                        appModule.addPersistenceModule(new PersistenceModule(appModule, "", persistence));
 
                     } else if (modules instanceof PersistenceUnit) {
 
                         final PersistenceUnit unit = (PersistenceUnit) modules;
-                        appModule.addPersistenceModule(new PersistenceModule("", new Persistence(unit)));
+                        appModule.addPersistenceModule(new PersistenceModule(appModule, "", new Persistence(unit)));
 
                     } else if (modules instanceof Beans) {
 

@@ -130,5 +130,9 @@ public class ClientModule extends Module implements DeploymentModule {
                 '}';
     }
 
+    @Override
+    public AppModule appModule() {
+        return super.getAppModule();
+    }
 
 }

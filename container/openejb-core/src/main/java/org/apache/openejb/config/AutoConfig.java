@@ -203,7 +203,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private void resolvePersistenceRefs(AppModule appModule) {
-        LinkResolver<PersistenceUnit> persistenceUnits = new UniqueDefaultLinkResolver<PersistenceUnit>();
+        LinkResolver<PersistenceUnit> persistenceUnits = new PersistenceUnitLinkResolver(appModule);
 
         for (PersistenceModule module : appModule.getPersistenceModules()) {
             String rootUrl = module.getRootUrl();
@@ -235,22 +235,22 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private void processPersistenceRefs(JndiConsumer component, DeploymentModule module, LinkResolver<PersistenceUnit> persistenceUnits, URI moduleURI) {
 
-        String componentName = component.getJndiConsumerName();
-
-        ValidationContext validation = module.getValidation();
+        final String componentName = component.getJndiConsumerName();
+        final ValidationContext validation = module.getValidation();
+        final AppModule appModule = module.appModule();
 
         for (PersistenceRef ref : component.getPersistenceUnitRef()) {
 
-            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(appModule, persistenceUnits, ref, moduleURI, componentName, validation);
         }
 
         for (PersistenceRef ref : component.getPersistenceContextRef()) {
 
-            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(appModule, persistenceUnits, ref, moduleURI, componentName, validation);
         }
     }
 
-    private PersistenceUnit processPersistenceRef(LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
+    private PersistenceUnit processPersistenceRef(AppModule appModule, LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
 
         if (ref.getMappedName() != null && ref.getMappedName().startsWith("jndi:")){
             return null;

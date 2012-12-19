@@ -16,19 +16,29 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.loader.JarLocation;
+import org.apache.openejb.config.AppModule;
+import org.apache.xbean.finder.archive.FileArchive;
 
-import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Collections;
-import java.net.URI;
+
 
 public class LinkResolver<E> {
     private final Map<URI, E> byFullName = new TreeMap<URI, E>();
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
+    protected final AppModule module;
+
+    public LinkResolver() {
+        this(null);
+    }
+
+    public LinkResolver(final AppModule o) {
+        module = o;
+    }
 
     public boolean add(String modulePackageName, String name, E value) {
         return add(URI.create(modulePackageName), name, value);
@@ -57,9 +67,8 @@ public class LinkResolver<E> {
     }
 
     private URI resolve(URI moduleURI, String name) {
-        name = name.replaceAll(" ", "%20");
-        URI uri = moduleURI.resolve("#" + name);
-        return uri;
+        name = FileArchive.decode(name);
+        return moduleURI.resolve("#" + name);
     }
 
     public Collection<E> values() {
@@ -89,7 +98,13 @@ public class LinkResolver<E> {
 
             // check for single value using short name
             Collection<E> values = byShortName.get(link);
-            if (values == null || values.size() != 1) {
+            if (values == null) {
+                return null;
+            }
+            if (values.size() > 1) {
+                values = tryToResolveForEar(values, moduleUri, link);
+            }
+            if (values.size() != 1) {
                 return null;
             }
             value = values.iterator().next();
@@ -97,12 +112,16 @@ public class LinkResolver<E> {
         } else if (moduleUri != null) {
             // full (absolute) name
             URI uri = moduleUri.resolve(link);
-            E value = byFullName.get(uri);
-            return value;
+            return byFullName.get(uri);
         } else {
             // Absolute reference in a standalone module
             return null;
         }
+    }
+
+    // mainly to let children add some check here
+    protected Collection<E> tryToResolveForEar(final Collection<E> values, final URI moduleUri, final String link) {
+        return values;
     }
 
     protected E getUniqueMember() {
@@ -112,5 +131,4 @@ public class LinkResolver<E> {
             return null;
         }
     }
-
 }

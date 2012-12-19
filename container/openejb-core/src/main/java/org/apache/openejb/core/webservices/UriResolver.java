@@ -19,6 +19,7 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Base64;
+import org.apache.xbean.finder.archive.FileArchive;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,7 +102,7 @@ public class UriResolver {
             if (uriFile.exists()) {
                 relative = uriFile.toURI();
             } else {
-                relative = new URI(uriStr.replaceAll(" ", "%20"));
+                relative = new URI(FileArchive.decode(uriStr));
             }
 
             if (relative.isAbsolute()) {

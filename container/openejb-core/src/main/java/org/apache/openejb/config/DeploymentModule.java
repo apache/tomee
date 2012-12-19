@@ -55,6 +55,8 @@ public interface DeploymentModule {
 
     java.util.Properties getProperties();
 
+    AppModule appModule();
+
     class ID {
         private final String name;
         private final File location;
