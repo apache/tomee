@@ -656,7 +656,7 @@ class AppInfoBuilder {
 
     private String findRelatedWebApp(final AppModule appModule, final String rootUrl) {
         for (WebModule webModule : appModule.getWebModules()) {
-            final List<URL> pXmls = (List<URL>) webModule.getAltDDs().get("ear-webapp-persistence-xml-jars");
+            final List<URL> pXmls = (List<URL>) webModule.getAltDDs().get(DeploymentLoader.EAR_WEBAPP_PERSISTENCE_XML_JARS);
             if (pXmls != null) {
                 for (URL url : pXmls) {
                     if (url.toExternalForm().contains(rootUrl)) {
