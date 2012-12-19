@@ -17,6 +17,8 @@
 package org.apache.openejb.persistence;
 
 
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
@@ -325,6 +327,17 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     // not the shouldSkip() method from UrlClassLoaderFirst since we skip more here
     // we just need JPA stuff so all the tricks we have for the server part are useless
     public static boolean isServerClass(final String name) {
+        for (String prefix : URLClassLoaderFirst.FORCED_SKIP) {
+            if (name.startsWith(prefix)) {
+                return true;
+            }
+        }
+        for (String prefix : URLClassLoaderFirst.FORCED_LOAD) {
+            if (name.startsWith(prefix)) {
+                return false;
+            }
+        }
+
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.")) return true;
         if (name.startsWith("sun.")) return true;

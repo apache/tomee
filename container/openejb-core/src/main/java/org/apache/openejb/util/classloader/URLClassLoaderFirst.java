@@ -36,8 +36,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
     // - will not match anything, that's the desired default behavior
-    private static final Collection<String> FORCED_SKIP = new ArrayList<String>();
-    private static final Collection<String> FORCED_LOAD = new ArrayList<String>();
+    public static final Collection<String> FORCED_SKIP = new ArrayList<String>();
+    public static final Collection<String> FORCED_LOAD = new ArrayList<String>();
 
     static {
         reloadConfig();

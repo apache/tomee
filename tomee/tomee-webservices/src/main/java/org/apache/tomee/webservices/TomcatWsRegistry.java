@@ -21,9 +21,6 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -40,6 +37,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.loader.TomcatHelper;
@@ -53,7 +51,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.apache.tomee.catalina.BackportUtil.getServlet;
-import static org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 public class TomcatWsRegistry implements WsRegistry {
     private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
@@ -206,28 +203,11 @@ public class TomcatWsRegistry implements WsRegistry {
     }
 
     private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName) {
-        StandardContext context = new StandardContext();
+        final StandardContext context = new IgnoredStandardContext();
         context.setPath(path);
         context.setDocBase("");
         context.setParentClassLoader(classLoader);
         context.setDelegate(true);
-
-        // Tomcat has a stupid rule where a life cycle listener must set
-        // configured true, or it will treat it as a failed deployment
-        context.addLifecycleListener(new LifecycleListener() {
-            public void lifecycleEvent(LifecycleEvent event) {
-                Context context = (Context) event.getLifecycle();
-
-                if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-                    context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
-                }
-
-
-                if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
-                    context.setConfigured(true);
-                }
-            }
-        });
 
         // Configure security
         if (authMethod != null) {
