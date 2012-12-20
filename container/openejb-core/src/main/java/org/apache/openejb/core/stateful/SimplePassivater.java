@@ -53,7 +53,17 @@ public class SimplePassivater implements PassivationStrategy {
             } else {
                 sessionDirectory = new File(System.getProperty("java.io.tmpdir", File.separator + "tmp"));
             }
+
+            if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
+                throw new java.io.IOException("Failed to create session directory: " + sessionDirectory.getAbsolutePath());
+            }
+
+            if (sessionDirectory.exists() && !sessionDirectory.isDirectory()) {
+                throw new java.io.IOException("Session directory exists as a file: " + sessionDirectory.getAbsolutePath());
+            }
+
             logger.info("Using directory " + sessionDirectory + " for stateful session passivation");
+
         } catch (java.io.IOException e) {
             throw new SystemException(getClass().getName() + ".init(): can't use directory prefix " + dir + ":" + e, e);
         }
