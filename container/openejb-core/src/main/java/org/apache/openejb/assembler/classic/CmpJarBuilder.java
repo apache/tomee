@@ -73,7 +73,6 @@ public class CmpJarBuilder {
             return;
         }
 
-        boolean threwException = false;
         JarOutputStream jarOutputStream = null;
 
         try {
@@ -94,19 +93,16 @@ public class CmpJarBuilder {
                 // System.out.println(appInfo.cmpMappingsXml);
                 addJarEntry(jarOutputStream, "META-INF/openejb-cmp-generated-orm.xml", appInfo.cmpMappingsXml.getBytes());
             }
-        } catch (IOException e) {
-            threwException = true;
-            throw e;
-        } finally {
+        } catch (Throwable e) {
 
-            close(jarOutputStream);
-
-            if (threwException) {
-                if (null != jarFile && !jarFile.delete()) {
-                    jarFile.deleteOnExit();
-                }
-                jarFile = null;
+            if (null != jarFile && !jarFile.delete()) {
+                jarFile.deleteOnExit();
             }
+            jarFile = null;
+
+            throw new IOException("CmpJarBuilder.generate()", e);
+        } finally {
+            close(jarOutputStream);
         }
     }
 
