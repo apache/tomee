@@ -22,6 +22,9 @@ import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.UrlCache;
 
 import java.io.File;
@@ -99,7 +102,7 @@ public class CmpJarBuilder {
             close(jarOutputStream);
 
             if (threwException) {
-                if (!jarFile.delete()) {
+                if (null != jarFile && !jarFile.delete()) {
                     jarFile.deleteOnExit();
                 }
                 jarFile = null;
@@ -240,14 +243,23 @@ public class CmpJarBuilder {
     }
 
     private static synchronized JarOutputStream openJarFile(final CmpJarBuilder instance) throws IOException {
+
         if (instance.jarFile != null) {
-            throw new IllegalStateException("Jar file is closed");
+            throw new IllegalStateException("Jar file exists already");
+        }
+
+        File dir = UrlCache.cacheDir;
+
+        if (null == dir) {
+            dir = SystemInstance.get().getBase().getDirectory("tmp", true);
         }
 
         // if url caching is enabled, generate the file directly in the cache dir, so it doesn't have to be recoppied
         try {
-            instance.jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
-        } catch (IOException e) {
+            instance.jarFile = File.createTempFile("OpenEJBGenerated.", ".jar", dir).getAbsoluteFile();
+        } catch (Throwable e) {
+
+            Logger.getInstance(LogCategory.OPENEJB_STARTUP, CmpJarBuilder.class).warning("Failed to create temp jar file in: " + dir, e);
 
             //Try
             try {
@@ -255,12 +267,16 @@ public class CmpJarBuilder {
             } catch (InterruptedException ie) {
                 //Ignore
             }
-            instance.jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
+
+            instance.jarFile = File.createTempFile("OpenEJBGenerated.", ".jar", dir).getAbsoluteFile();
         }
 
         Thread.yield();
 
         instance.jarFile.deleteOnExit();
+
+        Logger.getInstance(LogCategory.OPENEJB_STARTUP, CmpJarBuilder.class).debug("Using temp jar file: " + instance.jarFile);
+
         return new JarOutputStream(IO.write(instance.jarFile));
     }
 

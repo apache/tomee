@@ -27,13 +27,15 @@ public class FileUtils {
 
     private File home;
 
-    private FileUtils(String homeDir, String defaultDir) {
+    private FileUtils(final String homeDir, final String defaultDir) {
         this(homeDir, defaultDir, SystemInstance.get().getProperties());
     }
 
-    public FileUtils(String homeDir, String defaultDir, Hashtable env) {
-        String homePath = null;
-        homePath = (String) env.get(homeDir);
+    @SuppressWarnings("UseOfObsoleteCollectionType")
+    public FileUtils(final String homeDir, final String defaultDir, final Hashtable env) {
+
+        String homePath = (String) env.get(homeDir);
+
         if (homePath == null) {
             homePath = (String) env.get(defaultDir);
         }
@@ -56,20 +58,19 @@ public class FileUtils {
         }
     }
 
-    public File getDirectory(String path) throws IOException {
+    public File getDirectory(final String path) throws IOException {
         return getDirectory(path, false);
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof FileUtils)) return false;
-        FileUtils that = (FileUtils) obj;
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof FileUtils))
+            return false;
+        final FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
     }
 
-    public File getDirectory(String path, boolean create) throws IOException {
-        File dir = null;
-
-        dir = new File(home, path);
+    public File getDirectory(final String path, final boolean create) throws IOException {
+        File dir = new File(home, path);
         dir = dir.getCanonicalFile();
 
         if (!dir.exists() && create) {
@@ -91,18 +92,16 @@ public class FileUtils {
         return home;
     }
 
-    public void setDirectory(File dir) {
+    public void setDirectory(final File dir) {
         this.home = dir;
     }
 
-    public File getFile(String path) throws java.io.FileNotFoundException, java.io.IOException {
+    public File getFile(final String path) throws java.io.FileNotFoundException, java.io.IOException {
         return getFile(path, true);
     }
 
-    public File getFile(String path, boolean validate) throws java.io.FileNotFoundException, java.io.IOException {
-        File file = null;
-
-        file = new File(path);
+    public File getFile(final String path, final boolean validate) throws java.io.FileNotFoundException, java.io.IOException {
+        File file = new File(path);
 
         if (!file.isAbsolute()) {
             file = new File(home, path);
@@ -117,22 +116,21 @@ public class FileUtils {
         return file;
     }
 
-    public static File createTempDirectory(String pathPrefix) throws java.io.IOException {
+    public static File createTempDirectory(final String pathPrefix) throws java.io.IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
-            String path = pathPrefix + _random.nextLong();
-            java.io.File tmpDir = new java.io.File(path);
-            if (tmpDir.exists()) {
-                continue;
-            } else {
-                tmpDir.mkdir();
+
+            final String path = pathPrefix + _random.nextLong();
+            final java.io.File tmpDir = new java.io.File(path);
+
+            if (!tmpDir.exists() && tmpDir.mkdirs()) {
                 return tmpDir;
             }
         }
-        throw new java.io.IOException("Can't create temporary directory.");
+        throw new java.io.IOException("Cannot create temporary directory at: " + pathPrefix);
     }
 
     public static File createTempDirectory() throws java.io.IOException {
-        String prefix = System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "openejb";
+        final String prefix = System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "openejb";
         return createTempDirectory(prefix);
     }
 
