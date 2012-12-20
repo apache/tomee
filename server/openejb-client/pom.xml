@@ -87,6 +87,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
+          <useFile>false</useFile>
         </configuration>
       </plugin>
       <plugin>

@@ -169,7 +169,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
             @Override
-            public int compare(URI uri1, URI uri2) {
+            public int compare(final URI uri1, final URI uri2) {
 
                 //Ignore server hostname
                 URI u1 = URI.create(uri1.getSchemeSpecificPart());
@@ -354,7 +354,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 running.set(false);
 
-                for (Future future : futures) {
+                for (final Future future : futures) {
                     future.cancel(true);
                 }
 
@@ -506,7 +506,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
 
         @Override
-        protected List<String> validate(Arguments arguments) {
+        protected List<String> validate(final Arguments arguments) {
             return super.validate(arguments);
         }
 
@@ -538,6 +538,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final AtomicBoolean running = new AtomicBoolean(true);
 
         final Thread t = new Thread(new Runnable() {
+            @SuppressWarnings("UseOfSystemOutOrSystemErr")
             @Override
             public void run() {
                 while (running.get()) {

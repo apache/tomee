@@ -18,21 +18,21 @@
 package org.apache.openejb.client;
 
 import junit.framework.TestCase;
+import org.w3c.dom.Element;
 
-import javax.xml.ws.spi.Provider;
-import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.spi.Provider;
+import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
 import java.net.URL;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 public class JaxWsProviderWrapperTest extends TestCase {
+
     public void test() throws Exception {
         System.setProperty(Provider.JAXWSPROVIDER_PROPERTY, MockProvider.class.getName());
         Provider provider = Provider.provider();
@@ -44,10 +44,10 @@ public class JaxWsProviderWrapperTest extends TestCase {
             provider = Provider.provider();
             assertNotNull("provider is null", provider);
             assertTrue("provider should be an instance of ProviderWrapper", provider instanceof JaxWsProviderWrapper);
-            JaxWsProviderWrapper providerWrapper = (JaxWsProviderWrapper)provider;
+            final JaxWsProviderWrapper providerWrapper = (JaxWsProviderWrapper) provider;
 
             // check delegate
-            Provider delegate = providerWrapper.getDelegate();
+            final Provider delegate = providerWrapper.getDelegate();
             assertNotNull("providerWrapper delegate is null", delegate);
             assertFalse("providerWrapper delegate should not be an instance of ProviderWrapper", delegate instanceof JaxWsProviderWrapper);
         } finally {
@@ -57,27 +57,34 @@ public class JaxWsProviderWrapperTest extends TestCase {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public static class MockProvider extends Provider {
-        public ServiceDelegate createServiceDelegate(URL url, QName qName, Class aClass) {
+
+        @Override
+        public ServiceDelegate createServiceDelegate(final URL url, final QName qName, final Class aClass) {
             return null;
         }
 
-        public Endpoint createEndpoint(String string, Object object) {
+        @Override
+        public Endpoint createEndpoint(final String string, final Object object) {
             return null;
         }
 
-        public Endpoint createAndPublishEndpoint(String string, Object object) {
+        @Override
+        public Endpoint createAndPublishEndpoint(final String string, final Object object) {
             return null;
         }
 
-        public W3CEndpointReference createW3CEndpointReference(String address, QName serviceName, QName portName, List<Element> metadata, String wsdlDocumentLocation, List<Element> referenceParameters) {
+        @Override
+        public W3CEndpointReference createW3CEndpointReference(final String address, final QName serviceName, final QName portName, final List<Element> metadata, final String wsdlDocumentLocation, final List<Element> referenceParameters) {
             return null;
         }
 
-        public EndpointReference readEndpointReference(Source source){
+        @Override
+        public EndpointReference readEndpointReference(final Source source) {
             return null;
         }
 
-        public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        @Override
+        public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
             return null;
         }
     }
