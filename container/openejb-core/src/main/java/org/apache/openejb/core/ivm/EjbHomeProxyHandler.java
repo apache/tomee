@@ -147,8 +147,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 }
                 return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler, handler.getBeanContext().getBeanClass(), interfaces.toArray(new Class<?>[interfaces.size()]));
             } else {
-                List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
+                List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 2);
                 proxyInterfaces.addAll(handler.getInterfaces());
+                proxyInterfaces.add(Serializable.class);
                 proxyInterfaces.add(IntraVmProxy.class);
                 if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
                     proxyInterfaces.add(BeanContext.Removable.class);

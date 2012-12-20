@@ -449,6 +449,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
 
             //Free all plugin resources
+            ((CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin()).clearProxies();
             webBeansContext.getPluginLoader().shutDown();
 
             //Clear extensions
