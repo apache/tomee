@@ -119,8 +119,9 @@ public class JaxWsProviderWrapper extends Provider {
         return delegate;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ServiceDelegate createServiceDelegate(final URL wsdlDocumentLocation, final QName serviceName, final Class<? extends Service> serviceClass) {
+    public ServiceDelegate createServiceDelegate(final URL wsdlDocumentLocation, final QName serviceName, final Class serviceClass) {
         ServiceDelegate serviceDelegate = delegate.createServiceDelegate(wsdlDocumentLocation, serviceName, serviceClass);
         serviceDelegate = new ServiceDelegateWrapper(serviceDelegate);
         return serviceDelegate;
