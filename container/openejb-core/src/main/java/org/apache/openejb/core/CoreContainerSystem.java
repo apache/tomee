@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @org.apache.xbean.XBean element="containerSystem"
  */
 public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
+
     private final Map<Object, AppContext> apps = new ConcurrentHashMap<Object, AppContext>();
     private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
@@ -42,15 +43,15 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
      * Constructs a CoreContainerSystem and initializes the root JNDI context.
      * It also creates three sub contexts, namely
      * <ul>
-     *  <li>java:openejb/local</li>
-     *  <li>java:openejb/client</li>
-     *  <li>java:openejb/Deployment</li>
+     * <li>java:openejb/local</li>
+     * <li>java:openejb/client</li>
+     * <li>java:openejb/Deployment</li>
      * </ul>
      *
-     *@throws RuntimeException if there is a problem during initialization of the root context
-     * @param jndiFactory
+     * @param jndiFactory JndiFactory
+     * @throws RuntimeException if there is a problem during initialization of the root context
      */
-    public CoreContainerSystem(JndiFactory jndiFactory) {
+    public CoreContainerSystem(final JndiFactory jndiFactory) {
 
         if (jndiFactory == null) {
             throw new NullPointerException("JndiFactory required");
@@ -58,56 +59,61 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         jndiContext = jndiFactory.createRootContext();
         try {
             if (!(jndiContext.lookup("openejb/local") instanceof Context)
-            || !(jndiContext.lookup("openejb/remote") instanceof Context)
-            || !(jndiContext.lookup("openejb/client") instanceof Context)
-            || !(jndiContext.lookup("openejb/Deployment") instanceof Context)
-            || !(jndiContext.lookup("openejb/global") instanceof Context)) {
+                || !(jndiContext.lookup("openejb/remote") instanceof Context)
+                || !(jndiContext.lookup("openejb/client") instanceof Context)
+                || !(jndiContext.lookup("openejb/Deployment") instanceof Context)
+                || !(jndiContext.lookup("openejb/global") instanceof Context)) {
                 throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present");
             }
-        }
-        catch (javax.naming.NamingException exception) {
+        } catch (javax.naming.NamingException exception) {
             throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present", exception);
         }
         SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);
     }
+
     /**
      * Returns the DeploymentInfo for an EJB with the given deploymentID.
-     * 
+     *
      * @param deploymentID The deployment ID of an EJB
      */
-    public BeanContext getBeanContext(Object deploymentID) {
+    @Override
+    public BeanContext getBeanContext(final Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
+    @Override
     public BeanContext[] deployments() {
         return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
-    public void addDeployment(BeanContext deployment) {
+    public void addDeployment(final BeanContext deployment) {
         this.deployments.put(deployment.getDeploymentID(), deployment);
     }
 
-    public void removeBeanContext(BeanContext info){
+    public void removeBeanContext(final BeanContext info) {
         this.deployments.remove(info.getDeploymentID());
     }
 
-    public Container getContainer(Object id) {
+    @Override
+    public Container getContainer(final Object id) {
         return containers.get(id);
     }
 
-    public Container [] containers() {
-        return containers.values().toArray(new Container [containers.size()]);
+    @Override
+    public Container[] containers() {
+        return containers.values().toArray(new Container[containers.size()]);
     }
 
-    public void addContainer(Object id, Container c) {
+    public void addContainer(final Object id, final Container c) {
         containers.put(id, c);
     }
 
-    public void removeContainer(Object id) {
+    public void removeContainer(final Object id) {
         containers.remove(id);
     }
 
-    public WebContext getWebContext(String id) {
+    @Override
+    public WebContext getWebContext(final String id) {
         return webDeployments.get(id);
     }
 
@@ -115,14 +121,15 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         return webDeployments.values().toArray(new WebContext[webDeployments.size()]);
     }
 
-    public void addWebContext(WebContext webDeployment) {
+    public void addWebContext(final WebContext webDeployment) {
         this.webDeployments.put(webDeployment.getId(), webDeployment);
     }
 
-    public void removeWebContext(WebContext info){
+    public void removeWebContext(final WebContext info) {
         this.webDeployments.remove(info.getId());
     }
 
+    @Override
     public Context getJNDIContext() {
         return jndiContext;
     }
@@ -133,19 +140,33 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     }
 
     @Override
-    public AppContext getAppContext(Object id) {
-        return apps.get(id);
+    public AppContext getAppContext(final Object id) {
+
+        AppContext context = apps.get(id);
+
+        if (null == context && null != id) {
+            context = apps.get(id.toString().toLowerCase());
+        }
+
+        return context;
     }
 
-    public void addAppContext(AppContext appContext) {
-        apps.put(appContext.getId(), appContext);
-    }
-    
-    public void removeAppContext(Object id) {
-        apps.remove(id);
+    public void addAppContext(final AppContext appContext) {
+        apps.put(appContext.getId().toLowerCase(), appContext);
     }
 
-    public synchronized Object[] getAppContextKeys(){
+    public AppContext removeAppContext(final Object id) {
+
+        AppContext context = apps.remove(id);
+
+        if (null == context && null != id) {
+            context = apps.remove(id.toString().toLowerCase());
+        }
+
+        return context;
+    }
+
+    public synchronized Object[] getAppContextKeys() {
         return apps.keySet().toArray();
     }
 }

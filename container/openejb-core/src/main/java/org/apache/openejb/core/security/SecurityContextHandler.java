@@ -31,22 +31,24 @@ public class SecurityContextHandler implements WorkContextHandler<SecurityContex
     private ConnectorCallbackHandler callbackHandler;
 	private final String securityRealmName;
 
-	public SecurityContextHandler(String securityRealmName) {
+	public SecurityContextHandler(final String securityRealmName) {
 		this.securityRealmName = securityRealmName;
 	}
 
-	public void before(SecurityContext securityContext) throws WorkCompletedException {
+	@Override
+    public void before(final SecurityContext securityContext) throws WorkCompletedException {
         if (securityContext != null) {
             callbackHandler = new ConnectorCallbackHandler(securityRealmName);
             
-            Subject clientSubject = new Subject();
+            final Subject clientSubject = new Subject();
 			securityContext.setupSecurityContext(callbackHandler, clientSubject, null);
         }
     }
 
-    public void after(SecurityContext securityContext) throws WorkCompletedException {
-    	SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-    	Object loginObj = securityService.disassociate();
+    @Override
+    public void after(final SecurityContext securityContext) throws WorkCompletedException {
+    	final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+    	final Object loginObj = securityService.disassociate();
     	if (loginObj != null) {
     		try {
 				securityService.logout(loginObj);
@@ -55,11 +57,13 @@ public class SecurityContextHandler implements WorkContextHandler<SecurityContex
     	}
     }
 
-	public boolean supports(Class<? extends WorkContext> clazz) {
+	@Override
+    public boolean supports(final Class<? extends WorkContext> clazz) {
 		return SecurityContext.class.isAssignableFrom(clazz);
 	}
 
-	public boolean required() {
+	@Override
+    public boolean required() {
 		return false;
 	}
 

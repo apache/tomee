@@ -530,10 +530,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
 
-            for (WebModule webModule : appModule.getWebModules()) {
+            for (final WebModule webModule : appModule.getWebModules()) {
                 final List<URL> scannableUrls = webModule.getScannableUrls();
                 final List<URL> foundRootUrls = new ArrayList<URL>();
-                for (URL url : scannableUrls) {
+                for (final URL url : scannableUrls) {
                     if (!addPersistenceUnits(appModule, url).isEmpty()) {
                         foundRootUrls.add(url);
                     }

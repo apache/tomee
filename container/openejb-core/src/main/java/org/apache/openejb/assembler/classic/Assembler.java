@@ -706,7 +706,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
+            final List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
 
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
@@ -830,7 +830,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             boolean skip = false;
             if (!appInfo.webAppAlone) {
-                for (WebAppInfo webapp : appInfo.webApps) {
+                for (final WebAppInfo webapp : appInfo.webApps) {
                     if ((webappId == null && ejbJar.moduleId.equals(webapp.moduleId))
                             || (webappId != null && !ejbJar.moduleId.equals(webappId))) {
                         skip = true;
@@ -1779,7 +1779,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // WorkManager: the resource adapter can use this to dispatch messages or perform tasks
             final WorkManager workManager;
-            if (transactionManager instanceof GeronimoTransactionManager) {
+            if (GeronimoTransactionManager.class.isInstance(transactionManager)) {
                 final GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
                 final TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(geronimoTransactionManager);
 

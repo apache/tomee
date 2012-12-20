@@ -654,11 +654,12 @@ class AppInfoBuilder {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private String findRelatedWebApp(final AppModule appModule, final String rootUrl) {
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             final List<URL> pXmls = (List<URL>) webModule.getAltDDs().get(DeploymentLoader.EAR_WEBAPP_PERSISTENCE_XML_JARS);
             if (pXmls != null) {
-                for (URL url : pXmls) {
+                for (final URL url : pXmls) {
                     if (url.toExternalForm().contains(rootUrl)) {
                         return webModule.getModuleId();
                     }
