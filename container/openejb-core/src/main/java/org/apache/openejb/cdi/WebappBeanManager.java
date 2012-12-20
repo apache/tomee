@@ -52,11 +52,12 @@ public class WebappBeanManager extends BeanManagerImpl {
             return false;
         }
     };
-    private final Set<Bean<?>> deploymentBeans = new CopyOnWriteArraySet<Bean<?>>();
+    private Set<Bean<?>> deploymentBeans;
 
     public WebappBeanManager(WebappWebBeansContext ctx) {
         super(ctx);
         webappCtx = ctx;
+        deploymentBeans = super.getBeans(); // use the parent one while starting
     }
 
     @Override
@@ -387,7 +388,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     public void afterStart() {
-        deploymentBeans.clear();
+        deploymentBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
         for (Bean<?> bean : getParentBm().getBeans()) {
             if (bean instanceof BeanManagerBean || bean instanceof BuildInOwbBean
                     || bean instanceof ConversationBean || bean instanceof InjectionPointBean) {

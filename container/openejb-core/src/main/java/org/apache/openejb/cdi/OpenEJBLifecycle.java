@@ -352,7 +352,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         final ExtensionLoader extensionLoader = webBeansContext.getExtensionLoader();
 
         // Load regularly visible Extensions
-        extensionLoader.loadExtensionServices(appContext.getClassLoader());
+        extensionLoader.loadExtensionServices(Thread.currentThread().getContextClassLoader()); // init in OpenEJBLifecycle
+
 
         // Load any potentially misplaced extensions -- TCK seems to be full of them
         // This could perhaps be improved or addressed elsewhere
