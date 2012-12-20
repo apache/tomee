@@ -71,8 +71,11 @@ public class CmpJarBuilder {
         }
 
         boolean threwException = false;
-        final JarOutputStream jarOutputStream = openJarFile();
+        JarOutputStream jarOutputStream = null;
+
         try {
+            jarOutputStream = openJarFile(this);
+
             // Generate CMP implementation classes
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
                 for (final EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
@@ -92,7 +95,9 @@ public class CmpJarBuilder {
             threwException = true;
             throw e;
         } finally {
+
             close(jarOutputStream);
+
             if (threwException) {
                 if (!jarFile.delete()) {
                     jarFile.deleteOnExit();
@@ -234,25 +239,36 @@ public class CmpJarBuilder {
         }
     }
 
-    private JarOutputStream openJarFile() throws IOException {
-        if (jarFile != null) {
+    private static synchronized JarOutputStream openJarFile(final CmpJarBuilder instance) throws IOException {
+        if (instance.jarFile != null) {
             throw new IllegalStateException("Jar file is closed");
         }
 
         // if url caching is enabled, generate the file directly in the cache dir, so it doesn't have to be recoppied
-        jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
+        try {
+            instance.jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
+        } catch (IOException e) {
+
+            //Try
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ie) {
+                //Ignore
+            }
+            instance.jarFile = File.createTempFile("OpenEJB_Generated_", ".jar", UrlCache.cacheDir);
+        }
 
         Thread.yield();
 
-        jarFile.deleteOnExit();
-        return new JarOutputStream(IO.write(jarFile));
+        instance.jarFile.deleteOnExit();
+        return new JarOutputStream(IO.write(instance.jarFile));
     }
 
     private void close(final JarOutputStream jarOutputStream) {
         if (jarOutputStream != null) {
             try {
                 jarOutputStream.close();
-            } catch (IOException ignored) {
+            } catch (Throwable ignored) {
             }
         }
     }
