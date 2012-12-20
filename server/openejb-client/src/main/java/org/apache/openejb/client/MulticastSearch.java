@@ -40,15 +40,15 @@ public class MulticastSearch {
         this("239.255.3.2", 6142);
     }
 
-    public MulticastSearch(String host, int port) throws IOException {
-        InetAddress inetAddress = InetAddress.getByName(host);
+    public MulticastSearch(final String host, final int port) throws IOException {
+        final InetAddress inetAddress = InetAddress.getByName(host);
 
         multicast = new MulticastSocket(port);
         multicast.joinGroup(inetAddress);
         multicast.setSoTimeout(500);
     }
 
-    public URI search(int timeout, TimeUnit milliseconds) throws IOException {
+    public URI search(final int timeout, final TimeUnit milliseconds) throws IOException {
         return search(new DefaultFilter(), timeout, milliseconds);
     }
 
@@ -56,25 +56,26 @@ public class MulticastSearch {
         return search(new DefaultFilter(), 0, TimeUnit.MILLISECONDS);
     }
 
-    public URI search(Filter filter) throws IOException {
+    public URI search(final Filter filter) throws IOException {
         return search(filter, 0, TimeUnit.MILLISECONDS);
     }
 
-    public URI search(Filter filter, long timeout, TimeUnit unit) throws IOException {
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    public URI search(final Filter filter, long timeout, final TimeUnit unit) throws IOException {
         timeout = TimeUnit.MILLISECONDS.convert(timeout, unit);
         long waited = 0;
 
-        byte[] buf = new byte[BUFF_SIZE];
-        DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
+        final byte[] buf = new byte[BUFF_SIZE];
+        final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
 
         while (timeout == 0 || waited < timeout) {
-            long start = System.currentTimeMillis();
+            final long start = System.currentTimeMillis();
             try {
                 multicast.receive(packet);
                 if (packet.getLength() > 0) {
-                    String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
+                    final String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
                     try {
-                        URI service = new URI(str);
+                        final URI service = new URI(str);
                         if (service != null && filter.accept(service)) {
 
                             final String callerHost = ((InetSocketAddress) packet.getSocketAddress()).getAddress().getHostAddress();
@@ -98,7 +99,7 @@ public class MulticastSearch {
             } catch (SocketException e) {
                 System.out.println(e.getClass().getName() + ": " + e.getMessage());
             } finally {
-                long stop = System.currentTimeMillis();
+                final long stop = System.currentTimeMillis();
                 waited += stop - start;
             }
         }
@@ -112,7 +113,7 @@ public class MulticastSearch {
 
     public static class DefaultFilter implements Filter {
         @Override
-        public boolean accept(URI service) {
+        public boolean accept(final URI service) {
             return true;
         }
     }

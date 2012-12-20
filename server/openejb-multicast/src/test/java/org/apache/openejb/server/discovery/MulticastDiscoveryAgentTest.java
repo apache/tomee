@@ -17,29 +17,29 @@
 package org.apache.openejb.server.discovery;
 
 import junit.framework.TestCase;
+import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.server.ServiceException;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.DiscoveryListener;
-
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastDiscoveryAgentTest extends TestCase {
 
     //public void testNothing(){}
 
     public void test() throws Exception {
-        MulticastDiscoveryAgent[] agents = {agent("red"),agent("green"),agent("yellow"),agent("blue")};
+        final MulticastDiscoveryAgent[] agents = {agent("red"), agent("green"), agent("yellow"), agent("blue")};
 
-        MulticastSearch multicast = new MulticastSearch();
-        Filter filter = new Filter();
+        final MulticastSearch multicast = new MulticastSearch();
+        final Filter filter = new Filter();
 
         System.out.println("uri = " + multicast.search(filter));
         System.out.println("uri = " + multicast.search(filter));
@@ -49,14 +49,13 @@ public class MulticastDiscoveryAgentTest extends TestCase {
         Thread.sleep(2000);
         System.out.println("--");
 
-
-        for (MulticastDiscoveryAgent agent : agents) {
+        for (final MulticastDiscoveryAgent agent : agents) {
             Thread.sleep(2000);
             System.out.println("--");
             agent.stop();
         }
 
-        for (MulticastDiscoveryAgent agent : agents) {
+        for (final MulticastDiscoveryAgent agent : agents) {
             Thread.sleep(2000);
             System.out.println("--");
             agent.start();
@@ -67,40 +66,44 @@ public class MulticastDiscoveryAgentTest extends TestCase {
     }
 
     private static class Filter implements MulticastSearch.Filter {
+
         private final Set<URI> seen = new HashSet<URI>();
+
         @Override
-        public boolean accept(URI service) {
-            if (seen.contains(service)) return false;
+        public boolean accept(final URI service) {
+            if (seen.contains(service))
+                return false;
             seen.add(service);
             return true;
         }
     }
 
-    private MulticastDiscoveryAgent agent(String id) throws IOException, URISyntaxException, ServiceException {
-        MulticastDiscoveryAgent agent = new MulticastDiscoveryAgent();
+    private MulticastDiscoveryAgent agent(final String id) throws IOException, URISyntaxException, ServiceException {
+        final MulticastDiscoveryAgent agent = new MulticastDiscoveryAgent();
         agent.init(new Properties());
         agent.setDiscoveryListener(new MyDiscoveryListener(id));
-        agent.registerService(new URI("ejb:ejbd://"+id+":4201"));
+        agent.registerService(new URI("ejb:ejbd://" + id + ":4201"));
         agent.start();
         return agent;
     }
 
     private static class MyDiscoveryListener implements DiscoveryListener {
+
         private final String id;
 
         public MyDiscoveryListener(String id) {
             id += "        ";
-            id = id.substring(0,8);
+            id = id.substring(0, 8);
             this.id = id;
         }
 
         @Override
-        public void serviceAdded(URI service) {
+        public void serviceAdded(final URI service) {
             System.out.println(id + "add " + service.toString());
         }
 
         @Override
-        public void serviceRemoved(URI service) {
+        public void serviceRemoved(final URI service) {
             System.out.println(id + "remove " + service.toString());
         }
     }
