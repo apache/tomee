@@ -60,6 +60,8 @@ public class TomcatWsRegistry implements WsRegistry {
     private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = SystemInstance.get().getOptions().get("tomee.jaxws.oldsubcontext", false);
 
     private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();
+    private final Map<String, Integer> fakeContextReferences = new TreeMap<String, Integer>();
+
     private Engine engine;
     private List<Connector> connectors;
 
@@ -199,12 +201,35 @@ public class TomcatWsRegistry implements WsRegistry {
     }
 
     private void deployInFakeWebapp(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, Container host, HttpListener httpListener, List<String> addresses, String name) {
-        final Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName, name);
-        host.addChild(context);
-        addServlet(host, context, "/*", httpListener, path, addresses, true);
+        Container context = host.findChild(name);
+        if (context == null) {
+            context = createNewContext(classLoader, authMethod, transportGuarantee, realmName, name);
+            host.addChild(context);
+        }
+
+        final Integer ref = fakeContextReferences.get(name);
+        if (ref == null) {
+            fakeContextReferences.put(name, 0);
+        } else {
+            fakeContextReferences.put(name, ref + 1);
+        }
+
+        String mapping = path;
+        if (!mapping.startsWith("/")) { // TODO: check it can happen or move it away
+            mapping = '/' + mapping;
+        }
+        addServlet(host, (Context) context, mapping, httpListener, path, addresses, true);
     }
 
-    private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, String name) {
+    private static Context createNewContext(ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName, String name) {
+        String path = name;
+        if (path == null) {
+            path = "/";
+        }
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
         final StandardContext context = new IgnoredStandardContext();
         context.setPath(path);
         context.setDocBase("");
@@ -299,7 +324,7 @@ public class TomcatWsRegistry implements WsRegistry {
                 }
                 fullContextpath.append(path);
             } else {
-                fullContextpath = new StringBuilder(path);
+                fullContextpath = new StringBuilder(context.getPath()).append(path);
             }
 
             try {
@@ -321,11 +346,20 @@ public class TomcatWsRegistry implements WsRegistry {
             return;
         }
 
-        Context context = webserviceContexts.remove(path);
-        if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
+        final Context context = webserviceContexts.remove(path);
+        Integer refs = 1; // > 0 to avoid to destroy the context if not mandatory
+        if (context != null) {
+            final String name = context.getName();
+            refs = fakeContextReferences.remove(name);
+            if (refs != null && refs > 0) {
+                fakeContextReferences.put(name, refs - 1);
+            }
+        }
+
+        if ((WEBSERVICE_OLDCONTEXT_ACTIVE || (refs != null && refs == 0)) && context != null) {
             try {
-                context.destroy();
                 context.stop();
+                context.destroy();
             } catch (Exception e) {
                 throw new TomEERuntimeException(e);
             }
