@@ -21,6 +21,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastSearch {
 
     private static final int BUFF_SIZE = 8192;
@@ -89,6 +91,8 @@ public class MulticastSearch {
                 }
             } catch (SocketTimeoutException e) {
                 //Ignore
+            } catch (SocketException e) {
+                System.out.println(e.getClass().getName() + ": " + e.getMessage());
             } finally {
                 final long stop = System.currentTimeMillis();
                 waited += stop - start;
