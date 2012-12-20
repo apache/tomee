@@ -20,8 +20,6 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
-import org.apache.webbeans.component.OwbBean;
-import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.WebBeansDecorator;
@@ -34,7 +32,6 @@ import org.apache.webbeans.logger.WebBeansLoggerFacade;
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Typed;
@@ -44,15 +41,12 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.NoSuchObjectException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,6 +194,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
             }
         }
 
+        if (!clazzes.contains(Serializable.class)) {
+            clazzes.add(Serializable.class);
+        }
+
         return clazzes;
     }
 
@@ -217,10 +215,13 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T getInstance(final CreationalContext<T> creationalContext) {
+        return createEjb(creationalContext);
+
+        /*
         final T instance;
         if (scopeClass == null || Dependent.class == scopeClass) { // no need to add any layer, null = @New
             instance = createEjb(creationalContext);
-        } else {
+        } else { // only stateful normally
             final InstanceBean<T> bean = new InstanceBean<T>(this);
             if (webBeansContext.getBeanManagerImpl().isScopeTypeNormal(scopeClass)) {
                 instance = (T) webBeansContext.getProxyFactory().createNormalScopedBeanProxy(bean, creationalContext);
@@ -231,6 +232,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
             bean.setOWBProxy(instance);
         }
         return instance;
+        */
     }
 
     @Override
@@ -342,7 +344,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return toReturn;
     }
 
-    private T createEjb(final CreationalContext<T> creationalContext) {
+    protected T createEjb(final CreationalContext<T> creationalContext) {
         final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         final CreationalContext existing = currentCreationalContext.get();
@@ -378,201 +380,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         }
     }
 
-    // does pretty much nothing
-    // used only to get a layer between our EJB proxies and OWB proxies to let them manage the scope
-    private static class InstanceBean<T> implements OwbBean<T> {
-        private final CdiEjbBean<T> bean;
-        private T OWBProxy;
-
-        public InstanceBean(final CdiEjbBean<T> tCdiEjbBean) {
-            bean = tCdiEjbBean;
-        }
-
-        @Override
-        public T createNewInstance(final CreationalContext<T> creationalContext) {
-            return create(creationalContext);
-        }
-
-        @Override
-        public void destroyCreatedInstance(final T instance, final CreationalContext<T> creationalContext) {
-            bean.destroyComponentInstance(instance, creationalContext);
-        }
-
-        @Override
-        public Set<Type> getTypes() {
-            return bean.getTypes();
-        }
-
-        @Override
-        public Set<Annotation> getQualifiers() {
-            return bean.getQualifiers();
-        }
-
-        @Override
-        public Class<? extends Annotation> getScope() {
-            return bean.getScope();
-        }
-
-        @Override
-        public String getName() {
-            return bean.getName();
-        }
-
-        @Override
-        public boolean isNullable() {
-            return bean.isNullable();
-        }
-
-        @Override
-        public Set<InjectionPoint> getInjectionPoints() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public Class<?> getBeanClass() {
-            return bean.getBeanClass();
-        }
-
-        @Override
-        public Set<Class<? extends Annotation>> getStereotypes() {
-            return bean.getStereotypes();
-        }
-
-        @Override
-        public boolean isAlternative() {
-            return bean.isAlternative();
-        }
-
-        @Override
-        public T create(final CreationalContext<T> creationalContext) {
-            final T instance = bean.createEjb(creationalContext);
-            if (OWBProxy != null && SessionBeanType.STATEFUL.equals(bean.getEjbType())) { // we need to be able to remove OWB proxy to remove (statefuls for instance)
-                bean.dependentSFSBToBeRemoved.put(System.identityHashCode(OWBProxy), instance);
-            }
-            return instance;
-        }
-
-        @Override
-        public void destroy(final T instance, final CreationalContext<T> cc) {
-            if (!SessionBeanType.STATEFUL.equals(bean.getEjbType())) {
-                return;
-            }
-
-            bean.destroy(instance, cc);
-        }
-
-        @Override
-        public void setImplScopeType(final Annotation scopeType) {
-            // no-op
-        }
-
-        @Override
-        public WebBeansType getWebBeansType() {
-            return bean.getWebBeansType();
-        }
-
-        @Override
-        public void addQualifier(final Annotation qualifier) {
-            // no-op
-        }
-
-        @Override
-        public boolean isSerializable() {
-            return bean.isSerializable();
-        }
-
-        @Override
-        public void addStereoType(final Annotation stereoType) {
-            // no-op
-        }
-
-        @Override
-        public void addApiType(final Class<?> apiType) {
-            // no-op
-        }
-
-        @Override
-        public void addInjectionPoint(final InjectionPoint injectionPoint) {
-            // no-op
-        }
-
-        @Override
-        public Set<Annotation> getOwbStereotypes() {
-            return bean.getOwbStereotypes();
-        }
-
-        @Override
-        public void setName(final String name) {
-            // no-op
-        }
-
-        @Override
-        public List<InjectionPoint> getInjectionPoint(final Member member) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public Class<T> getReturnType() {
-            return bean.getReturnType();
-        }
-
-        @Override
-        public void setSerializable(final boolean serializable) {
-            // no-op
-        }
-
-        @Override
-        public void setNullable(final boolean nullable) {
-            // no-op
-        }
-
-        @Override
-        public void setSpecializedBean(boolean specialized) {
-            // no-op
-        }
-
-        @Override
-        public boolean isSpecializedBean() {
-            return bean.isSpecializedBean();
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            // no-op
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return bean.isEnabled();
-        }
-
-        @Override
-        public String getId() {
-            return bean.getId();
-        }
-
-        @Override
-        public boolean isPassivationCapable() {
-            return bean.isPassivationCapable();
-        }
-
-        @Override
-        public boolean isDependent() {
-            return bean.isDependent();
-        }
-
-        @Override
-        public void validatePassivationDependencies() {
-            bean.validatePassivationDependencies();
-        }
-
-        @Override
-        public WebBeansContext getWebBeansContext() {
-            return bean.getWebBeansContext();
-        }
-
-        public void setOWBProxy(final T OWBProxy) {
-            this.OWBProxy = OWBProxy;
-        }
+    public void storeStatefulInstance(final Object proxy, final T instance) {
+        dependentSFSBToBeRemoved.put(System.identityHashCode(proxy), instance);
     }
 }

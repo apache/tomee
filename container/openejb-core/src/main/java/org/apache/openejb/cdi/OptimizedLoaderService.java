@@ -54,7 +54,7 @@ public class OptimizedLoaderService implements LoaderService {
     @Override
     public <T> List<T> load(Class<T> serviceType, ClassLoader classLoader) {
         // ServiceLoader is expensive (can take up to a half second).  This is an optimization
-        if (OpenWebBeansPlugin.class.equals(serviceType)) return loadWebBeansPlugins(OptimizedLoaderService.class.getClassLoader());
+        if (OpenWebBeansPlugin.class.equals(serviceType)) return loadWebBeansPlugins(classLoader);
 
         // As far as we know, this only is reached for CDI Extension discovery
         final List<T> list = loaderService.load(serviceType, classLoader);
