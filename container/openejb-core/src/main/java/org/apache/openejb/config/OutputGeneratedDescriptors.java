@@ -48,16 +48,16 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     public static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
     public static final String OUTPUT_DESCRIPTORS_FOLDER = "openejb.descriptors.output.folder";
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         boolean output = SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS, false);
 
-        if (output && appModule.getCmpMappings() != null){
+        if (output && appModule.getCmpMappings() != null) {
 
             writeGenratedCmpMappings(appModule);
         }
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            Options options = new Options(ejbModule.getOpenejbJar().getProperties(), SystemInstance.get().getOptions());
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final Options options = new Options(ejbModule.getOpenejbJar().getProperties(), SystemInstance.get().getOptions());
 
             final ValidationContext context = ejbModule.getValidation();
 
@@ -78,37 +78,37 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 writeGeronimoOpenejb(ejbModule);
             }
         }
-        
-        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
-			writeRaXml(connectorModule);
-		}
+
+        for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
+            writeRaXml(connectorModule);
+        }
 
         return appModule;
     }
 
-    private void writeRaXml(ConnectorModule connectorModule) {
-    	try {
-	    	Connector connector = connectorModule.getConnector();
-	
-	        File tempFile = tempFile("ra-", connectorModule.getModuleId() + ".xml");
+    private void writeRaXml(final ConnectorModule connectorModule) {
+        try {
+            final Connector connector = connectorModule.getConnector();
+
+            final File tempFile = tempFile("ra-", connectorModule.getModuleId() + ".xml");
 
             final OutputStream out = IO.write(tempFile);
-	        try {
-		    	JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
-		    	Marshaller marshaller = ctx.createMarshaller();
-		    	marshaller.marshal(connector, out);
+            try {
+                final JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
+                final Marshaller marshaller = ctx.createMarshaller();
+                marshaller.marshal(connector, out);
                 logger.info("Dumping Generated ra.xml to: " + tempFile.getAbsolutePath());
-	        } catch (JAXBException e) {
-	        } finally {
-	        	IO.close(out);
-	        }
-    	} catch (IOException e) {
-    	}
-	}
+            } catch (JAXBException e) {
+            } finally {
+                IO.close(out);
+            }
+        } catch (IOException e) {
+        }
+    }
 
-    private File tempFile(String start, String end) throws IOException {
+    private File tempFile(final String start, final String end) throws IOException {
         if (SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS_FOLDER, (String) null) != null) {
-            File tmp = new File(SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS_FOLDER, ""));
+            final File tmp = new File(SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS_FOLDER, ""));
             if (!tmp.exists()) {
                 if (!tmp.mkdirs()) {
                     throw new IOException("can't create " + tmp.getAbsolutePath());
@@ -116,13 +116,23 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
             }
             return new File(tmp, start + Long.toString(new Random().nextInt()) + end);
         } else {
-            return File.createTempFile(start, end);
+            try {
+                return File.createTempFile(start, end);
+            } catch (Throwable e) {
+
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                return File.createTempFile(start, end, tmp);
+            }
         }
     }
 
-	private void writeGenratedCmpMappings(AppModule appModule) {
+    private void writeGenratedCmpMappings(final AppModule appModule) {
 
-        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+        for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
             try {
                 final Persistence persistence = persistenceModule.getPersistence();
                 if (hasCmpPersistenceUnit(persistence)) {
@@ -132,7 +142,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                         JpaJaxbUtil.marshal(Persistence.class, persistence, out);
                         logger.info("Dumping Generated CMP persistence.xml to: " + tempFile.getAbsolutePath());
                     } catch (JAXBException e) {
-                    } finally{
+                    } finally {
                         IO.close(out);
                     }
                 }
@@ -146,21 +156,21 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings(), out);
                 logger.info("Dumping Generated CMP mappings.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
-            } finally{
+            } finally {
                 IO.close(out);
             }
         } catch (IOException e) {
         }
     }
 
-    private boolean hasCmpPersistenceUnit(Persistence persistence) {
-        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+    private boolean hasCmpPersistenceUnit(final Persistence persistence) {
+        for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
             if (unit.getName().startsWith("cmp")) return true;
         }
         return false;
     }
 
-    private void writeOpenejbJar(EjbModule ejbModule) {
+    private void writeOpenejbJar(final EjbModule ejbModule) {
         try {
             final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
             final File tempFile = tempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
@@ -177,7 +187,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         }
     }
 
-    private void writeGeronimoOpenejb(EjbModule ejbModule) {
+    private void writeGeronimoOpenejb(final EjbModule ejbModule) {
         try {
             final GeronimoEjbJarType geronimoEjbJarType = (GeronimoEjbJarType) ejbModule.getAltDDs().get("geronimo-openejb.xml");
 
@@ -197,7 +207,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         }
     }
 
-    private void writeEjbJar(EjbModule ejbModule) {
+    private void writeEjbJar(final EjbModule ejbModule) {
         try {
             final EjbJar ejbJar = ejbModule.getEjbJar();
             final File tempFile = tempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");

@@ -21,12 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,32 +36,42 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class WebArchives {
 
-    public static File warArchive(Class... classes) throws IOException {
+    public static File warArchive(final Class... classes) throws IOException {
         return warArchive(new HashMap<String, String>(), "temp", classes);
     }
 
 
-    public static File warArchive(Map<String, String> entries, String archiveNamePrefix, Class... classes) throws IOException {
+    public static File warArchive(final Map<String, String> entries, final String archiveNamePrefix, final Class... classes) throws IOException {
 
-        ClassLoader loader = WebArchives.class.getClassLoader();
+        final ClassLoader loader = WebArchives.class.getClassLoader();
 
-        File classpath = File.createTempFile(archiveNamePrefix, ".war");
+        File classpath;
+        try {
+            classpath = File.createTempFile(archiveNamePrefix, ".war");
+        } catch (IOException e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+
+            classpath = File.createTempFile(archiveNamePrefix, ".war", tmp);
+        }
 
         // Create the ZIP file
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(classpath)));
+        final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(classpath)));
 
-        for (Class clazz : classes) {
-            String name = clazz.getName().replace('.', File.separatorChar) + ".class";
+        for (final Class clazz : classes) {
+            final String name = clazz.getName().replace('.', File.separatorChar) + ".class";
 
-            URL resource = loader.getResource(name);
+            final URL resource = loader.getResource(name);
             assertNotNull(resource);
 
             // Add ZIP entry to output stream.
             out.putNextEntry(new ZipEntry("WEB-INF/classes/" + name));
 
-            InputStream in = new BufferedInputStream(resource.openStream());
+            final InputStream in = new BufferedInputStream(resource.openStream());
 
-            int i = -1;
+            int i;
             while ((i = in.read()) != -1) {
                 out.write(i);
             }
@@ -76,7 +81,7 @@ public class WebArchives {
             out.closeEntry();
         }
 
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
+        for (final Map.Entry<String, String> entry : entries.entrySet()) {
 
             out.putNextEntry(new ZipEntry(entry.getKey()));
 
@@ -91,14 +96,14 @@ public class WebArchives {
     @WebServlet(name = "manager servlet", urlPatterns = "/")
     public static class Foo extends HttpServlet {
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
             resp.setHeader("Content-Type", "text/html");
             Debug.Trace.report(resp.getOutputStream());
 
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         System.out.println(warArchive(Foo.class));
     }
 }

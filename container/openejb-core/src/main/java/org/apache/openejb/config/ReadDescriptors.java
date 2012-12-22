@@ -20,19 +20,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.webservices.WsdlResolver;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.Connector10;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.JavaWsdlMapping;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.Listener;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.fragment.PersistenceFragment;
@@ -46,11 +34,7 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.LengthInputStream;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Saxs;
-import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,8 +60,8 @@ public class ReadDescriptors implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
 
     @SuppressWarnings({"unchecked"})
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
             if (ejbModule.getEjbJar() == null) {
                 readEjbJar(ejbModule, appModule);
@@ -96,27 +80,27 @@ public class ReadDescriptors implements DynamicDeployer {
             readResourcesXml(ejbModule);
         }
 
-        for (ClientModule clientModule : appModule.getClientModules()) {
+        for (final ClientModule clientModule : appModule.getClientModules()) {
             readAppClient(clientModule, appModule);
             readValidationConfigType(clientModule);
             readResourcesXml(clientModule);
         }
 
-        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
+        for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
             readConnector(connectorModule, appModule);
             readValidationConfigType(connectorModule);
             readResourcesXml(connectorModule);
         }
 
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             readWebApp(webModule, appModule);
             readValidationConfigType(webModule);
             readResourcesXml(webModule);
         }
 
-        List<Object> persistenceUrls = (List<Object>) appModule.getAltDDs().get("persistence.xml");
+        final List<Object> persistenceUrls = (List<Object>) appModule.getAltDDs().get("persistence.xml");
         if (persistenceUrls != null) {
-            for (Object persistenceUrl : persistenceUrls) {
+            for (final Object persistenceUrl : persistenceUrls) {
                 final boolean url = persistenceUrl instanceof URL;
                 final Source source = getSource(persistenceUrl);
 
@@ -140,7 +124,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     String tmpRootUrl = moduleName;
 
-                    String extForm = pUrl.toExternalForm();
+                    final String extForm = pUrl.toExternalForm();
                     if (extForm.contains("WEB-INF/classes/META-INF/")) {
                         tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
                     }
@@ -155,8 +139,8 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
 
                 try {
-                    Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, source.get());
-                    PersistenceModule persistenceModule = new PersistenceModule(appModule, rootUrl, persistence);
+                    final Persistence persistence = JaxbPersistenceFactory.getPersistence(Persistence.class, source.get());
+                    final PersistenceModule persistenceModule = new PersistenceModule(appModule, rootUrl, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if (url && "file".equals(((URL) persistenceUrl).getProtocol())) {
                         persistenceModule.getWatchedResources().add(path);
@@ -170,14 +154,14 @@ public class ReadDescriptors implements DynamicDeployer {
 
         final List<URL> persistenceFragmentUrls = (List<URL>) appModule.getAltDDs().get("persistence-fragment.xml");
         if (persistenceFragmentUrls != null) {
-            for (URL persistenceFragmentUrl : persistenceFragmentUrls) {
+            for (final URL persistenceFragmentUrl : persistenceFragmentUrls) {
                 try {
                     final PersistenceFragment persistenceFragment = JaxbPersistenceFactory.getPersistence(PersistenceFragment.class, persistenceFragmentUrl);
                     // merging
-                    for (PersistenceUnitFragment fragmentUnit : persistenceFragment.getPersistenceUnitFragment()) {
-                        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+                    for (final PersistenceUnitFragment fragmentUnit : persistenceFragment.getPersistenceUnitFragment()) {
+                        for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
                             final Persistence persistence = persistenceModule.getPersistence();
-                            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+                            for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
                                 if (!fragmentUnit.getName().equals(unit.getName())) {
                                     continue;
                                 }
@@ -191,19 +175,19 @@ public class ReadDescriptors implements DynamicDeployer {
                                     persistenceModule.getWatchedResources().add(URLs.toFile(persistenceFragmentUrl).getAbsolutePath());
                                 }
 
-                                for (String clazz : fragmentUnit.getClazz()) {
+                                for (final String clazz : fragmentUnit.getClazz()) {
                                     if (!unit.getClazz().contains(clazz)) {
                                         logger.info("Adding class " + clazz + " to persistence unit " + fragmentUnit.getName());
                                         unit.getClazz().add(clazz);
                                     }
                                 }
-                                for (String mappingFile : fragmentUnit.getMappingFile()) {
+                                for (final String mappingFile : fragmentUnit.getMappingFile()) {
                                     if (!unit.getMappingFile().contains(mappingFile)) {
                                         logger.info("Adding mapping file " + mappingFile + " to persistence unit " + fragmentUnit.getName());
                                         unit.getMappingFile().add(mappingFile);
                                     }
                                 }
-                                for (String jarFile : fragmentUnit.getJarFile()) {
+                                for (final String jarFile : fragmentUnit.getJarFile()) {
                                     if (!unit.getJarFile().contains(jarFile)) {
                                         logger.info("Adding jar file " + jarFile + " to persistence unit " + fragmentUnit.getName());
                                         unit.getJarFile().add(jarFile);
@@ -226,7 +210,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
-    private static URL getUrl(Module module, String name) {
+    private static URL getUrl(final Module module, final String name) {
         URL url = (URL) module.getAltDDs().get(name);
         if (url == null && module.getClassLoader() != null) {
             url = module.getClassLoader().getResource("META-INF/" + name);
@@ -239,16 +223,17 @@ public class ReadDescriptors implements DynamicDeployer {
 
     /**
      * All the readFooXml(URL) methods could simply use this method
+     *
      * @param module
      * @param name
      * @return
      */
-    private static Source getSource(Module module, String name) {
-        Object o = module.getAltDDs().get(name);
+    private static Source getSource(final Module module, final String name) {
+        final Object o = module.getAltDDs().get(name);
         if (o != null) return getSource(o);
 
         if (module.getClassLoader() != null) {
-            URL url = module.getClassLoader().getResource("META-INF/" + name);
+            final URL url = module.getClassLoader().getResource("META-INF/" + name);
             if (url != null) {
                 module.getAltDDs().put(name, url);
             }
@@ -258,8 +243,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return null;
     }
 
-    public static void readResourcesXml(Module module) {
-        URL url = getUrl(module, "resources.xml");
+    public static void readResourcesXml(final Module module) {
+        final URL url = getUrl(module, "resources.xml");
         if (url != null) {
             try {
                 final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, IO.read(url));
@@ -270,7 +255,7 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readValidationConfigType(Module module) throws OpenEJBException {
+    private void readValidationConfigType(final Module module) throws OpenEJBException {
         if (module.getValidationConfig() != null) {
             return;
         }
@@ -278,7 +263,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Source value = getSource(module.getAltDDs().get("validation.xml"));
         if (value != null) {
             try {
-                ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, ((Source) value).get(), false);
+                final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, ((Source) value).get(), false);
                 module.setValidationConfig(validationConfigType);
             } catch (Exception e) {
                 logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
@@ -286,25 +271,25 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readOpenejbJar(EjbModule ejbModule) throws OpenEJBException {
-        Source source = getSource(ejbModule.getAltDDs().get("openejb-jar.xml"));
+    private void readOpenejbJar(final EjbModule ejbModule) throws OpenEJBException {
+        final Source source = getSource(ejbModule.getAltDDs().get("openejb-jar.xml"));
 
         if (source != null) {
             try {
                 // Attempt to parse it first as a v3 descriptor
-                OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, source.get()).postRead();
+                final OpenejbJar openejbJar = JaxbOpenejbJar3.unmarshal(OpenejbJar.class, source.get()).postRead();
                 ejbModule.setOpenejbJar(openejbJar);
             } catch (final Exception v3ParsingException) {
                 // Attempt to parse it second as a v2 descriptor
-                OpenejbJar openejbJar = new OpenejbJar();
+                final OpenejbJar openejbJar = new OpenejbJar();
                 ejbModule.setOpenejbJar(openejbJar);
 
                 try {
-                    JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, source.get());
-                    OpenejbJarType o2 = (OpenejbJarType) element.getValue();
+                    final JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, source.get());
+                    final OpenejbJarType o2 = (OpenejbJarType) element.getValue();
                     ejbModule.getAltDDs().put("openejb-jar.xml", o2);
 
-                    GeronimoEjbJarType g2 = OpenEjb2Conversion.convertToGeronimoOpenejbXml(o2);
+                    final GeronimoEjbJarType g2 = OpenEjb2Conversion.convertToGeronimoOpenejbXml(o2);
 
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", g2);
                 } catch (final Exception v2ParsingException) {
@@ -312,10 +297,10 @@ public class ReadDescriptors implements DynamicDeployer {
                     final Exception[] realIssue = {v3ParsingException};
 
                     try {
-                        SAXParserFactory factory = Saxs.namespaceAwareFactory();
-                        SAXParser parser = factory.newSAXParser();
+                        final SAXParserFactory factory = Saxs.namespaceAwareFactory();
+                        final SAXParser parser = factory.newSAXParser();
                         parser.parse(source.get(), new DefaultHandler() {
-                            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                                 if (localName.equals("environment")) {
                                     realIssue[0] = v2ParsingException;
                                     throw new SAXException("Throw exception to stop parsing");
@@ -332,7 +317,17 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     String filePath = "<error: could not be written>";
                     try {
-                        File tempFile = File.createTempFile("openejb-jar-", ".xml");
+                        File tempFile = null;
+                        try {
+                            tempFile = File.createTempFile("openejb-jar-", ".xml");
+                        } catch (IOException e) {
+                            final File tmp = new File("tmp");
+                            if (!tmp.exists() && !tmp.mkdirs()) {
+                                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                            }
+
+                            tempFile = File.createTempFile("openejb-jar-", ".xml", tmp);
+                        }
                         try {
                             IO.copy(source.get(), tempFile);
                         } catch (IOException e) {
@@ -341,11 +336,11 @@ public class ReadDescriptors implements DynamicDeployer {
                     } catch (IOException e) {
                     }
 
-                    Exception e = realIssue[0];
+                    final Exception e = realIssue[0];
                     if (e instanceof SAXException) {
-                        throw new OpenEJBException("Cannot parse the openejb-jar.xml. Xml content written to: "+filePath, e);
+                        throw new OpenEJBException("Cannot parse the openejb-jar.xml. Xml content written to: " + filePath, e);
                     } else if (e instanceof JAXBException) {
-                        throw new OpenEJBException("Cannot unmarshall the openejb-jar.xml. Xml content written to: "+filePath, e);
+                        throw new OpenEJBException("Cannot unmarshall the openejb-jar.xml. Xml content written to: " + filePath, e);
                     } else if (e instanceof IOException) {
                         throw new OpenEJBException("Cannot read the openejb-jar.xml.", e);
                     } else {
@@ -355,23 +350,23 @@ public class ReadDescriptors implements DynamicDeployer {
             }
         }
 
-        Source source1 = getSource(ejbModule.getAltDDs().get("geronimo-openejb.xml"));
+        final Source source1 = getSource(ejbModule.getAltDDs().get("geronimo-openejb.xml"));
         if (source1 != null) {
             try {
                 GeronimoEjbJarType geronimoEjbJarType = null;
-                Object o = JaxbOpenejbJar2.unmarshal(GeronimoEjbJarType.class, source1.get());
+                final Object o = JaxbOpenejbJar2.unmarshal(GeronimoEjbJarType.class, source1.get());
                 if (o instanceof GeronimoEjbJarType) {
                     geronimoEjbJarType = (GeronimoEjbJarType) o;
                 } else if (o instanceof JAXBElement) {
-                    JAXBElement element = (JAXBElement) o;
+                    final JAXBElement element = (JAXBElement) o;
                     geronimoEjbJarType = (GeronimoEjbJarType) element.getValue();
                 }
                 if (geronimoEjbJarType != null) {
-                    Object nested = geronimoEjbJarType.getOpenejbJar();
+                    final Object nested = geronimoEjbJarType.getOpenejbJar();
                     if (nested != null && nested instanceof OpenejbJar) {
-                        OpenejbJar existingOpenejbJar = ejbModule.getOpenejbJar();
+                        final OpenejbJar existingOpenejbJar = ejbModule.getOpenejbJar();
                         if (existingOpenejbJar == null || existingOpenejbJar.getEjbDeploymentCount() <= 0) {
-                            OpenejbJar openejbJar = (OpenejbJar) nested;
+                            final OpenejbJar openejbJar = (OpenejbJar) nested;
                             ejbModule.getAltDDs().put("openejb-jar.xml", openejbJar);
                             ejbModule.setOpenejbJar(openejbJar);
                         }
@@ -385,15 +380,15 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
-    private void readAppClient(ClientModule clientModule, AppModule appModule) throws OpenEJBException {
+    private void readAppClient(final ClientModule clientModule, final AppModule appModule) throws OpenEJBException {
         if (clientModule.getApplicationClient() != null) return;
 
-        Object data = clientModule.getAltDDs().get("application-client.xml");
+        final Object data = clientModule.getAltDDs().get("application-client.xml");
         if (data instanceof ApplicationClient) {
             clientModule.setApplicationClient((ApplicationClient) data);
         } else if (data instanceof URL) {
-            URL url = (URL) data;
-            ApplicationClient applicationClient = readApplicationClient(url);
+            final URL url = (URL) data;
+            final ApplicationClient applicationClient = readApplicationClient(url);
             clientModule.setApplicationClient(applicationClient);
         } else {
             if (!clientModule.isEjbModuleGenerated()) {
@@ -403,13 +398,13 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    public void readEjbJar(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
+    public void readEjbJar(final EjbModule ejbModule, final AppModule appModule) throws OpenEJBException {
         if (ejbModule.getEjbJar() != null) return;
 
         final Source data = getSource(ejbModule.getAltDDs().get("ejb-jar.xml"));
         if (data != null) {
             try {
-                EjbJar ejbJar = readEjbJar(data.get());
+                final EjbJar ejbJar = readEjbJar(data.get());
                 ejbModule.setEjbJar(ejbJar);
             } catch (IOException e) {
                 throw new OpenEJBException(e);
@@ -437,14 +432,14 @@ public class ReadDescriptors implements DynamicDeployer {
         checkDuplicatedByBeansXml(beans.getInterceptors(), complete.getDuplicatedInterceptors());
     }
 
-    private void readBeans(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
+    private void readBeans(final EjbModule ejbModule, final AppModule appModule) throws OpenEJBException {
         if (ejbModule.getBeans() != null) return;
 
         final Object raw = ejbModule.getAltDDs().get("beans.xml");
         final Source data = getSource(raw);
         if (data != null) {
             try {
-                Beans beans = readBeans(data.get());
+                final Beans beans = readBeans(data.get());
                 checkDuplicatedByBeansXml(beans, beans);
                 ejbModule.setBeans(beans);
             } catch (IOException e) {
@@ -458,14 +453,14 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readCmpOrm(EjbModule ejbModule) throws OpenEJBException {
-        Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
+    private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
+        final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data == null || data instanceof EntityMappings) {
             return;
         } else if (data instanceof URL) {
-            URL url = (URL) data;
+            final URL url = (URL) data;
             try {
-                EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
+                final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
                 ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
             } catch (SAXException e) {
                 throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
@@ -479,15 +474,15 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readConnector(ConnectorModule connectorModule, AppModule appModule) throws OpenEJBException {
+    private void readConnector(final ConnectorModule connectorModule, final AppModule appModule) throws OpenEJBException {
         if (connectorModule.getConnector() != null) return;
 
-        Object data = connectorModule.getAltDDs().get("ra.xml");
+        final Object data = connectorModule.getAltDDs().get("ra.xml");
         if (data instanceof Connector) {
             connectorModule.setConnector((Connector) data);
         } else if (data instanceof URL) {
-            URL url = (URL) data;
-            Connector connector = readConnector(url);
+            final URL url = (URL) data;
+            final Connector connector = readConnector(url);
             connectorModule.setConnector(connector);
         } else {
             DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
@@ -495,15 +490,15 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private void readWebApp(WebModule webModule, AppModule appModule) throws OpenEJBException {
+    private void readWebApp(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
         if (webModule.getWebApp() != null) return;
 
-        Object data = webModule.getAltDDs().get("web.xml");
+        final Object data = webModule.getAltDDs().get("web.xml");
         if (data instanceof WebApp) {
             webModule.setWebApp((WebApp) data);
         } else if (data instanceof URL) {
-            URL url = (URL) data;
-            WebApp webApp = readWebApp(url);
+            final URL url = (URL) data;
+            final WebApp webApp = readWebApp(url);
             webModule.setWebApp(webApp);
         } else {
             DeploymentLoader.logger.debug("No web.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + webModule.getModuleId());
@@ -511,18 +506,18 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    public static ApplicationClient readApplicationClient(URL url) throws OpenEJBException {
-        ApplicationClient applicationClient;
+    public static ApplicationClient readApplicationClient(final URL url) throws OpenEJBException {
+        final ApplicationClient applicationClient;
         try {
             applicationClient = (ApplicationClient) JaxbJavaee.unmarshalJavaee(ApplicationClient.class, IO.read(url));
         } catch (SAXException e) {
-            throw new OpenEJBException("Cannot parse the application-client.xml file: "+ url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the application-client.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
-            throw new OpenEJBException("Cannot unmarshall the application-client.xml file: "+ url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot unmarshall the application-client.xml file: " + url.toExternalForm(), e);
         } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the application-client.xml file: "+ url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the application-client.xml file: " + url.toExternalForm(), e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: "+ url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: " + url.toExternalForm(), e);
         }
         return applicationClient;
     }
@@ -572,17 +567,17 @@ public class ReadDescriptors implements DynamicDeployer {
 
     private static boolean isEmpty(final InputStream is, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
         final LengthInputStream in = new LengthInputStream(is);
-        InputSource inputSource = new InputSource(in);
+        final InputSource inputSource = new InputSource(in);
 
-        SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
+        final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         try {
-            parser.parse(inputSource, new DefaultHandler(){
-                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+            parser.parse(inputSource, new DefaultHandler() {
+                public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
                     if (!localName.equals(rootElement)) throw new SAXException(localName);
                 }
 
-                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+                public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
                     return new InputSource(new ByteArrayInputStream(new byte[0]));
                 }
             });
@@ -597,16 +592,16 @@ public class ReadDescriptors implements DynamicDeployer {
 
         try {
             final LengthInputStream in = new LengthInputStream(is);
-            InputSource inputSource = new InputSource(in);
+            final InputSource inputSource = new InputSource(in);
 
-            SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
+            final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
             parser.parse(inputSource, new DefaultHandler() {
-                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+                public void startElement(final String uri, final String localName, final String qName, final Attributes att) throws SAXException {
                     id[0] = att.getValue("id");
                 }
 
-                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+                public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
                     return new InputSource(new ByteArrayInputStream(new byte[0]));
                 }
             });
@@ -616,8 +611,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return id[0];
     }
 
-    public static Webservices readWebservices(URL url) throws OpenEJBException {
-        Webservices webservices;
+    public static Webservices readWebservices(final URL url) throws OpenEJBException {
+        final Webservices webservices;
         try {
             webservices = (Webservices) JaxbJavaee.unmarshalJavaee(Webservices.class, IO.read(url));
         } catch (SAXException e) {
@@ -632,8 +627,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return webservices;
     }
 
-    public static HandlerChains readHandlerChains(URL url) throws OpenEJBException {
-        HandlerChains handlerChains;
+    public static HandlerChains readHandlerChains(final URL url) throws OpenEJBException {
+        final HandlerChains handlerChains;
         try {
             handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, IO.read(url));
         } catch (SAXException e) {
@@ -648,8 +643,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return handlerChains;
     }
 
-    public static JavaWsdlMapping readJaxrpcMapping(URL url) throws OpenEJBException {
-        JavaWsdlMapping wsdlMapping;
+    public static JavaWsdlMapping readJaxrpcMapping(final URL url) throws OpenEJBException {
+        final JavaWsdlMapping wsdlMapping;
         try {
             wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshalJavaee(JavaWsdlMapping.class, IO.read(url));
         } catch (SAXException e) {
@@ -664,14 +659,14 @@ public class ReadDescriptors implements DynamicDeployer {
         return wsdlMapping;
     }
 
-    public static Definition readWsdl(URL url) throws OpenEJBException {
-        Definition definition;
+    public static Definition readWsdl(final URL url) throws OpenEJBException {
+        final Definition definition;
         try {
-            WSDLFactory factory = WSDLFactory.newInstance();
-            WSDLReader reader = factory.newWSDLReader();
+            final WSDLFactory factory = WSDLFactory.newInstance();
+            final WSDLReader reader = factory.newWSDLReader();
             reader.setFeature("javax.wsdl.verbose", true);
             reader.setFeature("javax.wsdl.importDocuments", true);
-            WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
+            final WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
             definition = reader.readWSDL(wsdlResolver);
         } catch (IOException e) {
             throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
@@ -681,13 +676,13 @@ public class ReadDescriptors implements DynamicDeployer {
         return definition;
     }
 
-    public static Connector readConnector(URL url) throws OpenEJBException {
+    public static Connector readConnector(final URL url) throws OpenEJBException {
         Connector connector;
         try {
             connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector.class, IO.read(url));
         } catch (JAXBException e) {
             try {
-                Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, IO.read(url));
+                final Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, IO.read(url));
                 connector = Connector.newConnector(connector10);
             } catch (ParserConfigurationException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
@@ -708,8 +703,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return connector;
     }
 
-    public static WebApp readWebApp(URL url) throws OpenEJBException {
-        WebApp webApp;
+    public static WebApp readWebApp(final URL url) throws OpenEJBException {
+        final WebApp webApp;
         try {
             webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, IO.read(url));
         } catch (SAXException e) {
@@ -724,7 +719,7 @@ public class ReadDescriptors implements DynamicDeployer {
         return webApp;
     }
 
-    public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
+    public static TldTaglib readTldTaglib(final URL url) throws OpenEJBException {
         // TOMEE-164 Optimization on reading built-in tld files
         if (url.getPath().contains("jstl-1.2.jar")) return new TldTaglib();
         if (url.getPath().contains("myfaces-impl")) {
@@ -735,7 +730,7 @@ public class ReadDescriptors implements DynamicDeployer {
             return taglib;
         }
 
-        TldTaglib tldTaglib;
+        final TldTaglib tldTaglib;
         try {
             tldTaglib = (TldTaglib) JaxbJavaee.unmarshalTaglib(TldTaglib.class, IO.read(url));
         } catch (SAXException e) {
@@ -750,7 +745,7 @@ public class ReadDescriptors implements DynamicDeployer {
         return tldTaglib;
     }
 
-    public static FacesConfig readFacesConfig(URL url) throws OpenEJBException {
+    public static FacesConfig readFacesConfig(final URL url) throws OpenEJBException {
         try {
             final Source src = getSource(url);
             if (src == null) {
@@ -761,7 +756,7 @@ public class ReadDescriptors implements DynamicDeployer {
             if (isEmpty(new ByteArrayInputStream(content.getBytes()), "faces-config")) {
                 return new FacesConfig();
             }
-     		return  (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, new ByteArrayInputStream(content.getBytes()));
+            return (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, new ByteArrayInputStream(content.getBytes()));
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -773,7 +768,7 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    private static Source getSource(Object o) {
+    private static Source getSource(final Object o) {
         if (o instanceof Source) {
             return (Source) o;
         }
@@ -796,7 +791,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static class UrlSource implements Source {
         private final URL url;
 
-        public UrlSource(URL url) {
+        public UrlSource(final URL url) {
             this.url = url;
         }
 
@@ -809,7 +804,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static class StringSource implements Source {
         private byte[] bytes;
 
-        public StringSource(String content) {
+        public StringSource(final String content) {
             bytes = content.getBytes();
         }
 

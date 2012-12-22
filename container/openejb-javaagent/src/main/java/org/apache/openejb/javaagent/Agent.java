@@ -17,13 +17,7 @@
  */
 package org.apache.openejb.javaagent;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -191,7 +185,17 @@ public class Agent {
         ZipOutputStream out = null;
         File file = null;
         try {
-            file = File.createTempFile(Agent.class.getName(), ".jar");
+            try {
+                file = File.createTempFile(Agent.class.getName(), ".jar");
+            } catch (IOException e) {
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                file = File.createTempFile(Agent.class.getName(), ".jar", tmp);
+            }
+
             file.deleteOnExit();
 
             out = new ZipOutputStream(new FileOutputStream(file));

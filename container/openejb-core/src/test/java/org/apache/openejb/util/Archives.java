@@ -19,12 +19,7 @@ package org.apache.openejb.util;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,50 +37,62 @@ import static junit.framework.Assert.assertTrue;
  */
 public class Archives {
 
-    public static File fileArchive(Class[] classes) throws IOException {
+    public static File fileArchive(final Class[] classes) throws IOException {
         return fileArchive(new HashMap<String, String>(), classes);
     }
 
-    public static File fileArchive(Map<String, String> entries, Class... classes) throws IOException {
+    @SuppressWarnings("unchecked")
+    public static File fileArchive(final Map<String, String> entries, final Class... classes) throws IOException {
         return fileArchive(entries, Collections.EMPTY_LIST, classes);
     }
 
-    public static File fileArchive(Map<String, String> entries, final List<String> parts, Class... classes) throws IOException {
+    public static File fileArchive(final Map<String, String> entries, final List<String> parts, final Class... classes) throws IOException {
 
-        ClassLoader loader = Archives.class.getClassLoader();
+        final ClassLoader loader = Archives.class.getClassLoader();
 
-        File classpath = File.createTempFile("test", "archive");
+        File classpath;
+        try {
+            classpath = File.createTempFile("test", "archive");
+        } catch (Throwable e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+
+            classpath = File.createTempFile("test", "archive", tmp);
+        }
+
         Files.deleteOnExit(classpath);
         assertTrue(classpath.delete());
         assertTrue(classpath.mkdirs());
 
-        for (String part : parts) {
+        for (final String part : parts) {
             classpath = new File(classpath, part);
         }
 
         System.out.println("Archive file path:" + classpath.getCanonicalPath());
 
-        for (Class clazz : classes) {
-            String name = clazz.getName().replace('.', File.separatorChar) + ".class";
-            File file = new File(classpath, name);
+        for (final Class clazz : classes) {
+            final String name = clazz.getName().replace('.', File.separatorChar) + ".class";
+            final File file = new File(classpath, name);
 
-            File d = file.getParentFile();
+            final File d = file.getParentFile();
 
             if (!d.exists()) assertTrue(d.getAbsolutePath(), d.mkdirs());
 
-            URL resource = loader.getResource(name);
+            final URL resource = loader.getResource(name);
             assertNotNull(resource);
 
             IO.copy(IO.read(resource), file);
         }
 
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
+        for (final Map.Entry<String, String> entry : entries.entrySet()) {
 
             final String key = entry.getKey().replace('/', File.separatorChar);
 
             final File file = new File(classpath, key);
 
-            File d = file.getParentFile();
+            final File d = file.getParentFile();
 
             if (!d.exists()) assertTrue(d.getAbsolutePath(), d.mkdirs());
 
@@ -95,37 +102,47 @@ public class Archives {
         return classpath;
     }
 
-    public static File jarArchive(Class... classes) throws IOException {
+    public static File jarArchive(final Class... classes) throws IOException {
         return jarArchive(new HashMap<String, String>(), "temp", classes);
     }
 
 
-    public static File jarArchive(Map<String, ?> entries, String archiveNamePrefix, Class... classes) throws IOException {
+    public static File jarArchive(final Map<String, ?> entries, final String archiveNamePrefix, final Class... classes) throws IOException {
 
-        File classpath = File.createTempFile(archiveNamePrefix, ".jar");
+        File classpath;
+        try {
+            classpath = File.createTempFile(archiveNamePrefix, ".jar");
+        } catch (Throwable e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+
+            classpath = File.createTempFile(archiveNamePrefix, ".jar", tmp);
+        }
         classpath.deleteOnExit();
 
         return jarArchive(classpath, entries, classes);
     }
 
-    public static File jarArchive(File archive, Map<String, ?> entries, Class... classes) throws IOException {
+    public static File jarArchive(final File archive, final Map<String, ?> entries, final Class... classes) throws IOException {
         final ClassLoader loader = Archives.class.getClassLoader();
 
         // Create the ZIP file
         final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(archive)));
 
-        for (Class clazz : classes) {
-            String name = clazz.getName().replace('.', File.separatorChar) + ".class";
+        for (final Class clazz : classes) {
+            final String name = clazz.getName().replace('.', File.separatorChar) + ".class";
 
-            URL resource = loader.getResource(name);
+            final URL resource = loader.getResource(name);
             assertNotNull(resource);
 
             // Add ZIP entry to output stream.
             out.putNextEntry(new ZipEntry(name));
 
-            InputStream in = new BufferedInputStream(resource.openStream());
+            final InputStream in = new BufferedInputStream(resource.openStream());
 
-            int i = -1;
+            int i;
             while ((i = in.read()) != -1) {
                 out.write(i);
             }
@@ -135,7 +152,7 @@ public class Archives {
             out.closeEntry();
         }
 
-        if (entries != null) for (Map.Entry<String, ?> entry : entries.entrySet()) {
+        if (entries != null) for (final Map.Entry<String, ?> entry : entries.entrySet()) {
 
             out.putNextEntry(new ZipEntry(entry.getKey()));
 
@@ -143,18 +160,19 @@ public class Archives {
 
             if (value instanceof String) {
 
-                String s = (String) value;
+                final String s = (String) value;
                 out.write(s.getBytes());
 
             } else if (value instanceof File) {
 
                 final File file = (File) value;
-                if (file.isDirectory()) throw new IllegalArgumentException(entry.getKey() + " is a directory, not a file.");
+                if (file.isDirectory())
+                    throw new IllegalArgumentException(entry.getKey() + " is a directory, not a file.");
                 IO.copy(file, out);
 
             } else if (value instanceof URL) {
 
-                IO.copy((URL)value, out);
+                IO.copy((URL) value, out);
 
             }
 
