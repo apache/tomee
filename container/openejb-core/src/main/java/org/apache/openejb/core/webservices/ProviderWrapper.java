@@ -26,33 +26,17 @@ import javax.jws.WebService;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.*;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.spi.Provider;
 import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 public class ProviderWrapper extends Provider {
@@ -64,19 +48,19 @@ public class ProviderWrapper extends Provider {
 
     private static ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
 
-    public static void beforeCreate(List<PortRefData> portRefData) {
+    public static void beforeCreate(final List<PortRefData> portRefData) {
         // Axis JAXWS api is non compliant and checks system property before classloader
         // so we replace system property so this wrapper is selected.  The original value
         // is saved into an openejb property so we can load the class in the find method
-        String oldProperty = System.getProperty(JAXWSPROVIDER_PROPERTY);
+        final String oldProperty = System.getProperty(JAXWSPROVIDER_PROPERTY);
         if (oldProperty != null && !oldProperty.equals(ProviderWrapper.class.getName())) {
             System.setProperty("openejb." + JAXWSPROVIDER_PROPERTY, oldProperty);
             System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
         }
 
         System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
-        
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {
             Thread.currentThread().setContextClassLoader(new ProviderClassLoader(oldClassLoader));
         } else {
@@ -94,7 +78,7 @@ public class ProviderWrapper extends Provider {
         private final List<PortRefData> portRefData;
         private final ClassLoader callerClassLoader;
 
-        public ProviderWrapperData(List<PortRefData> portRefData, ClassLoader callerClassLoader) {
+        public ProviderWrapperData(final List<PortRefData> portRefData, final ClassLoader callerClassLoader) {
             this.portRefData = portRefData;
             this.callerClassLoader = callerClassLoader;
         }
@@ -117,31 +101,31 @@ public class ProviderWrapper extends Provider {
         return delegate;
     }
 
-    public ServiceDelegate createServiceDelegate(URL wsdlDocumentLocation, QName serviceName, Class serviceClass) {
+    public ServiceDelegate createServiceDelegate(final URL wsdlDocumentLocation, final QName serviceName, final Class serviceClass) {
         ServiceDelegate serviceDelegate = delegate.createServiceDelegate(wsdlDocumentLocation, serviceName, serviceClass);
         // the PortRef list is bound to this thread when using @WebServiceRef injection
         // When using the JAX-WS API we don't need to wrap the ServiceDelegate
         if (threadPortRefs.get() != null) {
             serviceDelegate = new ServiceDelegateWrapper(serviceDelegate);
-            
+
         }
         return serviceDelegate;
     }
 
-    public Endpoint createEndpoint(String bindingId, Object implementor) {
+    public Endpoint createEndpoint(final String bindingId, final Object implementor) {
         return delegate.createEndpoint(bindingId, implementor);
     }
 
-    public Endpoint createAndPublishEndpoint(String address, Object implementor) {
+    public Endpoint createAndPublishEndpoint(final String address, final Object implementor) {
         return delegate.createAndPublishEndpoint(address, implementor);
     }
 
-    public W3CEndpointReference createW3CEndpointReference(String address,
-            QName serviceName,
-            QName portName,
-            List<Element> metadata,
-            String wsdlDocumentLocation,
-            List<Element> referenceParameters) {
+    public W3CEndpointReference createW3CEndpointReference(final String address,
+                                                           final QName serviceName,
+                                                           final QName portName,
+                                                           final List<Element> metadata,
+                                                           final String wsdlDocumentLocation,
+                                                           final List<Element> referenceParameters) {
 
         return (W3CEndpointReference) invoke21Delegate(delegate, createW3CEndpointReference,
                 address,
@@ -152,36 +136,36 @@ public class ProviderWrapper extends Provider {
                 referenceParameters);
     }
 
-    public EndpointReference readEndpointReference(Source source){
+    public EndpointReference readEndpointReference(final Source source) {
         return (EndpointReference) invoke21Delegate(delegate, readEndpointReference, source);
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+    public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
         return (T) invoke21Delegate(delegate, providerGetPort, endpointReference, serviceEndpointInterface, features);
     }
 
     private class ServiceDelegateWrapper extends ServiceDelegate {
         private final ServiceDelegate serviceDelegate;
 
-        public ServiceDelegateWrapper(ServiceDelegate serviceDelegate) {
+        public ServiceDelegateWrapper(final ServiceDelegate serviceDelegate) {
             this.serviceDelegate = serviceDelegate;
         }
 
-        public <T> T getPort(QName portName, Class<T> serviceEndpointInterface) {
-            T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
+        public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface) {
+            final T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
             setProperties((BindingProvider) t, portName);
             return t;
         }
 
-        public <T> T getPort(Class<T> serviceEndpointInterface) {
-            T t = serviceDelegate.getPort(serviceEndpointInterface);
+        public <T> T getPort(final Class<T> serviceEndpointInterface) {
+            final T t = serviceDelegate.getPort(serviceEndpointInterface);
 
             QName qname = null;
             if (serviceEndpointInterface.isAnnotationPresent(WebService.class)) {
-                WebService webService = serviceEndpointInterface.getAnnotation(WebService.class);
-                String targetNamespace = webService.targetNamespace();
-                String name = webService.name();
+                final WebService webService = serviceEndpointInterface.getAnnotation(WebService.class);
+                final String targetNamespace = webService.targetNamespace();
+                final String name = webService.name();
                 if (targetNamespace != null && targetNamespace.length() > 0 && name != null && name.length() > 0) {
                     qname = new QName(targetNamespace, name);
                 }
@@ -191,24 +175,24 @@ public class ProviderWrapper extends Provider {
             return t;
         }
 
-        public void addPort(QName portName, String bindingId, String endpointAddress) {
+        public void addPort(final QName portName, final String bindingId, final String endpointAddress) {
             serviceDelegate.addPort(portName, bindingId, endpointAddress);
         }
 
-        public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode) {
-            Dispatch<T> dispatch = serviceDelegate.createDispatch(portName, type, mode);
+        public <T> Dispatch<T> createDispatch(final QName portName, final Class<T> type, final Service.Mode mode) {
+            final Dispatch<T> dispatch = serviceDelegate.createDispatch(portName, type, mode);
             setProperties(dispatch, portName);
             return dispatch;
         }
 
-        public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode) {
-            Dispatch<Object> dispatch = serviceDelegate.createDispatch(portName, context, mode);
+        public Dispatch<Object> createDispatch(final QName portName, final JAXBContext context, final Service.Mode mode) {
+            final Dispatch<Object> dispatch = serviceDelegate.createDispatch(portName, context, mode);
             setProperties(dispatch, portName);
             return dispatch;
         }
 
         @SuppressWarnings({"unchecked"})
-        public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode, WebServiceFeature... features) {
+        public <T> Dispatch<T> createDispatch(final QName portName, final Class<T> type, final Service.Mode mode, final WebServiceFeature... features) {
             return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchInterface,
                     portName,
                     type,
@@ -217,7 +201,7 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
-        public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode, WebServiceFeature... features) {
+        public Dispatch<java.lang.Object> createDispatch(final QName portName, final JAXBContext context, final Service.Mode mode, final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchJaxBContext,
                     portName,
                     context,
@@ -227,10 +211,10 @@ public class ProviderWrapper extends Provider {
 
         @SuppressWarnings({"unchecked"})
         public Dispatch<Object> createDispatch(
-                EndpointReference endpointReference,
-                JAXBContext context,
-                Service.Mode mode,
-                WebServiceFeature... features) {
+                final EndpointReference endpointReference,
+                final JAXBContext context,
+                final Service.Mode mode,
+                final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReferenceJaxB,
                     endpointReference,
                     context,
@@ -239,10 +223,10 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
-        public <T> Dispatch<T> createDispatch(EndpointReference endpointReference,
-                                               java.lang.Class<T> type,
-                                               Service.Mode mode,
-                                               WebServiceFeature... features) {
+        public <T> Dispatch<T> createDispatch(final EndpointReference endpointReference,
+                                              final java.lang.Class<T> type,
+                                              final Service.Mode mode,
+                                              final WebServiceFeature... features) {
             return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchReferenceClass,
                     endpointReference,
                     type,
@@ -250,8 +234,9 @@ public class ProviderWrapper extends Provider {
                     features);
 
         }
+
         @SuppressWarnings({"unchecked"})
-        public <T> T getPort(QName portName, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        public <T> T getPort(final QName portName, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
             return (T) invoke21Delegate(serviceDelegate, serviceGetPortByQName,
                     portName,
                     serviceEndpointInterface,
@@ -259,7 +244,7 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
-        public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        public <T> T getPort(final EndpointReference endpointReference, final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
             return (T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference,
                     endpointReference,
                     serviceEndpointInterface,
@@ -267,47 +252,47 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
-        public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        public <T> T getPort(final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
             return (T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface,
                     serviceEndpointInterface,
                     features);
         }
 
         public QName getServiceName() {
-            QName qName = serviceDelegate.getServiceName();
+            final QName qName = serviceDelegate.getServiceName();
             return qName;
         }
 
         public Iterator<QName> getPorts() {
-            Iterator<QName> ports = serviceDelegate.getPorts();
+            final Iterator<QName> ports = serviceDelegate.getPorts();
             return ports;
         }
 
         public URL getWSDLDocumentLocation() {
-            URL documentLocation = serviceDelegate.getWSDLDocumentLocation();
+            final URL documentLocation = serviceDelegate.getWSDLDocumentLocation();
             return documentLocation;
         }
 
         public HandlerResolver getHandlerResolver() {
-            HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
+            final HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
             return handlerResolver;
         }
 
-        public void setHandlerResolver(HandlerResolver handlerResolver) {
+        public void setHandlerResolver(final HandlerResolver handlerResolver) {
             serviceDelegate.setHandlerResolver(handlerResolver);
         }
 
         public Executor getExecutor() {
-            Executor executor = serviceDelegate.getExecutor();
+            final Executor executor = serviceDelegate.getExecutor();
             return executor;
         }
 
-        public void setExecutor(Executor executor) {
+        public void setExecutor(final Executor executor) {
             serviceDelegate.setExecutor(executor);
         }
 
-        private void setProperties(BindingProvider proxy, QName qname) {
-            for (PortRefData portRef : portRefs) {
+        private void setProperties(final BindingProvider proxy, final QName qname) {
+            for (final PortRefData portRef : portRefs) {
                 Class intf = null;
                 if (portRef.getServiceEndpointInterface() != null) {
                     try {
@@ -322,15 +307,15 @@ public class ProviderWrapper extends Provider {
                     }
 
                     // set mtom
-                    boolean enableMTOM = portRef.isEnableMtom();
+                    final boolean enableMTOM = portRef.isEnableMtom();
                     if (enableMTOM && proxy.getBinding() instanceof SOAPBinding) {
-                        ((SOAPBinding)proxy.getBinding()).setMTOMEnabled(enableMTOM);
+                        ((SOAPBinding) proxy.getBinding()).setMTOMEnabled(enableMTOM);
                     }
 
                     // set properties
-                    for (Map.Entry<Object, Object> entry : portRef.getProperties().entrySet()) {
-                        String name = (String) entry.getKey();
-                        String value = (String) entry.getValue();
+                    for (final Map.Entry<Object, Object> entry : portRef.getProperties().entrySet()) {
+                        final String name = (String) entry.getKey();
+                        final String value = (String) entry.getValue();
                         proxy.getRequestContext().put(name, value);
                     }
 
@@ -354,7 +339,7 @@ public class ProviderWrapper extends Provider {
 
         // 1. META-INF/services/javax.xml.ws.spi.Provider
         try {
-            for (URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
+            for (final URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
                 BufferedReader in = null;
                 try {
                     in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -378,8 +363,8 @@ public class ProviderWrapper extends Provider {
         }
 
         // 2. $java.home/lib/jaxws.properties
-        String javaHome = System.getProperty("java.home");
-        File jaxrpcPropertiesFile = new File(new File(javaHome, "lib"), "jaxrpc.properties");
+        final String javaHome = System.getProperty("java.home");
+        final File jaxrpcPropertiesFile = new File(new File(javaHome, "lib"), "jaxrpc.properties");
         if (jaxrpcPropertiesFile.exists()) {
             try {
                 final Properties properties = IO.readProperties(jaxrpcPropertiesFile);
@@ -389,7 +374,7 @@ public class ProviderWrapper extends Provider {
                 if (provider != null) {
                     return provider;
                 }
-            } catch(Exception ignored) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -416,10 +401,10 @@ public class ProviderWrapper extends Provider {
         throw new WebServiceException("No " + JAXWSPROVIDER_PROPERTY + " implementation found");
     }
 
-    private static Provider createProviderInstance(String providerClass, ClassLoader classLoader) {
+    private static Provider createProviderInstance(final String providerClass, final ClassLoader classLoader) {
         if (providerClass != null && providerClass.length() > 0 && !providerClass.equals(ProviderWrapper.class.getName())) {
             try {
-                Class<? extends Provider> clazz = classLoader.loadClass(providerClass).asSubclass(Provider.class);
+                final Class<? extends Provider> clazz = classLoader.loadClass(providerClass).asSubclass(Provider.class);
                 return clazz.newInstance();
             } catch (Throwable e) {
                 logger.warning("Unable to construct provider implementation " + providerClass, e);
@@ -431,11 +416,22 @@ public class ProviderWrapper extends Provider {
     private static class ProviderClassLoader extends ClassLoader {
         private static final String PROVIDER_RESOURCE = "META-INF/services/" + JAXWSPROVIDER_PROPERTY;
         private static final URL PROVIDER_URL;
+
         static {
             try {
-                File tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
+                File tempFile = null;
+                try {
+                    tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
+                } catch (IOException e) {
+                    final File tmp = new File("tmp");
+                    if (!tmp.exists() && !tmp.mkdirs()) {
+                        throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                    }
+
+                    tempFile = File.createTempFile("openejb-jaxws-provider", "tmp", tmp);
+                }
                 tempFile.deleteOnExit();
-                OutputStream out = IO.write(tempFile);
+                final OutputStream out = IO.write(tempFile);
                 out.write(ProviderWrapper.class.getName().getBytes());
                 out.close();
                 PROVIDER_URL = tempFile.toURI().toURL();
@@ -447,14 +443,14 @@ public class ProviderWrapper extends Provider {
         public ProviderClassLoader() {
         }
 
-        public ProviderClassLoader(ClassLoader parent) {
+        public ProviderClassLoader(final ClassLoader parent) {
             super(parent);
         }
 
-        public Enumeration<URL> getResources(String name) throws IOException {
+        public Enumeration<URL> getResources(final String name) throws IOException {
             Enumeration<URL> resources = super.getResources(name);
             if (PROVIDER_RESOURCE.equals(name)) {
-                ArrayList<URL> list = new ArrayList<URL>();
+                final ArrayList<URL> list = new ArrayList<URL>();
                 list.add(PROVIDER_URL);
                 list.addAll(Collections.list(resources));
                 resources = Collections.enumeration(list);
@@ -463,7 +459,7 @@ public class ProviderWrapper extends Provider {
         }
 
 
-        public URL getResource(String name) {
+        public URL getResource(final String name) {
             if (PROVIDER_RESOURCE.equals(name)) {
                 return PROVIDER_URL;
             }
@@ -476,12 +472,12 @@ public class ProviderWrapper extends Provider {
     // Delegate methods for JaxWS 2.1
     //
 
-    private static Object invoke21Delegate(Object delegate, Method method, Object... args) {
+    private static Object invoke21Delegate(final Object delegate, final Method method, final Object... args) {
         if (method == null) {
             throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
         }
         try {
-            return method.invoke(delegate,args);
+            return method.invoke(delegate, args);
         } catch (IllegalAccessException e) {
             throw new WebServiceException(e);
         } catch (InvocationTargetException e) {

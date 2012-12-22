@@ -18,36 +18,22 @@
 
 package org.apache.openejb.jee;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
-
 import junit.framework.TestCase;
-
-import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.*;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+import java.io.*;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -56,71 +42,72 @@ public class JeeTest extends TestCase {
 
     /**
      * TODO Doesn't seem there are any asserts here
+     *
      * @throws Exception
      */
     public void testEjbJar() throws Exception {
-        String fileName = "ejb-jar-example1.xml";
+        final String fileName = "ejb-jar-example1.xml";
         //        String fileName = "ejb-jar-empty.xml";
 
         //        marshalAndUnmarshal(EjbJar.class, fileName);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        final SAXParser parser = factory.newSAXParser();
 
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
 
         //        Unmarshaller unmarshaller = new UnmarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
         //        Marshaller marshaller = new MarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
-        JAXBContext ctx = JAXBContextFactory.newInstance(EjbJar.class);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        Marshaller marshaller = ctx.createMarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(EjbJar.class);
+        final Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        final Marshaller marshaller = ctx.createMarshaller();
 
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+        final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
         unmarshaller.setEventHandler(new TestValidationEventHandler());
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
-        String expected = readContent(in);
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String expected = readContent(in);
 
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(expected.getBytes())));
-        Object object = unmarshaller.unmarshal(source);
+        final SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(expected.getBytes())));
+        final Object object = unmarshaller.unmarshal(source);
 
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
         System.out.println("time: " + (System.currentTimeMillis() - start));
     }
 
     public void testEjbTimeout() throws Exception {
-        String fileName = "ejb-jar-timeout.xml";
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String fileName = "ejb-jar-timeout.xml";
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+        final Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
-        EjbJar ejbJar = (EjbJar) o;
-        EnterpriseBean bean = ejbJar.getEnterpriseBean("A");
+        final EjbJar ejbJar = (EjbJar) o;
+        final EnterpriseBean bean = ejbJar.getEnterpriseBean("A");
 
         assertTrue("The bean A is not a SessionBean", bean instanceof SessionBean);
-        SessionBean sbean = (SessionBean) bean;
+        final SessionBean sbean = (SessionBean) bean;
 
         assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
     }
 
     public void testSessionSynchronization() throws Exception {
-        String fileName = "ejb-session-synchronization.xml";
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String fileName = "ejb-session-synchronization.xml";
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+        final Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
-        EjbJar ejbJar = (EjbJar) o;
-        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+        final EjbJar ejbJar = (EjbJar) o;
+        final EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
 
         assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
-        SessionBean sbean = (SessionBean) bean;
+        final SessionBean sbean = (SessionBean) bean;
 
         assertNotNull("Unable to get the afterBegin value", sbean.getAfterBeginMethod());
         assertNotNull("Unable to get the beforeCompletion value", sbean.getBeforeCompletionMethod());
@@ -132,41 +119,41 @@ public class JeeTest extends TestCase {
     }
 
     public void testAroundTimeout() throws Exception {
-        String fileName = "ejb-jar-aroundtimeout.xml";
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String fileName = "ejb-jar-aroundtimeout.xml";
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+        final Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
-        EjbJar ejbJar = (EjbJar) o;
-        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+        final EjbJar ejbJar = (EjbJar) o;
+        final EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
 
         assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
-        SessionBean sbean = (SessionBean) bean;
+        final SessionBean sbean = (SessionBean) bean;
 
-        AroundTimeout beanAroundTimeout = sbean.getAroundTimeout().get(0);
+        final AroundTimeout beanAroundTimeout = sbean.getAroundTimeout().get(0);
         assertEquals("aroundTimeout", beanAroundTimeout.getMethodName());
 
-        AroundTimeout interceptorAroundTimeout = ejbJar.getInterceptors()[0].getAroundTimeout().get(0);
+        final AroundTimeout interceptorAroundTimeout = ejbJar.getInterceptors()[0].getAroundTimeout().get(0);
         assertEquals("aroundTimeout", interceptorAroundTimeout.getMethodName());
     }
 
     public void testTimerSchedule() throws Exception {
-        String fileName = "ejb-jar-timeschedule.xml";
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String fileName = "ejb-jar-timeschedule.xml";
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+        final Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
-        EjbJar ejbJar = (EjbJar) o;
-        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+        final EjbJar ejbJar = (EjbJar) o;
+        final EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
 
         assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
-        SessionBean sbean = (SessionBean) bean;
+        final SessionBean sbean = (SessionBean) bean;
 
-        List<Timer> timers = sbean.getTimer();
+        final List<Timer> timers = sbean.getTimer();
         assertEquals(1, timers.size());
 
-        Timer timer = timers.get(0);
-        TimerSchedule timerSchedule = timer.getSchedule();
+        final Timer timer = timers.get(0);
+        final TimerSchedule timerSchedule = timer.getSchedule();
         assertEquals("10", timerSchedule.getSecond());
         assertEquals("10", timerSchedule.getMinute());
         assertEquals("*", timerSchedule.getDayOfMonth());
@@ -178,7 +165,7 @@ public class JeeTest extends TestCase {
         assertEquals("2010-03-01T13:00:00Z", timer.getStart().toXMLFormat());
         assertEquals("2012-12-11T14:19:00Z", timer.getEnd().toXMLFormat());
 
-        NamedMethod timeoutMethod = timer.getTimeoutMethod();
+        final NamedMethod timeoutMethod = timer.getTimeoutMethod();
         assertEquals("testScheduleMethod", timeoutMethod.getMethodName());
         assertEquals("javax.ejb.Timer", timeoutMethod.getMethodParams().getMethodParam().get(0));
 
@@ -188,16 +175,16 @@ public class JeeTest extends TestCase {
     }
 
     public void testEjbJarMdb20() throws Exception {
-        String fileName = "ejb-jar-mdb-2.0.xml";
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        final String fileName = "ejb-jar-mdb-2.0.xml";
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+        final Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
-        EjbJar ejbJar = (EjbJar) o;
+        final EjbJar ejbJar = (EjbJar) o;
 
-        MessageDrivenBean bean = (MessageDrivenBean) ejbJar.getEnterpriseBean("MyMdb");
+        final MessageDrivenBean bean = (MessageDrivenBean) ejbJar.getEnterpriseBean("MyMdb");
 
-        Properties properties = bean.getActivationConfig().toProperties();
+        final Properties properties = bean.getActivationConfig().toProperties();
 
         assertEquals(4, properties.size());
         /*
@@ -235,21 +222,21 @@ public class JeeTest extends TestCase {
     }
 
     public void testRar10() throws Exception {
-        Connector10 c10 = marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml", null);
-        Connector c = Connector.newConnector(c10);
-        JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
-        Marshaller marshaller = ctx.createMarshaller();
+        final Connector10 c10 = marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml", null);
+        final Connector c = Connector.newConnector(c10);
+        final JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
+        final Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(c, baos);
 
-        byte[] bytes = baos.toByteArray();
-        String actual = new String(bytes);
+        final byte[] bytes = baos.toByteArray();
+        final String actual = new String(bytes);
 
-        String expected;
-            InputStream in2 = this.getClass().getClassLoader().getResourceAsStream("connector-1.0-example-expected-1.6.xml");
-            expected = readContent(in2);
+        final String expected;
+        final InputStream in2 = this.getClass().getClassLoader().getResourceAsStream("connector-1.0-example-expected-1.6.xml");
+        expected = readContent(in2);
 
         try {
             StaxCompare.compare(expected, actual);
@@ -267,51 +254,51 @@ public class JeeTest extends TestCase {
     public void testRar16() throws Exception {
         marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml", null);
     }
-    
+
     public void testWebServiceHandlers() throws Exception {
-        QName[] expectedServiceNames = { new QName("http://www.helloworld.org", "HelloService", "ns1"), new QName("http://www.bar.org", "HelloService", "bar"),
-                new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null };
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml");
+        final QName[] expectedServiceNames = {new QName("http://www.helloworld.org", "HelloService", "ns1"), new QName("http://www.bar.org", "HelloService", "bar"),
+                new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null};
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml");
         try {
-            HandlerChains handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, in);
+            final HandlerChains handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, in);
             for (int index = 0; index < handlerChains.getHandlerChain().size(); index++) {
-                HandlerChain handlerChain = handlerChains.getHandlerChain().get(index);
-                QName serviceName = handlerChain.getServiceNamePattern();
-                QName expectedServiceName = expectedServiceNames[index];
+                final HandlerChain handlerChain = handlerChains.getHandlerChain().get(index);
+                final QName serviceName = handlerChain.getServiceNamePattern();
+                final QName expectedServiceName = expectedServiceNames[index];
                 if (expectedServiceName == null) {
                     assertNull(serviceName);
                 } else {
-                    assertEquals("serviceNamePattern at index " + index + " mismatches", expectedServiceName, serviceName );
+                    assertEquals("serviceNamePattern at index " + index + " mismatches", expectedServiceName, serviceName);
                 }
             }
             System.out.println(JaxbJavaee.marshal(HandlerChains.class, handlerChains));
         } finally {
             in.close();
-        }        
+        }
     }
 
-    public static <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {
-        InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
-        T object = (T)JaxbJavaee.unmarshalJavaee(type, in);
+    public static <T> T marshalAndUnmarshal(final Class<T> type, final String sourceXmlFile, final String expectedXmlFile) throws Exception {
+        final InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
+        final T object = (T) JaxbJavaee.unmarshalJavaee(type, in);
         in.close();
         assertTrue(object.getClass().isAssignableFrom(type));
 
-        JAXBContext ctx = JAXBContextFactory.newInstance(type);
-        Marshaller marshaller = ctx.createMarshaller();
+        final JAXBContext ctx = JAXBContextFactory.newInstance(type);
+        final Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-        byte[] bytes = baos.toByteArray();
-        String actual = new String(bytes);
+        final byte[] bytes = baos.toByteArray();
+        final String actual = new String(bytes);
 
-        String expected;
+        final String expected;
         if (expectedXmlFile == null) {
-            InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
+            final InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
             expected = readContent(in2);
         } else {
-            InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(expectedXmlFile);
+            final InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(expectedXmlFile);
             expected = readContent(in2);
         }
 
@@ -329,23 +316,33 @@ public class JeeTest extends TestCase {
 
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public NamespaceFilter(XMLReader xmlReader) {
+        public NamespaceFilter(final XMLReader xmlReader) {
             super(xmlReader);
         }
 
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
             return EMPTY_INPUT_SOURCE;
         }
 
-        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qname, final Attributes atts) throws SAXException {
             super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
         }
     }
 
-    private static void writeToTmpFile(byte[] bytes, String xmlFileName) {
+    private static void writeToTmpFile(final byte[] bytes, final String xmlFileName) {
         try {
-            File tempFile = File.createTempFile("jaxb-output", "xml");
-            FileOutputStream out = new FileOutputStream(tempFile);
+            File tempFile = null;
+            try {
+                tempFile = File.createTempFile("jaxb-output", "xml");
+            } catch (IOException e) {
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                tempFile = File.createTempFile("jaxb-output", "xml", tmp);
+            }
+            final FileOutputStream out = new FileOutputStream(tempFile);
             out.write(bytes);
             out.close();
             System.out.println("Jaxb output of " + xmlFileName + " written to " + tempFile.getAbsolutePath());
@@ -355,7 +352,7 @@ public class JeeTest extends TestCase {
     }
 
     private static String readContent(InputStream in) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         in = new BufferedInputStream(in);
         try {
             int i = in.read();
@@ -366,13 +363,12 @@ public class JeeTest extends TestCase {
         } finally {
             in.close();
         }
-        String content = sb.toString();
-        return content;
+        return sb.toString();
     }
 
     private static class TestValidationEventHandler implements ValidationEventHandler {
 
-        public boolean handleEvent(ValidationEvent validationEvent) {
+        public boolean handleEvent(final ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
             System.out.println(validationEvent.getLocator());
             return false; // if an error occurs we must be aware of

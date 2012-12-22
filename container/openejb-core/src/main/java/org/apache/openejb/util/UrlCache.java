@@ -39,9 +39,9 @@ public class UrlCache {
     public static final boolean antiJarLocking;
     public static final File cacheDir;
 
-    static {        
+    static {
         antiJarLocking = SystemInstance.get().getOptions().get("antiJarLocking", false);
-     
+
         if (antiJarLocking) {
             cacheDir = createCacheDir();
             logger.info("AntiJarLocking enabled. Using URL cache dir " + cacheDir);
@@ -51,7 +51,6 @@ public class UrlCache {
     }
 
 
-    
     private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL, File>>();
 
     public synchronized URL[] cacheUrls(final String appId, final URL[] urls) {
@@ -127,24 +126,24 @@ public class UrlCache {
     }
 
     public URL getUrlKeyCached(final String appId, final File file) {
-    	if (file == null) {
-    		return null;
-    	}
+        if (file == null) {
+            return null;
+        }
         final Map<URL, File> appCache = getAppCache(appId);
         for (final Map.Entry<URL, File> entry : appCache.entrySet()) {
-        	if (entry.getValue().equals(file)) {
-        		return entry.getKey();
-        	}
+            if (entry.getValue().equals(file)) {
+                return entry.getKey();
+            }
         }
 
         final URL keyUrl;
-		try {
-			keyUrl = file.toURI().toURL();
-		} catch (MalformedURLException e) {
-			return null;
-		}
+        try {
+            keyUrl = file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            return null;
+        }
         if (appCache.containsKey(keyUrl)) {
-        	return keyUrl;
+            return keyUrl;
         }
         return null;
     }
@@ -205,7 +204,16 @@ public class UrlCache {
         File cacheFile = null;
         boolean success;
         try {
-            cacheFile = File.createTempFile(prefix, suffix, cacheDir);
+            try {
+                cacheFile = File.createTempFile(prefix, suffix, cacheDir);
+            } catch (Throwable e) {
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                cacheFile = File.createTempFile(prefix, suffix, tmp);
+            }
             cacheFile.deleteOnExit();
             success = JarExtractor.copyRecursively(sourceFile, cacheFile);
         } catch (IOException e) {
@@ -252,7 +260,7 @@ public class UrlCache {
             // build the urls...
             // the class-path attribute is space delimited
             final LinkedList<URL> classPathUrls = new LinkedList<URL>();
-            for (StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens();) {
+            for (StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens(); ) {
                 final String entry = tokenizer.nextToken();
                 try {
                     // the class path entry is relative to the resource location code source
@@ -277,8 +285,7 @@ public class UrlCache {
                 InputStream in = null;
                 try {
                     in = IO.read(manifestFile);
-                    final Manifest manifest = new Manifest(in);
-                    return manifest;
+                    return new Manifest(in);
                 } finally {
                     close(in);
                 }
@@ -286,8 +293,7 @@ public class UrlCache {
         } else {
             final JarFile jarFile = new JarFile(location);
             try {
-                final Manifest manifest = jarFile.getManifest();
-                return manifest;
+                return jarFile.getManifest();
             } finally {
                 close(jarFile);
             }
@@ -310,7 +316,7 @@ public class UrlCache {
             }
 
             // if we are embedded, tmp dir is in the system tmp dir
-            if (dir == null) {                
+            if (dir == null) {
                 dir = Files.tmpdir();
             }
 
@@ -334,19 +340,19 @@ public class UrlCache {
     }
 
     private static File createCacheDir(final File dir) throws IOException {
-        
-        if(dir.exists() && dir.isDirectory()){
+
+        if (dir.exists() && dir.isDirectory()) {
             return dir;
         }
-        
+
         if (dir.exists() && !dir.isDirectory()) {
             throw new IOException("Cache temp directory held by file: " + dir);
         }
-        
+
         if (!dir.mkdirs()) {
             throw new IOException("Unable to create cache temp directory: " + dir);
         }
-        
+
         Thread.yield();
 
         return dir;
