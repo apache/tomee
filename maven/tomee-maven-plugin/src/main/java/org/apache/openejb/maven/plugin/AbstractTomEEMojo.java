@@ -686,6 +686,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
 
+            final FileWriter writer = new FileWriter(new File(catalinaBase, "conf/tomee.xml"));
+            writer.write("<?xml version=\"1.0\"?>\n" +
+                    "<tomee>\n" +
+                    "  <Deployments dir=\"apps\" />\n" +
+                    "</tomee>\n");
+            writer.close();
+
             getLog().info("TomEE was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (Exception e) {
             throw new TomEEException(e.getMessage(), e);
