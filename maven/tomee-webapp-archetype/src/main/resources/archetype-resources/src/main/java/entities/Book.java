@@ -14,20 +14,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package ${groupId};
+package ${package}.entities;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.persistence.*;
 
-@WebServlet(urlPatterns = "/index")
-public class Index extends HttpServlet {
+@Entity
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int bookId;
+    private String bookTitle;
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookName) {
+        this.bookTitle = bookName;
+    }
+
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        response.getWriter().write("Index");
+    public String toString() {
+        return "Book{" +
+                "bookId=" + bookId +
+                ", bookTitle='" + bookTitle + '\'' +
+                '}';
     }
 }
+
