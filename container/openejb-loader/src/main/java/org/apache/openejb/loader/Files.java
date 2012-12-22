@@ -139,11 +139,28 @@ public class Files {
 
     public static File tmpdir() {
         try {
-            final File file = File.createTempFile("temp", "dir");
-            if (!file.delete()) throw new IllegalStateException("Cannot make temp dir.  Delete failed");
+            File file = null;
+            try {
+                file = File.createTempFile("temp", "dir");
+            } catch (Throwable e) {
+                //Use a local tmp directory
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                file = File.createTempFile("temp", "dir", tmp);
+            }
+
+            if (!file.delete()) {
+                throw new IOException("Failed to create temp dir. Delete failed");
+            }
+
             mkdir(file);
             deleteOnExit(file);
+
             return file;
+
         } catch (IOException e) {
             throw new FileRuntimeException(e);
         }
@@ -260,7 +277,8 @@ public class Files {
     public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
         if (matches.size() == 0) throw new IllegalStateException(String.format("Missing '%s'", pattern));
-        if (matches.size() > 1) throw new IllegalStateException(String.format("Too many found '%s': %s", pattern, join(", ", matches)));
+        if (matches.size() > 1)
+            throw new IllegalStateException(String.format("Too many found '%s': %s", pattern, join(", ", matches)));
         return matches.get(0);
     }
 
