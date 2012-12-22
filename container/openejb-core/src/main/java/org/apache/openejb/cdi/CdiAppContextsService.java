@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
@@ -53,6 +54,9 @@ import java.lang.annotation.Annotation;
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
+
+    private static final String SESSION_CONTEXT_CLAZZ = SystemInstance.get().getProperty("openejb.session-context", null);
+
     private final ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
 
     private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
@@ -314,7 +318,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //No current context
         if (currentSessionContext == null) {
-            currentSessionContext = new SessionContext();
+            currentSessionContext = newSessionContext();
             sessionCtxManager.addNewSessionContext(sessionId, currentSessionContext);
         }
         //Activate
@@ -322,6 +326,18 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //Set thread local
         sessionContext.set(currentSessionContext);
+    }
+
+    private SessionContext newSessionContext() {
+        if (SESSION_CONTEXT_CLAZZ != null) {
+            try {
+                return (SessionContext) Thread.currentThread().getContextClassLoader()
+                            .loadClass(SESSION_CONTEXT_CLAZZ).newInstance();
+            } catch (Exception e) {
+                logger.error("Can't instantiate " + SESSION_CONTEXT_CLAZZ + ", using default session context", e);
+            }
+        }
+        return new SessionContext();
     }
 
     /**
