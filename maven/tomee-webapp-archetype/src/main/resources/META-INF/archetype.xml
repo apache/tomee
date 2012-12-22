@@ -20,11 +20,20 @@
            xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0
                                http://maven.apache.org/xsd/archetype-1.0.0.xsd">
   <id>quickstart</id>
-  <sources>
-    <source>src/main/java/Index.java</source>
-  </sources>
+
+    <sources>
+        <source>src/main/java/application/BookService.java</source>
+        <source>src/main/java/entities/Book.java</source>
+        <source>src/main/java/presentation/BookBean.java</source>
+    </sources>
+
   <resources>
-    <resource>src/main/webapp/WEB-INF/beans.xml</resource>
+      <resource>src/main/resources/META-INF/persistence.xml</resource>
+     <resource>src/main/webapp/WEB-INF/beans.xml</resource>
+     <resource>src/main/webapp/WEB-INF/faces-config.xml</resource>
+     <resource>src/main/webapp/book.xhtml</resource>
+     <resource>src/main/webapp/result.xhtml</resource>
+     <resource>src/main/webapp/index.jsp</resource>
   </resources>
   <testResources>
     <resource>src/test/resources/arquillian.xml</resource>
