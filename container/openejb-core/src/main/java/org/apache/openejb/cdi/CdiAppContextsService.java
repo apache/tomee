@@ -50,6 +50,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
@@ -318,7 +319,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         //No current context
         if (currentSessionContext == null) {
-            currentSessionContext = newSessionContext();
+            currentSessionContext = newSessionContext(session);
             sessionCtxManager.addNewSessionContext(sessionId, currentSessionContext);
         }
         //Activate
@@ -328,11 +329,22 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         sessionContext.set(currentSessionContext);
     }
 
-    private SessionContext newSessionContext() {
+    private SessionContext newSessionContext(final HttpSession session) {
         if (SESSION_CONTEXT_CLAZZ != null) {
+            String classname = SESSION_CONTEXT_CLAZZ;
+            if ("http".equals(classname)) { // easier in the config
+                classname = "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
+            }
+
             try {
-                return (SessionContext) Thread.currentThread().getContextClassLoader()
-                            .loadClass(SESSION_CONTEXT_CLAZZ).newInstance();
+                final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
+                try {
+                    final Constructor<?> constr = clazz.getConstructor(HttpSession.class);
+                    return (SessionContext)constr.newInstance(session);
+                } catch (Exception e) {
+                    return (SessionContext) clazz.newInstance();
+                }
+
             } catch (Exception e) {
                 logger.error("Can't instantiate " + SESSION_CONTEXT_CLAZZ + ", using default session context", e);
             }

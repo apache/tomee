@@ -25,35 +25,26 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.OpenEjbVersion;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class OpenEJBValve extends ValveBase {
     protected TomcatSecurityService securityService;
     protected static final String info = OpenEJBValve.class.getName() + "/" + OpenEjbVersion.get().getVersion();
 
-    protected static final ThreadLocal<HttpServletRequest> REQUEST = new ThreadLocal<HttpServletRequest>();
-
     public OpenEJBValve() {
         super(true);
         securityService = getSecurityService();
-    }
-
-    public static HttpServletRequest request() {
-        return REQUEST.get();
     }
 
     public void invoke(Request request, Response response) throws IOException, ServletException {
         OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
 
         if (!request.isAsync()) {
-            REQUEST.set(request);
             listener.enter();
             try {
                 getNext().invoke(request, response);
             } finally {
                 listener.exit();
-                REQUEST.remove();
             }
         } else {
             request.getAsyncContext().addListener(new OpenEJBSecurityListener(securityService, request));

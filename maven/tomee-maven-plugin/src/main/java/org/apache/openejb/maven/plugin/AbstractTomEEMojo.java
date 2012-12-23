@@ -693,6 +693,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     "</tomee>\n");
             writer.close();
 
+            new File(catalinaBase, "apps").mkdirs();
+
             getLog().info("TomEE was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (Exception e) {
             throw new TomEEException(e.getMessage(), e);
