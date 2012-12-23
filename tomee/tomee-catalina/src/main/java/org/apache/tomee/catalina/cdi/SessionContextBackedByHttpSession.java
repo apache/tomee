@@ -2,6 +2,7 @@ package org.apache.tomee.catalina.cdi;
 
 import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.session.StandardSessionFacade;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.context.SessionContext;
 import org.apache.webbeans.context.creational.BeanInstanceBag;
@@ -18,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class SessionContextBackedByHttpSession extends SessionContext {
+    private static final String WRAPPER = SystemInstance.get().getProperty("tomee.session-context.wrapper", "direct");
+
     private HttpSession session;
 
     public SessionContextBackedByHttpSession(final HttpSession session) {
@@ -42,7 +45,11 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         if (session instanceof StandardSession) {
             try {
                 final ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) Reflections.get(session, "attributes");
-                componentInstanceMap = new DirectSessionMap(map);
+                if (WRAPPER.equals("direct")) {
+                    componentInstanceMap = new DirectSessionMap(map);
+                } else  {
+                    componentInstanceMap = new HttpSessionMap(session);
+                }
             } catch (Exception e) {
                 componentInstanceMap = new HttpSessionMap(session);
             }
@@ -102,22 +109,22 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> get(Object key) {
+        public BeanInstanceBag<?> get(final Object key) {
             return (BeanInstanceBag<?>) delegate.get(key(key));
         }
 
         @Override
-        public BeanInstanceBag<?> put(Contextual<?> key, BeanInstanceBag<?> value) {
+        public BeanInstanceBag<?> put(final Contextual<?> key, final BeanInstanceBag<?> value) {
             return (BeanInstanceBag<?>) delegate.put(key(key), value);
         }
 
         @Override
-        public BeanInstanceBag<?> remove(Object key) {
+        public BeanInstanceBag<?> remove(final Object key) {
             return (BeanInstanceBag<?>) delegate.remove(key(key));
         }
 
         @Override
-        public void putAll(Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
+        public void putAll(final Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
             for (Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
                 put(e.getKey(), e.getValue());
             }
@@ -134,12 +141,12 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> putIfAbsent(Contextual<?> key, BeanInstanceBag<?> value) {
+        public BeanInstanceBag<?> putIfAbsent(final Contextual<?> key, final BeanInstanceBag<?> value) {
             return (BeanInstanceBag<?>) delegate.putIfAbsent(key(key), value);
         }
 
         @Override
-        public boolean remove(Object key, Object value) {
+        public boolean remove(final Object key, final Object value) {
             return delegate.remove(key(key), value);
         }
 
@@ -149,11 +156,12 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> replace(Contextual<?> key, BeanInstanceBag<?> value) {
+        public BeanInstanceBag<?> replace(final Contextual<?> key, final BeanInstanceBag<?> value) {
             return (BeanInstanceBag<?>) delegate.replace(key(key), value);
         }
     }
-    private static class HttpSessionMap implements Map<Contextual<?>,BeanInstanceBag<?>> { // not sure it can really work
+
+    private static class HttpSessionMap implements ConcurrentMap<Contextual<?>,BeanInstanceBag<?>> { // not sure it can really work
         private final HttpSession session;
 
         public HttpSessionMap(final HttpSession session) {
@@ -191,6 +199,16 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
+        public boolean replace(Contextual<?> key, BeanInstanceBag<?> oldValue, BeanInstanceBag<?> newValue) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public BeanInstanceBag<?> replace(Contextual<?> key, BeanInstanceBag<?> value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void clear() {
             // no-op
         }
@@ -201,7 +219,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> get(Object key) {
+        public BeanInstanceBag<?> get(final Object key) {
             return (BeanInstanceBag<?>) session.getAttribute(key(key));
         }
 
@@ -212,17 +230,33 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         }
 
         @Override
-        public BeanInstanceBag<?> remove(Object key) {
+        public BeanInstanceBag<?> remove(final Object key) {
             final BeanInstanceBag<?> bag = get(key);
             session.removeAttribute(key(key));
             return bag;
         }
 
         @Override
-        public void putAll(Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
+        public void putAll(final Map<? extends Contextual<?>, ? extends BeanInstanceBag<?>> m) {
             for (Map.Entry<? extends Contextual<?>, ? extends BeanInstanceBag<?>> e : m.entrySet()) {
                 put(e.getKey(), e.getValue());
             }
+        }
+
+        @Override
+        public BeanInstanceBag<?> putIfAbsent(final Contextual<?> key, final BeanInstanceBag<?> value) {
+            final String k = key(key);
+            final BeanInstanceBag<?> beanInstanceBag = get(k);
+            if (beanInstanceBag == null) {
+                return put(key, value);
+            }
+            return beanInstanceBag;
+        }
+
+        @Override
+        public boolean remove(final Object key, final Object value) {
+            remove(key(key));
+            return true;
         }
     }
 
