@@ -223,10 +223,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                         final Class implClass = beanContext.getManagedClass();
 
                         //Define annotation type
-                        AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+                        final AnnotatedType<Object> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
                         //Fires ProcessAnnotatedType
-                        ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
+                        final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
 
                         // TODO Can you really veto an EJB?
                         //if veto() is called
@@ -234,7 +234,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                             continue;
                         }
 
-                        CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
+                        final CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
+                        bean.setAnnotatedType((AnnotatedType<Object>) processAnnotatedEvent.getAnnotatedType()); // update AnnotatedType -- can be updated in extensions
 
                         beanContext.set(CdiEjbBean.class, bean);
                         beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());

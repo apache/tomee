@@ -247,12 +247,12 @@ public class BeansDeployer {
                     if (!(bean instanceof Decorator) &&
                             !(bean instanceof javax.enterprise.inject.spi.Interceptor) &&
                             !(bean instanceof NewBean)) {
-                        new DefinitionUtil(webBeansContext).defineDecoratorStack((AbstractInjectionTargetBean<Object>) bean);
+                        webBeansContext.getDefinitionUtil().defineDecoratorStack((AbstractInjectionTargetBean<Object>) bean);
                     }
 
                     //If intercepted marker
                     if (bean instanceof InterceptedMarker) {
-                    	new DefinitionUtil(webBeansContext).defineBeanInterceptorStack((AbstractInjectionTargetBean<Object>) bean);
+                    	webBeansContext.getDefinitionUtil().defineBeanInterceptorStack((AbstractInjectionTargetBean<Object>) bean);
                     }
                 }
 

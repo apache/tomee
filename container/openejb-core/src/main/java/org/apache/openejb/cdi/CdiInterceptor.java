@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.cdi;
 
-import javassist.util.proxy.ProxyObject;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -101,11 +100,10 @@ public class CdiInterceptor implements Serializable {
     }
 
     private Object invoke(InvocationContext ejbContext) throws Exception {
-        final CreationalContext<?> context = getCreationalContext();
-
         Object instance = ejbContext.getTarget();
 
         if (bean.getDecoratorStack().size() > 0) {
+            final CreationalContext<?> context = getCreationalContext();
 
             final ProxyFactory proxyFactory = webBeansContext.getProxyFactory();
 
