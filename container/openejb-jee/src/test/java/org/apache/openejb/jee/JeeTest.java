@@ -334,7 +334,7 @@ public class JeeTest extends TestCase {
             File tempFile = null;
             try {
                 tempFile = File.createTempFile("jaxb-output", "xml");
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());

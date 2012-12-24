@@ -422,7 +422,7 @@ public class ProviderWrapper extends Provider {
                 File tempFile = null;
                 try {
                     tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     final File tmp = new File("tmp");
                     if (!tmp.exists() && !tmp.mkdirs()) {
                         throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());

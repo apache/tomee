@@ -35,15 +35,7 @@ import org.jboss.testharness.spi.Containers;
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.validation.ValidationException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -59,6 +51,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ContainersImpl implements Containers {
 
     private static String stuck;
@@ -68,7 +61,7 @@ public class ContainersImpl implements Containers {
     private ClassLoader originalClassLoader;
 
     @Override
-    public boolean deploy(InputStream archive, String name) {
+    public boolean deploy(final InputStream archive, final String name) {
         if (!OpenEJB.isInitialized()) stuck = name;
         else System.out.println("STUCK " + stuck);
 
@@ -87,7 +80,7 @@ public class ContainersImpl implements Containers {
             map.put(EJBContainer.APP_NAME, name);
 
             originalClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[]{ file.toURI().toURL() }, originalClassLoader));
+            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[]{file.toURI().toURL()}, originalClassLoader));
             container = EJBContainer.createEJBContainer(map);
 
 //            final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get();
@@ -104,11 +97,11 @@ public class ContainersImpl implements Containers {
         return true;
     }
 
-    private void dump(Object o) {
+    private void dump(final Object o) {
         try {
             final Class<?> clazz = o.getClass();
 
-            for (Field field : clazz.getDeclaredFields()) {
+            for (final Field field : clazz.getDeclaredFields()) {
                 SetAccessible.on(field);
 
                 if (Collection.class.isAssignableFrom(field.getType())) {
@@ -121,14 +114,14 @@ public class ContainersImpl implements Containers {
         }
     }
 
-    private URL getResource(Class clazz, String path) {
+    private URL getResource(final Class clazz, final String path) {
         final String resourcePath = clazz.getPackage().getName().replace(".", "/") + "/" + path;
 
         return clazz.getClassLoader().getResource(resourcePath);
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         new ContainersImpl().memoryMappedFile();
 
         System.out.println();
@@ -136,20 +129,30 @@ public class ContainersImpl implements Containers {
 
     public void memoryMappedFile() throws IOException {
 
-        FileChannel rwChannel = new RandomAccessFile(new File("/tmp/memory-mapped.txt"), "rw").getChannel();
+        final FileChannel rwChannel = new RandomAccessFile(new File("/tmp/memory-mapped.txt"), "rw").getChannel();
 
         final byte[] bytes = "hello world".getBytes();
 
-        ByteBuffer writeonlybuffer = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
+        final ByteBuffer writeonlybuffer = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
         writeonlybuffer.put(bytes);
         writeonlybuffer.compact();
     }
 
-    private File writeToFile2(InputStream archive, String name) throws IOException {
-        final File file = File.createTempFile("deploy", "-" + name);
+    private File writeToFile2(final InputStream archive, final String name) throws IOException {
+        File file;
+        try {
+            file = File.createTempFile("deploy", "-" + name);
+        } catch (Throwable e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+
+            file = File.createTempFile("deploy", "-" + name, tmp);
+        }
         final FileOutputStream outputStream = new FileOutputStream(file);
 
-        int i = 0;
+        int i;
         while ((i = archive.read()) != -1) {
             outputStream.write(i);
         }
@@ -157,13 +160,22 @@ public class ContainersImpl implements Containers {
         return file;
     }
 
-    private File writeToFile(InputStream archive, String name) throws IOException {
-        final File file = File.createTempFile("deploy", "-" + name);
+    private File writeToFile(final InputStream archive, final String name) throws IOException {
+        File file;
+        try {
+            file = File.createTempFile("deploy", "-" + name);
+        } catch (Throwable e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+            file = File.createTempFile("deploy", "-" + name, tmp);
+        }
         file.deleteOnExit();
 
         try {
 
-            Map<String, URL> resources = new HashMap<String, URL>();
+            final Map<String, URL> resources = new HashMap<String, URL>();
 
             final Class<?> clazz = this.getClass().getClassLoader().loadClass(name.replace(".jar", ""));
 
@@ -182,7 +194,7 @@ public class ContainersImpl implements Containers {
             if (clazz.isAnnotationPresent(ValidationXml.class)) {
                 String path = clazz.getAnnotation(ValidationXml.class).value();
                 if (path.contains(".jar")) {
-                    path = path.substring(path.indexOf( "!" ) + 2);
+                    path = path.substring(path.indexOf("!") + 2);
                 }
 
                 final URL resource = getResource(clazz, path);
@@ -194,7 +206,7 @@ public class ContainersImpl implements Containers {
             }
 
             if (clazz.isAnnotationPresent(Resource.class)) {
-                Resource resourceAnn = clazz.getAnnotation(Resource.class);
+                final Resource resourceAnn = clazz.getAnnotation(Resource.class);
                 final URL resource = getResource(clazz, resourceAnn.source());
                 if (resource != null) {
                     resources.put(resourceAnn.destination().replaceFirst("WEB-INF/classes/", ""), resource);
@@ -202,8 +214,8 @@ public class ContainersImpl implements Containers {
             }
 
             if (clazz.isAnnotationPresent(Resources.class)) {
-                Resources resourcesAnn = clazz.getAnnotation(Resources.class);
-                for (Resource resourceAnn : resourcesAnn.value()) {
+                final Resources resourcesAnn = clazz.getAnnotation(Resources.class);
+                for (final Resource resourceAnn : resourcesAnn.value()) {
                     final URL resource = getResource(clazz, resourceAnn.source());
                     if (resource != null) {
                         resources.put(resourceAnn.destination().replaceFirst("WEB-INF/classes/", ""), resource);
@@ -235,9 +247,9 @@ public class ContainersImpl implements Containers {
                 ZipUtil.copy(src, zout);
             }
 
-            for (Map.Entry<String, URL> entry : resources.entrySet()) {
+            for (final Map.Entry<String, URL> entry : resources.entrySet()) {
                 zout.putNextEntry(new ZipEntry(entry.getKey()));
-                InputStream in = IO.read(entry.getValue());
+                final InputStream in = IO.read(entry.getValue());
                 ZipUtil.copy(in, zout);
                 in.close();
             }
@@ -260,7 +272,7 @@ public class ContainersImpl implements Containers {
         return file;
     }
 
-    private void writeToFile(File file, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
+    private void writeToFile(final File file, final ByteArrayOutputStream byteArrayOutputStream) throws IOException {
         final byte[] bytes = byteArrayOutputStream.toByteArray();
 
         final FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -268,7 +280,7 @@ public class ContainersImpl implements Containers {
         fileOutputStream.close();
     }
 
-    public static void close(Closeable closeable) throws IOException {
+    public static void close(final Closeable closeable) throws IOException {
         if (closeable == null) return;
         try {
             if (closeable instanceof Flushable) {
@@ -291,7 +303,7 @@ public class ContainersImpl implements Containers {
     }
 
     @Override
-    public void undeploy(String name) {
+    public void undeploy(final String name) {
         if (container != null) {
             container.close();
         }
