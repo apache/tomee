@@ -223,10 +223,28 @@ public class Container {
 
     private String getBaseDir() {
         try {
+
             final String dir = configuration.getDir();
-            if (dir != null) return dir;
-            final File file = File.createTempFile("apache-tomee", "-home");
+            if (dir != null) {
+                return dir;
+            }
+
+            File file;
+
+            try {
+                file = File.createTempFile("apache-tomee", "-home");
+            } catch (Throwable e) {
+
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                file = File.createTempFile("apache-tomee", "-home", tmp);
+            }
+
             return file.getAbsolutePath();
+
         } catch (IOException e) {
             throw new TomEERuntimeException(e);
         }
@@ -239,6 +257,7 @@ public class Container {
         OpenEJB.destroy();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public AppContext deploy(final String name, final File file) throws OpenEJBException, IOException, NamingException {
         return deploy(name, file, false);
     }
@@ -287,7 +306,7 @@ public class Container {
             context = assembler.createApplication(appInfo);
         }
 
-        moduleIds.put(name, appInfo.path);
+        moduleIds.put(name, null != appInfo ? appInfo.path : null);
         infos.put(name, appInfo);
         appContexts.put(name, context);
 
@@ -313,6 +332,7 @@ public class Container {
         return defaultValue;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public AppInfo getInfo(final String name) {
         return infos.get(name);
     }
