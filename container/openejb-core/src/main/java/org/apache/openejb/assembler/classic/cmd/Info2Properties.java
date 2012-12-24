@@ -16,14 +16,7 @@
  */
 package org.apache.openejb.assembler.classic.cmd;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
@@ -34,11 +27,7 @@ import org.apache.openejb.util.URISupport;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +41,12 @@ public class Info2Properties {
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption(option("v", "version", "cmd.properties.opt.version"));
         options.addOption(option("h", "help", "cmd.properties.opt.help"));
         options.addOption(option("s", "server-url", "url", "cmd.properties.opt.server"));
@@ -79,15 +68,15 @@ public class Info2Properties {
             System.exit(0);
         }
 
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-        String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
+        final String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
         p.put(Context.PROVIDER_URL, serverUrl);
 
         ConfigurationInfo configInfo = null;
         try {
-            InitialContext ctx = new InitialContext(p);
+            final InitialContext ctx = new InitialContext(p);
             configInfo = (ConfigurationInfo) ctx.lookup("openejb/ConfigurationInfoBusinessRemote");
         } catch (javax.naming.ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
@@ -100,7 +89,17 @@ public class Info2Properties {
 
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("configrequest", "txt");
+            try {
+                tempFile = File.createTempFile("configrequest", "txt");
+            } catch (Throwable e) {
+                final File tmp = new File("tmp");
+                if (!tmp.exists() && !tmp.mkdirs()) {
+                    throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+                }
+
+                tempFile = File.createTempFile("configrequest", "txt", tmp);
+
+            }
             if (!tempFile.exists()) {
                 throw new IllegalStateException("Failed to create tmp file: " + tempFile.getAbsolutePath());
             }
@@ -122,8 +121,8 @@ public class Info2Properties {
     }
 
     public static void printLocalConfig() {
-        OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-        if (configuration != null){
+        final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        if (configuration != null) {
             printConfig(configuration);
         }
     }
@@ -149,15 +148,15 @@ public class Info2Properties {
         println(out, cr, "");
         println(out, cr, "");
 
-        for (ServiceInfo info : configuration.containerSystem.containers) {
+        for (final ServiceInfo info : configuration.containerSystem.containers) {
             print(out, cr, info);
         }
 
-        for (ServiceInfo info : configuration.facilities.connectionManagers) {
+        for (final ServiceInfo info : configuration.facilities.connectionManagers) {
             print(out, cr, info);
         }
 
-        for (ServiceInfo info : configuration.facilities.resources) {
+        for (final ServiceInfo info : configuration.facilities.resources) {
             print(out, cr, info);
         }
 
@@ -172,7 +171,7 @@ public class Info2Properties {
         println(out, cr, "");
         println(out, cr, "");
 
-        for (ServiceInfo info : configuration.facilities.services) {
+        for (final ServiceInfo info : configuration.facilities.services) {
             print(out, cr, info);
         }
 
@@ -187,7 +186,7 @@ public class Info2Properties {
     private static void printSystemProperties(final PrintStream out, final String cr) {
 
         try {
-            SuperProperties p = new SuperProperties();
+            final SuperProperties p = new SuperProperties();
             p.setSpaceBetweenProperties(false);
             p.setKeyValueSeparator(" = ");
             p.setLineSeparator(cr);
@@ -196,9 +195,9 @@ public class Info2Properties {
             p.store(out, null);
 
 
-            Properties p2 = System.getProperties();
-            String[] misc = {"os.version", "os.name", "os.arch", "java.version", "java.vendor"};
-            for (String prop : misc) {
+            final Properties p2 = System.getProperties();
+            final String[] misc = {"os.version", "os.name", "os.arch", "java.version", "java.vendor"};
+            for (final String prop : misc) {
                 comment(out, cr, prop + "=" + p2.get(prop));
             }
         } catch (IOException e) {
@@ -206,12 +205,12 @@ public class Info2Properties {
         }
     }
 
-    private static void copyOpenEjbProperties(Properties source, Properties dest) {
-        for (Map.Entry<Object, Object> entry : source.entrySet()) {
+    private static void copyOpenEjbProperties(final Properties source, final Properties dest) {
+        for (final Map.Entry<Object, Object> entry : source.entrySet()) {
             if (!(entry.getKey() instanceof String)) continue;
             if (!(entry.getValue() instanceof String)) continue;
 
-            String key = (String) entry.getKey();
+            final String key = (String) entry.getKey();
             if (key.startsWith("openejb.")) {
                 dest.put(entry.getKey(), entry.getValue());
             }
@@ -224,7 +223,7 @@ public class Info2Properties {
         println(out, cr, text);
     }
 
-    private static void print(final PrintStream out, String text) {
+    private static void print(final PrintStream out, final String text) {
         out.print(text);
     }
 
@@ -243,15 +242,15 @@ public class Info2Properties {
             // TODO: the codebase value usually isn't filled in, we should do that.
             // comment("codebase: " + info.codebase);
             comment(out, cr, "");
-            SuperProperties p = new SuperProperties();
+            final SuperProperties p = new SuperProperties();
             p.setSpaceBetweenProperties(false);
             p.setKeyValueSeparator(" = ");
             p.setLineSeparator(cr);
 
             String uri = "new://" + info.service;
-            if (info.service.matches("Container|Resource|Connector")){
+            if (info.service.matches("Container|Resource|Connector")) {
                 try {
-                    Map query = new HashMap();
+                    final Map query = new HashMap();
                     query.put("type", info.types.get(0));
                     uri += "?" + URISupport.createQueryString(query);
                 } catch (Exception e) {
@@ -259,8 +258,8 @@ public class Info2Properties {
             }
 
             p.put(info.id, uri);
-            
-            for (Map.Entry<Object, Object> entry : info.properties.entrySet()) {
+
+            for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) {
                 if (!(entry.getKey() instanceof String)) continue;
                 if (!(entry.getValue() instanceof String)) continue;
 
@@ -285,11 +284,11 @@ public class Info2Properties {
     static class Filter extends java.io.FilterOutputStream {
         private boolean pastFirstLine;
 
-        public Filter(OutputStream out) {
+        public Filter(final OutputStream out) {
             super(out);
         }
 
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             if (pastFirstLine) super.write(b);
             else pastFirstLine = b == '\n';
         }
@@ -298,11 +297,11 @@ public class Info2Properties {
 
     static class CommentsFilter extends java.io.FilterOutputStream {
 
-        public CommentsFilter(OutputStream out) {
+        public CommentsFilter(final OutputStream out) {
             super(out);
         }
 
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             super.write(b);
 
             if (b == '\n') super.write('#');
@@ -310,20 +309,20 @@ public class Info2Properties {
 
     }
 
-    private static void help(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
+    private static void help(final Options options) {
+        final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("properties [options]", "\n" + i18n("cmd.properties.description"), options, "\n");
     }
 
-    private static Option option(String shortOpt, String longOpt, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static Option option(String shortOpt, String longOpt, String argName, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String argName, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static String i18n(String key) {
+    private static String i18n(final String key) {
         return messages.format(key);
     }
 

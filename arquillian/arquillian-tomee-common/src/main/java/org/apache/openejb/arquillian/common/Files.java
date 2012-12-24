@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class Files {
 
-    public static File path(String... parts) {
+    public static File path(final String... parts) {
         File dir = null;
-        for (String part : parts) {
+        for (final String part : parts) {
             if (dir == null) {
                 dir = new File(part);
             } else {
@@ -39,8 +39,8 @@ public class Files {
         return dir;
     }
 
-    public static File path(File dir, String... parts) {
-        for (String part : parts) {
+    public static File path(File dir, final String... parts) {
+        for (final String part : parts) {
             dir = new File(dir, part);
         }
 
@@ -52,13 +52,23 @@ public class Files {
     }
 
     public static File createTempDir(final String prefix, final String suffix) throws IOException {
-        final File tempDir = File.createTempFile(prefix, suffix);
-        tempDir.delete();
-        tempDir.mkdirs();
+        File tempDir;
+        try {
+            tempDir = File.createTempFile(prefix, suffix);
+        } catch (Throwable e) {
+            final File tmp = new File("tmp");
+            if (!tmp.exists() && !tmp.mkdirs()) {
+                throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
+            }
+            tempDir = File.createTempFile(prefix, suffix, tmp);
+        }
+        if (!tempDir.delete() && tempDir.mkdirs()) {
+            throw new IOException("Failed to create temp directory: " + tempDir.getAbsolutePath());
+        }
         deleteOnExit(tempDir);
         return tempDir;
     }
-    
+
     private Files() {
         // no-op
     }
@@ -96,7 +106,7 @@ public class Files {
                 }
             }
 
-            if(!file.delete()){
+            if (!file.delete()) {
                 file.deleteOnExit();
             }
         }
