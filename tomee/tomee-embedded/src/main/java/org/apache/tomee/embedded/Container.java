@@ -222,14 +222,15 @@ public class Container {
     }
 
     private String getBaseDir() {
+
+        File file = null;
+
         try {
 
             final String dir = configuration.getDir();
-            if (dir != null) {
+            if (dir != null && new File(dir).exists()) {
                 return dir;
             }
-
-            File file;
 
             try {
                 file = File.createTempFile("apache-tomee", "-home");
@@ -246,7 +247,7 @@ public class Container {
             return file.getAbsolutePath();
 
         } catch (IOException e) {
-            throw new TomEERuntimeException(e);
+            throw new TomEERuntimeException("Failed to get or create base dir: " + file, e);
         }
     }
 
