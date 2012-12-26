@@ -187,7 +187,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 }
 
                 for (Object o : singletons) {
-                    if (o == null) {
+                    if (o == null || additionalProviders.contains(o)) {
                         continue;
                     }
 
