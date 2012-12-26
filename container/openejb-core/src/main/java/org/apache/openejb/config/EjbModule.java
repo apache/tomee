@@ -97,6 +97,11 @@ public class EjbModule extends Module implements WsModule {
         this.finder.set(finder);
     }
 
+    public EjbModule finder(IAnnotationFinder finder) {
+        this.finder.set(finder);
+        return this;
+    }
+
     public ClientModule getClientModule() {
         return clientModule;
     }

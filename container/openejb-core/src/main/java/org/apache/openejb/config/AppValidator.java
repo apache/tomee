@@ -29,6 +29,7 @@ import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.config.rules.CheckAssemblyBindings;
 import org.apache.openejb.config.rules.CheckAsynchronous;
 import org.apache.openejb.config.rules.CheckCallbacks;
+import org.apache.openejb.config.rules.CheckCdiEnabled;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckDependsOn;
 import org.apache.openejb.config.rules.CheckDescriptorLocation;
@@ -128,19 +129,16 @@ public class AppValidator {
                 new CheckDescriptorLocation(),
                 new CheckAnnotations(),
                 new CheckIncorrectPropertyNames(),
-                new CheckRestMethodArePublic()
+                new CheckRestMethodArePublic(),
+                new CheckCdiEnabled()
         };
         if (additionalValidators == null || additionalValidators.length == 0) {
             return defaultRules;
         }
 
         final ValidationRule[] rules = new ValidationRule[additionalValidators.length + defaultRules.length];
-        for (int i = 0; i < additionalValidators.length; i++) {
-            rules[i] = additionalValidators[i];
-        }
-        for (int i = 0; i < defaultRules.length; i++) {
-            rules[i + additionalValidators.length] = defaultRules[i];
-        }
+        System.arraycopy(additionalValidators, 0, rules, 0, additionalValidators.length);
+        System.arraycopy(defaultRules, 0, rules, additionalValidators.length, defaultRules.length);
         return rules;
     }
 
