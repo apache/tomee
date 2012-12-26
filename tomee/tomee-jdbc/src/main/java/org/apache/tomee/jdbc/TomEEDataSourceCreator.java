@@ -223,7 +223,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         private void initJmx(final String name) {
             try {
-                internalOn = ObjectNameBuilder.uniqueName("datasources", name, this);
+                internalOn = ObjectNameBuilder.uniqueName("datasources", name.replace("/", "_"), this);
                 try {
                     if (pool.getJmxPool()!=null) {
                         LocalMBeanServer.get().registerMBean(pool.getJmxPool(), internalOn);
