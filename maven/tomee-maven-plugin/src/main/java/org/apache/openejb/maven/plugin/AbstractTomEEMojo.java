@@ -117,8 +117,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.ajp", defaultValue = "8009")
     protected int tomeeAjpPort = 8009;
 
-    @Parameter(property = "tomee-plugin.https", defaultValue = "8443")
-    protected int tomeeHttpsPort = 8080;
+    @Parameter(property = "tomee-plugin.https")
+    protected Integer tomeeHttpsPort;
 
     @Parameter(property = "tomee-plugin.args")
     protected String args;
@@ -421,8 +421,22 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private void overrideAddresses() {
         final File serverXml = new File(catalinaBase, "conf/server.xml");
-        final String value = read(serverXml);
         final QuickServerXmlParser parser = QuickServerXmlParser.parse(serverXml);
+
+        String value = read(serverXml);
+
+        if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
+            // ensure connector is not commented
+            value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
+                    + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
+                    "                scheme=\"https\" secure=\"true\"\n" +
+                    "                clientAuth=\"false\" sslProtocol=\"TLS\" />\n");
+        }
+
+        if (tomeeHttpsPort == null) {
+            // avoid NPE
+            tomeeHttpsPort = 8443;
+        }
 
         FileWriter writer = null;
         try {
