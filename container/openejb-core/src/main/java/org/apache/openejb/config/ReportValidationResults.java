@@ -79,11 +79,7 @@ public class ReportValidationResults implements DynamicDeployer {
             logger.info("Set the '"+VALIDATION_LEVEL+"' system property to "+ join(" or ", levels) +" for increased validation details.");
         }
 
-        validationFailedException = new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
-
-        if (validationFailedException != null) throw validationFailedException;
-
-        return appModule;
+        throw  new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
     }
 
     private void logResults(ValidationContext context, Level level) {

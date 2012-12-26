@@ -17,15 +17,24 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.config.EjbModule;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.inject.Inject;
 
 public class CheckCdiEnabled extends ValidationBase {
     public void validate(EjbModule ejbModule) {
+        if (ejbModule.getFinder() == null) {
+            return;
+        }
+
         if (ejbModule.getBeans() == null
-                && (!ejbModule.getFinder().findAnnotatedMethods(Inject.class).isEmpty()
-                || !ejbModule.getFinder().findAnnotatedFields(Inject.class).isEmpty())) {
+                && hasAtInject(ejbModule.getFinder())) {
             warn(ejbModule.getModuleId(), "cdi.notEnabled", ejbModule.getModuleId());
         }
+    }
+
+    private static boolean hasAtInject(final IAnnotationFinder finder) {
+        return !finder.findAnnotatedMethods(Inject.class).isEmpty()
+                || !finder.findAnnotatedFields(Inject.class).isEmpty();
     }
 }
