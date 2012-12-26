@@ -30,12 +30,14 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.OutputGeneratedDescriptors;
+import org.apache.openejb.config.ValidationContext;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.jee.EjbJar;
@@ -76,18 +78,29 @@ public class InvokeMethod extends Statement {
         try {
             SystemInstance.get().setProperty(OutputGeneratedDescriptors.OUTPUT_DESCRIPTORS, "false");
 
+            ValidationContext vc = null;
             if (obj instanceof EjbJar) {
-                EjbJar ejbJar = (EjbJar) obj;
-                assembler.createApplication(config.configureApplication(ejbJar));
+                final EjbJar ejbJar = (EjbJar) obj;
+                final EjbModule ejbModule = new EjbModule(ejbJar);
+                vc = ejbModule.getValidation();
+                assembler.createApplication(config.configureApplication(ejbModule));
             } else if (obj instanceof EjbModule) {
                 EjbModule ejbModule = (EjbModule) obj;
+                vc = ejbModule.getValidation();
                 assembler.createApplication(config.configureApplication(ejbModule));
             } else if (obj instanceof AppModule) {
                 AppModule appModule = (AppModule) obj;
+                vc = appModule.getValidation();
                 assembler.createApplication(config.configureApplication(appModule));
             }
             if (!isEmpty(expectedKeys)) {
-                fail("A ValidationFailedException should have been thrown");
+                if (vc != null && expectedKeys.get(KeyType.FAILURE).isEmpty() && expectedKeys.get(KeyType.ERROR).isEmpty()) {
+                    if (!expectedKeys.get(KeyType.WARNING).isEmpty()) {
+                        assertWarnings(expectedKeys.get(KeyType.WARNING), new ValidationFailedException("", vc));
+                    }
+                } else {
+                    fail("A ValidationFailedException should have been thrown");
+                }
             }
         } catch (ValidationFailedException vfe) {
             if (!isEmpty(expectedKeys)) {
