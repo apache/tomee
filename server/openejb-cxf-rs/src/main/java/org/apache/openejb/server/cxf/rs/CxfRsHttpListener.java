@@ -133,9 +133,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         if (providers == null) {
             providers = new ArrayList<Object>();
-            providers.addAll(defaultProviders());
             if (additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
+            } else {
+                providers.addAll(defaultProviders());
             }
             factory.setProviders(providers);
         }
