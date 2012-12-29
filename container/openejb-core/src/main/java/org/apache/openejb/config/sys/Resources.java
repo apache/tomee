@@ -35,6 +35,7 @@ import java.util.List;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://www.openejb.org/System/Configuration}Service" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
@@ -44,12 +45,15 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"resource", "service"})
+@XmlType(name = "", propOrder = {"container", "resource", "service"})
 @XmlRootElement(name = "resources")
 public class Resources {
 
     @XmlElement(name = "Resource")
     protected List<Resource> resource;
+
+    @XmlElement(name = "Container")
+    protected List<Container> container;
 
     @XmlElement(name = "Service")
     protected List<Service> service;
@@ -60,6 +64,14 @@ public class Resources {
         }
 
         return this.resource;
+    }
+
+    public List<Container> getContainer() {
+        if (container == null) {
+            container = new ArrayList<Container>();
+        }
+
+        return this.container;
     }
 
     public List<Service> getService() {
