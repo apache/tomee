@@ -50,6 +50,7 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
     }
 
     private Set<Class<?>> getContextTypes(Object resourceObject) {
+        if (!ProxyManager.isProxyClass(resourceObject.getClass())) return null;
         final InvocationHandler handler = ProxyManager.getInvocationHandler(resourceObject);
         if (!(handler instanceof BeanContextInvocationHandler)) return null;
 
