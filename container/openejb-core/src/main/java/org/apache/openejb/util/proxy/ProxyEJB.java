@@ -21,6 +21,7 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -54,19 +55,35 @@ public class ProxyEJB {
         return Proxy.newProxyInstance(itfs[0].getClassLoader(), itfs, new Handler(beanContext));
     }
 
-    private static class Handler implements java.lang.reflect.InvocationHandler {
-        private BeanContext beanContext;
+    private static class Handler implements BeanContextInvocationHandler {
+
+        private transient WeakReference<BeanContext> beanContextRef;
+        private final Object deploymentID;
 
         public Handler(BeanContext bc) {
-            beanContext = bc;
+            beanContextRef = new WeakReference<BeanContext>(bc);
+            deploymentID = bc.getDeploymentID();
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            final BeanContext beanContext = getBeanContext();
             final RpcContainer container = RpcContainer.class.cast(beanContext.getContainer());
+
             return container.invoke(beanContext.getDeploymentID(),
                     beanContext.getInterfaceType(method.getDeclaringClass()),
                     method.getDeclaringClass(), method, args, null);
         }
+
+
+        public BeanContext getBeanContext() {
+            BeanContext beanContext = beanContextRef.get();
+            if (beanContext == null|| beanContext.isDestroyed()){
+                beanContextRef.clear();
+                throw new IllegalStateException("Bean '" + deploymentID + "' has been undeployed.");
+            }
+            return beanContext;
+        }
+
     }
 }

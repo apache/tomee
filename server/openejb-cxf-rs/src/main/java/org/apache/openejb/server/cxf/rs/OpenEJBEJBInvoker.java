@@ -18,22 +18,47 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
+import org.apache.openejb.util.proxy.ProxyManager;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Set;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     @Override
     public Object invoke(final Exchange exchange, final Object request, final Object resourceObject) {
-        Contexts.bind(exchange);
+
+        final Set<Class<?>> types = getContextTypes(resourceObject);
+
+        if (types != null) {
+            Contexts.bind(exchange, types);
+        } else {
+            Contexts.bind(exchange);
+        }
+
         try {
             return super.invoke(exchange, request, resourceObject);
         } finally {
             ThreadLocalContextManager.reset();
         }
+    }
+
+    private Set<Class<?>> getContextTypes(Object resourceObject) {
+        final InvocationHandler handler = ProxyManager.getInvocationHandler(resourceObject);
+        if (!(handler instanceof BeanContextInvocationHandler)) return null;
+
+        final BeanContext beanContext = ((BeanContextInvocationHandler) handler).getBeanContext();
+        final ContextReferenceTypes contextReferenceTypes = beanContext.get(ContextReferenceTypes.class);
+
+        if (contextReferenceTypes == null) return null;
+
+        return contextReferenceTypes.get();
     }
 
     @Override
