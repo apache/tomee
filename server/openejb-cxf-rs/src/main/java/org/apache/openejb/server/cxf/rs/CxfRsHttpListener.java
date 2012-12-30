@@ -30,26 +30,33 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
 
 import javax.naming.Context;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
@@ -98,8 +105,29 @@ public class CxfRsHttpListener implements RsHttpListener {
     @Override
     public void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
+
+        addContextTypes(beanContext);
+
         deploy(beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
                 proxy, null, new OpenEJBEJBInvoker(), additionalProviders, configuration);
+    }
+
+    private void addContextTypes(BeanContext beanContext) {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.addAll(Classes.ancestors(beanContext.getBeanClass()));
+        for (InterceptorData interceptorData : beanContext.getInstanceScopedInterceptors()) {
+            classes.addAll(Classes.ancestors(interceptorData.getInterceptorClass()));
+        }
+
+        // We really shouldn't do this here -- should be done in the AnnotationDeployer where we already payed for the AnnotationFinder
+        final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(classes));
+        final List<Field> fields = finder.findAnnotatedFields(javax.ws.rs.core.Context.class);
+        final Set<Class<?>> contextTypes = new HashSet<Class<?>>();
+        for (Field field : fields) {
+            contextTypes.add(field.getType());
+        }
+
+        beanContext.set(ContextReferenceTypes.class, new ContextReferenceTypes(contextTypes));
     }
 
     private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,

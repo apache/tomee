@@ -36,8 +36,11 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public final class Contexts {
     private Contexts() {
@@ -52,8 +55,25 @@ public final class Contexts {
         final ClassResourceInfo cri = exchange.get(OperationResourceInfo.class).getClassResourceInfo();
 
         // binding context fields
+        final Set<Class<?>> types = new HashSet<Class<?>>();
         for (Field field : cri.getContextFields()) {
-            Class<?> type = field.getType();
+            types.add(field.getType());
+        }
+
+        bind(exchange, types);
+    }
+
+    /**
+     * Using a set ensures we don't set the thread local twice or more,
+     * there may be super classes with injection points of identical types
+     *
+     * Also allows us to get context references from other sources such as interceptors
+     *
+     * @param exchange
+     * @param types
+     */
+    public static void bind(Exchange exchange, Set<Class<?>> types) {
+        for (Class<?> type : types) {
             if (Request.class.equals(type)) {
                 Request binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Request.class);
                 ThreadLocalContextManager.REQUEST.set(binding);
