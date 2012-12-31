@@ -41,7 +41,6 @@ import java.util.List;
  * @version $Revision$ $Date$
  */
 @RunWith(Arquillian.class)
-@Ignore
 public class OverloadedEjbObserverMethodsTest {
 
     @EJB
