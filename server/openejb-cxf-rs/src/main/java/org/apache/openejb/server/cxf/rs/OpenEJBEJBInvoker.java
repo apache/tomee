@@ -22,6 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import java.lang.reflect.InvocationHandler;
@@ -50,7 +51,8 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
     }
 
     private Set<Class<?>> getContextTypes(Object resourceObject) {
-        if (!ProxyManager.isProxyClass(resourceObject.getClass())) return null;
+        if (!ProxyManager.isProxyClass(resourceObject.getClass())
+                && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) return null;
         final InvocationHandler handler = ProxyManager.getInvocationHandler(resourceObject);
         if (!(handler instanceof BeanContextInvocationHandler)) return null;
 
