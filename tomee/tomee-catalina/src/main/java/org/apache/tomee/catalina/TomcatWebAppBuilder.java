@@ -773,11 +773,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             final ContextInfo contextInfo = getContextInfo(standardContext);
             if (contextInfo == null || contextInfo.appInfo == null || contextInfo.appInfo.path == null) {
-                standardContext.setJ2EEApplication(standardContext.getName());
+                standardContext.setJ2EEApplication(jmxName(standardContext.getName()));
             } else {
-                standardContext.setJ2EEApplication(shortName(contextInfo.appInfo.path));
+                standardContext.setJ2EEApplication(jmxName(shortName(contextInfo.appInfo.path)));
             }
         }
+    }
+
+    private String jmxName(final String name) { // see javax.management.ObjectName.construct()
+        return name.replace(':', '_');
     }
 
     private String shortName(final String path) {
