@@ -28,6 +28,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
@@ -58,8 +59,10 @@ public class FeatureTest {
         ejbJar.addEnterpriseBean(bean);
 
         final OpenejbJar openejbJar = new OpenejbJar();
-        openejbJar.addEjbDeployment(new EjbDeployment(ejbJar.getEnterpriseBeans()[0]));
-        final Properties properties = openejbJar.getEjbDeployment().iterator().next().getProperties();
+        final PojoDeployment e = new PojoDeployment();
+        openejbJar.getPojoDeployment().add(e);
+        e.setClassName("jaxrs-application");
+        final Properties properties = e.getProperties();
         properties.setProperty(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES, "my-feature");
 
         final EjbModule module = new EjbModule(ejbJar);

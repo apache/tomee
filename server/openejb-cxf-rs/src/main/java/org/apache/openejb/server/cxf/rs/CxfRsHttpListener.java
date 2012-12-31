@@ -35,6 +35,8 @@ import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
+import org.apache.openejb.server.rest.EJBRestServiceInfo;
+import org.apache.openejb.server.rest.InternalApplication;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
@@ -49,24 +51,19 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
+    private static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
 
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
     private Server server;
+    private String context = "";
 
     public CxfRsHttpListener(HTTPTransportFactory httpTransportFactory) {
         transportFactory = httpTransportFactory;
@@ -82,11 +79,18 @@ public class CxfRsHttpListener implements RsHttpListener {
             @Override
             public String getRequestURI() {
                 if (httpRequest instanceof HttpRequestImpl) {
-                    return ((HttpRequestImpl) httpRequest).requestRawPath();
+                    return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
                 }
-                return super.getRequestURI();
+                return strip(context, super.getRequestURI());
             }
         }, httpResponse);
+    }
+
+    private String strip(final String context, final String requestURI) {
+        if (requestURI.startsWith(context)) {
+            return requestURI.substring(context.length());
+        }
+        return requestURI;
     }
 
     @Override
@@ -139,35 +143,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             impl = clazz.getName();
         }
 
-        final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
+        final JAXRSServerFactoryBean factory = newFactory(address);
+        configureFactory(impl, additionalProviders, configuration, factory);
         factory.setResourceClasses(clazz);
-        factory.setDestinationFactory(transportFactory);
-        factory.setBus(transportFactory.getBus());
-        factory.setAddress(address);
 
-        CxfUtil.configureEndpoint(factory, configuration, CXF_JAXRS_PREFIX, impl);
-
-        final Collection<ServiceInfo> services = configuration.getAvailableServices();
-
-        // providers
-        final String provider = configuration.getProperties().getProperty(PROVIDERS_KEY);
-        List<Object> providers = null;
-        if (provider != null) {
-            providers = ServiceInfos.resolve(services, provider.split(","));
-            if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
-            }
-            factory.setProviders(providers);
-        }
-        if (providers == null) {
-            providers = new ArrayList<Object>();
-            if (additionalProviders != null && !additionalProviders.isEmpty()) {
-                providers.addAll(providers(services, additionalProviders));
-            } else {
-                providers.addAll(defaultProviders());
-            }
-            factory.setProviders(providers);
-        }
 
         if (rp != null) {
             factory.setResourceProvider(rp);
@@ -212,6 +191,93 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     public void undeploy() {
         server.stop();
+    }
+
+    @Override
+    public void deployApplication(final Application application, final String prefix, final String webContext,
+                                  final Collection<Object> additionalProviders,
+                                  final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader,
+                                  final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx,
+                                  final ServiceConfiguration serviceConfiguration) {
+        final JAXRSServerFactoryBean factory = newFactory(prefix);
+        if (InternalApplication.class.equals(application.getClass())) { // todo: check it is the good choice
+            configureFactory("jaxrs-application", additionalProviders, serviceConfiguration, factory);
+        } else {
+            configureFactory(application.getClass().getName(), additionalProviders, serviceConfiguration, factory);
+        }
+        factory.setApplication(application);
+
+        final List<Class<?>> classes = new ArrayList<Class<?>>();
+
+        for (Class<?> clazz : application.getClasses()) {
+            classes.add(clazz);
+        }
+
+        for (Object o : application.getSingletons()) {
+            final Class<?> clazz = o.getClass();
+            classes.add(clazz);
+        }
+
+        for (Class<?> clazz : classes) {
+            final String name = clazz.getName();
+            if (restEjbs.containsKey(name)) {
+                final BeanContext bc = restEjbs.get(name).context;
+                final Object proxy = ProxyEJB.subclassProxy(bc);
+                addContextTypes(bc);
+                factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
+            } else {
+                factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(clazz, injections, context, owbCtx));
+            }
+        }
+
+        factory.setResourceClasses(classes);
+        factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
+
+        server = factory.create();
+        this.context = webContext;
+        if (!webContext.startsWith("/")) {
+            this.context = "/" + webContext;
+        }
+        destination = (AbstractHTTPDestination) server.getDestination();
+    }
+
+    private JAXRSServerFactoryBean newFactory(String prefix) {
+        final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
+        factory.setDestinationFactory(transportFactory);
+        factory.setBus(transportFactory.getBus());
+        factory.setAddress(prefix);
+        return factory;
+    }
+
+    private void configureFactory(String application, Collection<Object> additionalProviders, ServiceConfiguration serviceConfiguration, JAXRSServerFactoryBean factory) {
+        CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX, application);
+
+        final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
+
+        final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(STATIC_SUB_RESOURCE_RESOLUTION_KEY);
+        if (staticSubresourceResolution != null) {
+            factory.setStaticSubresourceResolution("true".equalsIgnoreCase(staticSubresourceResolution));
+        }
+
+        // providers
+        final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+        List<Object> providers = null;
+        if (provider != null) {
+            providers = ServiceInfos.resolve(services, provider.split(","));
+            if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
+                providers.addAll(providers(services, additionalProviders));
+            }
+            factory.setProviders(providers);
+        }
+        if (providers == null) {
+            providers = new ArrayList<Object>();
+            if (additionalProviders != null && !additionalProviders.isEmpty()) {
+                providers.addAll(providers(services, additionalProviders));
+            } else {
+                providers.addAll(defaultProviders());
+            }
+            factory.setProviders(providers);
+        }
     }
 
     private static List<Object> defaultProviders() {

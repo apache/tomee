@@ -16,9 +16,9 @@
   limitations under the License.
 -->
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
-  <ejb-deployment ejb-name="CustomizedService">
+  <pojo-deployment class-name="jaxrs-application">
     <properties>
       cxf.jaxrs.providers = configured
     </properties>
-  </ejb-deployment>
+  </pojo-deployment>
 </openejb-jar>

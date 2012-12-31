@@ -24,6 +24,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
@@ -55,8 +56,10 @@ public class CustomContextTest {
 
         module.getEjbJar().addEnterpriseBean(bean);
 
-        module.getOpenejbJar().addEjbDeployment(bean);
-        module.getOpenejbJar().getEjbDeployment().iterator().next().getProperties().setProperty("cxf.jaxrs.providers", CustomProvider.class.getName());
+        final PojoDeployment e = new PojoDeployment();
+        e.setClassName("jaxrs-application");
+        e.getProperties().setProperty("cxf.jaxrs.providers", CustomProvider.class.getName());
+        module.getOpenejbJar().getPojoDeployment().add(e);
 
         return module;
     }

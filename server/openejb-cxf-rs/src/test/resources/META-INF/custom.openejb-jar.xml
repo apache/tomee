@@ -16,14 +16,9 @@
   limitations under the License.
 -->
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
-  <ejb-deployment ejb-name="CustomSpecificService">
+  <pojo-deployment class-name="jaxrs-application">
     <properties>
-      cxf.jaxrs.providers = constant
+      cxf.jaxrs.providers = constant,reverse
     </properties>
-  </ejb-deployment>
-  <ejb-deployment ejb-name="CustomService">
-    <properties>
-      cxf.jaxrs.providers = reverse
-    </properties>
-  </ejb-deployment>
+  </pojo-deployment>
 </openejb-jar>
