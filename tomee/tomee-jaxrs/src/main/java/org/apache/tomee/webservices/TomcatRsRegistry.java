@@ -16,18 +16,7 @@
  */
 package org.apache.tomee.webservices;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Service;
-import org.apache.catalina.Wrapper;
+import org.apache.catalina.*;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -37,6 +26,9 @@ import org.apache.openejb.server.rest.RsServlet;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.loader.TomcatHelper;
+
+import java.net.URI;
+import java.util.*;
 
 public class TomcatRsRegistry implements RsRegistry {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatRsRegistry.class);
@@ -89,9 +81,17 @@ public class TomcatRsRegistry implements RsRegistry {
         wrapper.setName(name);
         wrapper.setServletClass(RsServlet.class.getName());
 
+        String mapping = completePath;
+        if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)
+            if (completePath.endsWith("*")) {
+                mapping = completePath.substring(0, completePath.length() - 1);
+            }
+            mapping = mapping + "/*";
+        }
+
         context.addChild(wrapper);
-        wrapper.addMapping(removeWebContext(webContext, completePath));
-        context.addServletMapping(completePath, name);
+        wrapper.addMapping(removeWebContext(webContext, mapping));
+        context.addServletMapping(mapping, name);
 
         final String listenerId = wrapper.getName() + RsServlet.class.getName() + listener.hashCode();
         wrapper.addInitParameter(HttpListener.class.getName(), listenerId);

@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Classes;
 import org.apache.openejb.junit.EnableServices;
 import org.apache.openejb.junit.Module;
-import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
-import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.server.cxf.rs.beans.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,7 +41,7 @@ public class SimpleApplicationTest {
     public static final String BASE_URL = "http://localhost:4204/foo/my-app";
 
     @Module
-    @Classes({ RestWithInjections.class, SimpleEJB.class })
+    @Classes({ RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo")
@@ -76,9 +75,9 @@ public class SimpleApplicationTest {
         assertEquals("hi Pink Floyd", writer.toString());
     }
 
-    @Test
-    public void nonListed() { // default handler from openejb-http
-        assertEquals("", WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class));
+    @Test(expected = ServerWebApplicationException.class)
+    public void nonListed() {
+        WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
     }
 
     @Test

@@ -16,22 +16,12 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.FacilitiesInfo;
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.AnnotationDeployer;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.WebModule;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.config.*;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
@@ -41,14 +31,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.cxf.rs.beans.HookedRest;
-import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MyNonListedRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
-import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
-import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.server.cxf.rs.beans.*;
 import org.apache.openejb.server.httpd.HttpServer;
 import org.apache.openejb.server.httpd.HttpServerFactory;
 import org.apache.openejb.server.httpd.OpenEJBHttpServer;
@@ -198,9 +181,9 @@ public class RestDeploymentTest {
         assertEquals("hi Pink Floyd", writer.toString());
     }
 
-    @Test
-    public void nonListed() { // default handler from openejb-http
-        assertEquals("", WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class));
+    @Test(expected = ServerWebApplicationException.class)
+    public void nonListed() {
+        WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
     }
 
     @Test

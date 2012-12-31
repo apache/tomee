@@ -16,14 +16,9 @@
   limitations under the License.
 -->
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
-  <ejb-deployment ejb-name="RestWithExceptionMapper">
+  <pojo-deployment class-name="jaxrs-application">
     <properties>
       cxf.jaxrs.providers = em
-    </properties>
-  </ejb-deployment>
-  <pojo-deployment ejb-name="org.Foo">
-    <properties>
-      providers4 = em2
     </properties>
   </pojo-deployment>
 </openejb-jar>

@@ -26,6 +26,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import javax.naming.Context;
 import javax.ws.rs.core.Application;
 import java.util.Collection;
+import java.util.Map;
 
 public interface RsHttpListener extends HttpListener {
     void deploySingleton(String fullContext, Object o, Application appInstance,
@@ -37,4 +38,6 @@ public interface RsHttpListener extends HttpListener {
     void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
     void undeploy();
+
+    void deployApplication(Application application, String prefix, String webContext, Collection<Object> additionalProviders, Map<String, EJBRestServiceInfo> restEjbs, ClassLoader classLoader, Collection<Injection> injections, Context context, WebBeansContext owbCtx, ServiceConfiguration serviceConfiguration);
 }

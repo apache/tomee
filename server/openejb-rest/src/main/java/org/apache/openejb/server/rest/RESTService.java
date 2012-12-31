@@ -20,13 +20,7 @@ package org.apache.openejb.server.rest;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.IdPropertiesInfo;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
@@ -56,23 +50,13 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 
 public abstract class RESTService implements ServerService, SelfManaging {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
     private static final boolean OLD_WEBSERVICE_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false);
+    private static final boolean APPLICATION_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.jaxrs.application", true);
     public static final String OPENEJB_JAXRS_PROVIDERS_AUTO_PROP = "openejb.jaxrs.providers.auto";
 
     private static final String IP = "n/a";
@@ -130,130 +114,231 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
 
+        Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
         try {
-            // The spec says:
-            //
-            // "The resources and providers that make up a JAX-RS application are configured via an application-supplied
-            // subclass of Application. An implementation MAY provide alternate mechanisms for locating resource
-            // classes and providers (e.g. runtime class scanning) but use of Application is the only portable means of
-            //  configuration."
-            //
-            //  The choice here is to deploy using the Application if it exists or to use the scanned classes
-            //  if there is no Application.
-            //
-            //  Like this providing an Application subclass user can totally control deployed services.
+            if (APPLICATION_DEPLOYMENT) {
+                Application application = null;
+                String prefix = "/";
 
-            boolean useApp = false;
-            String appPrefix = webApp.contextRoot;
-            Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
-            for (String app : webApp.restApplications) { // normally a unique one but we support more
-                appPrefix = webApp.contextRoot; // if multiple application classes reinit it
-                if (!appPrefix.endsWith("/")) {
-                    appPrefix += "/";
-                }
+                if (webApp.restApplications.size() == 1) {
+                    final String app = webApp.restApplications.iterator().next();
+                    final Class<?> appClazz;
+                    try {
+                        appClazz = classLoader.loadClass(app);
+                        application = Application.class.cast(appClazz.newInstance());
+                    } catch (Exception e) {
+                        throw new OpenEJBRestRuntimeException("can't create class " + app, e);
+                    }
 
-                Application appInstance;
-                Class<?> appClazz;
-                try {
-                    appClazz = classLoader.loadClass(app);
-                    appInstance = Application.class.cast(appClazz.newInstance());
-                } catch (Exception e) {
-                    throw new OpenEJBRestRuntimeException("can't create class " + app, e);
-                }
-
-                ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
-                if (path != null) {
-                    String appPath = path.value();
-                    if (appPath.startsWith("/")) {
-                        appPrefix += appPath.substring(1);
+                    final String path = appPrefix(appClazz);
+                    if (path != null) {
+                        prefix += path + wildcard;
                     } else {
-                        appPrefix += appPath;
-                    }
-                }
-
-                Set<Class<?>> classes = appInstance.getClasses();
-                Set<Object> singletons = appInstance.getSingletons();
-
-                // look for providers
-                for (Class<?> clazz : classes) {
-                    if (isProvider(clazz)) {
-                        additionalProviders.add(clazz);
-                    }
-                }
-                for (Object obj : singletons) {
-                    if (obj != null && isProvider(obj.getClass())) {
-                        additionalProviders.add(obj);
-                    }
-                }
-
-                for (Object o : singletons) {
-                    if (o == null || additionalProviders.contains(o)) {
-                        continue;
+                        prefix += wildcard;
                     }
 
-                    if (hasEjbAndIsNotAManagedBean(restEjbs, o.getClass().getName())) {
-                        // no more a singleton if the ejb is not a singleton...but it is a weird case
-                        deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(o.getClass().getName()).context, additionalProviders, appInfo.services);
+                    final Set<Class<?>> classes = application.getClasses();
+                    final Set<Object> singletons = application.getSingletons();
+                    if (classes.size() + singletons.size() == 0) {
+                        application = null; // use discovered services
                     } else {
-                        pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                        deploySingleton(webApp.contextRoot, appPrefix, o, appInstance, classLoader, additionalProviders,
-                                new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
-                    }
-                }
-
-                for (Class<?> clazz : classes) {
-                    if (additionalProviders.contains(clazz)) {
-                        continue;
-                    }
-
-                    if (hasEjbAndIsNotAManagedBean(restEjbs, clazz.getName())) {
-                        deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(clazz.getName()).context, additionalProviders, appInfo.services);
-                    } else {
-                        pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                        deployPojo(webApp.contextRoot, appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders,
-                                new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
-                    }
-                }
-
-                useApp = useApp || classes.size() + singletons.size() > 0;
-                LOGGER.info("REST application deployed: " + app);
-            }
-
-            if (!useApp) {
-                if (webApp.restApplications.isEmpty() || webApp.restApplications.size() > 1) {
-                    appPrefix = webApp.contextRoot;
-                } // else keep application prefix
-
-                final Set<String> restClasses = new HashSet<String>(webApp.restClass);
-                restClasses.addAll(webApp.ejbRestServices);
-
-                for (String clazz : restClasses) {
-                    if (restEjbs.containsKey(clazz)) {
-                        final BeanContext ctx = restEjbs.get(clazz).context;
-                        if (hasEjbAndIsNotAManagedBean(restEjbs, clazz)) {
-                            deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(clazz).context, additionalProviders, appInfo.services);
-                        } else {
-                            deployPojo(webApp.contextRoot, appPrefix, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(), context,
-                                    owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                        for (Class<?> clazz : classes) {
+                            if (isProvider(clazz)) {
+                                additionalProviders.add(clazz);
+                            }
                         }
-                    } else {
+                        for (Object o : singletons) {
+                            if (isProvider(o.getClass())) {
+                                additionalProviders.add(o);
+                            }
+                        }
+                    }
+                }
+
+                if (application == null) {
+                    application = new InternalApplication();
+
+                    for (String clazz : webApp.restClass) {
                         try {
-                            Class<?> loadedClazz = classLoader.loadClass(clazz);
+                            final Class<?> loaded = classLoader.loadClass(clazz);
+                            if (!isProvider(loaded)) {
+                                application.getClasses().add(loaded);
+                            } else {
+                                additionalProviders.add(loaded);
+                            }
+                        } catch (Exception e) {
+                            throw new OpenEJBRestRuntimeException("can't load class " + clazz, e);
+                        }
+                    }
+                    for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
+                        application.getClasses().add(ejb.getValue().context.getBeanClass());
+                    }
+                    if (!prefix.endsWith(wildcard)) {
+                        prefix += wildcard;
+                    }
+                }
+
+                if (!application.getClasses().isEmpty() || !application.getSingletons().isEmpty()) {
+                    pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
+                    deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, prefix);
+                }
+
+            } else {
+                // The spec says:
+                //
+                // "The resources and providers that make up a JAX-RS application are configured via an application-supplied
+                // subclass of Application. An implementation MAY provide alternate mechanisms for locating resource
+                // classes and providers (e.g. runtime class scanning) but use of Application is the only portable means of
+                //  configuration."
+                //
+                //  The choice here is to deploy using the Application if it exists or to use the scanned classes
+                //  if there is no Application.
+                //
+                //  Like this providing an Application subclass user can totally control deployed services.
+
+                boolean useApp = false;
+                String appPrefix = webApp.contextRoot;
+                for (String app : webApp.restApplications) { // normally a unique one but we support more
+                    appPrefix = webApp.contextRoot; // if multiple application classes reinit it
+                    if (!appPrefix.endsWith("/")) {
+                        appPrefix += "/";
+                    }
+
+                    Application appInstance;
+                    Class<?> appClazz;
+                    try {
+                        appClazz = classLoader.loadClass(app);
+                        appInstance = Application.class.cast(appClazz.newInstance());
+                    } catch (Exception e) {
+                        throw new OpenEJBRestRuntimeException("can't create class " + app, e);
+                    }
+
+                    final String path = appPrefix(appClazz);
+                    if (path != null) {
+                        appPrefix += path;
+                    }
+
+                    Set<Class<?>> classes = appInstance.getClasses();
+                    Set<Object> singletons = appInstance.getSingletons();
+
+                    // look for providers
+                    for (Class<?> clazz : classes) {
+                        if (isProvider(clazz)) {
+                            additionalProviders.add(clazz);
+                        }
+                    }
+                    for (Object obj : singletons) {
+                        if (obj != null && isProvider(obj.getClass())) {
+                            additionalProviders.add(obj);
+                        }
+                    }
+
+                    for (Object o : singletons) {
+                        if (o == null || additionalProviders.contains(o)) {
+                            continue;
+                        }
+
+                        if (hasEjbAndIsNotAManagedBean(restEjbs, o.getClass().getName())) {
+                            // no more a singleton if the ejb is not a singleton...but it is a weird case
+                            deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(o.getClass().getName()).context, additionalProviders, appInfo.services);
+                        } else {
                             pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                            deployPojo(webApp.contextRoot, appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
-                                    additionalProviders,
-                                    new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
-                        } catch (ClassNotFoundException e) {
-                            throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
+                            deploySingleton(webApp.contextRoot, appPrefix, o, appInstance, classLoader, additionalProviders,
+                                    new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, o.getClass().getName()), appInfo.services));
+                        }
+                    }
+
+                    for (Class<?> clazz : classes) {
+                        if (additionalProviders.contains(clazz)) {
+                            continue;
+                        }
+
+                        if (hasEjbAndIsNotAManagedBean(restEjbs, clazz.getName())) {
+                            deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(clazz.getName()).context, additionalProviders, appInfo.services);
+                        } else {
+                            pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
+                            deployPojo(webApp.contextRoot, appPrefix, clazz, appInstance, classLoader, injections, context, owbCtx, additionalProviders,
+                                    new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()), appInfo.services));
+                        }
+                    }
+
+                    useApp = useApp || classes.size() + singletons.size() > 0;
+                    LOGGER.info("REST application deployed: " + app);
+                }
+
+                if (!useApp) {
+                    if (webApp.restApplications.isEmpty() || webApp.restApplications.size() > 1) {
+                        appPrefix = webApp.contextRoot;
+                    } // else keep application prefix
+
+                    final Set<String> restClasses = new HashSet<String>(webApp.restClass);
+                    restClasses.addAll(webApp.ejbRestServices);
+
+                    for (String clazz : restClasses) {
+                        if (restEjbs.containsKey(clazz)) {
+                            final BeanContext ctx = restEjbs.get(clazz).context;
+                            if (hasEjbAndIsNotAManagedBean(restEjbs, clazz)) {
+                                deployEJB(webApp.contextRoot, appPrefix, restEjbs.get(clazz).context, additionalProviders, appInfo.services);
+                            } else {
+                                deployPojo(webApp.contextRoot, appPrefix, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(), context,
+                                        owbCtx, additionalProviders, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                            }
+                        } else {
+                            try {
+                                Class<?> loadedClazz = classLoader.loadClass(clazz);
+                                pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
+                                deployPojo(webApp.contextRoot, appPrefix, loadedClazz, null, classLoader, injections, context, owbCtx,
+                                        additionalProviders,
+                                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfigurations, loadedClazz.getName()), appInfo.services));
+                            } catch (ClassNotFoundException e) {
+                                throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
+                            }
                         }
                     }
                 }
             }
-
-            restEjbs.clear();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
+    }
+
+    private void deployApplication(AppInfo appInfo, String contextRoot, Map<String, EJBRestServiceInfo> restEjbs, ClassLoader classLoader, Collection<Injection> injections, WebBeansContext owbCtx, Context context, Collection<Object> additionalProviders, Collection<IdPropertiesInfo> pojoConfigurations, Application application, String prefix) {
+        // get configuration
+        Properties configuration = PojoUtil.findConfiguration(pojoConfigurations, application.getClass().getName());
+        if (configuration == null) { // try a constant (common in half of cases)
+            configuration = PojoUtil.findConfiguration(pojoConfigurations, "jaxrs-application");
+        }
+        if (configuration == null) { // try with context
+            configuration = PojoUtil.findConfiguration(pojoConfigurations, contextRoot);
+        }
+
+        final String nopath = getAddress(contextRoot) + prefix;
+        final RsHttpListener listener = createHttpListener();
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+
+        services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName()));
+        listener.deployApplication(application, address.complete, nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
+                classLoader, injections, context, owbCtx, // injection/webapp context
+                new ServiceConfiguration(configuration, appInfo.services)); // deployment config
+
+        if (!application.getClass().equals(InternalApplication.class)) {
+            LOGGER.info("REST Application: " + address.complete + "  -> " + application.getClass().getName());
+        } else {
+            LOGGER.info("REST Application: " + address.complete + "  -> " + contextRoot);
+        }
+    }
+
+    private static String appPrefix(final Class<?> appClazz) {
+        final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
+        if (path != null) {
+            String appPath = path.value();
+            if (appPath.startsWith("/")) {
+                return appPath.substring(1);
+            } else {
+                return appPath;
+            }
+        }
+        return null;
     }
 
     private static <T> boolean isProvider(final Class<T> clazz) {
@@ -287,6 +372,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (deployedApplications.add(appInfo)) {
             if (appInfo.webApps.size() == 0) {
                 final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
+                if (restEjbs.isEmpty()) {
+                    return;
+                }
+
                 final Collection<Object> providers;
                 if (useDiscoveredProviders()) {
                     providers = appProviders(appInfo, containerSystem.getAppContext(appInfo.appId).getClassLoader());
@@ -294,18 +383,53 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     providers = new ArrayList<Object>();
                 }
 
-                for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
-                    final BeanContext ctx = ejb.getValue().context;
-                    if (BeanType.MANAGED.equals(ctx.getComponentType())) {
-                        deployPojo("", ejb.getValue().path, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(),
-                                ctx.getJndiContext(),
-                                containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
-                                providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
-                    } else {
-                        deployEJB("", ejb.getValue().path, ctx, providers, appInfo.services);
+                if (APPLICATION_DEPLOYMENT) {
+                    final Application application = new InternalApplication();
+                    for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
+                        application.getClasses().add(ejb.getValue().context.getBeanClass());
+                    }
+
+                    List<IdPropertiesInfo> pojoConfigurations = new ArrayList<IdPropertiesInfo>();
+                    BeanContext comp = null;
+                    for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                        for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                            if (comp != null) {
+                                break;
+                            }
+                            if (bean.ejbClass.equals(BeanContext.Comp.class.getName())) {
+                                comp = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                                break;
+                            }
+                        }
+                        if (ejbJar.pojoConfigurations != null) {
+                            pojoConfigurations.addAll(ejbJar.pojoConfigurations);
+                        }
+                    }
+                    if (appInfo.pojoConfigurations != null) {
+                        pojoConfigurations.addAll(appInfo.pojoConfigurations);
+                    }
+
+                    final Map.Entry<String, EJBRestServiceInfo> next = restEjbs.entrySet().iterator().next();
+                    if (comp == null) {
+                        comp = next.getValue().context;
+                    }
+
+                    deployApplication(appInfo, next.getValue().path, restEjbs, comp.getClassLoader(), comp.getInjections(),
+                            containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
+                            providers, pojoConfigurations, application, wildcard);
+                } else {
+                    for (Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
+                        final BeanContext ctx = ejb.getValue().context;
+                        if (BeanType.MANAGED.equals(ctx.getComponentType())) {
+                            deployPojo("", ejb.getValue().path, ctx.getBeanClass(), null, ctx.getClassLoader(), ctx.getInjections(),
+                                    ctx.getJndiContext(),
+                                    containerSystem.getAppContext(appInfo.appId).getWebBeansContext(),
+                                    providers, new ServiceConfiguration(ctx.getProperties(), appInfo.services));
+                        } else {
+                            deployEJB("", ejb.getValue().path, ctx, providers, appInfo.services);
+                        }
                     }
                 }
-                restEjbs.clear();
             } else {
                 for (final WebAppInfo webApp : appInfo.webApps) {
                     afterApplicationCreated(appInfo, webApp);
@@ -441,14 +565,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private String getAddress(String context, Class<?> clazz) {
-        String root = NOPATH_PREFIX;
-        if (context != null) {
-            if (context.startsWith("/")) {
-                root += context.substring(1);
-            } else {
-                root += context;
-            }
-        }
+        String root = getAddress(context);
 
         Class<?> usedClass = findPath(clazz);
         if (usedClass == null || Object.class.equals(usedClass)) { // try interfaces
@@ -499,6 +616,18 @@ public abstract class RESTService implements ServerService, SelfManaging {
         } catch (URISyntaxException e) {
             throw new OpenEJBRestRuntimeException("uri syntax is not correct", e);
         }
+    }
+
+    private String getAddress(String context) {
+        String root = NOPATH_PREFIX;
+        if (context != null) {
+            if (context.startsWith("/")) {
+                root += context.substring(1);
+            } else {
+                root += context;
+            }
+        }
+        return root;
     }
 
     // this mean not really conflicting mappings (rest/servlet and so on) can be conflicting
@@ -617,20 +746,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
         this.virtualHost = virtualHost;
     }
 
-    public static class EJBRestServiceInfo {
-        public String path;
-        public BeanContext context;
-
-        public EJBRestServiceInfo(String path, BeanContext context) {
-            if (context == null) {
-                throw new OpenEJBRestRuntimeException("can't find context");
-            }
-
-            this.path = path;
-            this.context = context;
-        }
-    }
-
     // look WebServiceHelperImpl before updating it
     public static class DeployedService {
         public String address;
@@ -644,7 +759,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         public boolean isInWebApp(final WebAppInfo webApp) {
-            return webApp.contextRoot == webapp || (webapp != null && webapp.startsWith(webApp.contextRoot));
+            return (webApp.contextRoot != null && webApp.contextRoot.equals(webapp)) || (webapp != null && webapp.startsWith(webApp.contextRoot));
         }
     }
 

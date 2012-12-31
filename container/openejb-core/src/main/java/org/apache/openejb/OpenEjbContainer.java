@@ -19,22 +19,10 @@ package org.apache.openejb;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ConnectorModule;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.NewLoaderLogic;
-import org.apache.openejb.config.PersistenceModule;
-import org.apache.openejb.config.ValidationFailedException;
+import org.apache.openejb.config.*;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.ManagedBean;
-import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -42,13 +30,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.Exceptions;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.JuliLogStreamFactory;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.OptionsLog;
-import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.openejb.util.*;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
@@ -72,14 +54,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.LogManager;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
@@ -330,6 +305,7 @@ public class OpenEjbContainer extends EJBContainer {
 
                 OpenEJB.init(properties);
 
+                DeploymentLoader.reloadAltDD(); // otherwise hard to use multiple altdd with several start/stop in the same JVM
 
                 final ConfigurationFactory configurationFactory = new ConfigurationFactory();
 
