@@ -90,8 +90,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*");
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
-        final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
-
         final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
         if (webContext == null) {
             return;
@@ -100,6 +98,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (!deployedWebApps.add(webApp)) {
             return;
         }
+
+        final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
 
         final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
         final Collection<Injection> injections = webContext.getInjections();
