@@ -77,9 +77,9 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public Object getInjectableReference(InjectionPoint injectionPoint, CreationalContext<?> ctx) {
         try {
-            return getParentBm().getInjectableReference(injectionPoint, ctx);
-        } catch (RuntimeException e) {
             return super.getInjectableReference(injectionPoint, ctx);
+        } catch (RuntimeException e) {
+            return getParentBm().getInjectableReference(injectionPoint, ctx);
         }
     }
 
