@@ -35,33 +35,15 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
-import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
-import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY;
-import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER;
+import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.*;
 import static org.apache.maven.artifact.versioning.VersionRange.createFromVersion;
 import static org.apache.openejb.util.JarExtractor.delete;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
@@ -563,7 +545,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
-        if (getNoShutdownHook()) {
+        if (!getNoShutdownHook()) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {

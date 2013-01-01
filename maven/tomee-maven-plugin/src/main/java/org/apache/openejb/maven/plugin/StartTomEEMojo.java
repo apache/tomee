@@ -29,7 +29,6 @@ public class StartTomEEMojo extends UpdatableTomEEMojo {
 
     @Override
     public void run() {
-        System.setProperty("server.windows.fork", "true");
         super.run();
     }
 }
