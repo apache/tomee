@@ -17,14 +17,6 @@
  */
 package org.apache.openejb.server.cxf.ejb;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
-import javax.interceptor.InvocationContext;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.handler.MessageContext.Scope;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.AbstractJAXWSMethodInvoker;
 import org.apache.cxf.jaxws.context.WebServiceContextImpl;
@@ -38,6 +30,15 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+
+import javax.interceptor.InvocationContext;
+import javax.xml.ws.WebFault;
+import javax.xml.ws.handler.MessageContext.Scope;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
 
@@ -115,7 +116,7 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
 
             Class callInterface = this.beanContext
                     .getServiceEndpointInterface();
-            method = getMostSpecificMethod(method, callInterface);
+            method = getMostSpecificMethod(beanContext, method, callInterface);
             Object res = container.invoke(
                     this.beanContext.getDeploymentID(),
                     InterfaceType.SERVICE_ENDPOINT, callInterface, method,
@@ -162,6 +163,31 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
         }
     }
 
+    // seems the cxf impl is slow so caching it in BeanContext
+    private Method getMostSpecificMethod(final BeanContext beanContext, final Method method, final Class callInterface) {
+        MostSpecificMethodCache cache = beanContext.get(MostSpecificMethodCache.class);
+
+        if (cache == null) {
+            synchronized (beanContext) { // no need to use a lock IMO here
+                cache = beanContext.get(MostSpecificMethodCache.class);
+                if (cache == null) {
+                    cache = new MostSpecificMethodCache();
+                    beanContext.set(MostSpecificMethodCache.class, cache);
+                }
+            }
+        }
+
+        final MostSpecificMethodKey key = new MostSpecificMethodKey(callInterface, method);
+
+        Method m = cache.methods.get(key);
+        if (m == null) { // no need of more synchro since Method will be resolved to the same instance
+            m = getMostSpecificMethod(method, callInterface);
+            cache.methods.putIfAbsent(key, m);
+        }
+
+        return m;
+    }
+
     public Object directEjbInvoke(Exchange exchange, Method m,
             List<Object> params) throws Exception {
         Object[] paramArray;
@@ -171,5 +197,49 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
             paramArray = new Object[] {};
         }
         return performInvocation(exchange, null, m, paramArray);
+    }
+
+    public static class MostSpecificMethodCache { // just a wrapper to put in BeanContext without conflict
+        public final ConcurrentMap<MostSpecificMethodKey, Method> methods = new ConcurrentHashMap<MostSpecificMethodKey, Method>();
+    }
+
+    public static class MostSpecificMethodKey {
+        public final Class<?> ejbInterface;
+        public final Method method;
+        private int hashCode;
+
+        public MostSpecificMethodKey(final Class<?> ejbInterface, final Method method) {
+            this.ejbInterface = ejbInterface;
+            this.method = method;
+
+            // this class exists for map usage so simply precalculate hashcode
+            hashCode = ejbInterface != null ? ejbInterface.hashCode() : 0;
+            hashCode = 31 * hashCode + (method != null ? method.hashCode() : 0);
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final MostSpecificMethodKey that = (MostSpecificMethodKey) o;
+
+            if (!(ejbInterface != null ? !ejbInterface.equals(that.ejbInterface) : that.ejbInterface != null)) {
+                if (!(method != null ? !method.equals(that.method) : that.method != null)) {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return hashCode;
+        }
     }
 }
