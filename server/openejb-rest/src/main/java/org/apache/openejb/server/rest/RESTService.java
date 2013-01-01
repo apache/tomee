@@ -312,7 +312,14 @@ public abstract class RESTService implements ServerService, SelfManaging {
             configuration = PojoUtil.findConfiguration(pojoConfigurations, contextRoot);
         }
 
-        final String nopath = getAddress(contextRoot) + prefix;
+        final String base = getAddress(contextRoot);
+        final String nopath;
+        if (base.endsWith("/") && prefix.startsWith("/")) {
+            nopath = base + prefix.substring(1);
+        } else {
+            nopath = base + prefix;
+        }
+
         final RsHttpListener listener = createHttpListener();
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
