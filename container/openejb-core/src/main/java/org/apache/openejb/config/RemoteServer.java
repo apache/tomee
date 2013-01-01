@@ -308,7 +308,7 @@ public class RemoteServer {
 
                 if ("start".equals(cmd)) {
                     server = process;
-                } else if ("stop".equals(cmd)) {
+                } else if ("stop".equals(cmd) && server != null) {
                     server.waitFor();
                 }
 
