@@ -51,4 +51,8 @@ public class ConnectorReference extends Reference {
             throw (javax.naming.NamingException) (new javax.naming.NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re));
         }
     }
+
+    public ConnectionManager getConnectionManager() {
+        return conMngr;
+    }
 }

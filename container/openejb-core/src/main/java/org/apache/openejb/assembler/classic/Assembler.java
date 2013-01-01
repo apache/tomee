@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
+import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.HintsContextHandler;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
@@ -136,6 +137,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.resource.cci.ConnectionFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -1208,6 +1210,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 //Ignore
             }
 
+        } else if (object instanceof ConnectorReference) {
+            final ConnectorReference cr = (ConnectorReference) object;
+            try {
+                final ConnectionManager cm = cr.getConnectionManager();
+                if (cm != null && cm instanceof AbstractConnectionManager) {
+                    ((AbstractConnectionManager) cm).doStop();
+                }
+            } catch (Exception e) {
+                logger.debug("Not processing resource on destroy: " + className, e);
+            }
         } else if (logger.isDebugEnabled()) {
             logger.debug("Not processing resource on destroy: " + className);
         }
@@ -1856,6 +1868,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     unset.put(entry.getKey(), entry.getValue());
             }
             logUnusedProperties(unset, serviceInfo);
+
+            if (connectionManager instanceof AbstractConnectionManager) {
+                try {
+                    ((AbstractConnectionManager) connectionManager).doStart();
+                } catch (Exception e) {
+                    logger.warning("Can't start connection manager", e);
+                }
+            }
 
             // service becomes a ConnectorReference which merges connection manager and mcf
             service = new ConnectorReference(connectionManager, managedConnectionFactory);
