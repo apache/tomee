@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -49,8 +52,6 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
@@ -61,6 +62,7 @@ import org.apache.xbean.finder.ClassFinder;
  * @org.apache.xbean.XBean element="statelessContainer"
  */
 public class StatelessContainer implements org.apache.openejb.RpcContainer {
+    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
 
     private StatelessInstanceManager instanceManager;
 
@@ -284,6 +286,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         // of our stack.
         Object interceptor = args[1];
 
+        final Class<?> interceptorClass = interceptor.getClass();
+
 
         //  Add the webservice interceptor to the list of interceptor instances
         Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
@@ -294,10 +298,21 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
         List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
         {
-            InterceptorData providerData = new InterceptorData(interceptor.getClass());
-            ClassFinder finder = new ClassFinder(interceptor.getClass());
-            providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
-//            interceptorDatas.add(providerData);
+            final InterceptorData providerData = new InterceptorData(interceptorClass);
+
+            List<Method> aroundInvokes = interceptorCache.get(interceptorClass);
+            if (aroundInvokes == null) {
+                aroundInvokes = new ClassFinder(interceptorClass).findAnnotatedMethods(AroundInvoke.class);
+                if (StatelessContainer.class.getClassLoader() == interceptorClass.getClassLoader()) { // use cache only for server classes
+                    final List<Method> value = new CopyOnWriteArrayList<Method>(aroundInvokes);
+                    aroundInvokes = interceptorCache.putIfAbsent(interceptorClass, aroundInvokes); // ensure it to be thread safe
+                    if (aroundInvokes == null) {
+                        aroundInvokes = value;
+                    }
+                }
+            }
+
+            providerData.getAroundInvoke().addAll(aroundInvokes);
             interceptorDatas.add(0, providerData);
             interceptorDatas.addAll(beanContext.getMethodInterceptors(runMethod));
         }

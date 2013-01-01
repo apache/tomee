@@ -24,8 +24,10 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
 
 /**
  * Tomcat thread context listener.
@@ -48,24 +50,23 @@ public class TomcatThreadContextListener implements ThreadContextListener {
      * getThreadName method in class ContextBindings
      */
     protected Method method;
+    private Hashtable<Thread, Object> threadNameBindings;
 
     /**
      * Creates a new instance.
      */
     public TomcatThreadContextListener() {
         ContextBindings.bindContext(OPENEJB_CONTEXT, new OpenEJBContext());
-        boolean accessible = false;
         try {
             // someone decided to make the getThreadName package protected so we have to use reflection
             method = ContextBindings.class.getDeclaredMethod("getThreadName");
-//            accessible = method.isAccessible();
             method.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+
+            final Field threadNameBindingsField = ContextBindings.class.getDeclaredField("threadNameBindings");
+            threadNameBindingsField.setAccessible(true);
+            threadNameBindings = (Hashtable<Thread, Object>) threadNameBindingsField.get(null);
+        } catch (Exception e) {
             logger.error("Expected ContextBinding to have the method getThreadName()");
-//        } finally {
-//            if (!accessible) {
-//                method.setAccessible(accessible);
-//            }
         }
     }
 
@@ -78,13 +79,14 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             Data data = new Data(getThreadName());
             newContext.set(Data.class, data);
         } catch (NamingException ignored) {
+            // no-op
         }
 
         // set the new context
         try {
-            ContextBindings.bindThread(OPENEJB_CONTEXT);
+            ContextBindings.bindThread(OPENEJB_CONTEXT, null);
         } catch (NamingException e) {
-            ContextBindings.unbindContext(OPENEJB_CONTEXT);
+            ContextBindings.unbindContext(OPENEJB_CONTEXT, null);
             throw new IllegalArgumentException("Unable to bind OpenEJB enc");
         }
     }
@@ -94,13 +96,13 @@ public class TomcatThreadContextListener implements ThreadContextListener {
      */
     public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
         // unbind the new context
-        ContextBindings.unbindThread(OPENEJB_CONTEXT);
+        ContextBindings.unbindThread(OPENEJB_CONTEXT, null);
 
         // attempt to restore the old context
         Data data = exitedContext.get(Data.class);
         if (data != null && data.oldContextName != null) {
             try {
-                ContextBindings.bindThread(data.oldContextName);
+                ContextBindings.bindThread(data.oldContextName, null);
             } catch (NamingException e) {
                 logger.error("Exception in method contextExited", e);
             }
@@ -115,8 +117,14 @@ public class TomcatThreadContextListener implements ThreadContextListener {
      */
     private Object getThreadName() throws NamingException {
         try {
-            Object threadName = method.invoke(null);
-            return threadName;
+            return threadNameBindings.get(Thread.currentThread());
+        } catch (Exception e) {
+            // no-op: try the old implementation
+        }
+
+        // this implementation is probably better but slower
+        try {
+            return method.invoke(null);
 
         } catch (InvocationTargetException e) {
             // if it's a naming exception, it should be treated by the caller

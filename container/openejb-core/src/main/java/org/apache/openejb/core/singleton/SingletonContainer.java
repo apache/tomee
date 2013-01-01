@@ -34,8 +34,6 @@ import org.apache.openejb.core.webservices.NoAddressingSupport;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
@@ -46,10 +44,10 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.*;
@@ -62,6 +60,8 @@ public class SingletonContainer implements RpcContainer {
     private SingletonInstanceManager instanceManager;
 
     private HashMap<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
+
+    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
 
     private Object containerID = null;
     private SecurityService securityService;
@@ -331,19 +331,33 @@ public class SingletonContainer implements RpcContainer {
 
         if (interceptor == null) throw new IllegalArgumentException("Interceptor instance is null.");
 
+        final Class<?> interceptorClass = interceptor.getClass();
+
         //  Add the webservice interceptor to the list of interceptor instances
         Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
         {
-            interceptors.put(interceptor.getClass().getName(), interceptor);
+            interceptors.put(interceptorClass.getName(), interceptor);
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
         List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
         {
-            InterceptorData providerData = new InterceptorData(interceptor.getClass());
-            ClassFinder finder = new ClassFinder(interceptor.getClass());
-            providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
-            interceptorDatas.add(providerData);
+            final InterceptorData providerData = new InterceptorData(interceptorClass);
+
+            List<Method> aroundInvokes = interceptorCache.get(interceptorClass);
+            if (aroundInvokes == null) {
+                aroundInvokes = new ClassFinder(interceptorClass).findAnnotatedMethods(AroundInvoke.class);
+                if (SingletonContainer.class.getClassLoader() == interceptorClass.getClassLoader()) { // use cache only for server classes
+                    final List<Method> value = new CopyOnWriteArrayList<Method>(aroundInvokes);
+                    aroundInvokes = interceptorCache.putIfAbsent(interceptorClass, value); // ensure it to be thread safe
+                    if (aroundInvokes == null) {
+                        aroundInvokes = value;
+                    }
+                }
+            }
+
+            providerData.getAroundInvoke().addAll(aroundInvokes);
+            interceptorDatas.add(0, providerData);
             interceptorDatas.addAll(beanContext.getMethodInterceptors(runMethod));
         }
 
