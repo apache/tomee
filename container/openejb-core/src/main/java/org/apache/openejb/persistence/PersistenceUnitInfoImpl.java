@@ -327,6 +327,10 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     // not the shouldSkip() method from UrlClassLoaderFirst since we skip more here
     // we just need JPA stuff so all the tricks we have for the server part are useless
     public static boolean isServerClass(final String name) {
+        if (name == null) {
+            return false;
+        }
+
         for (String prefix : URLClassLoaderFirst.FORCED_SKIP) {
             if (name.startsWith(prefix)) {
                 return true;
@@ -369,6 +373,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
                 if (apache.startsWith("juli.")) return true;
                 if (apache.startsWith("webbeans.")) return true;
                 if (apache.startsWith("cxf.")) return true;
+                if (apache.startsWith("activemq.")) return true;
 
                 if (apache.startsWith("commons.")) {
                     final String commons = apache.substring("commons.".length());

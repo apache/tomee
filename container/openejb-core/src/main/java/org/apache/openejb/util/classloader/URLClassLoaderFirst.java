@@ -169,6 +169,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // /!\ please check org.apache.openejb.persistence.PersistenceUnitInfoImpl.isServerClass() too
     // when updating this method
     public static boolean shouldSkip(final String name) {
+        if (name == null) { // can happen with rest servlet definition or errors
+            return false;
+        }
+
         for (String prefix : FORCED_SKIP) {
             if (name.startsWith(prefix)) {
                 return true;

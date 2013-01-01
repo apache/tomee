@@ -71,7 +71,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private List<DeployedService> services = new ArrayList<DeployedService>();
     private String virtualHost;
     private boolean enabled = true;
-    private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*");
+    private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
         final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
