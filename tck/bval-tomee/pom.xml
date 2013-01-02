@@ -183,7 +183,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.12.4</version>
+        <version>2.13</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
