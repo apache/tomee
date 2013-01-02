@@ -124,7 +124,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.6</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -174,7 +174,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12</version>
+        <version>2.12.4</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -183,7 +183,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.12.4</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
@@ -205,7 +205,7 @@
             <connect.tries>90</connect.tries>
             <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
-            <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
+            <java.opts>-Xmx512m -Xss2048k -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
             <openejb.home>${openejb.home}</openejb.home>
           </systemPropertyVariables>
         </configuration>
@@ -229,7 +229,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.5</version>
+        <version>1.7</version>
         <executions>
           <execution>
             <id>remove-apps</id>
