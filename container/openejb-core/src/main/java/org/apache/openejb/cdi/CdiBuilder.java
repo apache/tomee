@@ -16,13 +16,9 @@
  */
 package org.apache.openejb.cdi;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -30,43 +26,40 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansFinder;
 
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$C
  */
 public class CdiBuilder {
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, CdiBuilder.class);
     private static final ThreadSingletonService SINGLETON_SERVICE = new ThreadSingletonServiceImpl();
 
     public CdiBuilder() {
     }
 
-    public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
+    public void build(final AppInfo appInfo, final AppContext appContext, final List<BeanContext> allDeployments) {
         initSingleton().initialize(new StartupObject(appContext, appInfo, allDeployments));
     }
 
     private ThreadSingletonService initSingleton() {
         ThreadContext.addThreadContextListener(new RequestScopedThreadContextListener());
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
-        logger.info("Existing thread singleton service in SystemInstance() " + singletonService);
+
         //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would
         //presumably have to be replicated in about 70 other tests.
         if (singletonService == null) {
             singletonService = initializeOWB(getClass().getClassLoader());
+        } else {
+            logger.info("Existing thread singleton service in SystemInstance(): " + singletonService);
         }
         return singletonService;
     }
 
-    public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments, WebContext webContext) {
-        ThreadSingletonService singletonService = initSingleton();
+    public void build(final AppInfo appInfo, final AppContext appContext, final List<BeanContext> allDeployments, final WebContext webContext) {
+        final ThreadSingletonService singletonService = initSingleton();
         singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments, webContext));
-    }
-
-    private boolean hasBeans(AppInfo appInfo) {
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            if (ejbJar.beans != null) return true;
-        }
-
-        return false;
     }
 
     public static ThreadSingletonService initializeOWB(final ClassLoader classLoader) {
