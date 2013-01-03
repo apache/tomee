@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.FilterInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.ListenerInfo;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -55,6 +56,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+import javax.ws.rs.core.Application;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -197,6 +199,31 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             // register servlets
             for (ServletInfo info : webAppInfo.servlets) {
+                if ("true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
+                    // skip jaxrs servlets
+                    boolean skip = false;
+                    for (ParamValueInfo pvi : info.initParams) {
+                        if ("javax.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
+                            skip = true;
+                        }
+                    }
+
+                    if (skip) {
+                        continue;
+                    }
+
+                    if (info.servletClass == null) {
+                        try {
+                            if (Application.class.isAssignableFrom(classLoader.loadClass(info.servletName))) {
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            // no-op
+                        }
+                    }
+                } // else let the user manage itself a rest servlet etc...
+
+                // deploy
                 for (String mapping : info.mappings) {
                     try {
                         addServletMethod.invoke(null, info.servletClass, webContext, mapping);

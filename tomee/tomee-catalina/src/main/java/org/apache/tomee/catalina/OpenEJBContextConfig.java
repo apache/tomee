@@ -16,13 +16,16 @@
  */
 package org.apache.tomee.catalina;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -40,6 +43,7 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 
 import javax.servlet.ServletContainerInitializer;
+import javax.ws.rs.core.Application;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +80,55 @@ public class OpenEJBContextConfig extends ContextConfig {
     public void configureStart() {
         super.configureStart();
         adjustDataSourceNameIfNecessary(); // doing it here to potentially factorize resource id resolution
+        cleanUpRestServlets();
+    }
+
+    private void cleanUpRestServlets() {
+        final WebAppInfo webAppInfo = info.get();
+        final AppInfo appInfo = info.app();
+        if (webAppInfo == null || appInfo == null || "false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
+            return;
+        }
+
+        final Container[] children = context.findChildren();
+        final Map<String, Container> mappedChildren = new HashMap<String, Container>();
+        if (children != null) {
+            // index potential rest containers by class to cleanup applications defined as servlet
+            for (Container c : children) {
+                if (!(c instanceof StandardWrapper)) {
+                    continue;
+                }
+
+                final StandardWrapper wrapper = (StandardWrapper) c;
+
+                String appSpec = wrapper.getInitParameter("javax.ws.rs.Application");
+                if (appSpec != null) {
+                    mappedChildren.put(appSpec, c);
+                } else {
+                    String app = wrapper.getInitParameter(Application.class.getName());
+                    if (app != null) {
+                        mappedChildren.put(app, c);
+                    } else if (wrapper.getServletClass() == null) {
+                        try {
+                            if (Application.class.isAssignableFrom(
+                                    context.getLoader().getClassLoader().loadClass(wrapper.getServletName()))) {
+                                context.removeChild(c); // remove directly since it is not in restApplications
+                            }
+                        } catch (Exception e) {
+                            // no-op
+                        }
+                    }
+                }
+            }
+
+            // cleanup
+            for (String clazz : webAppInfo.restApplications) {
+                final Container child = mappedChildren.get(clazz);
+                if (child != null) {
+                    context.removeChild(child);
+                }
+            }
+        }
     }
 
     @Override
