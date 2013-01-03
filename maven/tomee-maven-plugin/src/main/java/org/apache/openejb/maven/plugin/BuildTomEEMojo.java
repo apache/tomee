@@ -82,4 +82,9 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
     public String getCmd() {
         return null; // no need
     }
+
+    @Override
+    protected boolean getWaitTomEE() {
+        return false;
+    }
 }

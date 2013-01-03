@@ -26,9 +26,4 @@ public class RunTomEEMojo extends UpdatableTomEEMojo {
     public String getCmd() {
         return "start";
     }
-
-    @Override
-    protected boolean getNoShutdownHook() {
-        return false;
-    }
 }

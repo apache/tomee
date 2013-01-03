@@ -46,4 +46,9 @@ public class StopTomEEMojo extends AbstractTomEEMojo {
             getLog().error(e.getMessage(), e);
         }
     }
+
+    @Override
+    protected boolean getWaitTomEE() {
+        return false;
+    }
 }
