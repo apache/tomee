@@ -23,7 +23,6 @@ import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
@@ -93,7 +92,9 @@ public final class CxfUtil {
         if (properties != null) {
             svrFactory.setProperties(PropertiesHelper.map(properties));
         }
-        if (SystemInstance.get().getOptions().get(prefix + DEBUG, false)) {
+
+        final String debugKey = prefix + DEBUG;
+        if ("true".equalsIgnoreCase(beanConfig.getProperty(debugKey, SystemInstance.get().getOptions().get(debugKey, "false")))) {
             svrFactory.getProperties(true).put("faultStackTraceEnabled", "true");
         }
 
