@@ -1826,7 +1826,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     servletClass = realClassName(servlet.getServletName());
                 }
 
-                if (servletClass != null) {
+                if (servletClass != null && servlet.getJspFile() == null) { // jaxrs application doesn't have a jsp file
                     if (!"org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass)) {
                         try {
                             Class clazz = classLoader.loadClass(servletClass);
