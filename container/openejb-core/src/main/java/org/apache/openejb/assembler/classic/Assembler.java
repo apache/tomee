@@ -808,10 +808,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            logger.info("createApplication.success", appInfo.path);
 
             deployedApplications.put(appInfo.path, appInfo);
             systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo));
+
+            logger.info("createApplication.success", appInfo.path);
 
             return appContext;
         } catch (ValidationException ve) {
