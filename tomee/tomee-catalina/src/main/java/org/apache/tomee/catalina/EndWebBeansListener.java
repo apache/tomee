@@ -21,12 +21,10 @@ import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.InjectionPointBean;
-import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.FailOverService;
-import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.web.context.WebContextsService;
 
 import javax.enterprise.context.RequestScoped;
