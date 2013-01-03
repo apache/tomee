@@ -134,18 +134,22 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString().trim();
-            if (!value.isEmpty() && !converted.containsKey(key)) {
-                if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
-                    String interceptors = properties.getProperty("jdbcInterceptors");
-                    if (interceptors == null || !interceptors.contains("StatementCache")) {
-                        converted.setProperty("jdbcInterceptors",
-                                "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
-                        LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
+            if (!converted.containsKey(key)) {
+                if (!value.isEmpty()) {
+                    if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
+                        String interceptors = properties.getProperty("jdbcInterceptors");
+                        if (interceptors == null || !interceptors.contains("StatementCache")) {
+                            converted.setProperty("jdbcInterceptors",
+                                    "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
+                            LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                converted.put(Strings.lcfirst(key), value);
+                    converted.put(Strings.lcfirst(key), value);
+                } else if (key.toLowerCase().equals("username") || key.toLowerCase().equals("password")) { // avoid NPE
+                    converted.put(Strings.lcfirst(key), "");
+                }
             }
         }
 
