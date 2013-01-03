@@ -86,8 +86,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
 
-
+@SuppressWarnings("unchecked")
 public class BeanContext extends DeploymentContext {
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
 
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
@@ -100,25 +101,31 @@ public class BeanContext extends DeploymentContext {
     }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
+
         Object create();
     }
 
     public interface BusinessLocalBeanHome extends javax.ejb.EJBLocalHome {
+
         Object create();
     }
 
     public interface BusinessRemoteHome extends javax.ejb.EJBHome {
+
         Object create();
     }
 
     public interface Removable {
+
         void $$remove();
     }
 
     public interface ServiceEndpoint {
+
     }
 
     public interface Timeout {
+
     }
 
     /**
@@ -127,7 +134,8 @@ public class BeanContext extends DeploymentContext {
      * for components with undefined namespace such as CDI
      */
     public static class Comp {
-        public static String openejbCompName(String module) {
+
+        public static String openejbCompName(final String module) {
             return module + "." + Comp.class.getSimpleName();
         }
     }
@@ -189,8 +197,7 @@ public class BeanContext extends DeploymentContext {
      */
     private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method, Boolean>();
 
-
-    public Class getInterface(InterfaceType interfaceType) {
+    public Class getInterface(final InterfaceType interfaceType) {
         switch (interfaceType) {
             case EJB_HOME:
                 return getHomeInterface();
@@ -221,27 +228,32 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    public List<Class> getInterfaces(InterfaceType interfaceType) {
+    public List<Class> getInterfaces(final InterfaceType interfaceType) {
         switch (interfaceType) {
             case BUSINESS_REMOTE:
                 return getBusinessRemoteInterfaces();
             case BUSINESS_LOCAL:
                 return getBusinessLocalInterfaces();
             default:
-                List<Class> interfaces = new ArrayList<Class>();
+                final List<Class> interfaces = new ArrayList<Class>();
                 interfaces.add(getInterface(interfaceType));
                 return interfaces;
         }
     }
 
-    public InterfaceType getInterfaceType(Class clazz) {
-        InterfaceType type = interfaces.get(clazz);
-        if (type != null) return type;
+    public InterfaceType getInterfaceType(final Class clazz) {
+        final InterfaceType type = interfaces.get(clazz);
+        if (type != null)
+            return type;
 
-        if (javax.ejb.EJBLocalHome.class.isAssignableFrom(clazz)) return InterfaceType.EJB_LOCAL_HOME;
-        if (javax.ejb.EJBLocalObject.class.isAssignableFrom(clazz)) return InterfaceType.EJB_LOCAL;
-        if (javax.ejb.EJBHome.class.isAssignableFrom(clazz)) return InterfaceType.EJB_HOME;
-        if (javax.ejb.EJBObject.class.isAssignableFrom(clazz)) return InterfaceType.EJB_OBJECT;
+        if (javax.ejb.EJBLocalHome.class.isAssignableFrom(clazz))
+            return InterfaceType.EJB_LOCAL_HOME;
+        if (javax.ejb.EJBLocalObject.class.isAssignableFrom(clazz))
+            return InterfaceType.EJB_LOCAL;
+        if (javax.ejb.EJBHome.class.isAssignableFrom(clazz))
+            return InterfaceType.EJB_HOME;
+        if (javax.ejb.EJBObject.class.isAssignableFrom(clazz))
+            return InterfaceType.EJB_OBJECT;
 
         return null;
     }
@@ -249,7 +261,7 @@ public class BeanContext extends DeploymentContext {
     /**
      * load default interceptors configured in properties.
      */
-    private BeanContext(String id, Context jndiContext, ModuleContext moduleContext, BeanType componentType, boolean localBean, final Class beanClass) {
+    private BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final BeanType componentType, final boolean localBean, final Class beanClass) {
         super(id, moduleContext.getOptions());
 
         if (beanClass == null) {
@@ -257,20 +269,20 @@ public class BeanContext extends DeploymentContext {
         }
 
         this.moduleContext = moduleContext;
-        this.jndiContext = (Context) Proxy.newProxyInstance(BeanContext.class.getClassLoader(), new Class[]{ Context.class }, new ContextHandler(jndiContext));
+        this.jndiContext = (Context) Proxy.newProxyInstance(BeanContext.class.getClassLoader(), new Class[]{Context.class}, new ContextHandler(jndiContext));
         this.localbean = localBean;
         this.componentType = componentType;
         this.beanClass = beanClass;
 
-        String interceptors = SystemInstance.get().getProperties().getProperty(USER_INTERCEPTOR_KEY);
+        final String interceptors = SystemInstance.get().getProperties().getProperty(USER_INTERCEPTOR_KEY);
         if (interceptors != null) {
-            String[] interceptorArray = interceptors.split(USER_INTERCEPTOR_SEPARATOR);
-            ClassLoader classLoader = moduleContext.getClassLoader();
-            for (String interceptor : interceptorArray) {
+            final String[] interceptorArray = interceptors.split(USER_INTERCEPTOR_SEPARATOR);
+            final ClassLoader classLoader = moduleContext.getClassLoader();
+            for (final String interceptor : interceptorArray) {
                 if (interceptor != null && !interceptor.isEmpty()) {
-                    Object interceptorObject;
+                    final Object interceptorObject;
                     try {
-                        Class<?> clazz = classLoader.loadClass(interceptor);
+                        final Class<?> clazz = classLoader.loadClass(interceptor);
                         interceptorObject = clazz.newInstance();
                     } catch (Exception e) {
                         logger.warning("interceptor " + interceptor + " not found, are you sure the container can load it?");
@@ -282,24 +294,27 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    public BeanContext(String id, Context jndiContext, ModuleContext moduleContext,
-                       Class beanClass, Class homeInterface,
-                       Class remoteInterface,
-                       Class localHomeInterface,
-                       Class localInterface,
-                       Class proxy,
-                       Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
-                       BeanType componentType,
-                       boolean localBean) throws SystemException {
+    public BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext,
+                       final Class beanClass, final Class homeInterface,
+                       final Class remoteInterface,
+                       final Class localHomeInterface,
+                       final Class localInterface,
+                       final Class proxy,
+                       final Class serviceEndpointInterface, final List<Class> businessLocals, final List<Class> businessRemotes, final Class pkClass,
+                       final BeanType componentType,
+                       final boolean localBean) throws SystemException {
         this(id, jndiContext, moduleContext, componentType, localBean, beanClass);
-
 
         this.proxyClass = proxy;
 
-        if (homeInterface != null) this.getLegacyView().homeInterface = homeInterface;
-        if (localInterface != null) this.getLegacyView().localInterface = localInterface;
-        if (localHomeInterface != null) this.getLegacyView().localHomeInterface = localHomeInterface;
-        if (remoteInterface != null) this.getLegacyView().remoteInterface = remoteInterface;
+        if (homeInterface != null)
+            this.getLegacyView().homeInterface = homeInterface;
+        if (localInterface != null)
+            this.getLegacyView().localInterface = localInterface;
+        if (localHomeInterface != null)
+            this.getLegacyView().localHomeInterface = localHomeInterface;
+        if (remoteInterface != null)
+            this.getLegacyView().remoteInterface = remoteInterface;
 
         if (businessLocals != null) {
             this.businessLocals.addAll(businessLocals);
@@ -314,13 +329,13 @@ public class BeanContext extends DeploymentContext {
 
         this.serviceEndpointInterface = serviceEndpointInterface;
 
-//        if (businessLocal != null && localHomeInterface == null){
-//            this.localHomeInterface = BusinessLocalHome.class;
-//        }
-//
-//        if (businessRemote != null && homeInterface == null){
-//            this.homeInterface = BusinessRemoteHome.class;
-//        }
+        //        if (businessLocal != null && localHomeInterface == null){
+        //            this.localHomeInterface = BusinessLocalHome.class;
+        //        }
+        //
+        //        if (businessRemote != null && homeInterface == null){
+        //            this.homeInterface = BusinessRemoteHome.class;
+        //        }
 
         // createMethodMap();
 
@@ -347,12 +362,12 @@ public class BeanContext extends DeploymentContext {
         addInterface(getLocalInterface(), InterfaceType.EJB_LOCAL);
 
         addInterface(BeanContext.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
-        for (Class businessRemote : this.businessRemotes) {
+        for (final Class businessRemote : this.businessRemotes) {
             addInterface(businessRemote, InterfaceType.BUSINESS_REMOTE);
         }
 
         addInterface(BeanContext.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
-        for (Class businessLocal : this.businessLocals) {
+        for (final Class businessLocal : this.businessLocals) {
             addInterface(businessLocal, InterfaceType.BUSINESS_LOCAL);
         }
         if (localBean) {
@@ -401,19 +416,20 @@ public class BeanContext extends DeploymentContext {
      * DMB: This is a not so reliable way to determine the proxy type
      * The proxy type really should come with the call in the invoke.
      *
-     * @param interfce
-     * @param type
+     * @param interfce Class
+     * @param type     InterfaceType
      */
-    private void addInterface(Class interfce, InterfaceType type) {
-        if (interfce == null) return;
+    private void addInterface(final Class interfce, final InterfaceType type) {
+        if (interfce == null)
+            return;
         interfaces.put(interfce, type);
 
-        for (Class clazz : interfce.getInterfaces()) {
+        for (final Class clazz : interfce.getInterfaces()) {
             addInterface(clazz, type);
         }
     }
 
-    public void addApplicationException(Class exception, boolean rollback, boolean inherited) {
+    public void addApplicationException(final Class exception, final boolean rollback, final boolean inherited) {
         if (inherited) {
             if (rollback) {
                 exceptions.put(exception, ExceptionType.APPLICATION_ROLLBACK);
@@ -429,7 +445,7 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    public ExceptionType getExceptionType(Throwable e) {
+    public ExceptionType getExceptionType(final Throwable e) {
         // Errors are always system exceptions
         if (!(e instanceof Exception)) {
             return ExceptionType.SYSTEM;
@@ -439,7 +455,7 @@ public class BeanContext extends DeploymentContext {
         Class<?> exceptionClass = e.getClass();
         boolean inherited = false;
         while (exceptionClass != Object.class) {
-            ExceptionType type = exceptions.get(exceptionClass);
+            final ExceptionType type = exceptions.get(exceptionClass);
             if (type == ExceptionType.APPLICATION || type == ExceptionType.APPLICATION_ROLLBACK) {
                 return type;
             }
@@ -464,7 +480,7 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    public BeanContext(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
+    public BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final Class beanClass, final Class mdbInterface, final Map<String, String> activationProperties) throws SystemException {
         this(id, jndiContext, moduleContext, BeanType.MESSAGE_DRIVEN, false, beanClass);
 
         this.getMdb().mdbInterface = mdbInterface;
@@ -485,7 +501,7 @@ public class BeanContext extends DeploymentContext {
 
     private void initDefaultLock() {
 
-        if(!BeanType.SINGLETON.equals(this.componentType)){
+        if (!BeanType.SINGLETON.equals(this.componentType)) {
             return;
         }
 
@@ -524,12 +540,11 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-
     public Object getContainerData() {
         return containerData;
     }
 
-    public void setContainerData(Object containerData) {
+    public void setContainerData(final Object containerData) {
         this.containerData = containerData;
     }
 
@@ -549,7 +564,7 @@ public class BeanContext extends DeploymentContext {
         return destroyed;
     }
 
-    public void setDestroyed(boolean destroyed) {
+    public void setDestroyed(final boolean destroyed) {
         this.destroyed = destroyed;
     }
 
@@ -561,11 +576,11 @@ public class BeanContext extends DeploymentContext {
         return getStateful().extendedEntityManagerFactories;
     }
 
-    public void setExtendedEntityManagerFactories(Index<EntityManagerFactory, Map> extendedEntityManagerFactories) {
+    public void setExtendedEntityManagerFactories(final Index<EntityManagerFactory, Map> extendedEntityManagerFactories) {
         this.getStateful().extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
-    public void setContainer(Container container) {
+    public void setContainer(final Container container) {
         this.container = container;
     }
 
@@ -573,7 +588,7 @@ public class BeanContext extends DeploymentContext {
         return componentType;
     }
 
-    public LockType getConcurrencyAttribute(Method beanMethod) {
+    public LockType getConcurrencyAttribute(final Method beanMethod) {
         return getMethodContext(beanMethod).getLockType();
     }
 
@@ -581,11 +596,11 @@ public class BeanContext extends DeploymentContext {
         return this.getSingleton().lockType;
     }
 
-    public TransactionType getTransactionType(Method method) {
+    public TransactionType getTransactionType(final Method method) {
         return getTransactionType(method, null);
     }
 
-    public TransactionType getTransactionType(Method method, InterfaceType interfaceType) {
+    public TransactionType getTransactionType(final Method method, final InterfaceType interfaceType) {
 
         MethodContext methodContext = null;
 
@@ -593,7 +608,8 @@ public class BeanContext extends DeploymentContext {
             methodContext = getViewMethodContext(method, interfaceType.getSpecName());
         }
 
-        if (methodContext == null) methodContext = methodContextMap.get(method);
+        if (methodContext == null)
+            methodContext = methodContextMap.get(method);
 
         if (methodContext == null) {
             final Method beanMethod = getMatchingBeanMethod(method);
@@ -602,37 +618,37 @@ public class BeanContext extends DeploymentContext {
 
         return methodContext.getTransactionType();
 
-//
-//        // Check the cache
-//        TransactionType type = methodTransactionType.get(method);
-//        if (type != null) {
-//            return type;
-//        }
-//
-//        // Bean managed EJBs always get the BeanManaged policy
-//        if (isBeanManagedTransaction) {
-//            return TransactionType.BeanManaged;
-//        }
-//
-//        // Check the matching bean method for the supplied method
-//        Method beanMethod = getMatchingBeanMethod(method);
-//        if (beanMethod != null){
-//            type = methodTransactionType.get(beanMethod);
-//            if (type != null) {
-//                return type;
-//            }
-//        }
-//
-//        // All transaction attributes should have been set during deployment, so log a message
-//        Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-//        log.debug("The following method doesn't have a transaction policy assigned: " + method);
-//
-//        // default transaction policy is required
-//        type = getTransactionType();
-//
-//        // cache this default to avoid extra log messages
-//        methodTransactionType.put(method, type);
-//        return type;
+        //
+        //        // Check the cache
+        //        TransactionType type = methodTransactionType.get(method);
+        //        if (type != null) {
+        //            return type;
+        //        }
+        //
+        //        // Bean managed EJBs always get the BeanManaged policy
+        //        if (isBeanManagedTransaction) {
+        //            return TransactionType.BeanManaged;
+        //        }
+        //
+        //        // Check the matching bean method for the supplied method
+        //        Method beanMethod = getMatchingBeanMethod(method);
+        //        if (beanMethod != null){
+        //            type = methodTransactionType.get(beanMethod);
+        //            if (type != null) {
+        //                return type;
+        //            }
+        //        }
+        //
+        //        // All transaction attributes should have been set during deployment, so log a message
+        //        Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+        //        log.debug("The following method doesn't have a transaction policy assigned: " + method);
+        //
+        //        // default transaction policy is required
+        //        type = getTransactionType();
+        //
+        //        // cache this default to avoid extra log messages
+        //        methodTransactionType.put(method, type);
+        //        return type;
     }
 
     public TransactionType getTransactionType() {
@@ -643,7 +659,7 @@ public class BeanContext extends DeploymentContext {
         return transactionPolicyFactory;
     }
 
-    public void setTransactionPolicyFactory(TransactionPolicyFactory transactionPolicyFactory) {
+    public void setTransactionPolicyFactory(final TransactionPolicyFactory transactionPolicyFactory) {
         this.transactionPolicyFactory = transactionPolicyFactory;
     }
 
@@ -700,7 +716,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getMdbInterface() {
-        return (mdb == null)? null: getMdb().mdbInterface;
+        return (mdb == null) ? null : getMdb().mdbInterface;
     }
 
     public Class getServiceEndpointInterface() {
@@ -725,7 +741,6 @@ public class BeanContext extends DeploymentContext {
         return getLegacyView().ejbHomeRef;
     }
 
-
     public EJBLocalHome getEJBLocalHome() {
         if (getLocalHomeInterface() == null) {
             throw new IllegalStateException("This component has no local home interface: " + getDeploymentID());
@@ -742,26 +757,26 @@ public class BeanContext extends DeploymentContext {
     }
 
     public BusinessLocalBeanHome getBusinessLocalBeanHome() {
-        List<Class> interfaces = new ArrayList<Class>();
+        final List<Class> interfaces = new ArrayList<Class>();
         interfaces.add(this.beanClass);
         return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces, this.beanClass);
     }
 
-    public BusinessLocalHome getBusinessLocalHome(Class mainInterface) {
-        List<Class> localInterfaces = this.getBusinessLocalInterfaces();
+    public BusinessLocalHome getBusinessLocalHome(final Class mainInterface) {
+        final List<Class> localInterfaces = this.getBusinessLocalInterfaces();
 
-        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, localInterfaces);
+        final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, localInterfaces);
         return this.getBusinessLocalHome(interfaces, mainInterface);
     }
 
-    public BusinessLocalHome getBusinessLocalHome(List<Class> interfaces, Class mainInterface) {
+    public BusinessLocalHome getBusinessLocalHome(final List<Class> interfaces, final Class mainInterface) {
         if (getBusinessLocalInterfaces().size() == 0) {
             throw new IllegalStateException("This component has no business local interfaces: " + getDeploymentID());
         }
         if (interfaces.size() == 0) {
             throw new IllegalArgumentException("No interface classes were specified");
         }
-        for (Class clazz : interfaces) {
+        for (final Class clazz : interfaces) {
             if (!getBusinessLocalInterfaces().contains(clazz)) {
                 throw new IllegalArgumentException("Not a business interface of this bean:" + clazz.getName());
             }
@@ -775,21 +790,21 @@ public class BeanContext extends DeploymentContext {
         return getBusinessRemoteHome(getBusinessRemoteInterfaces(), null);
     }
 
-    public BusinessRemoteHome getBusinessRemoteHome(Class mainInterface) {
-        List<Class> remoteInterfaces = this.getBusinessRemoteInterfaces();
+    public BusinessRemoteHome getBusinessRemoteHome(final Class mainInterface) {
+        final List<Class> remoteInterfaces = this.getBusinessRemoteInterfaces();
 
-        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, remoteInterfaces);
+        final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, remoteInterfaces);
         return this.getBusinessRemoteHome(interfaces, mainInterface);
     }
 
-    public BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces, Class mainInterface) {
+    public BusinessRemoteHome getBusinessRemoteHome(final List<Class> interfaces, final Class mainInterface) {
         if (getBusinessRemoteInterfaces().size() == 0) {
             throw new IllegalStateException("This component has no business remote interfaces: " + getDeploymentID());
         }
         if (interfaces.size() == 0) {
             throw new IllegalArgumentException("No interface classes were specified");
         }
-        for (Class clazz : interfaces) {
+        for (final Class clazz : interfaces) {
             if (!getBusinessRemoteInterfaces().contains(clazz)) {
                 throw new IllegalArgumentException("Not a business interface of this bean:" + clazz.getName());
             }
@@ -802,15 +817,15 @@ public class BeanContext extends DeploymentContext {
         return getMdb().destinationId;
     }
 
-    public void setDestinationId(String destinationId) {
+    public void setDestinationId(final String destinationId) {
         this.getMdb().destinationId = destinationId;
     }
 
-    public void setBeanManagedTransaction(boolean value) {
+    public void setBeanManagedTransaction(final boolean value) {
         isBeanManagedTransaction = value;
     }
 
-    public void setBeanManagedConcurrency(boolean beanManagedConcurrency) {
+    public void setBeanManagedConcurrency(final boolean beanManagedConcurrency) {
         isBeanManagedConcurrency = beanManagedConcurrency;
     }
 
@@ -822,16 +837,16 @@ public class BeanContext extends DeploymentContext {
         return getCmp().isReentrant;
     }
 
-    public void setIsReentrant(boolean reentrant) {
+    public void setIsReentrant(final boolean reentrant) {
         getCmp().isReentrant = reentrant;
     }
 
-    public Method getMatchingBeanMethod(Method interfaceMethod) {
-        Method method = methodMap.get(interfaceMethod);
+    public Method getMatchingBeanMethod(final Method interfaceMethod) {
+        final Method method = methodMap.get(interfaceMethod);
         return (method == null) ? interfaceMethod : method;
     }
 
-    public MethodContext getMethodContext(Method method) {
+    public MethodContext getMethodContext(final Method method) {
         MethodContext methodContext = methodContextMap.get(method);
         if (methodContext == null) {
             methodContext = new MethodContext(this, method);
@@ -846,24 +861,23 @@ public class BeanContext extends DeploymentContext {
         return methodContextMap.entrySet().iterator();
     }
 
-    public void setMethodConcurrencyAttribute(Method method, LockType concurrencyAttribute) {
+    public void setMethodConcurrencyAttribute(final Method method, final LockType concurrencyAttribute) {
         getMethodContext(method).setLockType(concurrencyAttribute);
     }
-
 
     /**
      * TODO: Move to MethodContext
      */
-    public void setMethodTransactionAttribute(Method method, TransactionType transactionType) throws OpenEJBException {
+    public void setMethodTransactionAttribute(final Method method, final TransactionType transactionType) throws OpenEJBException {
         setMethodTransactionAttribute(method, transactionType, null);
     }
 
     /**
      * TODO: Move to MethodContext
      */
-    public void setMethodTransactionAttribute(Method method, TransactionType transactionType, String view) throws OpenEJBException {
+    public void setMethodTransactionAttribute(final Method method, final TransactionType transactionType, final String view) throws OpenEJBException {
 
-//        method = getMatchingBeanMethod(method);
+        //        method = getMatchingBeanMethod(method);
 
         if (view == null) {
             getMethodContext(method).setTransactionType(transactionType);
@@ -871,23 +885,23 @@ public class BeanContext extends DeploymentContext {
             initViewMethodContext(method, view).setTransactionType(transactionType);
         }
 
-//        // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
-//        // bean message listener methods. The use of the other transaction attributes is not meaningful
-//        // for message-driven bean message listener methods because there is no pre-existing client transaction
-//        // context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
-//        if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
-//            if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
-//
-//                if ((method.equals(this.ejbTimeout) || methodContextMap.get(method).isAsynchronous()) && transactionType == TransactionType.RequiresNew) {
-//                    // do nothing. This is allowed as the timer callback method for a message driven bean
-//                    // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
-//                } else {
-//                    throw new OpenEJBException("The transaction attribute " + transactionType + " is not supported for the method "
-//                                               + method.getName() + " of the Message Driven Bean " + beanClass.getName());
-//                }
-//            }
-//        }
-//        methodTransactionType.put(method, transactionType);
+        //        // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
+        //        // bean message listener methods. The use of the other transaction attributes is not meaningful
+        //        // for message-driven bean message listener methods because there is no pre-existing client transaction
+        //        // context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
+        //        if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
+        //            if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
+        //
+        //                if ((method.equals(this.ejbTimeout) || methodContextMap.get(method).isAsynchronous()) && transactionType == TransactionType.RequiresNew) {
+        //                    // do nothing. This is allowed as the timer callback method for a message driven bean
+        //                    // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
+        //                } else {
+        //                    throw new OpenEJBException("The transaction attribute " + transactionType + " is not supported for the method "
+        //                                               + method.getName() + " of the Message Driven Bean " + beanClass.getName());
+        //                }
+        //            }
+        //        }
+        //        methodTransactionType.put(method, transactionType);
     }
 
     public List<Method> getRemoveMethods() {
@@ -897,7 +911,7 @@ public class BeanContext extends DeploymentContext {
     /**
      * TODO: Move to MethodContext
      */
-    public void setRetainIfExeption(Method removeMethod, boolean retain) {
+    public void setRetainIfExeption(final Method removeMethod, final boolean retain) {
         if (getRemoveMethods().contains(removeMethod)) {
             removeExceptionPolicy.put(removeMethod, retain);
         }
@@ -906,8 +920,8 @@ public class BeanContext extends DeploymentContext {
     /**
      * TODO: Move to MethodContext
      */
-    public boolean retainIfExeption(Method removeMethod) {
-        Boolean retain = removeExceptionPolicy.get(removeMethod);
+    public boolean retainIfExeption(final Method removeMethod) {
+        final Boolean retain = removeExceptionPolicy.get(removeMethod);
         return retain != null && retain;
     }
 
@@ -928,20 +942,20 @@ public class BeanContext extends DeploymentContext {
         return instanceScopedInterceptors;
     }
 
-    public void addSystemInterceptor(Object interceptor) {
+    public void addSystemInterceptor(final Object interceptor) {
         systemInterceptors.add(new InterceptorInstance(interceptor));
     }
 
-    public void addFirstSystemInterceptor(Object interceptor) {
+    public void addFirstSystemInterceptor(final Object interceptor) {
         systemInterceptors.add(0, new InterceptorInstance(interceptor));
     }
 
-    public void addUserInterceptor(Object interceptor) {
+    public void addUserInterceptor(final Object interceptor) {
         userInterceptors.add(new InterceptorInstance(interceptor));
     }
 
     public List<InterceptorInstance> getUserAndSystemInterceptors() {
-        List<InterceptorInstance> interceptors = new ArrayList<InterceptorInstance>(systemInterceptors);
+        final List<InterceptorInstance> interceptors = new ArrayList<InterceptorInstance>(systemInterceptors);
         interceptors.addAll(userInterceptors);
         return interceptors;
     }
@@ -949,13 +963,13 @@ public class BeanContext extends DeploymentContext {
     private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
 
     public List<InterceptorData> getCallbackInterceptors() {
-        List<InterceptorData> datas = getInterceptorData();
+        final List<InterceptorData> datas = getInterceptorData();
         datas.addAll(callbackInterceptors);
         datas.addAll(cdiInterceptors);
         return datas;
     }
 
-    public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
+    public void setCallbackInterceptors(final List<InterceptorData> callbackInterceptors) {
         //TODO shouldn't we remove the old callbackInterceptors from instanceScopedInterceptors before adding the new ones?
         this.callbackInterceptors.clear();
         this.callbackInterceptors.addAll(callbackInterceptors);
@@ -966,19 +980,19 @@ public class BeanContext extends DeploymentContext {
         return new ArrayList<InterceptorData>(cdiInterceptors);
     }
 
-    public void setCdiInterceptors(List<InterceptorData> cdiInterceptors) {
+    public void setCdiInterceptors(final List<InterceptorData> cdiInterceptors) {
         this.cdiInterceptors.clear();
         this.cdiInterceptors.addAll(cdiInterceptors);
         this.instanceScopedInterceptors.addAll(cdiInterceptors);
     }
 
-    public List<InterceptorData> getMethodInterceptors(Method method) {
+    public List<InterceptorData> getMethodInterceptors(final Method method) {
         return getMethodContext(method).getInterceptors();
     }
 
     public List<InterceptorData> getInterceptorData() {
-        List<InterceptorData> datas = new ArrayList<InterceptorData>();
-        for (InterceptorInstance instance : getUserAndSystemInterceptors()) {
+        final List<InterceptorData> datas = new ArrayList<InterceptorData>();
+        for (final InterceptorInstance instance : getUserAndSystemInterceptors()) {
             datas.add(instance.getData());
         }
         return datas;
@@ -989,7 +1003,7 @@ public class BeanContext extends DeploymentContext {
         instanceScopedInterceptors.add(interceptor);
     }
 
-    public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
+    public void setMethodInterceptors(final Method method, final List<InterceptorData> interceptors) {
         getMethodContext(method).setInterceptors(interceptors);
         this.instanceScopedInterceptors.addAll(interceptors);
     }
@@ -1011,11 +1025,11 @@ public class BeanContext extends DeploymentContext {
             mapObjectInterface(serviceEndpointInterface);
         }
 
-        for (Class businessLocal : businessLocals) {
+        for (final Class businessLocal : businessLocals) {
             mapObjectInterface(businessLocal);
         }
 
-        for (Class businessRemote : businessRemotes) {
+        for (final Class businessRemote : businessRemotes) {
             mapObjectInterface(businessRemote);
         }
 
@@ -1035,7 +1049,7 @@ public class BeanContext extends DeploymentContext {
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
                     beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
                 } else {
-                    for (Method method : getRemoveMethods()) {
+                    for (final Method method : getRemoveMethods()) {
                         if (method.getParameterTypes().length == 0) {
                             beanMethod = method;
                             break;
@@ -1055,7 +1069,7 @@ public class BeanContext extends DeploymentContext {
                 clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
-                Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
+                final Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
                 Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
                 mapMethods(clientMethod, beanMethod);
                 clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
@@ -1074,10 +1088,10 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    private void mapHomeInterface(Class intrface) {
-        Method[] homeMethods = intrface.getMethods();
-        for (Method method : homeMethods) {
-            Class owner = method.getDeclaringClass();
+    private void mapHomeInterface(final Class intrface) {
+        final Method[] homeMethods = intrface.getMethods();
+        for (final Method method : homeMethods) {
+            final Class owner = method.getDeclaringClass();
             if (owner == EJBHome.class || owner == EJBLocalHome.class) {
                 continue;
             }
@@ -1085,7 +1099,7 @@ public class BeanContext extends DeploymentContext {
             try {
                 Method beanMethod = null;
                 if (method.getName().startsWith("create")) {
-                    StringBuilder ejbCreateName = new StringBuilder(method.getName());
+                    final StringBuilder ejbCreateName = new StringBuilder(method.getName());
                     ejbCreateName.replace(0, 1, "ejbC");
                     beanMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                     getLegacyView().createMethod = beanMethod;
@@ -1096,8 +1110,9 @@ public class BeanContext extends DeploymentContext {
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
                         ejbCreateName.insert(3, "Post");
                         Class clazz = beanClass;
-                        if (getCmp().cmpImplClass != null) clazz = getCmp().cmpImplClass;
-                        Method postCreateMethod = clazz.getMethod(ejbCreateName.toString(), method.getParameterTypes());
+                        if (getCmp().cmpImplClass != null)
+                            clazz = getCmp().cmpImplClass;
+                        final Method postCreateMethod = clazz.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                         getCmp().postCreateMethodMap.put(getLegacyView().createMethod, postCreateMethod);
                     }
                     /*
@@ -1108,39 +1123,39 @@ public class BeanContext extends DeploymentContext {
                 } else if (method.getName().startsWith("find")) {
                     if (this.componentType == BeanType.BMP_ENTITY) {
 
-                        String beanMethodName = "ejbF" + method.getName().substring(1);
+                        final String beanMethodName = "ejbF" + method.getName().substring(1);
                         beanMethod = beanClass.getMethod(beanMethodName, method.getParameterTypes());
                     }
                 } else {
-                    String beanMethodName = "ejbHome" + method.getName().substring(0, 1).toUpperCase() + method.getName().substring(1);
+                    final String beanMethodName = "ejbHome" + method.getName().substring(0, 1).toUpperCase() + method.getName().substring(1);
                     beanMethod = beanClass.getMethod(beanMethodName, method.getParameterTypes());
                 }
                 if (beanMethod != null) {
                     mapMethods(method, beanMethod);
                 }
             } catch (NoSuchMethodException nsme) {
-//                throw new OpenEJBRuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
+                //                throw new OpenEJBRuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
             }
         }
     }
 
-    public void mapMethods(Method interfaceMethod, Method beanMethod) {
+    public void mapMethods(final Method interfaceMethod, final Method beanMethod) {
         methodMap.put(interfaceMethod, beanMethod);
     }
 
-    private void mapObjectInterface(Class intrface) {
+    private void mapObjectInterface(final Class intrface) {
         if (intrface == BusinessLocalHome.class || intrface == BusinessRemoteHome.class || intrface == ServiceEndpoint.class) {
             return;
         }
 
-        Method[] interfaceMethods = intrface.getMethods();
-        for (Method method : interfaceMethods) {
-            Class declaringClass = method.getDeclaringClass();
+        final Method[] interfaceMethods = intrface.getMethods();
+        for (final Method method : interfaceMethods) {
+            final Class declaringClass = method.getDeclaringClass();
             if (declaringClass == EJBObject.class || declaringClass == EJBLocalObject.class) {
                 continue;
             }
             try {
-                Method beanMethod = beanClass.getMethod(method.getName(), method.getParameterTypes());
+                final Method beanMethod = beanClass.getMethod(method.getName(), method.getParameterTypes());
                 mapMethods(method, beanMethod);
             } catch (NoSuchMethodException nsme) {
                 throw new OpenEJBRuntimeException("Invalid method [" + method + "]. Not declared by " + beanClass.getName() + " class");
@@ -1148,17 +1163,17 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    public List<Class> getObjectInterface(Class homeInterface) {
+    public List<Class> getObjectInterface(final Class homeInterface) {
         if (BusinessLocalHome.class.isAssignableFrom(homeInterface)) {
             return getBusinessLocalInterfaces();
         } else if (BusinessRemoteHome.class.isAssignableFrom(homeInterface)) {
             return getBusinessRemoteInterfaces();
         } else if (EJBLocalHome.class.isAssignableFrom(homeInterface)) {
-            List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<Class>();
             classes.add(getLocalInterface());
             return classes;
         } else if (EJBHome.class.isAssignableFrom(homeInterface)) {
-            List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<Class>();
             classes.add(getRemoteInterface());
             return classes;
         } else {
@@ -1170,20 +1185,20 @@ public class BeanContext extends DeploymentContext {
         return getLegacyView().createMethod;
     }
 
-    public Method getMatchingPostCreateMethod(Method createMethod) {
+    public Method getMatchingPostCreateMethod(final Method createMethod) {
         return this.getCmp().postCreateMethodMap.get(createMethod);
     }
 
-    public boolean isAsynchronous(Method method) {
-        Method matchingBeanMethod = getMatchingBeanMethod(method);
-        Class<?> returnType = matchingBeanMethod.getReturnType();
+    public boolean isAsynchronous(final Method method) {
+        final Method matchingBeanMethod = getMatchingBeanMethod(method);
+        final Class<?> returnType = matchingBeanMethod.getReturnType();
         if (returnType != void.class && returnType != Future.class) {
             return false;
         }
         if (asynchronousClasses.contains(matchingBeanMethod.getDeclaringClass())) {
             return true;
         }
-        MethodContext methodContext = methodContextMap.get(matchingBeanMethod);
+        final MethodContext methodContext = methodContextMap.get(matchingBeanMethod);
         return methodContext != null && methodContext.isAsynchronous();
     }
 
@@ -1191,7 +1206,7 @@ public class BeanContext extends DeploymentContext {
         return getCmp().cmp2;
     }
 
-    public void setCmp2(boolean cmp2) {
+    public void setCmp2(final boolean cmp2) {
         this.getCmp().cmp2 = cmp2;
     }
 
@@ -1199,7 +1214,7 @@ public class BeanContext extends DeploymentContext {
         return getCmp().primaryKeyField;
     }
 
-    public void setPrimaryKeyField(String primaryKeyField) {
+    public void setPrimaryKeyField(final String primaryKeyField) {
         this.getCmp().primaryKeyField = primaryKeyField;
     }
 
@@ -1207,15 +1222,15 @@ public class BeanContext extends DeploymentContext {
         return getCmp().keyGenerator;
     }
 
-    public void setKeyGenerator(KeyGenerator keyGenerator) {
+    public void setKeyGenerator(final KeyGenerator keyGenerator) {
         this.getCmp().keyGenerator = keyGenerator;
     }
 
-    public void setRemoteQueryResults(String methodSignature) {
+    public void setRemoteQueryResults(final String methodSignature) {
         getCmp().remoteQueryResults.add(methodSignature);
     }
 
-    public boolean isRemoteQueryResults(String methodSignature) {
+    public boolean isRemoteQueryResults(final String methodSignature) {
         return getCmp().remoteQueryResults.contains(methodSignature);
     }
 
@@ -1223,7 +1238,7 @@ public class BeanContext extends DeploymentContext {
         return getCmp().cmpImplClass;
     }
 
-    public void setCmpImplClass(Class cmpImplClass) {
+    public void setCmpImplClass(final Class cmpImplClass) {
         this.getCmp().cmpImplClass = cmpImplClass;
     }
 
@@ -1231,7 +1246,7 @@ public class BeanContext extends DeploymentContext {
         return getCmp().abstractSchemaName;
     }
 
-    public void setAbstractSchemaName(String abstractSchemaName) {
+    public void setAbstractSchemaName(final String abstractSchemaName) {
         this.getCmp().abstractSchemaName = abstractSchemaName;
     }
 
@@ -1239,7 +1254,7 @@ public class BeanContext extends DeploymentContext {
         return ejbTimeout;
     }
 
-    public void setEjbTimeout(Method ejbTimeout) {
+    public void setEjbTimeout(final Method ejbTimeout) {
         this.ejbTimeout = ejbTimeout;
     }
 
@@ -1247,7 +1262,7 @@ public class BeanContext extends DeploymentContext {
         return ejbTimerService;
     }
 
-    public void setEjbTimerService(EjbTimerService ejbTimerService) {
+    public void setEjbTimerService(final EjbTimerService ejbTimerService) {
         this.ejbTimerService = ejbTimerService;
     }
 
@@ -1267,11 +1282,11 @@ public class BeanContext extends DeploymentContext {
         return runAs;
     }
 
-    public void setEjbName(String ejbName) {
+    public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
-    public void setRunAs(String runAs) {
+    public void setRunAs(final String runAs) {
         this.runAs = runAs;
     }
 
@@ -1283,7 +1298,7 @@ public class BeanContext extends DeploymentContext {
         return getSingleton().loadOnStartup;
     }
 
-    public void setLoadOnStartup(boolean loadOnStartup) {
+    public void setLoadOnStartup(final boolean loadOnStartup) {
         this.getSingleton().loadOnStartup = loadOnStartup;
     }
 
@@ -1306,7 +1321,7 @@ public class BeanContext extends DeploymentContext {
         return null;
     }
 
-    public Duration getAccessTimeout(Method beanMethod) {
+    public Duration getAccessTimeout(final Method beanMethod) {
         return getMethodContext(beanMethod).getAccessTimeout();
     }
 
@@ -1314,7 +1329,7 @@ public class BeanContext extends DeploymentContext {
         return accessTimeout;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -1322,10 +1337,9 @@ public class BeanContext extends DeploymentContext {
         return getStateful().statefulTimeout;
     }
 
-    public void setStatefulTimeout(Duration statefulTimeout) {
+    public void setStatefulTimeout(final Duration statefulTimeout) {
         this.getStateful().statefulTimeout = statefulTimeout;
     }
-
 
     public Class<Object> getManagedClass() {
         if (isDynamicallyImplemented()) {
@@ -1336,8 +1350,8 @@ public class BeanContext extends DeploymentContext {
 
     @SuppressWarnings("unchecked")
     public InstanceContext newInstance() throws Exception {
-        ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
-        ThreadContext oldContext = ThreadContext.enter(callContext);
+        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
         AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
@@ -1348,7 +1362,7 @@ public class BeanContext extends DeploymentContext {
             }
         }
 
-        ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
+        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
         if (beanDefinition == null) {
             beanDefinition = beanConstructor;
         }
@@ -1357,7 +1371,7 @@ public class BeanContext extends DeploymentContext {
             final Context ctx = this.getJndiEnc();
             final Class beanClass = this.getBeanClass();
 
-            CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
+            final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
             CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
 
             if (creationalContext == null) {
@@ -1374,7 +1388,7 @@ public class BeanContext extends DeploymentContext {
             } else {
                 // update target
                 final List<Injection> newInjections = new ArrayList<Injection>();
-                for (Injection injection : getInjections()) {
+                for (final Injection injection : getInjections()) {
                     if (beanClass.equals(injection.getTarget())) {
                         final Injection updated = new Injection(injection.getJndiName(), injection.getName(), beanDefinition.getBeanClass());
                         newInjections.add(updated);
@@ -1386,7 +1400,7 @@ public class BeanContext extends DeploymentContext {
                 injections.addAll(newInjections);
 
                 injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
-                InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
+                final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
             }
@@ -1395,12 +1409,12 @@ public class BeanContext extends DeploymentContext {
             final Map<String, Object> interceptorInstances = new LinkedHashMap<String, java.lang.Object>();
 
             // Add the stats interceptor instance and other already created interceptor instances
-            for (InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
+            for (final InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
                 final Class clazz = interceptorInstance.getData().getInterceptorClass();
                 interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
             }
 
-            for (InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
+            for (final InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) {
                     continue;
                 }
@@ -1445,7 +1459,7 @@ public class BeanContext extends DeploymentContext {
             TransactionType transactionType;
 
             if (getComponentType() == BeanType.SINGLETON) {
-                Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() - 1).getPostConstruct();
+                final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() - 1).getPostConstruct();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
@@ -1457,7 +1471,7 @@ public class BeanContext extends DeploymentContext {
             } else {
                 transactionType = isBeanManagedTransaction() ? TransactionType.BeanManaged : TransactionType.NotSupported;
             }
-            TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
+            final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try {
                 //Call the chain
                 postConstruct.invoke();
@@ -1474,14 +1488,14 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    protected <X> X getBean(Class<X> clazz, Bean<?> bean) {
+    protected <X> X getBean(final Class<X> clazz, final Bean<?> bean) {
         return clazz.cast(bean);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void inject(T instance, CreationalContext<T> ctx) {
+    public <T> void inject(final T instance, CreationalContext<T> ctx) {
 
-        WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
         AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
 
@@ -1495,12 +1509,11 @@ public class BeanContext extends DeploymentContext {
             ctx = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(ctx, beanDefinition);
         }
 
-        Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
         boolean isInjectionToAnotherBean = false;
         try {
-            Contextual<?> contextual = null;
             if (ctx instanceof CreationalContextImpl) {
-                contextual = ((CreationalContextImpl) ctx).getBean();
+                final Contextual<?> contextual = ((CreationalContextImpl) ctx).getBean();
                 isInjectionToAnotherBean = contextual != getBean(InjectionTargetBean.class, beanDefinition);
             }
 
@@ -1508,7 +1521,7 @@ public class BeanContext extends DeploymentContext {
                 AbstractInjectable.instanceUnderInjection.set(instance);
             }
 
-            InjectionTargetBean<T> bean = getBean(InjectionTargetBean.class, beanDefinition);
+            final InjectionTargetBean<T> bean = getBean(InjectionTargetBean.class, beanDefinition);
 
             bean.injectResources(instance, ctx);
             bean.injectSuperFields(instance, ctx);
@@ -1535,13 +1548,13 @@ public class BeanContext extends DeploymentContext {
     }
 
     public void createAsynchronousMethodSet() {
-        for (Map.Entry<Method, MethodContext> entry : methodContextMap.entrySet()) {
+        for (final Map.Entry<Method, MethodContext> entry : methodContextMap.entrySet()) {
             if (entry.getValue().isAsynchronous()) {
                 asynchronousMethodSignatures.add(generateMethodSignature(entry.getKey()));
             }
         }
-        for (Class<?> cls : asynchronousClasses) {
-            for (Method method : cls.getDeclaredMethods()) {
+        for (final Class<?> cls : asynchronousClasses) {
+            for (final Method method : cls.getDeclaredMethods()) {
                 if (Modifier.isPublic(method.getModifiers())) {
                     asynchronousMethodSignatures.add(generateMethodSignature(method));
                 }
@@ -1549,20 +1562,20 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    private String generateMethodSignature(Method method) {
-        StringBuilder buffer = new StringBuilder(method.getName());
-        for (Class<?> parameterType : method.getParameterTypes()) {
+    private String generateMethodSignature(final Method method) {
+        final StringBuilder buffer = new StringBuilder(method.getName());
+        for (final Class<?> parameterType : method.getParameterTypes()) {
             buffer.append(parameterType.getName());
         }
         return buffer.toString();
     }
 
-    private MethodContext getViewMethodContext(Method method, String view) {
-        ViewContext viewContext = this.viewContextMap.get(view);
+    private MethodContext getViewMethodContext(final Method method, final String view) {
+        final ViewContext viewContext = this.viewContextMap.get(view);
         return (viewContext == null) ? null : viewContext.getMethodContext(method);
     }
 
-    private MethodContext initViewMethodContext(Method method, String view) {
+    private MethodContext initViewMethodContext(final Method method, final String view) {
         ViewContext viewContext = this.viewContextMap.get(view);
         if (viewContext == null) {
             viewContext = new ViewContext();
@@ -1580,13 +1593,14 @@ public class BeanContext extends DeploymentContext {
 
         private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
 
-        public MethodContext getMethodContext(Method method) {
+        public MethodContext getMethodContext(final Method method) {
             return methodContextMap.get(method);
         }
 
-        public MethodContext initMethodContext(Method method) {
+        public MethodContext initMethodContext(final Method method) {
             MethodContext methodContext = methodContextMap.get(method);
-            if (methodContext != null) return methodContext;
+            if (methodContext != null)
+                return methodContext;
 
             methodContext = new MethodContext(BeanContext.this, method);
             methodContextMap.put(method, methodContext);
@@ -1599,7 +1613,7 @@ public class BeanContext extends DeploymentContext {
         return hidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public void setHidden(final boolean hidden) {
         this.hidden = hidden;
     }
 
@@ -1623,7 +1637,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         final Class<? extends Annotation> scope = bean.getScope();
-        isPassivatingScope =  !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
+        isPassivatingScope = !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
     }
 
     public boolean isPassivatingScope() {
@@ -1650,6 +1664,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     private static class Cmp {
+
         private boolean cmp2;
         private KeyGenerator keyGenerator;
         private String primaryKeyField;
@@ -1662,24 +1677,28 @@ public class BeanContext extends DeploymentContext {
     }
 
     private static class Mdb {
+
         private String destinationId;
         private final Map<String, String> activationProperties = new HashMap<String, String>();
         private Class mdbInterface;
     }
 
     private static class Singleton {
+
         private LockType lockType = LockType.WRITE;
         private boolean loadOnStartup;
         private final Set<String> dependsOn = new LinkedHashSet<String>();
     }
 
     private static class Stateful {
+
         private Index<EntityManagerFactory, Map> extendedEntityManagerFactories;
         private Duration statefulTimeout;
         private final List<Method> removeMethods = new ArrayList<Method>();
     }
 
     private static class LegacyView {
+
         private EJBHome ejbHomeRef;
         private EJBLocalHome ejbLocalHomeRef;
         private Class homeInterface;
@@ -1690,6 +1709,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     private static class ContextHandler implements InvocationHandler {
+
         private final Context delegate;
 
         public ContextHandler(final Context jndiContext) {

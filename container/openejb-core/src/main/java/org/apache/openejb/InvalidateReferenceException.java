@@ -41,19 +41,19 @@ public class InvalidateReferenceException extends ApplicationException {
         super();
     }
 
-    public InvalidateReferenceException(String message) {
+    public InvalidateReferenceException(final String message) {
         super(message);
     }
 
-    public InvalidateReferenceException(Exception e) {
+    public InvalidateReferenceException(final Exception e) {
         super(e);
     }
 
-    public InvalidateReferenceException(Throwable t) {
+    public InvalidateReferenceException(final Throwable t) {
         super(t);
     }
 
-    public InvalidateReferenceException(String message, Exception e) {
+    public InvalidateReferenceException(final String message, final Exception e) {
         super(message, e);
     }
 
