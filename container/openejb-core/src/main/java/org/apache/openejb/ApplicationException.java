@@ -41,19 +41,19 @@ public class ApplicationException extends OpenEJBException {
         super();
     }
 
-    public ApplicationException(String message) {
+    public ApplicationException(final String message) {
         super(message);
     }
 
-    public ApplicationException(Exception e) {
+    public ApplicationException(final Exception e) {
         super(e);
     }
 
-    public ApplicationException(Throwable t) {
+    public ApplicationException(final Throwable t) {
         super(t);
     }
 
-    public ApplicationException(String message, Exception e) {
+    public ApplicationException(final String message, final Exception e) {
         super(message, e);
     }
 }
