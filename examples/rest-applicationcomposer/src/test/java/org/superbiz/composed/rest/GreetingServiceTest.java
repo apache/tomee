@@ -46,7 +46,6 @@ public class GreetingServiceTest {
 
     @Module
     public EjbModule app() {
-        // in embedded mode only ejb are deployed
         final SingletonBean bean = (SingletonBean) new SingletonBean(GreetingService.class).localBean();
         bean.setRestService(true);
 
