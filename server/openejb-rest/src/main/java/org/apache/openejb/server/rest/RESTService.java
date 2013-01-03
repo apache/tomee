@@ -168,7 +168,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                             }
                         }
 
-                        if (deploymentWithApplication) {
+                        if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
                             for (Object o : singletons) {
                                 final Class<?> clazz = o.getClass();
                                 if (isProvider(clazz)) {
@@ -185,15 +185,17 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         }
                     }
 
-                    final String path = appPrefix(appClazz);
-                    if (path != null) {
-                        prefix += path + wildcard;
-                    } else {
-                        prefix += wildcard;
+                    if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
+                        final String path = appPrefix(appClazz);
+                        if (path != null) {
+                            prefix += path + wildcard;
+                        } else {
+                            prefix += wildcard;
+                        }
                     }
                 }
 
-                if (deploymentWithApplication) {
+                if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
                     if (application == null) {
                         application = new InternalApplication();
 
@@ -514,7 +516,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 if (bean.restService) {
                     final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
                     if (containsJaxRsConfiguration(beanContext.getProperties())) {
-                        appInfo.properties.setProperty(OPENEJB_USE_APPLICATION_PROPERTY, "true");
+                        appInfo.properties.setProperty(OPENEJB_USE_APPLICATION_PROPERTY, "false");
                         logOldDeploymentUsage(bean.ejbClass);
                         return; // no need to look further
                     }
