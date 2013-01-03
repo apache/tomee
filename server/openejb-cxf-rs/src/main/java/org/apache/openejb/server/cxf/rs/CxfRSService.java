@@ -61,6 +61,19 @@ public class CxfRSService extends RESTService {
     }
 
     @Override
+    protected boolean containsJaxRsConfiguration(final Properties properties) {
+        return properties.containsKey(CxfRsHttpListener.PROVIDERS_KEY)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_FAULT_INTERCEPTORS)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_INTERCEPTORS)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_FAULT_INTERCEPTORS)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_INTERCEPTORS)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.DATABINDING)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ADDRESS)
+                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ENDPOINT_PROPERTIES);
+    }
+
+    @Override
     protected RsHttpListener createHttpListener() {
         return new CxfRsHttpListener(httpTransportFactory);
     }
