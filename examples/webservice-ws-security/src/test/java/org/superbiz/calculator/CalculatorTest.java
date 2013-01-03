@@ -45,8 +45,9 @@ import java.util.Properties;
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup
+    @Override
     protected void setUp() throws Exception {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
 
@@ -56,251 +57,252 @@ public class CalculatorTest extends TestCase {
 
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImpl?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImpl?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
 
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+            @Override
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
                 pc.setPassword("waterfall");
             }
         });
 
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(10, calc.sum(4, 6));
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp1way() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplTimestamp1way");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplTimestamp1way");
 
-//        CalculatorWs calc = calcService.getPort(
-//        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//		CalculatorWs.class);
+        //        CalculatorWs calc = calcService.getPort(
+        //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //		CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.TIMESTAMP);
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(12, calc.multiply(3, 4));
     }
 
     public void testCalculatorViaWsInterfaceWithTimestamp2ways() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplTimestamp2ways");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplTimestamp2ways");
 
-//        CalculatorWs calc = calcService.getPort(
-//        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//		CalculatorWs.class);
+        //        CalculatorWs calc = calcService.getPort(
+        //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //		CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
         endpoint.getInInterceptors().add(new SAAJInInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.TIMESTAMP);
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
-        Map<String, Object> inProps = new HashMap<String, Object>();
+        final Map<String, Object> inProps = new HashMap<String, Object>();
         inProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.TIMESTAMP);
-        WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
+        final WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
         endpoint.getInInterceptors().add(wssIn);
 
         assertEquals(12, calc.multiply(3, 4));
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPassword() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPassword");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPassword");
 
-//        CalculatorWs calc = calcService.getPort(
-//        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//        	CalculatorWs.class);
+        //        CalculatorWs calc = calcService.getPort(
+        //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //        	CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
 
             @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
                 pc.setPassword("waterfall");
             }
         });
 
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(10, calc.sum(4, 6));
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenHashedPassword() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplUsernameTokenHashedPassword");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenHashedPassword");
 
-//        CalculatorWs calc = calcService.getPort(
-//        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//        	CalculatorWs.class);
+        //        CalculatorWs calc = calcService.getPort(
+        //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //        	CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
 
             @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
                 pc.setPassword("waterfall");
             }
         });
 
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(10, calc.sum(4, 6));
     }
 
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPasswordEncrypt() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPasswordEncrypt");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplUsernameTokenPlainPasswordEncrypt");
 
-//        CalculatorWs calc = calcService.getPort(
-//        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//        	CalculatorWs.class);
+        //        CalculatorWs calc = calcService.getPort(
+        //        	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //        	CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN
-                + " " + WSHandlerConstants.ENCRYPT);
+                                                + " " + WSHandlerConstants.ENCRYPT);
         outProps.put(WSHandlerConstants.USER, "jane");
         outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
 
             @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
                 pc.setPassword("waterfall");
             }
         });
         outProps.put(WSHandlerConstants.ENC_PROP_FILE, "META-INF/CalculatorImplUsernameTokenPlainPasswordEncrypt-client.properties");
         outProps.put(WSHandlerConstants.ENCRYPTION_USER, "serveralias");
 
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(10, calc.sum(4, 6));
     }
 
     public void testCalculatorViaWsInterfaceWithSign() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplSign?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
+        final Service calcService = Service.create(new URL("http://127.0.0.1:4204/webservice-ws-security/CalculatorImplSign?wsdl"),
+                                                   new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         // for debugging (ie. TCPMon)
         calcService.addPort(new QName("http://superbiz.org/wsdl",
-                "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
-                "http://127.0.0.1:8204/CalculatorImplSign");
+                                      "CalculatorWsService2"), SOAPBinding.SOAP12HTTP_BINDING,
+                            "http://127.0.0.1:8204/CalculatorImplSign");
 
-//      CalculatorWs calc = calcService.getPort(
-//	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
-//	CalculatorWs.class);
+        //      CalculatorWs calc = calcService.getPort(
+        //	new QName("http://superbiz.org/wsdl", "CalculatorWsService2"),
+        //	CalculatorWs.class);
 
-        CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
 
-        Client client = ClientProxy.getClient(calc);
-        Endpoint endpoint = client.getEndpoint();
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
         endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        final Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.SIGNATURE);
         outProps.put(WSHandlerConstants.USER, "clientalias");
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
 
             @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
                 pc.setPassword("clientPassword");
             }
         });
         outProps.put(WSHandlerConstants.SIG_PROP_FILE, "META-INF/CalculatorImplSign-client.properties");
         outProps.put(WSHandlerConstants.SIG_KEY_ID, "IssuerSerial");
 
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         endpoint.getOutInterceptors().add(wssOut);
 
         assertEquals(24, calc.multiply(4, 6));

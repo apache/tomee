@@ -43,7 +43,7 @@ public abstract class CxfWsContainer implements HttpListener {
         this.port = port;
         this.serviceConfiguration = config;
         
-        List<String> ids = new ArrayList<String>();
+        final List<String> ids = new ArrayList<String>();
         ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
 
         httpTransportFactory = new HttpTransportFactory(bus);
@@ -69,7 +69,8 @@ public abstract class CxfWsContainer implements HttpListener {
         // }
     }
 
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
+    @Override
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         destination.invoke(null, request.getServletContext(), request, response);
     }
 }
