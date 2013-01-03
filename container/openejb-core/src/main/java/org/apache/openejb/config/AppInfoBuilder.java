@@ -33,6 +33,7 @@ import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ListenerInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -404,6 +405,12 @@ class AppInfoBuilder {
                 servletInfo.servletName = servlet.getServletName();
                 servletInfo.servletClass = servlet.getServletClass();
                 servletInfo.mappings = webModule.getWebApp().getServletMappings(servletInfo.servletName);
+                for (ParamValue pv : servlet.getInitParam()) {
+                    final ParamValueInfo pvi = new ParamValueInfo();
+                    pvi.name = pv.getParamName();
+                    pvi.value = pv.getParamValue();
+                    servletInfo.initParams.add(pvi);
+                }
                 webAppInfo.servlets.add(servletInfo);
             }
 

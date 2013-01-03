@@ -865,6 +865,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
 
+        public AppInfo app() {
+            final ContextInfo contextInfo = getContextInfo(standardContext);
+            if (contextInfo == null) {
+                logger.debug("No ContextInfo for StandardContext " + standardContext.getName());
+                return null;
+            }
+            return contextInfo.appInfo;
+        }
+
         public WebAppInfo get() {
             if (standardContext == null) return null;
 
@@ -1063,6 +1072,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         if (webAppInfo != null) {
+
             if (appContext == null) {
                 appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
             }

@@ -682,6 +682,21 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         return this;
     }
 
+    public WebApp addServletMapping(final String servletName, final String mapping) {
+        for (ServletMapping s : getServletMapping()) {
+            if (servletName.equals(s.getServletName())) {
+                s.getUrlPattern().add(mapping);
+                return this;
+            }
+        }
+
+        final ServletMapping sm = new ServletMapping();
+        sm.setServletName(servletName);
+        sm.getUrlPattern().add(mapping);
+        getServletMapping().add(sm);
+        return this;
+    }
+
     public WebApp addInitParam(final String servletName, final String name, final String value) {
         final ParamValue paramValue = new ParamValue();
         paramValue.setParamName(name);

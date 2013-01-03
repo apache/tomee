@@ -25,7 +25,9 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
@@ -186,7 +188,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
 
                     if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
-                        final String path = appPrefix(appClazz);
+                        final String path = appPrefix(webApp, appClazz);
                         if (path != null) {
                             prefix += path + wildcard;
                         } else {
@@ -265,7 +267,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
-                    final String path = appPrefix(appClazz);
+                    final String path = appPrefix(webApp, appClazz);
                     if (path != null) {
                         appPrefix += path;
                     }
@@ -391,7 +393,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    private static String appPrefix(final Class<?> appClazz) {
+    private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {
         final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
         if (path != null) {
             String appPath = path.value();
@@ -401,6 +403,38 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 return appPath;
             }
         }
+
+        // no annotation, try servlets
+        for (ServletInfo s : info.servlets) {
+            if (s.mappings.isEmpty()) {
+                continue;
+            }
+
+            String mapping = null;
+
+            final String name = appClazz.getName();
+            if (name.equals(s.servletClass) || name.equals(s.servletName)) {
+                mapping = s.mappings.iterator().next();
+            } else {
+                for (ParamValueInfo pvi : s.initParams) {
+                    if ("javax.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
+                        mapping = s.mappings.iterator().next();
+                        break;
+                    }
+                }
+            }
+
+            if (mapping != null) {
+                if (mapping.endsWith("/*")) {
+                    mapping = mapping.substring(0, mapping.length() - 2);
+                }
+                if (mapping.startsWith("/")) {
+                    mapping = mapping.substring(1);
+                }
+                return mapping;
+            }
+        }
+
         return null;
     }
 
@@ -432,6 +466,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (!enabled) return;
 
         final AppInfo appInfo = event.getApp();
+        if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
+            return;
+        }
 
         quickCheckIfOldDeploymentShouldBeUsedFromEjbConfig(appInfo);
 
