@@ -529,7 +529,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (args != null) {
             strings.addAll(Arrays.asList(args.split(" ")));
         }
-        if (getNoShutdownHook()) {
+        if (!getWaitTomEE()) {
             strings.add("-Dtomee.noshutdownhook=true");
         }
         if (quickSession) {
@@ -545,7 +545,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
-        if (!getNoShutdownHook()) {
+        if (getWaitTomEE()) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
@@ -560,7 +560,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         serverCmd(server, strings);
 
-        if (!getNoShutdownHook()) {
+        if (getWaitTomEE()) {
             try {
                 server.getServer().waitFor(); // connect attempts = 0
             } catch (InterruptedException e) {
@@ -585,7 +585,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return new File(System.getProperty("java.home"), "/bin/java").getAbsolutePath();
     }
 
-    protected boolean getNoShutdownHook() {
+    protected boolean getWaitTomEE() {
         return true;
     }
 
