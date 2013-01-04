@@ -42,7 +42,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
             }
         }
 
-        if (session instanceof StandardSession) {
+        if (StandardSession.class.equals(session.getClass())) { // local session, use fastest wrapper
             try {
                 final ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) Reflections.get(session, "attributes");
                 if (WRAPPER.equals("direct")) {
