@@ -59,6 +59,10 @@ public class SessionContextBackedByHttpSession extends SessionContext {
     }
 
     private static String key(final Object key) {
+        if (key instanceof String) { // avoid nested calls
+            return (String) key;
+        }
+
         final String id = WebBeansUtil.isPassivationCapable((Contextual<?>) key);
         if (id != null) {
             return id;
