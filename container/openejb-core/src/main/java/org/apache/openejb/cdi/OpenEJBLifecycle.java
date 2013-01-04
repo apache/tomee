@@ -214,60 +214,56 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Discover classpath classes
                 deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
-                boolean deployEjb = stuff.getWebContext() == null;
+                for (BeanContext beanContext : stuff.getBeanContexts()) {
+                    if (!beanContext.isCdiCompatible()) continue;
 
-                if (deployEjb) {
-                    for (BeanContext beanContext : stuff.getBeanContexts()) {
-                        if (!beanContext.getComponentType().isCdiCompatible()) continue;
+                    final Class implClass = beanContext.getManagedClass();
 
-                        final Class implClass = beanContext.getManagedClass();
+                    //Define annotation type
+                    final AnnotatedType<Object> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
-                        //Define annotation type
-                        final AnnotatedType<Object> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
+                    //Fires ProcessAnnotatedType
+                    final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
 
-                        //Fires ProcessAnnotatedType
-                        final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
+                    // TODO Can you really veto an EJB?
+                    //if veto() is called
+                    if (processAnnotatedEvent.isVeto()) {
+                        continue;
+                    }
 
-                        // TODO Can you really veto an EJB?
-                        //if veto() is called
-                        if (processAnnotatedEvent.isVeto()) {
-                            continue;
-                        }
+                    final CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
+                    bean.setAnnotatedType((AnnotatedType<Object>) processAnnotatedEvent.getAnnotatedType()); // update AnnotatedType -- can be updated in extensions
 
-                        final CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
-                        bean.setAnnotatedType((AnnotatedType<Object>) processAnnotatedEvent.getAnnotatedType()); // update AnnotatedType -- can be updated in extensions
+                    beanContext.set(CdiEjbBean.class, bean);
+                    beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
+                    beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
 
-                        beanContext.set(CdiEjbBean.class, bean);
-                        beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
-                        beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
+                    EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
-                        EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+                    beanContext.initIsPassivationScope();
 
-                        beanContext.initIsPassivationScope();
+                    webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
 
-                        webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
+                    Class clazz = beanContext.getBeanClass();
+                    while (clazz.isAnnotationPresent(Specializes.class)) {
+                        clazz = clazz.getSuperclass();
 
-                        Class clazz = beanContext.getBeanClass();
-                        while (clazz.isAnnotationPresent(Specializes.class)) {
-                            clazz = clazz.getSuperclass();
+                        if (clazz == null || Object.class.equals(clazz)) break;
 
-                            if (clazz == null || Object.class.equals(clazz)) break;
+                        final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
 
-                            final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
+                        EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
 
-                            EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
+                        //Define meta-data
+                        ejbBeanCreator.defineSerializable();
+                        ejbBeanCreator.defineStereoTypes();
+                        ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
+                        ejbBeanCreator.defineQualifier();
+                        ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
 
-                            //Define meta-data
-                            ejbBeanCreator.defineSerializable();
-                            ejbBeanCreator.defineStereoTypes();
-                            ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
-                            ejbBeanCreator.defineQualifier();
-                            ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
+                        bean.specialize(superBean);
 
-                            bean.specialize(superBean);
-
-                            EjbUtility.defineSpecializedData(clazz, bean);
-                        }
+                        EjbUtility.defineSpecializedData(clazz, bean);
                     }
                 }
 
@@ -280,43 +276,39 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Validate injection Points
                 deployer.validateInjectionPoints();
 
-                if (deployEjb) {
-                    for (BeanContext beanContext : stuff.getBeanContexts()) {
-                        if (!beanContext.getComponentType().isSession() || beanContext.isDynamicallyImplemented()) continue;
-                        final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
+                for (BeanContext beanContext : stuff.getBeanContexts()) {
+                    if (!beanContext.isCdiCompatible() || beanContext.isDynamicallyImplemented()) continue;
+                    final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
 
-                        // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.
-                        final List<InterceptorData> datas = bean.getInterceptorStack();
+                    // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.
+                    final List<InterceptorData> datas = bean.getInterceptorStack();
 
-                        final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
-                        for (InterceptorData data : datas) {
-                            // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
-                            final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
-                            if (data.isDefinedInMethod()) {
-                                final Method method = data.getInterceptorBindingMethod();
-                                beanContext.addCdiMethodInterceptor(method, openejbData);
-                            } else {
-                                converted.add(openejbData);
-                            }
+                    final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
+                    for (InterceptorData data : datas) {
+                        // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
+                        final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
+                        if (data.isDefinedInMethod()) {
+                            final Method method = data.getInterceptorBindingMethod();
+                            beanContext.addCdiMethodInterceptor(method, openejbData);
+                        } else {
+                            converted.add(openejbData);
                         }
-
-                        beanContext.setCdiInterceptors(converted);
                     }
+
+                    beanContext.setCdiInterceptors(converted);
                 }
 
                 //Fire Event
                 deployer.fireAfterDeploymentValidationEvent();
 
-                if (deployEjb) {
-                    for (BeanContext beanContext : stuff.getBeanContexts()) {
+                for (BeanContext beanContext : stuff.getBeanContexts()) {
 
-                        final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);;
+                    final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
 
-                        if (bean == null) continue;
+                    if (bean == null) continue;
 
-                        final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-                        manager.addBean(new NewCdiEjbBean<Object>(bean));
-                    }
+                    final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
+                    manager.addBean(new NewCdiEjbBean<Object>(bean));
                 }
 
             } catch (Exception e1) {

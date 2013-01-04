@@ -1589,6 +1589,10 @@ public class BeanContext extends DeploymentContext {
         return proxyClass;
     }
 
+    public boolean isCdiCompatible(){
+        return componentType.isCdiCompatible() && !Comp.class.equals(beanClass);
+    }
+
     public class ViewContext {
 
         private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();

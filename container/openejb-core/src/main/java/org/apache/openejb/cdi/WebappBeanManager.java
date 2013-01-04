@@ -29,7 +29,6 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
@@ -364,7 +363,7 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public ExpressionFactory wrapExpressionFactory(javax.el.ExpressionFactory expressionFactory) {
-        return super.wrapExpressionFactory(getParentBm().wrapExpressionFactory(expressionFactory));
+        return super.wrapExpressionFactory(expressionFactory);
     }
 
     public BeanManagerImpl getParentBm() {
