@@ -48,15 +48,15 @@ public class StatefulSessionBeanTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+        final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("PoolSize", "0");
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         statefulContainerInfo.properties.setProperty("Frequency", "0");
@@ -66,14 +66,14 @@ public class StatefulSessionBeanTest extends TestCase {
 
         StatefulSessionBeanTest.calls.clear();
 
-        InitialContext ctx = new InitialContext();
-        TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
+        final InitialContext ctx = new InitialContext();
+        final TargetHome home = (TargetHome) ctx.lookup("TargetBeanRemoteHome");
         assertNotNull(home);
 
-        Target target = home.create("Fuzz");
+        final Target target = home.create("Fuzz");
         assertNotNull(target);
 
-        String name = target.getName();
+        final String name = target.getName();
         assertEquals("Fuzz", name);
 
         target.remove();
@@ -82,15 +82,15 @@ public class StatefulSessionBeanTest extends TestCase {
 
     }
 
-    private void assertCalls(Call... expectedCalls) {
-        List expected = Arrays.asList(expectedCalls);
+    private void assertCalls(final Call... expectedCalls) {
+        final List expected = Arrays.asList(expectedCalls);
         assertEquals(StatefulSessionBeanTest.join("\n", expected), StatefulSessionBeanTest.join("\n", StatefulSessionBeanTest.calls));
     }
 
     public EjbModule buildTestApp() {
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
-        StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(StatefulSessionBeanTest.TargetBean.class));
+        final StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(StatefulSessionBeanTest.TargetBean.class));
         bean.setHomeAndRemote(TargetHome.class, Target.class);
 
         return new EjbModule(this.getClass().getClassLoader(), this.getClass().getSimpleName(), "test", ejbJar, null);
@@ -118,11 +118,12 @@ public class StatefulSessionBeanTest extends TestCase {
             calls.add(Call.Constructor);
         }
 
-        public void setSessionContext(SessionContext sessionContext){
+        @Override
+        public void setSessionContext(final SessionContext sessionContext){
             calls.add(Call.SetSessionContext);
         }
 
-        public void ejbCreate(String name) throws CreateException {
+        public void ejbCreate(final String name) throws CreateException {
             calls.add(Call.EjbCreate);
             this.name = name;
         }
@@ -132,14 +133,17 @@ public class StatefulSessionBeanTest extends TestCase {
             return name;
         }
 
+        @Override
         public void ejbActivate() throws EJBException, RemoteException {
             calls.add(Enum.valueOf(Call.class, "EjbActivate" + (++activates)));
         }
 
+        @Override
         public void ejbPassivate() throws EJBException, RemoteException {
             calls.add(Enum.valueOf(Call.class, "EjbPassivate" + (++passivates)));
         }
 
+        @Override
         public void ejbRemove() throws EJBException, RemoteException {
             calls.add(Call.EjbRemove);
         }
@@ -153,9 +157,9 @@ public class StatefulSessionBeanTest extends TestCase {
         String getName();
     }
 
-    private static String join(String delimeter, List items) {
-        StringBuffer sb = new StringBuffer();
-        for (Object item : items) {
+    private static String join(final String delimeter, final List items) {
+        final StringBuffer sb = new StringBuffer();
+        for (final Object item : items) {
             sb.append(item.toString()).append(delimeter);
         }
         return sb.toString();

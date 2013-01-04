@@ -781,18 +781,14 @@ public class StatefulContainer implements RpcContainer {
 
     private void releaseInstance(final Instance instance) {
         // Don't pool if the bean has been undeployed
-        if (instance.beanContext.isDestroyed())
+        if (instance.beanContext.isDestroyed()) {
             return;
-
-        // verify the instance is not associated with a bean-managed transaction
-        if (instance.getBeanTransaction() != null) {
-            throw new IllegalStateException("Instance has an active bean-managed transaction");
         }
 
         // no longer in use
         instance.setInUse(false);
 
-        if (instance.getTransaction() == null && !containsExtendedPersistenceContext(instance.beanContext)) {
+        if (instance.getTransaction() == null && !containsExtendedPersistenceContext(instance.beanContext) && null == instance.getBeanTransaction()) {
             synchronized (instance.primaryKey) {
                 // return to cache
                 cache.checkIn(instance.primaryKey);
