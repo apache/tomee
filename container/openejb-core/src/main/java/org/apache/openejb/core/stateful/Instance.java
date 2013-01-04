@@ -46,7 +46,7 @@ public class Instance implements Serializable, Cache.TimeOut {
 
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
-    private Stack<Transaction> transaction = new Stack<Transaction>();
+    private final Stack<Transaction> transaction = new Stack<Transaction>();
     private final ReentrantLock lock = new ReentrantLock();
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
@@ -55,7 +55,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers;
     private final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
-    public Instance(BeanContext beanContext, Object primaryKey, Object bean, CreationalContext creationalContext, Map<String, Object> interceptors, Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
+    public Instance(final BeanContext beanContext, final Object primaryKey, final Object bean, final CreationalContext creationalContext, final Map<String, Object> interceptors, final Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
         this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.bean = bean;
@@ -65,7 +65,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         this.entityManagerArray = null;
     }
 
-    public Instance(Object deploymentId, Object primaryKey, Object bean, CreationalContext creationalContext, Map<String, Object> interceptors, JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
+    public Instance(final Object deploymentId, final Object primaryKey, final Object bean, final CreationalContext creationalContext, final Map<String, Object> interceptors, final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
         this.beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         if (beanContext == null) {
             throw new IllegalArgumentException("Unknown deployment " + deploymentId);
@@ -77,6 +77,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         this.entityManagerArray = entityManagerArray;
     }
 
+    @Override
     public Duration getTimeOut() {
         return beanContext.getStatefulTimeout();
     }
@@ -85,7 +86,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         return inUse;
     }
 
-    public synchronized void setInUse(boolean inUse) {
+    public synchronized void setInUse(final boolean inUse) {
         this.inUse = inUse;
     }
 
@@ -93,7 +94,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         return beanTransaction;
     }
 
-    public synchronized void setBeanTransaction(SuspendedTransaction beanTransaction) {
+    public synchronized void setBeanTransaction(final SuspendedTransaction beanTransaction) {
         this.beanTransaction = beanTransaction;
     }
 
@@ -105,7 +106,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         return lock;
     }
 
-    public synchronized void setTransaction(Transaction transaction) {
+    public synchronized void setTransaction(final Transaction transaction) {
         if (this.transaction.size() == 0 && transaction != null) {
             lock.lock();
             this.transaction.push(transaction);
@@ -123,12 +124,12 @@ public class Instance implements Serializable, Cache.TimeOut {
         }
     }
     
-    public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(Index<EntityManagerFactory, Map> factories) {
+    public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(final Index<EntityManagerFactory, Map> factories) {
         if (entityManagers == null && entityManagerArray != null) {
             entityManagers = new HashMap<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>();
             for (int i = 0; i < entityManagerArray.length; i++) {
-                EntityManagerFactory entityManagerFactory = factories.getKey(i);
-                JtaEntityManagerRegistry.EntityManagerTracker entityManager = entityManagerArray[i];
+                final EntityManagerFactory entityManagerFactory = factories.getKey(i);
+                final JtaEntityManagerRegistry.EntityManagerTracker entityManager = entityManagerArray[i];
                 entityManagers.put(entityManagerFactory, entityManager);
             }
         }
@@ -154,14 +155,14 @@ public class Instance implements Serializable, Cache.TimeOut {
         public final Map<String, Object> interceptors;
         public final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
-        public Serialization(Instance i) {
+        public Serialization(final Instance i) {
             deploymentId = i.beanContext.getDeploymentID();
             primaryKey = i.primaryKey;
             bean = toSerializable(i.bean);
             creationalContext = i.creationalContext;
 
             interceptors = new HashMap<String, Object>(i.interceptors.size());
-            for (Map.Entry<String, Object> e : i.interceptors.entrySet()) {
+            for (final Map.Entry<String, Object> e : i.interceptors.entrySet()) {
                 if (e.getValue() == i.bean) {
                     // need to use the same wrapped reference or well get two copies.
                     interceptors.put(e.getKey(), bean);
@@ -179,7 +180,7 @@ public class Instance implements Serializable, Cache.TimeOut {
             }
         }
 
-        private static Object toSerializable(Object obj) {
+        private static Object toSerializable(final Object obj) {
             if (obj instanceof Serializable) {
                 return obj;
             } else {
