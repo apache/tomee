@@ -22,7 +22,6 @@ import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.arquillian.common.Zips;
 import org.apache.openejb.config.RemoteServer;
-import org.apache.openejb.util.Base64;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -160,6 +159,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 is.close();
 
                 tmpContainer.stop();
+                tmpContainer.getServer().waitFor();
             }
 
             container = new RemoteServer();
@@ -217,6 +217,11 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         if (shutdown) {
             Setup.removeArquillianBeanDiscoverer(openejbHome);
             container.stop();
+            try {
+                container.getServer().waitFor();
+            } catch (InterruptedException e) {
+                throw new LifecycleException(e.getMessage(), e);
+            }
         }
     }
 

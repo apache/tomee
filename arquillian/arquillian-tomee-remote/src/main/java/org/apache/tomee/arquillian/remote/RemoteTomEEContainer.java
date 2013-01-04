@@ -225,6 +225,13 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         if (shutdown) {
             Setup.removeArquillianBeanDiscoverer(tomeeHome);
             container.stop();
+            if (container.getServer() != null) {
+                try {
+                    container.getServer().waitFor();
+                } catch (InterruptedException e) {
+                    throw new LifecycleException(e.getMessage(), e);
+                }
+            }
         }
     }
 

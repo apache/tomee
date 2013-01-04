@@ -156,5 +156,12 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     public void cleanup() throws IOException {
         System.out.println("Cleanup called");
         server.stop();
+        if (server.getServer() != null) {
+            try {
+                server.getServer().waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace(System.err);
+            }
+        }
     }
 }
