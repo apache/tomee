@@ -17,11 +17,13 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -466,29 +468,27 @@ public class RemoteServer {
         }
     }
 
-    private void forceShutdown() throws Exception {
-        final String fcommand = command + Character.toString((char) 0); // SHUTDOWN + EOF
-
-        Socket socket = null;
-        try {
-            socket= new Socket(host, shutdownPort);
-            final OutputStream out = socket.getOutputStream();
-            out.write(fcommand.getBytes());
-            out.flush();
-        } finally {
-            if (socket != null) {
-                socket.close();
-            }
-        }
-    }
-
+    // same as catalina.sh stop {@see org.apache.catalina.startup.Catalina#stopServer}
     private void shutdown() throws Exception {
-        final boolean originalDebug = debug;
-        debug = false; // make sure we don't debug the stop command otherwise in debug mode we will not stop
+        Socket socket = null;
+        OutputStream stream = null;
         try {
-            cmd(Collections.EMPTY_LIST, "stop", false);
+            socket = new Socket(host, shutdownPort);
+            stream = socket.getOutputStream();
+            String shutdown = command + Character.toString((char) 0);
+            for (int i = 0; i < shutdown.length(); i++) {
+                stream.write(shutdown.charAt(i));
+            }
+            stream.flush();
         } finally {
-            debug = originalDebug;
+            IO.close(stream);
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
         }
     }
 
