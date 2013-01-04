@@ -35,15 +35,34 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.util.QuickServerXmlParser;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
-import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.*;
+import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
+import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY;
+import static org.apache.maven.artifact.repository.ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER;
 import static org.apache.maven.artifact.versioning.VersionRange.createFromVersion;
 import static org.apache.openejb.util.JarExtractor.delete;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
@@ -503,12 +522,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     protected void run() {
-        System.setProperty("openejb.home", catalinaBase.getAbsolutePath());
-        if (debug) {
-            System.setProperty("openejb.server.debug", "true");
-            System.setProperty("server.debug.port", Integer.toString(debugPort));
-        }
-
         final String deployOpenEjbAppKey = "openejb.system.apps";
 
         final List<String> strings = new ArrayList<String>();
@@ -526,12 +539,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
         }
-        if (args != null) {
-            strings.addAll(Arrays.asList(args.split(" ")));
-        }
-        if (!getWaitTomEE()) {
-            strings.add("-Dtomee.noshutdownhook=true");
-        }
         if (quickSession) {
             strings.add("-Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
         }
@@ -540,18 +547,40 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 strings.add("-D" + deployOpenEjbAppKey + "=false");
             }
         }
+        if (args != null) {
+            strings.addAll(Arrays.asList(args.split(" ")));
+        }
 
+        // init env for RemoteServer
+        System.setProperty("openejb.home", catalinaBase.getAbsolutePath());
+        if (debug) {
+            System.setProperty("openejb.server.debug", "true");
+            System.setProperty("server.debug.port", Integer.toString(debugPort));
+        }
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
+
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
+        final CountDownLatch stopCondition;
         if (getWaitTomEE()) {
+            stopCondition = new CountDownLatch(1);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    server.stop();
+                    try {
+                        server.stop();
+                        server.getServer().waitFor();
+                        getLog().info("TomEE stopped");
+                        stopCondition.countDown();
+                    } catch (Exception e) {
+                        getLog().error("Error stopping TomEE", e);
+                    }
                 }
             });
+        } else {
+            stopCondition = null;
+            strings.add("-Dtomee.noshutdownhook=true");
         }
 
         getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
@@ -560,11 +589,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         serverCmd(server, strings);
 
-        if (getWaitTomEE()) {
+        if (stopCondition != null) {
             try {
-                server.getServer().waitFor(); // connect attempts = 0
+                stopCondition.await();
             } catch (InterruptedException e) {
-                // ignored
+                // no-op
             }
         }
     }
@@ -579,10 +608,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected int getConnectAttempts() {
         return Integer.MAX_VALUE;
-    }
-
-    protected static String java() {
-        return new File(System.getProperty("java.home"), "/bin/java").getAbsolutePath();
     }
 
     protected boolean getWaitTomEE() {
