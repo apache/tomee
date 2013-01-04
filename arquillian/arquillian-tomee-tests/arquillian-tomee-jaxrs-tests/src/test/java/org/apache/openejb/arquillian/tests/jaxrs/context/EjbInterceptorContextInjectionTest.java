@@ -58,7 +58,7 @@ public class EjbInterceptorContextInjectionTest {
     @ArquillianResource
     private URL url;
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive archive() {
         return ShrinkWrap.create(WebArchive.class)
                 .addClass(RsInjection.class)
