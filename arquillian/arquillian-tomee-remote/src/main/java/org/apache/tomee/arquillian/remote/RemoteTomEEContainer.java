@@ -224,14 +224,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         // only stop the container if we started it
         if (shutdown) {
             Setup.removeArquillianBeanDiscoverer(tomeeHome);
-            container.stop();
-            if (container.getServer() != null) {
-                try {
-                    container.getServer().waitFor();
-                } catch (InterruptedException e) {
-                    throw new LifecycleException(e.getMessage(), e);
-                }
-            }
+            container.destroy();
         }
     }
 

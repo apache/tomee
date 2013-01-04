@@ -110,6 +110,13 @@ public class RemoteServer {
 
     public void destroy() {
         stop();
+        if (server != null) {
+            try {
+                server.waitFor();
+            } catch (InterruptedException e) {
+                // no-op
+            }
+        }
     }
 
     public void start() {
