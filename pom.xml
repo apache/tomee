@@ -481,10 +481,6 @@
     <!--</repository>-->
     <!-- Apache snapshots -->
     <repository>
-      <id>OWB-1.1.7</id>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-117/</url>
-    </repository>
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>http://repository.apache.org/content/groups/snapshots-group</url>
@@ -543,18 +539,6 @@
       <id>openejb-3rdparty-builds</id>
       <name>3rd Party Build Repository</name>
       <url>http://svn.apache.org/repos/asf/openejb/repo/</url>
-      <!--<url>file:///Users/dblevins/work/openejb-root/repo/</url>-->
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>openjpa</id>
-      <name>OpenJPA Release 2.2.1</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-118/</url>
       <!--<url>file:///Users/dblevins/work/openejb-root/repo/</url>-->
       <releases>
         <enabled>true</enabled>
