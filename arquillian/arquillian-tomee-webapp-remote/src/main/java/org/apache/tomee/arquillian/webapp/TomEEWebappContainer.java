@@ -127,7 +127,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             if (logger.isLoggable(Level.FINE)) {
-                Map<Object, Object> map = new TreeMap(System.getProperties());
+                Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     System.out.printf("%s = %s\n", entry.getKey(), entry.getValue());
                 }
@@ -138,18 +138,15 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             if (!wereOpenejbHomeSet && configuration.isUseInstallerServlet()) {
                 // instead of calling the Installer, let's just do like users do
                 // call the servlet installer instead
-                StringBuilder baseUrl = new StringBuilder("http://")
-                        .append(configuration.getHost())
-                        .append(":")
-                        .append(configuration.getHttpPort())
-                        .append("/tomee/installer");
+                String baseUrl = "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/installer";
 
+                assert installer != null;
                 installer.addTomEEAdminConfInTomcatUsers(true);
 
                 RemoteServer tmpContainer = new RemoteServer();
                 tmpContainer.start();
 
-                URL url = new URL(baseUrl.toString());
+                URL url = new URL(baseUrl);
                 URLConnection uc = url.openConnection();
                 // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
                 String authorizationString = "Basic dG9tZWU6dG9tZWU=";
@@ -216,12 +213,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
         // only stop the container if we started it
         if (shutdown) {
             Setup.removeArquillianBeanDiscoverer(openejbHome);
-            container.stop();
-            try {
-                container.getServer().waitFor();
-            } catch (InterruptedException e) {
-                throw new LifecycleException(e.getMessage(), e);
-            }
+            container.destroy();
         }
     }
 
