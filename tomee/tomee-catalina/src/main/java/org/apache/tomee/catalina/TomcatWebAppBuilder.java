@@ -1144,8 +1144,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 if (!contextInfo.appInfo.webAppAlone) {
                     final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
-                    appContext.getBeanContexts().addAll(beanContexts);
-                    new CdiBuilder().build(contextInfo.appInfo, appContext, appContext.getBeanContexts(), webContext);
+                    new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
                     assembler.startEjbs(true, beanContexts);
                 }
 

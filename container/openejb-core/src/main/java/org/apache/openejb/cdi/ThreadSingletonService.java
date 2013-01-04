@@ -18,9 +18,6 @@
 
 package org.apache.openejb.cdi;
 
-import java.util.Map;
-
-import org.apache.openejb.AppContext;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.SingletonService;
 
