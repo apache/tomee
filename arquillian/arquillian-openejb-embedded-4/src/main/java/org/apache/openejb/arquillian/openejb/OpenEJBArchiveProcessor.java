@@ -281,7 +281,7 @@ public class OpenEJBArchiveProcessor {
             }
             // look org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.hasBeansXml()
             try {
-                final URL key = new URL("jar:file://foo.jar!/WEB-INF/classes/");
+                final URL key = new URL("jar:file://!/WEB-INF/classes/"); // no host avoid host resolution in hashcode()
                 classesByUrl.put(key, mainClasses);
             } catch (MalformedURLException mue) {
                 // no-op
