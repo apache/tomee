@@ -24,10 +24,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ServletByteArrayIntputStream extends ServletInputStream {
-    private ByteArrayInputStream intputStream;
+    private final ByteArrayInputStream intputStream;
+    private final byte[] raw;
 
     public ServletByteArrayIntputStream(byte[] body) {
         intputStream = new ByteArrayInputStream(body);
+        raw = body;
     }
 
     @Override
@@ -37,5 +39,9 @@ public class ServletByteArrayIntputStream extends ServletInputStream {
 
     public ByteArrayInputStream getIntputStream() {
         return intputStream;
+    }
+
+    public byte[] getRaw() {
+        return raw;
     }
 }

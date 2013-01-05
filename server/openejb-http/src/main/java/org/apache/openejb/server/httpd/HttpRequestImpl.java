@@ -307,11 +307,11 @@ public class HttpRequestImpl implements HttpRequest {
      * @throws java.io.IOException if an exception is thrown
      */
     protected void readMessage(InputStream input) throws IOException {
-        DataInput in = new DataInputStream(input);
+        final DataInput di = new DataInputStream(input);
 
-        readRequestLine(in);
-        readHeaders(in);
-        readBody(in);
+        readRequestLine(di);
+        readHeaders(di);
+        readBody(di);
 
         parameters.putAll(this.getFormParameters());
         parameters.putAll(this.getQueryParameters());
@@ -553,6 +553,7 @@ public class HttpRequestImpl implements HttpRequest {
 
             try {
                 body = readContent(in);
+                this.in = new ServletByteArrayIntputStream(body);
                 rawParams = new String(body);
             } catch (Exception e) {
                 throw (IOException)new IOException("Could not read the HTTP Request Body: " + e.getMessage()).initCause(e);
