@@ -137,10 +137,19 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             if (!converted.containsKey(key)) {
                 if (!value.isEmpty()) {
                     if ("MaxOpenPreparedStatements".equalsIgnoreCase(key) || "PoolPreparedStatements".equalsIgnoreCase(key)) {
+                        if ("0".equalsIgnoreCase(properties.getProperty("MaxOpenPreparedStatements", "0"))
+                                || "false".equalsIgnoreCase(properties.getProperty("PoolPreparedStatements", "false"))) {
+                            continue;
+                        }
+
                         String interceptors = properties.getProperty("jdbcInterceptors");
-                        if (interceptors == null || !interceptors.contains("StatementCache")) {
+                        if (interceptors == null) {
                             converted.setProperty("jdbcInterceptors",
                                     "StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
+                            LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
+                        } else if  (!interceptors.contains("StatementCache")) {
+                            converted.setProperty("jdbcInterceptors", interceptors
+                                    + ";StatementCache(max=" + properties.getProperty("MaxOpenPreparedStatements", "128") + ")");
                             LOGGER.debug("Tomcat-jdbc StatementCache added to handle prepared statement cache/pool");
                         }
                         continue;
