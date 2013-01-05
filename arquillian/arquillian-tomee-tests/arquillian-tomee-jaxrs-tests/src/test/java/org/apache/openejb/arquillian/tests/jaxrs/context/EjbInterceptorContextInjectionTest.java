@@ -18,6 +18,7 @@ package org.apache.openejb.arquillian.tests.jaxrs.context;
 
 import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -52,18 +53,19 @@ import static org.junit.Assert.assertEquals;
  *
  * @version $Rev$ $Date$
  */
+@RunAsClient
 @RunWith(Arquillian.class)
 public class EjbInterceptorContextInjectionTest {
 
     @ArquillianResource
     private URL url;
 
-    @Deployment(testable = false)
+    @Deployment
     public static WebArchive archive() {
         return ShrinkWrap.create(WebArchive.class)
+                .addClass(EjbInterceptorContextInjectionTest.class)
                 .addClass(RsInjection.class)
-                .addClass(RsEjbInterceptor.class)
-                ;
+                .addClass(RsEjbInterceptor.class);
     }
 
     @Test
