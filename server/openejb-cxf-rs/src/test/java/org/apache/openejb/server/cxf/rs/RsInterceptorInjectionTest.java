@@ -17,15 +17,12 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.core.ivm.naming.MapObjectReference;
-import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +31,6 @@ import javax.ejb.Singleton;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;

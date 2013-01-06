@@ -19,9 +19,9 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

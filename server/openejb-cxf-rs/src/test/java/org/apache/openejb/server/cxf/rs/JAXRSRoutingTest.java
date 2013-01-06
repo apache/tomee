@@ -16,25 +16,22 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
-import org.apache.openejb.server.cxf.rs.beans.*;
+import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
+import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
+import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
+import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
