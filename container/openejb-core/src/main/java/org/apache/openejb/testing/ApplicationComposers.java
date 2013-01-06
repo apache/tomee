@@ -120,14 +120,16 @@ public final class ApplicationComposers {
     private void validate() {
         List<Throwable> errors = new ArrayList<Throwable>();
 
-        final List<Method> configs = testClassFinder.findAnnotatedMethods(Configuration.class);
+        final List<Method> configs = new ArrayList<Method>();
+        configs.addAll(testClassFinder.findAnnotatedMethods(Configuration.class));
+        configs.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Configuration.class));
         if (configs.size() > 1) {
             final String gripe = "Test class should have no more than one @Configuration method";
             errors.add(new Exception(gripe));
         }
 
-        final List<Method> mockInjector = testClassFinder.findAnnotatedMethods(MockInjector.class);
-        if (mockInjector.size() > 1) {
+        if (testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.MockInjector.class).size()
+                + testClassFinder.findAnnotatedMethods(MockInjector.class).size() > 1) {
             errors.add(new Exception("Test class should have no more than one @MockInjector method"));
         }
 
@@ -139,13 +141,19 @@ public final class ApplicationComposers {
             }
         }
 
-        for (Method method : testClassFinder.findAnnotatedMethods(Component.class)) {
+        final List<Method> components = new ArrayList<Method>();
+        components.addAll(testClassFinder.findAnnotatedMethods(Component.class));
+        components.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Component.class));
+        for (Method method : components) {
             if (method.getParameterTypes().length > 0) {
                 errors.add(new Exception("@Component methods shouldn't take any parameters"));
             }
         }
 
-        for (Method method : testClassFinder.findAnnotatedMethods(Descriptors.class)) {
+        final List<Method> descriptors = new ArrayList<Method>();
+        descriptors.addAll(testClassFinder.findAnnotatedMethods(Descriptors.class));
+        descriptors.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Descriptors.class));
+        for (Method method : descriptors) {
             final Class<?> returnType = method.getReturnType();
             if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
                     && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
@@ -154,7 +162,10 @@ public final class ApplicationComposers {
             }
         }
 
-        for (Method method : testClassFinder.findAnnotatedMethods(Classes.class)) {
+        final List<Method> classes = new ArrayList<Method>();
+        classes.addAll(testClassFinder.findAnnotatedMethods(Classes.class));
+        classes.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Classes.class));
+        for (Method method : classes) {
             final Class<?> returnType = method.getReturnType();
             if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
                     && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)) {
@@ -165,7 +176,10 @@ public final class ApplicationComposers {
         int appModules = 0;
         int modules = 0;
 
-        for (Method method : testClassFinder.findAnnotatedMethods(Module.class)) {
+        final List<Method> moduleMethods = new ArrayList<Method>();
+        moduleMethods.addAll(testClassFinder.findAnnotatedMethods(Module.class));
+        moduleMethods.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Module.class));
+        for (Method method : moduleMethods) {
 
             modules++;
 
@@ -289,7 +303,8 @@ public final class ApplicationComposers {
         int webModulesNb = 0;
 
         // Invoke the @Module producer methods to build out the AppModule
-        final List<Method> moduleMethods = new ArrayList<Method>(testClassFinder.findAnnotatedMethods(Module.class));
+        final List<Method> moduleMethods = new ArrayList<Method>();
+        moduleMethods.addAll(testClassFinder.findAnnotatedMethods(Module.class));
         moduleMethods.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Module.class));
         for (Method method : moduleMethods) {
 
@@ -599,18 +614,6 @@ public final class ApplicationComposers {
             }
         }
         OpenEJB.destroy();
-    }
-
-    private void load(String className) {
-        try {
-            getClass().getClassLoader().loadClass(className);
-        } catch (Throwable t1) {
-            try {
-                getClass().getClassLoader().loadClass(className);
-            } catch (Throwable t2) {
-                // no-op
-            }
-        }
     }
 
     private <Module extends NamedModule> Module setId(Module module, Method method) {
