@@ -30,18 +30,8 @@
   <name>OpenEJB :: Arquillian Adaptors Parent :: Arquillian TCK</name>
   <packaging>jar</packaging>
 
-  <!--
-  <repositories>
-    <repository>
-      <id>arq-repo</id>
-      <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
-    </repository>
-  </repositories>
-  -->
-
   <properties>
-    <tck.classes>${project.build.directory}/test-classes</tck.classes>
-    <tck.reports>${project.build.directory}/surefire-reports/tck</tck.reports>
+    <tck.version>1.0.0.Final-SNAPSHOT</tck.version>
   </properties>
 
   <dependencies>
@@ -60,31 +50,25 @@
     <dependency>
       <groupId>org.arquillian.tck.container</groupId>
       <artifactId>arquillian-tck-container</artifactId>
-      <version>1.0.0.Final-SNAPSHOT</version>
+      <version>${tck.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-cdi</artifactId>
-      <version>1.0.3.Final</version>
+      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>1.5.2-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-        <targetPath>${tck.classes}</targetPath>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -101,31 +85,11 @@
                 <artifactItem>
                   <groupId>org.arquillian.tck.container</groupId>
                   <artifactId>arquillian-tck-container</artifactId>
-                  <version>1.0.0.Final-SNAPSHOT</version>
+                  <version>${tck.version}</version>
                   <classifier>tests</classifier>
-                  <outputDirectory>${tck.classes}</outputDirectory>
+                  <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
                 </artifactItem>
               </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
-        <executions>
-          <execution>
-            <id>tck-tests</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <!-- <groups>org.arquillian.tck.group.EE6</groups> -->
-              <!-- <excludedGroups>org.arquillian.tck.group.EE5</excludedGroups> -->
-              <testClassesDirectory>${tck.classes}</testClassesDirectory>
-              <reportsDirectory>${tck.reports}</reportsDirectory>
             </configuration>
           </execution>
         </executions>
