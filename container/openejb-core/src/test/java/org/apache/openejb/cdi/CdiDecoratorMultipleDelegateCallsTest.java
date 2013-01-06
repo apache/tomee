@@ -20,16 +20,14 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Classes;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Module;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 

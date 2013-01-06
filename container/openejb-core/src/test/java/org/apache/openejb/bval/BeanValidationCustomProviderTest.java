@@ -22,7 +22,7 @@ import org.apache.openejb.bval.util.CustomValidatorProvider;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

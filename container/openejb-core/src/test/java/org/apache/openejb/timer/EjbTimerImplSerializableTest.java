@@ -27,7 +27,7 @@ import org.apache.openejb.core.timer.TimerData;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.Test;

@@ -18,13 +18,10 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

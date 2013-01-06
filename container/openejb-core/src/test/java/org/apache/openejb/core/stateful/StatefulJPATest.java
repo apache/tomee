@@ -21,8 +21,9 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.ApplicationComposers;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,7 +48,7 @@ import java.util.Properties;
 public class StatefulJPATest {
     @Test
     public void testRemoveOk() throws NamingException {
-        final Context ctx = (Context) System.getProperties().get(ApplicationComposer.OPENEJB_APPLICATION_COMPOSER_CONTEXT);
+        final Context ctx = (Context) System.getProperties().get(ApplicationComposers.OPENEJB_APPLICATION_COMPOSER_CONTEXT);
         final AStateful stateful = (AStateful) ctx.lookup("global/StatefulJPATest/app/AStateful");
         for (int i = 0; i < 3; i++) {
             stateful.saveSomething();

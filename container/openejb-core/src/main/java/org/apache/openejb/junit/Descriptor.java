@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated // use org.apache.openejb.testing.Descriptor
 public @interface Descriptor {
     String name();
     String path();

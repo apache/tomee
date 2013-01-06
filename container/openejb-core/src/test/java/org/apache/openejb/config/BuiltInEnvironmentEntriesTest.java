@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.util.SetAccessible;
 import org.junit.Assert;
 import org.junit.Test;

@@ -23,9 +23,10 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated // use org.apache.openejb.testing.EnableServices
 public @interface EnableServices {
     // should contain the list of services to activate
     // default is empty list which means that all services gonna be activated
-    String[] value () default {};
+    String[] value() default {};
     boolean httpDebug() default false;
 }

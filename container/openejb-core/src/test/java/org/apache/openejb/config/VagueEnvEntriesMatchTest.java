@@ -17,22 +17,15 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnvEntryInfo;
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.*;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @version $Rev$ $Date$

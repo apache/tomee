@@ -17,23 +17,18 @@
 package org.apache.openejb.persistence;
 
 import java.util.Properties;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.StatelessBean;
+
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.apache.webbeans.logger.JULLoggerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;

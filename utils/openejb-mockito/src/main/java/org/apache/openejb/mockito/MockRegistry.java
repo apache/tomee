@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.mockito;
 
-import org.apache.openejb.junit.TestInstance;
+import org.apache.openejb.testing.TestInstance;
 import org.apache.openejb.loader.SystemInstance;
 import org.mockito.Mock;
 
