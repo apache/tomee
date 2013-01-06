@@ -275,14 +275,14 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             String clazz = info.getResourceClass().getName();
             if (restEjbs.containsKey(clazz)) {
-                LOGGER.info("    Service URI: " + address + " -> EJB " + clazz);
+                LOGGER.info("     Service URI: " + address + " -> EJB " + clazz);
             } else {
-                LOGGER.info("    Service URI: " + address + " -> Pojo " + clazz);
+                LOGGER.info("     Service URI: " + address + " -> Pojo " + clazz);
             }
 
             final MethodDispatcher md = info.getMethodDispatcher();
             for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
-                LOGGER.info("        "
+                LOGGER.info("          "
                         + forceLength(ori.getHttpMethod(), 7) + " " + singleSlash(address, ori.getURITemplate().getValue())
                         + "-> " + toGenericString(ori.getMethodToInvoke()));
             }
