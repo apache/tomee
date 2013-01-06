@@ -75,6 +75,6 @@ public class CxfRSService extends RESTService {
 
     @Override
     protected RsHttpListener createHttpListener() {
-        return new CxfRsHttpListener(httpTransportFactory);
+        return new CxfRsHttpListener(httpTransportFactory, getWildcard());
     }
 }

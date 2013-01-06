@@ -18,8 +18,12 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
+import org.apache.cxf.jaxrs.model.MethodDispatcher;
+import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
@@ -67,13 +71,16 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
     private static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
 
-    private HTTPTransportFactory transportFactory;
+    private final HTTPTransportFactory transportFactory;
+    private final String wildcard;
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
 
-    public CxfRsHttpListener(HTTPTransportFactory httpTransportFactory) {
+    public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
         transportFactory = httpTransportFactory;
+        wildcard = star;
+
     }
 
     @Override
@@ -250,6 +257,40 @@ public class CxfRsHttpListener implements RsHttpListener {
             this.context = "/" + webContext;
         }
         destination = (AbstractHTTPDestination) server.getDestination();
+
+        final JAXRSServiceImpl service = (JAXRSServiceImpl) factory.getServiceFactory().getService();
+        final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+        for (final ClassResourceInfo info : resources) {
+            if (info.getResourceClass() == null) { // possible?
+                continue;
+            }
+
+            final String address = singleSlash(prefix.substring(0, prefix.length() - wildcard.length()), info.getURITemplate().getValue());
+
+            String clazz = info.getResourceClass().getName();
+            if (restEjbs.containsKey(clazz)) {
+                LOGGER.info("REST EJB[" + clazz + "]  -> " + address);
+            } else {
+                LOGGER.info("REST Pojo[" + clazz + "]  -> " + address);
+            }
+
+            clazz = info.getResourceClass().getSimpleName(); // the qualified name is already printed just make it clearer
+            final MethodDispatcher md = info.getMethodDispatcher();
+            for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
+                LOGGER.info("     -> Method[" + clazz + "#" + ori.getMethodToInvoke().getName() + "]"
+                        + "  -> " + ori.getHttpMethod() + " " + singleSlash(address, ori.getURITemplate().getValue()));
+            }
+        }
+    }
+
+    private static String singleSlash(final String address, final String value) {
+        if (address.endsWith("/") && value.startsWith("/")) {
+            return address + value.substring(1);
+        }
+        if (!address.endsWith("/") && !value.startsWith("/")) {
+            return address + '/' + value;
+        }
+        return address + value;
     }
 
     private JAXRSServerFactoryBean newFactory(String prefix) {
