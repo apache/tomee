@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>arquillian</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>1.5.2-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>arquillian-tck</artifactId>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Arquillian TCK</name>
+  <packaging>jar</packaging>
+
+  <!--
+  <repositories>
+    <repository>
+      <id>arq-repo</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
+    </repository>
+  </repositories>
+  -->
+
+  <properties>
+    <tck.classes>${project.build.directory}/test-classes</tck.classes>
+    <tck.reports>${project.build.directory}/surefire-reports/tck</tck.reports>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${version.arquillian}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+      <version>${version.shrinkwrap.descriptor}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.tck.container</groupId>
+      <artifactId>arquillian-tck-container</artifactId>
+      <version>1.0.0.Final-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testenricher</groupId>
+      <artifactId>arquillian-testenricher-cdi</artifactId>
+      <version>1.0.3.Final</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-tomee-remote</artifactId>
+      <version>1.5.2-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+        <targetPath>${tck.classes}</targetPath>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>tck-unpack</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.arquillian.tck.container</groupId>
+                  <artifactId>arquillian-tck-container</artifactId>
+                  <version>1.0.0.Final-SNAPSHOT</version>
+                  <classifier>tests</classifier>
+                  <outputDirectory>${tck.classes}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.13</version>
+        <executions>
+          <execution>
+            <id>tck-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <!-- <groups>org.arquillian.tck.group.EE6</groups> -->
+              <!-- <excludedGroups>org.arquillian.tck.group.EE5</excludedGroups> -->
+              <testClassesDirectory>${tck.classes}</testClassesDirectory>
+              <reportsDirectory>${tck.reports}</reportsDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

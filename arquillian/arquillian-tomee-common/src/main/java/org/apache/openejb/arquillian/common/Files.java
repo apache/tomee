@@ -20,11 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev: 1157006 $ $Date: 2011-08-12 01:23:04 -0700 (Fri, 12 Aug 2011) $
  */
 public class Files {
+    private static final Logger LOGGER = Logger.getLogger(Files.class.getName());
 
     public static File path(final String... parts) {
         File dir = null;
@@ -76,10 +78,13 @@ public class Files {
     // Shutdown hook for recursive delete on tmp directories
     static final List<String> delete = new ArrayList<String>();
 
+    private static volatile boolean shutdown = false;
+
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                shutdown = true;
                 delete();
             }
         });
@@ -97,19 +102,25 @@ public class Files {
 
     public static void delete(final File file) {
         if (file.exists()) {
-            if (file.isDirectory()) {
-                final File[] files = file.listFiles();
-                if (files != null) {
-                    for (final File f : files) {
-                        delete(f);
-                    }
-                }
-            }
+            tryTodelete(file);
 
-            if (!file.delete()) {
+            if (!file.delete() && !shutdown) {
                 file.deleteOnExit();
+            } else if (!willBeDelete(file)) {
+                LOGGER.severe("can't delete " + file.getAbsolutePath());
             }
         }
+    }
+
+    private static boolean willBeDelete(final File file) {
+        File current = file;
+        while (current != null) {
+            if (delete.contains(current.getAbsolutePath())) {
+                return true;
+            }
+            current = current.getParentFile();
+        }
+        return false;
     }
 
     public static void mkdir(final File dir) {
@@ -140,6 +151,17 @@ public class Files {
     public static void assertFile(final File file) {
         if (!file.isFile()) {
             throw new IllegalStateException("Not a file: " + file.getAbsolutePath());
+        }
+    }
+
+    public static void tryTodelete(final File file) {
+        if (file.isDirectory()) {
+            final File[] files = file.listFiles();
+            if (files != null) {
+                for (final File f : files) {
+                    delete(f);
+                }
+            }
         }
     }
 }
