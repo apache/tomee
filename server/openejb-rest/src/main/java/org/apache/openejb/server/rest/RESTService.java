@@ -385,8 +385,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
         listener.deployApplication(application, address.complete, nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
                 classLoader, injections, context, owbCtx, // injection/webapp context
                 new ServiceConfiguration(configuration, appInfo.services)); // deployment config
-
-        LOGGER.info("REST Application: " + address.complete + "  -> " + application.getClass().getName());
     }
 
     private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {

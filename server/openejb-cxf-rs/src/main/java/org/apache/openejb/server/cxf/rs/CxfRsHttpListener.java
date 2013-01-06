@@ -55,6 +55,9 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -258,6 +261,9 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         destination = (AbstractHTTPDestination) server.getDestination();
 
+        LOGGER.info("REST Application: " + prefix + "  -> " + application.getClass().getName());
+
+        final String base = prefix.substring(0, prefix.length() - wildcard.length());
         final JAXRSServiceImpl service = (JAXRSServiceImpl) factory.getServiceFactory().getService();
         final List<ClassResourceInfo> resources = service.getClassResourceInfos();
         for (final ClassResourceInfo info : resources) {
@@ -265,21 +271,80 @@ public class CxfRsHttpListener implements RsHttpListener {
                 continue;
             }
 
-            final String address = singleSlash(prefix.substring(0, prefix.length() - wildcard.length()), info.getURITemplate().getValue());
+            final String address = singleSlash(base, info.getURITemplate().getValue());
 
             String clazz = info.getResourceClass().getName();
             if (restEjbs.containsKey(clazz)) {
-                LOGGER.info("REST EJB[" + clazz + "]  -> " + address);
+                LOGGER.info("    Service URI: " + address + " -> EJB " + clazz);
             } else {
-                LOGGER.info("REST Pojo[" + clazz + "]  -> " + address);
+                LOGGER.info("    Service URI: " + address + " -> Pojo " + clazz);
             }
 
-            clazz = info.getResourceClass().getSimpleName(); // the qualified name is already printed just make it clearer
             final MethodDispatcher md = info.getMethodDispatcher();
             for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
-                LOGGER.info("     -> Method[" + clazz + "#" + ori.getMethodToInvoke().getName() + "]"
-                        + "  -> " + ori.getHttpMethod() + " " + singleSlash(address, ori.getURITemplate().getValue()));
+                LOGGER.info("        "
+                        + forceLength(ori.getHttpMethod(), 7) + " " + singleSlash(address, ori.getURITemplate().getValue())
+                        + "-> " + toGenericString(ori.getMethodToInvoke()));
             }
+        }
+    }
+
+    private static String forceLength(final String httpMethod, final int l) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < l - httpMethod.length(); i++) {
+            builder.append(" ");
+        }
+        return builder.append(httpMethod).toString();
+    }
+
+    public static String toGenericString(final Method mtd) {
+        try {
+            final StringBuilder sb = new StringBuilder();
+            final Type[] typeparms = mtd.getTypeParameters();
+            if (typeparms.length > 0) {
+                boolean first = true;
+                sb.append("<");
+                for(Type typeparm: typeparms) {
+                    if (!first)
+                        sb.append(",");
+                    if (typeparm instanceof Class)
+                        sb.append(((Class)typeparm).getSimpleName());
+                    else
+                        sb.append(typeparm.toString().replace("java.lang.", ""));
+                    first = false;
+                }
+                sb.append("> ");
+            }
+
+            final Type genRetType = mtd.getGenericReturnType();
+            sb.append((genRetType instanceof Class) ?
+                    ((Class) genRetType).getSimpleName()
+                    : genRetType.toString().replace("java.lang.", "")).append(" ");
+
+            sb.append(mtd.getName()).append("(");
+            final Type[] params = mtd.getGenericParameterTypes();
+            for (int j = 0; j < params.length; j++) {
+                sb.append((params[j] instanceof Class)?
+                        ((Class)params[j]).getSimpleName():
+                        (params[j].toString()) );
+                if (j < (params.length - 1))
+                    sb.append(",");
+            }
+            sb.append(")");
+            final Type[] exceptions = mtd.getGenericExceptionTypes();
+            if (exceptions.length > 0) {
+                sb.append(" throws ");
+                for (int k = 0; k < exceptions.length; k++) {
+                    sb.append((exceptions[k] instanceof Class)?
+                            ((Class)exceptions[k]).getName():
+                            exceptions[k].toString());
+                    if (k < (exceptions.length - 1))
+                        sb.append(",");
+                }
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return "<" + e + ">";
         }
     }
 
