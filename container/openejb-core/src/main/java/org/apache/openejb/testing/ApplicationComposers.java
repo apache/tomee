@@ -257,7 +257,10 @@ public final class ApplicationComposers {
             configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
         }
 
-        for (Method method : testClassFinder.findAnnotatedMethods(Configuration.class)) {
+        final List<Method> configs = new ArrayList<Method>();
+        configs.addAll(testClassFinder.findAnnotatedMethods(Configuration.class));
+        configs.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Configuration.class));
+        for (Method method : configs) {
             final Object o = method.invoke(testInstance);
             if (o instanceof Properties) {
                 Properties properties = (Properties) o;
