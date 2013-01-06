@@ -23,10 +23,12 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.WebappAggregatedArchive;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
@@ -87,7 +89,7 @@ public class OpenEJBArchiveProcessor {
     public static AppModule createModule(final Archive<?> archive, final TestClass testClass) {
         final Class<?> javaClass = testClass.getJavaClass();
 
-        final Collection<URL> additionalPaths = new ArrayList<URL>();
+        final List<URL> additionalPaths = new ArrayList<URL>();
 
         final String prefix;
         if (WebArchive.class.isInstance(archive)) {
@@ -125,6 +127,11 @@ public class OpenEJBArchiveProcessor {
         final AppModule appModule = new AppModule(loader, archive.getName());
         if (WEB_INF.equals(prefix)) {
             appModule.setDelegateFirst(false);
+            appModule.setStandloneWebModule();
+
+            final WebModule webModule = new WebModule(new WebApp(), contextRoot(archive.getName()), loader, "", appModule.getModuleId());
+            webModule.setUrls(additionalPaths);
+            appModule.getWebModules().add(webModule);
         }
 
         // add the test as a managed bean to be able to inject into it easily
@@ -172,6 +179,9 @@ public class OpenEJBArchiveProcessor {
         final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, appModule.getClassLoader(), additionalPaths);
 
         ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new AnnotationFinder(finderArchive)));
+        if (appModule.isWebapp()) { // war
+            appModule.getWebModules().iterator().next().setFinder(ejbModule.getFinder());
+        }
         appModule.getEjbModules().add(ejbModule);
 
         {
@@ -236,9 +246,18 @@ public class OpenEJBArchiveProcessor {
             }
         }
 
-        appModule.getAdditionalLibraries().addAll(additionalPaths);
+        if (!appModule.isWebapp()) {
+            appModule.getAdditionalLibraries().addAll(additionalPaths);
+        }
 
         return appModule;
+    }
+
+    private static String contextRoot(final String name) {
+        if (name.endsWith(".war")) {
+            return name.substring(0, name.length() - ".war".length());
+        }
+        return name;
     }
 
     private static <T> T get(final Class<T> fileClass, final String attr, final Asset asset) {
