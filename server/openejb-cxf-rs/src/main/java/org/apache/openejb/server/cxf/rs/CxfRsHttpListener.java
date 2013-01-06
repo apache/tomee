@@ -51,7 +51,14 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
@@ -210,12 +217,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
 
         for (Class<?> clazz : application.getClasses()) {
-            classes.add(clazz);
+            if (!additionalProviders.contains(clazz)) {
+                classes.add(clazz);
+            }
         }
 
         for (Object o : application.getSingletons()) {
-            final Class<?> clazz = o.getClass();
-            classes.add(clazz);
+            if (!additionalProviders.contains(o)) {
+                final Class<?> clazz = o.getClass();
+                classes.add(clazz);
+            }
         }
 
         for (Class<?> clazz : classes) {

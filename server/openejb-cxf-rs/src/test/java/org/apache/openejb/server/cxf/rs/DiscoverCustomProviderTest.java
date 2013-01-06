@@ -17,11 +17,14 @@
 
 package org.apache.openejb.server.cxf.rs;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Properties;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentFilterable;
+import org.apache.openejb.server.rest.RESTService;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import javax.ejb.Singleton;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ws.rs.GET;
@@ -31,13 +34,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.server.rest.RESTService;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 

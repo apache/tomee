@@ -17,7 +17,6 @@
 package org.apache.openejb.server.cxf.rs.beans;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

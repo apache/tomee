@@ -71,6 +71,7 @@ import javax.naming.Context;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -229,8 +230,14 @@ public final class ApplicationComposers {
         final Properties configuration = new Properties();
         configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
-        final EnableServices annotation = testClass.getAnnotation(EnableServices.class);
+        EnableServices annotation = testClass.getAnnotation(EnableServices.class);
         if (annotation != null && annotation.httpDebug()) {
+            configuration.setProperty("httpejbd.print", "true");
+            configuration.setProperty("httpejbd.indent.xml", "true");
+            configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
+        }
+        org.apache.openejb.junit.EnableServices annotationOld = testClass.getAnnotation(org.apache.openejb.junit.EnableServices.class);
+        if (annotationOld != null && annotationOld.httpDebug()) {
             configuration.setProperty("httpejbd.print", "true");
             configuration.setProperty("httpejbd.indent.xml", "true");
             configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
@@ -254,9 +261,10 @@ public final class ApplicationComposers {
 
         // call the mock injector before module method to be able to use mocked classes
         // it will often use the TestInstance so
-        final List<Method> mockInjectors = testClassFinder.findAnnotatedMethods(MockInjector.class);
-        for (Method method : mockInjectors) { // max == 1 so no need to break
-            Object o = method.invoke(testInstance);
+        final List<Method> mockInjectors = new ArrayList<Method>(testClassFinder.findAnnotatedMethods(MockInjector.class));
+        mockInjectors.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.MockInjector.class));
+        if (!mockInjectors.isEmpty()) {
+            Object o = mockInjectors.iterator().next().invoke(testInstance);
             if (o instanceof Class<?>) {
                 o = ((Class<?>) o).newInstance();
             }
@@ -266,32 +274,35 @@ public final class ApplicationComposers {
         }
 
         for (Method method : testClassFinder.findAnnotatedMethods(Component.class)) {
-            Object value = method.invoke(testInstance);
-            if (value instanceof Class<?>) {
-                value = ((Class<?>) value).newInstance();
-            }
-
-            Class<?> key = method.getReturnType();
-
-            if (!key.isInstance(value)) { // we can't do it in validate to avoid to instantiate the value twice
-                throw new OpenEJBRuntimeException(value + " is not an instance of " + key.getName());
-            }
-
-            SystemInstance.get().setComponent((Class<Object>) key, value);
+            setComponent(testInstance, method);
+        }
+        for (Method method : testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Component.class)) {
+            setComponent(testInstance, method);
         }
 
-        final Map<String, URL> additionalDescriptors = descriptorsToMap(testClass.getAnnotation(Descriptors.class));
+        final Map<String, URL> additionalDescriptors = descriptorsToMap(testClass.getAnnotation(org.apache.openejb.junit.Descriptors.class));
+        final Map<String, URL> additionalDescriptorsNew = descriptorsToMap(testClass.getAnnotation(Descriptors.class));
+        additionalDescriptors.putAll(additionalDescriptorsNew);
 
         Application application = null;
 
         int webModulesNb = 0;
 
         // Invoke the @Module producer methods to build out the AppModule
-        final List<Method> moduleMethods = testClassFinder.findAnnotatedMethods(Module.class);
+        final List<Method> moduleMethods = new ArrayList<Method>(testClassFinder.findAnnotatedMethods(Module.class));
+        moduleMethods.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Module.class));
         for (Method method : moduleMethods) {
 
             final Object obj = method.invoke(testInstance);
             final Classes classesAnnotation = method.getAnnotation(Classes.class);
+            final org.apache.openejb.junit.Classes classesAnnotationOld = method.getAnnotation(org.apache.openejb.junit.Classes.class);
+
+            Class<?>[] classes = null;
+            if (classesAnnotation != null) {
+                classes = classesAnnotation.value();
+            } else if (classesAnnotationOld != null) {
+                classes = classesAnnotationOld.value();
+            }
 
             if (obj instanceof WebApp) { // will add the ejbmodule too
                 webModulesNb++;
@@ -307,8 +318,8 @@ public final class ApplicationComposers {
                 webModule.getAltDDs().putAll(additionalDescriptors);
                 webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                if (classesAnnotation != null) {
-                    webModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                if (classes != null) {
+                    webModule.setFinder(finderFromClasses(classes));
                 }
                 DeploymentLoader.addWebModule(webModule, appModule);
             } else if (obj instanceof WebModule) { // will add the ejbmodule too
@@ -319,8 +330,8 @@ public final class ApplicationComposers {
                 webModule.getAltDDs().putAll(additionalDescriptors);
                 webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                if (classesAnnotation != null) {
-                    webModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                if (classes != null) {
+                    webModule.setFinder(finderFromClasses(classes));
                 }
                 DeploymentLoader.addWebModule(webModule, appModule);
             } else if (obj instanceof EjbModule) {
@@ -329,8 +340,8 @@ public final class ApplicationComposers {
                 ejbModule.getAltDDs().putAll(additionalDescriptors);
                 ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
-                if (classesAnnotation != null) {
-                    ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                if (classes != null) {
+                    ejbModule.setFinder(finderFromClasses(classes));
                 }
                 ejbModule.initAppModule(appModule);
                 appModule.getEjbModules().add(ejbModule);
@@ -345,8 +356,8 @@ public final class ApplicationComposers {
                 ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
 
                 appModule.getEjbModules().add(ejbModule);
-                if (classesAnnotation != null) {
-                    ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                if (classes != null) {
+                    ejbModule.setFinder(finderFromClasses(classes));
                 }
             } else if (obj instanceof EnterpriseBean) {
 
@@ -384,8 +395,8 @@ public final class ApplicationComposers {
                 final Beans beans = (Beans) obj;
                 final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                 ejbModule.setBeans(beans);
-                if (classesAnnotation != null) {
-                    ejbModule.setFinder(finderFromClasses(classesAnnotation.value()));
+                if (classes != null) {
+                    ejbModule.setFinder(finderFromClasses(classes));
                 }
                 appModule.getEjbModules().add(ejbModule);
 
@@ -467,10 +478,13 @@ public final class ApplicationComposers {
         assembler.buildContainerSystem(config.getOpenEjbConfiguration());
 
         if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
-                || annotation != null) {
+                || (annotation != null || annotationOld != null)) {
             try {
                 if (annotation != null) {
-                    initFilteredServiceManager(annotation);
+                    initFilteredServiceManager(annotation.value());
+                }
+                if (annotationOld != null) {
+                    initFilteredServiceManager(annotationOld.value());
                 }
                 serviceManager = new ServiceManagerProxy(false);
                 serviceManager.start();
@@ -516,7 +530,8 @@ public final class ApplicationComposers {
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
         // test injections
-        final List<Field> fields = testClassFinder.findAnnotatedFields(AppResource.class);
+        final List<Field> fields = new ArrayList<Field>(testClassFinder.findAnnotatedFields(AppResource.class));
+        fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
         for (Field field : fields) {
             final Class<?> type = field.getType();
             if (AppModule.class.isAssignableFrom(type)) {
@@ -531,6 +546,21 @@ public final class ApplicationComposers {
         }
 
         previous = ThreadContext.enter(new ThreadContext(context, null, Operation.BUSINESS));
+    }
+
+    private void setComponent(Object testInstance, Method method) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        Object value = method.invoke(testInstance);
+        if (value instanceof Class<?>) {
+            value = ((Class<?>) value).newInstance();
+        }
+
+        Class<?> key = method.getReturnType();
+
+        if (!key.isInstance(value)) { // we can't do it in validate to avoid to instantiate the value twice
+            throw new OpenEJBRuntimeException(value + " is not an instance of " + key.getName());
+        }
+
+        SystemInstance.get().setComponent((Class<Object>) key, value);
     }
 
     public void evaluate(final Object testInstance, final Callable<Void> next) throws Exception {
@@ -616,12 +646,20 @@ public final class ApplicationComposers {
         }
     }
 
-    private static Map<String, URL> descriptorsToMap(final Descriptors descriptors) {
+    private static Map<String, URL> descriptorsToMap(final Object descriptors) {
         if (descriptors != null) {
             final Map<String, URL> dds = new HashMap<String, URL>();
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            for (Descriptor descriptor : descriptors.value()) {
-                dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+            if (descriptors instanceof Descriptors) {
+                for (Descriptor descriptor : ((Descriptors) descriptors).value()) {
+                    dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+                }
+            } else {
+                if (descriptors instanceof org.apache.openejb.junit.Descriptors) {
+                    for (org.apache.openejb.junit.Descriptor descriptor : ((org.apache.openejb.junit.Descriptors) descriptors).value()) {
+                        dds.put(descriptor.name(), loader.getResource(descriptor.path()));
+                    }
+                }
             }
             return dds;
         }
@@ -632,7 +670,7 @@ public final class ApplicationComposers {
         return new AnnotationFinder(new ClassesArchive(value)).link();
     }
 
-    private void initFilteredServiceManager(EnableServices services) {
+    private void initFilteredServiceManager(String[] services) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Class serviceManagerClass;
         try {
@@ -646,9 +684,9 @@ public final class ApplicationComposers {
         Method initServiceManager = null;
         try {
             initServiceManager = serviceManagerClass.getMethod("initServiceManager", String[].class);
-            initServiceManager.invoke(null, new Object[]{services.value()});
+            initServiceManager.invoke(null, new Object[]{ services });
         } catch (Exception e) {
-            throw new IllegalStateException("Failed initializing FilteredServiceManager with services " + services.value(), e);
+            throw new IllegalStateException("Failed initializing FilteredServiceManager with services " + services, e);
         }
     }
 

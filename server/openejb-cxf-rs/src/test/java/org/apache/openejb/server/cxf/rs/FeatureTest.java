@@ -26,14 +26,13 @@ import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
