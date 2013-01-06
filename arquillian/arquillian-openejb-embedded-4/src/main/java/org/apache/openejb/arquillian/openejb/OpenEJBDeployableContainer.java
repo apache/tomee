@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentFilterable;
@@ -29,6 +30,7 @@ import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -164,6 +166,12 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
         configurationFactory = new ConfigurationFactory();
+
+        if ("true".equalsIgnoreCase(PROPERTIES.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE))
+                && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
+            SystemInstance.get().setComponent(WebAppBuilder.class, new LightweightWebAppBuilder());
+        }
+
         contextProducer.set(initialContext);
     }
 
