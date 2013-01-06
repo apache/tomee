@@ -23,5 +23,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated // use org.apache.openejb.testing.Module
 public @interface Module {
 }

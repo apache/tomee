@@ -16,33 +16,24 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.annotation.sql.DataSourceDefinitions;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.DelegatingConnection;
 import org.apache.commons.dbcp.managed.ManagedConnection;
-import org.apache.commons.dbcp.managed.PoolableManagedConnection;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
 import org.apache.openejb.spi.ContainerSystem;
 import org.hsqldb.jdbc.JDBCConnection;
-import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

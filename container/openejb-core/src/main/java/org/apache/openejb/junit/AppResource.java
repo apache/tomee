@@ -23,5 +23,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated // use org.apache.openejb.testing.AppResource
 public @interface AppResource {
 }

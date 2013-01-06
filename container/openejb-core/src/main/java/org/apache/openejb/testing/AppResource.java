@@ -14,22 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.junit;
+package org.apache.openejb.testing;
 
-public class TestInstance {
-    protected Class<?> testClass;
-    protected Object instance;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public TestInstance(final Class<?> testClass, final Object instance) {
-        this.testClass = testClass;
-        this.instance = instance;
-    }
-
-    public Class<?> getTestClass() {
-        return testClass;
-    }
-
-    public Object getInstance() {
-        return instance;
-    }
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AppResource {
 }

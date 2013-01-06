@@ -22,9 +22,9 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.junit.AppResource;
+import org.apache.openejb.testing.AppResource;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

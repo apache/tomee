@@ -22,7 +22,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

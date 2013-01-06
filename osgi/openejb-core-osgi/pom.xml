@@ -335,6 +335,7 @@
       org.junit.rules;resolution:=optional,
       org.junit.runners;resolution:=optional,
       org.junit.runners.model;resolution:=optional,
+      org.testng;resolution:=optional,
       org.omg.CORBA,
       org.quartz;resolution:=optional,
       org.quartz.impl;resolution:=optional,

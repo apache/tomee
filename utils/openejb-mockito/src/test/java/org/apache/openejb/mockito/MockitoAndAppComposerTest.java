@@ -17,8 +17,8 @@
 package org.apache.openejb.mockito;
 
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.MockInjector;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.MockInjector;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

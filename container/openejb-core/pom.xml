@@ -205,6 +205,7 @@
       org.junit.rules;resolution:=optional,
       org.junit.runners;resolution:=optional,
       org.junit.runners.model;resolution:=optional,
+      org.testng;resolution:=optional,
       org.omg.CORBA,
       org.osgi.framework,
       org.quartz;resolution:=optional,
@@ -500,6 +501,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

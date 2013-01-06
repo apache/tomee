@@ -22,7 +22,7 @@ import javax.management.ObjectName;
 import org.apache.openejb.core.singleton.SingletonContainer;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

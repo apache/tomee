@@ -17,7 +17,6 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.core.LocalInitialContext;
-import org.apache.openejb.junit.EnableServices;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

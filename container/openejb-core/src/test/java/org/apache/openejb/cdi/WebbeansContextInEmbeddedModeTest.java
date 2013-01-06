@@ -19,7 +19,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.config.WebBeansContext;

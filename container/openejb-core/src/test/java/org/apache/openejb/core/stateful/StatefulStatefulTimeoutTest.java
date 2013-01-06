@@ -19,8 +19,9 @@ package org.apache.openejb.core.stateful;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.ApplicationComposers;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class StatefulStatefulTimeoutTest {
 
     @Before
     public void initContext() {
-        context = (Context) System.getProperties().get(ApplicationComposer.OPENEJB_APPLICATION_COMPOSER_CONTEXT);
+        context = (Context) System.getProperties().get(ApplicationComposers.OPENEJB_APPLICATION_COMPOSER_CONTEXT);
     }
 
     @Stateful

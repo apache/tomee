@@ -21,14 +21,13 @@ import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Local;
 import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.spi.Context;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;

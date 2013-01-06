@@ -19,8 +19,8 @@ package org.apache.openejb.config;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.Module;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
