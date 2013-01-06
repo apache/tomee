@@ -386,11 +386,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 classLoader, injections, context, owbCtx, // injection/webapp context
                 new ServiceConfiguration(configuration, appInfo.services)); // deployment config
 
-        if (!application.getClass().equals(InternalApplication.class)) {
-            LOGGER.info("REST Application: " + address.complete + "  -> " + application.getClass().getName());
-        } else {
-            LOGGER.info("REST Application: " + address.complete + "  -> " + contextRoot);
-        }
+        LOGGER.info("REST Application: " + address.complete + "  -> " + application.getClass().getName());
     }
 
     private static String appPrefix(final WebAppInfo info, final Class<?> appClazz) {
@@ -891,5 +887,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     public List<DeployedService> getServices() {
         return services;
+    }
+
+    public String getWildcard() {
+        return wildcard;
     }
 }
