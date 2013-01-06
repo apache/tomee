@@ -277,6 +277,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 appInfo = deployer().deploy(file.getAbsolutePath());
                 if (appInfo != null) {
                     moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+                    Files.deleteOnExit(file); // "i" folder
                 } else {
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
@@ -407,7 +408,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             throw new DeploymentException("Unable to undeploy " + archive.getName(), e);
         } finally {
             LOGGER.info("cleaning " + deployed.file.getAbsolutePath());
-            Files.delete(deployed.file); // "i" folder
+            Files.tryTodelete(deployed.file); // "i" folder
 
             final File pathFile = new File(deployed.path);
             if (!deployed.path.equals(deployed.file.getAbsolutePath()) && pathFile.exists()) {
