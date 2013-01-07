@@ -53,6 +53,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A class to take care of HTTP Requests.  It parses headers, content, form and url
@@ -64,7 +65,7 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String CHUNKED = "chunked";
     protected static final String EJBSESSIONID = "EJBSESSIONID";
 
-    private static final Map<String, HttpSession> SESSIONS = new ConcurrentHashMap<String, HttpSession>();
+    private static final ConcurrentMap<String, HttpSession> SESSIONS = new ConcurrentHashMap<String, HttpSession>();
 
     /**
      * 5.1.1    Method
@@ -777,7 +778,10 @@ public class HttpRequestImpl implements HttpRequest {
     public HttpSession getSession(boolean create) {
         if (session == null) {
             session = new HttpSessionImpl();
-            SESSIONS.put(session.getId(), session);
+            final HttpSession previous = SESSIONS.putIfAbsent(session.getId(), session);
+            if (previous != null) {
+                session = previous;
+            }
         }
         return session;
     }
