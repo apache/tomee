@@ -165,7 +165,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
                                 if (PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()) != null) {
                                     deploymentWithApplication = false;
                                     logOldDeploymentUsage(clazz.getName());
-                                    break;
                                 }
                             }
                         }
@@ -180,7 +179,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
                                     if (PojoUtil.findConfiguration(pojoConfigurations, clazz.getName()) != null) {
                                         deploymentWithApplication = false;
                                         logOldDeploymentUsage(clazz.getName());
-                                        break;
                                     }
                                 }
                             }
