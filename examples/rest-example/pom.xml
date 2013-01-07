@@ -70,7 +70,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.5.2-SNAPSHOT</version>
         <configuration>
           <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
@@ -79,7 +79,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.5.2-SNAPSHOT</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.openejb</groupId>
