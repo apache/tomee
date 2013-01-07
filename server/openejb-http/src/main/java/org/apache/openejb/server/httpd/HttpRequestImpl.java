@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A class to take care of HTTP Requests.  It parses headers, content, form and url
@@ -62,6 +63,8 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
     protected static final String EJBSESSIONID = "EJBSESSIONID";
+
+    private static final Map<String, HttpSession> SESSIONS = new ConcurrentHashMap<String, HttpSession>();
 
     /**
      * 5.1.1    Method
@@ -315,6 +318,19 @@ public class HttpRequestImpl implements HttpRequest {
 
         parameters.putAll(this.getFormParameters());
         parameters.putAll(this.getQueryParameters());
+
+        if (headers.containsKey("Cookie")) {
+            final String cookie = headers.get("Cookie");
+            if (cookie != null) {
+                final String[] cookies = cookie.split(";");
+                for (String c : cookies) {
+                    final String current = c.trim();
+                    if (current.startsWith("EJBSESSIONID=")) {
+                        session = SESSIONS.get(current.substring("EJBSESSIONID=".length()));
+                    }
+                }
+            }
+        }
     }
 
     public void print(final Logger log, boolean formatXml) {
@@ -617,8 +633,6 @@ public class HttpRequestImpl implements HttpRequest {
             this.in = new ServletByteArrayIntputStream(body);
         }
 
-        session = new HttpSessionImpl();
-
     }
 
     private byte[] readContent(DataInput in) throws IOException {
@@ -761,6 +775,10 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public HttpSession getSession(boolean create) {
+        if (session == null) {
+            session = new HttpSessionImpl();
+            SESSIONS.put(session.getId(), session);
+        }
         return session;
     }
 
@@ -809,7 +827,7 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public HttpSession getSession() {
-        return getSession(true);
+        return session;
     }
 
     @Override
