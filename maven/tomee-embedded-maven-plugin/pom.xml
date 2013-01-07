@@ -28,6 +28,7 @@
   </parent>
 
   <artifactId>tomee-embedded-maven-plugin</artifactId>
+  <version>1.5.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>OpenEJB :: Maven Plugins :: TomEE Embedded Maven Plugin</name>
 
