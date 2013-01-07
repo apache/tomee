@@ -31,6 +31,9 @@ import java.io.IOException;
 
 import static org.apache.openejb.maven.plugin.util.Zips.zip;
 
+/**
+ * Create but not run a TomEE.
+ */
 @Mojo(name = "build", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class BuildTomEEMojo extends AbstractTomEEMojo {
     @Parameter(property = "tomee-plugin.zip", defaultValue = "true")

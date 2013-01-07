@@ -23,6 +23,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
 
+/**
+ * Simply undeploy an application in a running TomEE
+ */
 @Mojo(name = "undeploy")
 public class UnDeployMojo extends AbstractDeployMojo {
     @Override

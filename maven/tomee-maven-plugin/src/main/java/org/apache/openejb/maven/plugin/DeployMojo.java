@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Simply deploy an application in a running TomEE
+ */
 @Mojo(name = "deploy")
 public class DeployMojo extends AbstractDeployMojo {
     @Parameter

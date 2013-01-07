@@ -35,7 +35,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * highly inspired from openejb command helper but with some different data.
+ * Highly inspired from openejb command helper but with some different data.
+ * List deployed EJB in a running TomEE.
  */
 @Mojo(name = "list")
 public class ListEjbMojo extends AbstractCommandMojo {

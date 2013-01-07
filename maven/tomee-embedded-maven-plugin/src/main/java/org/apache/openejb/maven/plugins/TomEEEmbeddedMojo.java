@@ -29,6 +29,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * Run an Embedded TomEE.
+ */
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class TomEEEmbeddedMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.packaging}")
