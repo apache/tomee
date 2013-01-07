@@ -45,7 +45,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"container", "resource", "service"})
+@XmlType(name = "", propOrder = { "container", "resource", "service", "connector" })
 @XmlRootElement(name = "resources")
 public class Resources {
 
@@ -57,6 +57,9 @@ public class Resources {
 
     @XmlElement(name = "Service")
     protected List<Service> service;
+
+    @XmlElement(name = "Connector")
+    protected List<Connector> connector;
 
     public List<Resource> getResource() {
         if (resource == null) {
@@ -81,11 +84,20 @@ public class Resources {
         return service;
     }
 
+    private List<Connector> getConnector() {
+        if (connector == null) {
+            connector = new ArrayList<Connector>();
+        }
+        return this.connector;
+    }
+
     public void add(Object service) {
         if (service instanceof Resource) {
             getResource().add((Resource) service);
         } else if (service instanceof Service) {
             getService().add((Service) service);
+        } else if (service instanceof Connector) {
+            getConnector().add((Connector) service);
         }
     }
 }
