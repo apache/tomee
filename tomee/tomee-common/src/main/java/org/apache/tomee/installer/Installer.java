@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -243,8 +245,10 @@ public class Installer {
 
         copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
 
-        // a bit odd but we don't want to depend on OSGi and geronimo jaxb api ContextFinder depends on it
-        copyClasses(paths.getJavaEEAPIJar(), new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
+        final File jaxbApi = paths.findOpenEJBJar("geronimo-jaxb_2.2_spec");
+        copyClasses(paths.getJavaEEAPIJar(), jaxbApi, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*", Arrays.asList("javax/xml/bind/ContextFinder.class", "javax/xml/bind/DatatypeConverter.class"));
+        removeJar(jaxbApi);
+
         final File jaxbImpl = new File(endorsed, "jaxb-impl.jar");
         if (!jaxbImpl.exists()) {
             try {
@@ -303,6 +307,54 @@ public class Installer {
         */
     }
 
+    private void copyClasses(final File javaEEAPIJar, final File sourceJar, final File destinationJar, final String pattern, final List<String> exceptions) {
+        if (javaEEAPIJar == null) throw new NullPointerException("javaEEAPIJar");
+        if (sourceJar == null) throw new NullPointerException("sourceJar");
+        if (destinationJar == null) throw new NullPointerException("destinationJar");
+        if (pattern == null) throw new NullPointerException("pattern");
+        if (exceptions == null) throw new NullPointerException("exceptions");
+
+        if (destinationJar.exists()) return;
+
+        try {
+
+            final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
+            final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
+
+            final ZipInputStream source = new ZipInputStream(IO.read(sourceJar));
+            for (ZipEntry entry; (entry = source.getNextEntry()) != null; ) {
+                final String entryName = entry.getName();
+                if (!entryName.matches(pattern) || exceptions.contains(entryName)) {
+                    continue;
+                }
+
+                destination.putNextEntry(new ZipEntry(entryName));
+
+                IO.copy(source, destination);
+            }
+            IO.close(source);
+
+            final ZipInputStream source2 = new ZipInputStream(IO.read(javaEEAPIJar));
+            for (ZipEntry entry; (entry = source2.getNextEntry()) != null; ) {
+                final String entryName = entry.getName();
+                if (!entryName.matches(pattern) || !exceptions.contains(entryName)) {
+                    continue;
+                }
+
+                destination.putNextEntry(new ZipEntry(entryName));
+
+                IO.copy(source2, destination);
+            }
+            IO.close(source2);
+
+            IO.close(destination);
+
+            IO.copy(destinationBuffer.toByteArray(), destinationJar);
+        } catch (IOException e) {
+            alerts.addError(e.getMessage());
+        }
+    }
+
     private void copyClasses(File sourceJar, File destinationJar, String pattern) {
         if (sourceJar == null) throw new NullPointerException("sourceJar");
         if (destinationJar == null) throw new NullPointerException("destinationJar");
@@ -336,15 +388,18 @@ public class Installer {
         }
     }
 
+    private void removeJar(final File jar) {
+        if (jar.exists()) {
+            if (!jar.delete()) {
+                jar.deleteOnExit();
+            }
+            alerts.addInfo("Please restart the server or delete manually " + jar.getName());
+        }
+    }
 
     private void removeTomcatLibJar(String name) {
-        File annotationApi = new File(paths.getCatalinaLibDir(), name);
-        if (annotationApi.exists()) {
-            if (!annotationApi.delete()) {
-                annotationApi.deleteOnExit();
-            }
-            alerts.addInfo("Please restart the server or delete manually " + name);
-        }
+        final File jar = new File(paths.getCatalinaLibDir(), name);
+        removeJar(jar);
     }
 
     public void installListener() {
