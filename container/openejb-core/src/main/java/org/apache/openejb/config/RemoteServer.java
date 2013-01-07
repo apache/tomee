@@ -446,7 +446,9 @@ public class RemoteServer {
             try {
                 shutdown();
             } catch (Exception e) {
-                e.printStackTrace(System.err);
+                if (verbose) {
+                    e.printStackTrace(System.err);
+                }
             }
         }
     }
