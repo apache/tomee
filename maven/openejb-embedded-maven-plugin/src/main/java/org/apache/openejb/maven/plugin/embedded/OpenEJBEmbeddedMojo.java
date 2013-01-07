@@ -38,6 +38,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * Run an EJBContainer.
+ */
 @Mojo(name = "run", defaultPhase = LifecyclePhase.COMPILE)
 public class OpenEJBEmbeddedMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.artifactId}")

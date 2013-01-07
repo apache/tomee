@@ -25,7 +25,9 @@ import org.apache.openejb.config.RemoteServer;
 
 import java.util.List;
 
-
+/**
+ * Stop a TomEE started with start command.
+ */
 @Mojo(name = "stop", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class StopTomEEMojo extends AbstractTomEEMojo {
     @Override

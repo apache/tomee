@@ -20,6 +20,9 @@ package org.apache.openejb.maven.plugin;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+/**
+ * As run but with debug activated.
+ */
 @Mojo(name = "debug", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class DebugTomEEMojo extends RunTomEEMojo {
     @Override

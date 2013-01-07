@@ -20,6 +20,9 @@ package org.apache.openejb.maven.plugin;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+/**
+ * Start and forget TomEE.
+ */
 @Mojo(name = "start", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class StartTomEEMojo extends UpdatableTomEEMojo {
     @Override
