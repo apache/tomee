@@ -573,11 +573,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 public void run() {
                     try {
                         server.stop();
+                    } catch (Exception e) {
+                        // no-op
+                    }
+                    try {
                         server.getServer().waitFor();
                         getLog().info("TomEE stopped");
                         stopCondition.countDown();
                     } catch (Exception e) {
-                        getLog().error("Error stopping TomEE", e);
+                        getLog().error("Can't stop TomEE", e);
                     }
                 }
             });
