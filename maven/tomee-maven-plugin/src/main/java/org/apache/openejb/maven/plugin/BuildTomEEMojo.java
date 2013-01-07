@@ -45,7 +45,7 @@ public class BuildTomEEMojo extends AbstractTomEEMojo {
     @Component
     private MavenProjectHelper projectHelper;
 
-    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     @Parameter(property = "tomee-plugin.classifier")

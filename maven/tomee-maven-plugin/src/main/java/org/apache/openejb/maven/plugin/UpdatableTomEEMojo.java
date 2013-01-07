@@ -45,10 +45,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     @Parameter
     private Synchronization synchronization;
 
-    @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true, required = true)
+    @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true)
     private File buildDir;
 
-    @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true, required = true)
+    @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true)
     private File baseDir;
 
     @Parameter(property = "tomee-plugin.finalName", defaultValue = "${project.build.finalName}")

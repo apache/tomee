@@ -82,10 +82,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Component
     protected ArtifactResolver resolver;
 
-    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
+    @Parameter(defaultValue = "${localRepository}", readonly = true)
     protected ArtifactRepository local;
 
-    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     protected List<ArtifactRepository> remoteRepos;
 
     @Parameter(property = "tomee-plugin.skipCurrentProject", defaultValue = "false")
@@ -193,7 +193,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "false")
     protected boolean removeTomeeWebapp;
 
-    @Parameter(defaultValue = "${project.packaging}", readonly = true, required = true)
+    @Parameter(defaultValue = "${project.packaging}", readonly = true)
     protected String packaging;
 
     @Parameter(property = "tomee-plugin.keep-server-xml", defaultValue = "false")
@@ -202,7 +202,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     /**
      * The current user system settings for use in Maven.
      */
-    @Parameter(defaultValue = "${settings}", required = true, readonly = true)
+    @Parameter(defaultValue = "${settings}", readonly = true)
     protected Settings settings;
 
     protected File deployedFile = null;
