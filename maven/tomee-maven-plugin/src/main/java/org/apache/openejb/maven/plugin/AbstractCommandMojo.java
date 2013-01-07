@@ -30,7 +30,7 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
             props.put(Context.SECURITY_PRINCIPAL, user);
         }
         if (password != null) {
-            props.put(Context.SECURITY_PRINCIPAL, password);
+            props.put(Context.SECURITY_CREDENTIALS, password);
         }
         if (realm != null) {
             props.put("openejb.authentication.realmName", realm);
