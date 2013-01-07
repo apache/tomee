@@ -226,7 +226,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
 
         for (Class<?> clazz : application.getClasses()) {
-            if (!additionalProviders.contains(clazz)) {
+            if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
                 classes.add(clazz);
             }
         }
