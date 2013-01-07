@@ -528,10 +528,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (systemVariables != null) {
             for (Map.Entry<String, String> entry : systemVariables.entrySet()) {
                 final String key = entry.getKey();
-                if (entry.getValue().contains(" ")) {
-                    strings.add(String.format("'-D%s=%s'", key, entry.getValue()));
+                final String value = entry.getValue();
+                if (value == null) {
+                    strings.add("-D" + key);
+                } else if (value.contains(" ")) {
+                    strings.add(String.format("'-D%s=%s'", key, value));
                 } else {
-                    strings.add(String.format("-D%s=%s", key, entry.getValue()));
+                    strings.add(String.format("-D%s=%s", key, value));
                 }
 
                 if (deployOpenEjbAppKey.equals(key)) {
