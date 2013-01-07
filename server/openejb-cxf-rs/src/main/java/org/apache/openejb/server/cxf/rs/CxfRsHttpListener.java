@@ -56,7 +56,6 @@ import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -290,11 +289,18 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private static String forceLength(final String httpMethod, final int l) {
+        final String http;
+        if (httpMethod == null) { // subresourcelocator implies null http method
+            http = "";
+        } else {
+            http = httpMethod;
+        }
+
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < l - httpMethod.length(); i++) {
+        for (int i = 0; i < l - http.length(); i++) {
             builder.append(" ");
         }
-        return builder.append(httpMethod).toString();
+        return builder.append(http).toString();
     }
 
     public static String toGenericString(final Method mtd) {
@@ -362,7 +368,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
-        factory.setAddress(prefix);
+        factory.setAddress(prefix.substring(0, prefix.length() - wildcard.length()));
         return factory;
     }
 
