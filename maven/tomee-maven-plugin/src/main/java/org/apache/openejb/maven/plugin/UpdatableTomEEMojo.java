@@ -51,7 +51,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true, required = true)
     private File baseDir;
 
-    @Parameter(property = "tomee-plugin.finalName", defaultValue = "${project.build.finalName}", required = true)
+    @Parameter(property = "tomee-plugin.finalName", defaultValue = "${project.build.finalName}")
     private String finalName;
 
     @Parameter(property = "tomee-plugin.reload-on-update", defaultValue = "false")
