@@ -532,7 +532,7 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     private boolean hasBody() {
-        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name());
+        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name()) && !method.equals(Method.HEAD.name());
     }
     /**
      * reads the body from the data input passed in
