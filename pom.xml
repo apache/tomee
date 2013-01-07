@@ -114,7 +114,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-4</javaee-api.version>
+    <javaee-api.version>6.0-5-SNAPSHOT</javaee-api.version>
 
     <jaxb.version>2.2.6</jaxb.version>
 
