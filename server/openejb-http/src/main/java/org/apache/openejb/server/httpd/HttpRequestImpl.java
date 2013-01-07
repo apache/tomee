@@ -233,7 +233,10 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getRequestedSessionId() {
-        return session.getId();
+        if (session != null) {
+            return session.getId();
+        }
+        return null;
     }
 
     @Override
