@@ -21,10 +21,20 @@ import javax.servlet.http.HttpSessionContext;
 import org.apache.openejb.client.ArrayEnumeration;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 public class HttpSessionImpl implements HttpSession {
     private String sessionId = UUID.randomUUID().toString();
     private Map<String, Object> attributes = new HashMap<String, Object>();
+    private final ConcurrentMap<String, HttpSession> mapToClean;
+
+    public HttpSessionImpl(final ConcurrentMap<String, HttpSession> sessions) {
+        mapToClean = sessions;
+    }
+
+    public HttpSessionImpl() {
+        this(null);
+    }
 
     @Override
     public void removeAttribute(String name) {
@@ -45,6 +55,9 @@ public class HttpSessionImpl implements HttpSession {
     @Override
     public void invalidate() {
         attributes.clear();
+        if (mapToClean != null) {
+            mapToClean.remove(sessionId);
+        }
     }
 
     @Override

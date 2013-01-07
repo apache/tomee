@@ -65,6 +65,7 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String CHUNKED = "chunked";
     protected static final String EJBSESSIONID = "EJBSESSIONID";
 
+    // note: no eviction so invalidate has to be called properly
     private static final ConcurrentMap<String, HttpSession> SESSIONS = new ConcurrentHashMap<String, HttpSession>();
 
     /**
@@ -777,7 +778,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     public HttpSession getSession(boolean create) {
         if (session == null) {
-            session = new HttpSessionImpl();
+            session = new HttpSessionImpl(SESSIONS);
             final HttpSession previous = SESSIONS.putIfAbsent(session.getId(), session);
             if (previous != null) {
                 session = previous;
