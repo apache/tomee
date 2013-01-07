@@ -132,6 +132,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1033,7 +1034,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                     if (!appModule.isWebapp()) {
                     	classLoader = appModule.getClassLoader();
+                    } else {
+                        final ClassLoader loader = standardContext.getLoader().getClassLoader();
+                        if (loader instanceof LazyStopWebappClassLoader) {
+                            final LazyStopWebappClassLoader lazyStopWebappClassLoader = (LazyStopWebappClassLoader) loader;
+                            for (URL url : appModule.getWebModules().iterator().next().getAddedUrls()) {
+                                lazyStopWebappClassLoader.addURL(url);
+                            }
+                        }
                     }
+
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
                 } catch (Exception e) {

@@ -99,6 +99,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private static final String ddDir = "META-INF/";
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
+    public static final String RAR_URLS_KEY = "rar-urls";
+    public static final String URLS_KEY = "urls";
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
@@ -208,6 +210,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                     // ignored
                 }
 
+                addConnectorModules(appModule, webModule);
+
                 addWebPersistenceDD("persistence.xml", otherDD, appModule);
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
@@ -239,6 +243,30 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 //Really try and flush this classloader out
 //                System.gc();
+            }
+        }
+    }
+
+    private void addConnectorModules(final AppModule appModule, final WebModule webModule) throws OpenEJBException {
+        // WEB-INF
+        if (webModule.getAltDDs().containsKey("ra.xml")) {
+            final String jarLocation = new File(webModule.getJarLocation(), "/WEB-INF/classes").getAbsolutePath();
+            final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), webModule.getModuleId() + "RA");
+            connectorModule.getAltDDs().put("ra.xml", webModule.getAltDDs().get("ra.xml"));
+            appModule.getConnectorModules().add(connectorModule);
+        }
+
+        // .rar
+        for (URL url : webModule.getRarUrls()) {
+            try {
+                final File file = URLs.toFile(url);
+                if (file.getName().endsWith(".rar")) {
+                    final String jarLocation = file.getAbsolutePath();
+                    final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
+                    appModule.getConnectorModules().add(connectorModule);
+                }
+            } catch (Exception e) {
+                logger.error("error processing url " + url.toExternalForm(), e);
             }
         }
     }
@@ -771,21 +799,45 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // determine war class path
-        final URL[] webUrls = getWebappUrls(warFile);
+        final Map<String, URL[]> urls = getWebappUrlsAndRars(warFile);
+
+        final List<URL> webUrls = new ArrayList<URL>();
+        webUrls.addAll(Arrays.asList(urls.get(URLS_KEY)));
+
+        final List<URL> addedUrls = new ArrayList<URL>();
+        for (URL url : urls.get(RAR_URLS_KEY)) { // eager unpack to be able to use it in classloader
+            final File[] files = unpack(URLs.toFile(url)).listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    if (f.getName().endsWith(".jar")) {
+                        try {
+                            addedUrls.add(f.toURI().toURL());
+                        } catch (MalformedURLException e) {
+                            logger.warning("War path bad: " + f.getAbsolutePath(), e);
+                        }
+                    }
+                }
+            }
+        }
+        webUrls.addAll(addedUrls);
+
+        final URL[] webUrlsArray = webUrls.toArray(new URL[webUrls.size()]);
 
         // in TomEE this is done in init hook since we don't manage tomee webapp classloader
         // so here is not the best idea for tomee
         // if we want to manage it in a generic way
         // simply add a boolean shared between tomcat and openejb world
         // to know if we should fire it or not
-        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrls, parentClassLoader));
+        SystemInstance.get().fireEvent(new BeforeDeploymentEvent(webUrlsArray, parentClassLoader));
 
-        final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
+        final ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrlsArray, parentClassLoader);
 
         // create web module
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
-        webModule.setUrls(Arrays.asList(webUrls));
-        webModule.setScannableUrls(filterWebappUrls(webUrls, descriptors.get(NewLoaderLogic.EXCLUSION_FILE)));
+        webModule.setUrls(webUrls);
+        webModule.setAddedUrls(addedUrls);
+        webModule.setRarUrls(Arrays.asList(urls.get(RAR_URLS_KEY)));
+        webModule.setScannableUrls(filterWebappUrls(webUrlsArray, descriptors.get(NewLoaderLogic.EXCLUSION_FILE)));
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
@@ -911,8 +963,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         return null;
     }
 
-    public static URL[] getWebappUrls(final File warFile) {
+    public static Map<String, URL[]> getWebappUrlsAndRars(final File warFile) {
         final Set<URL> webClassPath = new HashSet<URL>();
+        final Set<URL> webRars = new HashSet<URL>();
         final File webInfDir = new File(warFile, "WEB-INF");
         try {
             webClassPath.add(new File(webInfDir, "classes").toURI().toURL());
@@ -925,9 +978,16 @@ public class DeploymentLoader implements DeploymentFilterable {
             final File[] list = libDir.listFiles();
             if (list != null) {
                 for (final File file : list) {
-                    if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                    final String name = file.getName();
+                    if (name.endsWith(".jar") || name.endsWith(".zip")) {
                         try {
                             webClassPath.add(file.toURI().toURL());
+                        } catch (MalformedURLException e) {
+                            logger.warning("War path bad: " + file, e);
+                        }
+                    } else if (name.endsWith(".rar")) {
+                        try {
+                            webRars.add(file.toURI().toURL());
                         } catch (MalformedURLException e) {
                             logger.warning("War path bad: " + file, e);
                         }
@@ -942,7 +1002,14 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // create the class loader
-        return webClassPath.toArray(new URL[webClassPath.size()]);
+        final Map<String, URL[]> urls = new HashMap<String, URL[]>();
+        urls.put(URLS_KEY,  webClassPath.toArray(new URL[webClassPath.size()]));
+        urls.put(RAR_URLS_KEY,  webRars.toArray(new URL[webRars.size()]));
+        return urls;
+    }
+
+    public static URL[] getWebappUrls(final File warFile) {
+        return getWebappUrlsAndRars(warFile).get("urls");
     }
 
     private static void addWebservices(final WsModule wsModule) throws OpenEJBException {

@@ -62,6 +62,8 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
     private List<URL> urls;
+    private List<URL> rarUrls;
+    private List<URL> addedUrls;
     private List<URL> scannableUrls;
 
     public WebModule(final WebApp webApp, String contextRoot, final ClassLoader classLoader, final String jarLocation, final String moduleId) {
@@ -239,6 +241,25 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public Set<String> getJaxrsProviders() {
         return jaxrsProviders;
+    }
+
+    public List<URL> getRarUrls() {
+        if (rarUrls == null) {
+            return Collections.emptyList();
+        }
+        return rarUrls;
+    }
+
+    public void setRarUrls(final List<URL> rarUrls) {
+        this.rarUrls = rarUrls;
+    }
+
+    public List<URL> getAddedUrls() {
+        return addedUrls;
+    }
+
+    public void setAddedUrls(final List<URL> addedUrls) {
+        this.addedUrls = addedUrls;
     }
 
     @Override
