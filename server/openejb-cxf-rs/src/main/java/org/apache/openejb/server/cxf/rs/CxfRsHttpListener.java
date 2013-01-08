@@ -368,7 +368,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
-        factory.setAddress(prefix.substring(0, prefix.length() - wildcard.length()));
+        factory.setAddress(prefix);
         return factory;
     }
 
