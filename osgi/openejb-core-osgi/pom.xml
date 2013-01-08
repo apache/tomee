@@ -351,7 +351,8 @@
       org.osgi.service.packageadmin,
       org.osgi.framework;version="[1.4,2)",
       org.osgi.util.tracker;version="[1.4,2)",
-      javassist.util.proxy;version="[3.9,4)",
+      javassist.util;resolution:=optional;version="[3.9,4)",
+      javassist.util.proxy;resolution:=optional;version="[3.9,4)",
       org.osgi.service.blueprint;resolution:=optional
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
