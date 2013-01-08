@@ -82,7 +82,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
 
-        DiscoveryAgent discovery = SystemInstance.get().getComponent(DiscoveryAgent.class);
+        final DiscoveryAgent discovery = SystemInstance.get().getComponent(DiscoveryAgent.class);
         if (discovery != null) {
             discovery.setDiscoveryListener(clusterHandler);
         }
@@ -142,8 +142,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
     }
 
-    public void service(InputStream in, OutputStream out) throws IOException {
-        ProtocolMetaData protocolMetaData = new ProtocolMetaData();
+    public void service(final InputStream in, final OutputStream out) throws IOException {
+        final ProtocolMetaData protocolMetaData = new ProtocolMetaData();
 
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
@@ -252,50 +252,56 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
     }
 
-    private void processClusterRequest(ObjectInputStream in, ObjectOutputStream out) throws IOException {
+    private void processClusterRequest(final ObjectInputStream in, final ObjectOutputStream out) throws IOException {
         clusterHandler.processRequest(in, out);
     }
 
-    protected BeanContext getDeployment(EJBRequest req) throws RemoteException {
-        String deploymentId = req.getDeploymentId();
-        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+    protected BeanContext getDeployment(final EJBRequest req) throws RemoteException {
+        final String deploymentId = req.getDeploymentId();
+        final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
         if (beanContext == null) throw new RemoteException("No deployment: " + deploymentId);
         return beanContext;
     }
 
-    public void processEjbRequest(ObjectInputStream in, ObjectOutputStream out) {
+    public void processEjbRequest(final ObjectInputStream in, final ObjectOutputStream out) {
         ejbHandler.processRequest(in, out);
     }
 
-    public void processJndiRequest(ObjectInputStream in, ObjectOutputStream out) throws Exception {
+    public void processJndiRequest(final ObjectInputStream in, final ObjectOutputStream out) throws Exception {
         jndiHandler.processRequest(in, out);
     }
 
-    public void processAuthRequest(ObjectInputStream in, ObjectOutputStream out) {
+    public void processAuthRequest(final ObjectInputStream in, final ObjectOutputStream out) {
         authHandler.processRequest(in, out);
     }
 
-    public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {
+    @Override
+    public javax.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
         return clientObjectFactory.getEJBMetaData(info);
     }
 
-    public javax.ejb.Handle getHandle(ProxyInfo info) {
+    @Override
+    public javax.ejb.Handle getHandle(final ProxyInfo info) {
         return clientObjectFactory.getHandle(info);
     }
 
-    public javax.ejb.HomeHandle getHomeHandle(ProxyInfo info) {
+    @Override
+    public javax.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
         return clientObjectFactory.getHomeHandle(info);
     }
 
-    public javax.ejb.EJBObject getEJBObject(ProxyInfo info) {
+    @Override
+    public javax.ejb.EJBObject getEJBObject(final ProxyInfo info) {
         return clientObjectFactory.getEJBObject(info);
     }
 
-    public Object getBusinessObject(ProxyInfo info) {
+    @Override
+    public Object getBusinessObject(final ProxyInfo info) {
         return clientObjectFactory.getBusinessObject(info);
     }
 
-    public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
+    @Override
+    public javax.ejb.EJBHome getEJBHome(final ProxyInfo info) {
         return clientObjectFactory.getEJBHome(info);
     }
 

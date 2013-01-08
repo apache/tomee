@@ -170,7 +170,7 @@
     <commons-lang3.version>3.1</commons-lang3.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
-    <commons-net.version>3.1</commons-net.version>
+    <commons-net.version>3.2</commons-net.version>
   </properties>
 
   <build>
@@ -1397,10 +1397,10 @@
         <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>3.15.0-GA</version>
-      </dependency>
+		<groupId>org.javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.17.1-GA</version>
+	  </dependency>
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>

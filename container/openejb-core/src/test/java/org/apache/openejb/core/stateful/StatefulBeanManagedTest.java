@@ -95,6 +95,7 @@ public class StatefulBeanManagedTest {
         beanOne.one("bob");
         assertEquals("bob", beanOne.two());
 
+        //This should throw an exception because of the existing transaction
         beanOne.one("sally");
     }
 

@@ -42,6 +42,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
@@ -83,10 +84,12 @@ public class KeepAliveServer implements ServerService {
         }
 
         final BlockingQueue<Runnable> queue = this.getQueue();
-        if (queue == null) return;
+        if (queue == null)
+            return;
 
         int backlog = queue.size();
-        if (backlog <= 0) return;
+        if (backlog <= 0)
+            return;
 
         final long now = System.currentTimeMillis();
 
@@ -99,7 +102,7 @@ public class KeepAliveServer implements ServerService {
 
             if (l.tryLock()) {
                 try {
-                    if (now - session.lastRequest > this.timeout) {
+                    if (now - session.lastRequest.get() > this.timeout) {
 
                         backlog--;
 
@@ -116,7 +119,8 @@ public class KeepAliveServer implements ServerService {
                 }
             }
 
-            if (backlog <= 0) return;
+            if (backlog <= 0)
+                return;
         }
     }
 
@@ -140,7 +144,11 @@ public class KeepAliveServer implements ServerService {
                     l.unlock();
                 }
             } else if (logger.isDebugEnabled()) {
-                logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
+                try {
+                    logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
+                } catch (Throwable e) {
+                    //Ignore
+                }
             }
         }
 
@@ -151,7 +159,8 @@ public class KeepAliveServer implements ServerService {
         if (this.threadQueue == null) {
             // this can be null if timer fires before service is fully initialized
             final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
-            if (incoming == null) return null;
+            if (incoming == null)
+                return null;
             final ThreadPoolExecutor threadPool = incoming.getThreadPool();
             this.threadQueue = threadPool.getQueue();
         }
@@ -187,7 +196,7 @@ public class KeepAliveServer implements ServerService {
         private final Lock lock = new ReentrantLock();
 
         // only used inside the Lock
-        private long lastRequest;
+        private final AtomicLong lastRequest;
 
         // only used inside the Lock
         private final Socket socket;
@@ -195,24 +204,32 @@ public class KeepAliveServer implements ServerService {
         protected Session(final KeepAliveServer kas, final Socket socket) {
             this.kas = kas;
             this.socket = socket;
-            this.lastRequest = System.currentTimeMillis();
+            this.lastRequest = new AtomicLong(System.currentTimeMillis());
             this.thread = Thread.currentThread();
         }
 
-        protected void service(final Socket socket) throws ServiceException, IOException {
+        protected void service() throws ServiceException, IOException {
             this.kas.addSession(this);
 
             int i = -1;
+            InputStream in = null;
+            OutputStream out = null;
 
             try {
-                final InputStream in;
-                final OutputStream out;
-                if (!KeepAliveServer.this.gzip) {
-                    in = new BufferedInputStream(socket.getInputStream());
-                    out = new BufferedOutputStream(socket.getOutputStream());
-                } else {
-                    in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
-                    out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
+
+                final Lock l1 = this.lock;
+                l1.lock();
+
+                try {
+                    if (!KeepAliveServer.this.gzip) {
+                        in = new BufferedInputStream(this.socket.getInputStream());
+                        out = new BufferedOutputStream(this.socket.getOutputStream());
+                    } else {
+                        in = new GZIPInputStream(new BufferedInputStream(this.socket.getInputStream()));
+                        out = new BufferedOutputStream(new FlushableGZIPOutputStream(this.socket.getOutputStream()));
+                    }
+                } finally {
+                    l1.unlock();
                 }
 
                 while (KeepAliveServer.this.running.get()) {
@@ -228,8 +245,8 @@ public class KeepAliveServer implements ServerService {
                     }
                     final KeepAliveStyle style = KeepAliveStyle.values()[i];
 
-                    final Lock l = this.lock;
-                    l.lock();
+                    final Lock l2 = this.lock;
+                    l2.lock();
 
                     try {
 
@@ -253,8 +270,8 @@ public class KeepAliveServer implements ServerService {
                             break;
                         }
                     } finally {
-                        this.lastRequest = System.currentTimeMillis();
-                        l.unlock();
+                        this.lastRequest.set(System.currentTimeMillis());
+                        l2.unlock();
                     }
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -262,6 +279,31 @@ public class KeepAliveServer implements ServerService {
             } catch (InterruptedIOException e) {
                 Thread.interrupted();
             } finally {
+
+                if (null != in) {
+                    try {
+                        in.close();
+                    } catch (Throwable e) {
+                        //ignore
+                    }
+                }
+
+                if (null != out) {
+                    try {
+                        out.close();
+                    } catch (Throwable e) {
+                        //ignore
+                    }
+                }
+
+                if (null != this.socket) {
+                    try {
+                        this.socket.close();
+                    } catch (Throwable e) {
+                        //ignore
+                    }
+                }
+
                 this.kas.removeSession(this);
             }
         }
@@ -270,7 +312,7 @@ public class KeepAliveServer implements ServerService {
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
         final Session session = new Session(this, socket);
-        session.service(socket);
+        session.service();
     }
 
     @Override
@@ -333,6 +375,7 @@ public class KeepAliveServer implements ServerService {
     }
 
     public class Output extends java.io.FilterOutputStream {
+
         public Output(final OutputStream out) {
             super(out);
         }
