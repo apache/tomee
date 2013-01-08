@@ -33,6 +33,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.cdi.WebappBeanManager;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -147,6 +148,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     try {
                         appClazz = classLoader.loadClass(app);
                         application = Application.class.cast(appClazz.newInstance());
+                        if (owbCtx.getBeanManagerImpl().isInUse()) {
+                            try {
+                                webContext.inject(application);
+                            } catch (Exception e) {
+                                // not important since not required by the spec
+                            }
+                        }
                     } catch (Exception e) {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
@@ -261,6 +269,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     try {
                         appClazz = classLoader.loadClass(app);
                         appInstance = Application.class.cast(appClazz.newInstance());
+                        if (owbCtx.getBeanManagerImpl().isInUse()) {
+                            try {
+                                webContext.inject(appInstance);
+                            } catch (Exception e) {
+                                // not important since not required by the spec
+                            }
+                        }
                     } catch (Exception e) {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }

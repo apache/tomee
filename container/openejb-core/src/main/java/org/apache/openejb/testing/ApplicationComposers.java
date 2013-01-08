@@ -316,8 +316,10 @@ public final class ApplicationComposers {
             final org.apache.openejb.junit.Classes classesAnnotationOld = method.getAnnotation(org.apache.openejb.junit.Classes.class);
 
             Class<?>[] classes = null;
+            boolean cdi = false;
             if (classesAnnotation != null) {
                 classes = classesAnnotation.value();
+                cdi = classesAnnotation.cdi();
             } else if (classesAnnotationOld != null) {
                 classes = classesAnnotationOld.value();
             }
@@ -339,7 +341,10 @@ public final class ApplicationComposers {
                 if (classes != null) {
                     webModule.setFinder(finderFromClasses(classes));
                 }
-                DeploymentLoader.addWebModule(webModule, appModule);
+                final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
+                if (cdi) {
+                    ejbModule.setBeans(new Beans());
+                }
             } else if (obj instanceof WebModule) { // will add the ejbmodule too
                 webModulesNb++;
 

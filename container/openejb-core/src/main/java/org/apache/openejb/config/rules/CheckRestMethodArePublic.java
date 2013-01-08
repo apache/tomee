@@ -74,11 +74,18 @@ public class CheckRestMethodArePublic implements ValidationRule {
                         continue; // managed elsewhere
                     }
 
-                    for (Class<?> rsClass : appInstance.getClasses()) {
-                        classes.add(rsClass.getName());
-                    }
-                    for (Object rsSingleton : appInstance.getSingletons()) {
-                        classes.add(rsSingleton.getClass().getName());
+                    try {
+                        for (Class<?> rsClass : appInstance.getClasses()) {
+                            classes.add(rsClass.getName());
+                        }
+                        for (Object rsSingleton : appInstance.getSingletons()) {
+                            classes.add(rsSingleton.getClass().getName());
+                        }
+                    } catch (NullPointerException npe) {
+                        if (appInstance == null) {
+                            throw npe;
+                        }
+                        // if app relies on cdi it is null here
                     }
                 }
 

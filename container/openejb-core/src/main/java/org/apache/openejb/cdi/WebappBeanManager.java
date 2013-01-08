@@ -371,6 +371,11 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
+    public boolean isInUse() {
+        return super.isInUse() || getParentBm().isInUse();
+    }
+
+    @Override
     public Set<Bean<?>> getComponents() {
         if (deploymentBeans.isEmpty()) {
             // probably not yet merged (afterStart())
