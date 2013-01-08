@@ -17,7 +17,6 @@
 package org.apache.openejb.openjpa;
 
 import org.apache.openejb.util.JuliLogStream;
-import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openjpa.lib.log.Log;
 
 import java.util.logging.Level;
