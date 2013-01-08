@@ -213,6 +213,15 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 return 0;
             }
 
+            if (source.isFile()) {
+                if (source.lastModified() < lastUpdate) {
+                    return 0;
+                }
+
+                updateFile(source, output, source, ts);
+                return 1;
+            }
+
             if (!source.isDirectory()) {
                 getLog().warn(source.getAbsolutePath() + " is not a directory, skipping");
                 return 0;
@@ -234,12 +243,17 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         }
 
         private void updateFile(final File source, final File target, final File file, final long ts) {
-            String relativized = file.getAbsolutePath().replace(source.getAbsolutePath(), "");
-            if (relativized.startsWith(File.separator)) {
-                relativized = relativized.substring(1);
+            final File output;
+            if (target.isFile() && target.exists()) {
+                output = target;
+            } else {
+                String relativized = file.getAbsolutePath().replace(source.getAbsolutePath(), "");
+                if (relativized.startsWith(File.separator)) {
+                    relativized = relativized.substring(1);
+                }
+                output = new File(target, relativized);
             }
 
-            final File output = new File(target, relativized);
             if (file.exists()) {
                 getLog().info("[Updating] " + file.getAbsolutePath() + " to " + output.getAbsolutePath());
             } else {
