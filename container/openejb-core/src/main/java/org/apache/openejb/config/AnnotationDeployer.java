@@ -1804,10 +1804,17 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                         try {
                             Application app = Application.class.cast(clazz.newInstance());
-                            if (!app.getClasses().isEmpty()) {
-                                classes.addAll(app.getClasses());
-                            } else {
-                                addRestClassesToScannedClasses(webModule, classes, classLoader);
+                            try {
+                                if (!app.getClasses().isEmpty()) {
+                                    classes.addAll(app.getClasses());
+                                } else {
+                                    addRestClassesToScannedClasses(webModule, classes, classLoader);
+                                }
+                            } catch (NullPointerException npe) {
+                                if (app == null) {
+                                    throw npe;
+                                }
+                                // if app depends on cdi no need to do it
                             }
                         } catch (InstantiationException e) {
                             throw new OpenEJBException("Unable to instantiate Application class: " + application, e);

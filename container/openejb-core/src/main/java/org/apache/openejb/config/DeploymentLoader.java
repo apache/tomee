@@ -679,8 +679,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         addWebModule(webModule, appModule);
     }
 
-    @SuppressWarnings("unchecked")
-    public static void addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
+    public static EjbModule addWebModule(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
         // create and add the WebModule
         appModule.getWebModules().add(webModule);
         if (appModule.isStandaloneModule()) {
@@ -740,6 +739,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         addWebservices(webEjbModule);
+
+        return webEjbModule;
     }
 
     /**

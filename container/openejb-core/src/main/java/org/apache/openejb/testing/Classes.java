@@ -25,4 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Classes {
     Class<?>[] value() default {};
+    boolean cdi() default false;
 }

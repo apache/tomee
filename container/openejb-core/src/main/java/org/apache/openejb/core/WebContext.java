@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.core;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -175,6 +177,12 @@ public class WebContext {
                 } else {
                     AbstractInjectable.instanceUnderInjection.remove();
                 }
+            }
+
+            // if the bean is dependent simply cleanup the creational context once it is created
+            final Class<? extends Annotation> scope = beanDefinition.getScope();
+            if (scope == null || Dependent.class.equals(scope)) {
+                creationalContext.release();
             }
 
             return beanInstance;
