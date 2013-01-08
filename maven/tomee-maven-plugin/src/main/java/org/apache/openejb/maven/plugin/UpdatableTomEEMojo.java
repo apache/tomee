@@ -30,12 +30,14 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -44,6 +46,9 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     @Parameter
     private Synchronization synchronization;
+
+    @Parameter
+    private List<Synchronization> synchronizations;
 
     @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true)
     private File buildDir;
@@ -61,33 +66,44 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     @Override
     protected void run() {
+        int sync = 0;
         if (synchronization != null) {
-            if (synchronization.getBinariesDir() == null) {
-                synchronization.setBinariesDir(new File(buildDir, "classes"));
-            }
-            if (synchronization.getResourcesDir() == null) {
-                synchronization.setResourcesDir(new File(baseDir, "src/main/webapp"));
-            }
-            if (synchronization.getTargetResourcesDir() == null) {
-                synchronization.setTargetResourcesDir(new File(catalinaBase, webappDir + "/" + finalName));
-            }
-            if (synchronization.getTargetBinariesDir() == null) {
-                synchronization.setTargetBinariesDir(new File(catalinaBase, webappDir + "/" + finalName + "/WEB-INF/classes"));
-            }
-            if (synchronization.getUpdateInterval() <= 0) {
-                synchronization.setUpdateInterval(5); // sec
-            }
-            if (synchronization.getExtensions() == null) {
-                synchronization.setExtensions(Arrays.asList(".html", ".css", ".js", ".xhtml"));
-            }
-            startSynchronizer();
-
-            if (reloadOnUpdate) {
-                // force it since we rely on it for reload
-                deployOpenEjbApplication = true;
+            initSynchronization(synchronization);
+        }
+        if (synchronizations != null) {
+            for (Synchronization s :synchronizations) {
+                initSynchronization(s);
             }
         }
+
+        startSynchronizers();
+
         super.run();
+    }
+
+    private void initSynchronization(final Synchronization synchronization) {
+        if (synchronization.getBinariesDir() == null) {
+            synchronization.setBinariesDir(new File(buildDir, "classes"));
+        }
+        if (synchronization.getResourcesDir() == null) {
+            synchronization.setResourcesDir(new File(baseDir, "src/main/webapp"));
+        }
+        if (synchronization.getTargetResourcesDir() == null) {
+            synchronization.setTargetResourcesDir(new File(catalinaBase, webappDir + "/" + finalName));
+        }
+        if (synchronization.getTargetBinariesDir() == null) {
+            synchronization.setTargetBinariesDir(new File(catalinaBase, webappDir + "/" + finalName + "/WEB-INF/classes"));
+        }
+        if (synchronization.getUpdateInterval() <= 0) {
+            synchronization.setUpdateInterval(5); // sec
+        }
+        if (synchronization.getExtensions() == null) {
+            synchronization.setExtensions(Arrays.asList(".html", ".css", ".js", ".xhtml"));
+        }
+
+        if (reloadOnUpdate) {
+            deployOpenEjbApplication = true;
+        }
     }
 
     @Override
@@ -103,21 +119,78 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         super.addShutdownHooks(server);
     }
 
-    protected void startSynchronizer() {
+    protected void startSynchronizers() {
         timer = new Timer("tomee-maven-plugin-synchronizer");
-        long interval = TimeUnit.SECONDS.toMillis(synchronization.getUpdateInterval());
-        if (interval > INITIAL_DELAY) {
-            timer.scheduleAtFixedRate(new Synchronizer(), interval, interval);
-        } else {
-            timer.scheduleAtFixedRate(new Synchronizer(), INITIAL_DELAY, interval);
+
+        final Collection<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
+
+        long interval = 5000; // max of all sync interval
+
+        if (synchronization != null) {
+            synchronizers.add(new Synchronizer(synchronization));
+            if (interval < 0) {
+                interval = TimeUnit.SECONDS.toMillis(synchronization.getUpdateInterval());
+            }
+        }
+        if (synchronizations != null) {
+            for (Synchronization s : synchronizations) {
+                synchronizers.add(new Synchronizer(s));
+                if (interval < s.getUpdateInterval()) {
+                    interval = TimeUnit.SECONDS.toMillis(s.getUpdateInterval());
+                }
+            }
+        }
+
+        // serialazing synchronizers to avoid multiple updates at the same time and reload a single time the app
+        if (!synchronizers.isEmpty()) {
+            final SynchronizerRedeployer task = new SynchronizerRedeployer(synchronizers);
+            getLog().info("Starting synchronizer with an update interval of " + interval);
+            if (interval > INITIAL_DELAY) {
+                timer.scheduleAtFixedRate(task, interval, interval);
+            } else {
+                timer.scheduleAtFixedRate(task, INITIAL_DELAY, interval);
+            }
         }
     }
 
-    private class Synchronizer extends TimerTask {
+    private class SynchronizerRedeployer extends TimerTask {
+        private final Collection<Synchronizer> delegates;
+
+        public SynchronizerRedeployer(final Collection<Synchronizer> synchronizers) {
+            delegates = synchronizers;
+        }
+
+        @Override
+        public void run() {
+            int updated = 0;
+            for (Synchronizer s : delegates) {
+                try {
+                    updated += s.call();
+                } catch (Exception e) {
+                    getLog().error(e.getMessage(), e);
+                }
+            }
+
+            if (updated > 0 && reloadOnUpdate) {
+                if (deployedFile != null && deployedFile.exists()) {
+                    String path = deployedFile.getAbsolutePath();
+                    if (path.endsWith(".war") || path.endsWith(".ear")) {
+                        path = path.substring(0, path.length() - ".war".length());
+                    }
+                    getLog().info("Reloading " + path);
+                    deployer().reload(path);
+                }
+            }
+        }
+    }
+
+    private class Synchronizer implements Callable<Integer> {
         private final FileFilter fileFilter;
+        private final Synchronization synchronization;
         private long lastUpdate = System.currentTimeMillis();
 
-        private Synchronizer() {
+        public Synchronizer(final Synchronization synchronization) {
+            this.synchronization = synchronization;
             if (synchronization.getRegex() != null) {
                 fileFilter = new SuffixesAndRegexFileFilter(synchronization.getExtensions(), Pattern.compile(synchronization.getRegex()));
             } else {
@@ -126,22 +199,23 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         }
 
         @Override
-        public void run() {
+        public Integer call() throws Exception {
             final long ts = System.currentTimeMillis();
-            updateFiles(synchronization.getResourcesDir(), synchronization.getTargetResourcesDir(), ts);
-            updateFiles(synchronization.getBinariesDir(), synchronization.getTargetBinariesDir(), ts);
+            int updated = updateFiles(synchronization.getResourcesDir(), synchronization.getTargetResourcesDir(), ts);
+            updated+= updateFiles(synchronization.getBinariesDir(), synchronization.getTargetBinariesDir(), ts);
             lastUpdate = ts;
+            return updated;
         }
 
-        private void updateFiles(final File source, final File output, final long ts) {
+        private int updateFiles(final File source, final File output, final long ts) {
             if (!source.exists()) {
                 getLog().debug(source.getAbsolutePath() + " does'tn exist");
-                return;
+                return 0;
             }
 
             if (!source.isDirectory()) {
                 getLog().warn(source.getAbsolutePath() + " is not a directory, skipping");
-                return;
+                return 0;
             }
 
             final Collection<File> files = Files.collect(source, fileFilter);
@@ -156,16 +230,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 updated++;
             }
 
-            if (updated > 0 && reloadOnUpdate) {
-                if (deployedFile != null && deployedFile.exists()) {
-                    String path = deployedFile.getAbsolutePath();
-                    if (path.endsWith(".war")) {
-                        path = path.substring(0, path.length() - ".war".length());
-                    }
-                    getLog().info("Reloading " + path);
-                    deployer().reload(path);
-                }
-            }
+            return updated;
         }
 
         private void updateFile(final File source, final File target, final File file, final long ts) {
