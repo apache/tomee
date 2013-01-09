@@ -285,7 +285,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
                 LOGGER.info("          "
                         + forceLength(ori.getHttpMethod(), 7) + " " + singleSlash(address, ori.getURITemplate().getValue())
-                        + "-> " + toGenericString(ori.getMethodToInvoke()));
+                        + " -> " + toGenericString(ori.getMethodToInvoke()));
             }
         }
     }
