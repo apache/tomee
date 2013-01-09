@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 public class JULOpenJPALog  implements Log {
     private final Logger logger;
 
-    public JULOpenJPALog(final String channel) {
-        logger = Logger.getLogger(channel);
+    public JULOpenJPALog(final Logger delegate) {
+        logger = delegate;
     }
 
     @Override

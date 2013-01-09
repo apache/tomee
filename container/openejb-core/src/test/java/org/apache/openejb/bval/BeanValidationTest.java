@@ -78,13 +78,13 @@ public class BeanValidationTest {
 
     @Module
     public Persistence persistence() {
-        PersistenceUnit unit = new PersistenceUnit("foo-unit");
+        final PersistenceUnit unit = new PersistenceUnit("foo-unit");
         unit.addClass(EntityToValidate.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unit.setExcludeUnlistedClasses(true);
 
-        Persistence persistence = new Persistence(unit);
+        final Persistence persistence = new Persistence(unit);
         persistence.setVersion("2.0");
         return persistence;
     }

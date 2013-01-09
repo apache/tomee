@@ -19,9 +19,11 @@ package org.apache.openejb.openjpa;
 import org.apache.openjpa.lib.log.Log;
 import org.apache.openjpa.lib.log.LogFactoryAdapter;
 
+import java.util.logging.Logger;
+
 public class JULOpenJPALogFactory extends LogFactoryAdapter {
     @Override
     protected Log newLogAdapter(final String channel) {
-        return new JULOpenJPALog(channel);
+        return new JULOpenJPALog(Logger.getLogger(channel));
     }
 }
