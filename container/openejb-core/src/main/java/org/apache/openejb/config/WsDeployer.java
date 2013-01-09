@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ServiceImplBean;
@@ -30,20 +31,18 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 
+import javax.jws.HandlerChain;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
-import javax.jws.HandlerChain;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -415,11 +414,11 @@ public class WsDeployer implements DynamicDeployer {
             for (Object element : port.getExtensibilityElements()) {
                 if (element instanceof SOAPAddress) {
                     SOAPAddress soapAddress = (SOAPAddress) element;
-                    URI uri = new URI(soapAddress.getLocationURI());
+                    URI uri = URLs.uri(soapAddress.getLocationURI());
                     return uri.getPath();
                 } else if (element instanceof HTTPAddress) {
                     HTTPAddress httpAddress = (HTTPAddress) element;
-                    URI uri = new URI(httpAddress.getLocationURI());
+                    URI uri = URLs.uri(httpAddress.getLocationURI());
                     return uri.getPath();
                 }
             }

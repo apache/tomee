@@ -54,6 +54,7 @@ import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Contexts;
+import org.apache.openejb.util.URLs;
 import org.apache.tomee.common.EjbFactory;
 import org.apache.tomee.common.EnumFactory;
 import org.apache.tomee.common.LookupFactory;
@@ -80,7 +81,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -135,14 +135,8 @@ public class TomcatJndiBuilder {
 
     public void mergeJndi() throws OpenEJBException {
 
-        NamingResources naming = standardContext.getNamingResources();
-
-        URI moduleUri;
-        try {
-            moduleUri = new URI(webAppInfo.moduleId);
-        } catch (URISyntaxException e) {
-            throw new OpenEJBException(e);
-        }
+        final NamingResources naming = standardContext.getNamingResources();
+        final URI moduleUri = URLs.uri(webAppInfo.moduleId);
 
         for (EnvEntryInfo ref : webAppInfo.jndiEnc.envEntries) {
             mergeRef(naming, ref);

@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.net.URI;
@@ -84,7 +85,7 @@ public interface DeploymentModule {
         private URI uri(final URI uri, final File location, final String name) {
             if (uri != null) return uri;
             if (location != null) return location.toURI();
-            return URI.create(name);
+            return URLs.uri(name);
         }
 
         private File location(final File location, final URI uri) {

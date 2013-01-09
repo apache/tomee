@@ -16,13 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ContextReferenceInfo;
@@ -65,6 +58,14 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.URLs;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
@@ -363,7 +364,7 @@ public class JndiEncInfoBuilder {
             String name = mappedName.substring(5);
 
             if(name.startsWith("ext://")) {
-                final URI uri = URI.create(name);
+                final URI uri = URLs.uri(name);
                 location.jndiProviderId = uri.getHost();
                 location.jndiName = uri.getPath();
             } else {
@@ -393,11 +394,7 @@ public class JndiEncInfoBuilder {
 
         URI moduleUri = null;
         if (moduleId != null) {
-            try {
-                moduleUri = new URI(moduleId);
-            } catch (URISyntaxException e) {
-                throw new OpenEJBException("Illegal moduleId " + moduleId, e);
-            }
+            moduleUri = URLs.uri(moduleId);
         }
 
         EjbResolver ejbResolver = getEjbResolver(moduleId);

@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.net.URI;
@@ -48,7 +49,7 @@ public class PersistenceModule implements DeploymentModule {
 
     public void setRootUrl(String rootUrl) {
         this.rootUrl = rootUrl;
-        this.uri = URI.create(rootUrl);
+        this.uri = URLs.uri(rootUrl);
     }
 
     public Persistence getPersistence() {

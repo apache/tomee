@@ -17,6 +17,7 @@
 package org.apache.openejb.cli;
 
 import org.apache.openejb.loader.SystemClassPath;
+import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.net.URI;
@@ -56,7 +57,7 @@ public class Bootstrap {
 
                 propsString = propsString.substring(0, propsString.indexOf("!"));
 
-                final URI uri = new URI(propsString);
+                final URI uri = URLs.uri(propsString);
 
                 final File jarFile = new File(uri.getSchemeSpecificPart());
 

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.xbean.finder.archive.FileArchive;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +29,7 @@ public class LinkResolver<E> {
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
 
     public boolean add(String modulePackageName, String name, E value) {
-        return add(URI.create(modulePackageName), name, value);
+        return add(URLs.uri(modulePackageName), name, value);
     }
 
     public boolean add(URI moduleURI, String name, E value) {
@@ -71,7 +69,7 @@ public class LinkResolver<E> {
     }
 
     public E resolveLink(String link, String modulePackageName) {
-        URI moduleURI = URI.create(modulePackageName);
+        URI moduleURI = URLs.uri(modulePackageName);
         return resolveLink(link, moduleURI);
     }
 

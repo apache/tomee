@@ -20,11 +20,11 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.util.URLs;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -96,7 +96,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
                 if (brokerXmlConfig.startsWith("broker:")) {
 
-                    final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
+                    final URISupport.CompositeData compositeData = URISupport.parseComposite(URLs.uri(brokerXmlConfig));
 
                     if (!compositeData.getParameters().containsKey("persistent")) {
                         //Override default - Which is 'true'
@@ -123,7 +123,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         try {
             //The returned broker should be started, but calling start is harmless.
             //We do not need to track the instance as the factory takes care of this.
-            ActiveMQFactory.createBroker(URI.create(getBrokerXmlConfig())).start();
+            ActiveMQFactory.createBroker(URLs.uri(getBrokerXmlConfig())).start();
         } catch (Exception e) {
             org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").fatal("Failed to start ActiveMQ", e);
         } finally {

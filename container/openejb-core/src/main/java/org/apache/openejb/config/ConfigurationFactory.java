@@ -19,7 +19,34 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
-import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
+import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.ContainerSystemInfo;
+import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.FacilitiesInfo;
+import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.HandlerInfo;
+import org.apache.openejb.assembler.classic.JndiContextInfo;
+import org.apache.openejb.assembler.classic.ManagedContainerInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
+import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.AdditionalDeployments;
@@ -630,7 +657,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         //        value = value.replaceFirst("(.)#", "$1%23");
         value = value.replaceFirst("(provider=[^#=&]+)#", "$1%23");
 
-        final URI uri = new URI(value);
+        final URI uri = URLs.uri(value);
 
         return toConfigDeclaration(name, uri);
     }

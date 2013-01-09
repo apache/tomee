@@ -24,6 +24,7 @@ import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.URLs;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -57,7 +58,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
-            final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
+            final URI uri = URLs.uri(brokerURI.getRawSchemeSpecificPart());
             broker = BrokerFactory.createBroker(uri);
             brokers.put(brokerURI, broker);
 

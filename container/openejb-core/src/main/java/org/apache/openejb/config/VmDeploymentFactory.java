@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.URLs;
+
 import javax.enterprise.deploy.spi.DeploymentManager;
 import javax.enterprise.deploy.spi.exceptions.DeploymentManagerCreationException;
 import javax.enterprise.deploy.spi.factories.DeploymentFactory;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -37,12 +38,8 @@ public class VmDeploymentFactory implements DeploymentFactory {
     }
 
     public boolean handlesURI(String uri) {
-        try {
-            URI fullUri = new URI(uri);
-            return URI_SCHEME.equals(fullUri.getScheme());
-        } catch (URISyntaxException e) {
-            return false;
-        }
+        URI fullUri = URLs.uri(uri);
+        return URI_SCHEME.equals(fullUri.getScheme());
     }
 
     public DeploymentManager getDisconnectedDeploymentManager(String uri) throws DeploymentManagerCreationException {

@@ -19,7 +19,7 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Base64;
-import org.apache.xbean.finder.archive.FileArchive;
+import org.apache.openejb.util.URLs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Resolves a File, classpath resource, or URL according to the follow rules:
@@ -94,78 +95,74 @@ public class UriResolver {
 
 
     private void tryFileSystem(String baseUriStr, String uriStr) throws IOException, MalformedURLException {
-        try {
-            URI relative;
-            File uriFile = new File(uriStr);
-            uriFile = new File(uriFile.getAbsolutePath());
+        URI relative;
+        File uriFile = new File(uriStr);
+        uriFile = new File(uriFile.getAbsolutePath());
 
-            if (uriFile.exists()) {
-                relative = uriFile.toURI();
-            } else {
-                relative = new URI(uriStr.replace(" ", "%20"));
+        if (uriFile.exists()) {
+            relative = uriFile.toURI();
+        } else {
+            relative = URLs.uri(uriStr.replace(" ", "%20"));
+        }
+
+        if (relative.isAbsolute()) {
+            uri = relative;
+            url = relative.toURL();
+
+            try {
+                HttpURLConnection huc = (HttpURLConnection)url.openConnection();
+
+                String host = System.getProperty("http.proxyHost");
+                if (host != null) {
+                    //comment out unused port to pass pmd check
+                    /*String ports = System.getProperty("http.proxyPort");
+                    int port = 80;
+                    if (ports != null) {
+                        port = Integer.parseInt(ports);
+                    }*/
+
+                    String username = System.getProperty("http.proxy.user");
+                    String password = System.getProperty("http.proxy.password");
+
+                    if (username != null && password != null) {
+                        String encoded = new String(Base64.encodeBase64((username + ":" + password).getBytes()));
+                        huc.setRequestProperty("Proxy-Authorization", "Basic " + encoded);
+                    }
+                }
+                is =  huc.getInputStream();
+            } catch (ClassCastException ex) {
+                is = IO.read(url);
+            }
+        } else if (baseUriStr != null) {
+            URI base;
+            File baseFile = new File(baseUriStr);
+
+            if (!baseFile.exists() && baseUriStr.startsWith("file:/")) {
+                baseFile = new File(baseUriStr.substring(6));
             }
 
-            if (relative.isAbsolute()) {
-                uri = relative;
-                url = relative.toURL();
+            if (baseFile.exists()) {
+                base = baseFile.toURI();
+            } else {
+                base = URLs.uri(baseUriStr);
+            }
 
+            base = base.resolve(relative);
+            if (base.isAbsolute()) {
                 try {
-                    HttpURLConnection huc = (HttpURLConnection)url.openConnection();
-
-                    String host = System.getProperty("http.proxyHost");
-                    if (host != null) {
-                        //comment out unused port to pass pmd check
-                        /*String ports = System.getProperty("http.proxyPort");
-                        int port = 80;
-                        if (ports != null) {
-                            port = Integer.parseInt(ports);
-                        }*/
-
-                        String username = System.getProperty("http.proxy.user");
-                        String password = System.getProperty("http.proxy.password");
-
-                        if (username != null && password != null) {
-                            String encoded = new String(Base64.encodeBase64((username + ":" + password).getBytes()));
-                            huc.setRequestProperty("Proxy-Authorization", "Basic " + encoded);
-                        }
-                    }
-                    is =  huc.getInputStream();
-                } catch (ClassCastException ex) {
-                    is = IO.read(url);
-                }
-            } else if (baseUriStr != null) {
-                URI base;
-                File baseFile = new File(baseUriStr);
-
-                if (!baseFile.exists() && baseUriStr.startsWith("file:/")) {
-                    baseFile = new File(baseUriStr.substring(6));
-                }
-
-                if (baseFile.exists()) {
-                    base = baseFile.toURI();
-                } else {
-                    base = new URI(baseUriStr);
-                }
-
-                base = base.resolve(relative);
-                if (base.isAbsolute()) {
-                    try {
-                        baseFile = new File(base);
-                        if (baseFile.exists()) {
-                            is = IO.read(base.toURL());
-                            uri = base;
-                        } else {
-                            tryClasspath(base.toString().startsWith("file:")
-                                         ? base.toString().substring(5) : base.toString());
-                        }
-                    } catch (Throwable th) {
+                    baseFile = new File(base);
+                    if (baseFile.exists()) {
+                        is = IO.read(base.toURL());
+                        uri = base;
+                    } else {
                         tryClasspath(base.toString().startsWith("file:")
                                      ? base.toString().substring(5) : base.toString());
                     }
+                } catch (Throwable th) {
+                    tryClasspath(base.toString().startsWith("file:")
+                                 ? base.toString().substring(5) : base.toString());
                 }
             }
-        } catch (URISyntaxException e) {
-            // do nothing
         }
 
         if (uri != null && "file".equals(uri.getScheme())) {
@@ -200,19 +197,15 @@ public class UriResolver {
 
         String jarBase = baseStr.substring(0, i + 1);
         String jarEntry = baseStr.substring(i + 1);
-        try {
-            URI u = new URI(jarEntry).resolve(uriStr);
+        URI u = URLs.uri(jarEntry).resolve(uriStr);
 
-            tryJar(jarBase + u.toString());
+        tryJar(jarBase + u.toString());
 
-            if (is != null) {
-                if (u.isAbsolute()) {
-                    url = u.toURL();
-                }
-                return;
+        if (is != null) {
+            if (u.isAbsolute()) {
+                url = u.toURL();
             }
-        } catch (URISyntaxException e) {
-            // do nothing
+            return;
         }
 
         tryFileSystem("", uriStr);
@@ -254,11 +247,7 @@ public class UriResolver {
                 if (urlStr.startsWith("jar:")) {
                     int pos = urlStr.indexOf('!');
                     if (pos != -1) {
-                        try {
-                            uri = new URI("classpath:" + urlStr.substring(pos + 1));
-                        } catch (URISyntaxException ue) {
-                            // ignore
-                        }
+                        uri = URLs.uri("classpath:" + urlStr.substring(pos + 1));
                     }
                 }
 
@@ -269,12 +258,10 @@ public class UriResolver {
 
     private void tryRemote(String uriStr) throws IOException {
         try {
-            url = new URL(uriStr);
-            uri = new URI(url.toString());
+            url = new URL(URLEncoder.encode(uriStr, "UTF-8"));
+            uri = URLs.uri(url.toString());
             is = IO.read(url);
         } catch (MalformedURLException e) {
-            // do nothing
-        } catch (URISyntaxException e) {
             // do nothing
         }
     }
