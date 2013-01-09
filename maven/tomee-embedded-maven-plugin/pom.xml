@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.openejb.maven</groupId>
       <artifactId>maven-util</artifactId>
-      <version>${parent.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
