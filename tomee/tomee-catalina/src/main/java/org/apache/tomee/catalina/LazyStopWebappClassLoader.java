@@ -18,7 +18,6 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.loader.ResourceEntry;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJB;
@@ -27,22 +26,15 @@ import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.classloader.EnhanceableClassLoader;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
-import javax.persistence.spi.ClassTransformer;
 import java.io.File;
 import java.io.IOException;
-import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.CodeSource;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class LazyStopWebappClassLoader extends WebappClassLoader implements EnhanceableClassLoader {
+public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
@@ -50,7 +42,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader implements Enha
     private boolean restarting = false;
     private volatile Context relatedContext;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
-    private final Map<String, Collection<ClassTransformer>> transformers = new ConcurrentHashMap<String, Collection<ClassTransformer>>();
     private ClassLoaderConfigurer configurer = null;
 
     public LazyStopWebappClassLoader() {
@@ -83,7 +74,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader implements Enha
                 || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
-            synchronized (this) {
+            synchronized (system) {
                 final ClassLoader old = system;
                 system = NoClassClassLoader.INSTANCE;
                 try {
@@ -104,39 +95,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader implements Enha
                 return super.loadClass(name);
             }
         }
-
-        if (transformers.keySet().contains(name)) {
-            final String path = name.replace('.', '/').concat(".class");
-            final ResourceEntry entry = findResourceInternal(name, path);
-            Class<?> clazz = entry.loadedClass;
-            if (clazz != null) {
-                return clazz;
-            }
-
-            if (entry.binaryContent != null) {
-                synchronized (this) {
-                    final CodeSource codeSource = new CodeSource(entry.codeBase, entry.certificates);
-                    try {
-                        final byte[] enhanced = Helper.enhance(transformers.get(name), this, name, null, null, entry.binaryContent);
-                        entry.loadedClass = defineClass(name, enhanced, 0, enhanced.length, codeSource);
-                    } catch (IllegalClassFormatException e) {
-                        LOGGER.error("Can't enhance " + name, e);
-                        try {
-                            entry.loadedClass = defineClass(name, entry.binaryContent, 0, entry.binaryContent.length, codeSource);
-                        } catch (UnsupportedClassVersionError ucve) {
-                            throw new UnsupportedClassVersionError(
-                                    ucve.getLocalizedMessage() + " " + sm.getString("webappClassLoader.wrongVersion", name));
-                        }
-                    }
-                    entry.binaryContent = null;
-                    entry.source = null;
-                    entry.codeBase = null;
-                    entry.manifest = null;
-                    entry.certificates = null;
-                }
-            }
-        }
-
         return super.loadClass(name);
     }
 
@@ -233,16 +191,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader implements Enha
     @Override
     public String toString() {
         return "LazyStop" + super.toString();
-    }
-
-    @Override
-    public void setTransformers(final Collection<ClassTransformer> transformers, final Collection<String> classes) {
-        if (getParent() instanceof EnhanceableClassLoader) {
-            ((EnhanceableClassLoader) getParent()).setTransformers(transformers, classes);
-        }
-        for (String clazz : classes) {
-            this.transformers.put(clazz, transformers);
-        }
     }
 
     private static class NoClassClassLoader extends ClassLoader {
