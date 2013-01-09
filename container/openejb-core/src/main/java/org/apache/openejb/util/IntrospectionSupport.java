@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class IntrospectionSupport {
     
@@ -171,7 +171,7 @@ public class IntrospectionSupport {
             return editor.getValue();
         }
         if (type == URI.class) {
-            return new URI(value.toString());
+            return URLs.uri(value.toString());
         }
         return null;
     }

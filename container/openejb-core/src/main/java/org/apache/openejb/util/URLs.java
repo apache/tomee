@@ -21,8 +21,11 @@ import static org.apache.openejb.loader.JarLocation.decode;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.apache.xbean.finder.UrlSet;
 
@@ -102,6 +105,14 @@ public class URLs {
         urls = urls.exclude(".*openejb.*");
         if (LOGGER.isDebugEnabled()) LOGGER.debug("Culled {0} OpenEJB urls from set", original.size() - urls.size());
         return urls;
+    }
+
+    public static URI uri(final String uri) {
+        try {
+            return URI.create(URLEncoder.encode(uri, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            return URI.create(URLEncoder.encode(uri)); // will not occur normally
+        }
     }
 
     private URLs() { }

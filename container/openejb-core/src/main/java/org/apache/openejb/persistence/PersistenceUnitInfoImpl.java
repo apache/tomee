@@ -17,6 +17,7 @@
 package org.apache.openejb.persistence;
 
 
+import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
 import javax.persistence.SharedCacheMode;
@@ -220,7 +221,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     public void setRootUrlAndJarUrls(String persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
         File root;
         try{
-            final URI rootUri = URI.create(persistenceUnitRootUrl);
+            final URI rootUri = URLs.uri(persistenceUnitRootUrl);
             root = new File(rootUri);
         } catch (IllegalArgumentException e) {
             root = new File(persistenceUnitRootUrl);

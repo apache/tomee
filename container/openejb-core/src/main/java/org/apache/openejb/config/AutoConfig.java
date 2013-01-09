@@ -55,7 +55,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
-import org.apache.openejb.util.UniqueDefaultLinkResolver;
+import org.apache.openejb.util.URLs;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.TimerService;
@@ -223,12 +223,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
-            URI moduleURI = URI.create(clientModule.getModuleId());
+            URI moduleURI = URLs.uri(clientModule.getModuleId());
             processPersistenceRefs(clientModule.getApplicationClient(), clientModule, persistenceUnits, moduleURI);
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
-            URI moduleURI = URI.create(webModule.getModuleId());
+            URI moduleURI = URLs.uri(webModule.getModuleId());
             processPersistenceRefs(webModule.getWebApp(), webModule, persistenceUnits, moduleURI);
         }
     }
@@ -332,7 +332,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     List<String> possibleUnits = new ArrayList<String>();
                     for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                         try {
-                            URI unitURI = URI.create(persistenceUnit.getId());
+                            URI unitURI = URLs.uri(persistenceUnit.getId());
                             unitURI = URISupport.relativize(moduleURI, unitURI);
                             possibleUnits.add(unitURI.toString());
                         } catch (Exception e) {
@@ -579,7 +579,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
-            URI moduleUri = URI.create(webModule.getModuleId());
+            URI moduleUri = URLs.uri(webModule.getModuleId());
             for (MessageDestinationRef ref : webModule.getWebApp().getMessageDestinationRef()) {
                 String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {
@@ -598,7 +598,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 continue;
             }
 
-            URI moduleUri = URI.create(ejbModule.getModuleId());
+            URI moduleUri = URLs.uri(ejbModule.getModuleId());
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {

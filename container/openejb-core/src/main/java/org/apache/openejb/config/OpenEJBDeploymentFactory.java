@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.URLs;
+
 import javax.enterprise.deploy.spi.DeploymentManager;
 import javax.enterprise.deploy.spi.exceptions.DeploymentManagerCreationException;
 import javax.enterprise.deploy.spi.factories.DeploymentFactory;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -58,12 +59,8 @@ public class OpenEJBDeploymentFactory implements DeploymentFactory {
     }
 
     public boolean handlesURI(String uri) {
-        try {
-            URI fullUri = new URI(uri);
-            return OpenEJBDeploymentFactory.URI_SCHEME.equals(fullUri.getScheme());
-        } catch (URISyntaxException e) {
-            return false;
-        }
+        final URI fullUri = URLs.uri(uri);
+        return OpenEJBDeploymentFactory.URI_SCHEME.equals(fullUri.getScheme());
     }
 
     public DeploymentManager getDisconnectedDeploymentManager(String uri) throws DeploymentManagerCreationException {
@@ -97,17 +94,12 @@ public class OpenEJBDeploymentFactory implements DeploymentFactory {
     }
 
     private URI getProtocolUri(String uri) {
-        try {
-            URI fullUri = new URI(uri);
-            if (!OpenEJBDeploymentFactory.URI_SCHEME.equals(fullUri.getScheme())) {
-                return null;
-            }
-
-            URI protocolUri = new URI(fullUri.getSchemeSpecificPart());
-            return protocolUri;
-        } catch (URISyntaxException e) {
+        final URI fullUri = URLs.uri(uri);
+        if (!OpenEJBDeploymentFactory.URI_SCHEME.equals(fullUri.getScheme())) {
             return null;
         }
+
+        return URLs.uri(fullUri.getSchemeSpecificPart());
     }
 
 //    public static void main(String[] args) {

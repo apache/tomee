@@ -146,7 +146,7 @@ public class URISupport {
                 sb.append("#");
                 sb.append(fragment);
             }
-            return new URI(sb.toString());
+            return URLs.uri(sb.toString());
         }
     }
 
@@ -286,7 +286,7 @@ public class URISupport {
     }
 
     public static URI stripScheme(URI uri) throws URISyntaxException {
-        return new URI(stripPrefix(uri.getRawSchemeSpecificPart().trim(), "//"));
+        return URLs.uri(stripPrefix(uri.getRawSchemeSpecificPart().trim(), "//"));
     }
 
     public static String createQueryString(Map options) throws URISyntaxException {
