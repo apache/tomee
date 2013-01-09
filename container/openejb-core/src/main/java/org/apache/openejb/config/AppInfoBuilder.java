@@ -654,7 +654,6 @@ class AppInfoBuilder {
 
                 PersistenceProviderProperties.apply(appModule.getClassLoader(), info);
 
-
                 // Persistence Unit Root Url
                 appInfo.persistenceUnits.add(info);
             }

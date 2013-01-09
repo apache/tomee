@@ -18,22 +18,30 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.classloader.EnhanceableClassLoader;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.ValidationMode;
+import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceProvider;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
     public static final String OPENEJB_JPA_INIT_ENTITYMANAGER = "openejb.jpa.init-entitymanager";
+    public static final String OPENEJB_ENHANCE_OPENJPA = "openejb.openjpa.auto-enhancing";
 
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
     private ClassLoader appClassLoader;
 
-    public EntityManagerFactoryCallable(String persistenceProviderClassName, PersistenceUnitInfoImpl unitInfo, ClassLoader cl) {
+    public EntityManagerFactoryCallable(final String persistenceProviderClassName,
+                                        final PersistenceUnitInfoImpl unitInfo,
+                                        final ClassLoader cl) {
         this.persistenceProviderClassName = persistenceProviderClassName;
         this.unitInfo = unitInfo;
         this.appClassLoader = cl;
@@ -52,11 +60,33 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
             }
+
             EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
-            if ((unitInfo.getProperties() != null
-                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER)))
-                    || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
+            if (isTrue(unitInfo, OPENEJB_ENHANCE_OPENJPA, false)) {
+                if (!unitInfo.excludeUnlistedClasses()) {
+                    Logger.getInstance(LogCategory.OPENJPA, EntityManagerFactoryCallable.class)
+                            .warning("Auto OpenJPA enhancing only works when JPA classes are provided " +
+                                            "either in persistence or through openejb.jpa.auto-scan");
+                }
+
+                try {
+                    final Collection<ClassTransformer> transformers = unitInfo.getTransformers();
+
+                    if (appClassLoader instanceof EnhanceableClassLoader) {
+                        final EnhanceableClassLoader enhanceableClassLoader = (EnhanceableClassLoader) appClassLoader;
+                        enhanceableClassLoader.setTransformers(transformers, unitInfo.getManagedClassNames());
+                    }
+                } catch (Exception e) {
+                    Logger.getInstance(LogCategory.OPENJPA, EntityManagerFactoryCallable.class)
+                            .warning("Can't enhance persistence unit " + unitInfo.getId(), e);
+                } catch (Error er) {
+                    Logger.getInstance(LogCategory.OPENJPA, EntityManagerFactoryCallable.class)
+                            .warning("Can't enhance persistence unit " + unitInfo.getId(), er);
+                }
+            }
+
+            if (isTrue(unitInfo, OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
                 emf.createEntityManager().close();
             }
 
@@ -72,6 +102,11 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
         } finally {
             Thread.currentThread().setContextClassLoader(old);
         }
+    }
+
+    private static boolean isTrue(final PersistenceUnitInfoImpl unitInfo, final String key, final boolean defaultValue) {
+        return (unitInfo.getProperties() != null && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(key)))
+                    || SystemInstance.get().getOptions().get(key, defaultValue);
     }
 
     public PersistenceUnitInfoImpl getUnitInfo() {
