@@ -19,90 +19,99 @@ package org.apache.openejb.openjpa;
 import org.apache.openejb.util.JuliLogStream;
 import org.apache.openjpa.lib.log.Log;
 
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class JULOpenJPALog  implements Log {
-    private final Logger logger;
+    private final Callable<Logger> logger;
 
-    public JULOpenJPALog(final Logger delegate) {
+    public JULOpenJPALog(final Callable<Logger> delegate) {
         logger = delegate;
+    }
+
+    private Logger logger() {
+        try {
+            return logger.call();
+        } catch (Exception e) { // shouldn't occur regarding the impl we use
+            return Logger.getLogger("default");
+        }
     }
 
     @Override
     public boolean isTraceEnabled() {
-        return logger.isLoggable(Level.FINEST);
+        return logger().isLoggable(Level.FINEST);
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return logger.isLoggable(Level.INFO);
+        return logger().isLoggable(Level.INFO);
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return logger.isLoggable(Level.WARNING);
+        return logger().isLoggable(Level.WARNING);
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return logger.isLoggable(Level.SEVERE);
+        return logger().isLoggable(Level.SEVERE);
     }
 
     @Override
     public boolean isFatalEnabled() {
-        return logger.isLoggable(Level.SEVERE);
+        return logger().isLoggable(Level.SEVERE);
     }
 
     @Override
     public void trace(Object o) {
-        logger.log(record(o, Level.FINEST));
+        logger().log(record(o, Level.FINEST));
     }
 
     @Override
     public void trace(Object o, Throwable t) {
-        logger.log(record(o, t, Level.FINEST));
+        logger().log(record(o, t, Level.FINEST));
     }
 
     @Override
     public void info(Object o) {
-        logger.log(record(o, Level.INFO));
+        logger().log(record(o, Level.INFO));
     }
 
     @Override
     public void info(Object o, Throwable t) {
-        logger.log(record(o, t, Level.INFO));
+        logger().log(record(o, t, Level.INFO));
     }
 
     @Override
     public void warn(Object o) {
-        logger.log(record(o, Level.WARNING));
+        logger().log(record(o, Level.WARNING));
     }
 
     @Override
     public void warn(Object o, Throwable t) {
-        logger.log(record(o, t, Level.WARNING));
+        logger().log(record(o, t, Level.WARNING));
     }
 
     @Override
     public void error(Object o) {
-        logger.log(record(o.toString(), Level.SEVERE));
+        logger().log(record(o.toString(), Level.SEVERE));
     }
 
     @Override
     public void error(Object o, Throwable t) {
-        logger.log(record(o, t, Level.SEVERE));
+        logger().log(record(o, t, Level.SEVERE));
     }
 
     @Override
     public void fatal(Object o) {
-        logger.log(record(o, Level.SEVERE));
+        logger().log(record(o, Level.SEVERE));
     }
 
     @Override
     public void fatal(Object o, Throwable t) {
-        logger.log(record(o, t, Level.SEVERE));
+        logger().log(record(o, t, Level.SEVERE));
     }
 
     private LogRecord record(final Object o, final Throwable t, final Level level) {
@@ -113,7 +122,7 @@ public class JULOpenJPALog  implements Log {
 
     private LogRecord record(final Object o,  final Level level) {
         final LogRecord record = new JuliLogStream.OpenEJBLogRecord(level, o.toString());
-        record.setSourceMethodName(logger.getName());
+        record.setSourceMethodName(logger().getName());
         return record;
     }
 }
