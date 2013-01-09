@@ -1512,10 +1512,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
                             final String packageName = pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN_PACKAGE);
 
+                            // no need of meta currently since JPA providers doesn't support it
                             final List<Class<?>> classes = new ArrayList<Class<?>>();
                             classes.addAll(finder.findAnnotatedClasses(Entity.class));
-                            classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
                             classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
+                            classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
                             final List<String> existingClasses = pu.getClazz();
                             for (Class<?> clazz : classes) {
                                 final String name = clazz.getName();

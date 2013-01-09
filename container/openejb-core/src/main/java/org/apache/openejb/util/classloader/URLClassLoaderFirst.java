@@ -85,7 +85,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // JSE classes?
-        if (shouldTestSystemLoading(name)) {
+        if (canBeLoadedFromSystem(name)) {
             try {
                 clazz = system.loadClass(name);
                 if (clazz != null) {
@@ -156,10 +156,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
             // no-op
         }
         return null;
-    }
-
-    protected boolean shouldTestSystemLoading(final String name) {
-        return canBeLoadedFromSystem(name);
     }
 
     // we skip webapp enrichment jars since we want to load them from the webapp or lib
