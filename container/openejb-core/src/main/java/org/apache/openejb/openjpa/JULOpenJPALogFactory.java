@@ -19,11 +19,37 @@ package org.apache.openejb.openjpa;
 import org.apache.openjpa.lib.log.Log;
 import org.apache.openjpa.lib.log.LogFactoryAdapter;
 
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 public class JULOpenJPALogFactory extends LogFactoryAdapter {
     @Override
     protected Log newLogAdapter(final String channel) {
-        return new JULOpenJPALog(Logger.getLogger(channel));
+        return new JULOpenJPALog(new LoggerCreator(channel));
+    }
+
+    private static class LoggerCreator implements Callable<Logger> {
+        private final String name;
+        private Logger logger;
+
+        public LoggerCreator(final String channel) {
+            name = channel;
+        }
+
+        @Override
+        public Logger call() throws Exception {
+            if (logger == null) {
+                synchronized (this) { // no need of lock for this part
+                    if (logger == null) {
+                        try {
+                            logger = Logger.getLogger(name);
+                        } catch (Exception e) {
+                            logger = Logger.getLogger(name); // try again
+                        }
+                    }
+                }
+            }
+            return logger;
+        }
     }
 }
