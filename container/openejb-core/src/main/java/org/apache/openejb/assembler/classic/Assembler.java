@@ -185,7 +185,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     static {
         AsmParameterNameLoader.install();
-        //avoid linkage error on mac
+        // avoid linkage error on mac
         // adding just in case others run into in their tests
         JULLoggerFactory.class.getName();
     }
