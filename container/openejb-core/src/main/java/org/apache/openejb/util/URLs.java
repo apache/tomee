@@ -17,17 +17,15 @@
 package org.apache.openejb.util;
 
 
-import static org.apache.openejb.loader.JarLocation.decode;
+import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
 
-import org.apache.xbean.finder.UrlSet;
+import static org.apache.openejb.loader.JarLocation.decode;
 
 
 /**
@@ -108,11 +106,7 @@ public class URLs {
     }
 
     public static URI uri(final String uri) {
-        try {
-            return URI.create(URLEncoder.encode(uri, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            return URI.create(URLEncoder.encode(uri)); // will not occur normally
-        }
+        return URI.create(uri.replace(" ", "%20"));
     }
 
     private URLs() { }
