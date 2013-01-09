@@ -17,10 +17,12 @@
 package org.apache.tomee.catalina;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.openejb.util.doc.Revisit;
 
 /**
 * @version $Rev$ $Date$
 */
+@Revisit("this is here to work around LinkageErrors that can occur - seems most often in mac")
 public class LinkageErrorProtection {
 
     public static void preload(StandardContext standardContext) {
