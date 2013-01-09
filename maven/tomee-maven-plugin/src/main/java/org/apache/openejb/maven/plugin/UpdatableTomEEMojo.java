@@ -63,10 +63,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private boolean reloadOnUpdate;
 
     private Timer timer;
+    private SynchronizerRedeployer task;
 
     @Override
     protected void run() {
-        int sync = 0;
         if (synchronization != null) {
             initSynchronization(synchronization);
         }
@@ -76,7 +76,9 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             }
         }
 
-        startSynchronizers();
+        if (startSynchronizers()) {
+            forceReloadable = true;
+        }
 
         super.run();
     }
@@ -108,10 +110,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     @Override
     protected void addShutdownHooks(final RemoteServer server) {
-        if (synchronization != null) {
+        if (synchronization != null || synchronizations != null) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
+                    task.cancel();
                     timer.cancel();
                 }
             });
@@ -119,7 +122,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         super.addShutdownHooks(server);
     }
 
-    protected void startSynchronizers() {
+    protected boolean startSynchronizers() {
         timer = new Timer("tomee-maven-plugin-synchronizer");
 
         final Collection<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
@@ -143,14 +146,16 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
         // serialazing synchronizers to avoid multiple updates at the same time and reload a single time the app
         if (!synchronizers.isEmpty()) {
-            final SynchronizerRedeployer task = new SynchronizerRedeployer(synchronizers);
+            task = new SynchronizerRedeployer(synchronizers);
             getLog().info("Starting synchronizer with an update interval of " + interval);
             if (interval > INITIAL_DELAY) {
                 timer.scheduleAtFixedRate(task, interval, interval);
             } else {
                 timer.scheduleAtFixedRate(task, INITIAL_DELAY, interval);
             }
+            return true;
         }
+        return false;
     }
 
     private class SynchronizerRedeployer extends TimerTask {

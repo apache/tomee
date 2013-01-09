@@ -175,6 +175,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
     public static final String TOMEE_INIT_J2EE_INFO = "tomee.init-J2EE-info";
 
+    private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
+
     /**
      * Context information for web applications
      */
@@ -697,6 +699,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // just adding a carriage return to get logs more readable
         logger.info("-------------------------\nTomcatWebAppBuilder.init " + finalName(standardContext.getPath()));
+
+        if (FORCE_RELOADABLE) {
+            standardContext.setReloadable(true);
+        }
 
         final String name = standardContext.getName();
 

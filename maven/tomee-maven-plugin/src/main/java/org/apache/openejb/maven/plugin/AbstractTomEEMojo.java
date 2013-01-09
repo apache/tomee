@@ -166,6 +166,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
     private boolean quickSession;
 
+    @Parameter(property = "tomee-plugin.force-reloadable", defaultValue = "false")
+    protected boolean forceReloadable;
+
     /**
      * supported formats:
      * --> groupId:artifactId:version...
@@ -552,6 +555,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         if (args != null) {
             strings.addAll(Arrays.asList(args.split(" ")));
+        }
+
+        if (forceReloadable) {
+            strings.add("-Dtomee.force-reloadable=true");
         }
 
         // init env for RemoteServer
