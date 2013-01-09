@@ -34,6 +34,8 @@ import java.net.URI;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 
@@ -129,6 +131,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     /** does it need to be created lazily (not in constructor) */
     private boolean lazilyInitialized;
+
+    private Collection<ClassTransformer> transformers = new HashSet<ClassTransformer>();
 
     public PersistenceUnitInfoImpl() {
         this.persistenceClassLoaderHandler = null;
@@ -284,6 +288,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             PersistenceClassFileTransformer classFileTransformer = new PersistenceClassFileTransformer(classTransformer);
             persistenceClassLoaderHandler.addTransformer(id, classLoader, classFileTransformer);
         }
+        transformers.add(classTransformer);
     }
 
     public ClassLoader getNewTempClassLoader() {
@@ -475,5 +480,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public void setNonJtaDataSourceName(String nonJtaDataSourceName) {
         this.nonJtaDataSourceName = nonJtaDataSourceName;
+    }
+
+    public Collection<ClassTransformer> getTransformers() {
+        return transformers;
     }
 }

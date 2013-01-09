@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.AppModule;
@@ -123,6 +124,7 @@ public class OpenEJBArchiveProcessor {
         } else {
             loader = new SWClassLoader("/WEB-INF/classes/", new URLClassLoaderFirst(urls, parent), archive);
         }
+        final URLClassLoader tempClassLoader = ClassLoaderUtil.createTempClassLoader(loader);
 
         final AppModule appModule = new AppModule(loader, archive.getName());
         if (WEB_INF.equals(prefix)) {
@@ -142,7 +144,9 @@ public class OpenEJBArchiveProcessor {
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(javaClass.getName());
-            appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+            final EjbModule e = new EjbModule(ejbJar, openejbJar);
+            e.setClassLoader(tempClassLoader);
+            appModule.getEjbModules().add(e);
         }
 
         final EjbJar ejbJar;
@@ -167,6 +171,7 @@ public class OpenEJBArchiveProcessor {
         }
 
         final EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setClassLoader(tempClassLoader);
 
         Node beansXml = archive.get(prefix.concat(BEANS_XML));
         if (beansXml == null && WEB_INF.equals(prefix)) {
@@ -176,7 +181,7 @@ public class OpenEJBArchiveProcessor {
             ejbModule.getAltDDs().put(BEANS_XML, new AssetSource(beansXml.getAsset()));
         }
 
-        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, appModule.getClassLoader(), additionalPaths);
+        final org.apache.xbean.finder.archive.Archive finderArchive = finderArchive(beansXml, archive, tempClassLoader, additionalPaths);
 
         ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new AnnotationFinder(finderArchive)));
         if (appModule.isWebapp()) { // war

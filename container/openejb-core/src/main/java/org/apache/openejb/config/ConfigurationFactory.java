@@ -1122,9 +1122,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (service.getType() == null && serviceTypeIsAdjustable) {
             // try to guess quickly for know type
-            // DataSource
-            if ((service.getProperties().containsKey("JdbcDriver") || service.getProperties().containsKey("url"))
-                && service.getProperties().containsKey("JtaManaged")) {
+            // -> DataSource
+            // the algo is weird but works, don't try to simplify it too much
+            // because we just have the service properties, not our defaults
+            final Properties properties = service.getProperties();
+            if ((properties.containsKey("JdbcDriver") || properties.containsKey("JdbcUrl") || properties.containsKey("url"))
+                && (properties.containsKey("JtaManaged") || properties.containsKey("UserName") || properties.containsKey("Password"))) {
                 service.setType("javax.sql.DataSource");
             }
         }
