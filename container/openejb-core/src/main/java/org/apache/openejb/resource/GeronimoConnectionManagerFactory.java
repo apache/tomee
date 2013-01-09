@@ -16,7 +16,16 @@
  */
 package org.apache.openejb.resource;
 
+import org.apache.geronimo.connector.outbound.AbstractSinglePoolConnectionInterceptor;
+import org.apache.geronimo.connector.outbound.ConnectionInfo;
+import org.apache.geronimo.connector.outbound.ConnectionInterceptor;
+import org.apache.geronimo.connector.outbound.ConnectionReturnAction;
 import org.apache.geronimo.connector.outbound.GenericConnectionManager;
+import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
+import org.apache.geronimo.connector.outbound.MultiPoolConnectionInterceptor;
+import org.apache.geronimo.connector.outbound.SinglePoolConnectionInterceptor;
+import org.apache.geronimo.connector.outbound.SinglePoolMatchAllConnectionInterceptor;
+import org.apache.geronimo.connector.outbound.SubjectSource;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.LocalTransactions;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.NoPool;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.NoTransactions;
@@ -29,8 +38,12 @@ import org.apache.geronimo.transaction.manager.NamedXAResourceFactory;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.reflection.Reflections;
 
+import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -39,7 +52,14 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class GeronimoConnectionManagerFactory   {
     private String name;
@@ -59,10 +79,9 @@ public class GeronimoConnectionManagerFactory   {
     private boolean allConnectionsEqual = true;
     private int connectionMaxWaitMilliseconds = 5000;
     private int connectionMaxIdleMinutes = 15;
+    private int validationInterval = -1;
     private ManagedConnectionFactory mcf;
 
-    
-    
     public ManagedConnectionFactory getMcf() {
 		return mcf;
 	}
@@ -175,6 +194,22 @@ public class GeronimoConnectionManagerFactory   {
         setConnectionMaxIdleMinutes((int) minutes);
     }
 
+    public int getValidationInterval() {
+        return validationInterval;
+    }
+
+    public void setValidationInterval(int validationInterval) {
+        this.validationInterval = validationInterval;
+    }
+
+    public void setValidationInterval(final Duration validationInterval) {
+        if (validationInterval.getUnit() == null) {
+            validationInterval.setUnit(TimeUnit.MINUTES);
+        }
+        final long minutes = TimeUnit.MINUTES.convert(validationInterval.getTime(), validationInterval.getUnit());
+        setValidationInterval((int) minutes);
+    }
+
     public GenericConnectionManager create() {
         PoolingSupport poolingSupport = createPoolingSupport();
 
@@ -194,6 +229,13 @@ public class GeronimoConnectionManagerFactory   {
             }
             tm = new SimpleRecoverableTransactionManager(transactionManager);
         }
+
+        if (validationInterval >= 0 && mcf instanceof ValidatingManagedConnectionFactory) {
+            return new ValidatingGenericConnectionManager(txSupport, poolingSupport,
+                    null, new AutoConnectionTracker(), tm,
+                    mcf, name, classLoader, validationInterval);
+        }
+
         return new GenericConnectionManager(txSupport, poolingSupport,
                         null, new AutoConnectionTracker(), tm,
                         mcf, name, classLoader);
@@ -321,6 +363,116 @@ public class GeronimoConnectionManagerFactory   {
         @Override
         public Transaction suspend() throws SystemException {
             return delegate.suspend();
+        }
+    }
+
+    private static class ValidatingGenericConnectionManager extends GenericConnectionManager {
+        private static final Timer TIMER = new Timer("ValidatingGenericConnectionManagerTimer", true);
+
+        private final TimerTask validatingTask;
+        private final long validationInterval;
+
+        private final ReadWriteLock lock;
+        private final Object pool;
+
+        public ValidatingGenericConnectionManager(final TransactionSupport txSupport, final PoolingSupport poolingSupport, final SubjectSource o, final AutoConnectionTracker autoConnectionTracker, final RecoverableTransactionManager tm, final ManagedConnectionFactory mcf, final String name, final ClassLoader classLoader, final long interval) {
+            super(txSupport, poolingSupport, o, autoConnectionTracker, tm, mcf, name, classLoader);
+            validationInterval = interval;
+
+            final ConnectionInterceptor stack = interceptors.getStack();
+
+            ReadWriteLock foundLock = null;
+            if (stack instanceof AbstractSinglePoolConnectionInterceptor) {
+                try {
+                    foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(stack);
+                } catch (IllegalAccessException e) {
+                    // no-op
+                } catch (NoSuchFieldException e) {
+                    // no-op
+                }
+            }
+            this.lock = foundLock;
+
+            Object foundPool = null;
+            if (stack instanceof AbstractSinglePoolConnectionInterceptor) {
+                foundPool = Reflections.get(stack, "pool");
+            } else if (stack instanceof MultiPoolConnectionInterceptor) {
+                log.warn("validation on stack " + stack + " not supported");
+            }
+            this.pool = foundPool;
+
+            if (pool != null) {
+                validatingTask = new ValidatingTask(stack, lock, pool);
+            } else {
+                validatingTask = null;
+            }
+        }
+
+        @Override
+        public void doStart() throws Exception {
+            super.doStart();
+            if (validatingTask != null) {
+                TIMER.schedule(validatingTask, validationInterval, validationInterval);
+            }
+        }
+
+        @Override
+        public void doStop() throws Exception {
+            if (validatingTask != null) {
+                validatingTask.cancel();
+            }
+            super.doStop();
+        }
+
+        private class ValidatingTask extends TimerTask {
+            private final ConnectionInterceptor stack;
+            private final ReadWriteLock lock;
+            private final Object pool;
+
+            public ValidatingTask(final ConnectionInterceptor stack, final ReadWriteLock lock, final Object pool) {
+                this.stack = stack;
+                this.lock = lock;
+                this.pool = pool;
+            }
+
+            @Override
+            public void run() {
+                if (lock != null) {
+                    lock.writeLock().lock();
+                }
+
+                try {
+                    final Map<ManagedConnection, ManagedConnectionInfo> connections;
+                    if (stack instanceof SinglePoolConnectionInterceptor) {
+                        connections = new HashMap<ManagedConnection, ManagedConnectionInfo>();
+                        for (final ManagedConnectionInfo info : (List<ManagedConnectionInfo>) pool) {
+                            connections.put(info.getManagedConnection(), info);
+                        }
+                    } else if (stack instanceof SinglePoolMatchAllConnectionInterceptor) {
+                        connections = (Map<ManagedConnection, ManagedConnectionInfo>) pool;
+                    } else {
+                        log.warn("stack " + stack + " currently not supported");
+                        return;
+                    }
+
+                    // destroy invalid connections
+                    try {
+                        final Set<ManagedConnection> invalids = ValidatingManagedConnectionFactory.class.cast(getManagedConnectionFactory())
+                                .getInvalidConnections(connections.keySet());
+                        if (invalids != null) {
+                            for (final ManagedConnection invalid : invalids) {
+                                stack.returnConnection(new ConnectionInfo(connections.get(invalid)), ConnectionReturnAction.DESTROY);
+                            }
+                        }
+                    } catch (ResourceException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                } finally {
+                    if (lock != null) {
+                        lock.writeLock().unlock();
+                    }
+                }
+            }
         }
     }
 }
