@@ -137,7 +137,6 @@ import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
