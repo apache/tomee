@@ -45,6 +45,7 @@ import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.doc.Revisit;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -132,6 +133,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 proxy, null, new OpenEJBEJBInvoker(), additionalProviders, configuration);
     }
 
+    @Revisit("We should not be scanning after the ConfigurationFactory completes")
     private void addContextTypes(BeanContext beanContext) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.addAll(Classes.ancestors(beanContext.getBeanClass()));
