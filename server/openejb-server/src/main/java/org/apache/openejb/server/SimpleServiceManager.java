@@ -162,11 +162,9 @@ public class SimpleServiceManager extends ServiceManager {
         for (int i = 0; i < daemons.length; i++) {
             final ServerService d = daemons[i];
 
-            LOGGER.info("Starting service " + d.getName());
             try {
                 d.start();
                 errors[i] = null;
-                LOGGER.info("Started service " + d.getName());
             } catch (Exception e) {
                 errors[i] = e;
                 LOGGER.info("Can't start service " + d.getName(), e);
