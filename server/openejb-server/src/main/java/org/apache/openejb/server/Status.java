@@ -24,7 +24,7 @@ import java.net.Socket;
 public class Status {
 
     public static void main(String[] args) {
-//        System.exit(new Start().start()?0:1);
+        //        System.exit(new Start().start()?0:1);
         new Status().status();
     }
 
@@ -43,10 +43,14 @@ public class Status {
     }
 
     private boolean connect(int tries) {
+
+        Socket socket = null;
+        OutputStream out = null;
+
         try {
             final int port = SystemInstance.get().getOptions().get("ejbd.port", 4201);
-            Socket socket = new Socket("localhost", port);
-            OutputStream out = socket.getOutputStream();
+            socket = new Socket("localhost", port);
+            out = socket.getOutputStream();
         } catch (Exception e) {
             if (tries < 2) {
                 return false;
@@ -57,6 +61,22 @@ public class Status {
                     e.printStackTrace();
                 }
                 return connect(--tries);
+            }
+        } finally {
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (Throwable t) {
+                    //Ignore
+                }
+            }
+
+            if (null != socket) {
+                try {
+                    socket.close();
+                } catch (Throwable t) {
+                    //Ignore
+                }
             }
         }
 

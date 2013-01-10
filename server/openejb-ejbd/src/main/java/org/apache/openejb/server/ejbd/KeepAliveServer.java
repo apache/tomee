@@ -107,7 +107,7 @@ public class KeepAliveServer implements ServerService {
                         backlog--;
 
                         try {
-                            session.socket.close();
+                            session.close();
                         } catch (Throwable e) {
                             //Ignore
                         } finally {
@@ -136,7 +136,7 @@ public class KeepAliveServer implements ServerService {
 
             if (l.tryLock()) {
                 try {
-                    session.socket.close();
+                    session.close();
                 } catch (Throwable e) {
                     //Ignore
                 } finally {
@@ -200,20 +200,20 @@ public class KeepAliveServer implements ServerService {
 
         // only used inside the Lock
         private final Socket socket;
+        private InputStream in = null;
+        private OutputStream out = null;
 
-        protected Session(final KeepAliveServer kas, final Socket socket) {
+        private Session(final KeepAliveServer kas, final Socket socket) {
             this.kas = kas;
             this.socket = socket;
             this.lastRequest = new AtomicLong(System.currentTimeMillis());
             this.thread = Thread.currentThread();
         }
 
-        protected void service() throws ServiceException, IOException {
+        private void service() throws ServiceException, IOException {
             this.kas.addSession(this);
 
             int i = -1;
-            InputStream in = null;
-            OutputStream out = null;
 
             try {
 
@@ -222,11 +222,11 @@ public class KeepAliveServer implements ServerService {
 
                 try {
                     if (!KeepAliveServer.this.gzip) {
-                        in = new BufferedInputStream(this.socket.getInputStream());
-                        out = new BufferedOutputStream(this.socket.getOutputStream());
+                        in = new BufferedInputStream(socket.getInputStream());
+                        out = new BufferedOutputStream(socket.getOutputStream());
                     } else {
-                        in = new GZIPInputStream(new BufferedInputStream(this.socket.getInputStream()));
-                        out = new BufferedOutputStream(new FlushableGZIPOutputStream(this.socket.getOutputStream()));
+                        in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
+                        out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
                     }
                 } finally {
                     l1.unlock();
@@ -280,31 +280,35 @@ public class KeepAliveServer implements ServerService {
                 Thread.interrupted();
             } finally {
 
-                if (null != in) {
-                    try {
-                        in.close();
-                    } catch (Throwable e) {
-                        //ignore
-                    }
-                }
-
-                if (null != out) {
-                    try {
-                        out.close();
-                    } catch (Throwable e) {
-                        //ignore
-                    }
-                }
-
-                if (null != this.socket) {
-                    try {
-                        this.socket.close();
-                    } catch (Throwable e) {
-                        //ignore
-                    }
-                }
+                close();
 
                 this.kas.removeSession(this);
+            }
+        }
+
+        private void close() {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //ignore
+                }
+            }
+
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //ignore
+                }
+            }
+
+            if (null != socket) {
+                try {
+                    socket.close();
+                } catch (Throwable e) {
+                    //ignore
+                }
             }
         }
     }

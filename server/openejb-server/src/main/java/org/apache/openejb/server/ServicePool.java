@@ -28,40 +28,99 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Managed
 public class ServicePool extends ServerServiceFilter {
+
     private static final Logger log = Logger.getInstance(LogCategory.SERVICEPOOL, "org.apache.openejb.util.resources");
 
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
 
     public ServicePool(final ServerService next, final Properties properties) {
-        this(next, new Options(properties).get("threads", 100));
+        //Liberal defaults
+        this(next, new Options(properties).get("threads", 50), new Options(properties).get("queue", 50000), new Options(properties).get("block", false));
     }
 
-    public ServicePool(final ServerService next, final int threads) {
+    public ServicePool(final ServerService next, int threads, int queue, final boolean block) {
         super(next);
 
-        final int keepAliveTime = (1000 * 60 * 5);
+        if (threads < 1) {
+            threads = 1;
+        }
 
-        threadPool = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        if (queue < 1) {
+            queue = 1;
+        }
+
+        /**
+         This thread pool starts with 2 core threads and can grow to the limit defined by 'threads'.
+         If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
+         It can accept upto the number of processes defined by 'queue'.
+         If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
+         Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
+         is true then a final attempt is made to run the process in the current thread (the service thread).
+         */
+
+        threadPool = new ThreadPoolExecutor(2, threads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
         threadPool.setThreadFactory(new ThreadFactory() {
-            private volatile int id = 0;
+
+            private final AtomicInteger i = new AtomicInteger(0);
 
             @Override
             public Thread newThread(final Runnable arg0) {
-                return new Thread(arg0, getName() + " " + getNextID());
+                final Thread t = new Thread(arg0, "OpenEJB." + getName() + "." + i.incrementAndGet());
+
+                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(final Thread t, final Throwable e) {
+                        log.error("Uncaught error in: " + t.getName(), e);
+                    }
+                });
+
+                return t;
             }
 
-            private int getNextID() {
-                return id++;
-            }
+        });
 
+        threadPool.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
+                }
+
+                if (log.isWarningEnabled()) {
+                    log.warning("ServicePool at capicity for process: " + r);
+                }
+
+                boolean offer = false;
+                try {
+                    offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+
+                if (!offer) {
+                    log.error("ServicePool failed to run asynchronous process: " + r);
+
+                    if (block) {
+                        try {
+                            //Last ditch effort to run the process in the current thread
+                            r.run();
+                        } catch (Throwable e) {
+                            log.error("ServicePool failed to run synchronous process: " + r);
+                        }
+                    }
+                }
+            }
         });
 
         SystemInstance.get().setComponent(ServicePool.class, this);
@@ -77,12 +136,24 @@ public class ServicePool extends ServerServiceFilter {
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
-        final Runnable service = new Runnable() {
+
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        final Runnable ctxCL = new Runnable() {
             @Override
             public void run() {
+
+                ClassLoader cl = null;
+
                 try {
-                    if (stop.get()) return;
+                    cl = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(tccl);
+
+                    if (stop.get()) {
+                        return;
+                    }
+
                     ServicePool.super.service(socket);
+
                 } catch (SecurityException e) {
                     final String msg = "ServicePool: Security error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
@@ -104,14 +175,12 @@ public class ServicePool extends ServerServiceFilter {
                     } else {
                         log.error(msg + " - Debug for StackTrace");
                     }
+
                 } finally {
+
+                    //Ensure delegated socket is closed here
+
                     try {
-                        // Once the thread is done with the socket, clean it up
-                        // The ServiceDaemon does not close the sockets as it is
-                        // single threaded and only accepts sockets and then
-                        // hands them off to be proceeceed.  As the thread doing
-                        // that processing it is our job to close the socket
-                        // when we are finished with it.
                         if (socket != null) {
                             socket.close();
                         }
@@ -123,19 +192,7 @@ public class ServicePool extends ServerServiceFilter {
                             log.warning(msg);
                         }
                     }
-                }
-            }
-        };
 
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final Runnable ctxCL = new Runnable() {
-            @Override
-            public void run() {
-                final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(tccl);
-                try {
-                    service.run();
-                } finally {
                     Thread.currentThread().setContextClassLoader(cl);
                 }
             }
@@ -149,6 +206,7 @@ public class ServicePool extends ServerServiceFilter {
 
     @Managed(append = true)
     public class Pool {
+
         @Managed
         public boolean isShutdown() {
             return threadPool.isShutdown();
@@ -180,7 +238,7 @@ public class ServicePool extends ServerServiceFilter {
         }
 
         @Managed
-        public long getKeepAliveTime(TimeUnit unit) {
+        public long getKeepAliveTime(final TimeUnit unit) {
             return threadPool.getKeepAliveTime(unit);
         }
 
@@ -210,22 +268,22 @@ public class ServicePool extends ServerServiceFilter {
         }
 
         @Managed
-        public void setMaximumPoolSize(int maximumPoolSize) {
+        public void setMaximumPoolSize(final int maximumPoolSize) {
             threadPool.setMaximumPoolSize(maximumPoolSize);
         }
 
         @Managed
-        public void setCorePoolSize(int corePoolSize) {
+        public void setCorePoolSize(final int corePoolSize) {
             getThreadPool().setCorePoolSize(corePoolSize);
         }
 
         @Managed
-        public void allowCoreThreadTimeOut(boolean value) {
+        public void allowCoreThreadTimeOut(final boolean value) {
             getThreadPool().allowCoreThreadTimeOut(value);
         }
 
         @Managed(description = "Sets time in nanoseconds")
-        public void setKeepAliveTime(long time) {
+        public void setKeepAliveTime(final long time) {
             getThreadPool().setKeepAliveTime(time, TimeUnit.NANOSECONDS);
         }
     }

@@ -35,39 +35,47 @@ public class ServerServiceFilter implements ServerService {
     @Managed
     private final ServerService service;
 
-    public ServerServiceFilter(ServerService service) {
+    public ServerServiceFilter(final ServerService service) {
         this.service = service;
     }
 
+    @Override
     public String getIP() {
         return service.getIP();
     }
 
+    @Override
     public String getName() {
         return service.getName();
     }
 
+    @Override
     public int getPort() {
         return service.getPort();
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         service.service(in, out);
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         service.service(socket);
     }
 
+    @Override
     public void start() throws ServiceException {
         service.start();
     }
 
+    @Override
     public void stop() throws ServiceException {
         service.stop();
     }
 
-    public void init(Properties props) throws Exception {
+    @Override
+    public void init(final Properties props) throws Exception {
         service.init(props);
     }
 }
