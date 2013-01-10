@@ -32,8 +32,6 @@ import static org.apache.openejb.loader.JarLocation.decode;
  * @version $Rev$ $Date$
  */
 public class URLs {
-    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, URLs.class.getPackage().getName());
-
     public static File toFile(final URL url) {
         if ("jar".equals(url.getProtocol())) {
             try {
@@ -94,14 +92,12 @@ public class URLs {
         urls = urls.excludeJavaHome();
         urls = urls.excludePaths(System.getProperty("sun.boot.class.path", ""));
         urls = urls.exclude(".*/JavaVM.framework/.*");
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Culled {0} system urls from set", original.size() - urls.size());
         return urls;
     }
 
     public static UrlSet cullOpenEJBJars(final UrlSet original) throws IOException {
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(".*openejb.*");
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Culled {0} OpenEJB urls from set", original.size() - urls.size());
         return urls;
     }
 
