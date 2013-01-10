@@ -157,6 +157,7 @@ class AppInfoBuilder {
             try {
                 final EjbJarInfo ejbJarInfo = this.ejbJarInfoBuilder.buildInfo(ejbModule);
                 ejbJarInfo.mbeans = ejbModule.getMbeans();
+                ejbJarInfo.webapp = ejbModule.isWebapp();
 
                 final Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 

@@ -94,6 +94,14 @@ public class CdiScanner implements ScannerService {
 
             if (beans == null) continue;
 
+            if (startupObject.isFromWebApp()) { // deploy only the related ejbmodule
+                if (!ejbJar.moduleId.equals(startupObject.getWebContext().getId())) {
+                    continue;
+                }
+            } else if (ejbJar.webapp) {
+                continue;
+            }
+
             // fail fast
             final StringBuilder errors = new StringBuilder("You can't define multiple times the same class in beans.xml: ");
             if (addErrors(errors, "alternative classes", beans.duplicatedAlternativeClasses)

@@ -714,6 +714,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // than an ear file, so the ear-style code we were previously
         // using doesn't exactly work anymore.
         final EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
+        webEjbModule.setWebapp(true);
         webEjbModule.getAltDDs().putAll(webModule.getAltDDs());
         appModule.getEjbModules().add(webEjbModule);
 
