@@ -48,6 +48,10 @@ public class ServicePool extends ServerServiceFilter {
         this(next, new Options(properties).get("threads", 50), new Options(properties).get("queue", 50000), new Options(properties).get("block", false));
     }
 
+    public ServicePool(final ServerService next, final int threads) {
+        this(next, threads, 50000, true);
+    }
+
     public ServicePool(final ServerService next, int threads, int queue, final boolean block) {
         super(next);
 

@@ -16,24 +16,21 @@
  */
 package org.apache.openejb.util;
 
-import javax.naming.InitialContext;
-import javax.naming.Context;
 import java.net.Socket;
-import java.io.OutputStream;
-import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Connect {
 
-    public static boolean connect(int tries, String host, int port) {
+    public static boolean connect(int tries, final String host, final int port) {
+
+        Socket s = null;
 
         try {
 
-            Socket socket = new Socket(host, port);
-
-            OutputStream out = socket.getOutputStream();
+            s = new Socket(host, port);
+            s.getOutputStream().close();
 
         } catch (Exception e) {
 
@@ -57,10 +54,18 @@ public class Connect {
 
             }
 
+        } finally {
+
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
 
         return true;
     }
 
-    
 }

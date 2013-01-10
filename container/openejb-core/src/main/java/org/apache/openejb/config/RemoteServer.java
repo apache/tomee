@@ -40,6 +40,7 @@ import java.util.Properties;
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RemoteServer {
+
     private static final Options options = new Options(System.getProperties());
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
@@ -94,7 +95,7 @@ public class RemoteServer {
 
     public static void main(final String[] args) {
         assert args.length > 0 : "no arguments supplied: valid argumen -efts are 'start' or 'stop'";
-        if (args[0].equalsIgnoreCase("start")){
+        if (args[0].equalsIgnoreCase("start")) {
             new RemoteServer().start();
         } else if (args[0].equalsIgnoreCase("stop")) {
             final RemoteServer remoteServer = new RemoteServer();
@@ -104,6 +105,7 @@ public class RemoteServer {
             throw new OpenEJBRuntimeException("valid arguments are 'start' or 'stop'");
         }
     }
+
     public Properties getProperties() {
         return properties;
     }
@@ -141,9 +143,9 @@ public class RemoteServer {
                 final File home = getHome();
                 final String javaVersion = System.getProperty("java.version");
                 if (verbose) {
-                    System.out.println("OPENEJB_HOME = "+ home.getAbsolutePath());
+                    System.out.println("OPENEJB_HOME = " + home.getAbsolutePath());
                     final String systemInfo = "Java " + javaVersion + "; " + System.getProperty("os.name") + "/" + System.getProperty("os.version");
-                    System.out.println("SYSTEM_INFO  = "+systemInfo);
+                    System.out.println("SYSTEM_INFO  = " + systemInfo);
                 }
 
                 serverHasAlreadyBeenStarted = false;
@@ -171,22 +173,22 @@ public class RemoteServer {
                 final int debugPort = options.get(SERVER_DEBUG_PORT, 5005);
                 if (!tomcat) {
                     if (debug) {
-                        args = new String[] { java,
-                                "-XX:+HeapDumpOnOutOfMemoryError",
-                                "-Xdebug",
-                                "-Xnoagent",
-                                "-Djava.compiler=NONE",
-                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort,
+                        args = new String[]{java,
+                                            "-XX:+HeapDumpOnOutOfMemoryError",
+                                            "-Xdebug",
+                                            "-Xnoagent",
+                                            "-Djava.compiler=NONE",
+                                            "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort,
 
-                                "-javaagent:" + javaagentJar.getAbsolutePath(),
+                                            "-javaagent:" + javaagentJar.getAbsolutePath(),
 
-                                "-jar", openejbJar.getAbsolutePath(), "start"
+                                            "-jar", openejbJar.getAbsolutePath(), "start"
                         };
                     } else {
-                        args = new String[] { java,
-                                "-XX:+HeapDumpOnOutOfMemoryError",
-                                "-javaagent:" + javaagentJar.getAbsolutePath(),
-                                "-jar", openejbJar.getAbsolutePath(), "start"
+                        args = new String[]{java,
+                                            "-XX:+HeapDumpOnOutOfMemoryError",
+                                            "-javaagent:" + javaagentJar.getAbsolutePath(),
+                                            "-jar", openejbJar.getAbsolutePath(), "start"
                         };
                     }
                 } else {
@@ -199,14 +201,14 @@ public class RemoteServer {
                     final File conf = new File(home, "conf");
                     final File loggingProperties = new File(conf, "logging.properties");
 
-
                     File endorsed = new File(home, "endorsed");
                     if (javaVersion != null && javaVersion.startsWith("1.7.")) { // java 7
                         endorsed = new File(home, "endorsed7"); // doesn't exist but just to ignore it with j7
                     }
                     final File temp = new File(home, "temp");
 
-                    final List<String> argsList = new ArrayList<String>() {};
+                    final List<String> argsList = new ArrayList<String>() {
+                    };
                     argsList.add(java);
                     argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
@@ -218,8 +220,9 @@ public class RemoteServer {
                     }
 
                     if (profile) {
-                        String yourkitHome = options.get("yourkit.home","/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
-                        if (!yourkitHome.endsWith("/")) yourkitHome += "/";
+                        String yourkitHome = options.get("yourkit.home", "/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
+                        if (!yourkitHome.endsWith("/"))
+                            yourkitHome += "/";
                         final String yourkitOpts = options.get("yourkit.opts", "disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
                         argsList.add("-agentpath:" + yourkitHome + "libyjpagent.jnilib=" + yourkitOpts);
                     }
@@ -305,7 +308,6 @@ public class RemoteServer {
                     args = argsList.toArray(new String[argsList.size()]);
                 }
 
-
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
                 }
@@ -322,17 +324,20 @@ public class RemoteServer {
                 }
 
             } catch (Exception e) {
-                throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
+                throw (RuntimeException) new OpenEJBRuntimeException("Cannot start the server.  Exception: " + e.getClass().getName() + ": " + e.getMessage()).initCause(e);
             }
             if (checkPortAvailable) {
                 if (debug) {
-                    if (!connect(Integer.MAX_VALUE)) throw new OpenEJBRuntimeException("Could not connect to server");
+                    if (!connect(Integer.MAX_VALUE))
+                        throw new OpenEJBRuntimeException("Could not connect to server");
                 } else {
-                    if (!connect(tries)) throw new OpenEJBRuntimeException("Could not connect to server");
+                    if (!connect(tries))
+                        throw new OpenEJBRuntimeException("Could not connect to server");
                 }
             }
         } else {
-            if (verbose) System.out.println("[] FOUND STARTED SERVER");
+            if (verbose)
+                System.out.println("[] FOUND STARTED SERVER");
         }
     }
 
@@ -391,9 +396,12 @@ public class RemoteServer {
             final File[] files = dir.listFiles();
             if (files != null) {
                 for (final File file : files) {
-                    if (!file.isFile()) continue;
-                    if (!file.getName().endsWith(".jar")) continue;
-                    if (file.getName().startsWith(name)) return file;
+                    if (!file.isFile())
+                        continue;
+                    if (!file.getName().endsWith(".jar"))
+                        continue;
+                    if (file.getName().startsWith(name))
+                        return file;
                 }
             }
         }
@@ -484,7 +492,7 @@ public class RemoteServer {
         try {
             socket = new Socket(host, shutdownPort);
             stream = socket.getOutputStream();
-            String shutdown = command + Character.toString((char) 0);
+            final String shutdown = command + Character.toString((char) 0);
             for (int i = 0; i < shutdown.length(); i++) {
                 stream.write(shutdown.charAt(i));
             }
@@ -506,17 +514,22 @@ public class RemoteServer {
     }
 
     private boolean connect(int tries) {
-        if (verbose) System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
+        if (verbose)
+            System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
 
-        Socket socket = null;
+        Socket s = null;
         try {
-            socket = new Socket(); // wee need a timeout here
-            socket.connect(new InetSocketAddress(host, shutdownPort), 1000);
-            socket.getOutputStream().close();
-            if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
+            s = new Socket();
+            s.connect(new InetSocketAddress(host, shutdownPort), 1000);
+            s.getOutputStream().close();
+            if (verbose) {
+                System.out.println("[] CONNECTED IN " + (this.tries - tries));
+            }
         } catch (Exception e) {
             if (tries < 2) {
-                if (verbose) System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
+                if (verbose) {
+                    System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
+                }
                 return false;
             } else {
                 try {
@@ -527,9 +540,9 @@ public class RemoteServer {
                 return connect(--tries);
             }
         } finally {
-            if (socket != null) {
+            if (s != null) {
                 try {
-                    socket.close();
+                    s.close();
                 } catch (Exception ignored) {
                     // no-op
                 }
@@ -544,7 +557,8 @@ public class RemoteServer {
     }
 
     public void killOnExit() {
-        if (!serverHasAlreadyBeenStarted && kill.contains(this.server)) return;
+        if (!serverHasAlreadyBeenStarted && kill.contains(this.server))
+            return;
         kill.add(this.server);
     }
 

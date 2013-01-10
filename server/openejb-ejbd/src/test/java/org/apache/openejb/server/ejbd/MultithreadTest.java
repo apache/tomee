@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.util.concurrent.atomic.AtomicReference;
-import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
@@ -28,19 +26,20 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.ejb.ConcurrentAccessException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.ejb.ConcurrentAccessException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -66,7 +65,8 @@ public class MultithreadTest {
         final CountDownLatch finishingLine = new CountDownLatch(30);
 
         // Do a business method...
-        Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
+            @Override
             public void run() {
                 counter.race();
                 finishingLine.countDown();
@@ -77,7 +77,7 @@ public class MultithreadTest {
 
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
         for (int i = 0; i < 30; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -103,15 +103,16 @@ public class MultithreadTest {
     @Test
     public void testStatelessBeanRelease() throws Exception {
 
-    	invocations = new CountDownLatch(30);
+        invocations = new CountDownLatch(30);
 
         // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
-                try{
-        		    counter.explode();
-                }catch(Exception e){
-
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    counter.explode();
+                } catch (Exception e) {
+                    //Ignore
                 }
             }
         };
@@ -120,11 +121,11 @@ public class MultithreadTest {
 
         // 30 instances should be created and discarded.
         for (int i = 0; i < 30; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
-        boolean success = invocations.await(10000, TimeUnit.MILLISECONDS);
+        final boolean success = invocations.await(10000, TimeUnit.MILLISECONDS);
 
         assertTrue(success);
 
@@ -132,6 +133,7 @@ public class MultithreadTest {
 
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void testStatelessBeanTimeout() throws Exception {
 
@@ -141,26 +143,26 @@ public class MultithreadTest {
 
         // Do a business method...
         final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
-        Runnable r = new Runnable(){
-        	public void run(){
-        		try{
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
                     counter.race();
-                }catch (ConcurrentAccessException ex){
+                } catch (ConcurrentAccessException ex) {
                     comment("Leap Start");
                     timeouts.countDown();
                     assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
-        		} catch (Throwable t) {
+                } catch (Throwable t) {
                     error.set(t);
                     fail("Unexpected exception" + t.getClass().getName() + " " + t.getMessage()); // useless in another thread
                 }
-        	}
+            }
         };
-
 
         comment("On your mark!");
 
         for (int i = 0; i < 20; i++) {
-            Thread t = new Thread(r);
+            final Thread t = new Thread(r);
             t.start();
         }
 
@@ -192,30 +194,30 @@ public class MultithreadTest {
 
     @Before
     public void setUp() throws Exception {
-        int poolSize = 10;
+        final int poolSize = 10;
 
-        System.setProperty("openejb.client.connectionpool.size", "" + (poolSize*2));
+        System.setProperty("openejb.client.connectionpool.size", "" + (poolSize * 2));
 
-        EjbServer ejbServer = new EjbServer();
-        KeepAliveServer keepAliveServer = new KeepAliveServer(ejbServer);
+        final EjbServer ejbServer = new EjbServer();
+        final KeepAliveServer keepAliveServer = new KeepAliveServer(ejbServer, false);
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(keepAliveServer, (poolSize*2));
+        final ServicePool pool = new ServicePool(keepAliveServer, (poolSize * 2));
         this.serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        final int port = serviceDaemon.getPort();
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
         // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        final StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
         statelessContainerInfo.properties.setProperty("PoolSize", "" + poolSize);
         statelessContainerInfo.properties.setProperty("MinSize", "2");
@@ -224,36 +226,36 @@ public class MultithreadTest {
 
         // Setup the descriptor information
 
-        StatelessBean bean = new StatelessBean(CounterBean.class);
+        final StatelessBean bean = new StatelessBean(CounterBean.class);
         bean.addBusinessLocal(Counter.class.getName());
         bean.addBusinessRemote(RemoteCounter.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
         CounterBean.instances.set(0);
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-        Context context = new InitialContext(props);
+        final Context context = new InitialContext(props);
         counter = (Counter) context.lookup("CounterBeanRemote");
     }
 
-
     public static Object lock = new Object[]{};
 
-    private static void comment(String x) {
-//        synchronized(lock){
-//            System.out.println(x);
-//            System.out.flush();
-//        }
+    private static void comment(final String x) {
+        //        synchronized(lock){
+        //            System.out.println(x);
+        //            System.out.flush();
+        //        }
     }
 
     public static interface Counter {
+
         int count();
 
         void race();
@@ -272,12 +274,13 @@ public class MultithreadTest {
         public static AtomicInteger instances = new AtomicInteger();
         public static AtomicInteger discardedInstances = new AtomicInteger();
 
-        private int count;
+        private final int count;
 
         public CounterBean() {
             count = instances.incrementAndGet();
         }
 
+        @Override
         public int count() {
             return instances.get();
         }
@@ -286,6 +289,7 @@ public class MultithreadTest {
             return discardedInstances.get();
         }
 
+        @Override
         public void explode() {
             try {
                 discardedInstances.incrementAndGet();
@@ -295,6 +299,7 @@ public class MultithreadTest {
             }
         }
 
+        @Override
         public void race() {
             comment("ready = " + count);
             startingLine.countDown();
