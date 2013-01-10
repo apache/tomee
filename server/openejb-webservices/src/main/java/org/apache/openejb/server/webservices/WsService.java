@@ -72,6 +72,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class WsService implements ServerService, SelfManaging {
+
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
     public static final String WS_FORCE_ADDRESS = "openejb.webservice.deployment.address";
@@ -88,13 +89,13 @@ public abstract class WsService implements ServerService, SelfManaging {
     private String virtualHost;
     private final Set<AppInfo> deployedApplications = new HashSet<AppInfo>();
     private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
-    private final Map<String,String> ejbLocations = new TreeMap<String,String>();
-    private final Map<String,String> ejbAddresses = new TreeMap<String,String>();
-    private final Map<String,String> servletAddresses = new TreeMap<String,String>();
+    private final Map<String, String> ejbLocations = new TreeMap<String, String>();
+    private final Map<String, String> ejbAddresses = new TreeMap<String, String>();
+    private final Map<String, String> servletAddresses = new TreeMap<String, String>();
     private final Map<String, List<EndpointInfo>> addressesByApplication = new TreeMap<String, List<EndpointInfo>>();
 
     public WsService() {
-        String format = SystemInstance.get().getOptions().get(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
+        final String format = SystemInstance.get().getOptions().get(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
         this.wsAddressTemplate = new StringTemplate(format);
     }
 
@@ -102,7 +103,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         return wsAddressTemplate;
     }
 
-    public void setWsAddressTemplate(StringTemplate wsAddressTemplate) {
+    public void setWsAddressTemplate(final StringTemplate wsAddressTemplate) {
         this.wsAddressTemplate = wsAddressTemplate;
     }
 
@@ -110,7 +111,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         return realmName;
     }
 
-    public void setRealmName(String realmName) {
+    public void setRealmName(final String realmName) {
         this.realmName = realmName;
     }
 
@@ -118,7 +119,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         return transportGuarantee;
     }
 
-    public void setTransportGuarantee(String transportGuarantee) {
+    public void setTransportGuarantee(final String transportGuarantee) {
         this.transportGuarantee = transportGuarantee;
     }
 
@@ -126,7 +127,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         return authMethod;
     }
 
-    public void setAuthMethod(String authMethod) {
+    public void setAuthMethod(final String authMethod) {
         this.authMethod = authMethod;
     }
 
@@ -134,22 +135,26 @@ public abstract class WsService implements ServerService, SelfManaging {
         return virtualHost;
     }
 
-    public void setVirtualHost(String virtualHost) {
+    public void setVirtualHost(final String virtualHost) {
         this.virtualHost = virtualHost;
     }
 
+    @Override
     public String getIP() {
         return "n/a";
     }
 
+    @Override
     public int getPort() {
         return -1;
     }
 
-    public void init(Properties props) throws Exception {
-        if (props == null) return;
+    @Override
+    public void init(final Properties props) throws Exception {
+        if (props == null)
+            return;
 
-        String format = props.getProperty(WS_ADDRESS_FORMAT);
+        final String format = props.getProperty(WS_ADDRESS_FORMAT);
         if (format != null) {
             this.wsAddressTemplate = new StringTemplate(format);
         }
@@ -160,6 +165,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         virtualHost = props.getProperty("virtualHost");
     }
 
+    @Override
     public void start() throws ServiceException {
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
         if (wsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
@@ -176,16 +182,17 @@ public abstract class WsService implements ServerService, SelfManaging {
         SystemInstance.get().setComponent(WsService.class, this);
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
-            for (AppInfo appInfo : assembler.getDeployedApplications()) {
+            for (final AppInfo appInfo : assembler.getDeployedApplications()) {
                 afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
             }
         }
     }
 
+    @Override
     public void stop() throws ServiceException {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
-            for (AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
+            for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications)) {
                 beforeApplicationDestroyed(new AssemblerBeforeApplicationDestroyed(appInfo));
             }
             assembler = null;
@@ -203,21 +210,23 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
-    public void afterApplicationCreated(@Observes AssemblerAfterApplicationCreated event) {
+    public void afterApplicationCreated(
+                                               @Observes
+                                               final AssemblerAfterApplicationCreated event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
-            Map<String, String> webContextByEjb = new HashMap<String, String>();
-            for (WebAppInfo webApp : appInfo.webApps) {
-                for (String ejb : webApp.ejbWebServices) {
+            final Map<String, String> webContextByEjb = new HashMap<String, String>();
+            for (final WebAppInfo webApp : appInfo.webApps) {
+                for (final String ejb : webApp.ejbWebServices) {
                     webContextByEjb.put(ejb, webApp.contextRoot);
                 }
             }
 
-            Map<String,String> contextData = new HashMap<String,String>();
+            final Map<String, String> contextData = new HashMap<String, String>();
             contextData.put("appId", appInfo.path);
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                Map<String, PortInfo> ports = new TreeMap<String,PortInfo>();
-                for (PortInfo port : ejbJar.portInfos) {
+            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+                for (final PortInfo port : ejbJar.portInfos) {
                     ports.put(port.serviceLink, port);
                 }
 
@@ -231,38 +240,41 @@ public abstract class WsService implements ServerService, SelfManaging {
                 }
 
                 StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
-                if (ejbJar.properties.containsKey(WS_ADDRESS_FORMAT)){
-                    String format = ejbJar.properties.getProperty(WS_ADDRESS_FORMAT);
-                    logger.info("Using "+ WS_ADDRESS_FORMAT +" '"+format+"'");
+                if (ejbJar.properties.containsKey(WS_ADDRESS_FORMAT)) {
+                    final String format = ejbJar.properties.getProperty(WS_ADDRESS_FORMAT);
+                    logger.info("Using " + WS_ADDRESS_FORMAT + " '" + format + "'");
                     deploymentIdTemplate = new StringTemplate(format);
                 }
                 contextData.put("ejbJarId", ejbJar.moduleName);
 
-                for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                     if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
 
-                        BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
-                        if (beanContext == null) continue;
+                        final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                        if (beanContext == null)
+                            continue;
 
-                        PortInfo portInfo = ports.get(bean.ejbName);
-                        if (portInfo == null) continue;
+                        final PortInfo portInfo = ports.get(bean.ejbName);
+                        if (portInfo == null)
+                            continue;
 
                         final ClassLoader old = Thread.currentThread().getContextClassLoader();
                         Thread.currentThread().setContextClassLoader(beanContext.getClassLoader());
                         try {
-                            PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
+                            final PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
 
-                            HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, new ServiceConfiguration(beanContext.getProperties(), appInfo.services));
+                            final HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, new ServiceConfiguration(beanContext.getProperties(), appInfo.services));
 
                             // generate a location if one was not assigned
                             String location = port.getLocation();
                             if (location == null) {
                                 location = autoAssignWsLocation(bean, port, contextData, deploymentIdTemplate);
                             }
-                            if (!location.startsWith("/")) location = "/" + location;
+                            if (!location.startsWith("/"))
+                                location = "/" + location;
                             ejbLocations.put(bean.ejbDeploymentId, location);
 
-                            ClassLoader classLoader = beanContext.getClassLoader();
+                            final ClassLoader classLoader = beanContext.getClassLoader();
                             if (wsRegistry != null) {
                                 String auth = authMethod;
                                 String realm = realmName;
@@ -278,10 +290,10 @@ public abstract class WsService implements ServerService, SelfManaging {
                                 if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                     context = ejbJar.moduleName;
                                 }
-                                List<String> addresses = wsRegistry.addWsContainer(context, location, container, virtualHost, realm, transport, auth, classLoader);
+                                final List<String> addresses = wsRegistry.addWsContainer(context, location, container, virtualHost, realm, transport, auth, classLoader);
 
                                 // one of the registered addresses to be the canonical address
-                                String address = HttpUtil.selectSingleAddress(addresses);
+                                final String address = HttpUtil.selectSingleAddress(addresses);
 
                                 if (address != null) {
                                     // register wsdl location
@@ -299,29 +311,30 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
                 }
             }
-            for (WebAppInfo webApp : appInfo.webApps) {
+            for (final WebAppInfo webApp : appInfo.webApps) {
                 afterApplicationCreated(appInfo, webApp);
             }
         }
     }
 
-    private List<EndpointInfo> addressesForApp(String appId) {
+    private List<EndpointInfo> addressesForApp(final String appId) {
         if (!addressesByApplication.containsKey(appId)) {
             addressesByApplication.put(appId, new ArrayList<EndpointInfo>());
         }
         return addressesByApplication.get(appId);
     }
 
-
-    public void afterApplicationCreated(AppInfo appInfo, WebAppInfo webApp) {
-        WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
-        if (webContext == null) return;
+    public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+        final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
+        if (webContext == null)
+            return;
 
         // if already deployed skip this webapp
-        if (!deployedWebApps.add(webApp)) return;
+        if (!deployedWebApps.add(webApp))
+            return;
 
-        Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
-        for (PortInfo port : webApp.portInfos) {
+        final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+        for (final PortInfo port : webApp.portInfos) {
             ports.put(port.serviceLink, port);
         }
 
@@ -333,12 +346,12 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
 
         Collection<IdPropertiesInfo> pojoConfiguration = null; // lazy init
-        for (ServletInfo servlet : webApp.servlets) {
+        for (final ServletInfo servlet : webApp.servlets) {
             if (servlet.servletName == null) {
                 continue;
             }
 
-            PortInfo portInfo = ports.get(servlet.servletName);
+            final PortInfo portInfo = ports.get(servlet.servletName);
             if (portInfo == null) {
                 continue;
             }
@@ -347,25 +360,25 @@ public abstract class WsService implements ServerService, SelfManaging {
             final ClassLoader classLoader = webContext.getClassLoader();
             Thread.currentThread().setContextClassLoader(classLoader);
             try {
-                Collection<Injection> injections = webContext.getInjections();
-                Context context = webContext.getJndiEnc();
-                Class target = classLoader.loadClass(servlet.servletClass);
+                final Collection<Injection> injections = webContext.getInjections();
+                final Context context = webContext.getJndiEnc();
+                final Class target = classLoader.loadClass(servlet.servletClass);
                 final Map<String, Object> bindings = webContext.getBindings();
 
-                PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
+                final PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
 
                 pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
-                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
-                        target, context, webApp.contextRoot, bindings,
-                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
+                final HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
+                                                                     target, context, webApp.contextRoot, bindings,
+                                                                     new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
                     // give servlet a reference to the webservice container
-                    List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
+                    final List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
 
                     // one of the registered addresses to be the connonical address
-                    String address = HttpUtil.selectSingleAddress(addresses);
+                    final String address = HttpUtil.selectSingleAddress(addresses);
 
                     // add address to global registry
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
@@ -381,30 +394,40 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    public void beforeApplicationDestroyed(@Observes AssemblerBeforeApplicationDestroyed event) {
+    public void beforeApplicationDestroyed(
+                                                  @Observes
+                                                  final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
-            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
-                for (PortInfo port : ejbJar.portInfos) {
+            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+                for (final PortInfo port : ejbJar.portInfos) {
                     ports.put(port.serviceLink, port);
                 }
 
-                for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
+                for (final EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
                     if (enterpriseBean instanceof StatelessBeanInfo || enterpriseBean instanceof SingletonBeanInfo) {
 
-                        PortInfo portInfo = ports.get(enterpriseBean.ejbName);
-                        if (portInfo == null) continue;
+                        final PortInfo portInfo = ports.get(enterpriseBean.ejbName);
+                        if (portInfo == null) {
+                            continue;
+                        }
+
+                        final BeanContext beanContext = containerSystem.getBeanContext(enterpriseBean.ejbDeploymentId);
+                        if (beanContext == null) {
+                            continue;
+                        }
 
                         // remove wsdl addresses from global registry
-                        String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
-                        addressesForApp(appInfo.appId).remove(address);
+                        final String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
+                        addressesForApp(appInfo.appId).remove(new EndpointInfo(address, portInfo.wsdlPort, beanContext.getBeanClass().getName()));
+
                         if (address != null) {
                             portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.seiInterfaceName);
                         }
 
                         // remove container from web server
-                        String location = ejbLocations.get(enterpriseBean.ejbDeploymentId);
+                        final String location = ejbLocations.get(enterpriseBean.ejbDeploymentId);
                         if (this.wsRegistry != null && location != null) {
                             this.wsRegistry.removeWsContainer(location);
                         }
@@ -415,15 +438,15 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
                 }
             }
-            for (WebAppInfo webApp : appInfo.webApps) {
+            for (final WebAppInfo webApp : appInfo.webApps) {
                 deployedWebApps.remove(webApp);
 
-                Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
-                for (PortInfo port : webApp.portInfos) {
+                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+                for (final PortInfo port : webApp.portInfos) {
                     ports.put(port.serviceLink, port);
                 }
 
-                for (ServletInfo servlet : webApp.servlets) {
+                for (final ServletInfo servlet : webApp.servlets) {
                     if (servlet.servletClass == null) {
                         continue;
                     }
@@ -437,8 +460,8 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
 
                     // remove wsdl addresses from global registry
-                    String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
-                    addressesForApp(webApp.moduleId).remove(address);
+                    final String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
+
                     if (address != null) {
                         portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.seiInterfaceName);
                     }
@@ -455,12 +478,14 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // destroy webservice container
                     destroyPojoWsContainer(portInfo.serviceLink);
                 }
+
+                addressesByApplication.remove(webApp.moduleId);
             }
             addressesByApplication.remove(appInfo.appId);
         }
     }
 
-    private String autoAssignWsLocation(EnterpriseBeanInfo bean, PortData port, Map<String, String> contextData, StringTemplate template) {
+    private String autoAssignWsLocation(final EnterpriseBeanInfo bean, final PortData port, final Map<String, String> contextData, final StringTemplate template) {
         if (bean.properties.containsKey(WS_FORCE_ADDRESS)) {
             return bean.properties.getProperty(WS_FORCE_ADDRESS);
         }
@@ -475,7 +500,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         return template.apply(contextData);
     }
 
-    public static String getEjbType(int type) {
+    public static String getEjbType(final int type) {
         if (type == EnterpriseBeanInfo.STATEFUL) {
             return "StatefulBean";
         } else if (type == EnterpriseBeanInfo.STATELESS) {
@@ -493,11 +518,13 @@ public abstract class WsService implements ServerService, SelfManaging {
         }
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("CxfService cannot be invoked directly");
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException("CxfService cannot be invoked directly");
     }
 
@@ -506,11 +533,12 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public static class EndpointInfo {
+
         public String address;
         public String portName;
         public String classname;
 
-        public EndpointInfo(String address, QName portName, String name) {
+        public EndpointInfo(final String address, final QName portName, final String name) {
             this.address = address;
             this.classname = name;
             if (portName != null) {
