@@ -37,12 +37,12 @@ public class ServiceLogger extends ServerServiceFilter {
     private Logger logger;
     private boolean debug = false;
 
-    public ServiceLogger(ServerService next) {
+    public ServiceLogger(final ServerService next) {
         super(next);
     }
 
     @Override
-    public void init(Properties props) throws Exception {
+    public void init(final Properties props) throws Exception {
 
         this.logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("service." + getName()), "org.apache.openejb.server.util.resources");
         this.debug = this.logger.isDebugEnabled();
@@ -51,7 +51,7 @@ public class ServiceLogger extends ServerServiceFilter {
     }
 
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("service(in,out)");
     }
 
@@ -63,7 +63,7 @@ public class ServiceLogger extends ServerServiceFilter {
             MDBput = MDC.getMethod("put", String.class, String.class);
         } catch (Exception e) { // no need to log it with a higher level
             Logger.getInstance(LogCategory.OPENEJB, ServiceLogger.class.getName())
-                    .debug("can't find log4j MDC class");
+                  .debug("can't find log4j MDC class");
         }
     }
 
@@ -78,9 +78,9 @@ public class ServiceLogger extends ServerServiceFilter {
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
 
-        InetAddress client = socket.getInetAddress();
+        final InetAddress client = socket.getInetAddress();
         final String address = client.getHostAddress();
         final String name = this.getName();
 
