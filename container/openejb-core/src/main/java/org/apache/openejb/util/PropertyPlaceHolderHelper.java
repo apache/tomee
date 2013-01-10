@@ -16,9 +16,10 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.SystemInstance;
+
 import java.util.Map;
 import java.util.Properties;
-import org.apache.openejb.loader.SystemInstance;
 
 public final class PropertyPlaceHolderHelper {
     private static final String PREFIX = "${";
@@ -48,11 +49,16 @@ public final class PropertyPlaceHolderHelper {
     }
 
     public static Properties holds(final Properties properties) {
-        final Properties updated = new Properties();
+        // we can put null values in SuperProperties, since properties is often of this type we need to tolerate it
+        final Properties updated = new SuperProperties();
+        if (properties == null) {
+            return updated;
+        }
+
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object rawValue = entry.getValue();
             if (rawValue instanceof String) {
-                updated.put(entry.getKey(), value(rawValue.toString()));
+                updated.put(entry.getKey(), value((String) rawValue));
             } else {
                 updated.put(entry.getKey(), rawValue);
             }
