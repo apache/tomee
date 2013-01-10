@@ -54,29 +54,46 @@ public final class ArquillianUtil {
             final String toSplit = properties.getProperty(PREDEPLOYING_KEY).trim();
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             for (String name : toSplit.split(",")) {
-                try {
-                    final Class<?> clazz = loader.loadClass(name);
-                    for (Method m : clazz.getMethods()) {
-                        final int modifiers = m.getModifiers();
-                        if (Object.class.equals(m.getDeclaringClass()) || !Archive.class.isAssignableFrom(m.getReturnType())
-                                || !Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
-                            continue;
+                int bracket = name.indexOf(".[");
+                if (bracket >= 0) {
+                    int end = name.indexOf("]");
+                    if (end > bracket) {
+                        final String pkg = name.substring(0, bracket + 1);
+                        final String classes = name.substring(bracket + 2, end);
+                        for (String n : classes.split("\\|")) {
+                            addClass(list, loader, pkg + n);
                         }
-
-                        for (Annotation a : m.getAnnotations()) {
-                            if ("org.jboss.arquillian.container.test.api.Deployment".equals(a.annotationType().getName())) {
-                                final Archive<?> archive = (Archive<?>) m.invoke(null);
-                                list.add(archive);
-                                break;
-                            }
-                        }
+                        continue;
                     }
-                } catch (Exception e) {
-                    throw new OpenEJBRuntimeException(e);
                 }
+                addClass(list, loader, name);
             }
         }
         return list;
+    }
+
+    private static void addClass(final Collection<Archive<?>> list, final ClassLoader loader, final String classname) {
+        final String name = classname.trim();
+        try {
+            final Class<?> clazz = loader.loadClass(name);
+            for (Method m : clazz.getMethods()) {
+                final int modifiers = m.getModifiers();
+                if (Object.class.equals(m.getDeclaringClass()) || !Archive.class.isAssignableFrom(m.getReturnType())
+                        || !Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
+                    continue;
+                }
+
+                for (Annotation a : m.getAnnotations()) {
+                    if ("org.jboss.arquillian.container.test.api.Deployment".equals(a.annotationType().getName())) {
+                        final Archive<?> archive = (Archive<?>) m.invoke(null);
+                        list.add(archive);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
     }
 
     public static void undeploy(DeployableContainer<?> container, final Collection<Archive<?>> containerArchives) {

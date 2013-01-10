@@ -14,37 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.openejb;
+package org.apache.openejb.arquillian.openejb.archive;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 
-public final class EmptyArchive {
-    private EmptyArchive() {
+public final class SimpleArchive2 {
+    private SimpleArchive2() {
         // no-op
     }
 
-    @Deployment(testable = false)
+    @Deployment
     public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class, "start.war")
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addClass(OkFilter.class);
+        return ShrinkWrap.create(WebArchive.class, "start2.war")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addClass(AnotherSingleton.class);
     }
 
-    @Startup
     @Singleton
-    public static class OkFilter {
-        public static boolean ok = false;
-
-        @PostConstruct
-        public void init() {
-            ok = true;
-        }
-    }
+    public static class AnotherSingleton {}
 }
