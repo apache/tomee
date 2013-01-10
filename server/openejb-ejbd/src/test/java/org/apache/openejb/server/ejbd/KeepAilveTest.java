@@ -115,7 +115,7 @@ public class KeepAilveTest extends TestCase {
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        final ServicePool pool = new ServicePool(keepAliveServer, 10);
+        final ServicePool pool = new ServicePool(keepAliveServer, 10, 5000, true);
         final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 

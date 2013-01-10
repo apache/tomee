@@ -21,6 +21,7 @@ import java.net.ServerSocket;
 import java.util.Collection;
 
 public final class NetworkUtil {
+
     private NetworkUtil() {
         // no-op
     }
@@ -29,52 +30,66 @@ public final class NetworkUtil {
         return getNextAvailablePort(new int[]{0});
     }
 
-    public static int getNextAvailablePort(int[] portList) {
+    public static int getNextAvailablePort(final int[] portList) {
         int port;
         ServerSocket s = null;
         try {
             s = create(portList);
             port = s.getLocalPort();
-            s.close();
         } catch (IOException ioe) {
             port = -1;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
         return port;
     }
 
-    public static int getNextAvailablePort(int min, int max, Collection<Integer> excepted) {
+    public static int getNextAvailablePort(final int min, final int max, final Collection<Integer> excepted) {
         int port = -1;
         ServerSocket s = null;
         for (int i = min; i <= max; i++) {
             try {
-                s = create(new int[] { i });
+                s = create(new int[]{i});
                 port = s.getLocalPort();
-                s.close();
 
                 if (excepted == null || !excepted.contains(port)) {
                     break;
                 }
             } catch (IOException ioe) {
                 port = -1;
+            } finally {
+                if (s != null) {
+                    try {
+                        s.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                }
             }
         }
         return port;
     }
 
-    private static ServerSocket create(int[] ports) throws IOException {
-        for (int port : ports) {
+    private static ServerSocket create(final int[] ports) throws IOException {
+        for (final int port : ports) {
             try {
                 return new ServerSocket(port);
             } catch (IOException ex) {
-                continue; // try next port
+                // try next port
             }
         }
 
         // if the program gets here, no port in the range was found
-        throw new IOException("no free port found");
+        throw new IOException("No free port found");
     }
 
-    public static String getLocalAddress(String start, String end) {
+    public static String getLocalAddress(final String start, final String end) {
         return start + "localhost:" + getNextAvailablePort() + end;
     }
 }

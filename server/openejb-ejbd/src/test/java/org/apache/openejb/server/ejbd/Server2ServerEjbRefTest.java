@@ -44,17 +44,16 @@ public class Server2ServerEjbRefTest extends TestCase {
 
     public void test() throws Exception {
 
-        Properties initProps = new Properties();
+        final Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
 
+        final int blue = server();
+        final int orange = server();
 
-        int blue = server();
-        int orange = server();
-
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         final JndiProvider jndiProvider = new JndiProvider("orange");
         final Properties p = jndiProvider.getProperties();
@@ -64,9 +63,8 @@ public class Server2ServerEjbRefTest extends TestCase {
         final JndiContextInfo contextInfo = config.configureService(jndiProvider, JndiContextInfo.class);
         assembler.createExternalContext(contextInfo);
 
-
         {// Create the "Orange" bean
-            EjbJar ejbJar = new EjbJar();
+            final EjbJar ejbJar = new EjbJar();
             ejbJar.addEnterpriseBean(new StatelessBean(OrangeBean.class));
 
             assembler.createApplication(config.configureApplication(ejbJar));
@@ -78,7 +76,7 @@ public class Server2ServerEjbRefTest extends TestCase {
         }
 
         {// Create the "Blue" bean
-            EjbJar ejbJar = new EjbJar();
+            final EjbJar ejbJar = new EjbJar();
             ejbJar.addEnterpriseBean(new StatelessBean(BlueBean.class));
 
             assembler.createApplication(config.configureApplication(ejbJar));
@@ -93,25 +91,23 @@ public class Server2ServerEjbRefTest extends TestCase {
             blueBeanRemote.hasOrangeRemote();
         }
 
-
     }
 
     private int server() throws Exception {
-        EjbServer ejbServer = new EjbServer();
+        final EjbServer ejbServer = new EjbServer();
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(ejbServer, 10);
-        ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
+        final ServicePool pool = new ServicePool(ejbServer, 10, 5000, true);
+        final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
         return serviceDaemon.getPort();
     }
 
-
     public static class OrangeBean implements OrangeRemote {
 
         @Override
-        public String echo(String message) {
+        public String echo(final String message) {
             return new StringBuilder(message).reverse().toString();
         }
     }
@@ -127,6 +123,7 @@ public class Server2ServerEjbRefTest extends TestCase {
         @EJB(mappedName = "jndi:ext://orange/OrangeBeanRemote")
         private OrangeRemote orangeRemote;
 
+        @Override
         public void hasOrangeRemote() {
             Assert.assertNotNull("orangeRemote is null", orangeRemote);
             assertEquals("olleh", orangeRemote.echo("hello"));
@@ -135,6 +132,7 @@ public class Server2ServerEjbRefTest extends TestCase {
 
     @Remote
     public static interface BlueRemote {
+
         public void hasOrangeRemote();
     }
 }
