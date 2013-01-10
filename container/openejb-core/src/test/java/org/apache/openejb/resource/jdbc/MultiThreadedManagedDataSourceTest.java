@@ -40,8 +40,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -150,9 +152,11 @@ public class MultiThreadedManagedDataSourceTest {
 
     @Test
     public void insertsWithRollback() throws SQLException {
+        final int count = count("");
         final AtomicInteger errors = new AtomicInteger(0);
         final AtomicInteger fail = new AtomicInteger(0);
         final AtomicInteger ok = new AtomicInteger(0);
+        final List<Exception> ex = new CopyOnWriteArrayList<Exception>();
         run(new Runnable() {
             @Override
             public void run() {
@@ -165,6 +169,7 @@ public class MultiThreadedManagedDataSourceTest {
                     id = persistManager.saveRollback(!rollback);
                 } catch (SQLException e) {
                     errors.incrementAndGet();
+                    ex.add(e);
                 }
                 if (!rollback) {
                     try {
@@ -173,13 +178,17 @@ public class MultiThreadedManagedDataSourceTest {
                         }
                     } catch (SQLException e) {
                         errors.incrementAndGet();
+                        ex.add(e);
                     }
                 }
             }
         });
+        for (Exception e : ex) {
+            e.printStackTrace(System.err);
+        }
         assertEquals(0, errors.get());
         assertEquals(0, fail.get());
-        assertEquals(ok.get(), count(""));
+        assertEquals(ok.get(), count("") - count);
     }
 
     @After
