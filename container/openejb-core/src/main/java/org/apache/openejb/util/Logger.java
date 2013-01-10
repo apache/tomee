@@ -39,6 +39,9 @@ public class Logger {
     }
 
     public static synchronized void configure() {
+        if (logStreamFactory != null) {
+            return;
+        }
 
         //See if user factory has been specified
         String factoryName = SystemInstance.get().getOptions().get("openejb.log.factory", JuliLogStreamFactory.class.getName());
