@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
@@ -100,8 +101,14 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             synchronization.setUpdateInterval(5); // sec
         }
         if (synchronization.getExtensions() == null) {
-            synchronization.setExtensions(Arrays.asList(".html", ".css", ".js", ".xhtml"));
+            synchronization.setExtensions(new ArrayList<String>(Arrays.asList(".html", ".css", ".js", ".xhtml")));
         }
+        if (synchronization.getUpdateOnlyExtenions() == null) {
+            synchronization.setUpdateOnlyExtensions(Collections.<String>emptyList());
+        }
+
+        // merge update only and normal extensions to browse more easily extensions in the timer task
+        synchronization.getExtensions().addAll(synchronization.getUpdateOnlyExtenions());
 
         if (reloadOnUpdate) {
             deployOpenEjbApplication = true;
@@ -191,11 +198,13 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     private class Synchronizer implements Callable<Integer> {
         private final FileFilter fileFilter;
+        private final FileFilter updateOnlyFilter;
         private final Synchronization synchronization;
         private long lastUpdate = System.currentTimeMillis();
 
-        public Synchronizer(final Synchronization synchronization) {
-            this.synchronization = synchronization;
+        public Synchronizer(final Synchronization synch) {
+            synchronization = synch;
+            updateOnlyFilter = new SuffixesFileFilter(synchronization.getUpdateOnlyExtenions());
             if (synchronization.getRegex() != null) {
                 fileFilter = new SuffixesAndRegexFileFilter(synchronization.getExtensions(), Pattern.compile(synchronization.getRegex()));
             } else {
@@ -206,15 +215,15 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         @Override
         public Integer call() throws Exception {
             final long ts = System.currentTimeMillis();
-            int updated = updateFiles(synchronization.getResourcesDir(), synchronization.getTargetResourcesDir(), ts);
-            updated+= updateFiles(synchronization.getBinariesDir(), synchronization.getTargetBinariesDir(), ts);
+            int updated = updateFiles(synchronization.getResourcesDir(), synchronization.getTargetResourcesDir(), ts)
+                + updateFiles(synchronization.getBinariesDir(), synchronization.getTargetBinariesDir(), ts);
             lastUpdate = ts;
             return updated;
         }
 
         private int updateFiles(final File source, final File output, final long ts) {
             if (!source.exists()) {
-                getLog().debug(source.getAbsolutePath() + " does'tn exist");
+                getLog().debug(source.getAbsolutePath() + " doesn't exist");
                 return 0;
             }
 
@@ -223,8 +232,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                     return 0;
                 }
 
-                updateFile(source, output, source, ts);
-                return 1;
+                return updateFile(source, output, source, ts);
             }
 
             if (!source.isDirectory()) {
@@ -240,14 +248,13 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                     continue;
                 }
 
-                updateFile(source, output, file, ts);
-                updated++;
+                updated += updateFile(source, output, file, ts);
             }
 
             return updated;
         }
 
-        private void updateFile(final File source, final File target, final File file, final long ts) {
+        private int updateFile(final File source, final File target, final File file, final long ts) {
             final File output;
             if (target.isFile() && target.exists()) {
                 output = target;
@@ -273,6 +280,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             } catch (IOException e) {
                 getLog().error(e);
             }
+
+            if (updateOnlyFilter.accept(source)) {
+                return 0;
+            }
+            return 1;
         }
     }
 
@@ -329,11 +341,8 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
         @Override
         public boolean accept(final File file) {
-            if (file.isDirectory()) {
-                return true;
-            }
+            return file.isDirectory() || (super.accept(file) && pattern.matcher(file.getAbsolutePath()).matches());
 
-            return super.accept(file) && pattern.matcher(file.getAbsolutePath()).matches();
         }
     }
 }
