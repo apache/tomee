@@ -26,6 +26,7 @@ public class Synchronization {
     private File targetResourcesDir;
     private int updateInterval;
     private List<String> extensions;
+    private List<String> updateOnlyExtensions;
     private String regex;
 
     public File getResourcesDir() {
@@ -82,5 +83,13 @@ public class Synchronization {
 
     public void setRegex(String regex) {
         this.regex = regex;
+    }
+
+    public List<String> getUpdateOnlyExtenions() {
+        return updateOnlyExtensions;
+    }
+
+    public void setUpdateOnlyExtensions(List<String> updateOnlyExtensions) {
+        this.updateOnlyExtensions = updateOnlyExtensions;
     }
 }
