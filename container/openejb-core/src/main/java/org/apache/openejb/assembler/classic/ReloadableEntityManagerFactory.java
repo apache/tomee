@@ -70,6 +70,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+@Internal
 public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
 

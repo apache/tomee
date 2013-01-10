@@ -19,6 +19,8 @@ package org.apache.openejb.resource.jdbc.dbcp;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import javax.management.MBeanServer;
 import org.apache.openejb.api.jmx.ManagedAttribute;
@@ -29,6 +31,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 
 // @MBean: don't put it since it is not a pojo
+@Internal
 @SuppressWarnings("UnusedDeclaration")
 @Description("describe a datasource pool")
 public class JMXBasicDataSource {
