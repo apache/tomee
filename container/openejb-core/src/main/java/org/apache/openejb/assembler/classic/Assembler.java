@@ -124,6 +124,8 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.management.InstanceNotFoundException;
@@ -794,16 +796,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // deploy MBeans
             for (final String mbean : appInfo.mbeans) {
-                deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId);
+                deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId);
             }
             for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
                 for (final String mbean : ejbJarInfo.mbeans) {
-                    deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
+                    deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, ejbJarInfo.moduleName);
                 }
             }
             for (final ConnectorInfo connectorInfo : appInfo.connectors) {
                 for (final String mbean : connectorInfo.mbeans) {
-                    deployMBean(appContext.getBeanManager(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
+                    deployMBean(appContext.getWebBeansContext(), classLoader, mbean, appInfo.jmx, appInfo.appId + ".add-lib");
                 }
             }
 
@@ -981,13 +983,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     @SuppressWarnings("unchecked")
-    private static void deployMBean(final BeanManager bm, final ClassLoader cl, final String mbeanClass, final Properties appMbeans, final String id) {
+    private static void deployMBean(final WebBeansContext wc, final ClassLoader cl, final String mbeanClass, final Properties appMbeans, final String id) {
         final Class<?> clazz;
         try {
             clazz = cl.loadClass(mbeanClass);
         } catch (ClassNotFoundException e) {
             throw new OpenEJBRuntimeException(e);
         }
+        final BeanManager bm = wc.getBeanManagerImpl();
         final Set<Bean<?>> beans = bm.getBeans(clazz);
         final Bean bean = bm.resolve(beans);
         final Object instance;
@@ -1002,7 +1005,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 return;
             }
         } else {
-            instance = bm.getReference(bean, clazz, bm.createCreationalContext(bean));
+            final CreationalContext creationalContext = bm.createCreationalContext(bean);
+            instance = bm.getReference(bean, clazz, creationalContext);
+            if (Dependent.class.equals(bean.getScope())) {
+                creationalContext.release();
+            }
         }
 
         if (LocalMBeanServer.isJMXActive()) {
@@ -1014,7 +1021,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         .set("name", clazz.getSimpleName())
                         .build();
 
-                server.registerMBean(new DynamicMBeanWrapper(instance), leaf);
+                server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
                 logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
             } catch (Exception e) {
