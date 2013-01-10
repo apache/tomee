@@ -17,20 +17,22 @@
 package org.apache.openejb.util;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Messages {
-    static private Hashtable _rbBundles = new Hashtable();
-    static private Hashtable _rbFormats = new Hashtable();
+    static private Map<String, ResourceBundle> _rbBundles = new ConcurrentHashMap<String, ResourceBundle>();
+    static private Map<String, Map<String, MessageFormat>> _rbFormats = new ConcurrentHashMap<String, Map<String, MessageFormat>>();
     static private Locale _globalLocale;
 
     private ResourceBundle _messages;
-    private Hashtable _formats;
+    private Map<String, MessageFormat> _formats;
     private Locale _locale;
     private String _resourceName;
 
@@ -44,35 +46,37 @@ public class Messages {
     }
 
     public Messages(String resourceName) {
+        _resourceName = resourceName + ".Messages";
         synchronized (Messages.class) {
             _locale = _globalLocale;
-            _resourceName = resourceName + ".Messages";
-
-            ResourceBundle rb = (ResourceBundle) _rbBundles.get(_resourceName);
-            if (rb == null) {
-                init();
-            } else {
-                _messages = rb;
-                _formats = (Hashtable) _rbFormats.get(_resourceName);
-            }
         }
-
     }
 
     protected void init() {
-        try {
-            if (_locale == null)
-                _messages = ResourceBundle.getBundle(_resourceName);
-            else
-                _messages = ResourceBundle.getBundle(_resourceName, _locale);
-        } catch (Exception except) {
-            _messages = new EmptyResourceBundle();
+        if (_formats != null && _messages != null) {
+            return;
         }
 
-        _formats = new Hashtable();
+        final ResourceBundle rb = _rbBundles.get(_resourceName);
+        if (rb == null) {
+            try {
+                if (_locale == null) {
+                    _messages = ResourceBundle.getBundle(_resourceName);
+                } else {
+                    _messages = ResourceBundle.getBundle(_resourceName, _locale);
+                }
+            } catch (Exception except) {
+                _messages = new EmptyResourceBundle();
+            }
 
-        _rbBundles.put(_resourceName, _messages);
-        _rbFormats.put(_resourceName, _formats);
+            _formats = new ConcurrentHashMap<String, MessageFormat>();
+
+            _rbBundles.put(_resourceName, _messages);
+            _rbFormats.put(_resourceName, _formats);
+        } else {
+            _messages = rb;
+            _formats = _rbFormats.get(_resourceName);
+        }
     }
 
     public String format(String message) {
@@ -80,6 +84,7 @@ public class Messages {
     }
 
     public String format(String message, Object... args) {
+        init();
         if (_locale != _globalLocale) {
             synchronized (Messages.class) {
                 init();
@@ -107,6 +112,7 @@ public class Messages {
     }
 
     public String message(String message) {
+        init();
         if (_locale != _globalLocale) {
             synchronized (Messages.class) {
                 init();
