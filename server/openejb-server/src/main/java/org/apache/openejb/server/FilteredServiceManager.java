@@ -29,18 +29,18 @@ public class FilteredServiceManager extends SimpleServiceManager {
 
     private final Collection<String> services;
 
-    public FilteredServiceManager (String[] services) {
+    public FilteredServiceManager(final String[] services) {
         setServiceManager(this);
         this.services = convertServices(services);
 
     }
 
-    private Collection<String> convertServices(String[] services) {
+    private Collection<String> convertServices(final String[] services) {
         final Set<String> realServices = new HashSet<String>();
         final Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
         final Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
 
-        for (String service : services) {
+        for (final String service : services) {
             if (rsAliases.contains(service)) {
                 realServices.addAll(Arrays.asList("cxf-rs", "httpejbd"));
             } else if (wsAliases.contains(service)) {
@@ -55,12 +55,12 @@ public class FilteredServiceManager extends SimpleServiceManager {
     }
 
     @Override
-    protected boolean accept(String serviceName) {
+    protected boolean accept(final String serviceName) {
         return services.isEmpty() || services.contains(serviceName);
     }
 
     // used by reflection
-    public static void initServiceManager(String[] services) {
+    public static void initServiceManager(final String[] services) {
         setServiceManager(new FilteredServiceManager(services));
     }
 }

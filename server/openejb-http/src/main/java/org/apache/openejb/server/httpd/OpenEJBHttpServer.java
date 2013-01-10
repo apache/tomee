@@ -48,6 +48,7 @@ import java.util.Set;
  * @since 11/25/2001
  */
 public class OpenEJBHttpServer implements HttpServer {
+
     private static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, "org.apache.openejb.util.resources");
 
     private HttpListener listener;
@@ -59,66 +60,87 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public static HttpListenerRegistry getHttpListenerRegistry() {
-        SystemInstance systemInstance = SystemInstance.get();
+        final SystemInstance systemInstance = SystemInstance.get();
         HttpListenerRegistry registry = systemInstance.getComponent(HttpListenerRegistry.class);
-        if (registry == null){
+        if (registry == null) {
             registry = new HttpListenerRegistry();
             systemInstance.setComponent(HttpListenerRegistry.class, registry);
         }
         return registry;
     }
 
-    public OpenEJBHttpServer(HttpListener listener) {
+    public OpenEJBHttpServer(final HttpListener listener) {
         this.listener = listener;
     }
 
-    public static boolean isTextXml(Map<String, String> headers) {
+    public static boolean isTextXml(final Map<String, String> headers) {
         final String contentType = headers.get("Content-Type");
         return contentType != null && contentType.contains("text/xml");
     }
 
+    @Override
     public HttpListener getListener() {
         return listener;
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         /**
          * The InputStream used to receive incoming messages from the client.
          */
-        InputStream in = socket.getInputStream();
+        InputStream in = null;
         /**
          * The OutputStream used to send outgoing response messages to the client.
          */
-        OutputStream out = socket.getOutputStream();
+        OutputStream out = null;
 
         try {
+            in = socket.getInputStream();
+            out = socket.getOutputStream();
+
             //TODO: if ssl change to https
-            URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
+            final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
             processRequest(socketURI, in, out);
+
         } catch (Throwable e) {
             log.error("Unexpected error", e);
         } finally {
-            try {
-                if (out != null) {
+            if (out != null) {
+                try {
                     out.flush();
-                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
                 }
-                if (in != null)
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (in != null) {
+                try {
                     in.close();
-                if (socket != null)
-                    socket.close();
-            } catch (Throwable t) {
-                log.error("Encountered problem while closing connection with client: "
-                        + t.getMessage());
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            try {
+                socket.close();
+            } catch (Throwable e) {
+                log.error("Encountered problem while closing connection with client: " + e.getMessage());
             }
         }
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
     }
 
-    public void init(Properties props) throws Exception {
+    @Override
+    public void init(final Properties props) throws Exception {
         final Options options = new Options(props);
         options.setLogger(new OptionsLog(log));
         print = options.getAll("print", OpenEJBHttpServer.Output.class);
@@ -127,23 +149,29 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public static enum Output {
-        REQUEST, RESPONSE;
+        REQUEST,
+        RESPONSE
     }
 
+    @Override
     public void start() throws ServiceException {
     }
 
+    @Override
     public void stop() throws ServiceException {
     }
 
+    @Override
     public String getName() {
         return "httpd";
     }
 
+    @Override
     public int getPort() {
         return 0;
     }
 
+    @Override
     public String getIP() {
         return "";
     }
@@ -151,10 +179,10 @@ public class OpenEJBHttpServer implements HttpServer {
     /**
      * takes care of processing requests and creating the webadmin ejb's
      *
-     * @param in     the input stream from the browser
-     * @param out    the output stream to the browser
+     * @param in  the input stream from the browser
+     * @param out the output stream to the browser
      */
-    private void processRequest(URI socketURI, InputStream in, OutputStream out) {
+    private void processRequest(final URI socketURI, final InputStream in, final OutputStream out) {
         HttpResponseImpl response = null;
         try {
             response = process(socketURI, in);
@@ -163,20 +191,22 @@ public class OpenEJBHttpServer implements HttpServer {
             response = HttpResponseImpl.createError(t.getMessage(), t);
         } finally {
             try {
-                response.writeMessage(out, false);
-                if (print.size() > 0 && print.contains(Output.RESPONSE)) {
-                    response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
+                if (response != null) {
+                    response.writeMessage(out, false);
+
+                    if (print.size() > 0 && print.contains(Output.RESPONSE)) {
+                        response.writeMessage(new LoggerOutputStream(log, "debug"), indent);
+                    }
                 }
             } catch (Throwable t2) {
                 log.error("Could not write response", t2);
             }
         }
-
     }
 
-    private HttpResponseImpl process(URI socketURI, InputStream in) throws OpenEJBException {
-        HttpRequestImpl req = new HttpRequestImpl(socketURI);
-        HttpResponseImpl res = new HttpResponseImpl();
+    private HttpResponseImpl process(final URI socketURI, final InputStream in) throws OpenEJBException {
+        final HttpRequestImpl req = new HttpRequestImpl(socketURI);
+        final HttpResponseImpl res = new HttpResponseImpl();
 
         try {
             req.readMessage(in);
@@ -199,12 +229,12 @@ public class OpenEJBHttpServer implements HttpServer {
             throw new OpenEJBException("Could not read the request.\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
         }
 
-        URI uri;
+        final URI uri;
         String location = null;
         try {
             uri = req.getURI();
             location = uri.getPath();
-            int querry = location.indexOf("?");
+            final int querry = location.indexOf("?");
             if (querry != -1) {
                 location = location.substring(0, querry);
             }
@@ -221,9 +251,9 @@ public class OpenEJBHttpServer implements HttpServer {
         return res;
     }
 
-
-    public static String reformat(String raw) {
-        if (raw.length() ==0) return raw;
+    public static String reformat(final String raw) {
+        if (raw.length() == 0)
+            return raw;
 
         try {
             final TransformerFactory factory = TransformerFactory.newInstance();
@@ -247,6 +277,7 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     private static class LoggerOutputStream extends OutputStream {
+
         private final Logger logger;
         private final String level;
 
@@ -256,12 +287,12 @@ public class OpenEJBHttpServer implements HttpServer {
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             logger.log(level, Character.toString((char) b));
         }
 
         @Override // shortcut for String - because we know what we have ;)
-        public void write(byte b[]) throws IOException {
+        public void write(final byte[] b) throws IOException {
             logger.log(level, new String(b));
         }
     }

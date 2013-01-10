@@ -16,11 +16,7 @@
  */
 package org.apache.openejb.server;
 
-
 import junit.framework.TestCase;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceAccessController;
-import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermissionFactory;
 
@@ -29,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Properties;
 
 public class ServiceAccessControllerTest extends TestCase {
@@ -51,7 +46,7 @@ public class ServiceAccessControllerTest extends TestCase {
     }
 
     public void testExactIPAddressPermission() throws Exception {
-        IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("121.122.123.124");
+        final IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("121.122.123.124");
         assertTrue(permission.implies(InetAddress.getByAddress(new byte[]{121, 122, 123, 124})));
         assertFalse(permission.implies(InetAddress.getByAddress(new byte[]{121, 122, 123, 125})));
     }
@@ -65,7 +60,7 @@ public class ServiceAccessControllerTest extends TestCase {
     }
 
     public void testStartWithIPAddressPermission() throws Exception {
-        IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("121.122.0.0");
+        final IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("121.122.0.0");
         assertTrue(permission.implies(InetAddress.getByAddress(new byte[]{121, 122, 123, 124})));
         assertFalse(permission.implies(InetAddress.getByAddress(new byte[]{121, 123, 123, 124})));
     }
@@ -97,7 +92,7 @@ public class ServiceAccessControllerTest extends TestCase {
     }
 
     public void testExactIPv6AddressPermission() throws Exception {
-        IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("101:102:103:104:105:106:107:108");
+        final IPAddressPermission permission = IPAddressPermissionFactory.getIPAddressMask("101:102:103:104:105:106:107:108");
         assertTrue(permission.implies(InetAddress.getByAddress(new byte[]{1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8})));
         assertFalse(permission.implies(InetAddress.getByAddress(new byte[]{1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 9})));
     }
@@ -114,29 +109,29 @@ public class ServiceAccessControllerTest extends TestCase {
         assertFalse(permission.implies(InetAddress.getByAddress(new byte[]{1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, (byte) 255, (byte) 253})));
     }
 
-//    public void testServiceOKWithInit() throws Exception {
-//        Properties properties = new Properties();
-//        properties.put("only_from", "121.122.{56,57}");
-//
-//        MockServerService mockServerService = new MockServerService();
-//        ServiceAccessController controller = new ServiceAccessController(mockServerService);
-//        controller.init(properties);
-//
-//        executeTestServiceOK(mockServerService, controller);
-//    }
-//
-//    public void testServiceNOKWithInit() throws Exception {
-//        Properties properties = new Properties();
-//        properties.put("only_from", "121.122.{56,57}");
-//
-//        MockServerService mockServerService = new MockServerService();
-//        ServiceAccessController controller = new ServiceAccessController(mockServerService);
-//        controller.init(properties);
-//
-//        executeTestServiceOK(mockServerService, controller);
-//    }
+    //    public void testServiceOKWithInit() throws Exception {
+    //        Properties properties = new Properties();
+    //        properties.put("only_from", "121.122.{56,57}");
+    //
+    //        MockServerService mockServerService = new MockServerService();
+    //        ServiceAccessController controller = new ServiceAccessController(mockServerService);
+    //        controller.init(properties);
+    //
+    //        executeTestServiceOK(mockServerService, controller);
+    //    }
+    //
+    //    public void testServiceNOKWithInit() throws Exception {
+    //        Properties properties = new Properties();
+    //        properties.put("only_from", "121.122.{56,57}");
+    //
+    //        MockServerService mockServerService = new MockServerService();
+    //        ServiceAccessController controller = new ServiceAccessController(mockServerService);
+    //        controller.init(properties);
+    //
+    //        executeTestServiceOK(mockServerService, controller);
+    //    }
 
-    private void executeTestServiceOK(MockServerService mockServerService, ServiceAccessController controller) throws UnknownHostException, ServiceException, IOException {
+    private void executeTestServiceOK(final MockServerService mockServerService, final ServiceAccessController controller) throws ServiceException, IOException {
         MockSocket mockSocket = new MockSocket(InetAddress.getByAddress(new byte[]{121, 122, 56, 123}));
         controller.service(mockSocket);
         assertSame(mockSocket, mockServerService.socket);
@@ -146,8 +141,8 @@ public class ServiceAccessControllerTest extends TestCase {
         assertSame(mockSocket, mockServerService.socket);
     }
 
-    private void executeTestServiceNOK(ServiceAccessController controller) throws UnknownHostException, ServiceException, IOException {
-        MockSocket mockSocket = new MockSocket(InetAddress.getByAddress(new byte[]{121, 122, 58, 123}));
+    private void executeTestServiceNOK(final ServiceAccessController controller) throws ServiceException, IOException {
+        final MockSocket mockSocket = new MockSocket(InetAddress.getByAddress(new byte[]{121, 122, 58, 123}));
         try {
             controller.service(mockSocket);
             fail();
@@ -156,47 +151,57 @@ public class ServiceAccessControllerTest extends TestCase {
     }
 
     private static class MockSocket extends Socket {
+
         private final InetAddress address;
 
-        private MockSocket(InetAddress address) {
+        private MockSocket(final InetAddress address) {
             this.address = address;
         }
 
+        @Override
         public InetAddress getInetAddress() {
             return address;
         }
     }
 
     private static class MockServerService implements ServerService {
+
         private Socket socket;
 
-        public void init(Properties props) throws Exception {
+        @Override
+        public void init(final Properties props) throws Exception {
         }
 
+        @Override
         public void start() throws ServiceException {
             throw new AssertionError();
         }
 
+        @Override
         public void stop() throws ServiceException {
             throw new AssertionError();
         }
 
+        @Override
         public String getIP() {
             throw new AssertionError();
         }
 
+        @Override
         public int getPort() {
             throw new AssertionError();
         }
 
-        public void service(Socket socket) throws ServiceException, IOException {
+        @Override
+        public void service(final Socket socket) throws ServiceException, IOException {
             this.socket = socket;
         }
 
         @Override
-        public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         }
 
+        @Override
         public String getName() {
             throw new AssertionError();
         }

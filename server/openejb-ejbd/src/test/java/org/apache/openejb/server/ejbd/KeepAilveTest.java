@@ -16,39 +16,41 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import junit.framework.TestCase;
 import junit.framework.Assert;
-
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.LinkedBlockingQueue;
-
+import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.server.ServicePool;
 
-import javax.naming.NamingException;
+import javax.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.ejb.Remote;
+import javax.naming.NamingException;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KeepAilveTest extends TestCase {
-    public void _testPool() throws Exception {
-        int threads = 2;
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 120, TimeUnit.SECONDS, new LinkedBlockingQueue());
 
-        Runnable runnable = new Runnable(){
+    @SuppressWarnings("unchecked")
+    public void _testPool() throws Exception {
+        final int threads = 2;
+        final ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 120, TimeUnit.SECONDS, new LinkedBlockingQueue());
+
+        final Runnable runnable = new Runnable() {
+            @Override
             public void run() {
                 waitOneSecond();
             }
@@ -56,7 +58,7 @@ public class KeepAilveTest extends TestCase {
 
         print(pool);
 
-        for (int i = 0; i < 10 ; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println("" + i);
             pool.execute(runnable);
             print(pool);
@@ -64,7 +66,7 @@ public class KeepAilveTest extends TestCase {
 
         waitOneSecond();
 
-        for (int i = 0; i < 10 ; i++) {
+        for (int i = 0; i < 10; i++) {
             print(pool);
             waitOneSecond();
         }
@@ -80,73 +82,75 @@ public class KeepAilveTest extends TestCase {
         }
     }
 
-    private void print(ThreadPoolExecutor pool) {
+    private void print(final ThreadPoolExecutor pool) {
         System.out.println("==========================================");
-        int activeCount = pool.getActiveCount();
+        final int activeCount = pool.getActiveCount();
         System.out.println("activeCount = " + activeCount);
-        int corePoolSize = pool.getCorePoolSize();
+        final int corePoolSize = pool.getCorePoolSize();
         System.out.println("corePoolSize = " + corePoolSize);
-        int largestPoolSize = pool.getLargestPoolSize();
+        final int largestPoolSize = pool.getLargestPoolSize();
         System.out.println("largestPoolSize = " + largestPoolSize);
-        int maximumPoolSize = pool.getMaximumPoolSize();
+        final int maximumPoolSize = pool.getMaximumPoolSize();
         System.out.println("maximumPoolSize = " + maximumPoolSize);
-        int poolSize = pool.getPoolSize();
+        final int poolSize = pool.getPoolSize();
         System.out.println("poolSize = " + poolSize);
-        int queueSize = pool.getQueue().size();
+        final int queueSize = pool.getQueue().size();
         System.out.println("queueSize = " + queueSize);
-        long taskCount = pool.getTaskCount();
+        final long taskCount = pool.getTaskCount();
         System.out.println("taskCount = " + taskCount);
         System.out.println("==========================================");
     }
 
-    public void test() throws Exception {
-        
-    }
     public void _test() throws Exception {
-        EjbServer ejbServer = new EjbServer();
-        KeepAliveServer keepAliveServer = new KeepAliveServer(ejbServer);
 
-        Properties initProps = new Properties();
+    }
+
+    public void test() throws Exception {
+        final EjbServer ejbServer = new EjbServer();
+        final KeepAliveServer keepAliveServer = new KeepAliveServer(ejbServer, false);
+
+        final Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(keepAliveServer, 10);
-        ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
+        final ServicePool pool = new ServicePool(keepAliveServer, 10);
+        final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
         try {
 
-            int port = serviceDaemon.getPort();
+            final int port = serviceDaemon.getPort();
 
-            Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-            ConfigurationFactory config = new ConfigurationFactory();
+            final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+            final ConfigurationFactory config = new ConfigurationFactory();
 
-            EjbJar ejbJar = new EjbJar();
+            final EjbJar ejbJar = new EjbJar();
             ejbJar.addEnterpriseBean(new StatelessBean(EchoBean.class));
 
             assembler.createApplication(config.configureApplication(ejbJar));
 
             // good creds
 
-            int threads = 1;
-            CountDownLatch latch = new CountDownLatch(threads);
+            final int threads = 1;
+            final CountDownLatch latch = new CountDownLatch(threads);
 
             for (int i = 0; i < threads; i++) {
-                Client client = new Client(latch, i, port);
+                final Client client = new Client(latch, i, port);
                 thread(client, false);
             }
 
-            assertTrue(latch.await(60, TimeUnit.SECONDS));
+            final boolean await = latch.await(60, TimeUnit.SECONDS);
+            assertTrue(await);
         } finally {
             serviceDaemon.stop();
             OpenEJB.destroy();
         }
     }
 
-    public static void thread(Runnable runnable, boolean daemon) {
-        Thread thread = new Thread(runnable);
+    public static void thread(final Runnable runnable, final boolean daemon) {
+        final Thread thread = new Thread(runnable);
         thread.setDaemon(daemon);
         thread.start();
     }
@@ -157,28 +161,29 @@ public class KeepAilveTest extends TestCase {
         private final CountDownLatch latch;
         private final int id;
 
-        public Client(CountDownLatch latch, int i, int port) throws NamingException {
+        public Client(final CountDownLatch latch, final int i, final int port) throws NamingException {
             this.latch = latch;
             this.id = i;
 
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port +"?"+id);
-            Context context = new InitialContext(props);
+            props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port + "?" + id);
+            final Context context = new InitialContext(props);
 
             this.echo = (Echo) context.lookup("EchoBeanRemote");
         }
 
+        @Override
         public void run() {
 
             try {
                 int count = 10;
-                for (; count >= 0; count--){
-                    String message = count + " bottles of beer on the wall";
+                for (; count >= 0; count--) {
+                    final String message = count + " bottles of beer on the wall";
 
-//                    Thread.currentThread().setName("client-"+id+": "+count);
+                    //                    Thread.currentThread().setName("client-"+id+": "+count);
 
-                    String response = echo.echo(message);
+                    final String response = echo.echo(message);
                     Assert.assertEquals(message, reverse(response));
                     try {
                         Thread.sleep(5000);
@@ -191,21 +196,23 @@ public class KeepAilveTest extends TestCase {
             }
         }
 
-        private Object reverse(String s) {
+        private Object reverse(final String s) {
             return new StringBuilder(s).reverse().toString();
         }
     }
 
-
     public static class EchoBean implements Echo {
-        public String echo(String s) {
-//            System.out.println(s);
+
+        @Override
+        public String echo(final String s) {
+            //            System.out.println(s);
             return new StringBuilder(s).reverse().toString();
         }
     }
 
     @Remote
     public static interface Echo {
+
         public String echo(String s);
     }
 }

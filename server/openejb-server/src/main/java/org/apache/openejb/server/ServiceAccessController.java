@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.server;
 
-
 import org.apache.openejb.monitoring.Event;
 import org.apache.openejb.monitoring.Managed;
-import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.ExactIPAddressPermission;
 import org.apache.openejb.server.auth.ExactIPv6AddressPermission;
+import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermissionFactory;
 import org.apache.openejb.server.auth.PermitAllPermission;
-import org.apache.openejb.util.Join;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,22 +44,24 @@ public class ServiceAccessController extends ServerServiceFilter {
 
     private IPAddressPermission[] hostPermissions;
 
-    public ServiceAccessController(ServerService next) {
+    public ServiceAccessController(final ServerService next) {
         super(next);
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         // Check authorization
         checkHostsAuthorization(socket.getInetAddress(), socket.getLocalAddress());
 
         super.service(socket);
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("service(in,out)");
     }
 
-    public void checkHostsAuthorization(InetAddress clientAddress, InetAddress serverAddress) throws SecurityException {
+    public void checkHostsAuthorization(final InetAddress clientAddress, final InetAddress serverAddress) throws SecurityException {
         // Check the client ip against the server ip. Hosts are
         // allowed to access themselves, so if these ips
         // match, the following for loop will be skipped.
@@ -69,7 +69,7 @@ public class ServiceAccessController extends ServerServiceFilter {
             return;
         }
 
-        for (IPAddressPermission host : hostPermissions) {
+        for (final IPAddressPermission host : hostPermissions) {
             if (host.implies(clientAddress)) {
                 return;
             }
@@ -79,50 +79,51 @@ public class ServiceAccessController extends ServerServiceFilter {
         throw new SecurityException("Host " + clientAddress.getHostAddress() + " is not authorized to access this service.");
     }
 
-    private void parseAdminIPs(Properties props) throws ServiceException {
-        LinkedList<IPAddressPermission> permissions = new LinkedList<IPAddressPermission>();
+    private void parseAdminIPs(final Properties props) throws ServiceException {
+        final LinkedList<IPAddressPermission> permissions = new LinkedList<IPAddressPermission>();
 
-        String ipString = props.getProperty("only_from");
+        final String ipString = props.getProperty("only_from");
 
         if (ipString == null) {
             permissions.add(new PermitAllPermission());
         } else {
-        	String hostname = "localhost";
+            final String hostname = "localhost";
             addIPAddressPermissions(permissions, hostname);
 
-            StringTokenizer st = new StringTokenizer(ipString, ", \n\t");
+            final StringTokenizer st = new StringTokenizer(ipString, ", \n\t");
             while (st.hasMoreTokens()) {
-                String mask = st.nextToken();
+                final String mask = st.nextToken();
                 try {
-                	permissions.add(IPAddressPermissionFactory.getIPAddressMask(mask));
+                    permissions.add(IPAddressPermissionFactory.getIPAddressMask(mask));
                 } catch (IllegalArgumentException iae) {
-                	// it could be that it is a hostname not ip address
-                	addIPAddressPermissions(permissions, mask);
+                    // it could be that it is a hostname not ip address
+                    addIPAddressPermissions(permissions, mask);
                 }
             }
         }
 
-        hostPermissions = (IPAddressPermission[]) permissions.toArray(new IPAddressPermission[permissions.size()]);
+        hostPermissions = permissions.toArray(new IPAddressPermission[permissions.size()]);
     }
 
-	private void addIPAddressPermissions(
-			LinkedList<IPAddressPermission> permissions, String hostname)
-			throws ServiceException {
-		try {
-		    InetAddress[] localIps = InetAddress.getAllByName(hostname);
-		    for (int i = 0; i < localIps.length; i++) {
-		        if (localIps[i] instanceof Inet4Address) {
-		            permissions.add(new ExactIPAddressPermission(localIps[i].getAddress()));
-		        } else {
-		            permissions.add(new ExactIPv6AddressPermission(localIps[i].getAddress()));
-		        }
-		    }
-		} catch (UnknownHostException e) {
-		    throw new ServiceException("Could not get " + hostname + " inet address", e);
-		}
-	}
+    private void addIPAddressPermissions(
+            final LinkedList<IPAddressPermission> permissions, final String hostname)
+            throws ServiceException {
+        try {
+            final InetAddress[] localIps = InetAddress.getAllByName(hostname);
+            for (final InetAddress localIp : localIps) {
+                if (localIp instanceof Inet4Address) {
+                    permissions.add(new ExactIPAddressPermission(localIp.getAddress()));
+                } else {
+                    permissions.add(new ExactIPv6AddressPermission(localIp.getAddress()));
+                }
+            }
+        } catch (UnknownHostException e) {
+            throw new ServiceException("Could not get " + hostname + " inet address", e);
+        }
+    }
 
-    public void init(Properties props) throws Exception {
+    @Override
+    public void init(final Properties props) throws Exception {
         parseAdminIPs(props);
         super.init(props);
     }
@@ -135,8 +136,8 @@ public class ServiceAccessController extends ServerServiceFilter {
 
         @Managed
         public List<String> getHostPermissions() {
-            List<String> list = new ArrayList<String>();
-            for (IPAddressPermission hostPermission : hostPermissions) {
+            final List<String> list = new ArrayList<String>();
+            for (final IPAddressPermission hostPermission : hostPermissions) {
                 list.add(hostPermission.toString());
             }
 

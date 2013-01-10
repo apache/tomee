@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.server.admin;
 
+import org.apache.openejb.client.RequestType;
+import org.apache.openejb.loader.IO;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,19 +27,20 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.openejb.client.RequestType;
-import org.apache.openejb.loader.IO;
-
-
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Stop {
 
     private static final String helpBase = "META-INF/org.apache.openejb.cli/";
 
-    public static void stop(String host, int port) {
+    public static void stop(final String host, final int port) {
+
+        Socket socket = null;
+        OutputStream out = null;
+
         try {
 
-            Socket socket = new Socket(host, port);
-            OutputStream out = socket.getOutputStream();
+            socket = new Socket(host, port);
+            out = socket.getOutputStream();
 
             out.write(RequestType.STOP_REQUEST_Stop.getCode());
 
@@ -44,6 +48,22 @@ public class Stop {
             System.out.println(":: server not running ::");
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (null != socket) {
+                try {
+                    socket.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
     }
 
@@ -51,7 +71,7 @@ public class Stop {
         stop("localhost", 4200);
     }
 
-    public static void main(String [] args) {
+    public static void main(final String[] args) {
         try {
 
             String host = "localhost";
@@ -86,44 +106,71 @@ public class Stop {
     private static void printHelp() {
         String header = "OpenEJB Remote Server ";
         try {
-            Properties versionInfo = loadVersionProperties();
+            final Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
+            //Ignore
         }
 
         System.out.println(header);
 
+        InputStream in = null;
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.help").openConnection().getInputStream();
+            final URL resource = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.help");
+            if (resource != null) {
+                in = resource.openConnection().getInputStream();
 
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
+                int b = in.read();
+                while (b != -1) {
+                    System.out.write(b);
+                    b = in.read();
+                }
             }
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
+            //Ignore
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
     }
 
     private static void printExamples() {
         String header = "OpenEJB Remote Server ";
         try {
-            Properties versionInfo = loadVersionProperties();
+            final Properties versionInfo = loadVersionProperties();
             header += versionInfo.get("version");
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
+            //Ignore
         }
 
         System.out.println(header);
-
+        InputStream in = null;
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.examples").openConnection().getInputStream();
+            final URL resource = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.examples");
+            if (resource != null) {
+                in = resource.openConnection().getInputStream();
 
-            int b = in.read();
-            while (b != -1) {
-                System.out.write(b);
-                b = in.read();
+                int b = in.read();
+                while (b != -1) {
+                    System.out.write(b);
+                    b = in.read();
+                }
             }
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
+            //Ignore
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
         }
     }
 

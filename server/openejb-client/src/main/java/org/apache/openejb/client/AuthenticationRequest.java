@@ -29,16 +29,17 @@ public class AuthenticationRequest implements Request {
     public AuthenticationRequest() {
     }
 
-    public AuthenticationRequest(String principal, String credentials) {
+    public AuthenticationRequest(final String principal, final String credentials) {
         this(null, principal, credentials);
     }
 
-    public AuthenticationRequest(String realm, String principal, String credentials) {
+    public AuthenticationRequest(final String realm, final String principal, final String credentials) {
         this.realm = realm;
         this.username = principal;
         this.credentials = credentials;
     }
 
+    @Override
     public RequestType getRequestType() {
         return RequestType.AUTH_REQUEST;
     }
@@ -55,15 +56,17 @@ public class AuthenticationRequest implements Request {
         return credentials;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
         realm = (String) in.readObject();
         username = (String) in.readObject();
         credentials = (String) in.readObject();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
@@ -73,7 +76,7 @@ public class AuthenticationRequest implements Request {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(50);
+        final StringBuilder sb = new StringBuilder(50);
         sb.append(realm).append(':');
         sb.append(username);
         return sb.toString();

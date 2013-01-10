@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -42,21 +43,26 @@ public class MulticastConnectionFactory implements ConnectionFactory {
     }
 
     @Override
-    public Connection getConnection(URI uri) throws IOException {
-        Map<String, String> params;
+    public Connection getConnection(final URI uri) throws IOException {
+        final Map<String, String> params;
         try {
             params = URIs.parseParamters(uri);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid multicast uri " + uri.toString(), e);
         }
 
-        Set<String> schemes = getSet(params, "schemes", defaultSchemes);
-        String group = getString(params, "group", "default");
-        long timeout = getLong(params, "timeout", 1500);
+        final Set<String> schemes = getSet(params, "schemes", defaultSchemes);
+        final String group = getString(params, "group", "default");
+        final long timeout = getLong(params, "timeout", 1500);
 
-        MulticastSearch search = new MulticastSearch(uri.getHost(), uri.getPort());
+        final MulticastSearch search = new MulticastSearch(uri.getHost(), uri.getPort());
 
-        URI serviceURI = search.search(new Filter(group, schemes), timeout, TimeUnit.MILLISECONDS);
+        URI serviceURI = null;
+        try {
+            serviceURI = search.search(new Filter(group, schemes), timeout, TimeUnit.MILLISECONDS);
+        } finally {
+            search.close();
+        }
 
         if (serviceURI == null) {
             throw new IllegalArgumentException("Unable to find a public ejb server via the multicast URI: " + uri);
@@ -74,7 +80,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         return ConnectionManager.getConnection(serviceURI);
     }
 
-    public static String getString(Map<String, String> params, String param, String defaultValue) {
+    public static String getString(final Map<String, String> params, final String param, final String defaultValue) {
         String value = params.get(param);
         if (value == null) {
             value = defaultValue;
@@ -82,20 +88,20 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         return value;
     }
 
-    public static long getLong(Map<String, String> params, String param, long defaultValue) {
-        String value = params.get(param);
+    public static long getLong(final Map<String, String> params, final String param, final long defaultValue) {
+        final String value = params.get(param);
         if (value == null) {
             return defaultValue;
         }
         return new Long(value);
     }
 
-    public static Set<String> getSet(Map<String, String> params, String param, Set<String> defaultSet) {
+    public static Set<String> getSet(final Map<String, String> params, final String param, final Set<String> defaultSet) {
         Set<String> set = new LinkedHashSet<String>();
         if (params.containsKey(param)) {
-            String value = params.get(param);
+            final String value = params.get(param);
             if (value != null) {
-                String[] strings = value.split(",");
+                final String[] strings = value.split(",");
                 Collections.addAll(set, strings);
             }
         } else {
@@ -105,16 +111,17 @@ public class MulticastConnectionFactory implements ConnectionFactory {
     }
 
     public static class URIs {
-        public static Map<String, String> parseQuery(String uri) throws URISyntaxException {
+
+        public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
             try {
-                Map<String, String> rc = new LinkedHashMap<String, String>();
+                final Map<String, String> rc = new LinkedHashMap<String, String>();
                 if (uri != null) {
-                    String[] parameters = uri.split("&");
+                    final String[] parameters = uri.split("&");
                     for (final String parameter : parameters) {
-                        int p = parameter.indexOf("=");
+                        final int p = parameter.indexOf("=");
                         if (p >= 0) {
-                            String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
-                            String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
+                            final String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
+                            final String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
                             rc.put(name, value);
                         } else {
                             rc.put(parameter, null);
@@ -127,26 +134,27 @@ public class MulticastConnectionFactory implements ConnectionFactory {
             }
         }
 
-        public static Map<String, String> parseParamters(URI uri) throws URISyntaxException {
-            return uri.getQuery() == null ? Collections.EMPTY_MAP : parseQuery(stripPrefix(uri.getQuery(), "?"));
+        public static Map<String, String> parseParamters(final URI uri) throws URISyntaxException {
+            return uri.getQuery() == null ? new HashMap<String, String>(0) : parseQuery(stripPrefix(uri.getQuery(), "?"));
         }
 
-        public static String stripPrefix(String value, String prefix) {
+        public static String stripPrefix(final String value, final String prefix) {
             if (value.startsWith(prefix))
                 return value.substring(prefix.length());
             return value;
         }
     }
 
-    protected static URI unwrap(URI uri) throws URISyntaxException {
+    protected static URI unwrap(final URI uri) throws URISyntaxException {
         return new URI(uri.getSchemeSpecificPart());
     }
 
     protected static class Filter implements MulticastSearch.Filter {
+
         private final Set<String> schemes;
         private final String group;
 
-        public Filter(String group, Set<String> schemes) {
+        public Filter(final String group, final Set<String> schemes) {
             this.group = group;
             this.schemes = schemes;
         }
@@ -154,13 +162,16 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         @Override
         public boolean accept(URI service) {
             try {
-                if (!group.equals(service.getScheme())) return false;
+                if (!group.equals(service.getScheme()))
+                    return false;
                 service = unwrap(service);
 
-                if (!"ejb".equals(service.getScheme())) return false;
+                if (!"ejb".equals(service.getScheme()))
+                    return false;
                 service = unwrap(service);
 
-                if (schemes.contains(service.getScheme())) return true;
+                if (schemes.contains(service.getScheme()))
+                    return true;
             } catch (URISyntaxException e) {
                 // not the uri we're looking for.
             }

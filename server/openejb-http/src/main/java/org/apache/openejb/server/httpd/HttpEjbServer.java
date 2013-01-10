@@ -17,38 +17,40 @@
  */
 package org.apache.openejb.server.httpd;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ejbd.EjbServer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ejbd.EjbServer;
-
 /**
  * @version $Revision$ $Date$
  */
 public abstract class HttpEjbServer implements ServerService {
+
     protected HttpServer httpServer;
     private String name;
 
-    public void init(Properties props) throws Exception {
+    @Override
+    public void init(final Properties props) throws Exception {
         name = props.getProperty("name");
-        EjbServer ejbServer = new EjbServer();
-        ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
+        final EjbServer ejbServer = new EjbServer();
+        final ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
 
-        SystemInstance systemInstance = SystemInstance.get();
+        final SystemInstance systemInstance = SystemInstance.get();
         HttpListenerRegistry registry = systemInstance.getComponent(HttpListenerRegistry.class);
-        if (registry == null){
+        if (registry == null) {
             registry = new HttpListenerRegistry();
             systemInstance.setComponent(HttpListenerRegistry.class, registry);
         }
 
         registry.addHttpListener(adapter, "/ejb/?.*");
-        
+
         // register the http server
         systemInstance.setComponent(HttpServer.class, httpServer);
 
@@ -56,31 +58,37 @@ public abstract class HttpEjbServer implements ServerService {
         ejbServer.init(props);
     }
 
-
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         httpServer.service(socket);
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         httpServer.service(in, out);
     }
 
+    @Override
     public void start() throws ServiceException {
         httpServer.start();
     }
 
+    @Override
     public void stop() throws ServiceException {
         httpServer.stop();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getPort() {
         return httpServer.getPort();
     }
 
+    @Override
     public String getIP() {
         return httpServer.getIP();
     }

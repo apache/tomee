@@ -21,20 +21,21 @@ import java.net.URI;
 import java.util.Stack;
 
 public class HeartbeatMonitor {
-    public static void main(String[] args) throws Exception {
-        Stack<String> stack = new Stack<String>();
-        for (String s : args) {
+
+    public static void main(final String[] args) throws Exception {
+        final Stack<String> stack = new Stack<String>();
+        for (final String s : args) {
             stack.push(s);
         }
 
         main(stack);
     }
 
-    private static void main(Stack<String> args) throws IOException {
+    private static void main(final Stack<String> args) throws IOException {
         String host = "239.255.2.3";
         int port = 6142;
 
-        for (String arg : args) {
+        for (final String arg : args) {
             if (arg.equals("--host") || arg.equals("-h")) {
                 host = args.pop();
             } else if (arg.equals("--port") || arg.equals("-p")) {
@@ -44,13 +45,20 @@ public class HeartbeatMonitor {
             }
         }
 
-        MulticastSearch search = new MulticastSearch(host, port);
-        search.search(new MulticastSearch.Filter() {
-            public boolean accept(URI service) {
-                System.out.println(service);
-                return false;
-            }
-        });
+        final MulticastSearch search = new MulticastSearch(host, port);
+        try {
+            search.search(new MulticastSearch.Filter() {
+                @Override
+                @SuppressWarnings("UseOfSystemOutOrSystemErr")
+                public boolean accept(final URI service) {
+                    System.out.println(service);
+                    return false;
+                }
+            });
+        } finally {
+            search.close();
+        }
+
     }
 
 }

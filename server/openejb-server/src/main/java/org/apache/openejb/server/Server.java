@@ -33,6 +33,7 @@ import java.util.Properties;
  * @org.apache.xbean.XBean element="server"
  * description="OpenEJB Server"
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Server implements Service {
     // FIXME: Remove it completely once we ensure PropertiesService (below) works well
 

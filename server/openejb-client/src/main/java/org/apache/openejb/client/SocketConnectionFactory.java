@@ -131,8 +131,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public static long getLong(final Properties p, final String property, final long defaultValue) {
         final String value = p.getProperty(property);
         try {
-            if (value != null) return Long.parseLong(value);
-            else return defaultValue;
+            if (value != null)
+                return Long.parseLong(value);
+            else
+                return defaultValue;
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -149,6 +151,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 conn = new SocketConnection(uri, pool);
                 conn.open(uri);
             } catch (IOException e) {
+
+                conn.cleanUp();
+
                 pool.put(null);
                 throw e;
             }
@@ -269,8 +274,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 final String scheme = uri.getScheme();
                 if (scheme.equalsIgnoreCase("ejbds") || scheme.equalsIgnoreCase("zejbds")) {
                     final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
-                    sslSocket.setEnabledCipherSuites(SocketConnectionFactory.this.enabledCipherSuites);
                     this.socket = sslSocket;
+                    sslSocket.setEnabledCipherSuites(SocketConnectionFactory.this.enabledCipherSuites);
 
                 } else {
                     this.socket = new Socket();
@@ -326,7 +331,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         @Override
         public void close() throws IOException {
-            if (this.discarded) return;
+            if (this.discarded)
+                return;
 
             this.pool.put(this);
             try {
@@ -399,6 +405,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     }
 
     public class Output extends java.io.FilterOutputStream {
+
         public Output(final OutputStream out) {
             super(out);
         }
@@ -410,6 +417,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     }
 
     private static class Pool {
+
         private final Semaphore semaphore;
         private final Stack<SocketConnection> pool;
         private final long timeout;
@@ -455,10 +463,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
         @Override
         public String toString() {
             return "Pool{" +
-                    "size=" + this.size +
-                    ", available=" + this.semaphore.availablePermits() +
-                    ", uri=" + this.uri +
-                    '}';
+                   "size=" + this.size +
+                   ", available=" + this.semaphore.availablePermits() +
+                   ", uri=" + this.uri +
+                   '}';
         }
     }
 }

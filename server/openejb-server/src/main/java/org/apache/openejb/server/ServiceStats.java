@@ -33,11 +33,12 @@ public class ServiceStats extends ServerServiceFilter {
     @Managed
     private final Stats stats = new Stats();
 
-    public ServiceStats(ServerService service) {
+    public ServiceStats(final ServerService service) {
         super(service);
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         final long start = System.nanoTime();
         try {
             super.service(in, out);
@@ -46,7 +47,8 @@ public class ServiceStats extends ServerServiceFilter {
         }
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         final long start = System.nanoTime();
         try {
             super.service(socket);

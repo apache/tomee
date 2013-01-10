@@ -62,7 +62,7 @@ public class MulticastDiscoveryAgentTest extends TestCase {
         }
 
         Thread.sleep(2000);
-
+        multicast.close();
     }
 
     private static class Filter implements MulticastSearch.Filter {

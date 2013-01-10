@@ -19,21 +19,21 @@ package org.apache.openejb.server;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.Managed;
 
+import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -49,31 +49,35 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     private final Monitor monitor = new Monitor();
 
     private final Executor executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
-        public Thread newThread(Runnable runable) {
-            Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
+        @Override
+        public Thread newThread(final Runnable runable) {
+            final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
             t.setDaemon(true);
             return t;
         }
     });
 
     public DiscoveryRegistry() {
-        SystemInstance.get().setComponent(DiscoveryRegistry.class, this);
-        SystemInstance.get().setComponent(DiscoveryAgent.class, this);
+        this(null);
     }
 
-    public DiscoveryRegistry(DiscoveryAgent agent) {
+    public DiscoveryRegistry(final DiscoveryAgent agent) {
         SystemInstance.get().setComponent(DiscoveryRegistry.class, this);
         SystemInstance.get().setComponent(DiscoveryAgent.class, this);
-        addDiscoveryAgent(agent);
+
+        if (null != agent) {
+            addDiscoveryAgent(agent);
+        }
     }
 
-    public void addDiscoveryAgent(DiscoveryAgent agent) {
+    public void addDiscoveryAgent(final DiscoveryAgent agent) {
         agents.add(agent);
         agent.setDiscoveryListener(this);
-        for (URI uri : registered.values()) {
+        for (final URI uri : registered.values()) {
             try {
                 agent.registerService(uri);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                //Ignore
             }
         }
     }
@@ -82,78 +86,86 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
         return new HashSet<URI>(services.values());
     }
 
-    public void registerService(URI serviceUri) throws IOException {
+    @Override
+    public void registerService(final URI serviceUri) throws IOException {
         registered.put(serviceUri.toString(), serviceUri);
-        for (DiscoveryAgent agent : agents) {
+        for (final DiscoveryAgent agent : agents) {
             agent.registerService(serviceUri);
         }
     }
 
-    public void reportFailed(URI serviceUri) throws IOException {
+    @Override
+    public void reportFailed(final URI serviceUri) throws IOException {
         registered.remove(serviceUri.toString());
-        for (DiscoveryAgent agent : agents) {
+        for (final DiscoveryAgent agent : agents) {
             agent.reportFailed(serviceUri);
         }
     }
 
-    public void unregisterService(URI serviceUri) throws IOException {
+    @Override
+    public void unregisterService(final URI serviceUri) throws IOException {
         registered.remove(serviceUri.toString());
-        for (DiscoveryAgent agent : agents) {
+        for (final DiscoveryAgent agent : agents) {
             agent.unregisterService(serviceUri);
         }
     }
 
-    public void setDiscoveryListener(DiscoveryListener listener) {
+    @Override
+    public void setDiscoveryListener(final DiscoveryListener listener) {
         addDiscoveryListener(listener);
     }
 
-    public void addDiscoveryListener(DiscoveryListener listener){
+    public void addDiscoveryListener(final DiscoveryListener listener) {
         // get the listener caught up
-        for (URI service : services.values()) {
+        for (final URI service : services.values()) {
             executor.execute(new ServiceAddedTask(listener, service));
         }
 
         listeners.add(listener);
     }
 
-    public void removeDiscoveryListener(DiscoveryListener listener){
+    public void removeDiscoveryListener(final DiscoveryListener listener) {
         listeners.remove(listener);
     }
 
-
-    public void serviceAdded(URI service) {
+    @Override
+    public void serviceAdded(final URI service) {
         services.put(service.toString(), service);
         for (final DiscoveryListener discoveryListener : getListeners()) {
             executor.execute(new ServiceAddedTask(discoveryListener, service));
         }
     }
 
-    public void serviceRemoved(URI service) {
+    @Override
+    public void serviceRemoved(final URI service) {
         services.remove(service.toString());
         for (final DiscoveryListener discoveryListener : getListeners()) {
             executor.execute(new ServiceRemovedTask(discoveryListener, service));
         }
     }
 
-    List<DiscoveryListener> getListeners(){
+    List<DiscoveryListener> getListeners() {
         return Collections.unmodifiableList(listeners);
     }
 
     private abstract static class Task implements Runnable {
+
         protected final DiscoveryListener discoveryListener;
         protected final URI service;
 
-        protected Task(DiscoveryListener discoveryListener, URI service) {
+        protected Task(final DiscoveryListener discoveryListener, final URI service) {
             this.discoveryListener = discoveryListener;
             this.service = service;
         }
     }
 
     private static class ServiceRemovedTask extends Task {
-        public ServiceRemovedTask(DiscoveryListener discoveryListener, URI service) {
+
+        public ServiceRemovedTask(final DiscoveryListener discoveryListener, final URI service) {
             super(discoveryListener, service);
         }
 
+        @Override
         public void run() {
             if (discoveryListener != null) {
                 discoveryListener.serviceRemoved(service);
@@ -162,10 +174,12 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     }
 
     private static class ServiceAddedTask extends Task {
-        public ServiceAddedTask(DiscoveryListener discoveryListener, URI service) {
+
+        public ServiceAddedTask(final DiscoveryListener discoveryListener, final URI service) {
             super(discoveryListener, service);
         }
 
+        @Override
         public void run() {
             if (discoveryListener != null) {
                 discoveryListener.serviceAdded(service);
@@ -190,8 +204,8 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
         @Managed
         public String[] getAgents() {
-            List<String> list = new ArrayList<String>();
-            for (DiscoveryAgent agent : DiscoveryRegistry.this.agents) {
+            final List<String> list = new ArrayList<String>();
+            for (final DiscoveryAgent agent : DiscoveryRegistry.this.agents) {
                 list.add(agent.getClass().getName());
             }
             return list.toArray(new String[list.size()]);

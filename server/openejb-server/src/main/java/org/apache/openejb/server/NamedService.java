@@ -27,7 +27,7 @@ public class NamedService extends ServerServiceFilter {
     @Managed
     private final String name;
 
-    public NamedService(ServerService service, String name) {
+    public NamedService(final ServerService service, final String name) {
         super(service);
         this.name = name;
     }

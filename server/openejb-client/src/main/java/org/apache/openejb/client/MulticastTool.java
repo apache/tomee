@@ -32,6 +32,7 @@ import java.util.TimerTask;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastTool {
 
     private static final CommandParser cmd = new CommandParser() {
@@ -67,7 +68,7 @@ public class MulticastTool {
         }
 
         @Override
-        protected List<String> validate(Arguments arguments) {
+        protected List<String> validate(final Arguments arguments) {
             return super.validate(arguments);
         }
 
@@ -79,7 +80,7 @@ public class MulticastTool {
 
     private static final int BUFF_SIZE = 8192;
 
-    public static void main(String[] array) throws Exception {
+    public static void main(final String[] array) throws Exception {
 
         final CommandParser.Arguments arguments;
         try {
@@ -94,28 +95,34 @@ public class MulticastTool {
 
         final Options options = arguments.options();
 
-        SimpleDateFormat format = new SimpleDateFormat(options.get("date-format", "HH:mm:ss"));
+        final SimpleDateFormat format = new SimpleDateFormat(options.get("date-format", "HH:mm:ss"));
 
         final String host = options.get("host", "239.255.3.2");
         final int port = options.get("port", 6142);
 
-        InetAddress inetAddress = InetAddress.getByName(host);
+        final InetAddress inetAddress = InetAddress.getByName(host);
 
-        InetSocketAddress address = new InetSocketAddress(inetAddress, port);
+        final InetSocketAddress address = new InetSocketAddress(inetAddress, port);
 
-        MulticastSocket multicast = new MulticastSocket(port);
+        final MulticastSocket multicast = new MulticastSocket(port);
         multicast.joinGroup(inetAddress);
 
-
-        final MulticastSocket s = multicast;
-        if (options.has("reuse-address")) s.setReuseAddress(options.get("reuse-address", false));
-        if (options.has("broadcast")) s.setBroadcast(options.get("broadcast", false));
-        if (options.has("loopback-mode")) s.setLoopbackMode(options.get("loopback-mode", false));
-        if (options.has("send-buffer-size")) s.setSendBufferSize(options.get("send-buffer-size", 0));
-        if (options.has("receive-buffer-size")) s.setReceiveBufferSize(options.get("receive-buffer-size", 0));
-        if (options.has("so-timeout")) s.setSoTimeout(options.get("so-timeout", 0));
-        if (options.has("time-to-live")) s.setTimeToLive(options.get("time-to-live", 0));
-        if (options.has("traffic-class")) s.setTrafficClass(options.get("traffic-class", 0));
+        if (options.has("reuse-address"))
+            multicast.setReuseAddress(options.get("reuse-address", false));
+        if (options.has("broadcast"))
+            multicast.setBroadcast(options.get("broadcast", false));
+        if (options.has("loopback-mode"))
+            multicast.setLoopbackMode(options.get("loopback-mode", false));
+        if (options.has("send-buffer-size"))
+            multicast.setSendBufferSize(options.get("send-buffer-size", 0));
+        if (options.has("receive-buffer-size"))
+            multicast.setReceiveBufferSize(options.get("receive-buffer-size", 0));
+        if (options.has("so-timeout"))
+            multicast.setSoTimeout(options.get("so-timeout", 0));
+        if (options.has("time-to-live"))
+            multicast.setTimeToLive(options.get("time-to-live", 0));
+        if (options.has("traffic-class"))
+            multicast.setTrafficClass(options.get("traffic-class", 0));
 
         System.out.println("Connected");
         print("host", host);
@@ -123,19 +130,19 @@ public class MulticastTool {
         System.out.println();
 
         System.out.println("Socket");
-        print("broadcast", s.getBroadcast());
-        print("loopback-mode", s.getLoopbackMode());
-        print("receive-buffer-size", s.getReceiveBufferSize());
-        print("reuse-address", s.getReuseAddress());
-        print("send-buffer-size", s.getSendBufferSize());
-        print("so-timeout", s.getSoTimeout());
-        print("time-to-live", s.getTimeToLive());
-        print("traffic-class", s.getTrafficClass());
+        print("broadcast", multicast.getBroadcast());
+        print("loopback-mode", multicast.getLoopbackMode());
+        print("receive-buffer-size", multicast.getReceiveBufferSize());
+        print("reuse-address", multicast.getReuseAddress());
+        print("send-buffer-size", multicast.getSendBufferSize());
+        print("so-timeout", multicast.getSoTimeout());
+        print("time-to-live", multicast.getTimeToLive());
+        print("traffic-class", multicast.getTrafficClass());
         System.out.println();
 
         if (options.has("send")) {
-            String send = options.get("send", "");
-            long rate = options.get("rate", 1000);
+            final String send = options.get("send", "");
+            final long rate = options.get("rate", 1000);
 
             System.out.println("Sending");
             print("send", send);
@@ -144,18 +151,19 @@ public class MulticastTool {
 
             final Send message = new Send(address, multicast, send);
 
-            if (rate >0) {
-                Timer timer = new Timer("Multicast Send", true);
+            if (rate > 0) {
+                final Timer timer = new Timer("Multicast Send", true);
                 timer.scheduleAtFixedRate(message, 0, rate);
             } else {
                 message.run();
+                message.close();
             }
         }
 
         System.out.println("Listening....");
 
-        byte[] buf = new byte[BUFF_SIZE];
-        DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
+        final byte[] buf = new byte[BUFF_SIZE];
+        final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
 
         while (true) {
             try {
@@ -166,7 +174,7 @@ public class MulticastTool {
                     sb.append(" - ");
                     sb.append(packet.getAddress().getHostAddress());
                     sb.append(" - ");
-                    String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
+                    final String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
                     sb.append(str);
                     System.out.println(sb.toString());
                 }
@@ -182,32 +190,56 @@ public class MulticastTool {
         }
     }
 
-    private static void print(String name, Object value) {
+    private static void print(final String name, final Object value) {
         System.out.printf(" %-20s: %s", name, value);
         System.out.println();
     }
 
     static class Send extends TimerTask {
+
         private final MulticastSocket multicast;
         private final String text;
         private final SocketAddress address;
 
-        public Send(SocketAddress address, MulticastSocket multicast, String text) {
+        public Send(final SocketAddress address, final MulticastSocket multicast, final String text) {
             this.address = address;
             this.multicast = multicast;
             this.text = text;
         }
 
+        @Override
+        protected void finalize() throws Throwable {
+            try {
+                close();
+            } finally {
+                super.finalize();
+            }
+        }
+
+        private void close() {
+            try {
+                multicast.close();
+            } catch (Throwable e) {
+                //Ignore
+            }
+        }
+
+        @Override
         public void run() {
             try {
-                byte[] data = text.getBytes();
-                DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
+                final byte[] data = text.getBytes();
+                final DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
                 multicast.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
+        @Override
+        public boolean cancel() {
+            close();
+            return super.cancel();
+        }
     }
 
 }

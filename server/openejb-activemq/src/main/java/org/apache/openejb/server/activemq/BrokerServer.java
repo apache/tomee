@@ -33,16 +33,18 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class BrokerServer implements ServerService, SelfManaging {
+
     private BrokerService broker;
 
     private int port = 1527;
     private boolean disabled;
     private InetAddress host;
 
-    public void init(Properties properties) throws Exception {
-        String port = properties.getProperty("port", "1527");
-        String bind = properties.getProperty("bind");
-        String disabled = properties.getProperty("disabled");
+    @Override
+    public void init(final Properties properties) throws Exception {
+        final String port = properties.getProperty("port", "1527");
+        final String bind = properties.getProperty("bind");
+        final String disabled = properties.getProperty("disabled");
         this.port = Integer.parseInt(port);
         this.disabled = Boolean.parseBoolean(disabled);
         host = InetAddress.getByName(bind);
@@ -50,15 +52,17 @@ public class BrokerServer implements ServerService, SelfManaging {
         if (this.disabled) {
             return;
         }
-        URI uri = new URI("tcp", null, bind, this.port, null, null, null);
+        final URI uri = new URI("tcp", null, bind, this.port, null, null, null);
 
         broker = new BrokerService();
         broker.setPersistent(false);
         broker.addConnector(uri);
     }
 
+    @Override
     public void start() throws ServiceException {
-        if (disabled) return;
+        if (disabled)
+            return;
         try {
             broker.start();
         } catch (Exception e) {
@@ -66,6 +70,7 @@ public class BrokerServer implements ServerService, SelfManaging {
         }
     }
 
+    @Override
     public void stop() throws ServiceException {
         if (broker == null) {
             return;
@@ -79,20 +84,25 @@ public class BrokerServer implements ServerService, SelfManaging {
         }
     }
 
-    public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream inputStream, final OutputStream outputStream) throws ServiceException, IOException {
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
     }
 
+    @Override
     public String getName() {
         return "activemq";
     }
 
+    @Override
     public String getIP() {
         return host.getHostAddress();
     }
 
+    @Override
     public int getPort() {
         return port;
     }

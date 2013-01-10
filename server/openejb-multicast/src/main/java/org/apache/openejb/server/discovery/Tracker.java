@@ -18,30 +18,30 @@ package org.apache.openejb.server.discovery;
 
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.server.DiscoveryListener;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.io.IOException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 @Managed(append = false)
 public class Tracker {
-    
+
     private final Logger log;
-    
+
     @Managed
     private final String group;
     private final String groupPrefix;
@@ -59,7 +59,7 @@ public class Tracker {
     private final boolean useExponentialBackOff;
     private final boolean debug;
 
-    public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff, final Logger log, boolean debug) {
+    public Tracker(final String group, final long heartRate, final int maxMissedHeartbeats, final long reconnectDelay, final long maxReconnectDelay, final int maxReconnectAttempts, final long exponentialBackoff, final Logger log, final boolean debug) {
         this.group = group;
         this.groupPrefix = group + ":";
 
@@ -75,9 +75,9 @@ public class Tracker {
         this.log.info("Created " + this);
     }
 
-    private Map<String, Service> registeredServices = new ConcurrentHashMap<String, Service>();
+    private final Map<String, Service> registeredServices = new ConcurrentHashMap<String, Service>();
 
-    private Map<String, ServiceVitals> discoveredServices = new ConcurrentHashMap<String, ServiceVitals>();
+    private final Map<String, ServiceVitals> discoveredServices = new ConcurrentHashMap<String, ServiceVitals>();
     private DiscoveryListener discoveryListener;
 
     public long getHeartRate() {
@@ -88,7 +88,7 @@ public class Tracker {
         return maxMissedHeartbeats;
     }
 
-    public void setDiscoveryListener(DiscoveryListener discoveryListener) {
+    public void setDiscoveryListener(final DiscoveryListener discoveryListener) {
         this.discoveryListener = discoveryListener;
     }
 
@@ -106,32 +106,32 @@ public class Tracker {
         return new HashSet<String>(discoveredServices.keySet());
     }
 
-    public void registerService(URI serviceUri) throws IOException {
-        Service service = new Service(serviceUri);
+    public void registerService(final URI serviceUri) throws IOException {
+        final Service service = new Service(serviceUri);
         this.registeredServices.put(service.broadcastString, service);
         fireServiceAddedEvent(serviceUri);
     }
 
-    public void unregisterService(URI serviceUri) throws IOException {
-        Service service = new Service(serviceUri);
+    public void unregisterService(final URI serviceUri) throws IOException {
+        final Service service = new Service(serviceUri);
         this.registeredServices.remove(service.broadcastString);
         fireServiceRemovedEvent(serviceUri);
     }
 
-    private boolean isSelf(Service service) {
+    private boolean isSelf(final Service service) {
         return isSelf(service.broadcastString);
     }
 
-    private boolean isSelf(String service) {
+    private boolean isSelf(final String service) {
         return registeredServices.keySet().contains(service);
     }
 
-    public void processData(String uriString) {
+    public void processData(final String uriString) {
         if (discoveryListener == null) {
             return;
         }
 
-        if (!uriString.startsWith(groupPrefix)){
+        if (!uriString.startsWith(groupPrefix)) {
             return;
         }
 
@@ -168,14 +168,14 @@ public class Tracker {
 
         final long expireTime = now - threshold;
 
-        for (ServiceVitals serviceVitals : discoveredServices.values()) {
+        for (final ServiceVitals serviceVitals : discoveredServices.values()) {
             if (serviceVitals.getLastHeartbeat() < expireTime && !isSelf(serviceVitals.service)) {
 
                 if (debug()) {
-                    log.debug("Expired " + serviceVitals.service + String.format(" Timeout{lastSeen=%s, threshold=%s}", serviceVitals.getLastHeartbeat() - now, threshold ));
+                    log.debug("Expired " + serviceVitals.service + String.format(" Timeout{lastSeen=%s, threshold=%s}", serviceVitals.getLastHeartbeat() - now, threshold));
                 }
 
-                ServiceVitals vitals = discoveredServices.remove(serviceVitals.service.broadcastString);
+                final ServiceVitals vitals = discoveredServices.remove(serviceVitals.service.broadcastString);
                 if (vitals != null && !vitals.isDead()) {
                     fireServiceRemovedEvent(vitals.service.uri);
                 }
@@ -188,8 +188,9 @@ public class Tracker {
     }
 
     private final Executor executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
-        public Thread newThread(Runnable runable) {
-            Thread t = new Thread(runable, "Discovery Agent Notifier");
+        @Override
+        public Thread newThread(final Runnable runable) {
+            final Thread t = new Thread(runable, "Discovery Agent Notifier");
             t.setDaemon(true);
             return t;
         }
@@ -207,10 +208,9 @@ public class Tracker {
             // he does not block this thread since we are doing time sensitive
             // processing of events.
             executor.execute(new Runnable() {
+                @Override
                 public void run() {
-                    if (discoveryListener != null) {
-                        discoveryListener.serviceRemoved(uri);
-                    }
+                    discoveryListener.serviceRemoved(uri);
                 }
             });
         }
@@ -228,18 +228,17 @@ public class Tracker {
             // he does not block this thread since we are doing time sensitive
             // processing of events.
             executor.execute(new Runnable() {
+                @Override
                 public void run() {
-                    if (discoveryListener != null) {
-                        discoveryListener.serviceAdded(uri);
-                    }
+                    discoveryListener.serviceAdded(uri);
                 }
             });
         }
     }
 
-    public void reportFailed(URI serviceUri) {
+    public void reportFailed(final URI serviceUri) {
         final Service service = new Service(serviceUri);
-        ServiceVitals serviceVitals = discoveredServices.get(service.broadcastString);
+        final ServiceVitals serviceVitals = discoveredServices.get(service.broadcastString);
         if (serviceVitals != null && serviceVitals.pronounceDead()) {
             fireServiceRemovedEvent(service.uri);
         }
@@ -247,17 +246,18 @@ public class Tracker {
 
     @Managed
     public class Service {
+
         @Managed
         private final URI uri;
         @Managed
         private final String broadcastString;
 
-        public Service(URI uri) {
+        public Service(final URI uri) {
             this.uri = uri;
             this.broadcastString = groupPrefix + uri.toString();
         }
 
-        public Service(String uriString) throws URISyntaxException {
+        public Service(final String uriString) throws URISyntaxException {
             URI uri = new URI(uriString);
             uri = new URI(uri.getSchemeSpecificPart());
             this.uri = uri;
@@ -267,9 +267,9 @@ public class Tracker {
         @Override
         public String toString() {
             return "Service{" +
-                    "uri=" + uri +
-                    ", broadcastString='" + broadcastString + '\'' +
-                    '}';
+                   "uri=" + uri +
+                   ", broadcastString='" + broadcastString + '\'' +
+                   '}';
         }
     }
 
@@ -287,7 +287,7 @@ public class Tracker {
         @Managed
         private boolean dead;
 
-        public ServiceVitals(Service service) {
+        public ServiceVitals(final Service service) {
             this.service = service;
             this.lastHeartBeat = System.currentTimeMillis();
         }
@@ -327,8 +327,8 @@ public class Tracker {
 
                 if (debug()) {
                     log.debug("Remote failure of " + service + " while still receiving multicast advertisements.  " +
-                            "Advertising events will be suppressed for " + delay
-                            + " ms, the current failure count is: " + failureCount);
+                              "Advertising events will be suppressed for " + delay
+                              + " ms, the current failure count is: " + failureCount);
                 }
 
                 recoveryTime = System.currentTimeMillis() + delay;
@@ -373,16 +373,16 @@ public class Tracker {
         @Override
         public String toString() {
             return service + "Vitals{" +
-                    ", lastHeartBeat=" + lastHeartBeat +
-                    ", recoveryTime=" + recoveryTime +
-                    ", failureCount=" + failureCount +
-                    ", dead=" + dead +
-                    '}';
+                   ", lastHeartBeat=" + lastHeartBeat +
+                   ", recoveryTime=" + recoveryTime +
+                   ", failureCount=" + failureCount +
+                   ", dead=" + dead +
+                   '}';
         }
     }
 
-
     public static class Builder {
+
         private String group = "default";
         private int maxMissedHeartbeats = 10;
         private long heartRate = 500;
@@ -396,12 +396,11 @@ public class Tracker {
         private boolean debug;
         // ---------------------------------
 
-
         public long getExponentialBackoff() {
             return exponentialBackoff;
         }
 
-        public void setExponentialBackoff(long exponentialBackoff) {
+        public void setExponentialBackoff(final long exponentialBackoff) {
             this.exponentialBackoff = exponentialBackoff;
         }
 
@@ -409,7 +408,7 @@ public class Tracker {
             return group;
         }
 
-        public void setGroup(String group) {
+        public void setGroup(final String group) {
             this.group = group;
         }
 
@@ -417,7 +416,7 @@ public class Tracker {
             return heartRate;
         }
 
-        public void setHeartRate(long heartRate) {
+        public void setHeartRate(final long heartRate) {
             this.heartRate = heartRate;
         }
 
@@ -425,7 +424,7 @@ public class Tracker {
             return reconnectDelay;
         }
 
-        public void setReconnectDelay(long reconnectDelay) {
+        public void setReconnectDelay(final long reconnectDelay) {
             this.reconnectDelay = reconnectDelay;
         }
 
@@ -433,7 +432,7 @@ public class Tracker {
             return maxMissedHeartbeats;
         }
 
-        public void setMaxMissedHeartbeats(int maxMissedHeartbeats) {
+        public void setMaxMissedHeartbeats(final int maxMissedHeartbeats) {
             this.maxMissedHeartbeats = maxMissedHeartbeats;
         }
 
@@ -441,7 +440,7 @@ public class Tracker {
             return maxReconnectAttempts;
         }
 
-        public void setMaxReconnectAttempts(int maxReconnectAttempts) {
+        public void setMaxReconnectAttempts(final int maxReconnectAttempts) {
             this.maxReconnectAttempts = maxReconnectAttempts;
         }
 
@@ -449,7 +448,7 @@ public class Tracker {
             return maxReconnectDelay;
         }
 
-        public void setMaxReconnectDelay(long maxReconnectDelay) {
+        public void setMaxReconnectDelay(final long maxReconnectDelay) {
             this.maxReconnectDelay = maxReconnectDelay;
         }
 
@@ -457,7 +456,7 @@ public class Tracker {
             return logger;
         }
 
-        public void setLogger(Logger logger) {
+        public void setLogger(final Logger logger) {
             this.logger = logger;
         }
 
@@ -465,7 +464,7 @@ public class Tracker {
             return debug;
         }
 
-        public void setDebug(boolean debug) {
+        public void setDebug(final boolean debug) {
             this.debug = debug;
         }
 
@@ -478,17 +477,17 @@ public class Tracker {
     @Override
     public String toString() {
         return "Tracker{" +
-                "group='" + group + '\'' +
-                ", groupPrefix='" + groupPrefix + '\'' +
-                ", heartRate=" + heartRate +
-                ", maxMissedHeartbeats=" + maxMissedHeartbeats +
-                ", reconnectDelay=" + reconnectDelay +
-                ", maxReconnectDelay=" + maxReconnectDelay +
-                ", maxReconnectAttempts=" + maxReconnectAttempts +
-                ", exponentialBackoff=" + exponentialBackoff +
-                ", useExponentialBackOff=" + useExponentialBackOff +
-                ", registeredServices=" + registeredServices.size() +
-                ", discoveredServices=" + discoveredServices.size() +
-                '}';
+               "group='" + group + '\'' +
+               ", groupPrefix='" + groupPrefix + '\'' +
+               ", heartRate=" + heartRate +
+               ", maxMissedHeartbeats=" + maxMissedHeartbeats +
+               ", reconnectDelay=" + reconnectDelay +
+               ", maxReconnectDelay=" + maxReconnectDelay +
+               ", maxReconnectAttempts=" + maxReconnectAttempts +
+               ", exponentialBackoff=" + exponentialBackoff +
+               ", useExponentialBackOff=" + useExponentialBackOff +
+               ", registeredServices=" + registeredServices.size() +
+               ", discoveredServices=" + discoveredServices.size() +
+               '}';
     }
 }

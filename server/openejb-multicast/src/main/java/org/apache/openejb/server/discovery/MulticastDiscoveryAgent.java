@@ -48,7 +48,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multicast"), MulticastDiscoveryAgent.class);
 
-    private AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     private String host = "239.255.3.2";
     private int port = 6142;
@@ -62,9 +62,9 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     private Multicast multicast;
 
     @Override
-    public void init(Properties props) {
+    public void init(final Properties props) {
 
-        Options options = new Options(props);
+        final Options options = new Options(props);
         options.setLogger(new OptionsLog(log));
 
         host = props.getProperty("bind", host);
@@ -72,8 +72,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         port = options.get("port", port);
         heartRate = options.get("heart_rate", heartRate);
 
-
-        Tracker.Builder builder = new Tracker.Builder();
+        final Tracker.Builder builder = new Tracker.Builder();
         builder.setGroup(props.getProperty("group", builder.getGroup()));
         builder.setHeartRate(heartRate);
         builder.setMaxMissedHeartbeats(options.get("max_missed_heartbeats", builder.getMaxMissedHeartbeats()));
@@ -101,39 +100,39 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     }
 
     @Override
-    public void setDiscoveryListener(DiscoveryListener listener) {
+    public void setDiscoveryListener(final DiscoveryListener listener) {
         this.tracker.setDiscoveryListener(listener);
     }
 
     @Override
-    public void registerService(URI serviceUri) throws IOException {
+    public void registerService(final URI serviceUri) throws IOException {
         tracker.registerService(serviceUri);
     }
 
     @Override
-    public void unregisterService(URI serviceUri) throws IOException {
+    public void unregisterService(final URI serviceUri) throws IOException {
         tracker.unregisterService(serviceUri);
     }
 
     @Override
-    public void reportFailed(URI serviceUri) {
+    public void reportFailed(final URI serviceUri) {
         tracker.reportFailed(serviceUri);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
     }
 
     /**
      * start the discovery agent
      *
-     * @throws Exception
+     * @throws ServiceException
      */
     @Override
     public void start() throws ServiceException {
         try {
             if (running.compareAndSet(false, true)) {
 
-                InetAddress inetAddress = InetAddress.getByName(host);
+                final InetAddress inetAddress = InetAddress.getByName(host);
 
                 this.address = new InetSocketAddress(inetAddress, port);
                 multicast = new Multicast(tracker);
@@ -146,7 +145,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     /**
      * stop the channel
      *
-     * @throws Exception
+     * @throws ServiceException
      */
     @Override
     public void stop() throws ServiceException {
@@ -156,11 +155,11 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     }
 
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
     }
 
     class Multicast {
@@ -169,10 +168,10 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
         private final Tracker tracker;
         private final MulticastSocket multicast;
-        private Timer timer;
-        private Thread listenerThread;
+        private final Timer timer;
+        private final Thread listenerThread;
 
-        Multicast(Tracker tracker) throws IOException {
+        Multicast(final Tracker tracker) throws IOException {
             this.tracker = tracker;
 
             multicast = new MulticastSocket(port);
@@ -186,7 +185,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
             listenerThread.setDaemon(true);
             listenerThread.start();
 
-            Broadcaster broadcaster = new Broadcaster();
+            final Broadcaster broadcaster = new Broadcaster();
 
             timer = new Timer("MulticastDiscovery: Broadcaster", true);
             timer.scheduleAtFixedRate(broadcaster, 0, heartRate);
@@ -198,17 +197,18 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         }
 
         class Listener implements Runnable {
+
             @Override
             public void run() {
-                byte[] buf = new byte[BUFF_SIZE];
-                DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
+                final byte[] buf = new byte[BUFF_SIZE];
+                final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
                 while (running.get()) {
                     tracker.checkServices();
                     try {
                         multicast.receive(packet);
                         if (packet.getLength() > 0) {
-                            String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
-//                        System.out.println("read = " + str);
+                            final String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
+                            //                        System.out.println("read = " + str);
                             tracker.processData(str);
                         }
                     } catch (SocketTimeoutException se) {
@@ -224,6 +224,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         }
 
         class Broadcaster extends TimerTask {
+
             private IOException failed;
 
             @Override
@@ -234,11 +235,11 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
             }
 
             private void heartbeat() {
-                for (String uri : tracker.getRegisteredServices()) {
+                for (final String uri : tracker.getRegisteredServices()) {
                     try {
-                        byte[] data = uri.getBytes();
-                        DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
-//                    System.out.println("ann = " + uri);
+                        final byte[] data = uri.getBytes();
+                        final DatagramPacket packet = new DatagramPacket(data, 0, data.length, address);
+                        //                    System.out.println("ann = " + uri);
                         multicast.send(packet);
                     } catch (IOException e) {
                         // If a send fails, chances are all subsequent sends will fail
@@ -251,7 +252,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                             final String message = e.getMessage();
                             if (null != message && message.toLowerCase().contains("operation not permitted")) {
                                 log.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
-                                        + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
+                                          + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
                             }
                         }
                     }
@@ -260,12 +261,11 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         }
     }
 
-
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -273,7 +273,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         return loopbackMode;
     }
 
-    public void setLoopbackMode(boolean loopbackMode) {
+    public void setLoopbackMode(final boolean loopbackMode) {
         this.loopbackMode = loopbackMode;
     }
 
@@ -281,7 +281,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         return timeToLive;
     }
 
-    public void setTimeToLive(int timeToLive) {
+    public void setTimeToLive(final int timeToLive) {
         this.timeToLive = timeToLive;
     }
 

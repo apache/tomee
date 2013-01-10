@@ -38,41 +38,47 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
 
     private NetworkServerControl serverControl;
     private int port = 1527;
-    private int threads;
     private boolean disabled;
     private InetAddress host;
 
+    @Override
     public String getIP() {
         return host.getHostAddress();
     }
 
+    @Override
     public String getName() {
         return "derbynet";
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
-    public void init(Properties properties) throws Exception {
-        Options options = new Options(properties);
+    @Override
+    public void init(final Properties properties) throws Exception {
+        final Options options = new Options(properties);
 
-        this.threads = options.get("threads", 20);
         this.port = options.get("port", 1527);
         this.disabled = options.get("disabled", false);
-        
+
         host = InetAddress.getByName("0.0.0.0");
         System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
     }
 
-    public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream inputStream, final OutputStream outputStream) throws ServiceException, IOException {
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
     }
 
+    @Override
     public void start() throws ServiceException {
-        if (disabled) return;
+        if (disabled)
+            return;
         try {
             serverControl = new NetworkServerControl(host, port);
             //serverControl.setMaxThreads(threads);
@@ -83,6 +89,7 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
         }
     }
 
+    @Override
     public void stop() throws ServiceException {
         if (serverControl == null) {
             return;

@@ -53,6 +53,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Author: Andy Gumbrecht
  * Date: 11.06.12
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastPulseAgentTest {
 
     private static final Set<String> schemes = new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http"));
@@ -128,7 +129,7 @@ public class MulticastPulseAgentTest {
 
         final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
             @Override
-            public int compare(URI uri1, URI uri2) {
+            public int compare(final URI uri1, final URI uri2) {
 
                 //Ignore server hostname
                 URI u1 = URI.create(uri1.getSchemeSpecificPart());
@@ -230,7 +231,7 @@ public class MulticastPulseAgentTest {
 
                                     System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n", group, services, s));
 
-                                    for (String svc : serviceList) {
+                                    for (final String svc : serviceList) {
 
                                         if (MulticastPulseAgent.EMPTY.equals(svc)) {
                                             continue;
@@ -257,26 +258,26 @@ public class MulticastPulseAgentTest {
                                                 }
                                             }
 
-                                            svc = ("mp-" + serverHost + ":" + group + ":" + svc);
+                                            final String fullsvc = ("mp-" + serverHost + ":" + group + ":" + svc);
 
                                             setLock.lock();
 
                                             try {
-                                                if (svc.contains("0.0.0.0")) {
+                                                if (fullsvc.contains("0.0.0.0")) {
                                                     for (final String h : hosts) {
                                                         if (!h.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
-                                                            set.add(URI.create(svc.replace("0.0.0.0", ipFormat(h))));
+                                                            set.add(URI.create(fullsvc.replace("0.0.0.0", ipFormat(h))));
                                                         }
                                                     }
-                                                } else if (svc.contains("[::]")) {
+                                                } else if (fullsvc.contains("[::]")) {
                                                     for (final String h : hosts) {
                                                         if (!h.replace("[", "").startsWith("2001:0:")) { //Filter Teredo
-                                                            set.add(URI.create(svc.replace("[::]", ipFormat(h))));
+                                                            set.add(URI.create(fullsvc.replace("[::]", ipFormat(h))));
                                                         }
                                                     }
                                                 } else {
                                                     //Just add as is
-                                                    set.add(URI.create(svc));
+                                                    set.add(URI.create(fullsvc));
                                                 }
                                             } catch (Throwable e) {
                                                 //Ignore
@@ -334,7 +335,7 @@ public class MulticastPulseAgentTest {
 
                 running.set(false);
 
-                for (Future future : futures) {
+                for (final Future future : futures) {
                     try {
                         future.cancel(true);
                     } catch (Throwable e) {
@@ -402,19 +403,20 @@ public class MulticastPulseAgentTest {
     }
 
     private static class MyDiscoveryListener implements DiscoveryListener {
+
         private final String id;
 
-        public MyDiscoveryListener(String id) {
+        public MyDiscoveryListener(final String id) {
             this.id = id;
         }
 
         @Override
-        public void serviceAdded(URI service) {
+        public void serviceAdded(final URI service) {
             System.out.println(id + ": add : " + service.toString());
         }
 
         @Override
-        public void serviceRemoved(URI service) {
+        public void serviceRemoved(final URI service) {
             System.out.println(id + ": remove : " + service.toString());
         }
     }

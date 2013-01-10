@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.server.discovery;
 
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.Event;
 import org.apache.openejb.monitoring.Managed;
+import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.DiscoveryAgent;
-import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.OptionsLog;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointDiscoveryAgent.class);
 
-    private AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     @Managed
     private String host = "127.0.0.1";
@@ -77,12 +77,13 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     public MultipointDiscoveryAgent() {
     }
 
-    public MultipointDiscoveryAgent(boolean debug, String name) {
+    public MultipointDiscoveryAgent(final boolean debug, final String name) {
         this.debug = debug;
         this.name = name;
     }
 
-    public void init(Properties props) {
+    @Override
+    public void init(final Properties props) {
 
         final Options options = new Options(props);
         options.setLogger(new OptionsLog(log));
@@ -98,7 +99,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         final Set<URI> uris = new LinkedHashSet<URI>();
 
         // Connect the initial set of peer servers
-        StringTokenizer st = new StringTokenizer(initialServers, ",");
+        final StringTokenizer st = new StringTokenizer(initialServers, ",");
         while (st.hasMoreTokens()) {
             final String string = st.nextToken().trim();
             if (string.startsWith("conn://")) {
@@ -112,7 +113,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
         roots = uris;
 
-        Tracker.Builder builder = new Tracker.Builder();
+        final Tracker.Builder builder = new Tracker.Builder();
         builder.setHeartRate(heartRate);
         builder.setGroup(props.getProperty("group", builder.getGroup()));
         builder.setMaxMissedHeartbeats(options.get("max_missed_heartbeats", builder.getMaxMissedHeartbeats()));
@@ -125,6 +126,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         tracker = builder.build();
     }
 
+    @Override
     public String getIP() {
         return host;
     }
@@ -134,6 +136,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         return "multipoint";
     }
 
+    @Override
     public int getPort() {
         return port;
     }
@@ -142,30 +145,35 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         return initialServers;
     }
 
-    public void setDiscoveryListener(DiscoveryListener listener) {
+    @Override
+    public void setDiscoveryListener(final DiscoveryListener listener) {
         this.tracker.setDiscoveryListener(listener);
     }
 
-    public void registerService(URI serviceUri) throws IOException {
+    @Override
+    public void registerService(final URI serviceUri) throws IOException {
         tracker.registerService(serviceUri);
     }
 
-    public void unregisterService(URI serviceUri) throws IOException {
+    @Override
+    public void unregisterService(final URI serviceUri) throws IOException {
         tracker.unregisterService(serviceUri);
     }
 
-    public void reportFailed(URI serviceUri) {
+    @Override
+    public void reportFailed(final URI serviceUri) {
         tracker.reportFailed(serviceUri);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
     }
 
     /**
      * start the discovery agent
      *
-     * @throws Exception
+     * @throws ServiceException On error
      */
+    @Override
     @Managed
     public void start() throws ServiceException {
         try {
@@ -178,7 +186,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
             }
         } catch (Exception e) {
-            throw new ServiceException(port+"", e);
+            throw new ServiceException(port + "", e);
         }
     }
 
@@ -192,8 +200,9 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     /**
      * stop the channel
      *
-     * @throws Exception
+     * @throws ServiceException On error
      */
+    @Override
     @Managed
     public void stop() throws ServiceException {
         if (running.compareAndSet(true, false)) {
@@ -202,17 +211,19 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         }
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
     }
 
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
