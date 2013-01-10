@@ -16,34 +16,35 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.proxy.InvocationHandler;
+
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.NoSuchEJBException;
+import javax.ejb.TransactionRequiredLocalException;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.TransactionRequiredException;
+import javax.transaction.TransactionRolledbackException;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
-import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.openejb.client.proxy.InvocationHandler;
-
-import javax.transaction.TransactionRequiredException;
-import javax.transaction.TransactionRolledbackException;
-import javax.ejb.TransactionRequiredLocalException;
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBHome;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.validation.ValidationException;
+import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
+
+    private static final ReentrantLock lock = new ReentrantLock();
 
     protected static final Method EQUALS = getMethod(Object.class, "equals", Object.class);
     protected static final Method HASHCODE = getMethod(Object.class, "hashCode");
@@ -74,15 +75,15 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         remote = false;
     }
 
-    public EJBInvocationHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
         this.ejb = ejb;
         this.server = server;
         this.client = client;
-        Class remoteInterface = ejb.getRemoteInterfaceClass();
+        final Class remoteInterface = ejb.getRemoteInterfaceClass();
         remote = remoteInterface != null && (EJBObject.class.isAssignableFrom(remoteInterface) || EJBHome.class.isAssignableFrom(remoteInterface));
     }
 
-    public EJBInvocationHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
         this(ejb, server, client);
         this.primaryKey = primaryKey;
     }
@@ -103,37 +104,37 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         return primaryKey;
     }
 
-    protected static Method getMethod(Class c, String method, Class... params) {
+    @SuppressWarnings("unchecked")
+    protected static Method getMethod(final Class c, final String method, final Class... params) {
         try {
             return c.getMethod(method, params);
         } catch (NoSuchMethodException nse) {
-            throw new IllegalStateException("Cannot find method: "+c.getName()+"."+method, nse);
+            throw new IllegalStateException("Cannot find method: " + c.getName() + "." + method, nse);
 
         }
     }
 
-    public Object invoke(Object proxy, Method method, Object... args) throws Throwable {
+    @Override
+    public Object invoke(final Object proxy, final Method method, final Object... args) throws Throwable {
         if (isInvalidReference.get()) {
-            if (remote || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
+            if (remote || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
                 throw new NoSuchObjectException("reference is invalid");
             } else {
                 throw new NoSuchEJBException("reference is invalid");
             }
         }
 
-        // BREAKPOINT -- nice place for a breakpoint
-        Object returnObj = _invoke(proxy, method, args);
-        return returnObj;
+        return _invoke(proxy, method, args);
     }
 
     protected abstract Object _invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
-    protected EJBResponse request(EJBRequest req) throws Exception {
+    protected EJBResponse request(final EJBRequest req) throws Exception {
         req.setClientIdentity(getClientIdentity());
 
         req.setServerHash(server.buildHash());
 
-        EJBResponse response = new EJBResponse();
+        final EJBResponse response = new EJBResponse();
         Client.request(req, response, server);
         if (null != response.getServer()) {
             server.merge(response.getServer());
@@ -141,7 +142,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         return response;
     }
 
-    protected EJBResponse request(EJBRequest req, EJBResponse res) throws Exception {
+    protected EJBResponse request(final EJBRequest req, final EJBResponse res) throws Exception {
         req.setClientIdentity(getClientIdentity());
 
         req.setServerHash(server.buildHash());
@@ -155,7 +156,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected Object getClientIdentity() {
         if (client != null) {
-            Object identity = client.getClientIdentity();
+            final Object identity = client.getClientIdentity();
             if (identity != null) {
                 return identity;
             }
@@ -168,44 +169,57 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         this.isInvalidReference.set(true);
     }
 
-    protected static void invalidateAllHandlers(Object key) {
+    protected static void invalidateAllHandlers(final Object key) {
 
-        Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.remove(key);
-        if (set == null) return;
+        final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.remove(key);
+        if (set == null)
+            return;
 
-        synchronized (set) {
-            for (WeakReference<EJBInvocationHandler> ref : set) {
-                EJBInvocationHandler handler = ref.get();
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            for (final WeakReference<EJBInvocationHandler> ref : set) {
+                final EJBInvocationHandler handler = ref.get();
                 if (handler != null) {
                     handler.invalidateReference();
                 }
             }
             set.clear();
+        } finally {
+            l.unlock();
         }
     }
 
-    protected static void registerHandler(Object key, EJBInvocationHandler handler) {
+    protected static void registerHandler(final Object key, final EJBInvocationHandler handler) {
         Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
 
         if (set == null) {
             set = new HashSet<WeakReference<EJBInvocationHandler>>();
-            Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
+            final Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
             // someone else added the set
-            if (current != null) set = current;
+            if (current != null)
+                set = current;
         }
 
-        synchronized (set) {
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
             set.add(new WeakReference<EJBInvocationHandler>(handler));
+        } finally {
+            l.unlock();
         }
     }
 
     /**
      * Renamed method so it shows up with a much more understandable purpose as it
      * will be the top element in the stacktrace
-     * @param e
-     * @param method
+     *
+     * @param e      Throwable
+     * @param method Method
      */
-    protected Throwable convertException(Throwable e, Method method) {
+    protected Throwable convertException(final Throwable e, final Method method) {
         if (!remote && e instanceof RemoteException) {
             if (e instanceof TransactionRequiredException) {
                 return new TransactionRequiredLocalException(e.getMessage()).initCause(getCause(e));
@@ -222,7 +236,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
              * See EJB 3.0, section 4.4
              */
             if (e instanceof NoSuchObjectException) {
-                if (java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
+                if (java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
                     return e;
                 } else {
                     return new NoSuchEJBException(e.getMessage()).initCause(getCause(e));
@@ -248,7 +262,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         return e;
     }
 
-    protected static Throwable getCause(Throwable e) {
+    protected static Throwable getCause(final Throwable e) {
         if (e != null && e.getCause() != null) {
             return e.getCause();
         }
