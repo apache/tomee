@@ -216,7 +216,8 @@ public class DataSourceFactory {
 
     public static void destroy(final Object o) throws Throwable {
         final Object instance = realInstance(o);
-        creatorByDataSource.remove(instance).destroy(instance);
+        final DataSourceCreator remove = creatorByDataSource.remove(instance);
+        remove.destroy(instance);
     }
 
     // remove proxy added by us in front of the datasource returned by the creator

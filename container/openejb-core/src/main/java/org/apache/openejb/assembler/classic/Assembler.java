@@ -93,6 +93,7 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -1221,6 +1222,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 DataSourceFactory.destroy(object);
             } catch (Throwable t) {
                 //Ignore
+            }
+
+            if (object instanceof ManagedDataSource) {
+                ((ManagedDataSource) object).clean();
             }
 
         } else if (object instanceof ConnectorReference) {

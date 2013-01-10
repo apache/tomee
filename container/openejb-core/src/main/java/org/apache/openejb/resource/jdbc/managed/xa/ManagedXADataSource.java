@@ -47,6 +47,6 @@ public class ManagedXADataSource extends ManagedDataSource {
     }
 
     private Connection managedXA(final Connection connection) throws SQLException {
-        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedXAConnection(connection, transactionManager));
+        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedXAConnection(delegate, connection, transactionManager));
     }
 }
