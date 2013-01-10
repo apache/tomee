@@ -56,6 +56,7 @@ import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -292,8 +293,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Options options = new Options(props, SystemInstance.get().getOptions());
         final String className = options.get("openejb.configurator", "org.apache.openejb.config.ConfigurationFactory");
 
-        configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
+        if ("org.apache.openejb.config.ConfigurationFactory".equals(className)) {
+            configFactory = new ConfigurationFactory(); // no need to use reflection
+        } else {
+            configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
+        }
         configFactory.init(props);
+        SystemInstance.get().setComponent(OpenEjbConfigurationFactory.class, configFactory);
     }
 
     public static void installNaming() {
