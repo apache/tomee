@@ -55,8 +55,9 @@ public class ServicePool extends ServerServiceFilter {
     public ServicePool(final ServerService next, int threads, int queue, final boolean block) {
         super(next);
 
-        if (threads < 1) {
-            threads = 1;
+        int core = 2;
+        if (threads < core) {
+            threads = core;
         }
 
         if (queue < 1) {
@@ -72,7 +73,7 @@ public class ServicePool extends ServerServiceFilter {
          is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        threadPool = new ThreadPoolExecutor(2, threads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
+        threadPool = new ThreadPoolExecutor(core, threads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
         threadPool.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);
