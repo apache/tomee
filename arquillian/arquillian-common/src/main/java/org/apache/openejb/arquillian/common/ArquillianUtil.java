@@ -16,9 +16,25 @@
  */
 package org.apache.openejb.arquillian.common;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.container.DeploymentException;
+import org.jboss.shrinkwrap.api.Archive;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class ArquillianUtil {
     private static final String OPENEJB_ADAPTER_SYSTEM_PROP = "openejb.arquillian.adapter";
     private static final String TOMEE_ADAPTER_SYSTEM_PROP = "tomee.arquillian.adapter";
+
+    public static final String PREDEPLOYING_KEY = "openejb.arquillian.predeploy-archives";
 
     private ArquillianUtil() {
         // no-op
@@ -30,5 +46,48 @@ public final class ArquillianUtil {
             adapter = System.getProperty(TOMEE_ADAPTER_SYSTEM_PROP);
         }
         return adapter == null || name.equals(adapter);
+    }
+
+    public static Collection<Archive<?>> toDeploy(final Properties properties) {
+        final Collection<Archive<?>> list = new ArrayList<Archive<?>>();
+        if (properties.containsKey(ArquillianUtil.PREDEPLOYING_KEY)) {
+            final String toSplit = properties.getProperty(PREDEPLOYING_KEY).trim();
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            for (String name : toSplit.split(",")) {
+                try {
+                    final Class<?> clazz = loader.loadClass(name);
+                    for (Method m : clazz.getMethods()) {
+                        final int modifiers = m.getModifiers();
+                        if (Object.class.equals(m.getDeclaringClass()) || !Archive.class.isAssignableFrom(m.getReturnType())
+                                || !Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
+                            continue;
+                        }
+
+                        for (Annotation a : m.getAnnotations()) {
+                            if ("org.jboss.arquillian.container.test.api.Deployment".equals(a.annotationType().getName())) {
+                                final Archive<?> archive = (Archive<?>) m.invoke(null);
+                                list.add(archive);
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            }
+        }
+        return list;
+    }
+
+    public static void undeploy(DeployableContainer<?> container, final Collection<Archive<?>> containerArchives) {
+        if (containerArchives != null) {
+            for (Archive<?> a  : containerArchives) {
+                try {
+                    container.undeploy(a);
+                } catch (DeploymentException e) {
+                    Logger.getLogger(container.getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+                }
+            }
+        }
     }
 }

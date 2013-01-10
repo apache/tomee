@@ -20,6 +20,7 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
@@ -57,8 +58,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
@@ -86,6 +90,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     private Assembler assembler;
     private InitialContext initialContext;
     private ConfigurationFactory configurationFactory;
+    private Collection<Archive<?>> containerArchives;
 
     // suite
     @Inject
@@ -174,12 +179,37 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         contextProducer.set(initialContext);
+
+        containerArchives = ArquillianUtil.toDeploy(properties);
+        for (Archive<?> archive : containerArchives) {
+            try {
+                quickDeploy(archive, testClass.get());
+            } catch (DeploymentException e) {
+                Logger.getLogger(OpenEJBDeployableContainer.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
     }
 
     @Override
     public ProtocolMetaData deploy(final Archive<?> archive) throws DeploymentException {
         try {
-            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass.get());
+            final DeploymentInfo info = quickDeploy(archive, testClass.get());
+
+            servletContextProducer.set(info.appServletContext);
+            sessionProducer.set(info.appSession);
+            appInfoProducer.set(info.appInfo);
+            appContextProducer.set(info.appCtx);
+            classLoader.set(info.appCtx.getClassLoader());
+        } catch (Exception e) {
+            throw new DeploymentException("can't deploy " + archive.getName(), e);
+        }
+
+        return new ProtocolMetaData();
+    }
+
+    private DeploymentInfo quickDeploy(final Archive<?> archive, final TestClass testClass) throws DeploymentException {
+        try {
+            final AppModule module = OpenEJBArchiveProcessor.createModule(archive, testClass);
             final AppInfo appInfo = configurationFactory.configureApplication(module);
             final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
 
@@ -188,17 +218,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
             startContexts(appCtx.getWebBeansContext().getContextsService(), appServletContext, appSession);
 
-            servletContextProducer.set(appServletContext);
-            sessionProducer.set(appSession);
-
-            appInfoProducer.set(appInfo);
-            appContextProducer.set(appCtx);
-            classLoader.set(appCtx.getClassLoader());
+            return new DeploymentInfo(appServletContext, appSession, appInfo, appCtx);
         } catch (Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
-
-        return new ProtocolMetaData();
     }
 
     @Override
@@ -226,6 +249,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Override
     public void stop() throws LifecycleException {
+        ArquillianUtil.undeploy(this, containerArchives);
+
         try {
             if (initialContext != null) {
                 initialContext.close();
@@ -250,5 +275,19 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
     @Override
     public void undeploy(Descriptor descriptor) throws DeploymentException {
         throw new UnsupportedOperationException();
+    }
+
+    private static class DeploymentInfo {
+        public final ServletContext appServletContext;
+        public final HttpSession appSession;
+        public final AppInfo appInfo;
+        public final AppContext appCtx;
+
+        private DeploymentInfo(ServletContext appServletContext, HttpSession appSession, AppInfo appInfo, AppContext appCtx) {
+            this.appServletContext = appServletContext;
+            this.appSession = appSession;
+            this.appInfo = appInfo;
+            this.appCtx = appCtx;
+        }
     }
 }

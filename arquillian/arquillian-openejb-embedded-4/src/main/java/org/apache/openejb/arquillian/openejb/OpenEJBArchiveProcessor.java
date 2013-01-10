@@ -88,7 +88,12 @@ public class OpenEJBArchiveProcessor {
     public static final String WEB_INF_CLASSES = "/WEB-INF/classes/";
 
     public static AppModule createModule(final Archive<?> archive, final TestClass testClass) {
-        final Class<?> javaClass = testClass.getJavaClass();
+        final Class<?> javaClass;
+        if (testClass != null) {
+            javaClass = testClass.getJavaClass();
+        } else {
+            javaClass = null;
+        }
 
         final List<URL> additionalPaths = new ArrayList<URL>();
 
@@ -115,7 +120,13 @@ public class OpenEJBArchiveProcessor {
             prefix = META_INF;
         }
 
-        final ClassLoader parent = javaClass.getClassLoader();
+        final ClassLoader parent;
+        if (javaClass == null) {
+            parent = Thread.currentThread().getContextClassLoader();
+        } else {
+            parent = javaClass.getClassLoader();
+        }
+
         final URL[] urls = additionalPaths.toArray(new URL[additionalPaths.size()]);
 
         final ClassLoader loader;
@@ -137,7 +148,7 @@ public class OpenEJBArchiveProcessor {
         }
 
         // add the test as a managed bean to be able to inject into it easily
-        {
+        if (javaClass != null) {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
             final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass.getSimpleName(), javaClass.getName(), true));

@@ -16,19 +16,23 @@
  */
 package org.apache.tomee.arquillian.remote;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
+import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.shrinkwrap.api.Archive;
 
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +52,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private RemoteServer container;
     private boolean shutdown = false;
     private File tomeeHome;
+    private Collection<Archive<?>> containerArchives;
 
     @Override
     public void start() throws LifecycleException {
@@ -83,6 +88,16 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             container.setAdditionalClasspath(addOneLineFormatter(tomeeHome));
             container.start(args(), "start", true);
             container.killOnExit();
+
+            if (configuration.getProperties() != null) {
+                final Properties props = new Properties();
+                IO.readProperties(IO.read(configuration.getProperties().getBytes()), new Properties());
+
+                containerArchives = ArquillianUtil.toDeploy(props);
+                for (Archive<?> archive : containerArchives) {
+                    deploy(archive);
+                }
+            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
@@ -221,6 +236,8 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
     @Override
     public void stop() throws LifecycleException {
+        ArquillianUtil.undeploy(this, containerArchives);
+
         // only stop the container if we started it
         if (shutdown) {
             Setup.removeArquillianBeanDiscoverer(tomeeHome);
