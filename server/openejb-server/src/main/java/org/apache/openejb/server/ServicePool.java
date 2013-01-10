@@ -63,11 +63,11 @@ public class ServicePool extends ServerServiceFilter {
             keepAliveTime = 1000 * 60 * 5;
         }
 
-        if (threads <= 0) {
-            threads = 100;
-        }
         if (threadCore <= 0) {
-            threadCore = threads;
+            threadCore = 100;
+        }
+        if (threads < threadCore) {
+            threads = threadCore;
         }
 
         if (queue < 1) {
