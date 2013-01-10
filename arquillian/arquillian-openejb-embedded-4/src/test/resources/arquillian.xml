@@ -30,7 +30,7 @@
         java\:global/db.JdbcUrl = jdbc:hsqldb:mem:global
 
         # to check startup deployment
-        openejb.arquillian.predeploy-archives = org.apache.openejb.arquillian.openejb.EmptyArchive
+        openejb.arquillian.predeploy-archives = org.apache.openejb.arquillian.openejb.archive.[SimpleArchive|SimpleArchive2]
       </property>
     </configuration>
   </container>
