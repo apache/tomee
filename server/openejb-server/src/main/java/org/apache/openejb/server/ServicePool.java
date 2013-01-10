@@ -45,19 +45,29 @@ public class ServicePool extends ServerServiceFilter {
 
     public ServicePool(final ServerService next, final Properties properties) {
         //Liberal defaults
-        this(next, new Options(properties).get("threads", 50), new Options(properties).get("queue", 50000), new Options(properties).get("block", false));
+        this(next, new Options(properties).get("threadsCore", 2), new Options(properties).get("threads", 50), new Options(properties).get("queue", 50000), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", 1000 * 60 * 5));
     }
 
     public ServicePool(final ServerService next, final int threads) {
-        this(next, threads, 50000, true);
+        this(next, threads, threads, 50000, true, 1000 * 60 * 5);
     }
 
     public ServicePool(final ServerService next, int threads, int queue, final boolean block) {
+        this(next, threads, threads, queue, block, 1000 * 60 * 5);
+    }
+
+    public ServicePool(final ServerService next, int threadCore, int threads, int queue, final boolean block, long keepAliveTime) {
         super(next);
 
-        int core = 2;
-        if (threads < core) {
-            threads = core;
+        if (keepAliveTime <= 0) {
+            keepAliveTime = 1000 * 60 * 5;
+        }
+
+        if (threads <= 0) {
+            threads = 100;
+        }
+        if (threadCore <= 0) {
+            threadCore = threads;
         }
 
         if (queue < 1) {
@@ -73,7 +83,7 @@ public class ServicePool extends ServerServiceFilter {
          is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        threadPool = new ThreadPoolExecutor(core, threads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
+        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
         threadPool.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);

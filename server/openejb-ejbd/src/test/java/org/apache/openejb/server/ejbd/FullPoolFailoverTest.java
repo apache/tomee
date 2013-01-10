@@ -88,6 +88,13 @@ public class FullPoolFailoverTest extends TestCase {
         }
 
         // Wait for the beans to reach the start line
+        try {
+            if (!paused.await(3000, TimeUnit.MILLISECONDS)) {
+                System.out.println();
+            }
+        } catch (Throwable t) {
+            System.out.println();
+        }
         assertTrue("expected 10 invocations", paused.await(3000, TimeUnit.MILLISECONDS));
 
         assertEquals(10, CounterBean.instances.get());
