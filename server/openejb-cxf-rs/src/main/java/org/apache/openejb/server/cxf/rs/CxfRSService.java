@@ -29,17 +29,17 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class CxfRSService extends RESTService {
+
     private static final String NAME = "cxf-rs";
     private HttpTransportFactory httpTransportFactory;
 
-
     @Override
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
     @Override
-    public void service(Socket socket) throws ServiceException, IOException {
+    public void service(final Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException(getClass().getName() + " cannot be invoked directly");
     }
 
@@ -49,7 +49,7 @@ public class CxfRSService extends RESTService {
     }
 
     @Override
-    public void init(Properties properties) throws Exception {
+    public void init(final Properties properties) throws Exception {
         super.init(properties);
         CxfUtil.configureBus();
     }
@@ -63,14 +63,14 @@ public class CxfRSService extends RESTService {
     @Override
     protected boolean containsJaxRsConfiguration(final Properties properties) {
         return properties.containsKey(CxfRsHttpListener.PROVIDERS_KEY)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_FAULT_INTERCEPTORS)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_INTERCEPTORS)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_FAULT_INTERCEPTORS)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_INTERCEPTORS)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.DATABINDING)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ADDRESS)
-                || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ENDPOINT_PROPERTIES);
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_FAULT_INTERCEPTORS)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.IN_INTERCEPTORS)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_FAULT_INTERCEPTORS)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.OUT_INTERCEPTORS)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.DATABINDING)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.FEATURES)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ADDRESS)
+               || properties.containsKey(CxfRsHttpListener.CXF_JAXRS_PREFIX + CxfUtil.ENDPOINT_PROPERTIES);
     }
 
     @Override

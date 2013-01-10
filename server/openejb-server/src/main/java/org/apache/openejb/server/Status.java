@@ -21,9 +21,10 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.OutputStream;
 import java.net.Socket;
 
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Status {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         //        System.exit(new Start().start()?0:1);
         new Status().status();
     }

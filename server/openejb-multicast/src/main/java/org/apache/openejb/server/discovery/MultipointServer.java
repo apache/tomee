@@ -31,9 +31,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedChannelException;
@@ -44,9 +42,9 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -71,6 +69,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Managed
 public class MultipointServer {
+
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointServer.class);
 
     private static final URI END_LIST = URI.create("end:list");
@@ -100,9 +99,9 @@ public class MultipointServer {
 
     private long joined = 0;
 
-    private long reconnectDelay;
+    private final long reconnectDelay;
 
-    private ServerSocketChannel serverChannel;
+    private final ServerSocketChannel serverChannel;
 
     private final Selector selector;
 
@@ -110,22 +109,26 @@ public class MultipointServer {
     private final Condition started = lock.newCondition();
     private final Condition stopped = lock.newCondition();
 
-    public MultipointServer(int port, Tracker tracker) throws IOException {
-        this("localhost", "localhost", port, tracker, randomColor(), true, Collections.EMPTY_SET, new Duration(30, TimeUnit.SECONDS));
+    public MultipointServer(final int port, final Tracker tracker) throws IOException {
+        this("localhost", "localhost", port, tracker, randomColor(), true, new HashSet<URI>(0), new Duration(30, TimeUnit.SECONDS));
     }
 
-    public MultipointServer(String bindHost, String broadcastHost, int port, Tracker tracker, String name, boolean debug, Set<URI> roots, Duration reconnectDelay) throws IOException {
-        if (tracker == null) throw new NullPointerException("tracker cannot be null");
-        if (bindHost == null) throw new NullPointerException("host cannot be null");
+    public MultipointServer(final String bindHost, String broadcastHost, final int port, final Tracker tracker, final String name, final boolean debug, final Set<URI> roots, Duration reconnectDelay) throws IOException {
+        if (tracker == null)
+            throw new NullPointerException("tracker cannot be null");
+        if (bindHost == null)
+            throw new NullPointerException("host cannot be null");
 
-        if (broadcastHost == null) broadcastHost = bindHost;
-        if (reconnectDelay == null) reconnectDelay = new Duration(30, TimeUnit.SECONDS);
+        if (broadcastHost == null)
+            broadcastHost = bindHost;
+        if (reconnectDelay == null)
+            reconnectDelay = new Duration(30, TimeUnit.SECONDS);
 
         this.tracker = tracker;
         this.name = name;
 
         if (roots != null) {
-            for (URI uri : roots) {
+            for (final URI uri : roots) {
                 this.roots.add(normalize(uri));
             }
         }
@@ -133,16 +136,15 @@ public class MultipointServer {
         this.reconnectDelay = reconnectDelay.getTime(TimeUnit.NANOSECONDS);
 
         final String format = String.format("MultipointServer(bindHost=%s, discoveryHost=%s, port=%s, name=%s, debug=%s, roots=%s, reconnectDelay='%s')",
-                bindHost,
-                broadcastHost,
-                port,
-                name,
-                debug,
-                this.roots.size(),
-                reconnectDelay.toString());
+                                            bindHost,
+                                            broadcastHost,
+                                            port,
+                                            name,
+                                            debug,
+                                            this.roots.size(),
+                                            reconnectDelay.toString());
 
         log.debug(format);
-
 
         selector = Selector.open();
 
@@ -161,11 +163,11 @@ public class MultipointServer {
         println("Broadcasting");
     }
 
-    private URI normalize(URI uri) {
+    private URI normalize(final URI uri) {
         return createURI(uri.getHost(), uri.getPort());
     }
 
-    private URI createURI(String host, final int port) {
+    private URI createURI(final String host, final int port) {
         return URI.create("conn://" + host.toLowerCase() + ":" + port);
     }
 
@@ -208,7 +210,7 @@ public class MultipointServer {
     public List<URI> getConnectionsQueued() {
         synchronized (connect) {
             final ArrayList<URI> uris = new ArrayList<URI>(connect.size());
-            for (Host host : connect) {
+            for (final Host host : connect) {
                 uris.add(host.getUri());
             }
             return uris;
@@ -226,15 +228,17 @@ public class MultipointServer {
 
     /**
      * Attempt to connect back to the network if
-     *  - We aren't already connected
-     *  - We aren't already attempting to connect
-     *  - It has been a while since we last tried (reconnectDelay)
+     * - We aren't already connected
+     * - We aren't already attempting to connect
+     * - It has been a while since we last tried (reconnectDelay)
      */
     private void rejoin() {
-        if (roots.size() <= 0) return;
-        if (System.nanoTime() - joined <= reconnectDelay) return;
+        if (roots.size() <= 0)
+            return;
+        if (System.nanoTime() - joined <= reconnectDelay)
+            return;
 
-        for (URI uri : roots) {
+        for (final URI uri : roots) {
             final Host host = new Host(uri);
             synchronized (connect) {
                 if (!connections.containsKey(uri) && !connect.contains(host)) {
@@ -246,13 +250,15 @@ public class MultipointServer {
             }
         }
     }
+
     public MultipointServer start() {
         if (running.compareAndSet(false, true)) {
 
-            String multipointServer = Join.join(".", "MultipointServer", name, port);
+            final String multipointServer = Join.join(".", "MultipointServer", name, port);
             log.info("MultipointServer Starting : Thread '" + multipointServer + "'");
 
-            Thread thread = new Thread(new Runnable() {
+            final Thread thread = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     signal(started);
                     try {
@@ -270,7 +276,7 @@ public class MultipointServer {
         return this;
     }
 
-    private void signal(Condition condition) {
+    private void signal(final Condition condition) {
         lock.lock();
         try {
             condition.signal();
@@ -279,7 +285,7 @@ public class MultipointServer {
         }
     }
 
-    private void await(Condition condition, long time, TimeUnit unit) {
+    private void await(final Condition condition, final long time, final TimeUnit unit) {
         lock.lock();
         try {
             condition.await(time, unit);
@@ -302,7 +308,8 @@ public class MultipointServer {
     }
 
     public static class CloseException extends RuntimeException {
-        public CloseException(Throwable cause) {
+
+        public CloseException(final Throwable cause) {
             super(cause);
         }
     }
@@ -325,7 +332,7 @@ public class MultipointServer {
         public boolean hangup;
         private final boolean client;
 
-        public Session(SocketChannel channel, InetSocketAddress address, URI uri) throws ClosedChannelException {
+        public Session(final SocketChannel channel, final InetSocketAddress address, final URI uri) throws ClosedChannelException {
             this.channel = channel;
             this.client = uri != null;
             this.uri = uri != null ? uri : createURI(address.getHostName(), address.getPort());
@@ -334,7 +341,7 @@ public class MultipointServer {
             log.info("Constructing " + this);
         }
 
-        public Session ops(int ops) {
+        public Session ops(final int ops) {
             key.interestOps(ops);
             return this;
         }
@@ -343,48 +350,52 @@ public class MultipointServer {
             return created;
         }
 
-        public void state(int ops, State state) {
-//            trace("transition "+state +"  "+ops);
+        public void state(final int ops, final State state) {
+            //            trace("transition "+state +"  "+ops);
             if (this.state != state) {
                 if (log.isDebugEnabled()) {
                     log.debug(message(state.name()));
                 }
             }
             this.state = state;
-            if (ops > 0) key.interestOps(ops);
+            if (ops > 0)
+                key.interestOps(ops);
         }
 
-        public void setURI(URI uri) {
+        public void setURI(final URI uri) {
             this.uri = uri;
         }
 
-        private void trace(String str) {
-//            println(message(str));
+        private void trace(final String str) {
+            //            println(message(str));
 
             if (log.isDebugEnabled()) {
                 log.debug(message(str));
-//                new Exception().fillInStackTrace().printStackTrace();
+                //                new Exception().fillInStackTrace().printStackTrace();
             }
         }
 
-        private void info(String str) {
-//            println(message(str));
+        private void info(final String str) {
+            //            println(message(str));
 
             if (log.isInfoEnabled()) {
                 log.info(message(str));
             }
         }
 
-        private String message(String str) {
+        private String message(final String str) {
             final StringBuilder sb = new StringBuilder();
             sb.append(name);
             sb.append(":");
             sb.append(port);
             sb.append(" ");
             if (key.isValid()) {
-                if ((key.interestOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ) sb.append("<");
-                if ((key.interestOps() & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) sb.append(">");
-                if ((key.interestOps() == 0)) sb.append("-");
+                if ((key.interestOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ)
+                    sb.append("<");
+                if ((key.interestOps() & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE)
+                    sb.append(">");
+                if ((key.interestOps() == 0))
+                    sb.append("-");
             } else {
                 sb.append(":");
             }
@@ -394,18 +405,17 @@ public class MultipointServer {
             sb.append(this.state);
             sb.append(" ");
             sb.append(str);
-            String x = sb.toString();
-            return x;
+            return sb.toString();
         }
 
-        public void write(URI uri) throws IOException {
+        public void write(final URI uri) throws IOException {
             write(Arrays.asList(uri));
         }
 
-        public void write(Collection<?> uris) throws IOException {
+        public void write(final Collection<?> uris) throws IOException {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            for (Object uri : uris) {
+            for (final Object uri : uris) {
                 final String s = uri.toString();
                 final byte[] b = s.getBytes("UTF-8");
                 baos.write(b);
@@ -422,13 +432,15 @@ public class MultipointServer {
 
         public String read() throws IOException {
 
-            if (channel.read(read) == -1) throw new EOFException();
+            if (channel.read(read) == -1)
+                throw new EOFException();
 
             final byte[] buf = read.array();
 
             final int end = endOfText(buf, 0, read.position());
 
-            if (end < 0) return null;
+            if (end < 0)
+                return null;
 
             // Copy the string without the terminator char
             final String text = new String(buf, 0, end, "UTF-8");
@@ -440,28 +452,32 @@ public class MultipointServer {
             return text;
         }
 
-        private int endOfText(byte[] data, int offset, int pos) {
-            for (int i = offset; i < pos; i++) if (data[i] == EOF) return i;
+        private int endOfText(final byte[] data, final int offset, final int pos) {
+            for (int i = offset; i < pos; i++) {
+                if (data[i] == EOF)
+                    return i;
+            }
             return -1;
         }
 
         @Override
         public String toString() {
             return "Session{" +
-                    "uri=" + uri +
-                    ", created=" + created +
-                    ", state=" + state +
-                    ", owner=" + port +
-                    ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
-                    ", c=" + (!client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
-                    ", " + (client ? "client" : "server") +
-                    '}';
+                   "uri=" + uri +
+                   ", created=" + created +
+                   ", state=" + state +
+                   ", owner=" + port +
+                   ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                   ", c=" + (!client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                   ", " + (client ? "client" : "server") +
+                   '}';
         }
 
         private long last = 0;
 
         public void tick() throws IOException {
-            if (state != State.HEARTBEAT) return;
+            if (state != State.HEARTBEAT)
+                return;
 
             final long now = System.currentTimeMillis();
             final long delay = now - last;
@@ -477,16 +493,20 @@ public class MultipointServer {
             heartbeats.record();
 
             final Set<String> strings = tracker.getRegisteredServices();
-//            for (String string : strings) {
-//                trace(string);
-//            }
+            //            for (String string : strings) {
+            //                trace(string);
+            //            }
             write(strings);
             state(SelectionKey.OP_READ | SelectionKey.OP_WRITE, State.HEARTBEAT);
         }
     }
 
     private static enum State {
-        OPEN, GREETING, LISTING, HEARTBEAT, CLOSED
+        OPEN,
+        GREETING,
+        LISTING,
+        HEARTBEAT,
+        CLOSED
     }
 
     private final AtomicBoolean running = new AtomicBoolean();
@@ -534,13 +554,17 @@ public class MultipointServer {
                 iterator.remove();
 
                 try {
-                    if (key.isAcceptable()) doAccept(key);
+                    if (key.isAcceptable())
+                        doAccept(key);
 
-                    if (key.isConnectable()) doConnect(key);
+                    if (key.isConnectable())
+                        doConnect(key);
 
-                    if (key.isReadable()) doRead(key);
+                    if (key.isReadable())
+                        doRead(key);
 
-                    if (key.isWritable()) doWrite(key);
+                    if (key.isWritable())
+                        doWrite(key);
 
                 } catch (CancelledKeyException ex) {
                     synchronized (connect) {
@@ -565,11 +589,12 @@ public class MultipointServer {
             }
 
             // This loop can generate WRITE keys (the heartbeats we send)
-            for (SelectionKey key : selector.keys()) {
+            for (final SelectionKey key : selector.keys()) {
                 final Session session = (Session) key.attachment();
 
                 try {
-                    if (session != null && session.state == State.HEARTBEAT) session.tick();
+                    if (session != null && session.state == State.HEARTBEAT)
+                        session.tick();
                 } catch (IOException ex) {
                     close(key);
                 }
@@ -591,7 +616,7 @@ public class MultipointServer {
         log.info("MultipointServer has terminated.");
     }
 
-    private long adjustedSelectorTimeout(long start) {
+    private long adjustedSelectorTimeout(final long start) {
         final long end = System.nanoTime();
         final long elapsed = TimeUnit.NANOSECONDS.toMillis(end - start);
         final long heartRate = tracker.getHeartRate();
@@ -610,7 +635,8 @@ public class MultipointServer {
 
                 log.debug("Initiate(uri=" + host.getUri() + ")");
 
-                if (connections.containsKey(host.getUri())) continue;
+                if (connections.containsKey(host.getUri()))
+                    continue;
 
                 if (!host.isDone()) {
                     unresolved.add(host);
@@ -658,7 +684,7 @@ public class MultipointServer {
         }
     }
 
-    private void doWrite(SelectionKey key) throws IOException {
+    private void doWrite(final SelectionKey key) throws IOException {
         final Session session = (Session) key.attachment();
 
         switch (session.state) {
@@ -683,7 +709,7 @@ public class MultipointServer {
                         // CLIENTs list last, so at this point we've read
                         // the server's list and have written ours
 
-//                        session.trace("DONE WRITING");
+                        //                        session.trace("DONE WRITING");
 
                         session.state(SelectionKey.OP_READ, State.HEARTBEAT);
 
@@ -704,7 +730,7 @@ public class MultipointServer {
 
                     session.last = System.currentTimeMillis();
 
-//                    session.trace("send");
+                    //                    session.trace("send");
 
                     session.state(SelectionKey.OP_READ, State.HEARTBEAT);
 
@@ -715,7 +741,7 @@ public class MultipointServer {
         }
     }
 
-    private void doRead(SelectionKey key) throws IOException {
+    private void doRead(final SelectionKey key) throws IOException {
         final Session session = (Session) key.attachment();
 
         switch (session.state) {
@@ -737,7 +763,8 @@ public class MultipointServer {
 
                 final String message = session.read();
 
-                if (message == null) break; // need to read more
+                if (message == null)
+                    break; // need to read more
 
                 session.setURI(URI.create(message));
 
@@ -759,17 +786,16 @@ public class MultipointServer {
 
                 session.trace("STARTING");
 
-
             }
             break;
 
             case LISTING: { // read
 
-                String message = null;
+                String message;
 
                 while ((message = session.read()) != null) {
 
-//                    session.trace(message);
+                    //                    session.trace(message);
 
                     final URI uri = URI.create(message);
 
@@ -779,7 +805,7 @@ public class MultipointServer {
 
                             final ArrayList<URI> list = connections();
 
-                            for (URI reported : session.listed) {
+                            for (final URI reported : session.listed) {
                                 list.remove(reported);
                             }
 
@@ -835,9 +861,9 @@ public class MultipointServer {
 
             case HEARTBEAT: { // read
 
-                String message = null;
+                String message;
                 while ((message = session.read()) != null) {
-//                    session.trace(message);
+                    //                    session.trace(message);
                     tracker.processData(message);
                 }
             }
@@ -845,7 +871,7 @@ public class MultipointServer {
         }
     }
 
-    private void doConnect(SelectionKey key) throws IOException {
+    private void doConnect(final SelectionKey key) throws IOException {
         // we are a client
 
         final Session session = (Session) key.attachment();
@@ -873,7 +899,7 @@ public class MultipointServer {
         session.state(SelectionKey.OP_WRITE, State.GREETING);
     }
 
-    private void doAccept(SelectionKey key) throws IOException {
+    private void doAccept(final SelectionKey key) throws IOException {
         // we are a server
 
         // when you are a server, we must first listen for the
@@ -899,16 +925,15 @@ public class MultipointServer {
     private ArrayList<URI> connections() {
         synchronized (connect) {
             final ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
-            for (Host host : connect) {
+            for (final Host host : connect) {
                 list.add(host.getUri());
             }
             return list;
         }
     }
 
-    private void close(SelectionKey key) {
+    private void close(final SelectionKey key) {
         final Session session = (Session) key.attachment();
-
 
         if (session.hangup) {
             // This was a duplicate connection and was closed
@@ -930,26 +955,27 @@ public class MultipointServer {
         hangup(key);
     }
 
-    private void hangup(SelectionKey key) {
+    private void hangup(final SelectionKey key) {
         key.cancel();
         try {
             key.channel().close();
         } catch (IOException cex) {
+            //Ignore
         }
     }
 
-
-    public void connect(MultipointServer s) throws Exception {
+    public void connect(final MultipointServer s) throws Exception {
         connect(s.port);
     }
 
-    public void connect(int port) throws Exception {
+    public void connect(final int port) throws Exception {
         connect(URI.create("conn://localhost:" + port));
     }
 
     public void connect(URI uri) {
         uri = normalize(uri);
-        if (me.equals(uri)) return;
+        if (me.equals(uri))
+            return;
 
         final Host host = new Host(uri);
 
@@ -966,10 +992,9 @@ public class MultipointServer {
 
         synchronized (connect) {
             Session duplicate = connections.get(session.uri);
-//            Session duplicate = null;
+            //            Session duplicate = null;
 
             if (duplicate != null) {
-
 
                 session.trace("duplicate");
 
@@ -991,7 +1016,7 @@ public class MultipointServer {
                     // Case 1 -- Client is calling back
                     Arrays.sort(sessions, new Comparator<Session>() {
                         @Override
-                        public int compare(Session a, Session b) {
+                        public int compare(final Session a, final Session b) {
                             return (int) (b.created - a.created);
                         }
                     });
@@ -999,38 +1024,40 @@ public class MultipointServer {
                     // Case 2 -- We called each other at the same time
 
                     Arrays.sort(sessions, new Comparator<Session>() {
-                    // Goal: Keep the connection with the lowest port number
-                    ///
-                    // Low vs high is not very significant.  The critical
-                    // part is that they both choose the same connection.
-                    //
-                    // Port numbers are seen on both sides.  There are two
-                    // ports (one client and one server) for each connection.
-                    //
-                    // Both sides will agree to kill the connection with the
-                    // lowest server port.  If those are the same, then both
-                    // sides will agree to kill the connection with the lowest
-                    // client port.  If those are the same, we still close a
-                    // connection and hope for the best.  If both connections
-                    // are killed we will try again next time another node
-                    // lists the server and we notice we are not connected.
-                    //
-                    public int compare(Session a, Session b) {
-                        int serverRank = server(a) - server(b);
-                        if (serverRank != 0) return serverRank;
-                        return client(a) - client(b);
-                    }
+                        // Goal: Keep the connection with the lowest port number
+                        ///
+                        // Low vs high is not very significant.  The critical
+                        // part is that they both choose the same connection.
+                        //
+                        // Port numbers are seen on both sides.  There are two
+                        // ports (one client and one server) for each connection.
+                        //
+                        // Both sides will agree to kill the connection with the
+                        // lowest server port.  If those are the same, then both
+                        // sides will agree to kill the connection with the lowest
+                        // client port.  If those are the same, we still close a
+                        // connection and hope for the best.  If both connections
+                        // are killed we will try again next time another node
+                        // lists the server and we notice we are not connected.
+                        //
+                        @Override
+                        public int compare(final Session a, final Session b) {
+                            final int serverRank = server(a) - server(b);
+                            if (serverRank != 0)
+                                return serverRank;
+                            return client(a) - client(b);
+                        }
 
-                    private int server(Session a) {
-                        final Socket socket = a.channel.socket();
-                        return a.client ? socket.getPort() : socket.getLocalPort();
-                    }
+                        private int server(final Session a) {
+                            final Socket socket = a.channel.socket();
+                            return a.client ? socket.getPort() : socket.getLocalPort();
+                        }
 
-                    private int client(Session a) {
-                        final Socket socket = a.channel.socket();
-                        return !a.client ? socket.getPort() : socket.getLocalPort();
-                    }
-                });
+                        private int client(final Session a) {
+                            final Socket socket = a.channel.socket();
+                            return !a.client ? socket.getPort() : socket.getLocalPort();
+                        }
+                    });
                 }
 
                 session = sessions[0];
@@ -1049,152 +1076,154 @@ public class MultipointServer {
         }
     }
 
-    private void println(String s) {
-//        if (debug && s.matches(".*(Listening|DONE|KEEP|KILL)")) {
-//            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
-//        }
+    private void println(final String s) {
+        //        if (debug && s.matches(".*(Listening|DONE|KEEP|KILL)")) {
+        //            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
+        //        }
     }
 
     @Override
     public String toString() {
         return "MultipointServer{" +
-                "name='" + name + '\'' +
-                ", me=" + me +
-                '}';
+               "name='" + name + '\'' +
+               ", me=" + me +
+               '}';
     }
 
     public static String randomColor() {
-        String[] colors = {
-                "almond",
-                "amber",
-                "amethyst",
-                "apple",
-                "apricot",
-                "aqua",
-                "aquamarine",
-                "ash",
-                "azure",
-                "banana",
-                "beige",
-                "black",
-                "blue",
-                "brick",
-                "bronze",
-                "brown",
-                "burgundy",
-                "carrot",
-                "charcoal",
-                "cherry",
-                "chestnut",
-                "chocolate",
-                "chrome",
-                "cinnamon",
-                "citrine",
-                "cobalt",
-                "copper",
-                "coral",
-                "cornflower",
-                "cotton",
-                "cream",
-                "crimson",
-                "cyan",
-                "ebony",
-                "emerald",
-                "forest",
-                "fuchsia",
-                "ginger",
-                "gold",
-                "goldenrod",
-                "gray",
-                "green",
-                "grey",
-                "indigo",
-                "ivory",
-                "jade",
-                "jasmine",
-                "khaki",
-                "lava",
-                "lavender",
-                "lemon",
-                "lilac",
-                "lime",
-                "macaroni",
-                "magenta",
-                "magnolia",
-                "mahogany",
-                "malachite",
-                "mango",
-                "maroon",
-                "mauve",
-                "mint",
-                "moonstone",
-                "navy",
-                "ocean",
-                "olive",
-                "onyx",
-                "orange",
-                "orchid",
-                "papaya",
-                "peach",
-                "pear",
-                "pearl",
-                "periwinkle",
-                "pine",
-                "pink",
-                "pistachio",
-                "platinum",
-                "plum",
-                "prune",
-                "pumpkin",
-                "purple",
-                "quartz",
-                "raspberry",
-                "red",
-                "rose",
-                "rosewood",
-                "ruby",
-                "salmon",
-                "sapphire",
-                "scarlet",
-                "sienna",
-                "silver",
-                "slate",
-                "strawberry",
-                "tan",
-                "tangerine",
-                "taupe",
-                "teal",
-                "titanium",
-                "topaz",
-                "turquoise",
-                "umber",
-                "vanilla",
-                "violet",
-                "watermelon",
-                "white",
-                "yellow"
+        final String[] colors = {
+                                        "almond",
+                                        "amber",
+                                        "amethyst",
+                                        "apple",
+                                        "apricot",
+                                        "aqua",
+                                        "aquamarine",
+                                        "ash",
+                                        "azure",
+                                        "banana",
+                                        "beige",
+                                        "black",
+                                        "blue",
+                                        "brick",
+                                        "bronze",
+                                        "brown",
+                                        "burgundy",
+                                        "carrot",
+                                        "charcoal",
+                                        "cherry",
+                                        "chestnut",
+                                        "chocolate",
+                                        "chrome",
+                                        "cinnamon",
+                                        "citrine",
+                                        "cobalt",
+                                        "copper",
+                                        "coral",
+                                        "cornflower",
+                                        "cotton",
+                                        "cream",
+                                        "crimson",
+                                        "cyan",
+                                        "ebony",
+                                        "emerald",
+                                        "forest",
+                                        "fuchsia",
+                                        "ginger",
+                                        "gold",
+                                        "goldenrod",
+                                        "gray",
+                                        "green",
+                                        "grey",
+                                        "indigo",
+                                        "ivory",
+                                        "jade",
+                                        "jasmine",
+                                        "khaki",
+                                        "lava",
+                                        "lavender",
+                                        "lemon",
+                                        "lilac",
+                                        "lime",
+                                        "macaroni",
+                                        "magenta",
+                                        "magnolia",
+                                        "mahogany",
+                                        "malachite",
+                                        "mango",
+                                        "maroon",
+                                        "mauve",
+                                        "mint",
+                                        "moonstone",
+                                        "navy",
+                                        "ocean",
+                                        "olive",
+                                        "onyx",
+                                        "orange",
+                                        "orchid",
+                                        "papaya",
+                                        "peach",
+                                        "pear",
+                                        "pearl",
+                                        "periwinkle",
+                                        "pine",
+                                        "pink",
+                                        "pistachio",
+                                        "platinum",
+                                        "plum",
+                                        "prune",
+                                        "pumpkin",
+                                        "purple",
+                                        "quartz",
+                                        "raspberry",
+                                        "red",
+                                        "rose",
+                                        "rosewood",
+                                        "ruby",
+                                        "salmon",
+                                        "sapphire",
+                                        "scarlet",
+                                        "sienna",
+                                        "silver",
+                                        "slate",
+                                        "strawberry",
+                                        "tan",
+                                        "tangerine",
+                                        "taupe",
+                                        "teal",
+                                        "titanium",
+                                        "topaz",
+                                        "turquoise",
+                                        "umber",
+                                        "vanilla",
+                                        "violet",
+                                        "watermelon",
+                                        "white",
+                                        "yellow"
         };
 
         final Random random = new Random();
         long l = random.nextLong();
 
-        if (l < 0) l *= -1;
+        if (l < 0)
+            l *= -1;
 
         final long index = l % colors.length;
-        final String s = colors[(int) index];
 
-        return s;
+        return colors[(int) index];
     }
 
     private final Executor dnsResolutionQueue = Executors.newFixedThreadPool(2);
 
     private class Host {
+
         private final URI uri;
         private final FutureTask<InetAddress> address;
 
-        private Host(URI uri) {
+        private Host(final URI uri) {
             this.uri = uri;
-            this.address = new FutureTask<InetAddress>(new Callable<InetAddress>(){
+            this.address = new FutureTask<InetAddress>(new Callable<InetAddress>() {
+                @Override
                 public InetAddress call() throws Exception {
                     return InetAddress.getByName(Host.this.uri.getHost());
                 }
@@ -1223,13 +1252,14 @@ public class MultipointServer {
             return uri;
         }
 
-
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
-            Host host = (Host) o;
+            final Host host = (Host) o;
 
             return uri.equals(host.uri);
         }

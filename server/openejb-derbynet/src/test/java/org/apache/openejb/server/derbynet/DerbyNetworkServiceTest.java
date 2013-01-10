@@ -45,7 +45,7 @@ public class DerbyNetworkServiceTest {
                 properties.setProperty("port", port + "");
                 properties.setProperty("disabled", "false");
                 properties.put(ServerService.class, DerbyNetworkService.class);
-                Map<String, Properties> services = new HashMap<String, Properties>();
+                final Map<String, Properties> services = new HashMap<String, Properties>();
                 services.put("derbynet", properties);
                 return services;
             }

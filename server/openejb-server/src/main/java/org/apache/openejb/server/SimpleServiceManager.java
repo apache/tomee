@@ -28,7 +28,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -38,20 +37,20 @@ import java.util.Properties;
  * @org.apache.xbean.XBean element="simpleServiceManager"
  */
 public class SimpleServiceManager extends ServiceManager {
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, SimpleServiceManager.class);
 
     private static ObjectName objectName = null;
 
     private ServerService[] daemons;
     private boolean stop = false;
-    private ServiceFinder serviceFinder;
-
+    private final ServiceFinder serviceFinder;
 
     public SimpleServiceManager() {
         this(new SimpleServiceFinder("META-INF/"));
     }
 
-    public SimpleServiceManager(ServiceFinder serviceFinder) {
+    public SimpleServiceManager(final ServiceFinder serviceFinder) {
         this.serviceFinder = serviceFinder;
     }
 
@@ -75,25 +74,25 @@ public class SimpleServiceManager extends ServiceManager {
     public static class SimpleServiceFinder implements ServiceFinder {
 
         private final ResourceFinder resourceFinder;
-        private ClassLoader classLoader;
+        private final ClassLoader classLoader;
 
-        public SimpleServiceFinder(String basePath) {
+        public SimpleServiceFinder(final String basePath) {
             this(basePath, Thread.currentThread().getContextClassLoader());
         }
 
-        public SimpleServiceFinder(String basePath, ClassLoader classLoader) {
+        public SimpleServiceFinder(final String basePath, final ClassLoader classLoader) {
             this.resourceFinder = new ResourceFinder(basePath, classLoader);
             this.classLoader = classLoader;
         }
 
         @Override
-        public Map<String, Properties> mapAvailableServices(Class interfase) throws IOException, ClassNotFoundException {
+        public Map<String, Properties> mapAvailableServices(final Class interfase) throws IOException, ClassNotFoundException {
             final Map<String, Properties> service = resourceFinder.mapAvailableProperties(ServerService.class.getName());
 
-            for (Iterator iterator = service.entrySet().iterator(); iterator.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String name = (String) entry.getKey();
-                Properties properties = (Properties) entry.getValue();
+            for (final Map.Entry<String, Properties> entry : service.entrySet()) {
+
+                final String name = entry.getKey();
+                final Properties properties = entry.getValue();
 
                 String className = properties.getProperty("className");
                 if (className == null) {
@@ -103,10 +102,10 @@ public class SimpleServiceManager extends ServiceManager {
                     }
                 }
 
-                Class impl = classLoader.loadClass(className);
+                final Class impl = classLoader.loadClass(className);
 
                 properties.put(interfase, impl);
-                String rawProperties = resourceFinder.findString(interfase.getName() + "/" + name);
+                final String rawProperties = resourceFinder.findString(interfase.getName() + "/" + name);
                 properties.put(Properties.class, rawProperties);
 
             }
@@ -128,13 +127,13 @@ public class SimpleServiceManager extends ServiceManager {
     public void init() throws Exception {
         try {
             ServiceLogger.MDCput("SERVER", "main");
-            InetAddress localhost = InetAddress.getLocalHost();
+            final InetAddress localhost = InetAddress.getLocalHost();
             ServiceLogger.MDCput("HOST", localhost.getHostName());
         } catch (Throwable e) {
             //Ignore
         }
 
-        DiscoveryRegistry registry = new DiscoveryRegistry();
+        final DiscoveryRegistry registry = new DiscoveryRegistry();
 
         // register the mbean
         try {
@@ -145,16 +144,16 @@ public class SimpleServiceManager extends ServiceManager {
 
         SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
 
-        Map<String, Properties> availableServices = this.serviceFinder.mapAvailableServices(ServerService.class);
+        final Map<String, Properties> availableServices = this.serviceFinder.mapAvailableServices(ServerService.class);
 
-        List<ServerService> enabledServers = initServers(availableServices);
+        final List<ServerService> enabledServers = initServers(availableServices);
 
-        daemons = enabledServers.toArray(new ServerService[]{});
+        daemons = enabledServers.toArray(new ServerService[enabledServers.size()]);
     }
 
     @Override
-    public synchronized void start(boolean block) throws ServiceException {
-        boolean display = SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null;
+    public synchronized void start(final boolean block) throws ServiceException {
+        final boolean display = SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null;
 
         // starting then displaying to get a more relevant log
 
@@ -226,7 +225,7 @@ public class SimpleServiceManager extends ServiceManager {
         final ServerService[] services = daemons.clone();
 
         final MBeanServer server = LocalMBeanServer.get();
-        for (ServerService service : services) {
+        for (final ServerService service : services) {
             if (LocalMBeanServer.isJMXActive()) {
                 final ObjectName on = getObjectName(service.getName());
                 if (server.isRegistered(on)) {
@@ -272,12 +271,9 @@ public class SimpleServiceManager extends ServiceManager {
         col3 += "                    ";
         col3 = col3.substring(0, 6);
 
-        final StringBuilder sb = new StringBuilder(50)
-            .append("  ").append(col1)
-            .append(" ").append(col2)
-            .append(" ").append(col3);
+        final String sb = "  " + col1 + " " + col2 + " " + col3;
 
-        LOGGER.info(sb.toString());
+        LOGGER.info(sb);
     }
 
     public ServerService[] getDaemons() {

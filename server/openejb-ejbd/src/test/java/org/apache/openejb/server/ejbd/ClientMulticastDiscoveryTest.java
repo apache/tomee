@@ -17,37 +17,23 @@
 package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
+import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServerServiceFilter;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.ServiceException;
 
-import java.net.URI;
-import java.net.Socket;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
+import javax.ejb.Remote;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.server.DiscoveryAgent;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.DiscoveryListener;
-import org.apache.openejb.server.ServerServiceFilter;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.DiscoveryRegistry;
-import org.apache.openejb.server.discovery.MulticastDiscoveryAgent;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.ServerFederation;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.ejb.Remote;
-import javax.ejb.EJBException;
+import java.net.Socket;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -56,9 +42,8 @@ public class ClientMulticastDiscoveryTest extends TestCase {
 
     private DiscoveryAgent agent;
 
-    
     public void test() throws Exception {
-    	/*
+        /*
         System.setProperty("openejb.client.requestretry", "true");
         Properties initProps = new Properties();
         initProps.setProperty("openejb.deployments.classpath.include", "");
@@ -117,7 +102,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
     	*/
     }
 
-    private ServerService server(Host host) throws Exception {
+    private ServerService server(final Host host) throws Exception {
         ServerService server = new EjbServer();
 
         server = new HostFilter(server, host);
@@ -131,27 +116,30 @@ public class ClientMulticastDiscoveryTest extends TestCase {
         return server;
     }
 
-
     // Simple single-threaded version, way easier on testing
     public static class TestAgent implements DiscoveryAgent {
 
         private final List<DiscoveryListener> listeners = new ArrayList<DiscoveryListener>();
 
-        public void registerService(URI serviceUri) throws IOException {
-            for (DiscoveryListener listener : listeners) {
+        @Override
+        public void registerService(final URI serviceUri) throws IOException {
+            for (final DiscoveryListener listener : listeners) {
                 listener.serviceAdded(serviceUri);
             }
         }
 
-        public void reportFailed(URI serviceUri) throws IOException {
+        @Override
+        public void reportFailed(final URI serviceUri) throws IOException {
         }
 
-        public void setDiscoveryListener(DiscoveryListener listener) {
+        @Override
+        public void setDiscoveryListener(final DiscoveryListener listener) {
             listeners.add(listener);
         }
 
-        public void unregisterService(URI serviceUri) throws IOException {
-            for (DiscoveryListener listener : listeners) {
+        @Override
+        public void unregisterService(final URI serviceUri) throws IOException {
+            for (final DiscoveryListener listener : listeners) {
                 listener.serviceRemoved(serviceUri);
             }
         }
@@ -159,24 +147,28 @@ public class ClientMulticastDiscoveryTest extends TestCase {
     }
 
     public static enum Host {
-        RED, BLUE, GREEN;
+        RED,
+        BLUE,
+        GREEN
     }
 
-    public static ThreadLocal<Host> host = new ThreadLocal<Host>();
+    public static final ThreadLocal<Host> host = new ThreadLocal<Host>();
 
     public static Socket serverSideSocket;
 
     public static class AgentFilter extends ServerServiceFilter {
+
         private final Host host;
         private final DiscoveryAgent agent;
         private URI uri;
 
-        public AgentFilter(ServerService service, DiscoveryAgent agent, Host host) {
+        public AgentFilter(final ServerService service, final DiscoveryAgent agent, final Host host) {
             super(service);
             this.agent = agent;
             this.host = host;
         }
 
+        @Override
         public void start() throws ServiceException {
             super.start();
             try {
@@ -187,6 +179,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
             }
         }
 
+        @Override
         public void stop() throws ServiceException {
             super.stop();
             try {
@@ -198,14 +191,16 @@ public class ClientMulticastDiscoveryTest extends TestCase {
     }
 
     public static class HostFilter extends ServerServiceFilter {
+
         private final Host me;
 
-        public HostFilter(ServerService service, Host me) {
+        public HostFilter(final ServerService service, final Host me) {
             super(service);
             this.me = me;
         }
 
-        public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        @Override
+        public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
             try {
                 host.set(me);
                 super.service(in, out);
@@ -214,7 +209,8 @@ public class ClientMulticastDiscoveryTest extends TestCase {
             }
         }
 
-        public void service(Socket socket) throws ServiceException, IOException {
+        @Override
+        public void service(final Socket socket) throws ServiceException, IOException {
             serverSideSocket = socket;
             try {
                 host.set(me);
@@ -226,14 +222,17 @@ public class ClientMulticastDiscoveryTest extends TestCase {
     }
 
     public static class Target implements TargetRemote {
+
+        @Override
         public Host getHost() {
             return host.get();
         }
 
-        public Wrapper kill(Host... hosts) {
-            Host host = getHost();
-            for (Host h : hosts) {
-                if (h == host){
+        @Override
+        public Wrapper kill(final Host... hosts) {
+            final Host host = getHost();
+            for (final Host h : hosts) {
+                if (h == host) {
                     return new Wrapper(host, serverSideSocket);
                 }
             }
@@ -246,14 +245,14 @@ public class ClientMulticastDiscoveryTest extends TestCase {
         transient Socket socket;
         private final Host host;
 
-        public Wrapper(Host host, Socket socket) {
+        public Wrapper(final Host host, final Socket socket) {
             this.host = host;
             this.socket = socket;
         }
 
-        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
             out.defaultWriteObject();
-            if (socket != null){
+            if (socket != null) {
                 socket.close();
             }
         }
@@ -261,6 +260,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
 
     @Remote
     public static interface TargetRemote {
+
         Host getHost();
 
         Wrapper kill(Host... hosts);

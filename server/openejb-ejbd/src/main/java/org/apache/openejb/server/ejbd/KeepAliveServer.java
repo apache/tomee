@@ -40,7 +40,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -159,10 +158,11 @@ public class KeepAliveServer implements ServerService {
         if (this.threadQueue == null) {
             // this can be null if timer fires before service is fully initialized
             final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
-            if (incoming == null)
+            if (incoming == null) {
                 return null;
-            final ThreadPoolExecutor threadPool = incoming.getThreadPool();
-            this.threadQueue = threadPool.getQueue();
+            }
+
+            this.threadQueue = incoming.getThreadPool().getQueue();
         }
         return this.threadQueue;
     }
@@ -197,8 +197,6 @@ public class KeepAliveServer implements ServerService {
 
         // only used inside the Lock
         private final AtomicLong lastRequest;
-
-        // only used inside the Lock
         private final Socket socket;
         private InputStream in = null;
         private OutputStream out = null;
@@ -208,6 +206,15 @@ public class KeepAliveServer implements ServerService {
             this.socket = socket;
             this.lastRequest = new AtomicLong(System.currentTimeMillis());
             this.thread = Thread.currentThread();
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            try {
+                this.close();
+            } finally {
+                super.finalize();
+            }
         }
 
         private void service() throws ServiceException, IOException {

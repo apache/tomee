@@ -52,6 +52,7 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class HsqlService implements ServerService, SelfManaging {
+
     // copied from org.hsqldb.server.ServerProperties since it uses package visibility
     private static final java.lang.String sc_key_port = "server.port";
     private static final java.lang.String sc_key_silent = "server.silent";
@@ -64,34 +65,39 @@ public class HsqlService implements ServerService, SelfManaging {
     private String ip = ServerConstants.SC_DEFAULT_ADDRESS;
     private Server server;
 
+    @Override
     public String getName() {
         return "hsql";
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public String getIP() {
         return ip;
     }
 
-
-    public void init(Properties p) throws Exception {
-        Properties properties = new Properties();
-        for (Map.Entry<Object, Object> entry : p.entrySet()) {
+    @Override
+    public void init(final Properties p) throws Exception {
+        final Properties properties = new Properties();
+        for (final Map.Entry<Object, Object> entry : p.entrySet()) {
             // Sometimes the properties object has non string values
-            if (!(entry.getKey() instanceof String)) continue;
-            if (!(entry.getValue() instanceof String)) continue;
+            if (!(entry.getKey() instanceof String))
+                continue;
+            if (!(entry.getValue() instanceof String))
+                continue;
 
-            String property = (String) entry.getKey();
-            String value = (String) entry.getValue();
+            final String property = (String) entry.getKey();
+            final String value = (String) entry.getValue();
 
             if (property.startsWith(sc_key_dbname + ".") ||
-                    property.startsWith(sc_key_database + ".")) {
+                property.startsWith(sc_key_database + ".")) {
 
                 throw new ServiceException("Databases cannot be declared in the hsql.properties.  " +
-                        "Instead declare a database connection in the openejb.conf file");
+                                           "Instead declare a database connection in the openejb.conf file");
             }
 
             if ("port".equals(property)) {
@@ -104,22 +110,22 @@ public class HsqlService implements ServerService, SelfManaging {
         }
         properties.setProperty(sc_key_no_system_exit, "true");
 
-        boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final boolean disabled = Boolean.parseBoolean(properties.getProperty("disabled"));
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         if (!disabled && containerSystem != null) {
-            NamingEnumeration<Binding> bindings;
+            final NamingEnumeration<Binding> bindings;
             try {
                 bindings = containerSystem.getJNDIContext().listBindings("openejb/Resource/");
-                Set<String> dbnames = new TreeSet<String>();
-                for (Binding binding : Collections.list(bindings)) {
-                    Object value = binding.getObject();
+                final Set<String> dbnames = new TreeSet<String>();
+                for (final Binding binding : Collections.list(bindings)) {
+                    final Object value = binding.getObject();
                     if (value instanceof DataSource) {
-                        DataSource jdbc = (DataSource) value;
+                        final DataSource jdbc = (DataSource) value;
                         Connection connection = null;
                         String path = null;
                         try {
                             connection = jdbc.getConnection();
-                            DatabaseMetaData meta = connection.getMetaData();
+                            final DatabaseMetaData meta = connection.getMetaData();
                             path = getPath(meta.getDriverName(), meta.getURL());
                         } catch (Throwable t) {
                             continue;
@@ -148,6 +154,7 @@ public class HsqlService implements ServerService, SelfManaging {
                     }
                 }
             } catch (NameNotFoundException e) {
+                //Ignore
             }
 
             // create the server
@@ -163,7 +170,7 @@ public class HsqlService implements ServerService, SelfManaging {
             port = server.getPort();
 
             // get the Address
-            String ipString = server.getAddress();
+            final String ipString = server.getAddress();
             if (ipString != null && ipString.length() > 0) {
                 this.ip = ipString;
             }
@@ -183,7 +190,7 @@ public class HsqlService implements ServerService, SelfManaging {
 
         // resolve the relative path and
         // hack off the jdbc:hsqldb stuff
-        String path = HsqldbDataSourcePlugin.toAbsolutePath(url).substring("jdbc:hsqldb:".length());
+        final String path = HsqldbDataSourcePlugin.toAbsolutePath(url).substring("jdbc:hsqldb:".length());
 
         // is this a connection to a local file, mem, or res database?
         if (!path.startsWith("file:") && !path.startsWith("mem:") && path.startsWith("res:")) {
@@ -193,21 +200,27 @@ public class HsqlService implements ServerService, SelfManaging {
         return path;
     }
 
-    public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream inputStream, final OutputStream outputStream) throws ServiceException, IOException {
         throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException("Method not implemented: service(Socket socket)");
     }
 
+    @Override
     public void start() throws ServiceException {
-        if (server == null) return;
+        if (server == null)
+            return;
         server.start();
     }
 
+    @Override
     public void stop() throws ServiceException {
-        if (server == null) return;
+        if (server == null)
+            return;
         try {
             server.stop();
         } finally {

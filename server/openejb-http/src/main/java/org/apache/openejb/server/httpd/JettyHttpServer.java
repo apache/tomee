@@ -16,19 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.server.ServiceException;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -41,10 +30,21 @@ import org.mortbay.jetty.servlet.HashSessionIdManager;
 import org.mortbay.jetty.servlet.HashSessionManager;
 import org.mortbay.jetty.servlet.SessionHandler;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Properties;
+
 /**
  * Jetty based http server implementation
  */
 public class JettyHttpServer implements HttpServer {
+
     private final HttpListener listener;
     private Server server;
     private int port;
@@ -53,56 +53,64 @@ public class JettyHttpServer implements HttpServer {
         this(OpenEJBHttpServer.getHttpListenerRegistry());
     }
 
-    public JettyHttpServer(HttpListener listener) {
+    public JettyHttpServer(final HttpListener listener) {
         this.listener = listener;
     }
 
+    @Override
     public HttpListener getListener() {
         return listener;
     }
 
-    public void service(Socket socket) throws ServiceException, IOException {
+    @Override
+    public void service(final Socket socket) throws ServiceException, IOException {
         throw new UnsupportedOperationException();
     }
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    @Override
+    public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getName() {
         return "jetty";
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public String getIP() {
         return "0.0.0.0";
     }
 
-    public void init(Properties props) throws Exception {
-        Options options = new Options(props);
+    @Override
+    public void init(final Properties props) throws Exception {
+        final Options options = new Options(props);
 
         port = options.get("port", 8080);
 
         // Create all the Jetty objects but dont' start them
         server = new Server();
-        Connector connector = new SelectChannelConnector();
+        final Connector connector = new SelectChannelConnector();
         connector.setPort(port);
         server.setConnectors(new Connector[]{connector});
 
-        ContextHandler context = new ContextHandler();
+        final ContextHandler context = new ContextHandler();
         context.setContextPath("/");
         final ServletContext servletContext = context.getServletContext();
         server.setHandler(context);
 
-        Handler handler = new AbstractHandler() {
-            public void handle(String target, HttpServletRequest req, HttpServletResponse res, int dispatch) throws IOException, ServletException {
+        final Handler handler = new AbstractHandler() {
+            @Override
+            public void handle(final String target, final HttpServletRequest req, final HttpServletResponse res, final int dispatch) throws IOException, ServletException {
                 try {
                     ((Request) req).setHandled(true);
-                    HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
-                    HttpResponse httpResponse = new ServletResponseAdapter(res);
+                    final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
+                    final HttpResponse httpResponse = new ServletResponseAdapter(res);
                     JettyHttpServer.this.listener.onMessage(httpRequest, httpResponse);
                 } catch (IOException e) {
                     throw e;
@@ -114,8 +122,8 @@ public class JettyHttpServer implements HttpServer {
             }
         };
 
-        SessionHandler sessionHandler = new SessionHandler();
-        SessionManager sessionManager = new HashSessionManager();
+        final SessionHandler sessionHandler = new SessionHandler();
+        final SessionManager sessionManager = new HashSessionManager();
         sessionManager.setIdManager(new HashSessionIdManager());
         sessionHandler.setSessionManager(sessionManager);
         sessionHandler.setHandler(handler);
@@ -123,6 +131,7 @@ public class JettyHttpServer implements HttpServer {
         context.setHandler(sessionHandler);
     }
 
+    @Override
     public void start() throws ServiceException {
         try {
             server.start();
@@ -131,6 +140,7 @@ public class JettyHttpServer implements HttpServer {
         }
     }
 
+    @Override
     public void stop() throws ServiceException {
         try {
             server.stop();

@@ -161,7 +161,7 @@ public class ServiceDaemon implements ServerService {
 
             this.socketListener = new SocketListener(this.next, serverSocket);
             final Thread thread = new Thread(this.socketListener);
-            thread.setName("service." + this.getName() + "@" + this.socketListener.hashCode());
+            thread.setName("Service." + this.getName() + "@" + this.socketListener.hashCode());
             thread.setDaemon(true);
             thread.start();
 

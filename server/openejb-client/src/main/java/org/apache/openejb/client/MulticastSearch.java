@@ -48,6 +48,15 @@ public class MulticastSearch {
         multicast.setSoTimeout(500);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            this.close();
+        } finally {
+            super.finalize();
+        }
+    }
+
     public URI search(final int timeout, final TimeUnit milliseconds) throws IOException {
         return search(new DefaultFilter(), timeout, milliseconds);
     }
@@ -107,11 +116,21 @@ public class MulticastSearch {
         return null;
     }
 
+    public void close() {
+        try {
+            multicast.close();
+        } catch (Throwable e) {
+            //Ignore
+        }
+    }
+
     public interface Filter {
+
         boolean accept(URI service);
     }
 
     public static class DefaultFilter implements Filter {
+
         @Override
         public boolean accept(final URI service) {
             return true;

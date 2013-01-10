@@ -32,8 +32,8 @@ import org.apache.openejb.server.ServerServiceFilter;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
 
-import javax.ejb.Remote;
 import javax.ejb.EJBException;
+import javax.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -59,31 +59,31 @@ public class FailoverTest extends TestCase {
         agent = new TestAgent();
 
         try {
-//            Properties initProps = System.getProperties();
-            Properties initProps = new Properties();
+            //            Properties initProps = System.getProperties();
+            final Properties initProps = new Properties();
             initProps.setProperty("openejb.deployments.classpath.include", "");
             initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
             OpenEJB.init(initProps, new ServerFederation());
         } catch (Exception e) {
         }
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(Target.class));
         assembler.createApplication(config.configureApplication(ejbJar));
 
         SystemInstance.get().setComponent(DiscoveryAgent.class, agent);
 
-        ServerService red = server(Host.RED);
-        ServerService blue = server(Host.BLUE);
-        ServerService green = server(Host.GREEN);
+        final ServerService red = server(Host.RED);
+        final ServerService blue = server(Host.BLUE);
+        final ServerService green = server(Host.GREEN);
 
         red.start();
         blue.start();
         green.start();
 
-        TargetRemote target = getBean(red);
+        final TargetRemote target = getBean(red);
 
         assertEquals(Host.RED, target.getHost());
 
@@ -114,31 +114,31 @@ public class FailoverTest extends TestCase {
         agent = new TestAgent();
 
         try {
-//            Properties initProps = System.getProperties();
-            Properties initProps = new Properties();
+            //            Properties initProps = System.getProperties();
+            final Properties initProps = new Properties();
             initProps.setProperty("openejb.deployments.classpath.include", "");
             initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
             OpenEJB.init(initProps, new ServerFederation());
         } catch (Exception e) {
         }
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        final ConfigurationFactory config = new ConfigurationFactory();
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(Target.class));
         assembler.createApplication(config.configureApplication(ejbJar));
 
         SystemInstance.get().setComponent(DiscoveryAgent.class, agent);
 
-        ServerService red = server(Host.RED);
-        ServerService blue = server(Host.BLUE);
-        ServerService green = server(Host.GREEN);
+        final ServerService red = server(Host.RED);
+        final ServerService blue = server(Host.BLUE);
+        final ServerService green = server(Host.GREEN);
 
         red.start();
         blue.start();
         green.start();
 
-        TargetRemote target = getBean(red);
+        final TargetRemote target = getBean(red);
 
         assertEquals(Host.GREEN, target.kill(Host.RED, Host.BLUE).host);
         assertEquals(Host.GREEN, target.getHost());
@@ -160,22 +160,20 @@ public class FailoverTest extends TestCase {
 
     }
 
-
-    private TargetRemote getBean(ServerService server) throws NamingException, IOException, OpenEJBException {
-        int port = server.getPort();
+    private TargetRemote getBean(final ServerService server) throws NamingException, IOException, OpenEJBException {
+        final int port = server.getPort();
 
         // good creds
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "ejbd://localhost:" + port + "/RED");
         System.setProperty("openejb.client.keepalive", "ping_pong");
         System.setProperty("openejb.client.requestretry", "true");
-        Context context = new InitialContext(props);
-        TargetRemote target = (TargetRemote) context.lookup("TargetRemote");
-        return target;
+        final Context context = new InitialContext(props);
+        return (TargetRemote) context.lookup("TargetRemote");
     }
 
-    private ServerService server(Host host) throws Exception {
+    private ServerService server(final Host host) throws Exception {
         ServerService server = new EjbServer();
 
         server = new HostFilter(server, host);
@@ -189,27 +187,30 @@ public class FailoverTest extends TestCase {
         return server;
     }
 
-
     // Simple single-threaded version, way easier on testing
     public static class TestAgent implements DiscoveryAgent {
 
         private final List<DiscoveryListener> listeners = new ArrayList<DiscoveryListener>();
 
-        public void registerService(URI serviceUri) throws IOException {
-            for (DiscoveryListener listener : listeners) {
+        @Override
+        public void registerService(final URI serviceUri) throws IOException {
+            for (final DiscoveryListener listener : listeners) {
                 listener.serviceAdded(serviceUri);
             }
         }
 
-        public void reportFailed(URI serviceUri) throws IOException {
+        @Override
+        public void reportFailed(final URI serviceUri) throws IOException {
         }
 
-        public void setDiscoveryListener(DiscoveryListener listener) {
+        @Override
+        public void setDiscoveryListener(final DiscoveryListener listener) {
             listeners.add(listener);
         }
 
-        public void unregisterService(URI serviceUri) throws IOException {
-            for (DiscoveryListener listener : listeners) {
+        @Override
+        public void unregisterService(final URI serviceUri) throws IOException {
+            for (final DiscoveryListener listener : listeners) {
                 listener.serviceRemoved(serviceUri);
             }
         }
@@ -217,24 +218,28 @@ public class FailoverTest extends TestCase {
     }
 
     public static enum Host {
-        RED, BLUE, GREEN;
+        RED,
+        BLUE,
+        GREEN
     }
 
-    public static ThreadLocal<Host> host = new ThreadLocal<Host>();
+    public static final ThreadLocal<Host> host = new ThreadLocal<Host>();
 
     public static Socket serverSideSocket;
 
     public static class AgentFilter extends ServerServiceFilter {
+
         private final Host host;
         private final DiscoveryAgent agent;
         private URI uri;
 
-        public AgentFilter(ServerService service, DiscoveryAgent agent, Host host) {
+        public AgentFilter(final ServerService service, final DiscoveryAgent agent, final Host host) {
             super(service);
             this.agent = agent;
             this.host = host;
         }
 
+        @Override
         public void start() throws ServiceException {
             super.start();
             try {
@@ -245,6 +250,7 @@ public class FailoverTest extends TestCase {
             }
         }
 
+        @Override
         public void stop() throws ServiceException {
             super.stop();
             try {
@@ -256,14 +262,16 @@ public class FailoverTest extends TestCase {
     }
 
     public static class HostFilter extends ServerServiceFilter {
+
         private final Host me;
 
-        public HostFilter(ServerService service, Host me) {
+        public HostFilter(final ServerService service, final Host me) {
             super(service);
             this.me = me;
         }
 
-        public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+        @Override
+        public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
             try {
                 host.set(me);
                 super.service(in, out);
@@ -272,7 +280,8 @@ public class FailoverTest extends TestCase {
             }
         }
 
-        public void service(Socket socket) throws ServiceException, IOException {
+        @Override
+        public void service(final Socket socket) throws ServiceException, IOException {
             serverSideSocket = socket;
             try {
                 host.set(me);
@@ -284,14 +293,17 @@ public class FailoverTest extends TestCase {
     }
 
     public static class Target implements TargetRemote {
+
+        @Override
         public Host getHost() {
             return host.get();
         }
 
-        public Wrapper kill(Host... hosts) {
-            Host host = getHost();
-            for (Host h : hosts) {
-                if (h == host){
+        @Override
+        public Wrapper kill(final Host... hosts) {
+            final Host host = getHost();
+            for (final Host h : hosts) {
+                if (h == host) {
                     return new Wrapper(host, serverSideSocket);
                 }
             }
@@ -304,14 +316,14 @@ public class FailoverTest extends TestCase {
         transient Socket socket;
         private final Host host;
 
-        public Wrapper(Host host, Socket socket) {
+        public Wrapper(final Host host, final Socket socket) {
             this.host = host;
             this.socket = socket;
         }
 
-        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
             out.defaultWriteObject();
-            if (socket != null){
+            if (socket != null) {
                 socket.close();
             }
         }
@@ -319,6 +331,7 @@ public class FailoverTest extends TestCase {
 
     @Remote
     public static interface TargetRemote {
+
         Host getHost();
 
         Wrapper kill(Host... hosts);

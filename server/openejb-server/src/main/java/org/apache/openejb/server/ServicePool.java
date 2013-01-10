@@ -74,9 +74,9 @@ public class ServicePool extends ServerServiceFilter {
             private final AtomicInteger i = new AtomicInteger(0);
 
             @Override
-            public Thread newThread(final Runnable arg0) {
-                final Thread t = new Thread(arg0, "OpenEJB." + getName() + "." + i.incrementAndGet());
-
+            public Thread newThread(final Runnable r) {
+                final Thread t = new Thread(r, "OpenEJB." + getName() + "." + i.incrementAndGet());
+                t.setDaemon(true);
                 t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(final Thread t, final Throwable e) {

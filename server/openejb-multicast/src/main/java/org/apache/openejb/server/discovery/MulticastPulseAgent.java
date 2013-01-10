@@ -527,7 +527,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         }
 
         final StringBuilder sb = new StringBuilder();
-        for (String host : hosts) {
+        for (final String host : hosts) {
             final String lc = host.toLowerCase();
             if (!"localhost".equals(lc) && !"::1".equals(lc) && !"127.0.0.1".equals(lc)) {
                 if (sb.length() > 0) {
