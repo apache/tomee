@@ -46,6 +46,7 @@ public class EjbModule extends Module implements WsModule {
     private final AtomicReference<IAnnotationFinder> finder = new AtomicReference<IAnnotationFinder>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private Beans beans;
+    private boolean webapp;
 
     private ClientModule clientModule;
     private ID id;
@@ -175,6 +176,14 @@ public class EjbModule extends Module implements WsModule {
 
     public Set<String> getWatchedResources() {
         return watchedResources;
+    }
+
+    public boolean isWebapp() {
+        return webapp;
+    }
+
+    public void setWebapp(boolean webapp) {
+        this.webapp = webapp;
     }
 
     @Override
