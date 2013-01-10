@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
@@ -214,7 +215,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                     operationInfos.toArray(new MBeanOperationInfo[operationInfos.size()]),
                     notificationInfos.toArray(new MBeanNotificationInfo[notificationInfos.size()]));
 
-            if (annotatedMBean.getName().startsWith("org.apache.openejb") && classloader == DynamicMBeanWrapper.class.getClassLoader()) {
+            if (annotatedMBean.getAnnotation(Internal.class) != null) {
                 CACHE.put(annotatedMBean, new CacheInfo(info, getters, setters, operations));
             }
         } else {

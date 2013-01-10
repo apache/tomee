@@ -18,12 +18,14 @@ package org.apache.openejb.assembler.monitoring;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
+import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 
 import java.util.Map;
 
+@Internal
 @Description("describe a container")
 public class JMXContainer {
     private final Container container;
