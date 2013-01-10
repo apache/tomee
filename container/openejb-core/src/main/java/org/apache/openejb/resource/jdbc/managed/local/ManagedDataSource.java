@@ -36,6 +36,7 @@ public class ManagedDataSource implements DataSource {
     public ManagedDataSource(final DataSource ds, final TransactionManager txMgr) {
         delegate = ds;
         transactionManager = txMgr;
+        ManagedConnection.pushDataSource(this);
     }
 
     @Override
@@ -84,10 +85,14 @@ public class ManagedDataSource implements DataSource {
     }
 
     private Connection managed(final Connection connection) {
-        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedConnection(connection, transactionManager));
+        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedConnection(this, connection, transactionManager));
     }
 
     public DataSource getDelegate() {
         return delegate;
+    }
+
+    public void clean() {
+        ManagedConnection.cleanDataSource(this);
     }
 }

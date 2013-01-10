@@ -18,6 +18,7 @@ package org.apache.openejb.resource.jdbc.managed.local;
 
 import org.apache.openejb.OpenEJB;
 
+import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
@@ -34,7 +35,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ManagedConnection implements InvocationHandler {
-    private static final Map<Transaction, Connection> CONNECTION_BY_TX = new ConcurrentHashMap<Transaction, Connection>();
+    private static final Map<DataSource, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<DataSource, Map<Transaction, Connection>>();
 
     private final TransactionManager transactionManager;
     private final LocalXAResource xaResource;
@@ -42,12 +43,14 @@ public class ManagedConnection implements InvocationHandler {
     private Transaction currentTransaction;
     private boolean closed;
 
+    private final Map<Transaction, Connection> connectionByTx;
 
-    public ManagedConnection(final Connection connection, final TransactionManager txMgr) {
+    public ManagedConnection(final DataSource ds, final Connection connection, final TransactionManager txMgr) {
         delegate = connection;
         transactionManager = txMgr;
         closed = false;
         xaResource = new LocalXAResource(delegate);
+        connectionByTx = CONNECTION_BY_TX_BY_DS.get(ds);
     }
 
     public XAResource getXAResource() throws SQLException {
@@ -92,13 +95,13 @@ public class ManagedConnection implements InvocationHandler {
             // or enlist this one in the tx
             int status = transaction.getStatus();
             if (isUnderTransaction(status)) {
-                final Connection connection = CONNECTION_BY_TX.get(transaction);
+                final Connection connection = connectionByTx.get(transaction);
                 if (connection != delegate) {
                     if (connection != null) { // use already existing one
                         delegate.close(); // return to pool
                         delegate = connection;
                     } else {
-                        CONNECTION_BY_TX.put(transaction, delegate);
+                        connectionByTx.put(transaction, delegate);
                         currentTransaction = transaction;
                         try {
                             transaction.enlistResource(getXAResource());
@@ -108,7 +111,7 @@ public class ManagedConnection implements InvocationHandler {
                             throw new SQLException("Unable to enlist connection the transaction", e);
                         }
 
-                        transaction.registerSynchronization(new ClosingSynchronization(delegate));
+                        transaction.registerSynchronization(new ClosingSynchronization(delegate, connectionByTx));
 
                         delegate.setAutoCommit(false);
                     }
@@ -121,8 +124,6 @@ public class ManagedConnection implements InvocationHandler {
         } catch (InvocationTargetException ite) {
             throw ite.getTargetException();
         }
-
-
     }
 
     private static Object invoke(final Method method, final Connection delegate, final Object[] args) throws Throwable {
@@ -176,11 +177,24 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
+    public static void pushDataSource(final DataSource ds) {
+        CONNECTION_BY_TX_BY_DS.put(ds, new ConcurrentHashMap<Transaction, Connection>());
+    }
+
+    public static void cleanDataSource(final DataSource ds) {
+        final Map<Transaction, Connection> map = CONNECTION_BY_TX_BY_DS.remove(ds);
+        if (map != null) {
+            map.clear();
+        }
+    }
+
     private static class ClosingSynchronization implements Synchronization {
         private final Connection connection;
+        private final Map<Transaction, Connection> mapToCleanup;
 
-        public ClosingSynchronization(final Connection delegate) {
+        public ClosingSynchronization(final Connection delegate, Map<Transaction, Connection> connByTx) {
             connection = delegate;
+            mapToCleanup = connByTx;
         }
 
         @Override
@@ -193,7 +207,7 @@ public class ManagedConnection implements InvocationHandler {
             close(connection);
             try {
                 final Transaction tx = OpenEJB.getTransactionManager().getTransaction();
-                CONNECTION_BY_TX.remove(tx);
+                mapToCleanup.remove(tx);
             } catch (SystemException ignored) {
                 // no-op
             }

@@ -34,6 +34,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.sql.DataSource;
+import javax.transaction.Transaction;
 import javax.transaction.UserTransaction;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -210,10 +211,11 @@ public class UTManagedDataSourceTest {
 
     @After
     public void checkTxMapIsEmpty() throws Exception { // avoid memory leak
-        final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX");
+        final Field map = ManagedConnection.class.getDeclaredField("CONNECTION_BY_TX_BY_DS");
         map.setAccessible(true);
-        final Map<?, ?> instance = (Map<?, ?>) map.get(null);
-        assertEquals(0, instance.size());
+        final Map<DataSource, Map<Transaction, Connection>>  instance = (Map<DataSource, Map<Transaction, Connection>> ) map.get(null);
+        assertEquals(1, instance.size());
+        assertEquals(0, instance.values().iterator().next().size());
     }
 
     private static boolean exists(int id) throws Exception {
