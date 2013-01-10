@@ -184,8 +184,9 @@ public abstract class JaxbOpenejb {
         SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         final ServicesJar servicesJar1 = new ServicesJar();
+        final PropertiesAdapter propertiesAdapter = new PropertiesAdapter();
 
-        parser.parse(inputSource, new DefaultHandler(){
+        parser.parse(inputSource, new DefaultHandler() {
             private ServiceProvider provider;
             private StringBuilder content;
 
@@ -204,8 +205,8 @@ public abstract class JaxbOpenejb {
                 provider.setParent(att.getValue("", "parent"));
                 String typesString = att.getValue("", "types");
                 if (typesString != null){
-                    ListAdapter listAdapter = new ListAdapter();
-                    List<String> types = listAdapter.unmarshal(typesString);
+                    final ListAdapter listAdapter = new ListAdapter();
+                    final List<String> types = listAdapter.unmarshal(typesString);
                     provider.getTypes().addAll(types);
                 }
                 servicesJar1.getServiceProvider().add(provider);
@@ -220,7 +221,6 @@ public abstract class JaxbOpenejb {
                 if (provider == null || content == null) return;
 
                 try {
-                    PropertiesAdapter propertiesAdapter = new PropertiesAdapter();
                     provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));
                 } catch (Exception e) {
                     throw new SAXException(e);

@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -165,7 +166,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
-        configurationFactory = new ConfigurationFactory();
+        configurationFactory = (ConfigurationFactory) SystemInstance.get().getComponent(OpenEjbConfigurationFactory.class);
 
         if ("true".equalsIgnoreCase(PROPERTIES.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE))
                 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {

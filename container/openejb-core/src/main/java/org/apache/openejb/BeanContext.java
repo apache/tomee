@@ -29,6 +29,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
+import org.apache.openejb.core.ivm.naming.ContextWrapper;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
@@ -65,14 +66,14 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
+import javax.naming.Name;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -269,7 +270,7 @@ public class BeanContext extends DeploymentContext {
         }
 
         this.moduleContext = moduleContext;
-        this.jndiContext = (Context) Proxy.newProxyInstance(BeanContext.class.getClassLoader(), new Class[]{Context.class}, new ContextHandler(jndiContext));
+        this.jndiContext = new ContextHandler(jndiContext);
         this.localbean = localBean;
         this.componentType = componentType;
         this.beanClass = beanClass;
@@ -1712,27 +1713,37 @@ public class BeanContext extends DeploymentContext {
         private Method createMethod;
     }
 
-    private static class ContextHandler implements InvocationHandler {
-
-        private final Context delegate;
+    private static class ContextHandler extends ContextWrapper {
 
         public ContextHandler(final Context jndiContext) {
-            delegate = jndiContext;
+            super(jndiContext);
         }
 
         @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        public Object lookup(final Name name) throws NamingException {
             try {
-                return method.invoke(delegate, args);
-            } catch (InvocationTargetException nnfe) {
-                if (nnfe.getTargetException() instanceof NameNotFoundException && "lookup".equals(method.getName())) {
-                    try {
-                        return method.invoke(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext(), args);
-                    } catch (InvocationTargetException nnfe2) {
-                        // ignore, let it be thrown
-                    }
+                return context.lookup(name);
+            } catch (NameNotFoundException nnfe) {
+                try {
+                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
+                } catch (NameNotFoundException nnfe2) {
+                    // ignore, let it be thrown
                 }
-                throw nnfe.getTargetException();
+                throw nnfe;
+            }
+        }
+
+        @Override
+        public Object lookup(String name) throws NamingException {
+            try {
+                return context.lookup(name);
+            } catch (NameNotFoundException nnfe) {
+                try {
+                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
+                } catch (NameNotFoundException nnfe2) {
+                    // ignore, let it be thrown
+                }
+                throw nnfe;
             }
         }
     }
