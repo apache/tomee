@@ -33,7 +33,9 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.tomee.util.InstallationEnrichers;
 import org.apache.tomee.util.QuickServerXmlParser;
+import org.apache.tomee.util.SimpleTomEEFormatter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -56,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.SimpleFormatter;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -126,6 +129,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     @Parameter(property = "tomee-plugin.debug", defaultValue = "false")
     protected boolean debug;
+
+    @Parameter(property = "tomee-plugin.simple-log", defaultValue = "false")
+    protected boolean simpleLog;
 
     @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
@@ -209,6 +215,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected Settings settings;
 
     protected File deployedFile = null;
+    private String additionalCp = null;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -236,6 +243,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
 
+        if (simpleLog) {
+            additionalCp = activateSimpleLog();
+        }
+
         if (!keepServerXmlAsthis) {
             overrideAddresses();
         }
@@ -243,6 +254,31 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             copyWar();
         }
         run();
+    }
+
+    private String activateSimpleLog() {
+        // adding SimpleTomEEFormatter to the classpath
+        final String cp = InstallationEnrichers.addOneLineFormatter(catalinaBase);
+
+        // replacing java.util.logging.SimpleFormatter by SimpleTomEEFormatter
+        final File loggingProperties = new File(catalinaBase, "conf/logging.properties");
+        if (loggingProperties.exists() && !new File(config, "conf/logging.properties").exists()) {
+            try {
+                final String content = IO.slurp(loggingProperties)
+                        .replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
+                final FileWriter writer = new FileWriter(loggingProperties);
+                try {
+                    writer.write(content);
+                } finally {
+                    IO.close(writer);
+                }
+            } catch (Exception e) {
+                getLog().error("Can't set SimpleTomEEFormatter", e);
+                return null;
+            }
+            return cp;
+        }
+        return null;
     }
 
     private void removeDefaultWebapps(final boolean removeTomee) {
@@ -570,6 +606,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
 
         final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
+        if (additionalCp != null) {
+            server.setAdditionalClasspath(additionalCp);
+        }
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
         final CountDownLatch stopCondition;

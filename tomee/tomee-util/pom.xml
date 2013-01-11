@@ -28,4 +28,13 @@
 
   <artifactId>tomee-util</artifactId>
   <name>OpenEJB :: TomEE :: Util</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>4.5.2-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>
