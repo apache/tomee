@@ -16,37 +16,36 @@
  */
 package org.apache.openejb.openjpa;
 
+import org.apache.openejb.log.LoggerCreator;
 import org.apache.openejb.util.JuliLogStream;
 import org.apache.openjpa.lib.log.Log;
 
-import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class JULOpenJPALog  implements Log {
-    private final Callable<Logger> logger;
+    private final LoggerCreator logger;
+    private final AtomicBoolean debug = new AtomicBoolean(false);
+    private final AtomicBoolean info = new AtomicBoolean(true);
 
-    public JULOpenJPALog(final Callable<Logger> delegate) {
+    public JULOpenJPALog(final LoggerCreator delegate) {
         logger = delegate;
     }
 
     private Logger logger() {
-        try {
-            return logger.call();
-        } catch (Exception e) { // shouldn't occur regarding the impl we use
-            return Logger.getLogger("default");
-        }
+        return LoggerCreator.Get.exec(logger, debug, info);
     }
 
     @Override
     public boolean isTraceEnabled() {
-        return logger().isLoggable(Level.FINEST);
+        return debug.get();
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return logger().isLoggable(Level.INFO);
+        return info.get();
     }
 
     @Override
@@ -66,12 +65,16 @@ public class JULOpenJPALog  implements Log {
 
     @Override
     public void trace(Object o) {
-        logger().log(record(o, Level.FINEST));
+        if (isTraceEnabled()) {
+            logger().log(record(o, Level.FINEST));
+        }
     }
 
     @Override
     public void trace(Object o, Throwable t) {
-        logger().log(record(o, t, Level.FINEST));
+        if (isTraceEnabled()) {
+            logger().log(record(o, t, Level.FINEST));
+        }
     }
 
     @Override

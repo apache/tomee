@@ -16,33 +16,24 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.log.LoggerCreator;
 
-import java.util.Properties;
-import java.util.logging.Handler;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class JuliLogStream implements LogStream {
-    protected Logger logger;
+    protected final LoggerCreator logger;
+    protected final AtomicBoolean debug = new AtomicBoolean(false);
+    protected final AtomicBoolean info = new AtomicBoolean(false);
 
     public JuliLogStream(LogCategory logCategory) {
-        logger = Logger.getLogger(logCategory.getName());
-
-        // if level set through properties force it
-        final Properties p = SystemInstance.get().getProperties();
-        final String levelName = p.getProperty("logging.level." + logger.getName());
-        if (levelName == null) return;
-
-        final Level level = Level.parse(levelName);
-        for (Handler handler : logger.getHandlers()) {
-            handler.setLevel(level);
-        }
+        logger = new LoggerCreator(logCategory.getName());
     }
 
     public boolean isFatalEnabled() {
-        return logger.isLoggable(Level.SEVERE);
+        return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.SEVERE);
     }
 
     public void fatal(String message) {
@@ -54,7 +45,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isErrorEnabled() {
-        return logger.isLoggable(Level.SEVERE);
+        return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.SEVERE);
     }
 
     public void error(String message) {
@@ -66,7 +57,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isWarnEnabled() {
-        return logger.isLoggable(Level.WARNING);
+        return LoggerCreator.Get.exec(logger).isLoggable(Level.WARNING);
     }
 
     public void warn(String message) {
@@ -78,7 +69,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isInfoEnabled() {
-        return logger.isLoggable(Level.INFO);
+        return LoggerCreator.Get.exec(logger).isLoggable(Level.INFO);
     }
 
     public void info(String message) {
@@ -90,7 +81,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isDebugEnabled() {
-        return logger.isLoggable(Level.FINE);
+        return debug.get();
     }
 
     public void debug(String message) {
@@ -102,10 +93,11 @@ public class JuliLogStream implements LogStream {
     }
 
     private void log(Level level, String message, Throwable t) {
-        if (logger.isLoggable(level)) {
+        final Logger log = LoggerCreator.Get.exec(logger);
+        if (log.isLoggable(level)) {
             LogRecord logRecord = new OpenEJBLogRecord(level, message);
             if (t != null) logRecord.setThrown(t);
-            logger.log(logRecord);
+            log.log(logRecord);
         }
     }
 
