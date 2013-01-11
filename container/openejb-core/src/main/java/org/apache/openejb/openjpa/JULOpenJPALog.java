@@ -32,6 +32,9 @@ public class JULOpenJPALog  implements Log {
 
     public JULOpenJPALog(final LoggerCreator delegate) {
         logger = delegate;
+        if (logger.isInit()) {
+            LoggerCreator.Get.levels(logger, debug, info);
+        }
     }
 
     private Logger logger() {

@@ -32,6 +32,17 @@ public class LoggerCreator implements Callable<Logger> {
 
     public LoggerCreator(final String channel) {
         name = channel;
+
+        // force eager init if config overrided
+        final Properties p = SystemInstance.get().getProperties();
+        final String levelName = p.getProperty("logging.level." + channel);
+        if (levelName != null) {
+            try {
+                call();
+            } catch (Exception e) {
+                // no-op
+            }
+        }
     }
 
     @Override
@@ -62,12 +73,16 @@ public class LoggerCreator implements Callable<Logger> {
         return logger;
     }
 
+    public boolean isInit() {
+        return init;
+    }
+
     public static final class Get {
         private Get() {
             // no-op
         }
 
-        public static Logger exec(final LoggerCreator creator) {
+        private static Logger exec(final LoggerCreator creator) {
             try {
                 return creator.call();
             } catch (Exception e) { // shouldn't occur regarding the impl we use
@@ -78,10 +93,21 @@ public class LoggerCreator implements Callable<Logger> {
         public static Logger exec(final LoggerCreator logger, final AtomicBoolean debug, final AtomicBoolean info) {
             final Logger l = exec(logger);
             if (!logger.init) {
-                debug.set(l.isLoggable(Level.FINE));
-                info.set(l.isLoggable(Level.INFO));
+                levels(logger, debug, info);
             }
             return l;
+        }
+
+        public static void levels(final LoggerCreator lc, final AtomicBoolean debug, final AtomicBoolean info) {
+            final Logger l;
+            try {
+                l = lc.call();
+            } catch (Exception e) {
+                return;
+            }
+
+            debug.set(l.isLoggable(Level.FINE));
+            info.set(l.isLoggable(Level.INFO));
         }
     }
 }
