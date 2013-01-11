@@ -249,7 +249,8 @@ public class Installer {
         copyClasses(paths.getJavaEEAPIJar(), jaxbApi, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*", Arrays.asList("javax/xml/bind/ContextFinder.class", "javax/xml/bind/DatatypeConverter.class"));
         removeJar(jaxbApi);
 
-        final File jaxbImpl = new File(endorsed, "jaxb-impl.jar");
+        // don't put jaxb-impl in endorsed since it relies on the jvm itself
+        final File jaxbImpl = new File(paths.getCatalinaLibDir(), "jaxb-impl.jar");
         if (!jaxbImpl.exists()) {
             try {
                 Installers.copyFile(paths.getJAXBImpl(), jaxbImpl);
