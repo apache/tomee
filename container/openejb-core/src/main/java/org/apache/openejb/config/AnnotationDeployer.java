@@ -1945,7 +1945,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 } else {
                                     addRestClassesToScannedClasses(webModule, classes, classLoader);
                                 }
-                            } catch (NullPointerException npe) {
+                            } catch (RuntimeException npe) {
                                 if (app == null) {
                                     throw npe;
                                 }
