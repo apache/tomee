@@ -30,6 +30,9 @@ public class JuliLogStream implements LogStream {
 
     public JuliLogStream(LogCategory logCategory) {
         logger = new LoggerCreator(logCategory.getName());
+        if (logger.isInit()) {
+            LoggerCreator.Get.levels(logger, debug, info);
+        }
     }
 
     public boolean isFatalEnabled() {
@@ -57,7 +60,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isWarnEnabled() {
-        return LoggerCreator.Get.exec(logger).isLoggable(Level.WARNING);
+        return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.WARNING);
     }
 
     public void warn(String message) {
@@ -69,7 +72,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isInfoEnabled() {
-        return LoggerCreator.Get.exec(logger).isLoggable(Level.INFO);
+        return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.INFO);
     }
 
     public void info(String message) {
@@ -93,7 +96,7 @@ public class JuliLogStream implements LogStream {
     }
 
     private void log(Level level, String message, Throwable t) {
-        final Logger log = LoggerCreator.Get.exec(logger);
+        final Logger log = LoggerCreator.Get.exec(logger, debug, info);
         if (log.isLoggable(level)) {
             LogRecord logRecord = new OpenEJBLogRecord(level, message);
             if (t != null) logRecord.setThrown(t);
