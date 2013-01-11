@@ -141,6 +141,8 @@ import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.resource.cci.Connection;
+import javax.resource.cci.ConnectionFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -1885,18 +1887,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (unsetB.containsKey(entry.getKey()))
                     unset.put(entry.getKey(), entry.getValue());
             }
-            logUnusedProperties(unset, serviceInfo);
 
-            if (connectionManager instanceof AbstractConnectionManager) {
+            // service becomes a ConnectorReference which merges connection manager and mcf
+            service = new ConnectorReference(connectionManager, managedConnectionFactory);
+
+            // init cm if needed
+            final Object eagerInit = unset.remove("eagerInit");
+            if (eagerInit != null && eagerInit instanceof String && "true".equalsIgnoreCase((String) eagerInit)
+                            && connectionManager instanceof AbstractConnectionManager) {
                 try {
                     ((AbstractConnectionManager) connectionManager).doStart();
+                    try {
+                        final Object cf = managedConnectionFactory.createConnectionFactory(connectionManager);
+                        if (cf instanceof ConnectionFactory) {
+                            final Connection connection = ((ConnectionFactory) cf).getConnection();
+                            connection.getMetaData();
+                            connection.close();
+                        }
+                    } catch (Exception e) {
+                        // no-op: just to force eager init of pool
+                    }
                 } catch (Exception e) {
                     logger.warning("Can't start connection manager", e);
                 }
             }
 
-            // service becomes a ConnectorReference which merges connection manager and mcf
-            service = new ConnectorReference(connectionManager, managedConnectionFactory);
+            logUnusedProperties(unset, serviceInfo);
         } else if (service instanceof DataSource) {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader == null) {

@@ -382,27 +382,39 @@ public class GeronimoConnectionManagerFactory   {
             final ConnectionInterceptor stack = interceptors.getStack();
 
             ReadWriteLock foundLock = null;
-            if (stack instanceof AbstractSinglePoolConnectionInterceptor) {
-                try {
-                    foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(stack);
-                } catch (IllegalAccessException e) {
-                    // no-op
-                } catch (NoSuchFieldException e) {
-                    // no-op
+            ConnectionInterceptor current = stack;
+            do {
+                if (current instanceof AbstractSinglePoolConnectionInterceptor) {
+                    try {
+                        foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(current);
+                    } catch (IllegalAccessException e) {
+                        // no-op
+                    } catch (NoSuchFieldException e) {
+                        // no-op
+                    }
+                    break;
                 }
-            }
+
+                // look next
+                try {
+                    current = (ConnectionInterceptor) Reflections.get(current, "next");
+                } catch (Exception e) {
+                    current = null;
+                }
+            } while (current != null);
+
             this.lock = foundLock;
 
             Object foundPool = null;
-            if (stack instanceof AbstractSinglePoolConnectionInterceptor) {
+            if (current instanceof AbstractSinglePoolConnectionInterceptor) {
                 foundPool = Reflections.get(stack, "pool");
-            } else if (stack instanceof MultiPoolConnectionInterceptor) {
+            } else if (current instanceof MultiPoolConnectionInterceptor) {
                 log.warn("validation on stack " + stack + " not supported");
             }
             this.pool = foundPool;
 
             if (pool != null) {
-                validatingTask = new ValidatingTask(stack, lock, pool);
+                validatingTask = new ValidatingTask(current, lock, pool);
             } else {
                 validatingTask = null;
             }
