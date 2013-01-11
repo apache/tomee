@@ -81,7 +81,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                         for (Object rsSingleton : appInstance.getSingletons()) {
                             classes.add(rsSingleton.getClass().getName());
                         }
-                    } catch (NullPointerException npe) {
+                    } catch (RuntimeException npe) {
                         if (appInstance == null) {
                             throw npe;
                         }

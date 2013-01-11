@@ -98,7 +98,7 @@ public class CdiScanner implements ScannerService {
                 if (!ejbJar.moduleId.equals(startupObject.getWebContext().getId())) {
                     continue;
                 }
-            } else if (ejbJar.webapp) {
+            } else if (ejbJar.webapp && !appInfo.webAppAlone) {
                 continue;
             }
 
