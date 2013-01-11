@@ -37,8 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 
 /**
@@ -50,20 +48,15 @@ import java.security.PrivilegedAction;
 public class AsmParameterNameLoader implements ParameterNameLoader {
 
     public static void install(){
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                try {
-                    Field field = org.apache.xbean.recipe.ReflectionUtil.class.getDeclaredField("parameterNamesLoader");
-                    field.setAccessible(true);
-                    field.set(null, new AsmParameterNameLoader());
+        try {
+            Field field = org.apache.xbean.recipe.ReflectionUtil.class.getDeclaredField("parameterNamesLoader");
+            field.setAccessible(true);
+            field.set(null, new AsmParameterNameLoader());
 //                    if (field.get(null) == null){
 //                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
