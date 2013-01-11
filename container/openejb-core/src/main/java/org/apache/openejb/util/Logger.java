@@ -252,13 +252,11 @@ public class Logger {
     private final LogCategory category;
     private final LogStream logStream;
     private final String baseName;
-    private final boolean debug;
 
     public Logger(final LogCategory category, final LogStream logStream, final String baseName) {
         this.category = category;
         this.logStream = logStream;
         this.baseName = baseName;
-        this.debug = logStream.isDebugEnabled(); // commonly used and can be slow so cache it
     }
 
     public static Logger getInstance(final LogCategory category, final Class clazz) {
@@ -349,7 +347,7 @@ public class Logger {
     }
 
     public boolean isDebugEnabled() {
-        return debug;
+        return logStream.isDebugEnabled();
     }
 
     public boolean isErrorEnabled() {
