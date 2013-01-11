@@ -140,6 +140,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             boolean deploymentWithApplication = "true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_USE_APPLICATION_PROPERTY, APPLICATION_DEPLOYMENT));
             if (deploymentWithApplication) {
                 Application application = null;
+                boolean appSkipped = false;
                 String prefix = "/";
 
                 final Class<?> appClazz;
@@ -162,8 +163,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     final Set<Class<?>> classes = application.getClasses();
                     final Set<Object> singletons = application.getSingletons();
 
-                    if (classes.size() + singletons.size() == 0) {
-                        application = null; // use discovered services
+                    if (classes.size() + singletons.size() > 0) {
+                        appSkipped = true;
                     } else {
                         for (final Class<?> clazz : classes) {
                             if (isProvider(clazz)) {
@@ -204,7 +205,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 }
 
                 if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
-                    if (application == null) {
+                    if (appSkipped) {
                         application = new InternalApplication(application);
 
                         for (final String clazz : webApp.restClass) {
