@@ -83,7 +83,7 @@ public class ServicePool extends ServerServiceFilter {
          is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(queue));
+        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue));
         threadPool.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);
