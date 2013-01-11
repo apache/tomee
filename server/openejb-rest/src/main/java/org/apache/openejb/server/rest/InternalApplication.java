@@ -23,6 +23,11 @@ import java.util.Set;
 public class InternalApplication extends Application {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Set<Object> singletons = new HashSet<Object>();
+    private final Application original;
+
+    public InternalApplication(final Application original) {
+        this.original = original;
+    }
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -32,5 +37,9 @@ public class InternalApplication extends Application {
     @Override
     public Set<Object> getSingletons() {
         return singletons;
+    }
+
+    public Application getOriginal() {
+        return original;
     }
 }

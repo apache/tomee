@@ -205,7 +205,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                 if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
                     if (application == null) {
-                        application = new InternalApplication();
+                        application = new InternalApplication(application);
 
                         for (final String clazz : webApp.restClass) {
                             try {
@@ -497,7 +497,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 }
 
                 if ("true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_USE_APPLICATION_PROPERTY, APPLICATION_DEPLOYMENT))) {
-                    final Application application = new InternalApplication();
+                    final Application application = new InternalApplication(null);
                     for (final Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                         application.getClasses().add(ejb.getValue().context.getBeanClass());
                     }

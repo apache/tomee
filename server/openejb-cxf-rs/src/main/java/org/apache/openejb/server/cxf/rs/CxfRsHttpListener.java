@@ -219,7 +219,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                                   final ServiceConfiguration serviceConfiguration) {
         final JAXRSServerFactoryBean factory = newFactory(prefix);
         if (InternalApplication.class.equals(application.getClass())) { // todo: check it is the good choice
-            configureFactory("jaxrs-application", additionalProviders, serviceConfiguration, factory);
+            final Application original = InternalApplication.class.cast(application).getOriginal();
+            if (original == null) {
+                configureFactory("jaxrs-application", additionalProviders, serviceConfiguration, factory);
+            } else {
+                configureFactory(original.getClass().getName(), additionalProviders, serviceConfiguration, factory);
+            }
         } else {
             configureFactory(application.getClass().getName(), additionalProviders, serviceConfiguration, factory);
         }
@@ -379,7 +384,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
 
-        final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(STATIC_SUB_RESOURCE_RESOLUTION_KEY);
+        final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + STATIC_SUB_RESOURCE_RESOLUTION_KEY);
         if (staticSubresourceResolution != null) {
             factory.setStaticSubresourceResolution("true".equalsIgnoreCase(staticSubresourceResolution));
         }
