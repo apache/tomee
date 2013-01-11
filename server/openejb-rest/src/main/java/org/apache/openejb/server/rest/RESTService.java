@@ -163,7 +163,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     final Set<Class<?>> classes = application.getClasses();
                     final Set<Object> singletons = application.getSingletons();
 
-                    if (classes.size() + singletons.size() > 0) {
+                    if (classes.size() + singletons.size() == 0) {
                         appSkipped = true;
                     } else {
                         for (final Class<?> clazz : classes) {
@@ -241,7 +241,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, prefix);
                     }
                 }
-
             }
 
             if (!deploymentWithApplication) {
