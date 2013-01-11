@@ -158,7 +158,7 @@ public abstract class CxfEndpoint {
         svrFactory.setServiceClass(serviceFactory.getServiceClass());
 
         // look for bean info if exists
-        CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX, getImplementorClass().getName());
+        CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX);
 
 		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");

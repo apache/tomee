@@ -79,7 +79,7 @@ public final class CxfUtil {
         }
     }
 
-    public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final ServiceConfiguration configuration, final String prefix, final String beanId) {
+    public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final ServiceConfiguration configuration, final String prefix) {
         final Properties beanConfig = configuration.getProperties();
         if (beanConfig == null || beanConfig.isEmpty()) {
             return;

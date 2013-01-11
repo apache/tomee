@@ -40,7 +40,6 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
-import org.apache.openejb.server.rest.InternalApplication;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
@@ -154,17 +153,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
                         Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        final String impl;
-        if (serviceBean != null) {
-            impl = serviceBean.getClass().getName();
-        } else {
-            impl = clazz.getName();
-        }
-
         final JAXRSServerFactoryBean factory = newFactory(address);
-        configureFactory(impl, additionalProviders, configuration, factory);
+        configureFactory(additionalProviders, configuration, factory);
         factory.setResourceClasses(clazz);
-
 
         if (rp != null) {
             factory.setResourceProvider(rp);
@@ -218,16 +209,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                                   final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx,
                                   final ServiceConfiguration serviceConfiguration) {
         final JAXRSServerFactoryBean factory = newFactory(prefix);
-        if (InternalApplication.class.equals(application.getClass())) { // todo: check it is the good choice
-            final Application original = InternalApplication.class.cast(application).getOriginal();
-            if (original == null) {
-                configureFactory("jaxrs-application", additionalProviders, serviceConfiguration, factory);
-            } else {
-                configureFactory(original.getClass().getName(), additionalProviders, serviceConfiguration, factory);
-            }
-        } else {
-            configureFactory(application.getClass().getName(), additionalProviders, serviceConfiguration, factory);
-        }
+        configureFactory(additionalProviders, serviceConfiguration, factory);
         factory.setApplication(application);
 
         final List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -379,8 +361,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         return factory;
     }
 
-    private void configureFactory(String application, Collection<Object> additionalProviders, ServiceConfiguration serviceConfiguration, JAXRSServerFactoryBean factory) {
-        CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX, application);
+    private void configureFactory(Collection<Object> additionalProviders, ServiceConfiguration serviceConfiguration, JAXRSServerFactoryBean factory) {
+        CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
 

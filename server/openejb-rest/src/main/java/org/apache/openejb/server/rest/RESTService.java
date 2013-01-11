@@ -375,12 +375,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     private void deployApplication(final AppInfo appInfo, final String contextRoot, final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader, final Collection<Injection> injections, final WebBeansContext owbCtx, final Context context, final Collection<Object> additionalProviders, final Collection<IdPropertiesInfo> pojoConfigurations, final Application application, final String prefix) {
         // get configuration
-        Properties configuration = PojoUtil.findConfiguration(pojoConfigurations, application.getClass().getName());
+        Properties configuration = null;
+        if (InternalApplication.class.equals(application.getClass())) {
+            final Application original = InternalApplication.class.cast(application).getOriginal();
+            if (original == null) {
+                configuration = PojoUtil.findConfiguration(pojoConfigurations, "jaxrs-application");
+            } else {
+                configuration = PojoUtil.findConfiguration(pojoConfigurations, original.getClass().getName());
+            }
+        } else {
+            configuration = PojoUtil.findConfiguration(pojoConfigurations, application.getClass().getName());
+        }
         if (configuration == null) { // try a constant (common in half of cases)
             configuration = PojoUtil.findConfiguration(pojoConfigurations, "jaxrs-application");
-        }
-        if (configuration == null) { // try with context
-            configuration = PojoUtil.findConfiguration(pojoConfigurations, contextRoot);
         }
 
         final String base = getAddress(contextRoot);
