@@ -205,7 +205,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 }
 
                 if (deploymentWithApplication) { // don't do it if we detected we should use old deployment
-                    if (appSkipped) {
+                    if (appSkipped || application == null) {
                         application = new InternalApplication(application);
 
                         for (final String clazz : webApp.restClass) {
