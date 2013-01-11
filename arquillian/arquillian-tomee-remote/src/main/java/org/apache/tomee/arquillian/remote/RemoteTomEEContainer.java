@@ -23,14 +23,13 @@ import org.apache.openejb.arquillian.common.Setup;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
-import org.jboss.arquillian.container.spi.client.container.DeploymentException;
+import org.apache.tomee.util.InstallationEnrichers;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.shrinkwrap.api.Archive;
 
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,7 +84,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             }
             container = new RemoteServer();
 
-            container.setAdditionalClasspath(addOneLineFormatter(tomeeHome));
+            container.setAdditionalClasspath(InstallationEnrichers.addOneLineFormatter(tomeeHome));
             container.start(args(), "start", true);
             container.killOnExit();
 
@@ -108,28 +107,6 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
             resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
         }
-    }
-
-    private String addOneLineFormatter(final File home) {
-        final String name = SimpleTomEEFormatter.class.getPackage().getName().replace('.', '/') + "/" + SimpleTomEEFormatter.class.getSimpleName() + ".class";
-        final InputStream is = getClass().getResourceAsStream("/" + name);
-        if (is != null) {
-            final File parent = Files.path(home, "bin", "classes");
-            final File destination = new File(parent, name);
-            if (!destination.getParentFile().mkdirs()) {
-                LOGGER.warning("Can't create " + destination.getPath());
-            } else {
-                try {
-                    IO.copy(is, destination);
-                    return parent.getAbsolutePath(); // to add to the classpath, don't return destination
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Can't add SingleLineFormatter", e);
-                } finally {
-                    IO.closeSilently(is);
-                }
-            }
-        }
-        return null;
     }
 
     private List<String> args() {

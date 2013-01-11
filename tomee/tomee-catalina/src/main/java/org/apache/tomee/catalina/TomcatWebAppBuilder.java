@@ -698,7 +698,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (isIgnored(standardContext)) return;
 
         // just adding a carriage return to get logs more readable
-        logger.info("-------------------------\nTomcatWebAppBuilder.init " + finalName(standardContext.getPath()));
+        logger.info("------------------------- " + finalName(standardContext.getPath()));
 
         if (FORCE_RELOADABLE) {
             standardContext.setReloadable(true);
