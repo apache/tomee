@@ -32,6 +32,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.sxc.EjbJarXml;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -214,7 +215,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
 
             final OutputStream out = IO.write(tempFile);
             try {
-                JaxbJavaee.marshal(EjbJar.class, ejbJar, out);
+                EjbJarXml.marshal(ejbJar, out);
                 logger.info("Dumping Generated ejb-jar.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally {

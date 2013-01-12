@@ -48,7 +48,6 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

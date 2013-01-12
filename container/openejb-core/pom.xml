@@ -424,6 +424,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-jee-accessors</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-app</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
