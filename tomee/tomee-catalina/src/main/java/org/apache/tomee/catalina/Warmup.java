@@ -157,10 +157,10 @@ public class Warmup {
 
         final ClassLoader loader = Warmup.class.getClassLoader();
 
-        final JaxbJavaeeLoad jaxbJavaeeLoad = new JaxbJavaeeLoad(WebApp.class);
-        final Thread jaxb = new Thread(jaxbJavaeeLoad);
-        jaxb.setDaemon(true);
-        jaxb.start();
+//        final JaxbJavaeeLoad jaxbJavaeeLoad = new JaxbJavaeeLoad(WebApp.class);
+//        final Thread jaxb = new Thread(jaxbJavaeeLoad);
+//        jaxb.setDaemon(true);
+//        jaxb.start();
 
         try { // see org.apache.openejb.Core
             Class.forName("org.apache.openejb.util.Logger", true, loader);
@@ -214,27 +214,27 @@ public class Warmup {
         try {
             semaphore.acquire(permits);
             tld.join();
-            jaxb.join();
+//            jaxb.join();
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
     }
 
 
-    private static class JaxbJavaeeLoad implements Runnable {
-
-        private final Class<?> type;
-
-        private JaxbJavaeeLoad(Class<?> type) {
-            this.type = type;
-        }
-
-        @Override
-        public void run() {
-            try {
-                JaxbJavaee.getContext(type);
-            } catch (JAXBException e) {
-            }
-        }
-    }
+//    private static class JaxbJavaeeLoad implements Runnable {
+//
+//        private final Class<?> type;
+//
+//        private JaxbJavaeeLoad(Class<?> type) {
+//            this.type = type;
+//        }
+//
+//        @Override
+//        public void run() {
+//            try {
+//                JaxbJavaee.getContext(type);
+//            } catch (JAXBException e) {
+//            }
+//        }
+//    }
 }
