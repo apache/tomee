@@ -42,12 +42,8 @@ import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.config.sys.ServiceProvider;
-import org.apache.openejb.config.sys.ServicesJar;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
@@ -75,7 +71,6 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.jpa.integration.MakeTxLookup;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.util.LogCategory;
@@ -86,7 +81,6 @@ import org.apache.openejb.util.References;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -163,7 +157,6 @@ class AppInfoBuilder {
             try {
                 final EjbJarInfo ejbJarInfo = this.ejbJarInfoBuilder.buildInfo(ejbModule);
                 ejbJarInfo.mbeans = ejbModule.getMbeans();
-                ejbJarInfo.webapp = ejbModule.isWebapp();
 
                 final Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
@@ -451,8 +444,7 @@ class AppInfoBuilder {
             // the id generation code in AutoConfig$AppResources
             //
 
-            final Resources config = new Resources();
-            Connector connector = connectorModule.getConnector();
+            final Connector connector = connectorModule.getConnector();
 
             final ConnectorInfo connectorInfo = new ConnectorInfo();
             connectorInfo.description = connector.getDescription();
@@ -479,10 +471,12 @@ class AppInfoBuilder {
                 final String id = this.getId(connectorModule);
                 final String className = resourceAdapter.getResourceAdapterClass();
 
-                Resource resource = new Resource(id, className);
-                resource.setType(className);
-                resource.setClassName(className);
+                final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                provider.getTypes().add(className);
 
+                ServiceUtils.registerServiceProvider(appId, provider);
+
+                final Resource resource = new Resource(id, className, appId + "#" + id);
 
                 for (final ConfigProperty property : resourceAdapter.getConfigProperty()) {
                     final String name = property.getConfigPropertyName();
@@ -491,9 +485,7 @@ class AppInfoBuilder {
                         resource.getProperties().setProperty(name, value);
                     }
                 }
-
-                config.getResource().add(resource);
-                connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
+                connectorInfo.resourceAdapter = this.configFactory.configureService(resource, ResourceInfo.class);
             }
 
             final OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
@@ -516,14 +508,16 @@ class AppInfoBuilder {
                     final String className = connection.getManagedConnectionFactoryClass();
                     final String type = connection.getConnectionFactoryInterface();
 
-                    Resource resource = new Resource(id, type);
-                    resource.setType(type);
-                    resource.setClassName(className);
+                    final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                    provider.getTypes().add(type);
 
-                    Properties properties = resource.getProperties();
-                    for (ConfigProperty property : connection.getConfigProperty()) {
-                        String name = property.getConfigPropertyName();
-                        String value = property.getConfigPropertyValue();
+                    ServiceUtils.registerServiceProvider(appId, provider);
+
+                    final Resource resource = new Resource(id, type, appId + "#" + id);
+                    final Properties properties = resource.getProperties();
+                    for (final ConfigProperty property : connection.getConfigProperty()) {
+                        final String name = property.getConfigPropertyName();
+                        final String value = property.getConfigPropertyValue();
                         if (value != null) {
                             properties.setProperty(name, value);
                         }
@@ -533,8 +527,7 @@ class AppInfoBuilder {
                     	properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
                     }
 
-                    config.getResource().add(resource);
-                    ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+                    final ResourceInfo resourceInfo = this.configFactory.configureService(resource, ResourceInfo.class);
                     connectorInfo.outbound.add(resourceInfo);
                 }
             }
@@ -551,8 +544,7 @@ class AppInfoBuilder {
                     properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
                     properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
 
-                    config.getContainer().add(container);
-                    MdbContainerInfo mdbContainerInfo = configFactory.configureService(container, MdbContainerInfo.class);
+                    final MdbContainerInfo mdbContainerInfo = this.configFactory.configureService(container, MdbContainerInfo.class);
                     connectorInfo.inbound.add(mdbContainerInfo);
                 }
             }
@@ -563,34 +555,24 @@ class AppInfoBuilder {
                 final String className = adminObject.getAdminObjectClass();
                 final String type = adminObject.getAdminObjectInterface();
 
-                Resource resource = new Resource(id, type);
-                resource.setType(type);
-                resource.setClassName(className);
+                final ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                provider.getTypes().add(type);
 
-                Properties properties = resource.getProperties();
-                for (ConfigProperty property : adminObject.getConfigProperty()) {
-                    String name = property.getConfigPropertyName();
-                    String value = property.getConfigPropertyValue();
+                ServiceUtils.registerServiceProvider(appId, provider);
+
+                final Resource resource = new Resource(id, type, appId + "#" + id);
+                final Properties properties = resource.getProperties();
+                for (final ConfigProperty property : adminObject.getConfigProperty()) {
+                    final String name = property.getConfigPropertyName();
+                    final String value = property.getConfigPropertyValue();
                     if (value != null) {
                         properties.setProperty(name, value);
                     }
                 }
-
-                config.getResource().add(resource);
-                ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+                final ResourceInfo resourceInfo = this.configFactory.configureService(resource, ResourceInfo.class);
                 connectorInfo.adminObject.add(resourceInfo);
             }
 
-            final File file = new File("/tmp/resources.xml");
-
-            try {
-                final OutputStream write = IO.write(file);
-                JaxbOpenejb.marshal(Resources.class, config, write);
-                write.flush();
-                write.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             appInfo.connectors.add(connectorInfo);
         }
     }
