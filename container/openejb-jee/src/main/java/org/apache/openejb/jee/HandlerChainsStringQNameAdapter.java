@@ -17,11 +17,12 @@
 
 package org.apache.openejb.jee;
 
+import org.apache.openejb.jee.JaxbJavaee.HandlerChainsNamespaceFilter;
+
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
-
-import org.apache.openejb.jee.JaxbJavaee.HandlerChainsNamespaceFilter;
 
 /**
  * @version $Rev$ $Date$
@@ -29,6 +30,7 @@ import org.apache.openejb.jee.JaxbJavaee.HandlerChainsNamespaceFilter;
 public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
 
     private HandlerChainsNamespaceFilter xmlFilter;
+    private NamespaceContext namespaceContext;
 
     @Override
     public QName unmarshal(String value) throws Exception {
@@ -41,7 +43,14 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
         }
         String prefix = value.substring(0, colonIndex);
         String localPart = (colonIndex == (value.length() - 1)) ? "" : value.substring(colonIndex + 1);
-        String nameSpaceURI = xmlFilter.lookupNamespaceURI(prefix);
+
+        String nameSpaceURI = "";
+        if (xmlFilter != null) {
+            nameSpaceURI = xmlFilter.lookupNamespaceURI(prefix);
+        } else if (namespaceContext != null) {
+            nameSpaceURI = namespaceContext.getNamespaceURI(prefix);
+        }
+
         if (nameSpaceURI == null) {
             nameSpaceURI = XMLConstants.NULL_NS_URI;
         }
@@ -64,7 +73,11 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
         return prefix + ":" + localPart;
     }
 
-    public void setHandlerChainsNamespaceFilter(HandlerChainsNamespaceFilter xmlFilter) {
+    public void setHandlerChainsNamespaceFilter(final HandlerChainsNamespaceFilter xmlFilter) {
         this.xmlFilter = xmlFilter;
+    }
+
+    public void setNamespaceContext(NamespaceContext namespaceContext) {
+        this.namespaceContext = namespaceContext;
     }
 }
