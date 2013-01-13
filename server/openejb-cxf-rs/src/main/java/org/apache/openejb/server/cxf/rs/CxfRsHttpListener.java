@@ -72,6 +72,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 public class CxfRsHttpListener implements RsHttpListener {
@@ -89,7 +90,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
-    private Collection<Pattern> staticResourcesList = new ArrayList<Pattern>();
+    private Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<String, String>();
