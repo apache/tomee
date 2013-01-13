@@ -31,6 +31,7 @@ import com.envoisolutions.sxc.util.XoXMLStreamWriterImpl;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -56,12 +57,16 @@ public class Sxc {
 
     public static void marshal(JAXBObject objectType, Object object, Result result) throws JAXBException {
         if (result == null) throw new IllegalArgumentException("result is null");
+        if (!(result instanceof StreamResult)) throw new IllegalArgumentException("result is null");
         if (object == null) throw new IllegalArgumentException("object is null");
         if (objectType == null) throw new IllegalArgumentException("jaxbObject is null");
 
+        StreamResult streamResult = (StreamResult) result;
+
         XMLStreamWriter writer = null;
         try {
-            writer = XmlFactories.getXof().createXMLStreamWriter(result);
+            final XMLOutputFactory xof = XmlFactories.getXof();
+            writer = xof.createXMLStreamWriter(streamResult.getOutputStream(), "UTF-8");
             writer = new PrettyPrintXMLStreamWriter(writer);
             XoXMLStreamWriter w = new XoXMLStreamWriterImpl(writer);
 
