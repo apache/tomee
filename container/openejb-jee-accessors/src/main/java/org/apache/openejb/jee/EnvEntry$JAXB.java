@@ -136,7 +136,7 @@ public class EnvEntry$JAXB
                 envEntry.envEntryType = envEntryType;
             } else if (("env-entry-value" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: envEntryValue
-                String envEntryValueRaw = elementReader.getElementAsString();
+                String envEntryValueRaw = elementReader.getElementText(); // don't trim
 
                 String envEntryValue;
                 try {
