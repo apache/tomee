@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" metadata-complete="true" version="3.0">
     <description>String</description>
     <display-name>token</display-name>
@@ -30,7 +30,7 @@
             <primkey-field>pk</primkey-field>
             <security-identity>
                 <description>identity</description>
-                <use-caller-identity/>
+                <use-caller-identity></use-caller-identity>
             </security-identity>
             <query>
                 <description>queryWithParam</description>
@@ -307,7 +307,7 @@
             </security-role-ref>
             <security-identity>
                 <description>String</description>
-                <use-caller-identity/>
+                <use-caller-identity></use-caller-identity>
             </security-identity>
         </session>
     </enterprise-beans>
@@ -485,7 +485,7 @@
                 <description>String</description>
                 <ejb-relationship-role-name>token</ejb-relationship-role-name>
                 <multiplicity>One</multiplicity>
-                <cascade-delete/>
+                <cascade-delete></cascade-delete>
                 <relationship-role-source>
                     <description>String</description>
                     <ejb-name>A</ejb-name>
