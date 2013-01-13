@@ -38,7 +38,6 @@ import static org.apache.openejb.jee.HandlerChain$JAXB.writeHandlerChain;
 public class HandlerChains$JAXB
         extends JAXBObject<HandlerChains> {
 
-
     public HandlerChains$JAXB() {
         super(HandlerChains.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chains".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "handler-chainsType".intern()), HandlerChain$JAXB.class);
     }
@@ -172,5 +171,4 @@ public class HandlerChains$JAXB
 
         context.afterMarshal(handlerChains, LifecycleCallback.NONE);
     }
-
 }
