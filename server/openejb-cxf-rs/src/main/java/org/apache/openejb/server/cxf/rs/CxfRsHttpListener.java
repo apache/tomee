@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
@@ -51,9 +52,15 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
 import javax.naming.Context;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -65,19 +72,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
-    private static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
+    public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
+    public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
+
+    private static final Map<String, String> STATIC_CONTENT_TYPES;
 
     private final HTTPTransportFactory transportFactory;
     private final String wildcard;
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
+    private Collection<Pattern> staticResourcesList = new ArrayList<Pattern>();
+
+    static {
+        STATIC_CONTENT_TYPES = new HashMap<String, String>();
+        STATIC_CONTENT_TYPES.put("html", "text/html");
+        STATIC_CONTENT_TYPES.put("xhtml", "text/html");
+        STATIC_CONTENT_TYPES.put("txt", "text/plain");
+        STATIC_CONTENT_TYPES.put("css", "text/css");
+        STATIC_CONTENT_TYPES.put("jpg", "image/jpg");
+        STATIC_CONTENT_TYPES.put("png", "image/png");
+        STATIC_CONTENT_TYPES.put("ico", "image/ico");
+        STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
+        STATIC_CONTENT_TYPES.put("xsd", "application/xml");
+    }
 
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
         transportFactory = httpTransportFactory;
@@ -87,6 +112,11 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
+        if (matchPath(httpRequest)) {
+            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
+            return;
+        }
+
         destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
             // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
             // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
@@ -100,6 +130,48 @@ public class CxfRsHttpListener implements RsHttpListener {
                 return strip(context, super.getRequestURI());
             }
         }, httpResponse);
+    }
+
+    private boolean matchPath(final HttpServletRequest request) {
+        if (staticResourcesList.isEmpty()) {
+            return false;
+        }
+
+        String path = request.getPathInfo();
+        if (path == null) {
+            path = "/";
+        }
+        for (Pattern pattern : staticResourcesList) {
+            if (pattern.matcher(path).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void serveStaticContent(final HttpServletRequest request,
+                                      final HttpServletResponse response,
+                                      final String pathInfo) throws ServletException {
+        final InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
+        if (is == null) {
+            throw new ServletException("Static resource " + pathInfo + " is not available");
+        }
+        try {
+            int ind = pathInfo.lastIndexOf(".");
+            if (ind != -1 && ind < pathInfo.length()) {
+                String type = STATIC_CONTENT_TYPES.get(pathInfo.substring(ind + 1));
+                if (type != null) {
+                    response.setContentType(type);
+                }
+            }
+
+            final ServletOutputStream os = response.getOutputStream();
+            IOUtils.copy(is, os);
+            os.flush();
+        } catch (IOException ex) {
+            throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
+        }
+
     }
 
     private String strip(final String context, final String requestURI) {
@@ -369,6 +441,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + STATIC_SUB_RESOURCE_RESOLUTION_KEY);
         if (staticSubresourceResolution != null) {
             factory.setStaticSubresourceResolution("true".equalsIgnoreCase(staticSubresourceResolution));
+        }
+
+        // static resources
+        final String staticResources = serviceConfiguration.getProperties().getProperty(STATIC_RESOURCE_KEY);
+        if (staticResources != null) {
+            final String[] resources = staticResources.split(",");
+            for (String r : resources) {
+                final String trimmed = r.trim();
+                if (!trimmed.isEmpty()) {
+                    staticResourcesList.add(Pattern.compile(trimmed));
+                }
+            }
         }
 
         // providers
