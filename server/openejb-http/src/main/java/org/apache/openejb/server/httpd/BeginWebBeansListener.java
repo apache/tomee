@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.catalina;
+package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
@@ -32,7 +32,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -138,8 +137,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
     @Override
     public void sessionDidActivate(HttpSessionEvent event) {
         if (failoverService.isSupportFailOver() || failoverService.isSupportPassivation()) {
-            HttpSession session = event.getSession();
-            failoverService.sessionDidActivate(session);
+            failoverService.sessionDidActivate(event.getSession());
         }
     }
 

@@ -125,7 +125,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             // this is just a workaround waiting for something better
             @Override
             public String getRequestURI() {
-                if (httpRequest instanceof HttpRequestImpl) {
+                if (httpRequest instanceof HttpRequest) {
                     return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
                 }
                 return strip(context, super.getRequestURI());
@@ -324,7 +324,15 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         LOGGER.info("REST Application: " + prefix + "  -> " + application.getClass().getName());
 
-        final String base = prefix.substring(0, prefix.length() - wildcard.length());
+        final String base;
+        if (prefix.endsWith("/")) {
+            base = prefix.substring(0, prefix.length() - 1);
+        } else if (prefix.endsWith(wildcard)) {
+            base = prefix.substring(0, prefix.length() - wildcard.length());
+        } else {
+            base = prefix;
+        }
+
         final JAXRSServiceImpl service = (JAXRSServiceImpl) factory.getServiceFactory().getService();
         final List<ClassResourceInfo> resources = service.getClassResourceInfos();
         for (final ClassResourceInfo info : resources) {

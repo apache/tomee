@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.catalina;
+package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
@@ -32,7 +32,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -95,7 +94,7 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
                 Object request = event.getServletRequest();
                 if (request instanceof HttpServletRequest) {
                     HttpServletRequest httpRequest = (HttpServletRequest) request;
-                    HttpSession session = httpRequest.getSession(false);
+                    javax.servlet.http.HttpSession session = httpRequest.getSession(false);
                     if (session != null) {
                         failoverService.sessionIsIdle(session);
                     }

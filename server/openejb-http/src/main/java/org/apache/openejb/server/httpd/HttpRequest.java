@@ -111,4 +111,5 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
     public void setAttribute(String name, Object value);
 
     String getRemoteAddr();
+
 }

@@ -21,6 +21,7 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -89,11 +90,33 @@ public class OpenEJBHttpRegistry {
         public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
             ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(classLoader);
+
             try {
+                if (request instanceof HttpRequestImpl) {
+                    initCdi((HttpRequestImpl) request).init();
+                }
+
                 delegate.onMessage(request, response);
             } finally {
+                if (request instanceof HttpRequestImpl) {
+                    ((HttpRequestImpl) request).destroy();
+                }
+
                 Thread.currentThread().setContextClassLoader(oldCl);
             }
+        }
+
+        private static HttpRequestImpl initCdi(final HttpRequestImpl request) {
+            try {
+                final WebBeansContext context = WebBeansContext.currentInstance();
+                if (context.getBeanManagerImpl().isInUse()) {
+                    request.setBeginListener(new BeginWebBeansListener(context));
+                    request.setEndListener(new EndWebBeansListener(context));
+                }
+            } catch (IllegalStateException ise) {
+                // no-op: ignore
+            }
+            return request;
         }
 
         public HttpListener getDelegate() {
