@@ -273,6 +273,10 @@ public class EjbJarInfoBuilder {
             if (role.getCmrField().getCmrFieldType() != null) {
                 cmrFieldInfo.fieldType = role.getCmrField().getCmrFieldType().toString();
             }
+
+            if (cmrFieldInfo.fieldType == null && relatedRole.getMultiplicity() == Multiplicity.MANY) {
+                cmrFieldInfo.fieldType = Collection.class.getName();
+            }
         } else {
             String relatedEjbName = relatedRole.getRelationshipRoleSource().getEjbName();
             EnterpriseBeanInfo relatedEjb = infos.get(relatedEjbName);
