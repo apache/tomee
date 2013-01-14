@@ -109,7 +109,8 @@
 
   <properties>
     <openejb.osgi.import.pkg>
-      javassist.util.proxy,
+      javassist.util;resolution:=optional;version="[3.9,4)",
+      javassist.util.proxy;resolution:=optional;version="[3.9,4)",
       javax.annotation,
       javax.annotation.security,
       javax.annotation.sql,
