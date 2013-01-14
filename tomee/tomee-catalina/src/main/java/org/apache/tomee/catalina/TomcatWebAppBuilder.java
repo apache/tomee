@@ -64,6 +64,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -133,6 +134,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -177,6 +179,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     public static final String TOMEE_INIT_J2EE_INFO = "tomee.init-J2EE-info";
 
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
+
+    private static Method getNamingContextName = null; // it just sucks but that's private
+    static {
+        try {
+            getNamingContextName = StandardContext.class.getDeclaredMethod("getNamingContextName");
+            getNamingContextName.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            throw new OpenEJBRuntimeException("can't find method getNamingContextName", e);
+        }
+    }
 
     /**
      * Context information for web applications
@@ -766,7 +778,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // force manually the namingContextListener to merge jndi in an easier way
         final NamingContextListener ncl = new NamingContextListener();
-        ncl.setName(name);
+        try {
+            ncl.setName((String) getNamingContextName.invoke(standardContext));
+        } catch (Exception e) {
+            ncl.setName(getId(standardContext));
+        }
+        ncl.setExceptionOnFailedWrite(standardContext.getJndiExceptionOnFailedWrite());
         standardContext.setNamingContextListener(ncl);
         standardContext.addLifecycleListener(ncl);
         standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
