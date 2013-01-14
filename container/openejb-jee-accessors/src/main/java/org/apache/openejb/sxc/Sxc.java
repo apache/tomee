@@ -139,19 +139,26 @@ public class Sxc {
     }
 
     public static <T> T unmarshalJavaee(JAXBObject<T> jaxbType, InputStream inputStream) throws Exception {
+        final XMLStreamReader filter = prepareReader(inputStream);
+        return unmarhsal(jaxbType, filter);
+    }
+
+    public static XMLStreamReader prepareReader(InputStream inputStream) throws XMLStreamException {
         final Source source = new StreamSource(inputStream);
 
         final XMLStreamReader streamReader = XmlFactories.getXif().createXMLStreamReader(source);
 
-        final XMLStreamReader filter = new JavaeeNamespaceFilter(streamReader);
-
-        return unmarhsal(jaxbType, filter);
+        return new JavaeeNamespaceFilter(streamReader);
     }
 
     public static <T> T unmarhsal(JAXBObject<T> jaxbType, XMLStreamReader xmlStreamReader) throws Exception {
 
         final XoXMLStreamReader reader = new XoXMLStreamReaderImpl(xmlStreamReader);
 
+        return unmarshall(jaxbType, reader);
+    }
+
+    public static <T> T unmarshall(JAXBObject<T> jaxbType, XoXMLStreamReader reader) throws Exception {
         int event = reader.getEventType();
         while (event != XMLStreamConstants.START_ELEMENT && reader.hasNext()) {
             event = reader.next();
