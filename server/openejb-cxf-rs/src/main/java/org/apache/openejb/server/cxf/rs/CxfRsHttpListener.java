@@ -125,7 +125,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             // this is just a workaround waiting for something better
             @Override
             public String getRequestURI() {
-                if (httpRequest instanceof HttpRequest) {
+                if (httpRequest instanceof HttpRequestImpl) {
                     return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
                 }
                 return strip(context, super.getRequestURI());
