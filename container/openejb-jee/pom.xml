@@ -112,7 +112,31 @@
               <extension>true</extension>
             </configuration>
           </plugin>
-                  
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>generate-accessors</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.metatype.sxc</groupId>
+            <artifactId>sxc-jaxb-maven-plugin</artifactId>
+            <version>0.8-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <configuration>
+                  <classes>
+                    <class>org.apache.openejb.jee</class>
+                    <class>org.apache.openejb.jee.oejb3</class>
+                  </classes>
+                </configuration>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
