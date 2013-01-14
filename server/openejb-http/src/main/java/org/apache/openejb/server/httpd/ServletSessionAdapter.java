@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSessionContext;
 import java.util.Enumeration;
 
 public class ServletSessionAdapter implements HttpSession {
-    private final javax.servlet.http.HttpSession session;
+    protected final javax.servlet.http.HttpSession session;
 
     public ServletSessionAdapter(javax.servlet.http.HttpSession session) {
         this.session = session;

@@ -28,9 +28,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +42,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -67,6 +71,17 @@ public class HttpRequestImpl implements HttpRequest {
 
     // note: no eviction so invalidate has to be called properly
     private static final ConcurrentMap<String, HttpSession> SESSIONS = new ConcurrentHashMap<String, HttpSession>();
+
+    public static final Class<?>[] SERVLET_CONTEXT_INTERFACES = new Class<?>[]{ServletContext.class};
+    public static final InvocationHandler SERVLET_CONTEXT_HANDLER = new InvocationHandler() {
+        @Override
+        public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
+            return null;
+        }
+    };
+
+    private EndWebBeansListener end;
+    private BeginWebBeansListener begin;
 
     /**
      * 5.1.1    Method
@@ -127,6 +142,7 @@ public class HttpRequestImpl implements HttpRequest {
     private Locale locale = Locale.getDefault();
     private HttpSession session;
     private String encoding = "UTF-8";
+    private ServletContext context = null;
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -780,11 +796,16 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public HttpSession getSession(boolean create) {
-        if (session == null) {
+        if (session == null && create) {
             session = new HttpSessionImpl(SESSIONS);
             final HttpSession previous = SESSIONS.putIfAbsent(session.getId(), session);
             if (previous != null) {
                 session = previous;
+            }
+
+            if (begin != null) {
+                begin.sessionCreated(new HttpSessionEvent(session));
+                return new SessionInvalidateListener(session, end);
             }
         }
         return session;
@@ -835,7 +856,7 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     public HttpSession getSession() {
-        return session;
+        return getSession(true);
     }
 
     @Override
@@ -954,8 +975,12 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     @Override
-    public ServletContext getServletContext() {
-        return null;
+    public ServletContext getServletContext() { // we need a not null value but it is not intended to be used in standalone for now
+        if (context == null) {
+            context = (ServletContext) Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(), SERVLET_CONTEXT_INTERFACES, SERVLET_CONTEXT_HANDLER);
+        }
+        return context;
     }
 
     @Override
@@ -998,6 +1023,40 @@ public class HttpRequestImpl implements HttpRequest {
         final String rawPath = requestRawPath();
         if (context != null) {
             setPath(rawPath.substring(1 + context.length(), rawPath.length())); // 1 because of the first /
+        }
+    }
+
+    public void setEndListener(final EndWebBeansListener end) {
+        this.end = end;
+    }
+
+    public void setBeginListener(final BeginWebBeansListener begin) {
+        this.begin = begin;
+    }
+
+    public void init() {
+        if (begin != null) {
+            begin.requestInitialized(new ServletRequestEvent(getServletContext(), this));
+        }
+    }
+
+    public void destroy() {
+        if (end != null) {
+            end.requestDestroyed(new ServletRequestEvent(getServletContext(), this));
+        }
+    }
+
+    protected static class SessionInvalidateListener extends ServletSessionAdapter {
+        private final EndWebBeansListener listener;
+
+        public SessionInvalidateListener(final javax.servlet.http.HttpSession session, final EndWebBeansListener end) {
+            super(session);
+            listener = end;
+        }
+
+        @Override
+        public void invalidate() {
+            listener.sessionDestroyed(new HttpSessionEvent(session));
         }
     }
 }
