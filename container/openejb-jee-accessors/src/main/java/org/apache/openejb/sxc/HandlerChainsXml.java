@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.sxc;
 
+import com.envoisolutions.sxc.util.XoXMLStreamReaderImpl;
+import org.apache.openejb.jee.Adapters;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.HandlerChains$JAXB;
 import org.apache.openejb.loader.IO;
 
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +40,15 @@ public class HandlerChainsXml {
     public static HandlerChains unmarshal(URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
-            return Sxc.unmarshalJavaee(new HandlerChains$JAXB(), inputStream);
+            final XMLStreamReader filter = Sxc.prepareReader(inputStream);
+            synchronized (Adapters.handlerChainsStringQNameAdapterAdapter) { // few threads on it so synchronized > lock
+                Adapters.handlerChainsStringQNameAdapterAdapter.setNamespaceContext(filter.getNamespaceContext());
+                try {
+                    return Sxc.unmarhsal(new HandlerChains$JAXB(), new XoXMLStreamReaderImpl(filter));
+                } finally {
+                    Adapters.handlerChainsStringQNameAdapterAdapter.setNamespaceContext(null);
+                }
+            }
         } finally {
             IO.close(inputStream);
         }

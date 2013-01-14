@@ -70,9 +70,6 @@ public class HandlerChain$JAXB
             context = new RuntimeContext();
         }
 
-        final HandlerChainsStringQNameAdapter handlerChainsStringQNameAdapterAdapter = new HandlerChainsStringQNameAdapter();
-        handlerChainsStringQNameAdapterAdapter.setNamespaceContext(reader.getNamespaceContext());
-
         HandlerChain handlerChain = new HandlerChain();
         context.beforeUnmarshal(handlerChain, LifecycleCallback.NONE);
 
@@ -107,7 +104,7 @@ public class HandlerChain$JAXB
 
                 QName serviceNamePattern;
                 try {
-                    serviceNamePattern = handlerChainsStringQNameAdapterAdapter.unmarshal(serviceNamePatternRaw);
+                    serviceNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.unmarshal(serviceNamePatternRaw);
                 } catch (Exception e) {
                     context.xmlAdapterError(elementReader, HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
                     continue;
@@ -120,7 +117,7 @@ public class HandlerChain$JAXB
 
                 QName portNamePattern;
                 try {
-                    portNamePattern = handlerChainsStringQNameAdapterAdapter.unmarshal(portNamePatternRaw);
+                    portNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.unmarshal(portNamePatternRaw);
                 } catch (Exception e) {
                     context.xmlAdapterError(elementReader, HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
                     continue;
@@ -193,9 +190,6 @@ public class HandlerChain$JAXB
             context = new RuntimeContext();
         }
 
-        final HandlerChainsStringQNameAdapter handlerChainsStringQNameAdapterAdapter = new HandlerChainsStringQNameAdapter();
-        handlerChainsStringQNameAdapterAdapter.setNamespaceContext(writer.getNamespaceContext());
-
         String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
         if (HandlerChain.class != handlerChain.getClass()) {
             context.unexpectedSubclass(writer, handlerChain, HandlerChain.class);
@@ -221,7 +215,7 @@ public class HandlerChain$JAXB
         QName serviceNamePatternRaw = handlerChain.serviceNamePattern;
         String serviceNamePattern = null;
         try {
-            serviceNamePattern = handlerChainsStringQNameAdapterAdapter.marshal(serviceNamePatternRaw);
+            serviceNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.marshal(serviceNamePatternRaw);
         } catch (Exception e) {
             context.xmlAdapterError(handlerChain, "serviceNamePattern", HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
         }
@@ -235,7 +229,7 @@ public class HandlerChain$JAXB
         QName portNamePatternRaw = handlerChain.portNamePattern;
         String portNamePattern = null;
         try {
-            portNamePattern = handlerChainsStringQNameAdapterAdapter.marshal(portNamePatternRaw);
+            portNamePattern = Adapters.handlerChainsStringQNameAdapterAdapter.marshal(portNamePatternRaw);
         } catch (Exception e) {
             context.xmlAdapterError(handlerChain, "portNamePattern", HandlerChainsStringQNameAdapter.class, QName.class, QName.class, e);
         }
