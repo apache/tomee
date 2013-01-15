@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -381,47 +382,60 @@ public class CxfRsHttpListener implements RsHttpListener {
                 boolean first = true;
                 sb.append("<");
                 for(Type typeparm: typeparms) {
-                    if (!first)
+                    if (!first) {
                         sb.append(",");
-                    if (typeparm instanceof Class)
-                        sb.append(((Class)typeparm).getSimpleName());
-                    else
-                        sb.append(typeparm.toString().replace("java.lang.", ""));
+                    }
+                    sb.append(name(typeparm));
                     first = false;
                 }
                 sb.append("> ");
             }
 
             final Type genRetType = mtd.getGenericReturnType();
-            sb.append((genRetType instanceof Class) ?
-                    ((Class) genRetType).getSimpleName()
-                    : genRetType.toString().replace("java.lang.", "")).append(" ");
-
+            sb.append(name(genRetType)).append(" ");
             sb.append(mtd.getName()).append("(");
             final Type[] params = mtd.getGenericParameterTypes();
             for (int j = 0; j < params.length; j++) {
-                sb.append((params[j] instanceof Class)?
-                        ((Class)params[j]).getSimpleName():
-                        (params[j].toString()) );
-                if (j < (params.length - 1))
+                sb.append(name(params[j]));
+                if (j < (params.length - 1)) {
                     sb.append(", ");
+                }
             }
             sb.append(")");
             final Type[] exceptions = mtd.getGenericExceptionTypes();
             if (exceptions.length > 0) {
                 sb.append(" throws ");
                 for (int k = 0; k < exceptions.length; k++) {
-                    sb.append((exceptions[k] instanceof Class)?
-                            ((Class)exceptions[k]).getName():
-                            exceptions[k].toString());
-                    if (k < (exceptions.length - 1))
+                    sb.append(name(exceptions[k]));
+                    if (k < (exceptions.length - 1)) {
                         sb.append(",");
+                    }
                 }
             }
             return sb.toString();
         } catch (Exception e) {
             return "<" + e + ">";
         }
+    }
+
+    private static String name(final Type type) {
+        if (type instanceof Class<?>) {
+            return ((Class) type).getSimpleName() .replace("java.lang.", "").replace("java.util", "");
+        } else if (type instanceof ParameterizedType) {
+            final ParameterizedType pt = (ParameterizedType) type;
+            final StringBuilder builder = new StringBuilder();
+            builder.append(name(pt.getRawType())).append("<");
+            for (Type param : pt.getActualTypeArguments()) {
+                if (param instanceof Class<?>) {
+                    builder.append(name(param));
+                } else {
+                    builder.append(param.toString()); // avoid infinite loops
+                }
+            }
+            builder.append(">");
+            return builder.toString();
+        }
+        return type.toString();
     }
 
     private static String singleSlash(final String address, final String value) {
