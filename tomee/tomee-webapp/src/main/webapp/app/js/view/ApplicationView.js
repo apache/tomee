@@ -118,7 +118,7 @@
         });
 
         //disable default contextmenu
-        $(document).bind("contextmenu", function (e) {
+        $(window.document).bind("contextmenu", function (e) {
             return false;
         });
 

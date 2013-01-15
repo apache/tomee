@@ -79,4 +79,7 @@ install-tomee: $(TOMCAT_ZIP)
 install-all:
 	mvn clean && mvn install -DskipTests=true
 
-.PHONY: install-all install-tomee tomcat tomee start-tomee reload-tomee kill-tomee up-static
+run-lint:
+	cd ./tomee/tomee-webapp/ && mvn jslint4java:lint
+
+.PHONY: install-all install-tomee tomcat tomee start-tomee reload-tomee kill-tomee up-static run-lint

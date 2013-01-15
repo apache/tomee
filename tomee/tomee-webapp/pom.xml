@@ -69,7 +69,7 @@
           <failOnError>true</failOnError>
           <options>
             <vars>true</vars>
-            <predef>$,CodeMirror,Handlebars,define,console,window,document,setTimeout,clearTimeout,sessionStorage</predef>
+            <predef>$,CodeMirror,Handlebars,define,window,console,requirejs,require,APP_CONFIG</predef>
             <indent>4</indent>
           </options>
           <sourceFolders>

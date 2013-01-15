@@ -32,11 +32,11 @@
 
                 // Cancel previous execution
                 if (currentTimer !== null) {
-                    clearTimeout(currentTimer);
+                    window.clearTimeout(currentTimer);
                 }
 
                 if (millis) {
-                    currentTimer = setTimeout(callback, millis);
+                    currentTimer = window.setTimeout(callback, millis);
                 } else {
                     // No timeout set.
                     callback();
