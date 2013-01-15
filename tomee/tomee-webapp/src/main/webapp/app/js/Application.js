@@ -30,7 +30,7 @@
     define(requirements, function (controller) {
         return {
             start: function () {
-                $(document).ready(function () {
+                $(window.document).ready(function () {
                     controller.newObject();
                 });
             }

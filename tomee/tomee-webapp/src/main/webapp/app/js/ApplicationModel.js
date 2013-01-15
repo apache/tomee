@@ -141,11 +141,11 @@
 
         function sendMessage(bean) {
             if (isSocketReady()) {
-                bean.sessionId = sessionStorage.sessionId;
+                bean.sessionId = window.sessionStorage.sessionId;
                 var str = JSON.stringify(bean);
                 appSocket.send(str);
             } else {
-                setTimeout(function () {
+                window.setTimeout(function () {
                     sendMessage(bean);
                 }, 1000);
             }
@@ -161,7 +161,7 @@
         });
 
         channel.bind('server-command-callback', 'Logout', function (data) {
-            delete sessionStorage.sessionId;
+            delete window.sessionStorage.sessionId;
         });
 
         function sendRequest(bean) {
@@ -183,14 +183,14 @@
 
         (function () {
             var params = {};
-            if (sessionStorage.sessionId) {
-                params.sessionId = sessionStorage.sessionId;
+            if (window.sessionStorage.sessionId) {
+                params.sessionId = window.sessionStorage.sessionId;
             }
             sendRequest({
                 servlet: 'session',
                 params: params,
                 callback: function (data) {
-                    sessionStorage.sessionId = data.sessionId;
+                    window.sessionStorage.sessionId = data.sessionId;
                     sessionReady = true;
                     channel.send('server-connection', 'session-ready', {});
                 }

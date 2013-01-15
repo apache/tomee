@@ -16,10 +16,12 @@
  *  limitations under the License.
  */
 
-require.config(APP_CONFIG);
+(function () {
+    'use strict';
 
-requirejs(['Application', 'lib/less', 'lib/bootstrap'],
-    function (app) {
+    require.config(APP_CONFIG);
+
+    requirejs(['Application', 'lib/less', 'lib/bootstrap'], function (app) {
         app.start();
-    }
-);
+    });
+}());
