@@ -31,6 +31,7 @@ import com.envoisolutions.sxc.util.XoXMLStreamWriterImpl;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -65,7 +66,7 @@ public class Sxc {
 
         XMLStreamWriter writer = null;
         try {
-            final XMLOutputFactory xof = XmlFactories.getXof();
+            final XMLOutputFactory xof = getXmOutputFactory();
             writer = xof.createXMLStreamWriter(streamResult.getOutputStream(), "UTF-8");
             writer = new PrettyPrintXMLStreamWriter(writer);
             XoXMLStreamWriter w = new XoXMLStreamWriterImpl(writer);
@@ -146,7 +147,7 @@ public class Sxc {
     public static XMLStreamReader prepareReader(InputStream inputStream) throws XMLStreamException {
         final Source source = new StreamSource(inputStream);
 
-        final XMLStreamReader streamReader = XmlFactories.getXif().createXMLStreamReader(source);
+        final XMLStreamReader streamReader = getXmlInputFactory().createXMLStreamReader(source);
 
         return new JavaeeNamespaceFilter(streamReader);
     }
@@ -166,4 +167,27 @@ public class Sxc {
 
         return jaxbType.read(reader, new RuntimeContext((ExtendedUnmarshaller) null));
     }
+
+    private static XMLInputFactory getXmlInputFactory() {
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            // We don't want to use whatever they have put in the their app as a STAX impl
+            Thread.currentThread().setContextClassLoader(Sxc.class.getClassLoader());
+            return XMLInputFactory.newInstance();
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
+    private static XMLOutputFactory getXmOutputFactory() {
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            // We don't want to use whatever they have put in the their app as a STAX impl
+            Thread.currentThread().setContextClassLoader(Sxc.class.getClassLoader());
+            return XMLOutputFactory.newInstance();
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
 }
