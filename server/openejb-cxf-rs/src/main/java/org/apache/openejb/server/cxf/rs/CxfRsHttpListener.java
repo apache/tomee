@@ -404,7 +404,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                         ((Class)params[j]).getSimpleName():
                         (params[j].toString()) );
                 if (j < (params.length - 1))
-                    sb.append(",");
+                    sb.append(", ");
             }
             sb.append(")");
             final Type[] exceptions = mtd.getGenericExceptionTypes();
