@@ -26,126 +26,133 @@
  * In this application an example of that is the pagingToolChannel sending message to its parent.
  *
  */
-TOMEE.ApplicationChannel = (function () {
 
-    var channels = {};
+(function () {
+    'use strict';
 
-    function createChannel(channelName) {
-        "use strict";
+    var requirements = ['util/Obj', 'lib/jquery', 'util/Log'];
 
-        var name = channelName,
-            listeners = {};
+    define(requirements, function (obj) {
+        var channels = {};
 
-        /**
-         * Bind a listener to a given message
-         *
-         * @param messageKey this is the messageKey sent by another object
-         * @param callback this is your callback function. It contains one
-         * parameter with all values sent by the sender object
-         */
-        function bind(messageKey, callback) {
-            //avoiding "NullPointerException"
-            if (!listeners[messageKey]) {
-                listeners[messageKey] = $.Callbacks();
+        function createChannel(channelName) {
+            var name = channelName;
+            var listeners = {};
+
+            /**
+             * Bind a listener to a given message
+             *
+             * @param messageKey this is the messageKey sent by another object
+             * @param callback this is your callback function. It contains one
+             * parameter with all values sent by the sender object
+             */
+            function bind(messageKey, callback) {
+                var myListeners = listeners[messageKey];
+
+                //avoiding "NullPointerException"
+                if (!myListeners) {
+                    myListeners = [];
+                    listeners[messageKey] = myListeners;
+                }
+
+                if (myListeners.indexOf(callback) < 0) {
+                    myListeners.push(callback);
+                }
             }
 
-            var myListeners = listeners[messageKey];
-            if (!myListeners.has(callback)) {
-                // wrap the callback method in order to avoid the standard
-                // jquery behaviour for callbacks exceptions
-                // (http://bugs.jquery.com/ticket/11193)
-                var callbackWrapper = function (paramsObj) {
-                    try {
-                        return callback(paramsObj);
-
-                    } catch (e) {
-                        console.error(
-                            'Cannot execute listener callback', e,
-                            'Channel', name,
-                            'key', messageKey,
-                            'Parameters', paramsObj
-                        );
-                    }
-                };
-
-                myListeners.add(callbackWrapper);
-            }
-        }
-
-        /**
-         * Unbind a listener to a given message
-         *
-         * @param messageKey this is the messageKey sent by another object
-         * @param callback the "function" object you used in the "bind" method
-         */
-        function unbind(messageKey, callback) {
-            if (!listeners[messageKey]) {
-                return;
+            /**
+             * Unbind a listener to a given message
+             *
+             * @param messageKey this is the messageKey sent by another object
+             */
+            function unbind(messageKey) {
+                if (!listeners[messageKey]) {
+                    return;
+                }
+                delete listeners[messageKey];
             }
 
-            var myListeners = listeners[messageKey];
-            myListeners.remove(callback);
-        }
+            function unbindAll() {
+                obj.forEachKey(listeners, function (key) {
+                    unbind(key);
+                });
+            }
 
-        /**
-         * Send a message
-         *
-         * @param messageKey your message key
-         * @param paramsObj the parameters to the listeners callback methods
-         */
-        function send(messageKey, paramsObj) {
-            console.log(
-                'Channel', name,
-                'key', messageKey,
-                'Parameters', paramsObj,
-                'Listeners available',
-                !(!listeners[messageKey])
-            );
+            /**
+             * Send a message
+             *
+             * @param messageKey your message key
+             * @param paramsObj the parameters to the listeners callback methods
+             */
+            function send(messageKey, paramsObj) {
+                var hasListeners = false;
+                if (listeners[messageKey] && listeners[messageKey].length > 0) {
+                    hasListeners = true;
+                }
+                console.log('Channel', name, 'key', messageKey, 'Parameters', paramsObj, 'Listeners available',
+                    hasListeners);
 
-            if (!listeners[messageKey]) {
+                if (!hasListeners) {
+                    return {
+                        consumed: false
+                    };
+                }
+
+                var myListeners = listeners[messageKey];
+
+                //the safeParamsObj will never be null or undefined
+                var safeParamsObj = paramsObj;
+                if (!safeParamsObj) {
+                    safeParamsObj = {};
+                }
+
+                obj.forEach(myListeners, function (callback) {
+                    callback(safeParamsObj);
+                });
+
                 return {
-                    consumed: false
+                    consumed: true
                 };
             }
-
-            var myListeners = listeners[messageKey];
-
-            //the safeParamsObj will never be null or undefined
-            var safeParamsObj = paramsObj;
-            if (!safeParamsObj) {
-                safeParamsObj = {};
-            }
-
-            myListeners.fire(safeParamsObj);
 
             return {
-                consumed: true
+                bind: bind,
+                unbind: unbind,
+                unbindAll: unbindAll,
+                send: send
             };
         }
 
+        function getChannel(name) {
+            if (!channels[name]) {
+                channels[name] = createChannel(name);
+            }
+            return channels[name];
+        }
+
+        function unbindAll(name) {
+            if (name) {
+                console.log('Unbinding all the listeners of "' + name + '"');
+                getChannel(name).unbindAll();
+            } else {
+                console.warn('You are zapping all the channels and listeners!');
+                obj.forEachKey(channels, function (key) {
+                    getChannel(key).unbindAll();
+                });
+            }
+        }
+
         return {
-            bind:bind,
-            unbind:unbind,
-            send:send
+            bind: function (name, key, callback) {
+                getChannel(name).bind(key, callback);
+            },
+            unbind: function (name, key) {
+                getChannel(name).unbind(key);
+            },
+            unbindAll: unbindAll,
+            send: function (name, key, data) {
+                return getChannel(name).send(key, data);
+            }
         };
-    }
-
-    function getChannel(name) {
-        if (!channels[name]) {
-            channels[name] = createChannel(name);
-        }
-        return channels[name];
-    }
-
-    return {
-        bind:function (name, key, callback) {
-            getChannel(name).bind(key, callback);
-        },
-        unbind:function (name, key, callback) {
-            getChannel(name).unbind(key, callback);
-        },
-        send:function (name, key, data) {
-            return getChannel(name).send(key, data);
-        }
-    };
-})();
+    });
+}());

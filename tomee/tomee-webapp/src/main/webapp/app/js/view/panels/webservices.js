@@ -16,71 +16,81 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationTabWebservices = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel;
-    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices', {}));
-    var active = false;
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'util/Obj', 'lib/jquery'];
 
-    channel.bind('ui-actions', 'window-F5-pressed', function () {
-        triggerRefresh();
-    });
+    define(requirements, function (channel, templates, utils) {
+        function newObject() {
+            var container = $(templates.getValue('application-tab-webservices', {}));
+            var active = false;
 
-    channel.bind('server-command-callback-success', 'GetWebServices', function (data) {
-        var table = $(TOMEE.ApplicationTemplates.getValue('application-tab-webservices-table', {
-            webservices:buildTableData(data.output)
-        }));
+            function buildTableData(data) {
+                var rest = utils.getArray(data.rest);
+                var soap = utils.getArray(data.soap);
+                var result = [];
 
-        container.find('table').remove();
-        container.append(table);
-    });
+                function buildAppData(app, wsType) {
+                    var services = utils.getArray(app.services);
 
-    function buildTableData(data) {
-        var rest = TOMEE.utils.getArray(data.rest);
-        var soap = TOMEE.utils.getArray(data.soap);
-        var result = [];
+                    utils.forEach(services, function (value) {
+                        result.push({
+                            'wsType': wsType,
+                            'app': app.name,
+                            'data': value
+                        });
+                    });
+                }
 
-        function buildAppData(app, wsType) {
-            var services = TOMEE.utils.getArray(app.services);
-
-            TOMEE.utils.forEach(services, function (value) {
-                result.push({
-                    'wsType':wsType,
-                    'app':app.name,
-                    'data':value
+                utils.forEach(rest, function (app) {
+                    buildAppData(app, 'rest');
                 });
+
+                utils.forEach(soap, function (app) {
+                    buildAppData(app, 'soap');
+                });
+
+                return result;
+            }
+
+            function triggerRefresh() {
+                if (!active) {
+                    return;
+                }
+                channel.send('ui-actions', 'reload-webservices-table', {});
+            }
+
+            channel.bind('ui-actions', 'window-F5-pressed', function () {
+                triggerRefresh();
             });
+
+            channel.bind('server-command-callback-success', 'GetWebServices', function (data) {
+                var table = $(templates.getValue('application-tab-webservices-table', {
+                    webservices: buildTableData(data.output)
+                }));
+
+                container.find('table').remove();
+                container.append(table);
+            });
+
+            return {
+                getEl: function () {
+                    return container;
+                },
+                onAppend: function () {
+                    active = true;
+                    triggerRefresh();
+                },
+                onDetach: function () {
+                    active = false;
+                }
+            };
         }
 
-        TOMEE.utils.forEach(rest, function (app) {
-            buildAppData(app, 'rest');
-        });
+        return {
+            newObject: newObject
+        };
+    });
+}());
 
-        TOMEE.utils.forEach(soap, function (app) {
-            buildAppData(app, 'soap');
-        });
-
-        return result;
-    }
-
-    function triggerRefresh() {
-        if(!active) {
-            return;
-        }
-        channel.send('ui-actions', 'reload-webservices-table', {});
-    }
-
-    return {
-        getEl:function () {
-            return container;
-        },
-        onAppend:function () {
-            active = true;
-            triggerRefresh();
-        },
-        onDetach:function () {
-            active = false;
-        }
-    };
-};

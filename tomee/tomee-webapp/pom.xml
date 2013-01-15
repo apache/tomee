@@ -61,6 +61,22 @@
           </descriptors>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.googlecode.jslint4java</groupId>
+        <artifactId>jslint4java-maven-plugin</artifactId>
+        <version>2.0.3</version>
+        <configuration>
+          <failOnError>true</failOnError>
+          <options>
+            <vars>true</vars>
+            <predef>$,CodeMirror,Handlebars,define,console,window,document,setTimeout,clearTimeout,sessionStorage</predef>
+            <indent>4</indent>
+          </options>
+          <sourceFolders>
+            <sourceFolder>${basedir}/src/main/webapp/app/js</sourceFolder>
+          </sourceFolders>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>

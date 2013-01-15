@@ -21,8 +21,21 @@
  * DO NOT add any logic here. All business logic should be implemented in the ApplicationController object.
  * That is ok to add global utility methods here.
  */
-"use strict";
-var TOMEE = {};
-$(document).ready(function () {
-    TOMEE.ApplicationController();
-});
+
+(function () {
+    'use strict';
+
+    var requirements = ['ApplicationController', 'lib/jquery'];
+
+    define(requirements, function (controller) {
+        return {
+            start: function () {
+                $(document).ready(function () {
+                    controller.newObject();
+                });
+            }
+        };
+    });
+}());
+
+

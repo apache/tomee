@@ -16,26 +16,37 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationTabHome = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel,
-        container = $(TOMEE.ApplicationTemplates.getValue('application-tab-home', {})),
-        active = false;
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'lib/jquery'];
 
-    channel.bind('ui-actions', 'container-resized', function (data) {
-        container.height(data.containerHeight);
-    });
+    define(requirements, function (channel, templates) {
+        function newObject() {
+            var container = $(templates.getValue('application-tab-home', {}));
+            var active = false;
 
-    return {
-        getEl:function () {
-            return container;
-        },
-        onAppend:function () {
-            active = true;
-        },
-        onDetach:function () {
-            active = false;
+            channel.bind('ui-actions', 'container-resized', function (data) {
+                container.height(data.containerHeight);
+            });
+
+            return {
+                getEl: function () {
+                    return container;
+                },
+                onAppend: function () {
+                    active = true;
+                },
+                onDetach: function () {
+                    active = false;
+                }
+            };
         }
-    };
-};
+
+        return {
+            newObject: newObject
+        };
+    });
+}());
+
+

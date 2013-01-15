@@ -16,46 +16,49 @@
  *  limitations under the License.
  */
 
-TOMEE.GrowlNotification = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel;
-    var container = $(TOMEE.ApplicationTemplates.getValue('application-growl', {}));
-    var myBody = $('body');
-    var active = false;
-    var timeout = {};
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'util/Sequence', 'util/DelayedTask', 'lib/jquery'];
 
-    function showNotification(message, messageType) {
-        if (!active) {
-            active = true;
-            myBody.append(container);
+    define(requirements, function (channel, templates, sequence, DelayedTask) {
+        var container = $(templates.getValue('application-growl', {}));
+        var myBody = $('body');
+        var active = false;
+        var timeout = {};
+
+        function showNotification(message, messageType) {
+            if (!active) {
+                active = true;
+                myBody.append(container);
+            }
+            var alertId = sequence.next('alert');
+            var alert = $(templates.getValue('application-growl-message', {
+                alertId: alertId,
+                messageType: 'alert-' + messageType
+            }));
+            var messageEl = alert.find('.message');
+            messageEl.append(message);
+            container.append(alert);
+            alert.fadeIn();
+
+            timeout[alertId] = DelayedTask.newObject();
+            timeout[alertId].delay(function () {
+                try {
+                    alert.fadeOut(null, function () {
+                        try {
+                            alert.remove();
+                        } catch (e) { /* noop */
+                        }
+                    });
+                } catch (e) { /* noop */
+                }
+                delete timeout[alertId];
+            }, 5000);
         }
-        var alertId = TOMEE.Sequence.next('alert');
-        var alert = $(TOMEE.ApplicationTemplates.getValue('application-growl-message', {
-            alertId:alertId,
-            messageType:'alert-' + messageType
-        }));
-        var messageEl = alert.find('.message');
-        messageEl.append(message);
-        container.append(alert);
-        alert.fadeIn();
 
-        timeout[alertId] = TOMEE.DelayedTask();
-        timeout[alertId].delay(function() {
-            try {
-                alert.fadeOut(null, function () {
-                    try {
-                        alert.remove();
-                    } catch (e) { /* noop */ }
-                });
-            } catch (e) { /* noop */ }
-            delete timeout[alertId];
-        }, 5000);
-
-
-    }
-
-    return {
-        showNotification:showNotification
-    };
-};
+        return {
+            showNotification: showNotification
+        };
+    });
+}());
