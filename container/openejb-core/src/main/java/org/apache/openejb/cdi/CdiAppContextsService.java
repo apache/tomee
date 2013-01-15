@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
@@ -56,8 +55,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
-    private static final String SESSION_CONTEXT_CLAZZ = SystemInstance.get().getProperty("openejb.session-context", null);
-
     private final ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
 
     private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
@@ -81,10 +78,12 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     public CdiAppContextsService(WebBeansContext wbc, boolean supportsConversation) {
-        webBeansContext = wbc;
-        if (wbc == null) {
-            wbc = WebBeansContext.currentInstance();
+        if (wbc != null) {
+            webBeansContext = wbc;
+        } else {
+            webBeansContext = WebBeansContext.currentInstance();
         }
+
         dependentContext.setActive(true);
         if (supportsConversation) {
             conversationContext = new ThreadLocal<ConversationContext>();
@@ -198,16 +197,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     @Override
     public boolean supportsContext(Class<? extends Annotation> scopeType) {
-        if (scopeType.equals(RequestScoped.class)
+        return scopeType.equals(RequestScoped.class)
                 || scopeType.equals(SessionScoped.class)
                 || scopeType.equals(ApplicationScoped.class)
                 || scopeType.equals(Dependent.class)
                 || scopeType.equals(Singleton.class)
-                || (scopeType.equals(ConversationScoped.class) && supportsConversation())) {
-            return true;
-        }
+                || (scopeType.equals(ConversationScoped.class) && supportsConversation());
 
-        return false;
     }
 
     private void initRequestContext(ServletRequestEvent event) {
@@ -330,12 +326,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
-        if (SESSION_CONTEXT_CLAZZ != null) {
-            String classname = SESSION_CONTEXT_CLAZZ;
-            if ("http".equals(classname)) { // easier in the config
-                classname = "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
-            }
-
+        final String classname = ThreadSingletonServiceImpl.sessionContextClass();
+        if (classname != null) {
             try {
                 final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
                 try {
@@ -346,7 +338,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 }
 
             } catch (Exception e) {
-                logger.error("Can't instantiate " + SESSION_CONTEXT_CLAZZ + ", using default session context", e);
+                logger.error("Can't instantiate " + classname + ", using default session context", e);
             }
         }
         return new SessionContext();
@@ -520,5 +512,4 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     private boolean supportsConversation() {
         return conversationContext != null;
     }
-
 }

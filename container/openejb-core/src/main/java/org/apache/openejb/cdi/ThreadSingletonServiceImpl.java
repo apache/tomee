@@ -62,6 +62,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
     public static final String OPENEJB_OWB_PROXY_FACTORY = "openejb.owb.proxy-factory";
+    private static final String SESSION_CONTEXT_CLAZZ = SystemInstance.get().getProperty("openejb.session-context", null);
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
@@ -81,12 +82,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public void initialize(StartupObject startupObject) {
-        AppContext appContext = startupObject.getAppContext();
+        final AppContext appContext = startupObject.getAppContext();
 
         appContext.setCdiEnabled(hasBeans(startupObject.getAppInfo()));
 
         //initialize owb context, cf geronimo's OpenWebBeansGBean
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
+
         Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
         properties.setProperty(OpenWebBeansConfiguration.USE_EJB_DISCOVERY, "true");
@@ -103,16 +105,25 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
         }
 
+        final boolean tomee = SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat");
+
         properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.ApplicationScoped", ApplicationScopedBeanInterceptorHandler.class.getName());
-        if (SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat")) {
+
+        if (tomee) {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", RequestScopedBeanInterceptorHandler.class.getName());
         } else {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", NormalScopedBeanInterceptorHandler.class.getName());
         }
 
+        if (SESSION_CONTEXT_CLAZZ != null && tomee) {
+            properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.SessionScoped", "org.apache.tomee.catalina.cdi.SessionNormalScopeBeanHandler");
+        }
+
         if (SystemInstance.get().getOptions().get(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, false)) {
             properties.setProperty(WEBBEANS_FAILOVER_ISSUPPORTFAILOVER, "true");
         }
+
+        properties.putAll(appContext.getProperties());
 
         services.put(AppContext.class, appContext);
         services.put(TransactionService.class, new OpenEJBTransactionService());
@@ -312,4 +323,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         ctx.clear();
     }
 
+    public static String sessionContextClass() {
+        if (SESSION_CONTEXT_CLAZZ != null) {
+            if ("http".equals(SESSION_CONTEXT_CLAZZ)) { // easy way to manage this config
+                return  "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
+            }
+            return SESSION_CONTEXT_CLAZZ;
+        }
+        return null;
+    }
 }
