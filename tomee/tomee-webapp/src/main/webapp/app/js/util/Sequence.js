@@ -16,28 +16,34 @@
  *  limitations under the License.
  */
 
-TOMEE.Sequence = (function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var sequenceMap = {};
+    var requirements = [];
 
-    function next(prefix) {
-        var myPrefix = prefix;
-        if (!myPrefix || myPrefix === '') {
-            myPrefix = 'TOMEE';
+    define(requirements, function () {
+        var sequenceMap = {};
+
+        function next(prefix) {
+            var myPrefix = (prefix ? prefix.trim() : null);
+            if (!myPrefix || myPrefix === '') {
+                myPrefix = 'APP';
+            }
+
+            var sequence = sequenceMap[myPrefix];
+            if (!sequence) {
+                sequence = 0;
+                sequenceMap[myPrefix] = sequence;
+            }
+
+            sequenceMap[myPrefix] = sequence + 1;
+            return myPrefix + '-' + sequence;
         }
 
-        var sequence = sequenceMap[myPrefix];
-        if (!sequence) {
-            sequence = 0;
-            sequenceMap[myPrefix] = sequence;
-        }
+        return {
+            next: next
+        };
+    });
+}());
 
-        sequenceMap[myPrefix] = sequence + 1;
-        return myPrefix + '-' + sequence;
-    }
 
-    return {
-        next:next
-    };
-})();

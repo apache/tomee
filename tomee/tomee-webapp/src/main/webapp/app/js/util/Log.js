@@ -16,20 +16,31 @@
  *  limitations under the License.
  */
 
-"use strict";
-
 (function () {
-    var noOp = function() {};
+    'use strict';
 
-    if(!window.console) {
-        window.console = {};
-    }
+    var requirements = [];
 
-    if(!window.console.error) {
-        window.console.error = noOp;
-    }
+    define(requirements, function () {
+        var noOp = function () {
+        };
 
-    if(!window.console.log) {
-        window.console.log = noOp;
-    }
-})();
+        if (!window.console) {
+            window.console = {};
+        }
+
+        if (!window.console.error) {
+            window.console.error = noOp;
+        }
+
+        if (!window.console.warn) {
+            window.console.warn = noOp;
+        }
+
+        if (!window.console.log) {
+            window.console.log = noOp;
+        }
+    });
+}());
+
+

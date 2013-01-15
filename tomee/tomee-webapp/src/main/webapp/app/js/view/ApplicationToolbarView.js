@@ -16,125 +16,134 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationToolbarView = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel;
-    var el = $(TOMEE.ApplicationTemplates.getValue('application-toolbar', {}));
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'util/DelayedTask'];
 
-    var userNameMenu = el.find('.tomee-user-name');
-    var loginMenu = el.find('.user-login-dropdown');
-    var loginBtn = el.find('.tomee-login-btn');
-    var logoutBtn = $(TOMEE.ApplicationTemplates.getValue('application-toolbar-logout-btn', {}));
+    define(requirements, function (channel, templates, DelayedTask) {
+        function newObject() {
+            var el = $(templates.getValue('application-toolbar', {}));
+            var userNameMenu = el.find('.tomee-user-name');
+            var loginMenu = el.find('.user-login-dropdown');
+            var loginBtn = el.find('.tomee-login-btn');
+            var logoutBtn = $(templates.getValue('application-toolbar-logout-btn', {}));
 
-    el.find('.toolbar-item').on('click', function (ev) {
-        var tabEl = $(ev.currentTarget),
-            tabKey = tabEl.attr("tab-key");
+            el.find('.toolbar-item').on('click', function (ev) {
+                var tabEl = $(ev.currentTarget),
+                    tabKey = tabEl.attr("tab-key");
 
-        channel.send('ui-actions', 'toolbar-click', {
-            key:tabKey
-        });
-    });
+                channel.send('ui-actions', 'toolbar-click', {
+                    key: tabKey
+                });
+            });
 
-    userNameMenu.on('click', function() {
-        TOMEE.DelayedTask().delay(function() {
-            var user = el.find('.tomee-login');
+            userNameMenu.on('click', function () {
+                DelayedTask.newObject().delay(function () {
+                    var user = el.find('.tomee-login');
 
-            if(loginMenu.hasClass('open') && user) {
-                user.focus();
-            }
-        }, 500);
-    });
+                    if (loginMenu.hasClass('open') && user) {
+                        user.focus();
+                    }
+                }, 500);
+            });
 
-    channel.bind('ui-actions', 'locked-change', function (data) {
-        el.find('.toolbar-item').each(function (index, htmlElement) {
-            var element = $(htmlElement);
-            if (data.panel === element.attr('tab-key')) {
-                if (data.locked) {
-                    element.addClass('hidden');
-                } else {
-                    element.removeClass('hidden');
+            channel.bind('ui-actions', 'locked-change', function (data) {
+                el.find('.toolbar-item').each(function (index, htmlElement) {
+                    var element = $(htmlElement);
+                    if (data.panel === element.attr('tab-key')) {
+                        if (data.locked) {
+                            element.addClass('hidden');
+                        } else {
+                            element.removeClass('hidden');
+                        }
+                    }
+                });
+            });
+
+            channel.bind('ui-actions', 'panel-switch', function (data) {
+                el.find('.toolbar-item').removeClass('active');
+                el.find('.toolbar-item').each(function (index, htmlEl) {
+                    var tabEl = $(htmlEl),
+                        tabKey = tabEl.attr("tab-key");
+
+                    if (tabKey === data.key) {
+                        tabEl.addClass('active');
+                    }
+                });
+            });
+
+            loginBtn.on('click', function () {
+                var user = el.find('.tomee-login').val();
+                var pass = el.find('.tomee-password').val();
+
+                channel.send('ui-actions', 'login-btn-click', {
+                    user: user,
+                    pass: pass
+                });
+                loginBtn.prop('disabled', true);
+            });
+
+            logoutBtn.on('click', function () {
+                channel.send('ui-actions', 'logout-btn-click', {});
+            });
+
+            channel.bind('server-command-callback-success', 'Login', function (params) {
+                var btnsArea = el.find('.login-buttons');
+                var user = el.find('.tomee-login');
+                var pass = el.find('.tomee-password');
+
+                if (!params.output.loginSuccess) {
+                    loginBtn.prop('disabled', false);
+                    return;
                 }
-            }
-        });
-    });
 
-    channel.bind('ui-actions', 'panel-switch', function (data) {
-        el.find('.toolbar-item').removeClass('active');
-        el.find('.toolbar-item').each(function (index, htmlEl) {
-            var tabEl = $(htmlEl),
-                tabKey = tabEl.attr("tab-key");
+                loginBtn.remove();
+                user.remove();
+                pass.remove();
 
-            if (tabKey === data.key) {
-                tabEl.addClass('active');
-            }
-        });
-    });
+                btnsArea.append(logoutBtn);
 
-    loginBtn.on('click', function () {
-        var user = el.find('.tomee-login').val();
-        var pass = el.find('.tomee-password').val();
+                loginMenu.removeClass('open');
+                userNameMenu.html(user.val());
 
-        channel.send('ui-actions', 'login-btn-click', {
-            user:user,
-            pass:pass
-        });
-        loginBtn.prop('disabled', true);
-    });
+                el.find('.login-menu').addClass('logout');
+            });
 
-    logoutBtn.on('click', function () {
-        channel.send('ui-actions', 'logout-btn-click', {});
-    });
+            channel.bind('server-command-callback-success', 'session', function (params) {
+                var btnsArea = el.find('.login-buttons');
+                var user = el.find('.tomee-login');
+                var pass = el.find('.tomee-password');
 
-    channel.bind('server-command-callback-success', 'Login', function (params) {
-        var btnsArea = el.find('.login-buttons');
-        var user = el.find('.tomee-login');
-        var pass = el.find('.tomee-password');
+                if (!params.data.userName) {
+                    return;
+                }
 
-        if (!params.output.loginSuccess) {
-            loginBtn.prop('disabled', false);
-            return;
+                loginBtn.remove();
+                user.remove();
+                pass.remove();
+                btnsArea.append(logoutBtn);
+
+                userNameMenu.html(params.data.userName);
+
+                el.find('.login-menu').addClass('logout');
+                el.find('.toolbar-item').removeClass('disabled');
+            });
+
+            channel.bind('server-command-callback-error', 'Login', function (params) {
+                loginBtn.prop('disabled', false);
+            });
+
+            return {
+                getEl: function () {
+                    return el;
+                }
+            };
         }
 
-        loginBtn.remove();
-        user.remove();
-        pass.remove();
-
-        btnsArea.append(logoutBtn);
-
-        loginMenu.removeClass('open');
-        userNameMenu.html(user.val());
-
-        el.find('.login-menu').addClass('logout');
+        return {
+            newObject: newObject
+        };
     });
+}());
 
-    channel.bind('server-command-callback-success', 'session', function (params) {
-        var btnsArea = el.find('.login-buttons');
-        var user = el.find('.tomee-login');
-        var pass = el.find('.tomee-password');
-
-        if (!params.data.userName) {
-            return;
-        }
-
-        loginBtn.remove();
-        user.remove();
-        pass.remove();
-        btnsArea.append(logoutBtn);
-
-        userNameMenu.html(params.data.userName);
-
-        el.find('.login-menu').addClass('logout');
-        el.find('.toolbar-item').removeClass('disabled');
-    });
-
-    channel.bind('server-command-callback-error', 'Login', function (params) {
-        loginBtn.prop('disabled', false);
-    });
-
-    return {
-        getEl:function () {
-            return el;
-        }
-    };
-};

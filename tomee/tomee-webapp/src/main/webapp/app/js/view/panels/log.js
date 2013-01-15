@@ -16,117 +16,128 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationTabLog = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel;
-    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-log', {}));
-    var selectedFile = null;
-    var active = false;
-    var locked = true;
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'util/Obj', 'lib/jquery'];
 
-    function setLocked(value) {
-        locked = value;
-        channel.send('ui-actions', 'locked-change', {
-            locked: value,
-            panel:'log'
-        });
-    }
+    define(requirements, function (channel, templates, utils) {
+        function newObject() {
+            var container = $(templates.getValue('application-tab-log', {}));
+            var selectedFile = null;
+            var active = false;
+            var locked = true;
 
-    channel.bind('ui-actions', 'container-resized', function (data) {
-        var consoleOutput = container.find('.tomee-log-output'),
-            bbar = container.find('.bbar'),
-            outputHeight = data.containerHeight - bbar.height() + 2;
+            function setLocked(value) {
+                locked = value;
+                channel.send('ui-actions', 'locked-change', {
+                    locked: value,
+                    panel: 'log'
+                });
+            }
 
-        consoleOutput.height(outputHeight);
-    });
-
-    channel.bind('server-command-callback-success', 'GetLogFiles', function (data) {
-        var logFiles = container.find('.tomee-log-files');
-        logFiles.empty();
-
-        TOMEE.utils.forEach(data.output.files, function (value) {
-            var file = $(TOMEE.ApplicationTemplates.getValue('application-tab-log-file', {
-                file:value
-            }));
-            file.on('click', function () {
+            function triggerFileSelected() {
+                if (!active || !selectedFile) {
+                    return;
+                }
                 channel.send('ui-actions', 'log-file-selected', {
-                    file:value
+                    file: selectedFile
+                });
+            }
+
+            function setFileName(name) {
+                var el = container.find('.log-file-name');
+                el.html(name);
+                selectedFile = name;
+            }
+
+            channel.bind('ui-actions', 'container-resized', function (data) {
+                var consoleOutput = container.find('.tomee-log-output'),
+                    bbar = container.find('.bbar'),
+                    outputHeight = data.containerHeight - bbar.height() + 2;
+
+                consoleOutput.height(outputHeight);
+            });
+
+            channel.bind('server-command-callback-success', 'GetLogFiles', function (data) {
+                var logFiles = container.find('.tomee-log-files');
+                logFiles.empty();
+
+                utils.forEach(data.output.files, function (value) {
+                    var file = $(templates.getValue('application-tab-log-file', {
+                        file: value
+                    }));
+                    file.on('click', function () {
+                        channel.send('ui-actions', 'log-file-selected', {
+                            file: value
+                        });
+                    });
+                    logFiles.append(file);
                 });
             });
-            logFiles.append(file);
-        });
-    });
 
-    channel.bind('server-command-callback-success', 'GetLog', function (data) {
-        setFileName(data.output.log.name);
-        var lines = container.find('.tomee-log-output');
-        lines.empty();
-        lines.append($(TOMEE.ApplicationTemplates.getValue('application-tab-log-lines', {
-            lines:data.output.log.lines
-        })));
+            channel.bind('server-command-callback-success', 'GetLog', function (data) {
+                setFileName(data.output.log.name);
+                var lines = container.find('.tomee-log-output');
+                lines.empty();
+                lines.append($(templates.getValue('application-tab-log-lines', {
+                    lines: data.output.log.lines
+                })));
 
-        lines.animate({
-            scrollTop:lines.prop("scrollHeight") - lines.height()
-        }, 500);
-    });
+                lines.animate({
+                    scrollTop: lines.prop("scrollHeight") - lines.height()
+                }, 500);
+            });
 
-    container.find('.log-file-name').on('click', function () {
-        triggerFileSelected();
-    });
+            container.find('.log-file-name').on('click', function () {
+                triggerFileSelected();
+            });
 
-    channel.bind('ui-actions', 'log-file-selected', function (param) {
-        setFileName(param.file);
-    });
+            channel.bind('ui-actions', 'log-file-selected', function (param) {
+                setFileName(param.file);
+            });
 
-    channel.bind('ui-actions', 'window-F5-pressed', function () {
-        triggerFileSelected();
-    });
+            channel.bind('ui-actions', 'window-F5-pressed', function () {
+                triggerFileSelected();
+            });
 
-    channel.bind('server-command-callback-success', 'Login', function (params) {
-        if (params.output.loginSuccess) {
-            setLocked(false);
-        } else {
-            setLocked(true);
+            channel.bind('server-command-callback-success', 'Login', function (params) {
+                if (params.output.loginSuccess) {
+                    setLocked(false);
+                } else {
+                    setLocked(true);
+                }
+            });
+
+            channel.bind('server-command-callback-success', 'session', function (params) {
+                if (params.data.userName) {
+                    setLocked(false);
+                } else {
+                    setLocked(true);
+                }
+            });
+
+            return {
+                getEl: function () {
+                    return container;
+                },
+                onAppend: function () {
+                    active = true;
+                    channel.send('ui-actions', 'load-file-names', {});
+                },
+                onDetach: function () {
+                    active = false;
+                },
+                isLocked: function () {
+                    return locked;
+                }
+            };
         }
+
+        return {
+            newObject: newObject
+        };
     });
+}());
 
-    channel.bind('server-command-callback-success', 'session', function (params) {
-        if (params.data.userName) {
-            setLocked(false);
-        } else {
-            setLocked(true);
-        }
-    });
 
-    function triggerFileSelected() {
-        if (!active || !selectedFile) {
-            return;
-        }
-        channel.send('ui-actions', 'log-file-selected', {
-            file:selectedFile
-        });
-    }
-
-    function setFileName(name) {
-        var el = container.find('.log-file-name');
-        el.html(name);
-        selectedFile = name;
-    }
-
-    return {
-        getEl:function () {
-            return container;
-        },
-        onAppend:function () {
-            active = true;
-            channel.send('ui-actions', 'load-file-names', {});
-        },
-        onDetach:function () {
-            active = false;
-        },
-        isLocked:function () {
-            return locked;
-        }
-    };
-};

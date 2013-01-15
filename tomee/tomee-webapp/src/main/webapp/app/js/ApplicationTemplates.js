@@ -16,52 +16,58 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationTemplates = (function (paths) {
-    "use strict";
+(function () {
+    'use strict';
 
-    var templates = {};
+    var files = [
+        'application',
+        'application-growl',
+        'application-growl-message',
+        'application-disabled',
+        'application-toolbar',
+        'application-toolbar-logout-btn',
+        'application-tab-home',
+        'application-tab-console',
+        'application-tab-console-sample',
+        'application-tab-console-output-line',
+        'application-tab-log',
+        'application-tab-log-file',
+        'application-tab-log-lines',
+        'application-tab-status',
+        'application-tab-status-lines',
+        'application-disconnected-popup',
+        'application-tab-webservices',
+        'application-tab-webservices-table',
+        'application-tab-jndi',
+        'application-tab-jndi-table'
+    ];
 
-    TOMEE.utils.forEach(paths, function (path) {
-        $.ajax({
-                url:'app/js/templates/' + path + '.handlebars',
-                method:'GET',
-                dataType:'text',
-                async:false,
-                success:function (data) {
-                    templates[path] = Handlebars.compile(data);
-                }
-            }
-        );
-    });
+    // Preparing the "requirements" paths.
+    var requirements = [];
 
-    return {
-        getValue:function (templateName, cfg) {
-            var template = templates[templateName];
-            if (!template) {
-                throw 'Template not registered. "' + templateName + '"';
-            }
-            return template(cfg);
+    (function () {
+        var i = 0;
+        for (i = 0; i < files.length; i += 1) {
+            requirements.push('text!templates/' + files[i] + '.handlebars');
         }
-    };
-})([
-    'application',
-    'application-growl',
-    'application-growl-message',
-    'application-disabled',
-    'application-toolbar',
-    'application-toolbar-logout-btn',
-    'application-tab-home',
-    'application-tab-console',
-    'application-tab-console-sample',
-    'application-tab-console-output-line',
-    'application-tab-log',
-    'application-tab-log-file',
-    'application-tab-log-lines',
-    'application-tab-status',
-    'application-tab-status-lines',
-    'application-disconnected-popup',
-    'application-tab-webservices',
-    'application-tab-webservices-table',
-    'application-tab-jndi',
-    'application-tab-jndi-table'
-]);
+    }());
+
+    requirements.push('lib/handlebars');
+
+    define(requirements, function () {
+        var templates = {};
+        var i = 0;
+        for (i = 0; i < files.length; i += 1) {
+            templates[files[i]] = Handlebars.compile(arguments[i]);
+        }
+        return {
+            getValue: function (templateName, cfg) {
+                var template = templates[templateName];
+                if (!template) {
+                    throw 'Template not registered. "' + templateName + '"';
+                }
+                return template(cfg);
+            }
+        };
+    });
+}());

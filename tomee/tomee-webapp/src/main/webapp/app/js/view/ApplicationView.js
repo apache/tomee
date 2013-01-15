@@ -16,181 +16,181 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationView = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel,
-        panelMap = {
-            'home':TOMEE.ApplicationTabHome(),
-            'console':TOMEE.ApplicationTabConsole(),
-            'log':TOMEE.ApplicationTabLog(),
-            'status': TOMEE.ApplicationTabStatus()
-        },
-        selected = null,
-        container = $(TOMEE.ApplicationTemplates.getValue('application', {})),
-        toolbar = TOMEE.ApplicationToolbarView(),
-        myWindow = $(window),
-        delayedContainerResize = TOMEE.DelayedTask(),
-        connectionPopupVisible = false,
-        applicationDisabled = $(TOMEE.ApplicationTemplates.getValue('application-disabled', {})),
-        connectionPopup = $(TOMEE.ApplicationTemplates.getValue('application-disconnected-popup', {}));
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates', 'util/DelayedTask', 'view/ApplicationToolbarView',
+        'view/panels/home', 'view/panels/console', 'view/panels/log', 'view/panels/status', 'util/Obj', 'lib/jquery'];
 
-    channel.bind('server-connection', 'socket-connection-opened', function (data) {
-        hideConnectionPopup();
-    });
-
-    channel.bind('server-connection', 'socket-connection-closed', function (data) {
-        showConnectionPopup();
-    });
-
-    channel.bind('server-connection', 'socket-connection-error', function (data) {
-        showConnectionPopup();
-    });
-
-    channel.bind('ui-actions', 'toolbar-click', function (data) {
-        switchPanelAndSendEvent(data.key);
-    });
-
-    //disable default contextmenu
-    $(document).bind("contextmenu", function (e) {
-        return false;
-    });
-
-    myWindow.on('resize', function () {
-        delayedContainerResize.delay(updateContainerSize, 500);
-    });
-
-    myWindow.on('keyup', function (ev) {
-        var result = {
-            consumed:false
+    define(requirements, function (channel, templates, DelayedTask, ApplicationToolbarView, ApplicationTabHome,
+                                   ApplicationTabConsole, ApplicationTabLog, ApplicationTabStatus, utils) {
+        var panelMap = {
+            'home': ApplicationTabHome.newObject(),
+            'console': ApplicationTabConsole.newObject(),
+            'log': ApplicationTabLog.newObject(),
+            'status': ApplicationTabStatus.newObject()
         };
+        var selected = null;
+        var container = $(templates.getValue('application', {}));
+        var toolbar = ApplicationToolbarView.newObject();
+        var myWindow = $(window);
+        var delayedContainerResize = DelayedTask.newObject();
+        var connectionPopupVisible = false;
+        var applicationDisabled = $(templates.getValue('application-disabled', {}));
+        var connectionPopup = $(templates.getValue('application-disconnected-popup', {}));
 
-        if (ev.keyCode === 18) { //ALT
-            result = channel.send('ui-actions', 'window-alt-released', {});
-        } else if (ev.keyCode === 17) { //CONTROL
-            result = channel.send('ui-actions', 'window-ctrl-released', {});
-        } else if (ev.keyCode === 16) { //SHIFT
-            result = channel.send('ui-actions', 'window-shift-released', {});
-        }
+        function updateContainerSize() {
+            var containerHeight,
+                containerWidth,
+                toolbarHeight = toolbar.getEl().outerHeight();
 
-        if (result.consumed) {
-            ev.preventDefault();
-        }
-    });
+            containerHeight = myWindow.outerHeight();
+            containerWidth = myWindow.outerWidth();
 
-    myWindow.on('keydown', function (ev) {
-        var key = [],
-            keyStr = null;
+            container.css('height', containerHeight + 'px');
+            container.css('width', containerWidth + 'px');
 
-        if (ev.altKey) {
-            key.push('alt');
-        } else if (ev.ctrlKey) {
-            key.push('ctrl');
-        } else if (ev.shiftKey) {
-            key.push('shift');
-        }
-
-        if (key.length === 0 &&
-            !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) { // F1...F12 or esc
-            return; //nothing to do
-        }
-
-        keyStr = TOMEE.utils.keyCodeToString(ev.keyCode);
-        if (!keyStr) {
-            keyStr = ev.keyCode;
-        }
-        key.push(keyStr);
-
-        var result = channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
-        if (result.consumed) {
-            ev.preventDefault();
-        }
-    });
-
-    channel.bind('ui-actions', 'window-alt-1-pressed', function () {
-        switchPanelAndSendEvent('home');
-    });
-    channel.bind('ui-actions', 'window-alt-2-pressed', function () {
-        switchPanelAndSendEvent('console');
-    });
-    channel.bind('ui-actions', 'window-alt-3-pressed', function () {
-        switchPanelAndSendEvent('log');
-    });
-
-    function showConnectionPopup() {
-        if (connectionPopupVisible) {
-            return;
-        }
-        connectionPopupVisible = true;
-        container.append(applicationDisabled);
-        container.append(connectionPopup);
-    }
-
-    function hideConnectionPopup() {
-        if (!connectionPopupVisible) {
-            return;
-        }
-        connectionPopupVisible = false;
-        applicationDisabled.detach();
-        connectionPopup.detach();
-    }
-
-    function switchPanelAndSendEvent(key) {
-        if (switchPanel(key)) {
-            channel.send('ui-actions', 'panel-switch', {
-                key:key
+            channel.send('ui-actions', 'container-resized', {
+                containerHeight: containerHeight - toolbarHeight,
+                containerWidth: containerWidth - toolbarHeight
             });
         }
-    }
 
-    function switchPanel(key) {
-        if (panelMap[key].isLocked && panelMap[key].isLocked()) {
-            //The panel is locked. The user should login first.
-            return false;
+        function switchPanel(key) {
+            if (panelMap[key].isLocked && panelMap[key].isLocked()) {
+                //The panel is locked. The user should login first.
+                return false;
+            }
+
+            if (selected) {
+                selected.getEl().detach();
+                selected.onDetach();
+            }
+            selected = panelMap[key];
+            selected.getEl().appendTo(container);
+            selected.onAppend();
+
+            updateContainerSize();
+
+            return true;
         }
 
-        if (selected) {
-            selected.getEl().detach();
-            selected.onDetach();
+        function switchPanelAndSendEvent(key) {
+            if (switchPanel(key)) {
+                channel.send('ui-actions', 'panel-switch', {
+                    key: key
+                });
+            }
         }
-        selected = panelMap[key];
-        selected.getEl().appendTo(container);
-        selected.onAppend();
 
-        updateContainerSize();
+        function showConnectionPopup() {
+            if (connectionPopupVisible) {
+                return;
+            }
+            connectionPopupVisible = true;
+            container.append(applicationDisabled);
+            container.append(connectionPopup);
+        }
 
-        return true;
-    }
+        function hideConnectionPopup() {
+            if (!connectionPopupVisible) {
+                return;
+            }
+            connectionPopupVisible = false;
+            applicationDisabled.detach();
+            connectionPopup.detach();
+        }
 
-    function updateContainerSize() {
-        var containerHeight,
-            containerWidth,
-            toolbarHeight = toolbar.getEl().outerHeight();
-
-        containerHeight = myWindow.outerHeight();
-        containerWidth = myWindow.outerWidth();
-
-        container.css('height', containerHeight + 'px');
-        container.css('width', containerWidth + 'px');
-
-        channel.send('ui-actions', 'container-resized', {
-            containerHeight:containerHeight - toolbarHeight,
-            containerWidth:containerWidth - toolbarHeight
+        channel.bind('server-connection', 'socket-connection-opened', function (data) {
+            hideConnectionPopup();
         });
-    }
 
-    return {
-        render:function () {
-            var myBody = $('body');
-            container.append(toolbar.getEl());
-            myBody.append(container);
-
-
-            switchPanel('home');
-
+        channel.bind('server-connection', 'socket-connection-closed', function (data) {
             showConnectionPopup();
+        });
 
+        channel.bind('server-connection', 'socket-connection-error', function (data) {
+            showConnectionPopup();
+        });
+
+        channel.bind('ui-actions', 'toolbar-click', function (data) {
+            switchPanelAndSendEvent(data.key);
+        });
+
+        //disable default contextmenu
+        $(document).bind("contextmenu", function (e) {
+            return false;
+        });
+
+        myWindow.on('resize', function () {
             delayedContainerResize.delay(updateContainerSize, 500);
-        }
-    };
-};
+        });
+
+        myWindow.on('keyup', function (ev) {
+            var result = {
+                consumed: false
+            };
+
+            if (ev.keyCode === 18) { //ALT
+                result = channel.send('ui-actions', 'window-alt-released', {});
+            } else if (ev.keyCode === 17) { //CONTROL
+                result = channel.send('ui-actions', 'window-ctrl-released', {});
+            } else if (ev.keyCode === 16) { //SHIFT
+                result = channel.send('ui-actions', 'window-shift-released', {});
+            }
+
+            if (result.consumed) {
+                ev.preventDefault();
+            }
+        });
+
+        myWindow.on('keydown', function (ev) {
+            var key = [],
+                keyStr = null;
+
+            if (ev.altKey) {
+                key.push('alt');
+            } else if (ev.ctrlKey) {
+                key.push('ctrl');
+            } else if (ev.shiftKey) {
+                key.push('shift');
+            }
+
+            if (key.length === 0 && !((ev.keyCode >= 112 && ev.keyCode <= 123) || ev.keyCode === 27)) { // F1...F12 or esc
+                return; //nothing to do
+            }
+
+            keyStr = utils.keyCodeToString(ev.keyCode);
+            if (!keyStr) {
+                keyStr = ev.keyCode;
+            }
+            key.push(keyStr);
+
+            var result = channel.send('ui-actions', 'window-' + key.join('-') + '-pressed', {});
+            if (result.consumed) {
+                ev.preventDefault();
+            }
+        });
+
+        channel.bind('ui-actions', 'window-alt-1-pressed', function () {
+            switchPanelAndSendEvent('home');
+        });
+        channel.bind('ui-actions', 'window-alt-2-pressed', function () {
+            switchPanelAndSendEvent('console');
+        });
+        channel.bind('ui-actions', 'window-alt-3-pressed', function () {
+            switchPanelAndSendEvent('log');
+        });
+
+        return {
+            render: function () {
+                var myBody = $('body');
+                container.append(toolbar.getEl());
+                myBody.append(container);
+                switchPanel('home');
+                showConnectionPopup();
+                delayedContainerResize.delay(updateContainerSize, 500);
+            }
+        };
+    });
+}());

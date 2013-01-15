@@ -16,43 +16,54 @@
  *  limitations under the License.
  */
 
-TOMEE.ApplicationTabJndi = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var channel = TOMEE.ApplicationChannel;
-    var container = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi', {}));
-    var active = false;
+    var requirements = ['ApplicationChannel', 'ApplicationTemplates'];
 
-    channel.bind('ui-actions', 'window-F5-pressed', function () {
-        triggerRefresh();
-    });
+    define(requirements, function (channel, templates) {
+        function newObject() {
+            var container = $(templates.getValue('application-tab-jndi', {}));
+            var active = false;
 
-    channel.bind('server-command-callback-success', 'GetJndi', function (data) {
-        var table = $(TOMEE.ApplicationTemplates.getValue('application-tab-jndi-table', {
-            jndi:data.output.jndi
-        }));
+            function triggerRefresh() {
+                if (!active) {
+                    return;
+                }
+                channel.send('ui-actions', 'reload-jndi-table', {});
+            }
 
-        container.find('table').remove();
-        container.append(table);
-    });
+            channel.bind('ui-actions', 'window-F5-pressed', function () {
+                triggerRefresh();
+            });
 
-    function triggerRefresh() {
-        if(!active) {
-            return;
+            channel.bind('server-command-callback-success', 'GetJndi', function (data) {
+                var table = $(templates.getValue('application-tab-jndi-table', {
+                    jndi: data.output.jndi
+                }));
+
+                container.find('table').remove();
+                container.append(table);
+            });
+
+            return {
+                getEl: function () {
+                    return container;
+                },
+                onAppend: function () {
+                    active = true;
+                    triggerRefresh();
+                },
+                onDetach: function () {
+                    active = false;
+                }
+            };
         }
-        channel.send('ui-actions', 'reload-jndi-table', {});
-    }
 
-    return {
-        getEl:function () {
-            return container;
-        },
-        onAppend:function () {
-            active = true;
-            triggerRefresh();
-        },
-        onDetach:function () {
-            active = false;
-        }
-    };
-};
+        return {
+            newObject: newObject
+        };
+    });
+}());
+
+

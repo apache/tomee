@@ -16,23 +16,41 @@
  *  limitations under the License.
  */
 
-TOMEE.DelayedTask = function () {
-    "use strict";
+(function () {
+    'use strict';
 
-    var currentTimer = null;
+    var requirements = [];
 
-    function delay(callback, millis) {
-        if (!callback) {
-            throw "You should give me a callback method to execute";
+    define(requirements, function () {
+        function newObject() {
+            var currentTimer = null;
+
+            function delay(callback, millis) {
+                if (!callback) {
+                    throw 'You should give me a callback method to execute';
+                }
+
+                // Cancel previous execution
+                if (currentTimer !== null) {
+                    clearTimeout(currentTimer);
+                }
+
+                if (millis) {
+                    currentTimer = setTimeout(callback, millis);
+                } else {
+                    // No timeout set.
+                    callback();
+                }
+            }
+
+            return {
+                delay: delay
+            };
         }
 
-        if (currentTimer !== null) {
-            clearTimeout(currentTimer);
-        }
-        currentTimer = setTimeout(callback, millis);
-    }
+        return {
+            newObject: newObject
+        };
+    });
+}());
 
-    return {
-        delay:delay
-    };
-};

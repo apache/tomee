@@ -17,80 +17,87 @@
  "use strict";
  */
 
-TOMEE.I18N = (function () {
+(function () {
+    'use strict';
 
-    var missing = Handlebars.compile('[!{{key}}!]');
-    var messages = {
-        'application.name':'Apache TomEE',
+    var requirements = ['util/Obj', 'lib/handlebars', 'util/Log'];
 
-        'ms':'ms',
+    define(requirements, function (utils) {
+        var missing = Handlebars.compile('[!{{key}}!]');
+        var messages = {
+            'application.name': 'Apache TomEE',
 
-        'connection.exception':'Connection exception',
-        'connection.exception.message':'The application is waiting for the server.',
+            'ms': 'ms',
 
-        'application.home':'Home',
+            'connection.exception': 'Connection exception',
+            'connection.exception.message': 'The application is waiting for the server.',
 
-        'application.status':'Status',
-        'application.status.install':'install',
-        'application.status.reinstall':'re-install',
-        'application.status.isAgentInstalled':'Is the agent installed? {{message}}',
-        'application.status.isListenerInstalled':'Is the listener installed? {{message}}',
+            'application.home': 'Home',
 
-        'application.jndi':'JNDI',
-        'application.jndi.path':'Path',
+            'application.status': 'Status',
+            'application.status.install': 'install',
+            'application.status.reinstall': 're-install',
+            'application.status.isAgentInstalled': 'Is the agent installed? {{message}}',
+            'application.status.isListenerInstalled': 'Is the listener installed? {{message}}',
 
-        'application.console':'Console',
-        'application.console.run':'Execute',
-        'application.console.run.error':'Script error.',
-        'application.console.clear.output':'Clear output',
-        'application.console.done':'Script executed.',
-        'application.console.password':'[Your password goes here]',
-        'application.console.run.time':'Time',
-        'application.console.run.output.empty':'Empty',
+            'application.jndi': 'JNDI',
+            'application.jndi.path': 'Path',
 
-        'application.log':'Log',
-        'application.log.select.a.file':'Select a file',
+            'application.console': 'Console',
+            'application.console.run': 'Execute',
+            'application.console.run.error': 'Script error.',
+            'application.console.clear.output': 'Clear output',
+            'application.console.done': 'Script executed.',
+            'application.console.password': '[Your password goes here]',
+            'application.console.run.time': 'Time',
+            'application.console.run.output.empty': 'Empty',
 
-        'application.webservices':'Webservices',
-        'application.webservices.app.name':'Application',
-        'application.webservices.ws.name':'Name',
-        'application.webservices.ws.addr':'Address',
-        'application.webservices.ws.port':'Port',
+            'application.log': 'Log',
+            'application.log.select.a.file': 'Select a file',
 
-        'application.sign.in':'Sign In',
-        'application.sign.out':'Sign Out',
-        'application.log.in':'Login',
-        'application.log.error':'Login error. Please try again.',
-        'application.log.bad':'Bad user or password. Please try again.',
-        'application.log.hello':'Hello {{userName}}!',
-        'application.password':'Password',
+            'application.webservices': 'Webservices',
+            'application.webservices.app.name': 'Application',
+            'application.webservices.ws.name': 'Name',
+            'application.webservices.ws.addr': 'Address',
+            'application.webservices.ws.port': 'Port',
 
-        'dummy':'dummy'
-    };
+            'application.sign.in': 'Sign In',
+            'application.sign.out': 'Sign Out',
+            'application.log.in': 'Login',
+            'application.log.error': 'Login error. Please try again.',
+            'application.log.bad': 'Bad user or password. Please try again.',
+            'application.log.hello': 'Hello {{userName}}!',
+            'application.password': 'Password',
 
-    TOMEE.utils.forEachKey(messages, function (key, value) {
-        var template = Handlebars.compile(value);
-        messages[key] = template;
+            'dummy': 'dummy'
+        };
+
+        utils.forEachKey(messages, function (key, value) {
+            var template = Handlebars.compile(value);
+            messages[key] = template;
+        });
+
+        var get = function (key, values) {
+            var template = messages[key];
+            var cfg = values;
+            if (!template) {
+                template = missing;
+                cfg = {
+                    key: key
+                };
+                console.error('Missing i18n message.', key);
+            }
+            return template(cfg);
+        };
+
+        Handlebars.registerHelper('i18n', function (key) {
+            return get(key);
+        });
+
+        return {
+            get: get
+        };
     });
+}());
 
-    var get = function (key, values) {
-        var template = messages[key];
-        var cfg = values;
-        if (!template) {
-            template = missing;
-            cfg = {
-                key:key
-            };
-            console.error('Missing i18n message.', key);
-        }
-        return template(cfg);
-    };
 
-    Handlebars.registerHelper('i18n', function (key) {
-        return get(key);
-    });
-
-    return {
-        get:get
-    };
-})();
