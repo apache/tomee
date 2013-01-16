@@ -63,12 +63,10 @@ import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -336,6 +334,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             base = prefix;
         }
 
+        final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<Logs.LogResourceEndpointInfo>();
+        int classSize = 0;
+        int addressSize = 0;
+
         final JAXRSServiceImpl service = (JAXRSServiceImpl) factory.getServiceFactory().getService();
         final List<ClassResourceInfo> resources = service.getClassResourceInfos();
         for (final ClassResourceInfo info : resources) {
@@ -343,111 +345,60 @@ public class CxfRsHttpListener implements RsHttpListener {
                 continue;
             }
 
-            final String address = singleSlash(base, info.getURITemplate().getValue());
+            final String address = Logs.singleSlash(base, info.getURITemplate().getValue());
 
             String clazz = info.getResourceClass().getName();
+            final String type;
             if (restEjbs.containsKey(clazz)) {
-                LOGGER.info("     Service URI: " + address + " -> EJB " + clazz);
+                type = "EJB";
             } else {
-                LOGGER.info("     Service URI: " + address + " -> Pojo " + clazz);
+                type = "Pojo";
             }
+
+            classSize = Math.max(classSize, clazz.length());
+            addressSize = Math.max(addressSize, address.length());
+
+            int methodSize = 7;
+            int methodStrSize = 0;
+
+            final List<Logs.LogOperationEndpointInfo> toLog = new ArrayList<Logs.LogOperationEndpointInfo>();
 
             final MethodDispatcher md = info.getMethodDispatcher();
             for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
+                final String httpMethod = ori.getHttpMethod();
+                final String currentAddress = Logs.singleSlash(address, ori.getURITemplate().getValue());
+                final String methodToStr = Logs.toSimpleString(ori.getMethodToInvoke());
+                toLog.add(new Logs.LogOperationEndpointInfo(httpMethod, currentAddress, methodToStr));
+
+                if (httpMethod != null) {
+                    methodSize = Math.max(methodSize, httpMethod.length());
+                }
+                addressSize = Math.max(addressSize, currentAddress.length());
+                methodStrSize = Math.max(methodStrSize, methodToStr.length());
+            }
+
+            Collections.sort(toLog);
+
+            resourcesToLog.add(new Logs.LogResourceEndpointInfo(type, address, clazz, toLog, methodSize, methodStrSize));
+        }
+
+        Collections.sort(resourcesToLog);
+        for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
+            LOGGER.info("     Service URI: "
+                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
+                    + Logs.forceLength(resource.type, 4, false) + " "
+                    + Logs.forceLength(resource.classname, classSize, true));
+
+            for (Logs.LogOperationEndpointInfo log : resource.operations) {
                 LOGGER.info("          "
-                        + forceLength(ori.getHttpMethod(), 7) + " " + singleSlash(address, ori.getURITemplate().getValue())
-                        + " -> " + toGenericString(ori.getMethodToInvoke()));
-            }
-        }
-    }
-
-    private static String forceLength(final String httpMethod, final int l) {
-        final String http;
-        if (httpMethod == null) { // subresourcelocator implies null http method
-            http = "";
-        } else {
-            http = httpMethod;
-        }
-
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < l - http.length(); i++) {
-            builder.append(" ");
-        }
-        return builder.append(http).toString();
-    }
-
-    public static String toGenericString(final Method mtd) {
-        try {
-            final StringBuilder sb = new StringBuilder();
-            final Type[] typeparms = mtd.getTypeParameters();
-            if (typeparms.length > 0) {
-                boolean first = true;
-                sb.append("<");
-                for(Type typeparm: typeparms) {
-                    if (!first) {
-                        sb.append(",");
-                    }
-                    sb.append(name(typeparm));
-                    first = false;
-                }
-                sb.append("> ");
+                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
+                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
+                        + Logs.forceLength(log.method, resource.methodStrSize, true));
             }
 
-            final Type genRetType = mtd.getGenericReturnType();
-            sb.append(name(genRetType)).append(" ");
-            sb.append(mtd.getName()).append("(");
-            final Type[] params = mtd.getGenericParameterTypes();
-            for (int j = 0; j < params.length; j++) {
-                sb.append(name(params[j]));
-                if (j < (params.length - 1)) {
-                    sb.append(", ");
-                }
-            }
-            sb.append(")");
-            final Type[] exceptions = mtd.getGenericExceptionTypes();
-            if (exceptions.length > 0) {
-                sb.append(" throws ");
-                for (int k = 0; k < exceptions.length; k++) {
-                    sb.append(name(exceptions[k]));
-                    if (k < (exceptions.length - 1)) {
-                        sb.append(",");
-                    }
-                }
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            return "<" + e + ">";
+            resource.operations.clear();
         }
-    }
-
-    private static String name(final Type type) {
-        if (type instanceof Class<?>) {
-            return ((Class) type).getSimpleName() .replace("java.lang.", "").replace("java.util", "");
-        } else if (type instanceof ParameterizedType) {
-            final ParameterizedType pt = (ParameterizedType) type;
-            final StringBuilder builder = new StringBuilder();
-            builder.append(name(pt.getRawType())).append("<");
-            for (Type param : pt.getActualTypeArguments()) {
-                if (param instanceof Class<?>) {
-                    builder.append(name(param));
-                } else {
-                    builder.append(param.toString()); // avoid infinite loops
-                }
-            }
-            builder.append(">");
-            return builder.toString();
-        }
-        return type.toString();
-    }
-
-    private static String singleSlash(final String address, final String value) {
-        if (address.endsWith("/") && value.startsWith("/")) {
-            return address + value.substring(1);
-        }
-        if (!address.endsWith("/") && !value.startsWith("/")) {
-            return address + '/' + value;
-        }
-        return address + value;
+        resourcesToLog.clear();
     }
 
     private JAXRSServerFactoryBean newFactory(String prefix) {
