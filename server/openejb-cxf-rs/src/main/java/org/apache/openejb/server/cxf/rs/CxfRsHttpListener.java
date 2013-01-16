@@ -323,8 +323,6 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         destination = (AbstractHTTPDestination) server.getDestination();
 
-        LOGGER.info("REST Application: " + prefix + "  -> " + application.getClass().getName());
-
         final String base;
         if (prefix.endsWith("/")) {
             base = prefix.substring(0, prefix.length() - 1);
@@ -333,6 +331,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         } else {
             base = prefix;
         }
+
+        // stack info to log to get nice logs
 
         final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<Logs.LogResourceEndpointInfo>();
         int classSize = 0;
@@ -381,6 +381,10 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             resourcesToLog.add(new Logs.LogResourceEndpointInfo(type, address, clazz, toLog, methodSize, methodStrSize));
         }
+
+        // effective logging
+
+        LOGGER.info("REST Application: " + Logs.forceLength(prefix, addressSize, true) + " -> " + application.getClass().getName());
 
         Collections.sort(resourcesToLog);
         for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
