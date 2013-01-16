@@ -249,8 +249,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // WEB-INF
         if (webModule.getAltDDs().containsKey("ra.xml")) {
             final String jarLocation = new File(webModule.getJarLocation(), "/WEB-INF/classes").getAbsolutePath();
-            final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), webModule.getModuleId() + "RA");
-            connectorModule.getAltDDs().put("ra.xml", webModule.getAltDDs().get("ra.xml"));
+            final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), webModule.getModuleId() + "RA", (URL) webModule.getAltDDs().get("ra.xml"));
             appModule.getConnectorModules().add(connectorModule);
         }
 
@@ -259,6 +258,33 @@ public class DeploymentLoader implements DeploymentFilterable {
             try {
                 final File file = URLs.toFile(url);
                 if (file.getName().endsWith(".rar")) {
+                    final String jarLocation = file.getAbsolutePath();
+                    final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
+                    appModule.getConnectorModules().add(connectorModule);
+                }
+            } catch (Exception e) {
+                logger.error("error processing url " + url.toExternalForm(), e);
+            }
+        }
+
+        for (URL url : webModule.getScannableUrls()) {
+            try {
+                final File file = URLs.toFile(url);
+                if (file.getName().endsWith(".jar")) {
+                    final JarFile jarFile = new JarFile(file);
+
+                    // TODO: better management of altdd
+                    String name = (ALTDD != null ? ALTDD + "." : "") + "ra.xml";
+
+                    JarEntry entry = jarFile.getJarEntry(name);
+                    if (entry == null) {
+                        name = "META-INF/" + name;
+                        entry = jarFile.getJarEntry(name);
+                    }
+                    if (entry == null) {
+                        continue;
+                    }
+
                     final String jarLocation = file.getAbsolutePath();
                     final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, webModule.getClassLoader(), null);
                     appModule.getConnectorModules().add(connectorModule);
@@ -1189,6 +1215,10 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     protected static ConnectorModule createConnectorModule(final String appId, final String rarPath, final ClassLoader parentClassLoader, final String moduleId) throws OpenEJBException {
+        return createConnectorModule(appId, rarPath, parentClassLoader, moduleId, null);
+    }
+
+    protected static ConnectorModule createConnectorModule(final String appId, final String rarPath, final ClassLoader parentClassLoader, final String moduleId, final URL raXmlUrl) throws OpenEJBException {
         final URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         rarFile = unpack(rarFile);
@@ -1197,7 +1227,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         // read the ra.xml file
         final Map<String, URL> descriptors = getDescriptors(baseUrl);
         Connector connector = null;
-        final URL rarXmlUrl = descriptors.get("ra.xml");
+        URL rarXmlUrl = descriptors.get("ra.xml");
+        if (rarXmlUrl == null && raXmlUrl != null) {
+            descriptors.put("ra.xml", raXmlUrl);
+            rarXmlUrl = raXmlUrl;
+        }
         if (rarXmlUrl != null) {
             connector = ReadDescriptors.readConnector(rarXmlUrl);
         }
@@ -1692,12 +1726,12 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static File unpack(final File jarFile) throws OpenEJBException {
-        if (jarFile.isDirectory()) {
+        if (jarFile.isDirectory() || jarFile.getName().endsWith(".jar")) {
             return jarFile;
         }
 
         String name = jarFile.getName();
-        if (name.endsWith(".jar") || name.endsWith(".ear") || name.endsWith(".zip") || name.endsWith(".war") || name.endsWith(".rar")) {
+        if (name.endsWith(".ear") || name.endsWith(".zip") || name.endsWith(".war") || name.endsWith(".rar")) {
             name = name.replaceFirst("....$", "");
         } else {
             name += ".unpacked";
