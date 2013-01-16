@@ -20,6 +20,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
+import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
@@ -83,6 +84,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
     public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
+    public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
 
@@ -464,6 +466,21 @@ public class CxfRsHttpListener implements RsHttpListener {
         final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + STATIC_SUB_RESOURCE_RESOLUTION_KEY);
         if (staticSubresourceResolution != null) {
             factory.setStaticSubresourceResolution("true".equalsIgnoreCase(staticSubresourceResolution));
+        }
+
+        // resource comparator
+        final String resourceComparator = serviceConfiguration.getProperties().getProperty(RESOURCE_COMPARATOR_KEY);
+        if (resourceComparator != null) {
+            try {
+                ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
+                if (instance == null) {
+                    instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
+                            .loadClass(resourceComparator).newInstance();
+                }
+                factory.setResourceComparator(instance);
+            } catch (Exception e) {
+                LOGGER.error("Can't create the resource comparator " + resourceComparator, e);
+            }
         }
 
         // static resources
