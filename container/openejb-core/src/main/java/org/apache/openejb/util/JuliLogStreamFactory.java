@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.log.ConsoleColorHandler;
 import org.apache.openejb.log.SingleLineFormatter;
-import org.apache.webbeans.logger.JULLoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
 
@@ -42,9 +43,10 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         final boolean embedded = is("org.apache.tomee.embedded.Container");
 
         // if embedded case enhance a bit logging if not set
+        final Options options = SystemInstance.get().getOptions();
         if ((!tomee || embedded) && System.getProperty("java.util.logging.manager") == null) {
             System.setProperty("java.util.logging.manager", OpenEJBLogManager.class.getName());
-            if (SystemInstance.get().getOptions().get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
+            if (options.get(OPENEJB_LOG_COLOR_PROP, false) && isNotIDE()) {
                 consoleHandlerClazz = ConsoleColorHandler.class.getName();
             } else {
                 consoleHandlerClazz = OpenEJBSimpleLayoutHandler.class.getName();
@@ -55,10 +57,27 @@ public class JuliLogStreamFactory implements LogStreamFactory {
             } catch (ClassNotFoundException e) {
                 consoleHandlerClazz = ConsoleHandler.class.getName();
             }
+
+            if (options.get("openejb.jul.forceReload", false)) {
+                try {
+                    final Field logManager = LogManager.class.getDeclaredField("manager");
+                    final boolean acc = logManager.isAccessible();
+                    logManager.setAccessible(true);
+                    OpenEJBLogManager value = new OpenEJBLogManager();
+                    try {
+                        logManager.set(null, value);
+                    } finally {
+                        logManager.setAccessible(acc);
+                    }
+                    value.forceReset();
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
         }
 
         try {
-            if (SystemInstance.get().getOptions().get("openjpa.Log", (String) null) == null) {
+            if (options.get("openjpa.Log", (String) null) == null) {
                 JuliLogStreamFactory.class.getClassLoader().loadClass("org.apache.openjpa.lib.log.LogFactoryAdapter");
                 System.setProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }

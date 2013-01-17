@@ -74,16 +74,19 @@ public final class OpenEJB {
             }
             initialized = new InitializationException("Initialized at "+new Date()).fillInStackTrace();
 
-            Logger.configure();
-            Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
-
             try {
                 SystemInstance.init(initProps);
+
+                // do it after having gotten the properties
+                Logger.configure();
+
                 OptionsLog.install();
             } catch (Exception e) {
                 throw new OpenEJBException(e);
             }
             SystemInstance system = SystemInstance.get();
+
+            final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
             system.setComponent(DeploymentExceptionManager.class, new DeploymentExceptionManager());
 
@@ -270,7 +273,6 @@ public final class OpenEJB {
     }
 
     private static Messages messages = new Messages("org.apache.openejb.util.resources");
-    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
     /**
      * 2 usages
@@ -279,16 +281,20 @@ public final class OpenEJB {
         if (isInitialized()) {
             if (instance != null){
                 String msg = messages.message("startup.alreadyInitialized");
-                logger.error(msg, instance.initialized);
+                logger().error(msg, instance.initialized);
                 throw new OpenEJBException(msg, instance.initialized);
             } else {
                 String msg = messages.message("startup.alreadyInitialized");
-                logger.error(msg);
+                logger().error(msg);
                 throw new OpenEJBException(msg);
             }
         } else {
             instance = appServer == null ? new Instance(initProps) : new Instance(initProps, appServer);
         }
+    }
+
+    private static Logger logger() { // do it lazily to avoid to trigger logger creation before properties are read + generally useless
+        return Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     }
 
     /**
