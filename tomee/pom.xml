@@ -43,7 +43,6 @@
     <module>tomee-embedded</module>
     <module>tomee-jaxrs</module>
     <module>tomee-jaxrs-webapp</module>
-    <module>apache-tomcat</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
   </modules>
