@@ -19,24 +19,17 @@ package org.apache.openejb.core;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
+import javax.transaction.*;
 
 /**
  * @org.apache.xbean.XBean element="userTransaction"
  */
 public class CoreUserTransaction implements javax.transaction.UserTransaction, java.io.Serializable {
     private static final long serialVersionUID = 9203248912222645965L;
-    private static final Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
-
+    private static transient final Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
     private transient TransactionManager transactionManager;
 
-    public CoreUserTransaction(TransactionManager transactionManager) {
+    public CoreUserTransaction(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -47,48 +40,54 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
         return transactionManager;
     }
 
+    @Override
     public void begin() throws NotSupportedException, SystemException {
         transactionManager().begin();
-        if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("Started user transaction " + transactionManager().getTransaction());
+        if (transactionLogger.isDebugEnabled()) {
+            transactionLogger.debug("Started user transaction " + transactionManager().getTransaction());
         }
     }
 
+    @Override
     public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
             SecurityException, IllegalStateException, SystemException {
-        if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("Committing user transaction " + transactionManager().getTransaction());
+        if (transactionLogger.isDebugEnabled()) {
+            transactionLogger.debug("Committing user transaction " + transactionManager().getTransaction());
         }
         transactionManager().commit();
     }
 
-    public void rollback() throws IllegalStateException, SecurityException, SystemException {
-        if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("Rolling back user transaction " + transactionManager().getTransaction());
-        }
-        transactionManager().rollback();
-    }
-
+    @Override
     public int getStatus() throws SystemException {
-        int status = transactionManager().getStatus();
-        if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("User transaction " + transactionManager().getTransaction() + " has status " + getStatus(status));
+        final int status = transactionManager().getStatus();
+        if (transactionLogger.isDebugEnabled()) {
+            transactionLogger.debug("User transaction " + transactionManager().getTransaction() + " has status " + getStatus(status));
         }
         return status;
     }
 
+    @Override
+    public void rollback() throws IllegalStateException, SecurityException, SystemException {
+        if (transactionLogger.isDebugEnabled()) {
+            transactionLogger.debug("Rolling back user transaction " + transactionManager().getTransaction());
+        }
+        transactionManager().rollback();
+    }
+
+    @Override
     public void setRollbackOnly() throws javax.transaction.SystemException {
-        if (transactionLogger.isInfoEnabled()) {
-            transactionLogger.info("Marking user transaction for rollback: " + transactionManager().getTransaction());
+        if (transactionLogger.isDebugEnabled()) {
+            transactionLogger.debug("Marking user transaction for rollback: " + transactionManager().getTransaction());
         }
         transactionManager().setRollbackOnly();
     }
 
-    public void setTransactionTimeout(int seconds) throws SystemException {
+    @Override
+    public void setTransactionTimeout(final int seconds) throws SystemException {
         transactionManager().setTransactionTimeout(seconds);
     }
 
-    private static String getStatus(int status) {
+    private static String getStatus(final int status) {
         final StringBuilder buffer = new StringBuilder(100);
         switch (status) {
             case Status.STATUS_ACTIVE:

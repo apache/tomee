@@ -187,7 +187,7 @@ public class Tracker {
         return debug && log.isDebugEnabled();
     }
 
-    private final Executor executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
+    private final Executor executor = new ThreadPoolExecutor(1, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), new ThreadFactory() {
         @Override
         public Thread newThread(final Runnable runable) {
             final Thread t = new Thread(runable, "Discovery Agent Notifier");

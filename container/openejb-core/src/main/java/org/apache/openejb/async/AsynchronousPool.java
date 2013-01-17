@@ -24,16 +24,7 @@ import org.apache.openejb.util.ExecutorBuilder;
 import javax.ejb.EJBException;
 import javax.ejb.NoSuchEJBException;
 import java.rmi.NoSuchObjectException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -44,22 +35,22 @@ public class AsynchronousPool {
     private final BlockingQueue<Runnable> blockingQueue;
     private final ExecutorService executor;
 
-    public AsynchronousPool(ThreadPoolExecutor threadPoolExecutor) {
+    public AsynchronousPool(final ThreadPoolExecutor threadPoolExecutor) {
         this.blockingQueue = threadPoolExecutor.getQueue();
         this.executor = threadPoolExecutor;
     }
 
-    public static AsynchronousPool create(AppContext appContext) {
+    public static AsynchronousPool create(final AppContext appContext) {
 
         final ExecutorBuilder builder = new ExecutorBuilder()
                 .prefix("AsynchronousPool")
-                .size(10)
+                .size(3)
                 .threadFactory(new DaemonThreadFactory("@Asynchronous", appContext.getId()));
 
         return new AsynchronousPool(builder.build(appContext.getOptions()));
     }
 
-    public Object invoke(Callable<Object> callable, boolean isVoid) throws Throwable {
+    public Object invoke(final Callable<Object> callable, final boolean isVoid) throws Throwable {
         final AtomicBoolean asynchronousCancelled = new AtomicBoolean(false);
 
         try {
@@ -80,7 +71,7 @@ public class AsynchronousPool {
 
         private final AtomicBoolean asynchronousCancelled;
 
-        private AsynchronousCall(Callable<Object> callable, AtomicBoolean asynchronousCancelled) {
+        private AsynchronousCall(final Callable<Object> callable, final AtomicBoolean asynchronousCancelled) {
             this.callable = callable;
             this.asynchronousCancelled = asynchronousCancelled;
         }
@@ -116,13 +107,14 @@ public class AsynchronousPool {
 
         private volatile boolean canceled;
 
-        public FutureAdapter(Future<T> target, AtomicBoolean asynchronousCancelled) {
+        public FutureAdapter(final Future<T> target, final AtomicBoolean asynchronousCancelled) {
             this.target = target;
             this.asynchronousCancelled = asynchronousCancelled;
         }
 
+        @SuppressWarnings("RedundantCast")
         @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
+        public boolean cancel(final boolean mayInterruptIfRunning) {
             /*In EJB 3.1 spec 3.4.8.1.1
              *a. If a client calls cancel on its Future object, the container will attempt to cancel the associated asynchronous invocation only if that invocation has not already been dispatched.
              *  There is no guarantee that an asynchronous invocation can be cancelled, regardless of how quickly cancel is called after the client receives its Future object.
@@ -171,7 +163,7 @@ public class AsynchronousPool {
         }
 
         @Override
-        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        public T get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
             if (canceled) {
                 throw new CancellationException();
             }
@@ -192,7 +184,7 @@ public class AsynchronousPool {
 
             //unwarp the exception to find the root cause
             while (e.getCause() != null) {
-                e = (Throwable) e.getCause();
+                e = e.getCause();
             }
 
             /*
@@ -205,7 +197,7 @@ public class AsynchronousPool {
                 e = new NoSuchEJBException(e.getMessage(), (Exception) e);
             }
 
-            boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
+            final boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
 
             // throw checked excpetion and EJBException directly.
             if (!isExceptionUnchecked || e instanceof EJBException) {

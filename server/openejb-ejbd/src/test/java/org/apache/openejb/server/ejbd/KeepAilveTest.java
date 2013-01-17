@@ -47,7 +47,7 @@ public class KeepAilveTest extends TestCase {
     @SuppressWarnings("unchecked")
     public void _testPool() throws Exception {
         final int threads = 2;
-        final ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 120, TimeUnit.SECONDS, new LinkedBlockingQueue());
+        final ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 120, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(threads));
 
         final Runnable runnable = new Runnable() {
             @Override
