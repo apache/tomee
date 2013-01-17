@@ -21,19 +21,8 @@ import org.apache.openejb.monitoring.Managed;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * @version $Rev$ $Date$
@@ -48,20 +37,38 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     @Managed
     private final Monitor monitor = new Monitor();
 
-    private final Executor executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
-        @Override
-        public Thread newThread(final Runnable runable) {
-            final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
-            t.setDaemon(true);
-            return t;
-        }
-    });
+    private final ThreadPoolExecutor executor;
 
     public DiscoveryRegistry() {
         this(null);
     }
 
     public DiscoveryRegistry(final DiscoveryAgent agent) {
+
+        executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), new ThreadFactory() {
+            @Override
+            public Thread newThread(final Runnable runable) {
+                final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
+                t.setDaemon(true);
+                return t;
+            }
+        });
+
+        executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
+                }
+
+                try {
+                    tpe.getQueue().offer(r, 20, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+            }
+        });
+
         SystemInstance.get().setComponent(DiscoveryRegistry.class, this);
         SystemInstance.get().setComponent(DiscoveryAgent.class, this);
 

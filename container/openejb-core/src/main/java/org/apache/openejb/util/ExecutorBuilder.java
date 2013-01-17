@@ -121,10 +121,10 @@ public class ExecutorBuilder {
         public BlockingQueue create(final Options options, final String prefix, final int queueSize) {
             switch (this) {
                 case ARRAY: {
-                    return new ArrayBlockingQueue(queueSize);
+                    return new ArrayBlockingQueue(queueSize > 0 ? queueSize : 1);
                 }
                 case LINKED: {
-                    return new LinkedBlockingQueue(queueSize);
+                    return new LinkedBlockingQueue(queueSize > 0 ? queueSize : 1);
                 }
                 case PRIORITY: {
                     return new PriorityBlockingQueue();
