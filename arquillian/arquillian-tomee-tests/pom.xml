@@ -111,9 +111,9 @@
       <type>zip</type>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>apache-tomcat</artifactId>
-      <version>${tomcat.bundle.version}</version>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat</artifactId>
+      <version>${tomcat.version}</version>
       <type>zip</type>
     </dependency>
   </dependencies>
@@ -310,7 +310,7 @@
                   <skip>${skip.webapp.webprofile}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
@@ -327,7 +327,7 @@
                   <skip>${skip.webapp.jaxrs}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-jaxrs-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
@@ -344,7 +344,7 @@
                   <skip>${skip.webapp.plus}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
@@ -425,9 +425,9 @@
           <type>war</type>
         </dependency>
         <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>apache-tomcat</artifactId>
-          <version>${tomcat.bundle.version}</version>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat</artifactId>
+          <version>${tomcat.version}</version>
           <type>zip</type>
         </dependency>
 
@@ -521,7 +521,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
@@ -538,7 +538,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-jaxrs-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
@@ -555,7 +555,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.bundle.version}</tomee.tomcatVersion>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>

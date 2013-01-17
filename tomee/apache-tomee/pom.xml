@@ -52,9 +52,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>apache-tomcat</artifactId>
-      <version>${tomcat.bundle.version}</version>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat</artifactId>
+      <version>${tomcat.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
@@ -135,12 +135,12 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.apache.openejb</groupId>
-                  <artifactId>apache-tomcat</artifactId>
-                  <version>${tomcat.bundle.version}</version>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
                   <type>zip</type>
                   <outputDirectory>${webprofile.work-dir}</outputDirectory>
-                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
+                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -154,12 +154,12 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.apache.openejb</groupId>
-                  <artifactId>apache-tomcat</artifactId>
-                  <version>${tomcat.bundle.version}</version>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
                   <type>zip</type>
                   <outputDirectory>${jaxrs.work-dir}</outputDirectory>
-                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
+                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -173,12 +173,12 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.apache.openejb</groupId>
-                  <artifactId>apache-tomcat</artifactId>
-                  <version>${tomcat.bundle.version}</version>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
                   <type>zip</type>
                   <outputDirectory>${plus.work-dir}</outputDirectory>
-                  <destFileName>apache-tomcat-${tomcat.bundle.version}.zip</destFileName>
+                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>

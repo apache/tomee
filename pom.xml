@@ -118,9 +118,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <!-- Used mainly in assembly/openejb-tomcat* projects  -->
-    <tomcat.bundle.version>7.0.34</tomcat.bundle.version> <!-- don't merge with tomcat.version since we can release it ourself -->
-    <tomcat.version>7.0.34</tomcat.version>
+    <tomcat.version>7.0.35</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.4</cxf.version> <!--2.6.4 requires wss4j 1.6.8-->

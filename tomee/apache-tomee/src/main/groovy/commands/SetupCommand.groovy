@@ -81,7 +81,6 @@ class SetupCommand {
 		def workDir = require('tomee.workdir')
 		def webapp = require('tomee.webapp')
 		def tomcatVersion = require('tomcat.version')
-		def tomcatBundleVersion = require('tomcat.bundle.version')
 		System.setProperty('tomcat.version', tomcatVersion)
 
         def tomeeVersion = require('tomee.version')
@@ -109,7 +108,7 @@ class SetupCommand {
 			setProxy.execute()
 		}
 		
-		def dest = "${workDir}/apache-tomcat-${tomcatBundleVersion}.zip"
+		def dest = "${workDir}/apache-tomcat-${tomcatVersion}.zip"
 		def catalinaHome = "${workDir}/apache-tomcat-${tomcatVersion}"
 
         log.info("extracting ${catalinaHome}")
