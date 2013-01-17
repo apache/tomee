@@ -77,7 +77,7 @@ public class StatelessInstanceManager {
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private SecurityService securityService;
     private final Pool.Builder poolBuilder;
-    private final Executor executor;
+    private final ThreadPoolExecutor executor;
 
     public StatelessInstanceManager(final SecurityService securityService, final Duration accessTimeout, final Duration closeTimeout, final Pool.Builder poolBuilder, final int callbackThreads) {
         this.securityService = securityService;
@@ -105,7 +105,23 @@ public class StatelessInstanceManager {
             }
         });
 
+        executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
 
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
+                }
+
+                try {
+                    if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
+                        logger.warning("Executor failed to run asynchronous process: " + r);
+                    }
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+            }
+        });
     }
 
     private class StatelessSupplier implements Pool.Supplier<Instance> {
