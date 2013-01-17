@@ -140,9 +140,9 @@ public class Pool<T> {
     }
 
     private Executor createExecutor() {
-        return new ThreadPoolExecutor(5, 10,
-                0L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+        return new ThreadPoolExecutor(3, 10,
+                60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
     }
 
     private void greater(final String maxName, final long max, final String minName, final long min) {

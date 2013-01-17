@@ -27,11 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,48 +35,56 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServicePool extends ServerServiceFilter {
 
     private static final Logger log = Logger.getInstance(LogCategory.SERVICEPOOL, "org.apache.openejb.util.resources");
+    private static final int KEEP_ALIVE_TIME = 1000 * 60 * 1;
 
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
 
     public ServicePool(final ServerService next, final Properties properties) {
-        //Liberal defaults
-        this(next, new Options(properties).get("threadsCore", 2), new Options(properties).get("threads", 50), new Options(properties).get("queue", 50000), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", 1000 * 60 * 5));
+        /**Defaults.
+         * This suggests that 3 core threads should cope with up to 5 runnables (threads + queue).
+         * Any more than 5 runnables will spawn a thread to cope if the thread count is less than 50.
+         * If 50 threads are processing runnables and the queue is full then block and wait for
+         * a slot for up to 10 seconds before rejecting the runnable.
+         * If a thread remains idle for more than 1 minute then it will be removed.
+         */
+        this(next, new Options(properties).get("threadsCore", 3), new Options(properties).get("threads", 50), new Options(properties).get("queue", 2), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
     }
 
     public ServicePool(final ServerService next, final int threads) {
-        this(next, threads, threads, 50000, true, 1000 * 60 * 5);
+        this(next, threads, threads, threads, true, KEEP_ALIVE_TIME);
     }
 
-    public ServicePool(final ServerService next, int threads, int queue, final boolean block) {
-        this(next, threads, threads, queue, block, 1000 * 60 * 5);
+    public ServicePool(final ServerService next, final int threads, final int queue, final boolean block) {
+        this(next, threads, threads, queue, block, KEEP_ALIVE_TIME);
     }
 
     public ServicePool(final ServerService next, int threadCore, int threads, int queue, final boolean block, long keepAliveTime) {
         super(next);
 
         if (keepAliveTime <= 0) {
-            keepAliveTime = 1000 * 60 * 5;
+            keepAliveTime = KEEP_ALIVE_TIME;
         }
 
         if (threadCore <= 0) {
-            threadCore = 100;
+            threadCore = 3;
         }
         if (threads < threadCore) {
-            threads = threadCore;
+            threads = threadCore + 1;
         }
 
-        if (queue < 1) {
-            queue = 1;
+        if (queue >= threadCore) {
+            queue = threadCore - 1;
         }
 
         /**
-         This thread pool starts with 2 core threads and can grow to the limit defined by 'threads'.
-         If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
-         It can accept upto the number of processes defined by 'queue'.
-         If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
+         This thread pool starts with 'threadCore' core threads and can grow to the limit defined by 'threads'.
+         If a pool thread is idle for more than 1 minute it will be discarded, until the core size is reached.
+         It can accept upto the number of runnables defined by 'queue' + 'threadCore' before the pool will grow,
+         so the 'queue' should ideally be less than 'threadsCore', but certainly less than 'threads'.
+         If the 'queue' and 'threads' are full then an attempt is made to add the runnable to the queue for 10 seconds.
          Failure to add to the queue in this time will either result in a logged rejection, or if 'block'
-         is true then a final attempt is made to run the process in the current thread (the service thread).
+         is true then a final attempt is made to run the runnable in the current thread (the service thread).
          */
 
         threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue));

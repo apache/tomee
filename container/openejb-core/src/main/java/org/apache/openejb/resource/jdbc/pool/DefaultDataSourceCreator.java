@@ -36,7 +36,7 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     }
 
     @Override
-    public DataSource poolManaged(final String name, final DataSource ds, Properties properties) {
+    public DataSource poolManaged(final String name, final DataSource ds, final Properties properties) {
         return new DbcpManagedDataSource(name, ds);
     }
 
@@ -55,7 +55,7 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final DataSource ds, Properties properties) {
+    public DataSource pool(final String name, final DataSource ds, final Properties properties) {
         return new DbcpDataSource(name, ds);
     }
 

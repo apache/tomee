@@ -55,14 +55,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
     private static final int threads = Integer.parseInt(System.getProperty("openejb.client.invoker.threads", "10"));
-    private static final int queue = Integer.parseInt(System.getProperty("openejb.client.invoker.queue", "50000"));
+    private static final int queue = Integer.parseInt(System.getProperty("openejb.client.invoker.queue", "2"));
     private static final LinkedBlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
 
     protected static final ThreadPoolExecutor executorService;
 
     static {
         /**
-         This thread pool starts with 2 core threads and can grow to the limit defined by 'threads'.
+         This thread pool starts with 3 core threads and can grow to the limit defined by 'threads'.
          If a pool thread is idle for more than 1 minute it will be discarded, unless the core size is reached.
          It can accept upto the number of processes defined by 'queue'.
          If the queue is full then an attempt is made to add the process to the queue for 10 seconds.
@@ -70,7 +70,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
          is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        executorService = new ThreadPoolExecutor(2, (threads < 2 ? 2 : threads), 1, TimeUnit.MINUTES, blockingQueue);
+        executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue);
         executorService.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);

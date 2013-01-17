@@ -33,12 +33,7 @@ import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.PassthroughFactory;
-import org.apache.openejb.util.Pool;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.*;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -58,14 +53,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -90,19 +79,27 @@ public class StatelessInstanceManager {
     private final Pool.Builder poolBuilder;
     private final Executor executor;
 
-    public StatelessInstanceManager(SecurityService securityService, Duration accessTimeout, Duration closeTimeout, Pool.Builder poolBuilder, int callbackThreads) {
+    public StatelessInstanceManager(final SecurityService securityService, final Duration accessTimeout, final Duration closeTimeout, final Pool.Builder poolBuilder, final int callbackThreads) {
         this.securityService = securityService;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
 
-        if (accessTimeout.getUnit() == null) accessTimeout.setUnit(TimeUnit.MILLISECONDS);
+        if (accessTimeout.getUnit() == null) {
+            accessTimeout.setUnit(TimeUnit.MILLISECONDS);
+        }
+
+        final int qsize = (callbackThreads > 1 ? callbackThreads - 1 : 1);
 
         executor = new ThreadPoolExecutor(callbackThreads, callbackThreads * 2,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
-            public Thread newThread(Runnable runable) {
-                Thread t = new Thread(runable, "StatelessPool");
+                1L, TimeUnit.MINUTES,
+                new LinkedBlockingQueue<Runnable>(qsize), new ThreadFactory() {
+
+            private final AtomicInteger i = new AtomicInteger(1);
+
+            @Override
+            public Thread newThread(final Runnable runable) {
+                final Thread t = new Thread(runable, "StatelessPool.worker." + i.getAndIncrement());
                 t.setDaemon(true);
                 return t;
             }
@@ -114,13 +111,14 @@ public class StatelessInstanceManager {
     private class StatelessSupplier implements Pool.Supplier<Instance> {
         private final BeanContext beanContext;
 
-        private StatelessSupplier(BeanContext beanContext) {
+        private StatelessSupplier(final BeanContext beanContext) {
             this.beanContext = beanContext;
         }
 
-        public void discard(Instance instance, Pool.Event reason) {
-            ThreadContext ctx = new ThreadContext(beanContext, null);
-            ThreadContext oldCallContext = ThreadContext.enter(ctx);
+        @Override
+        public void discard(final Instance instance, final Pool.Event reason) {
+            final ThreadContext ctx = new ThreadContext(beanContext, null);
+            final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
                 freeInstance(ctx, instance);
             } finally {
@@ -128,9 +126,10 @@ public class StatelessInstanceManager {
             }
         }
 
+        @Override
         public Instance create() {
-            ThreadContext ctx = new ThreadContext(beanContext, null);
-            ThreadContext oldCallContext = ThreadContext.enter(ctx);
+            final ThreadContext ctx = new ThreadContext(beanContext, null);
+            final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
                 return ceateInstance(ctx, ctx.getBeanContext());
             } catch (OpenEJBException e) {
@@ -146,21 +145,21 @@ public class StatelessInstanceManager {
     /**
      * Removes an instance from the pool and returns it for use
      * by the container in business methods.
-     *
+     * <p/>
      * If the pool is at it's limit the StrictPooling flag will
      * cause this thread to wait.
-     *
+     * <p/>
      * If StrictPooling is not enabled this method will create a
      * new stateless bean instance performing all required injection
      * and callbacks before returning it in a method ready state.
      *
-     * @param callContext
-     * @return
+     * @param callContext ThreadContext
+     * @return Object
      * @throws OpenEJBException
      */
-    public Object getInstance(ThreadContext callContext) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
-        Data data = (Data) beanContext.getContainerData();
+    public Object getInstance(final ThreadContext callContext) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
+        final Data data = (Data) beanContext.getContainerData();
 
         Instance instance = null;
         try {
@@ -171,7 +170,7 @@ public class StatelessInstanceManager {
                 instance.setPoolEntry(entry);
             }
         } catch (TimeoutException e) {
-            ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException("No instances available in Stateless Session Bean pool.  Waited " + data.accessTimeout.toString());
+            final ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException("No instances available in Stateless Session Bean pool.  Waited " + data.accessTimeout.toString());
             timeoutException.fillInStackTrace();
 
             throw new ApplicationException(timeoutException);
@@ -185,7 +184,7 @@ public class StatelessInstanceManager {
         return ceateInstance(callContext, beanContext);
     }
 
-    private Instance ceateInstance(ThreadContext callContext, BeanContext beanContext) throws org.apache.openejb.ApplicationException {
+    private Instance ceateInstance(final ThreadContext callContext, final BeanContext beanContext) throws org.apache.openejb.ApplicationException {
 
         try {
 
@@ -197,7 +196,7 @@ public class StatelessInstanceManager {
                 try {
                     callContext.setCurrentOperation(Operation.CREATE);
                     final Method create = beanContext.getCreateMethod();
-                    final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
+                    final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String, Object>());
                     ejbCreate.invoke();
                 } finally {
                     callContext.setCurrentOperation(originalOperation);
@@ -209,7 +208,7 @@ public class StatelessInstanceManager {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
-            String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
+            final String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
             throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
         }
@@ -218,25 +217,25 @@ public class StatelessInstanceManager {
     /**
      * All instances are removed from the pool in getInstance(...).  They are only
      * returned by the StatelessContainer via this method under two circumstances.
-     *
+     * <p/>
      * 1.  The business method returns normally
      * 2.  The business method throws an application exception
-     *
+     * <p/>
      * Instances are not returned to the pool if the business method threw a system
      * exception.
      *
-     * @param callContext
-     * @param bean
+     * @param callContext ThreadContext
+     * @param bean        Object
      * @throws OpenEJBException
      */
-    public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
+    public void poolInstance(final ThreadContext callContext, final Object bean) throws OpenEJBException {
         if (bean == null) throw new SystemException("Invalid arguments");
-        Instance instance = Instance.class.cast(bean);
+        final Instance instance = Instance.class.cast(bean);
 
-        BeanContext beanContext = callContext.getBeanContext();
-        Data data = (Data) beanContext.getContainerData();
+        final BeanContext beanContext = callContext.getBeanContext();
+        final Data data = (Data) beanContext.getContainerData();
 
-        Pool<Instance> pool = data.getPool();
+        final Pool<Instance> pool = data.getPool();
 
         if (instance.getPoolEntry() != null) {
             pool.push(instance.getPoolEntry());
@@ -249,8 +248,8 @@ public class StatelessInstanceManager {
      * This method is called to release the semaphore in case of the business method
      * throwing a system exception
      *
-     * @param callContext
-     * @param bean
+     * @param callContext ThreadContext
+     * @param bean        Object
      */
     public void discardInstance(final ThreadContext callContext, final Object bean) throws SystemException {
         if (bean == null) throw new SystemException("Invalid arguments");
@@ -265,15 +264,15 @@ public class StatelessInstanceManager {
         }
     }
 
-    private void freeInstance(ThreadContext callContext, Instance instance) {
+    private void freeInstance(final ThreadContext callContext, final Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
-            BeanContext beanContext = callContext.getBeanContext();
+            final BeanContext beanContext = callContext.getBeanContext();
 
-            Method remove = instance.bean instanceof SessionBean ? removeSessionBeanMethod : null;
+            final Method remove = instance.bean instanceof SessionBean ? removeSessionBeanMethod : null;
 
-            List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
+            final List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
+            final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
 
@@ -286,12 +285,13 @@ public class StatelessInstanceManager {
 
     }
 
-    public void deploy(BeanContext beanContext) throws OpenEJBException {
-        Options options = new Options(beanContext.getProperties());
+    @SuppressWarnings("unchecked")
+    public void deploy(final BeanContext beanContext) throws OpenEJBException {
+        final Options options = new Options(beanContext.getProperties());
 
         Duration accessTimeout = getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS);
         accessTimeout = getDuration(options, "AccessTimeout", accessTimeout, TimeUnit.MILLISECONDS);
-        Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
+        final Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
 
         final ObjectRecipe recipe = PassthroughFactory.recipe(new Pool.Builder(poolBuilder));
         recipe.allow(Option.CASE_INSENSITIVE_FACTORY);
@@ -308,8 +308,7 @@ public class StatelessInstanceManager {
         builder.setSupplier(supplier);
         builder.setExecutor(executor);
 
-
-        Data data = new Data(builder.build(), accessTimeout, closeTimeout);
+        final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
         beanContext.setContainerData(data);
 
         beanContext.set(EJBContext.class, data.sessionContext);
@@ -324,8 +323,8 @@ public class StatelessInstanceManager {
         }
 
         final int min = builder.getMin();
-        long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
-        double maxAgeOffset = builder.getMaxAgeOffset();
+        final long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
+        final double maxAgeOffset = builder.getMaxAgeOffset();
 
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
@@ -340,7 +339,7 @@ public class StatelessInstanceManager {
         if (StatsInterceptor.isStatsActivated()) {
 
             StatsInterceptor stats = null;
-            for (InterceptorInstance interceptor : beanContext.getUserAndSystemInterceptors()) {
+            for (final InterceptorInstance interceptor : beanContext.getUserAndSystemInterceptors()) {
                 if (interceptor.getInterceptor() instanceof StatsInterceptor) {
                     stats = (StatsInterceptor) interceptor.getInterceptor();
                 }
@@ -352,7 +351,7 @@ public class StatelessInstanceManager {
 
             // register the invocation stats interceptor
             try {
-                ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+                final ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
                 if (server.isRegistered(objectName)) {
                     server.unregisterMBean(objectName);
                 }
@@ -365,7 +364,7 @@ public class StatelessInstanceManager {
 
         // register the pool
         try {
-            ObjectName objectName = jmxName.set("j2eeType", "Pool").build();
+            final ObjectName objectName = jmxName.set("j2eeType", "Pool").build();
             if (server.isRegistered(objectName)) {
                 server.unregisterMBean(objectName);
             }
@@ -377,7 +376,7 @@ public class StatelessInstanceManager {
 
         // Finally, fill the pool and start it
         if (!options.get("BackgroundStartup", false) && min > 0) {
-            ExecutorService es = Executors.newFixedThreadPool(min);
+            final ExecutorService es = Executors.newFixedThreadPool(min);
             for (int i = 0; i < min; i++) {
                 es.submit(new InstanceCreatorRunnable(maxAge, i, min, maxAgeOffset, data, supplier));
             }
@@ -392,23 +391,23 @@ public class StatelessInstanceManager {
         data.getPool().start();
     }
 
-    private void setDefault(Duration duration, TimeUnit unit) {
+    private void setDefault(final Duration duration, final TimeUnit unit) {
         if (duration.getUnit() == null) duration.setUnit(unit);
     }
 
-    private Duration getDuration(Options options, String property, Duration defaultValue, TimeUnit defaultUnit) {
-        String s = options.get(property, defaultValue.toString());
-        Duration duration = new Duration(s);
+    private Duration getDuration(final Options options, final String property, final Duration defaultValue, final TimeUnit defaultUnit) {
+        final String s = options.get(property, defaultValue.toString());
+        final Duration duration = new Duration(s);
         if (duration.getUnit() == null) duration.setUnit(defaultUnit);
         return duration;
     }
 
-    public void undeploy(BeanContext beanContext) {
-        Data data = (Data) beanContext.getContainerData();
+    public void undeploy(final BeanContext beanContext) {
+        final Data data = (Data) beanContext.getContainerData();
         if (data == null) return;
 
-        MBeanServer server = LocalMBeanServer.get();
-        for (ObjectName objectName : data.jmxNames) {
+        final MBeanServer server = LocalMBeanServer.get();
+        for (final ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
             } catch (Exception e) {
@@ -434,11 +433,12 @@ public class StatelessInstanceManager {
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
         private final SessionContext sessionContext;
 
-        private Data(Pool<Instance> pool, Duration accessTimeout, Duration closeTimeout) {
+        private Data(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
             this.pool = pool;
             this.accessTimeout = accessTimeout;
             this.closeTimeout = closeTimeout;
             this.sessionContext = new StatelessContext(securityService, new Flushable() {
+                @Override
                 public void flush() throws IOException {
                     getPool().flush();
                 }
@@ -461,7 +461,7 @@ public class StatelessInstanceManager {
             return pool.close(closeTimeout.getTime(), closeTimeout.getUnit());
         }
 
-        public ObjectName add(ObjectName name) {
+        public ObjectName add(final ObjectName name) {
             jmxNames.add(name);
             return name;
         }
@@ -475,7 +475,7 @@ public class StatelessInstanceManager {
         private Data data;
         private StatelessSupplier supplier;
 
-        private InstanceCreatorRunnable(long maxAge, long iteration, long min, double maxAgeOffset, Data data, StatelessSupplier supplier) {
+        private InstanceCreatorRunnable(final long maxAge, final long iteration, final long min, final double maxAgeOffset, final Data data, final StatelessSupplier supplier) {
             this.maxAge = maxAge;
             this.iteration = iteration;
             this.min = min;
@@ -488,7 +488,7 @@ public class StatelessInstanceManager {
         public void run() {
             final Instance obj = supplier.create();
             if (obj != null) {
-                long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
                 data.getPool().add(obj, offset);
             }
         }

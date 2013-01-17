@@ -19,16 +19,7 @@ package org.apache.openejb.util;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.executor.OfferRejectedExecutionHandler;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @version $Rev$ $Date$
@@ -43,34 +34,44 @@ public class ExecutorBuilder {
     public ExecutorBuilder() {
     }
 
-    public ExecutorBuilder size(int size) {
+    public ExecutorBuilder size(final int size) {
         this.size = size;
         return this;
     }
 
-    public ExecutorBuilder prefix(String prefix) {
+    public ExecutorBuilder prefix(final String prefix) {
         this.prefix = prefix;
         return this;
     }
 
-    public ExecutorBuilder threadFactory(ThreadFactory threadFactory) {
+    public ExecutorBuilder threadFactory(final ThreadFactory threadFactory) {
         this.threadFactory = threadFactory;
         return this;
     }
 
-    public ExecutorBuilder rejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
+    public ExecutorBuilder rejectedExecutionHandler(final RejectedExecutionHandler rejectedExecutionHandler) {
         this.rejectedExecutionHandler = rejectedExecutionHandler;
         return this;
     }
 
-    public ThreadPoolExecutor build(Options options) {
-        final int corePoolSize = options.get(prefix + ".CorePoolSize", size);
+    @SuppressWarnings("unchecked")
+    public ThreadPoolExecutor build(final Options options) {
+
+        int corePoolSize = options.get(prefix + ".CorePoolSize", size);
+
+        if (corePoolSize < 1) {
+            corePoolSize = 1;
+        }
 
         // Default setting is for a fixed pool size, MaximumPoolSize==CorePoolSize
-        final int maximumPoolSize = Math.max(options.get(prefix + ".MaximumPoolSize", corePoolSize), corePoolSize);
+        int maximumPoolSize = Math.max(options.get(prefix + ".MaximumPoolSize", corePoolSize), corePoolSize);
 
-        // Default QueueSize is bounded using the MaximumPoolSize
-        final int size = options.get(prefix + ".QueueSize", maximumPoolSize);
+        if (maximumPoolSize < corePoolSize) {
+            maximumPoolSize = corePoolSize;
+        }
+
+        // Default QueueSize is bounded using the corePoolSize, else bounded pools will never grow
+        final int qsize = options.get(prefix + ".QueueSize", corePoolSize);
 
         // Keep Threads inactive threads alive for 60 seconds by default
         final Duration keepAliveTime = options.get(prefix + ".KeepAliveTime", new Duration(60, TimeUnit.SECONDS));
@@ -79,8 +80,9 @@ public class ExecutorBuilder {
         final boolean allowCoreThreadTimeout = options.get(prefix + ".AllowCoreThreadTimeOut", true);
 
         // If the user explicitly set the QueueSize to 0, we default QueueType to SYNCHRONOUS
-        final QueueType defaultQueueType = (size == 0) ? QueueType.SYNCHRONOUS : QueueType.LINKED;
-        final BlockingQueue queue = options.get(prefix + ".QueueType", defaultQueueType).create(options, prefix, size);
+        final QueueType defaultQueueType = (qsize < 1) ? QueueType.SYNCHRONOUS : QueueType.LINKED;
+
+        final BlockingQueue queue = options.get(prefix + ".QueueType", defaultQueueType).create(options, prefix, qsize);
 
         ThreadFactory factory = this.threadFactory;
         if (factory == null) {
@@ -116,7 +118,7 @@ public class ExecutorBuilder {
         PRIORITY,
         SYNCHRONOUS;
 
-        public BlockingQueue create(Options options, final String prefix, final int queueSize) {
+        public BlockingQueue create(final Options options, final String prefix, final int queueSize) {
             switch (this) {
                 case ARRAY: {
                     return new ArrayBlockingQueue(queueSize);
