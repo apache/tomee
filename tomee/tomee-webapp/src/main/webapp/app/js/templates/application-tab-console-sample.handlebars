@@ -12,6 +12,11 @@ with (myImports) {
   p.put("java.naming.security.credentials", "{{password}}");
 
   var ctx = new InitialContext(p);
-  var myBean =  ctx.lookup("openejb/UserBusinessRemote");
-  myBean.getUserName();
+  var varList = [];
+  var values = ctx.list("");
+  while(values.hasMore()) {
+    var pair = values.next();
+    varList.push(pair.getName());
+  }
+  varList.join(", ");
 }
