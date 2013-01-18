@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.TimeoutException;
@@ -346,9 +347,10 @@ public class PoolTest extends TestCase {
         final CountDownLatch discard = new CountDownLatch(max - min);
         final CountDownLatch hold = new CountDownLatch(1);
 
-        final Pool.Builder builder = new Pool.Builder();
+        final Pool.Builder<Bean> builder = new Pool.Builder<Bean>();
         builder.setMinSize(min);
         builder.setMaxSize(max);
+        builder.setExecutor(Executors.newFixedThreadPool(5));
         builder.setIdleTimeout(new Duration(idleTimeout, TimeUnit.MILLISECONDS));
         builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
@@ -394,7 +396,7 @@ public class PoolTest extends TestCase {
         }
 
 
-        await(discard, 10, TimeUnit.SECONDS);
+        await(discard, 20, TimeUnit.SECONDS);
 
         // All non-min instances should have been removed
         // no more, no less
