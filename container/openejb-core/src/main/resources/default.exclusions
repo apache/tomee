@@ -71,7 +71,11 @@ httpcore-
 icu4j-
 idb-
 idea_rt.jar
+jackson-annotations-
+jackson-core-
+jackson-databind-
 jackson-mapper-asl-
+jackson-module-jaxb-annotations-
 jansi-
 jasypt-
 javaee-
@@ -165,6 +169,7 @@ sshd-
 stax-api-
 surefire-
 swizzle-
+sxc-
 testng-
 tomcat-
 tomee-
