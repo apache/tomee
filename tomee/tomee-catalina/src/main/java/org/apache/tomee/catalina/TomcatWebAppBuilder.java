@@ -713,7 +713,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (isIgnored(standardContext)) return;
 
         // just adding a carriage return to get logs more readable
-        logger.info("------------------------- " + finalName(standardContext.getPath()));
+        logger.info("------------------------- "
+                + standardContext.getHostname().replace("_", defaultHost) + " -> "
+                + finalName(standardContext.getPath()));
 
         if (FORCE_RELOADABLE) {
             standardContext.setReloadable(true);
@@ -1149,14 +1151,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             for (final WebAppInfo w : contextInfo.appInfo.webApps) {
                 final String wId = getId(w.host, w.contextRoot);
                 if (id.equals(wId)) {
-                    webAppInfo = w;
-
-                    if (appContext == null) {
-                        appContext = cs.getAppContext(contextInfo.appInfo.appId);
+                    if (webAppInfo == null) {
+                        webAppInfo = w;
+                    } else if (w.host != null && w.host.equals(standardContext.getHostname())) {
+                        webAppInfo = w;
                     }
 
                     break;
                 }
+            }
+
+            if (appContext == null) {
+                appContext = cs.getAppContext(contextInfo.appInfo.appId);
             }
         }
 

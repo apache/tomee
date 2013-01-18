@@ -27,6 +27,7 @@ import javax.el.ExpressionFactory;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.Decorator;
@@ -152,7 +153,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public void fireEvent(Object event, Annotation... qualifiers) {
         super.fireEvent(event, qualifiers);
-        getParentBm().fireEvent(event, qualifiers);
+        // getParentBm().fireEvent(event, qualifiers); // send twice the same event for webapps with extension in lib part
     }
 
     @Override
@@ -204,8 +205,15 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void validate(InjectionPoint injectionPoint) {
-        super.validate(injectionPoint);
-        // getParentBm().validate(injectionPoint); // prevent injections from webapp only
+        try {
+            super.validate(injectionPoint);
+        } catch (UnsatisfiedResolutionException ure) {
+            try {
+                getParentBm().validate(injectionPoint); // prevent injections from webapp only if called directly
+            } catch (UnsatisfiedResolutionException ure2) {
+                throw ure;
+            }
+        }
     }
 
     @Override
