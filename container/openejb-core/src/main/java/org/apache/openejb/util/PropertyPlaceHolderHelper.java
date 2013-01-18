@@ -30,6 +30,18 @@ public final class PropertyPlaceHolderHelper {
         // no-op
     }
 
+    public static String simpleValue(final String key) {
+        if (key == null || !key.startsWith(PREFIX) || !key.endsWith(SUFFIX)) {
+            return key;
+        }
+
+        String value = SystemInstance.get().getOptions().get(key.substring(2, key.length() - 1), key);
+        if (!value.equals(key) && value.startsWith("java:")) {
+            value = value.substring(5);
+        }
+        return value;
+    }
+
     public static String value(final String key) {
         if (key == null || !key.startsWith(PREFIX) || !key.endsWith(SUFFIX)) {
             return key;
@@ -40,10 +52,7 @@ public final class PropertyPlaceHolderHelper {
             return value;
         }
 
-        value = SystemInstance.get().getOptions().get(key.substring(2, key.length() - 1), key);
-        if (!value.equals(key) && value.startsWith("java:")) {
-            value = value.substring(5);
-        }
+        value = simpleValue(key);
         CACHE.setProperty(key, value);
         return value;
     }

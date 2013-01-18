@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
 import org.apache.openejb.util.classloader.DefaultClassLoaderComparator;
 import org.apache.webbeans.annotation.AnnotationManager;
@@ -117,7 +118,7 @@ public class CdiScanner implements ScannerService {
             beans.duplicatedInterceptors.clear();
 
             for (String className : beans.interceptors) {
-                Class<?> clazz = load(className, classLoader);
+                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
 
                 if (clazz != null) {
 // TODO: Move check to validation phase
@@ -138,7 +139,7 @@ public class CdiScanner implements ScannerService {
             }
 
             for (String className : beans.decorators) {
-                Class<?> clazz = load(className, classLoader);
+                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
 
                 if (clazz != null) {
                     if (!decoratorsManager.isDecoratorEnabled(clazz)) {
@@ -152,7 +153,7 @@ public class CdiScanner implements ScannerService {
 
 
             for (String className : beans.alternativeStereotypes) {
-                Class<?> clazz = load(className, classLoader);
+                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addStereoTypeAlternative(clazz, null, null);
                     classes.add(clazz);
@@ -162,7 +163,7 @@ public class CdiScanner implements ScannerService {
             }
 
             for (String className : beans.alternativeClasses) {
-                Class<?> clazz = load(className, classLoader);
+                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addClazzAlternative(clazz, null, null);
                     classes.add(clazz);
