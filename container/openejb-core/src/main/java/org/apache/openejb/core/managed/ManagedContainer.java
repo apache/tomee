@@ -251,12 +251,14 @@ public class ManagedContainer implements RpcContainer {
     public synchronized void undeploy(final BeanContext bean) throws OpenEJBException {
         final Data data = (Data) bean.getContainerData();
 
-        final MBeanServer server = LocalMBeanServer.get();
-        for (final ObjectName objectName : data.jmxNames) {
-            try {
-                server.unregisterMBean(objectName);
-            } catch (Exception e) {
-                logger.error("Unable to unregister MBean " + objectName);
+        if (data != null) {
+            final MBeanServer server = LocalMBeanServer.get();
+            for (final ObjectName objectName : data.jmxNames) {
+                try {
+                    server.unregisterMBean(objectName);
+                } catch (Exception e) {
+                    logger.error("Unable to unregister MBean " + objectName);
+                }
             }
         }
 
