@@ -19,7 +19,15 @@ package org.apache.openejb.util;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.executor.OfferRejectedExecutionHandler;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -54,7 +62,6 @@ public class ExecutorBuilder {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public ThreadPoolExecutor build(final Options options) {
 
         int corePoolSize = options.get(prefix + ".CorePoolSize", size);
@@ -82,7 +89,7 @@ public class ExecutorBuilder {
         // If the user explicitly set the QueueSize to 0, we default QueueType to SYNCHRONOUS
         final QueueType defaultQueueType = (qsize < 1) ? QueueType.SYNCHRONOUS : QueueType.LINKED;
 
-        final BlockingQueue queue = options.get(prefix + ".QueueType", defaultQueueType).create(options, prefix, qsize);
+        final BlockingQueue<Runnable> queue = options.get(prefix + ".QueueType", defaultQueueType).create(options, prefix, qsize);
 
         ThreadFactory factory = this.threadFactory;
         if (factory == null) {
@@ -118,19 +125,19 @@ public class ExecutorBuilder {
         PRIORITY,
         SYNCHRONOUS;
 
-        public BlockingQueue create(final Options options, final String prefix, final int queueSize) {
+        public BlockingQueue<Runnable> create(final Options options, final String prefix, final int queueSize) {
             switch (this) {
                 case ARRAY: {
-                    return new ArrayBlockingQueue(queueSize > 0 ? queueSize : 1);
+                    return new ArrayBlockingQueue<Runnable>(queueSize > 0 ? queueSize : 1);
                 }
                 case LINKED: {
-                    return new LinkedBlockingQueue(queueSize > 0 ? queueSize : 1);
+                    return new LinkedBlockingQueue<Runnable>(queueSize > 0 ? queueSize : 1);
                 }
                 case PRIORITY: {
-                    return new PriorityBlockingQueue();
+                    return new PriorityBlockingQueue<Runnable>();
                 }
                 case SYNCHRONOUS: {
-                    return new SynchronousQueue(options.get(prefix + ".QueueFair", false));
+                    return new SynchronousQueue<Runnable>(options.get(prefix + ".QueueFair", false));
                 }
                 default: {
                     // The Options class will throw an error if the user supplies an unknown enum string
