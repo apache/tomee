@@ -110,12 +110,13 @@ public class Core {
 
         final int part = (int) Math.round(classes.length * 1. / permits);
         for (int i = 0; i < permits; i++) {
+            final int current = i;
             final int offset = i * part;
             final Thread thread = new Thread() {
                 @Override
                 public void run() {
                     int max = offset + part;
-                    if (offset / part == permits - 1) { // last one
+                    if (current == permits - 1) { // last one
                         max = classes.length;
                     }
 
