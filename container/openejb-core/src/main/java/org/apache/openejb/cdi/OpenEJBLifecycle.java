@@ -432,6 +432,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             beforeStopApplication(null);
 
             //Fire shut down
+            if (beanManager instanceof WebappBeanManager) {
+                ((WebappBeanManager) beanManager).beforeStop();
+            }
             this.beanManager.fireEvent(new BeforeShutdownImpl(), BeansDeployer.EMPTY_ANNOTATION_ARRAY);
 
             //Destroys context
