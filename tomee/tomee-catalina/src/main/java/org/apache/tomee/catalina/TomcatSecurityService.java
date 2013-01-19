@@ -89,6 +89,14 @@ public class TomcatSecurityService extends AbstractSecurityService {
                 }
             } // else ?
         }
+
+        final Set<RunAsRole> runAsRoles = securityContext.subject.getPrincipals(RunAsRole.class);
+        for (RunAsRole runAsRole : runAsRoles) {
+            if (role.equals(runAsRole.getName())) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -100,23 +108,18 @@ public class TomcatSecurityService extends AbstractSecurityService {
         final Principal principal = defaultRealm.authenticate(username, password);
         if (principal == null) throw new CredentialNotFoundException(username);
 
-        Subject subject = createSubject(defaultRealm, principal);
-        UUID token = registerSubject(subject);
-        return token;
+        final Subject subject = createSubject(defaultRealm, principal);
+        return registerSubject(subject);
     }
 
     private Subject createSubject(Realm realm, Principal principal) {
-        TomcatUser tomcatUser = new TomcatUser(realm, principal);
-
-        HashSet<Principal> principals = new HashSet<Principal>();
-        principals.add(tomcatUser);
-
-        Subject subject = new Subject(true, principals, new HashSet(), new HashSet());
-        return subject;
+        final Set<Principal> principals = new HashSet<Principal>();
+        principals.add(new TomcatUser(realm, principal));
+        return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
     public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles) {
-        LinkedHashSet<String> roles = new LinkedHashSet<String>(logicalRoles.size());
+        final Set<String> roles = new LinkedHashSet<String>(logicalRoles.size());
         for (String logicalRole : logicalRoles) {
             for (Principal principal : principals) {
                 if (principal instanceof TomcatUser) {
@@ -165,11 +168,11 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
     }
 
-    protected Subject getRunAsSubject(BeanContext callingBeanContext) {
-        Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
+    protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
+        final Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) return runAsSubject;
 
-        LinkedList<Subject> stack = runAsStack.get();
+        final LinkedList<Subject> stack = runAsStack.get();
         if (stack.isEmpty()) {
             return null;
         }
@@ -178,13 +181,12 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
 
     protected Subject createRunAsSubject(String role) {
-        if (role == null) return null;
+        if (role == null) {
+            return null;
+        }
 
-        RunAsRole runAsRole = new RunAsRole(role);
-
-        HashSet<Principal> principals = new HashSet<Principal>();
-        principals.add(runAsRole);
-
+        final Set<Principal> principals = new HashSet<Principal>();
+        principals.add(new RunAsRole(role));
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
