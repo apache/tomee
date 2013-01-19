@@ -21,6 +21,8 @@ import org.apache.webbeans.component.BuildInOwbBean;
 import org.apache.webbeans.component.ConversationBean;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.portable.events.generics.GenericBeanEvent;
+import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
 import javax.el.ExpressionFactory;
@@ -153,7 +155,36 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public void fireEvent(Object event, Annotation... qualifiers) {
         super.fireEvent(event, qualifiers);
-        // getParentBm().fireEvent(event, qualifiers); // send twice the same event for webapps with extension in lib part
+
+        // don't propagate to parent extension events since extensions are already here (loaded from spi)
+        if (!isExtensionEvent(event.getClass())) {
+            getParentBm().fireEvent(event, qualifiers);
+        }
+    }
+
+    private static boolean isExtensionEvent(final Type type) {
+        if (!(type instanceof Class<?>)) {
+            return false;
+        }
+
+        final Class<?> aClass = (Class<?>) type;
+        if (WebBeansUtil.isExtensionEventType(aClass)
+                || WebBeansUtil.isExtensionProducerOrObserverEventType(aClass)) {
+            return true;
+        }
+
+        final Class<?>[] itfs = aClass.getInterfaces();
+        if (itfs != null) {
+            for (Class<?> i : itfs) {
+                if (GenericBeanEvent.class.equals(i)
+                        || WebBeansUtil.isExtensionEventType(i)
+                        || WebBeansUtil.isDefaultExtensionBeanEventType(i)
+                        || WebBeansUtil.isDefaultExtensionProducerOrObserverEventType(i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -166,7 +197,12 @@ public class WebappBeanManager extends BeanManagerImpl {
             internalUse.set(false);
         }
         if (!internalUse.get()) {
-            mtds.addAll(getParentBm().resolveObserverMethods(event, qualifiers));
+            Set<ObserverMethod<? super T>> c = getParentBm().resolveObserverMethods(event, qualifiers);
+            for (ObserverMethod<? super T> o : c) {
+                if (!isExtensionEvent(o.getObservedType())) {
+                    mtds.add(o);
+                }
+            }
         }
         internalUse.remove();
         return mtds;
