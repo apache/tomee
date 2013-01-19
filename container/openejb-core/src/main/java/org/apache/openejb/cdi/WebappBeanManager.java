@@ -55,6 +55,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         }
     };
     private Set<Bean<?>> deploymentBeans;
+    private boolean started = false; // just to send events faster
 
     public WebappBeanManager(WebappWebBeansContext ctx) {
         super(ctx);
@@ -157,7 +158,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         super.fireEvent(event, qualifiers);
 
         // don't propagate to parent extension events since extensions are already here (loaded from spi)
-        if (!isExtensionEvent(event.getClass())) {
+        if (started || !isExtensionEvent(event.getClass())) {
             getParentBm().fireEvent(event, qualifiers);
         }
     }
@@ -445,5 +446,11 @@ public class WebappBeanManager extends BeanManagerImpl {
             deploymentBeans.add(bean);
         }
         deploymentBeans.addAll(super.getBeans());
+
+        started = true;
+    }
+
+    public void beforeStop() {
+        started = false;
     }
 }
