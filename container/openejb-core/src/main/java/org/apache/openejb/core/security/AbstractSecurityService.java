@@ -335,6 +335,18 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
+    @Override
+    public Object currentState() {
+        return clientIdentity.get();
+    }
+
+    @Override
+    public void setState(final Object o) {
+        if (Identity.class.isInstance(o)) {
+            clientIdentity.set(Identity.class.cast(o));
+        }
+    }
+
     protected final static class SecurityContext {
 
         public final Subject subject;

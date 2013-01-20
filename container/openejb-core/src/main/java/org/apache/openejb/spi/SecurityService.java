@@ -73,4 +73,7 @@ public interface SecurityService<T> extends Service {
      */
     public boolean isCallerAuthorized(Method method, InterfaceType type);
 
+    // mainly for asynch handling
+    public void setState(Object o);
+    public Object currentState();
 }

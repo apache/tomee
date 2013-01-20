@@ -22,7 +22,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -231,10 +233,18 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
 
         if (beanContext.isAsynchronous(method)) {
+            final SecurityService<?> securityService = SystemInstance.get().getComponent(SecurityService.class);
+            final Object state = securityService.currentState();
             return asynchronousPool.invoke(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    return synchronizedBusinessMethod(interfce, method, args);
+                    final Object threadState = securityService.currentState();
+                    securityService.setState(state);
+                    try {
+                        return synchronizedBusinessMethod(interfce, method, args);
+                    } finally {
+                        securityService.setState(threadState);
+                    }
                 }
             }, method.getReturnType() == Void.TYPE);
         } else {

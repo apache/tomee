@@ -70,4 +70,12 @@ public class PseudoSecurityService implements SecurityService {
     public boolean isCallerAuthorized(Method method, InterfaceType type) {
         return true;
     }
+
+    public void setState(Object o) {
+        // no-op
+    }
+
+    public Object currentState() {
+        return null;
+    }
 }
