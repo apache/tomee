@@ -1140,6 +1140,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 webModule.getWatchedResources().add(URLs.toFilePath(location));
             }
         }
+
+        TldScanner.clean(parentClassLoader); // no more need + this classloader is a temp one in Servlet container so avoid mem leaks
     }
 
     /**

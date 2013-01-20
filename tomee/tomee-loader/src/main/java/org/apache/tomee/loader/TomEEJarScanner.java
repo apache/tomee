@@ -19,10 +19,14 @@
 
 package org.apache.tomee.loader;
 
+import org.apache.catalina.startup.TldConfig;
+import org.apache.catalina.startup.XmlErrorHandler;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.TldScanner;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.URLs;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.file.Matcher;
@@ -33,6 +37,9 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -53,6 +60,9 @@ public class TomEEJarScanner extends StandardJarScanner {
      */
     private static final StringManager sm = StringManager.getManager(Constants.Package);
 
+    private static final Method tldScanStream;
+    private static final Field tldConfig;
+
     static {
         final Set<String> defaultJarsToSkip = new HashSet<String>();
         final String jarList = System.getProperty(Constants.SKIP_JARS_PROPERTY);
@@ -68,6 +78,17 @@ public class TomEEJarScanner extends StandardJarScanner {
             ignoredJarsTokens.add(Matcher.tokenizePathAsArray(pattern));
         }
         DEFAULT_JARS_TO_SKIP = ignoredJarsTokens;
+
+        try {
+            tldScanStream = TldConfig.class.getDeclaredMethod("tldScanStream", InputStream.class);
+            tldScanStream.setAccessible(true);
+            tldConfig = TomEEJarScanner.class.getClassLoader()
+                    .loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback")
+                    .getDeclaredField("this$0");
+            tldConfig.setAccessible(true);
+        } catch (Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
     }
 
     @Override
@@ -76,6 +97,16 @@ public class TomEEJarScanner extends StandardJarScanner {
             final EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
         } else if ("TldJarScannerCallback".equals(callback.getClass().getSimpleName())) {
+
+            try {
+                final Set<URL> urls = TldScanner.scan(context.getClassLoader());
+                for (URL url : urls) {
+                    tldConfig(callback, url);
+                }
+                return; // done, next code is a fallback if scan() throw an exception
+            } catch (OpenEJBException oe) {
+                // no-op
+            }
 
             // Scan WEB-INF/lib
             final Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
@@ -207,6 +238,35 @@ public class TomEEJarScanner extends StandardJarScanner {
             log.trace(sm.getString("jarScan.jarUrlStart", url));
         }
 
+        try {
+            final File file = URLs.toFile(url);
+            final Set<URL> urls = TldScanner.scan(Thread.currentThread().getContextClassLoader(), file);
+            for (URL current : urls) {
+                tldConfig(callback, current);
+            }
+        } catch (IllegalStateException e) {
+            tomcatProcess(callback, url);
+        } catch (IllegalArgumentException e) {
+            tomcatProcess(callback, url);
+        } catch (OpenEJBException e) {
+            tomcatProcess(callback, url);
+        }
+    }
+
+    private static void tldConfig(final JarScannerCallback callback, final URL current) {
+        InputStream is = null;
+        try {
+            is = current.openStream();
+            final XmlErrorHandler handler = (XmlErrorHandler) tldScanStream.invoke(tldConfig.get(callback), is);
+            handler.logFindings(log, current.toExternalForm());
+        } catch (Exception e) {
+            log.warn(sm.getString("jarScan.webinflibFail", current), e);
+        } finally {
+            IO.close(is);
+        }
+    }
+
+    private void tomcatProcess(final JarScannerCallback callback, final URL url) throws IOException {
         final URLConnection conn = url.openConnection();
         if (conn instanceof JarURLConnection) {
 
@@ -251,7 +311,6 @@ public class TomEEJarScanner extends StandardJarScanner {
                 }
             }
         }
-
     }
 
     /*
