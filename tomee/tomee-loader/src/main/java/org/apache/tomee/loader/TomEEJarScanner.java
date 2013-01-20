@@ -252,31 +252,6 @@ public class TomEEJarScanner extends StandardJarScanner {
         return jars;
     }
 
-    /*
-    * Scan a URL for JARs with the optional extensions to look at all files
-    * and all directories.
-    */
-    private void process(final JarScannerCallback callback, final URL url) throws IOException {
-
-        if (log.isTraceEnabled()) {
-            log.trace(sm.getString("jarScan.jarUrlStart", url));
-        }
-
-        try {
-            final File file = URLs.toFile(url);
-            final Set<URL> urls = TldScanner.scan(Thread.currentThread().getContextClassLoader(), file);
-            for (URL current : urls) {
-                tldConfig(callback, current);
-            }
-        } catch (IllegalStateException e) {
-            tomcatProcess(callback, url);
-        } catch (IllegalArgumentException e) {
-            tomcatProcess(callback, url);
-        } catch (OpenEJBException e) {
-            tomcatProcess(callback, url);
-        }
-    }
-
     private static void tldLocationCache(final JarScannerCallback callback, final URL url) {
         String resource = url.toString();
         String entry = null;
@@ -312,7 +287,11 @@ public class TomEEJarScanner extends StandardJarScanner {
         }
     }
 
-    private void tomcatProcess(final JarScannerCallback callback, final URL url) throws IOException {
+    /*
+    * Scan a URL for JARs with the optional extensions to look at all files
+    * and all directories.
+    */
+    private void process(final JarScannerCallback callback, final URL url) throws IOException {
         final URLConnection conn = url.openConnection();
         if (conn instanceof JarURLConnection) {
 

@@ -28,7 +28,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -56,17 +55,6 @@ import static org.apache.openejb.util.URLs.toFile;
 public class TldScanner {
 
     private static Map<ClassLoader, Set<URL>> cache = new WeakHashMap<ClassLoader, Set<URL>>();
-    private static Map<ClassLoader, Map<File, Set<URL>>> cacheByUrl = new WeakHashMap<ClassLoader, Map<File, Set<URL>>>();
-
-    public static Set<URL> scan(final ClassLoader classLoader, final File file) throws OpenEJBException {
-        scan(classLoader); // ensure init
-
-        final Map<File, Set<URL>> map = cacheByUrl.get(classLoader);
-        if (map == null || !map.containsKey(file)) {
-            return Collections.emptySet();
-        }
-        return map.get(file);
-    }
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
         if (classLoader == null) return Collections.emptySet();
@@ -74,31 +62,20 @@ public class TldScanner {
         final Set<URL> urls = cache.get(classLoader);
         if (urls != null) return urls;
 
-        final Map<File, Set<URL>> result = scanClassLoaderForTagLibs(classLoader);
-        cacheByUrl.put(classLoader, result);
+        final Set<URL> result = scanClassLoaderForTagLibs(classLoader);
+        cache.put(classLoader, result);
 
-        final Set<URL> merged = new HashSet<URL>();
-        for (Set<URL> us : result.values()) {
-            merged.addAll(us);
-        }
-        cache.put(classLoader, merged);
-
-        return merged;
+        return result;
     }
 
+    public static Set<URL> scanClassLoaderForTagLibs(final ClassLoader classLoader) throws OpenEJBException {
 
-    public static Map<File, Set<URL>> scanClassLoaderForTagLibs(final ClassLoader classLoader) throws OpenEJBException {
-
-        final Map<File, Set<URL>> tldUrls = new HashMap<File, Set<URL>>();
+        final Set<URL> tldUrls = new HashSet<URL>();
 
         if (classLoader == null) return tldUrls;
         if (classLoader == Object.class.getClassLoader()) return tldUrls;
 
-        final ClassLoader parent = classLoader.getParent();
-        scan(parent);
-        if (cacheByUrl.containsKey(parent)) {
-            tldUrls.putAll(cacheByUrl.get(parent));
-        }
+        tldUrls.addAll(scan(classLoader.getParent()));
 
 
         UrlSet urlSet = new UrlSet();
@@ -125,7 +102,6 @@ public class TldScanner {
 
 
         for (URL url : urlSet.getUrls()) {
-
             if (url.getProtocol().equals("jar")) {
                 try {
                     String path = url.getPath();
@@ -151,11 +127,7 @@ public class TldScanner {
                 continue;
             }
 
-            final Set<URL> set = new HashSet<URL>();
-            set.addAll(scanForTagLibs(file));
-            if (!set.isEmpty()) {
-                tldUrls.put(file, set);
-            }
+            tldUrls.addAll(scanForTagLibs(file));
         }
 
         return tldUrls;
@@ -261,13 +233,6 @@ public class TldScanner {
         }
 
         cache.remove(loader);
-        final Map<File, Set<URL>> map = cacheByUrl.remove(loader);
-        if (map != null) {
-            for (Set<URL> set : map.values()) {
-                set.clear();
-            }
-            map.clear();
-        }
         if (loader.getParent() != TldScanner.class.getClassLoader()) { // for ears
             clean(loader.getParent());
         }
