@@ -17,6 +17,7 @@
  */
 package org.apache.tomee.common;
 
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Strings;
@@ -26,9 +27,11 @@ import javax.naming.InitialContext;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import javax.naming.NoInitialContextException;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
+import java.util.Properties;
 
 public abstract class AbstractObjectFactory implements ObjectFactory {
     public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
@@ -53,14 +56,33 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
                 try {
                     return new InitialContext().lookup(jndiName);
                 } catch (NameNotFoundException ignored) {
+                    // no-op
+                } catch (NoInitialContextException nice) {
+                    final Properties props = new Properties();
+                    props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+                    try {
+                        return new InitialContext(props).lookup(jndiName);
+                    } catch (NameNotFoundException ignored) {
+                        // no-op
+                    }
                 }
             }
 
             // 3rd try
             if (ref.getClassName() != null) {
+                final String moduleName = "java:module/" + Strings.lastPart(ref.getClassName(), '.');
                 try {
-                    return new InitialContext().lookup("java:module/" + Strings.lastPart(ref.getClassName(), '.'));
+                    return new InitialContext().lookup(moduleName);
                 } catch (NameNotFoundException ignored) {
+                    // no-op
+                } catch (NoInitialContextException nice) {
+                    final Properties props = new Properties();
+                    props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+                    try {
+                        return new InitialContext(props).lookup(moduleName);
+                    } catch (NameNotFoundException ignored) {
+                        // no-op
+                    }
                 }
             }
 
