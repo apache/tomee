@@ -173,11 +173,17 @@ public class Sxc {
         try {
             // We don't want to use whatever they have put in the their app as a STAX impl
             Thread.currentThread().setContextClassLoader(Sxc.class.getClassLoader());
-            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            XMLInputFactory factory = null;
+            try { // 1) trying to force jvm one, 2) skipping classloading/SPI mecanism, 3) setting specific property
+                factory = (XMLInputFactory) Sxc.class.getClassLoader()
+                        .loadClass("com.sun.xml.internal.stream.XMLInputFactoryImpl").newInstance();
+                factory.setProperty("http://java.sun.com/xml/stream/properties/ignore-external-dtd", Boolean.TRUE);
+            } catch (Exception e) { // not a big deal, using the default one
+                factory = XMLInputFactory.newInstance();
+            }
             factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
             factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-            factory.setProperty("http://java.sun.com/xml/stream/properties/ignore-external-dtd", Boolean.TRUE);
             return factory;
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
