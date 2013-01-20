@@ -20,7 +20,19 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.webservices.WsdlResolver;
-import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.Connector10;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.fragment.PersistenceFragment;
@@ -41,7 +53,11 @@ import org.apache.openejb.sxc.HandlerChainsXml;
 import org.apache.openejb.sxc.TldTaglibXml;
 import org.apache.openejb.sxc.WebXml;
 import org.apache.openejb.sxc.WebservicesXml;
-import org.apache.openejb.util.*;
+import org.apache.openejb.util.LengthInputStream;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Saxs;
+import org.apache.openejb.util.URLs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -243,18 +259,17 @@ public class ReadDescriptors implements DynamicDeployer {
             final URL url = module.getClassLoader().getResource("META-INF/" + name);
             if (url != null) {
                 module.getAltDDs().put(name, url);
+                return new UrlSource(url);
             }
-
-            return new UrlSource(url);
         }
         return null;
     }
 
     public static void readResourcesXml(final Module module) {
-        final URL url = getUrl(module, "resources.xml");
+        final Source url = getSource(module.getAltDDs().get("resources.xml"));
         if (url != null) {
             try {
-                final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, IO.read(url));
+                final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
                 module.initResources(openejb);
             } catch (Exception e) {
                 logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
