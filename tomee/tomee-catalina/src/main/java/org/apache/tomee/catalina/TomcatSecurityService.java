@@ -139,6 +139,23 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return roles;
     }
 
+    @Override
+    public Principal getCallerPrincipal() {
+        final Identity currentIdentity = clientIdentity.get();
+        if (currentIdentity != null) {
+            final Set<Principal> principals = currentIdentity.getSubject().getPrincipals();
+            for (final Principal principal : principals) {
+                if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
+                    return principal;
+                }
+            }
+            if (!principals.isEmpty()) {
+                return principals.iterator().next();
+            }
+        }
+        return super.getCallerPrincipal();
+    }
+
     public Object enterWebApp(Realm realm, Principal principal, String runAs) {
         Identity newIdentity = null;
         if (principal != null) {
@@ -160,8 +177,13 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     public void exitWebApp(Object state) {
         if (state instanceof WebAppState) {
-            WebAppState webAppState = (WebAppState) state;
-            clientIdentity.set(webAppState.oldIdentity);
+            final WebAppState webAppState = (WebAppState) state;
+            if (webAppState.oldIdentity == null) {
+                clientIdentity.remove();
+            } else {
+                clientIdentity.set(webAppState.oldIdentity);
+            }
+
             if (webAppState.hadRunAs) {
                 runAsStack.get().removeFirst();
             }
