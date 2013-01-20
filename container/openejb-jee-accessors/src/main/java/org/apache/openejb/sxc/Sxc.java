@@ -173,7 +173,12 @@ public class Sxc {
         try {
             // We don't want to use whatever they have put in the their app as a STAX impl
             Thread.currentThread().setContextClassLoader(Sxc.class.getClassLoader());
-            return XMLInputFactory.newInstance();
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+            factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+            factory.setProperty("http://java.sun.com/xml/stream/properties/ignore-external-dtd", Boolean.TRUE);
+            return factory;
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
