@@ -82,6 +82,7 @@ public class OpenEJBArchiveProcessor {
 
     private static final String BEANS_XML = "beans.xml";
     private static final String VALIDATION_XML = "validation.xml";
+    private static final String RESOURCES_XML = "resources.xml";
     private static final String PERSISTENCE_XML = "persistence.xml";
     private static final String OPENEJB_JAR_XML = "openejb-jar.xml";
     private static final String ENV_ENTRIES_PROPERTIES = "env-entries.properties";
@@ -239,6 +240,13 @@ public class OpenEJBArchiveProcessor {
             final Node validationXml = archive.get(prefix.concat(VALIDATION_XML));
             if (validationXml != null) {
                 ejbModule.getAltDDs().put(VALIDATION_XML, new AssetSource(validationXml.getAsset()));
+            }
+        }
+
+        {
+            final Node resourcesXml = archive.get(prefix.concat(RESOURCES_XML));
+            if (resourcesXml != null) {
+                ejbModule.getAltDDs().put(RESOURCES_XML, new AssetSource(resourcesXml.getAsset()));
             }
         }
 

@@ -273,7 +273,14 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     public void undeploy() {
-        server.stop();
+        try {
+            server.stop();
+        } catch (IllegalStateException ise) {
+            LOGGER.warning("Can't stop correctly the endpoint " + server);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(ise.getMessage(), ise);
+            }
+        }
     }
 
     @Override
