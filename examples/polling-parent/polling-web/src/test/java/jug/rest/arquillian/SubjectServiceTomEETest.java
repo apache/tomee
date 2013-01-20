@@ -52,6 +52,7 @@ public class SubjectServiceTomEETest {
                 .addPackage(Subject.class.getPackage()) // domain
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addPackage(PollingRouter.class.getPackage()) // core
                 .addPackage(SubjectDao.class.getPackage()) // core

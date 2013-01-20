@@ -26,6 +26,7 @@ import org.apache.catalina.deploy.ContextService;
 import org.apache.catalina.deploy.MessageDestinationRef;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
+import org.apache.tomee.common.NamingUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -133,6 +134,8 @@ public class OpenEJBNamingResource extends NamingResources {
         final String name = ref.getName();
         if (name.startsWith(JAVA_PREFIX)) { // tomcat adds mbeans and a ":" in a mbean is not very cool for the objectname
             ref.setName(name.substring(JAVA_PREFIX.length()));
+        } else if (name.startsWith("openejb/Resource/")) {
+            ref.setProperty(NamingUtil.JNDI_NAME, "openejb:" + name.substring("openejb/".length()));
         }
         if (ref.getType() == null) {
             ref.setType("");
