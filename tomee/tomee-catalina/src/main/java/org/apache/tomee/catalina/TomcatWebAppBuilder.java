@@ -87,6 +87,7 @@ import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.config.sys.Resource;
@@ -181,6 +182,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     public static final String TOMEE_INIT_J2EE_INFO = "tomee.init-J2EE-info";
 
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
+    private static final boolean SKIP_TLD = SystemInstance.get().getOptions().get("tomee.skip-tld", false);
 
     private static Method getNamingContextName = null; // it just sucks but that's private
     static {
@@ -719,6 +721,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         if (FORCE_RELOADABLE) {
             standardContext.setReloadable(true);
+        }
+        if (SKIP_TLD) {
+            standardContext.setProcessTlds(false);
         }
 
         final String name = standardContext.getName();
@@ -1680,6 +1685,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         final LazyStopWebappClassLoader old = lazyClassLoader(standardContext);
         if (old != null) { // should always be the case
+            TldScanner.clean(old);
             jsfClasses.remove(old);
         }
 
