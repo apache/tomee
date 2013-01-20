@@ -60,8 +60,10 @@ public class TomEEJarScanner extends StandardJarScanner {
      */
     private static final StringManager sm = StringManager.getManager(Constants.Package);
 
-    private static final Method tldScanStream;
+    private static final Method tldConfigScanStream;
     private static final Field tldConfig;
+    private static final Method tldLocationScanStream;
+    private static final Field tldLocationCache;
 
     static {
         final Set<String> defaultJarsToSkip = new HashSet<String>();
@@ -80,12 +82,21 @@ public class TomEEJarScanner extends StandardJarScanner {
         DEFAULT_JARS_TO_SKIP = ignoredJarsTokens;
 
         try {
-            tldScanStream = TldConfig.class.getDeclaredMethod("tldScanStream", InputStream.class);
-            tldScanStream.setAccessible(true);
-            tldConfig = TomEEJarScanner.class.getClassLoader()
-                    .loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback")
-                    .getDeclaredField("this$0");
+            final ClassLoader loader = TomEEJarScanner.class.getClassLoader();
+
+            tldConfigScanStream = TldConfig.class.getDeclaredMethod("tldScanStream", InputStream.class);
+            tldConfigScanStream.setAccessible(true);
+            tldConfig = loader.loadClass("org.apache.catalina.startup.TldConfig$TldJarScannerCallback")
+                            .getDeclaredFields()[0]; // there is a unique field and this way it is portable
+                            //.getDeclaredField("this$0");
             tldConfig.setAccessible(true);
+
+            tldLocationScanStream = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache")
+                        .getDeclaredMethod("tldScanStream", String.class, String.class, InputStream.class);
+            tldLocationScanStream.setAccessible(true);
+            tldLocationCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache$TldJarScannerCallback")
+                                    .getDeclaredFields()[0];
+            tldLocationCache.setAccessible(true);
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -98,15 +109,28 @@ public class TomEEJarScanner extends StandardJarScanner {
             embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
         } else if ("TldJarScannerCallback".equals(callback.getClass().getSimpleName())) {
 
-            try {
-                final Set<URL> urls = TldScanner.scan(context.getClassLoader());
-                for (URL url : urls) {
-                    tldConfig(callback, url);
+            final String cbName = callback.getClass().getName();
+            if (cbName.equals(tldConfig.getDeclaringClass().getName())) {
+                try {
+                    final Set<URL> urls = TldScanner.scan(context.getClassLoader());
+                    for (URL url : urls) {
+                        tldConfig(callback, url);
+                    }
+                    return; // done, next code is a fallback if scan() throw an exception
+                } catch (OpenEJBException oe) {
+                    // no-op
                 }
-                return; // done, next code is a fallback if scan() throw an exception
-            } catch (OpenEJBException oe) {
-                // no-op
-            }
+            } else if (cbName.equals(tldLocationCache.getDeclaringClass().getName())) {
+                try {
+                    final Set<URL> urls = TldScanner.scan(context.getClassLoader());
+                    for (URL url : urls) {
+                        tldLocationCache(callback, url);
+                    }
+                    return;
+                } catch (OpenEJBException oe) {
+                    // no-op
+                }
+            } else { log.debug("This callback " + callback + " is not known and perf optim will not be available"); }
 
             // Scan WEB-INF/lib
             final Set<String> dirList = context.getResourcePaths(Constants.WEB_INF_LIB);
@@ -253,11 +277,33 @@ public class TomEEJarScanner extends StandardJarScanner {
         }
     }
 
+    private static void tldLocationCache(final JarScannerCallback callback, final URL url) {
+        String resource = url.toString();
+        String entry = null;
+
+        if (resource.contains("!/")) {
+            final String path = url.getPath();
+            final int endIndex = path.indexOf("!/");
+            resource = path.substring(0, endIndex);
+            entry = path.substring(endIndex + 2, path.length());
+        }
+
+        InputStream is = null;
+        try {
+            is = url.openStream();
+            tldLocationScanStream.invoke(tldLocationCache.get(callback), resource, entry, is);
+        } catch (Exception e) {
+            log.warn(sm.getString("jarScan.webinflibFail", url.toExternalForm()), e);
+        } finally {
+            IO.close(is);
+        }
+    }
+
     private static void tldConfig(final JarScannerCallback callback, final URL current) {
         InputStream is = null;
         try {
             is = current.openStream();
-            final XmlErrorHandler handler = (XmlErrorHandler) tldScanStream.invoke(tldConfig.get(callback), is);
+            final XmlErrorHandler handler = (XmlErrorHandler) tldConfigScanStream.invoke(tldConfig.get(callback), is);
             handler.logFindings(log, current.toExternalForm());
         } catch (Exception e) {
             log.warn(sm.getString("jarScan.webinflibFail", current), e);
