@@ -17,7 +17,6 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.loader.IO;
-import org.hsqldb.lib.Collection;
 
 import javax.naming.Binding;
 import javax.naming.Context;
