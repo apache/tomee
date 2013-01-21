@@ -18,7 +18,11 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
+import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
+import org.apache.openejb.cdi.CdiAppContextsService;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
 
 public class TomEEContainerListener implements ContainerListener {
     private static final ThreadLocal<StandardContext> context = new ThreadLocal<StandardContext>();
@@ -29,6 +33,14 @@ public class TomEEContainerListener implements ContainerListener {
             context.set((StandardContext) event.getContainer());
         } else if ("afterContextInitialized".equals(event.getType())) {
             context.remove();
+        } else if (Context.CHANGE_SESSION_ID_EVENT.endsWith(event.getType())) {
+            final String[] ids = (String[]) event.getData();
+
+            final WebBeansContext wbc = WebBeansContext.currentInstance();
+            final ContextsService cs = wbc.getContextsService();
+            if (CdiAppContextsService.class.isInstance(cs) && ids.length > 0) {
+                ((CdiAppContextsService) cs).updateSessionIdMapping(ids[0], ids[1]);
+            }
         }
     }
 

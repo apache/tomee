@@ -33,7 +33,6 @@ import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
 import org.apache.webbeans.web.context.ServletRequestContext;
-import org.apache.webbeans.web.context.SessionContextManager;
 import org.apache.webbeans.web.intercept.RequestScopedBeanInterceptorHandler;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -58,7 +57,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     private final ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
 
     private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
-    private final SessionContextManager sessionCtxManager = new SessionContextManager();
+    private final UpdatableSessionContextManager sessionCtxManager = new UpdatableSessionContextManager();
 
     /**
      * Conversation context manager
@@ -511,5 +510,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private boolean supportsConversation() {
         return conversationContext != null;
+    }
+
+    public void updateSessionIdMapping(final String oldId, final String newId) {
+        sessionCtxManager.updateSessionIdMapping(oldId, newId);
     }
 }
