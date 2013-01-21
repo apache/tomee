@@ -1685,7 +1685,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         final LazyStopWebappClassLoader old = lazyClassLoader(standardContext);
         if (old != null) { // should always be the case
-            TldScanner.clean(old);
+            TldScanner.forceCompleteClean(old);
             jsfClasses.remove(old);
         }
 

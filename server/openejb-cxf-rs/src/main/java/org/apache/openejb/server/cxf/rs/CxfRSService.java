@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.binding.BindingFactoryManager;
+import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
@@ -52,6 +55,19 @@ public class CxfRSService extends RESTService {
     public void init(final Properties properties) throws Exception {
         super.init(properties);
         CxfUtil.configureBus();
+
+        final Bus bus = CxfUtil.getBus();
+
+        // force init of bindings
+        if (!CxfUtil.hasService(JAXRSBindingFactory.JAXRS_BINDING_ID)) {
+            // cxf does it but with the pattern "if not here install it". It is slow so installing it without testing for presence here.
+            final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
+            try {
+                bfm.registerBindingFactory(JAXRSBindingFactory.JAXRS_BINDING_ID, new JAXRSBindingFactory(bus));
+            } catch (Throwable b) {
+                // no-op
+            }
+        }
     }
 
     @Override

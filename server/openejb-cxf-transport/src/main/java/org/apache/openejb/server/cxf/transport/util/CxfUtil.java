@@ -18,8 +18,12 @@ package org.apache.openejb.server.cxf.transport.util;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.binding.BindingFactory;
+import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
+import org.apache.cxf.bus.managers.BindingFactoryManagerImpl;
+import org.apache.cxf.configuration.spring.MapProvider;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.AbstractFeature;
@@ -36,7 +40,9 @@ import org.apache.openejb.util.PropertiesHelper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CxfUtil {
     public static final String ENDPOINT_PROPERTIES = "properties";
@@ -50,6 +56,9 @@ public final class CxfUtil {
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
+
+    private static volatile boolean usingBindingFactoryMap = false;
+    private static final Map<String, BindingFactory> bindingFactoryMap = new ConcurrentHashMap<String, BindingFactory>(8, 0.75f, 4);
 
     private CxfUtil() {
         // no-op
@@ -73,10 +82,27 @@ public final class CxfUtil {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.class.getClassLoader());
         try {
-            return BusFactory.getDefaultBus();
+            final Bus bus = BusFactory.getDefaultBus();
+            final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
+
+            if (bfm instanceof BindingFactoryManagerImpl) {
+                ((BindingFactoryManagerImpl) bfm).setMapProvider(new MapProvider<String, BindingFactory>() {
+                    @Override
+                    public Map<String, BindingFactory> createMap() {
+                        usingBindingFactoryMap = true;
+                        return bindingFactoryMap;
+                    }
+                });
+            }
+
+            return bus;
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
+    }
+
+    public static boolean hasService(final String name) {
+        return usingBindingFactoryMap && bindingFactoryMap.containsKey(name);
     }
 
     public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final ServiceConfiguration configuration, final String prefix) {

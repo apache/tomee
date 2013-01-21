@@ -21,10 +21,12 @@ avalon-framework-
 axis-
 axis2-
 bcprov-
+bootstrap.jar
 bval-core
 bval-jsr
 c3p0-
 catalina-
+catalina.jar
 cglib-
 commons-beanutils
 commons-cli-
@@ -77,6 +79,8 @@ jackson-databind-
 jackson-mapper-asl-
 jackson-module-jaxb-annotations-
 jansi-
+jasper.jar
+jasper-el.jar
 jasypt-
 javaee-
 javaee-api
@@ -159,6 +163,7 @@ scannotation-
 serializer-
 serp-
 servlet-api-
+servlet-api.jar
 sisu-inject
 sisu-guice
 shrinkwrap-

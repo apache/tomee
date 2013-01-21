@@ -57,6 +57,7 @@ import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -1393,10 +1394,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        if (appContext != null)
+        if (appContext != null) {
             for (final WebContext webContext : appContext.getWebContexts()) {
                 containerSystem.removeWebContext(webContext);
             }
+            TldScanner.forceCompleteClean(appContext.getClassLoader());
+        }
 
         // Clear out naming for all components first
         for (final BeanContext deployment : deployments) {
