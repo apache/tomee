@@ -42,12 +42,12 @@
     <dependency>
       <groupId>com.ctp.cdi.query</groupId>
       <artifactId>cdi-query-api</artifactId>
-      <version>1.0.0.Alpha5-SNAPSHOT</version>
+      <version>1.0.0.Alpha5</version>
     </dependency>
     <dependency>
       <groupId>com.ctp.cdi.query</groupId>
       <artifactId>cdi-query-impl</artifactId>
-      <version>1.0.0.Alpha5-SNAPSHOT</version>
+      <version>1.0.0.Alpha5</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -95,11 +95,6 @@
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
-    </repository>
-    <repository>
-      <id>ctp-consulting-m2-snapshot</id>
-      <name>Ctp Consulting Snapshot Repository</name>
-      <url>https://repository-ctpconsulting.forge.cloudbees.com/snapshot/</url>
     </repository>
   </repositories>
 
