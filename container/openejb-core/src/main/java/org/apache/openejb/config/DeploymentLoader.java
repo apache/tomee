@@ -1141,7 +1141,8 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
-        TldScanner.clean(parentClassLoader); // no more need + this classloader is a temp one in Servlet container so avoid mem leaks
+        // no more need + this classloader is a temp one in Servlet container so avoid mem leaks
+        TldScanner.quickClean(parentClassLoader);
     }
 
     /**

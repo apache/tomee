@@ -28,11 +28,18 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -58,37 +65,61 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
             urlSet.add(resources.nextElement());
         }
 
+        final List<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(loader)).getUrls();
+
+        final ExecutorService es = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors() + 1);
+        final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
+
         // Scan files inside META-INF ending with .faces-config.xml
-        for (URL url : NewLoaderLogic.applyBuiltinExcludes(new UrlSet(loader)).getUrls()) {
+        for (URL url : urls) {
             final File file = URLs.toFile(url);
             if (!file.exists()) {
                 continue;
             }
 
-            if (!file.isDirectory()) { // browse all entries to see if we have a matching file
-                final Enumeration<JarEntry> e = new JarFile(file).entries();
-                while (e.hasMoreElements()) {
-                    try {
-                        final String name = e.nextElement().getName();
-                        if (name.startsWith(META_INF_PREFIX) && name.endsWith(FACES_CONFIG_SUFFIX)) {
-                            final Enumeration<URL> e2 = loader.getResources(name);
-                            while (e2.hasMoreElements()) {
-                                urlSet.add(e2.nextElement());
+            futures.add(es.submit(new Callable<Set<URL>>() {
+                @Override
+                public Set<URL> call() throws Exception {
+                    final Set<URL> currentSet = new HashSet<URL>();
+
+                    if (!file.isDirectory()) { // browse all entries to see if we have a matching file
+                        final Enumeration<JarEntry> e = new JarFile(file).entries();
+                        while (e.hasMoreElements()) {
+                            try {
+                                final String name = e.nextElement().getName();
+                                if (name.startsWith(META_INF_PREFIX) && name.endsWith(FACES_CONFIG_SUFFIX)) {
+                                    final Enumeration<URL> e2 = loader.getResources(name);
+                                    while (e2.hasMoreElements()) {
+                                        currentSet.add(e2.nextElement());
+                                    }
+                                }
+                            } catch (Throwable ignored) {
+                                // no-op
                             }
                         }
-                    } catch (Throwable ignored) {
-                        // no-op
-                    }
-                }
-            } else {
-                final File metaInf = new File(file, META_INF_PREFIX);
-                if (metaInf.exists() && metaInf.isDirectory()) {
-                    for (File f : Files.collect(metaInf, FacesConfigSuffixFilter.INSTANCE)) {
-                        if (!f.isDirectory()) {
-                            urlSet.add(f.toURI().toURL());
+                    } else {
+                        final File metaInf = new File(file, META_INF_PREFIX);
+                        if (metaInf.exists() && metaInf.isDirectory()) {
+                            for (File f : Files.collect(metaInf, FacesConfigSuffixFilter.INSTANCE)) {
+                                if (!f.isDirectory()) {
+                                    currentSet.add(f.toURI().toURL());
+                                }
+                            }
                         }
                     }
+
+                    return currentSet;
                 }
+            }));
+        }
+
+        es.shutdown();
+
+        for (Future<Set<URL>> set : futures) {
+            try {
+                urlSet.addAll(set.get());
+            } catch (Exception e) {
+                // no-op
             }
         }
 

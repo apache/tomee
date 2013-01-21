@@ -23,7 +23,6 @@ import org.apache.xbean.asm.ClassVisitor;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.MethodVisitor;
 import org.apache.xbean.finder.UrlSet;
-import org.apache.xbean.finder.archive.FileArchive;
 
 import java.io.BufferedInputStream;
 import java.io.File;
