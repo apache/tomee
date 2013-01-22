@@ -25,9 +25,18 @@ import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11Protocol;
-import org.apache.openejb.*;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.WebAppDeployer;
-import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
@@ -44,7 +53,12 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -83,14 +97,9 @@ public class Container {
         } else {
             tomcat = new Tomcat();
         }
-    }
 
-    public void start() throws Exception {
-        final String dir = getBaseDir();
-
-        Logger.configure();
-
-        base = new File(dir);
+        // create basic installation in setup to be able to handle anything the caller does between setup() and start()
+        base = new File(getBaseDir());
         if (base.exists()) {
             Files.delete(base);
         }
@@ -98,12 +107,23 @@ public class Container {
         Files.mkdirs(base);
         Files.deleteOnExit(base);
 
-        final File conf = createDirectory(base, "conf");
-        final File webapps = createDirectory(base, "webapps");
+        createDirectory(base, "conf");
         createDirectory(base, "lib");
         createDirectory(base, "logs");
         createDirectory(base, "temp");
         createDirectory(base, "work");
+        createDirectory(base, "webapps");
+    }
+
+    public File getBase() {
+        return base;
+    }
+
+    public void start() throws Exception {
+        Logger.configure();
+
+        final File conf = new File(base, "conf");
+        final File webapps = new File(base, "webapps");
 
         copyFileTo(conf, "catalina.policy");
         copyTemplateTo(conf, "catalina.properties");
@@ -256,6 +276,7 @@ public class Container {
         tomcat.destroy();
         deleteTree(base);
         OpenEJB.destroy();
+        // don't set base = null here to be able to use base after to clean up from outside of this class
     }
 
     @SuppressWarnings("UnusedDeclaration")

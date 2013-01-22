@@ -90,7 +90,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         }
 
         if (is == null) {
-            is = classLoader.getResourceAsStream("/arquillian-tomee-info.txt");
+            is = classLoader.getResourceAsStream("arquillian-tomee-info.txt");
         }
 
         if (is != null) {
