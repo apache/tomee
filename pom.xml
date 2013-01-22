@@ -534,18 +534,6 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <repository>
-      <id>openejb-3rdparty-builds</id>
-      <name>3rd Party Build Repository</name>
-      <url>http://svn.apache.org/repos/asf/openejb/repo/</url>
-      <!--<url>file:///Users/dblevins/work/openejb-root/repo/</url>-->
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>terracotta</id>
       <name>Terracotta</name>
       <url>http://repo.terracotta.org/maven2/</url>
