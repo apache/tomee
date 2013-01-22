@@ -140,7 +140,7 @@
     <org.apache.activemq.version>5.7.0</org.apache.activemq.version>
     <quartz.version>2.1.6</quartz.version>
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
-    <junit.version>4.9</junit.version>
+    <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <org.apache.openwebbeans.version>1.1.8-SNAPSHOT</org.apache.openwebbeans.version>
