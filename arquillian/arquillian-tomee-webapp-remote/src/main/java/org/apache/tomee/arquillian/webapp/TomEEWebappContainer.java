@@ -204,7 +204,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             throw new LifecycleException("Unable to find URL for Tomcat " + tomcatVersion);
         }
 
-        File zipFile = Setup.downloadFile("org.apache.openejb:apache-tomcat:" + tomcatVersion + ":zip", source);
+        File zipFile = Setup.downloadFile("org.apache.tomcat:tomcat:" + tomcatVersion + ":zip", source);
         Zips.unzip(zipFile, catalinaDirectory);
     }
 

@@ -56,7 +56,8 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] { // always added since only used with loadClass
             "tomee-mojarra",
-            "openejb-jpa-integration"
+            "tomee-myfaces", // to be able to embedded myfaces in the webapp
+            "openejb-jpa-integration" // to be able to embedded hibernate, eclipselinks....
     };
     private static final String[] PREFIXES_TO_ADD;
 
