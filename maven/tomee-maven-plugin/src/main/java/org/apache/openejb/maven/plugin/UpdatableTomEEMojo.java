@@ -281,7 +281,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                 getLog().error(e);
             }
 
-            if (updateOnlyFilter.accept(source)) {
+            if (updateOnlyFilter.accept(file)) {
                 return 0;
             }
             return 1;
