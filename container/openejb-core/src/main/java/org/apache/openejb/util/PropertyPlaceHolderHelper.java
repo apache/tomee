@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Map;
@@ -26,34 +28,37 @@ public final class PropertyPlaceHolderHelper {
     private static final String SUFFIX = "}";
     private static final Properties CACHE = new Properties();
 
+    private static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
+
     private PropertyPlaceHolderHelper() {
         // no-op
     }
 
-    public static String simpleValue(final String key) {
-        if (key == null || !key.startsWith(PREFIX) || !key.endsWith(SUFFIX)) {
-            return key;
+    public static String simpleValue(final String raw) {
+        if (raw == null || !raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
+            return raw;
         }
 
-        String value = SystemInstance.get().getOptions().get(key.substring(2, key.length() - 1), key);
-        if (!value.equals(key) && value.startsWith("java:")) {
+
+        String value = SUBSTITUTOR.replace(raw);
+        if (!value.equals(raw) && value.startsWith("java:")) {
             value = value.substring(5);
         }
         return value;
     }
 
-    public static String value(final String key) {
-        if (key == null || !key.startsWith(PREFIX) || !key.endsWith(SUFFIX)) {
-            return key;
+    public static String value(final String aw) {
+        if (aw == null || !aw.contains(PREFIX) || !aw.contains(SUFFIX)) {
+            return aw;
         }
 
-        String value = CACHE.getProperty(key);
+        String value = CACHE.getProperty(aw);
         if (value != null) {
             return value;
         }
 
-        value = simpleValue(key);
-        CACHE.setProperty(key, value);
+        value = simpleValue(aw);
+        CACHE.setProperty(aw, value);
         return value;
     }
 
@@ -78,5 +83,14 @@ public final class PropertyPlaceHolderHelper {
     public static void holdsWithUpdate(final Properties props) {
         final Properties toUpdate = holds(props);
         props.putAll(toUpdate);
+    }
+
+    private static class PropertiesLookup extends StrLookup<Object> {
+        private static final Properties PROPERTIES = SystemInstance.get().getProperties();
+
+        @Override
+        public String lookup(final String key) {
+            return PROPERTIES.getProperty(key);
+        }
     }
 }
