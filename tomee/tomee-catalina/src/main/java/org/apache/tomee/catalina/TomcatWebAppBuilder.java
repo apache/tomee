@@ -719,7 +719,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 + standardContext.getHostname().replace("_", defaultHost) + " -> "
                 + finalName(standardContext.getPath()));
 
-        if (FORCE_RELOADABLE) {
+        if (FORCE_RELOADABLE && getContextInfo(standardContext) == null) { // don't do it for ears
             standardContext.setReloadable(true);
         }
         if (SKIP_TLD) {
