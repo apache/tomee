@@ -20,9 +20,10 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.cdi.CdiInterceptor;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.rest.ThreadLocalContextManager;
-import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -31,6 +32,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,11 +46,17 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
         for (BeanContext context : restEjbs) {
             final Collection<Class<?>> classes = new HashSet<Class<?>>();
             Contexts.findContextFields(context.getBeanClass(), classes);
-            for (InterceptorData id : context.getInterceptorData()) {
-                Contexts.findContextFields(id.getInterceptorClass(), classes);
-            }
-            for (InterceptorData id : context.getCallbackInterceptors()) {
-                Contexts.findContextFields(id.getInterceptorClass(), classes);
+            for (Collection<InterceptorData> list :
+                        Arrays.asList(
+                                context.getInterceptorData(),
+                                context.getInstanceScopedInterceptors(),
+                                context.getCallbackInterceptors())) {
+                for (InterceptorData id : list) {
+                    final Class<?> interceptorClass = id.getInterceptorClass();
+                    if (!StatsInterceptor.class.equals(interceptorClass) && !CdiInterceptor.class.equals(interceptorClass)) {
+                        Contexts.findContextFields(interceptorClass, classes);
+                    }
+                }
             }
             contextTypes.put(context.getBeanClass(), classes);
         }
