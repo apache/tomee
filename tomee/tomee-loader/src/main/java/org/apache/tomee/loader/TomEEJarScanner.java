@@ -316,32 +316,6 @@ public class TomEEJarScanner extends StandardJarScanner {
         } else {
             super.scan(context, classLoader, callback, jarsToIgnore);
         }
-
-
-//        String openejbWar = System.getProperty("tomee.war");
-//
-//        if (openejbWar == null) {
-//            EmbeddedJarScanner embeddedJarScanner = new EmbeddedJarScanner();
-//            embeddedJarScanner.scan(context, classLoader, callback, jarsToIgnore);
-//            return;
-//        }
-//
-//        Set<String> newIgnores = new HashSet<String>();
-//        if (jarsToIgnore != null) {
-//            newIgnores.addAll(jarsToIgnore);
-//        }
-//
-//        if (openejbWar != null && "FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
-//            File openejbApp = new File(openejbWar);
-//            File libFolder = new File(openejbApp, "lib");
-//            for (File f : libFolder.listFiles()) {
-//                if (f.getName().toLowerCase().endsWith(".jar")) {
-//                    newIgnores.add(f.getName());
-//                }
-//            }
-//        }
-//
-//        super.scan(context, classLoader, callback, newIgnores);
     }
 
     private void ensureServerTldsScanned() {
