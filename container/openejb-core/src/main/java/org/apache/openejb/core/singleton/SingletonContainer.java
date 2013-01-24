@@ -112,12 +112,6 @@ public class SingletonContainer implements RpcContainer {
             beanContext.setContainer(this);
         }
 
-        // add it before starting the timer (@PostCostruct)
-        if (StatsInterceptor.isStatsActivated()) {
-            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
-            beanContext.addFirstSystemInterceptor(stats);
-        }
-
         EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
