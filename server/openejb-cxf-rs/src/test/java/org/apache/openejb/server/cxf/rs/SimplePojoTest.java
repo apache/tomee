@@ -22,6 +22,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Component;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.testing.Configuration;
@@ -49,6 +50,7 @@ public class SimplePojoTest {
     }
 
     @Module
+    @Classes(cdi = true, value = { MyFirstRestClass.class })
     public WebModule war() {
         final WebModule webModule = new WebModule(new WebApp(), "/foo", Thread.currentThread().getContextClassLoader(), "", "foo");
         webModule.getRestClasses().add(MyFirstRestClass.class.getName());

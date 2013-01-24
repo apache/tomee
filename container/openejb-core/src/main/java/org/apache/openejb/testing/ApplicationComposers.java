@@ -316,10 +316,17 @@ public final class ApplicationComposers {
             final org.apache.openejb.junit.Classes classesAnnotationOld = method.getAnnotation(org.apache.openejb.junit.Classes.class);
 
             Class<?>[] classes = null;
+            Class<?>[] cdiInterceptors = null;
+            Class<?>[] cdiAlternatives = null;
+            Class<?>[] cdiDecorators = null;
             boolean cdi = false;
             if (classesAnnotation != null) {
                 classes = classesAnnotation.value();
-                cdi = classesAnnotation.cdi();
+                cdiInterceptors = classesAnnotation.cdiInterceptors();
+                cdiDecorators = classesAnnotation.cdiDecorators();
+                cdiAlternatives = classesAnnotation.cdiAlternatives();
+                cdi = classesAnnotation.cdi() || cdiAlternatives.length > 0
+                        || cdiDecorators.length > 0 || cdiInterceptors.length > 0;
             } else if (classesAnnotationOld != null) {
                 classes = classesAnnotationOld.value();
             }
@@ -343,7 +350,7 @@ public final class ApplicationComposers {
                 }
                 final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
                 if (cdi) {
-                    ejbModule.setBeans(new Beans());
+                    ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                 }
             } else if (obj instanceof WebModule) { // will add the ejbmodule too
                 webModulesNb++;
@@ -356,7 +363,10 @@ public final class ApplicationComposers {
                 if (classes != null) {
                     webModule.setFinder(finderFromClasses(classes));
                 }
-                DeploymentLoader.addWebModule(webModule, appModule);
+                final EjbModule ejbModule = DeploymentLoader.addWebModule(webModule, appModule);
+                if (cdi) {
+                    ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                }
             } else if (obj instanceof EjbModule) {
                 final EjbModule ejbModule = (EjbModule) obj;
 
@@ -368,6 +378,9 @@ public final class ApplicationComposers {
                 }
                 ejbModule.initAppModule(appModule);
                 appModule.getEjbModules().add(ejbModule);
+                if (cdi) {
+                    ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                }
             } else if (obj instanceof EjbJar) {
 
                 final EjbJar ejbJar = (EjbJar) obj;
@@ -381,6 +394,9 @@ public final class ApplicationComposers {
                 appModule.getEjbModules().add(ejbModule);
                 if (classes != null) {
                     ejbModule.setFinder(finderFromClasses(classes));
+                }
+                if (cdi) {
+                    ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
                 }
             } else if (obj instanceof EnterpriseBean) {
 
@@ -422,6 +438,9 @@ public final class ApplicationComposers {
                     ejbModule.setFinder(finderFromClasses(classes));
                 }
                 appModule.getEjbModules().add(ejbModule);
+                if (cdi) {
+                    ejbModule.setBeans(beans(beans, cdiDecorators, cdiInterceptors, cdiAlternatives));
+                }
 
             } else if (obj instanceof Class[]) {
 
@@ -569,6 +588,26 @@ public final class ApplicationComposers {
         }
 
         previous = ThreadContext.enter(new ThreadContext(context, null, Operation.BUSINESS));
+    }
+
+    private Beans beans(final Beans beans, final Class<?>[] cdiDecorators, final Class<?>[] cdiInterceptors,
+                        final Class<?>[] cdiAlternatives) {
+        if (cdiDecorators != null) {
+            for (Class<?> clazz : cdiDecorators) {
+                beans.addDecorator(clazz);
+            }
+        }
+        if (cdiInterceptors != null) {
+            for (Class<?> clazz : cdiInterceptors) {
+                beans.addInterceptor(clazz);
+            }
+        }
+        if (cdiAlternatives != null) {
+            for (Class<?> clazz : cdiAlternatives) {
+                beans.addAlternativeClass(clazz);
+            }
+        }
+        return beans;
     }
 
     private void setComponent(Object testInstance, Method method) throws IllegalAccessException, InvocationTargetException, InstantiationException {
