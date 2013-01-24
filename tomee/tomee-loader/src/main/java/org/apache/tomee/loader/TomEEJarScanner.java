@@ -19,6 +19,10 @@
 
 package org.apache.tomee.loader;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.startup.XmlErrorHandler;
 import org.apache.juli.logging.Log;
@@ -27,7 +31,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.file.Matcher;
 import org.apache.tomcat.util.res.StringManager;
@@ -39,15 +45,26 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class TomEEJarScanner extends StandardJarScanner {
 
@@ -64,6 +81,18 @@ public class TomEEJarScanner extends StandardJarScanner {
     private static final Field tldConfig;
     private static final Method tldLocationScanStream;
     private static final Field tldLocationCache;
+
+    // tld of the server
+    private static final Set<URL> SERVER_URLS;
+
+    // TldConfig of the server (common)
+    private static final Set<String> TAG_LIB_URIS;
+    private static final ArrayList<String> LISTENERS;
+
+    // TldLocationCache of the server (common)
+    private static final Hashtable<String, Object> MAPPINGS;
+
+    private static final Thread SERVER_SCANNING_THREAD;
 
     static {
         final Set<String> defaultJarsToSkip = new HashSet<String>();
@@ -91,12 +120,60 @@ public class TomEEJarScanner extends StandardJarScanner {
                             //.getDeclaredField("this$0");
             tldConfig.setAccessible(true);
 
-            tldLocationScanStream = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache")
-                        .getDeclaredMethod("tldScanStream", String.class, String.class, InputStream.class);
+            final Class<?> tldLocationsCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache");
+            tldLocationScanStream = tldLocationsCache.getDeclaredMethod("tldScanStream", String.class, String.class, InputStream.class);
             tldLocationScanStream.setAccessible(true);
             tldLocationCache = loader.loadClass("org.apache.jasper.compiler.TldLocationsCache$TldJarScannerCallback")
                                     .getDeclaredFields()[0];
             tldLocationCache.setAccessible(true);
+
+            // init server cache
+            SERVER_URLS = TldScanner.scan(TomEEJarScanner.class.getClassLoader());
+
+            final Context fakeWebApp = (Context) Proxy.newProxyInstance(loader, new Class<?>[]{Context.class},
+                    new InvocationHandler() {
+                        @Override
+                        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                            if ("getTldNamespaceAware".equals(method.getName())) {
+                                return Globals.STRICT_SERVLET_COMPLIANCE;
+                            } else if ("getTldValidation".equals(method.getName())) {
+                                return Globals.STRICT_SERVLET_COMPLIANCE;
+                            }
+                            return null;
+                        }
+                    });
+            final TldConfig config = new TldConfig();
+            config.lifecycleEvent(new LifecycleEvent(fakeWebApp, Lifecycle.AFTER_INIT_EVENT, null));
+
+            final Object fakeSc = Proxy.newProxyInstance(loader, new Class<?>[]{ ServletContext.class }, new InvocationHandler() {
+                @Override
+                public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                    return null;
+                }
+            });
+            final Object locationsCacheInstance = tldLocationsCache.getConstructor(ServletContext.class).newInstance(fakeSc);
+
+            if (!SERVER_URLS.isEmpty()) {
+                SERVER_SCANNING_THREAD = new Thread() {
+                    @Override
+                    public void run() {
+                        for (URL current : SERVER_URLS) {
+                            tldConfig(config, current);
+                            if (tldLocationsCache != null) {
+                                tldLocationCache(locationsCacheInstance, current);
+                            }
+                        }
+                    }
+                };
+                SERVER_SCANNING_THREAD.setName("TomEE-server-tld-reading");
+                SERVER_SCANNING_THREAD.start();
+            } else {
+                SERVER_SCANNING_THREAD = null;
+            }
+
+            TAG_LIB_URIS = (Set<String>) Reflections.get(config, "taglibUris");
+            LISTENERS = (ArrayList<String>) Reflections.get(config, "listeners");
+            MAPPINGS= (Hashtable<String, Object>) Reflections.get(locationsCacheInstance, "mappings");
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -111,21 +188,55 @@ public class TomEEJarScanner extends StandardJarScanner {
 
             final String cbName = callback.getClass().getName();
             if (cbName.equals(tldConfig.getDeclaringClass().getName())) {
+                ensureServerTldsScanned();
                 try {
+                    final TldConfig config;
+                    try {
+                        config = (TldConfig) tldConfig.get(callback);
+                    } catch (IllegalAccessException e) {
+                        throw new OpenEJBException("scan with default algo");
+                    }
+
                     final Set<URL> urls = TldScanner.scan(context.getClassLoader());
                     for (URL url : urls) {
-                        tldConfig(callback, url);
+                        if (!SERVER_URLS.contains(url)) {
+                            tldConfig(config, url);
+                        }
                     }
+
+                    // add already scanned ones
+                    for (String uri : TAG_LIB_URIS) {
+                        config.addTaglibUri(uri);
+                    }
+                    for (String listener : LISTENERS) {
+                        config.addApplicationListener(listener);
+                    }
+
                     return; // done, next code is a fallback if scan() throw an exception
                 } catch (OpenEJBException oe) {
                     // no-op
                 }
             } else if (cbName.equals(tldLocationCache.getDeclaringClass().getName())) {
+                ensureServerTldsScanned();
                 try {
+                    final Object tldLocationsCache;
+                    try {
+                        tldLocationsCache = tldLocationCache.get(callback);
+                    } catch (IllegalAccessException e) {
+                        throw new OpenEJBException("scan with default algo");
+                    }
+
                     final Set<URL> urls = TldScanner.scan(context.getClassLoader());
                     for (URL url : urls) {
-                        tldLocationCache(callback, url);
+                        if (!SERVER_URLS.contains(url)) {
+                            tldLocationCache(tldLocationsCache, url);
+                        }
                     }
+
+                    // add server ones
+                    final Hashtable<String, Object> mappings = (Hashtable<String, Object>) Reflections.get(tldLocationsCache, "mappings");
+                    mappings.putAll((Map<String, Object>) MAPPINGS.clone());
+
                     return;
                 } catch (OpenEJBException oe) {
                     // no-op
@@ -233,6 +344,18 @@ public class TomEEJarScanner extends StandardJarScanner {
 //        super.scan(context, classLoader, callback, newIgnores);
     }
 
+    private void ensureServerTldsScanned() {
+        if (SERVER_SCANNING_THREAD == null) {
+            return;
+        }
+
+        try {
+            SERVER_SCANNING_THREAD.join();
+        } catch (InterruptedException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+    }
+
     private Set<URL> discardFilePaths(final Set<URL> tldFileUrls) {
         final Set<String> jarPaths = new HashSet<String>();
 
@@ -252,7 +375,7 @@ public class TomEEJarScanner extends StandardJarScanner {
         return jars;
     }
 
-    private static void tldLocationCache(final JarScannerCallback callback, final URL url) {
+    private static void tldLocationCache(final Object tldLocationsCache, final URL url) {
         String resource = url.toString();
         String entry = null;
 
@@ -266,7 +389,7 @@ public class TomEEJarScanner extends StandardJarScanner {
         InputStream is = null;
         try {
             is = url.openStream();
-            tldLocationScanStream.invoke(tldLocationCache.get(callback), resource, entry, is);
+            tldLocationScanStream.invoke(tldLocationsCache, resource, entry, is);
         } catch (Exception e) {
             log.warn(sm.getString("jarScan.webinflibFail", url.toExternalForm()), e);
         } finally {
@@ -274,11 +397,11 @@ public class TomEEJarScanner extends StandardJarScanner {
         }
     }
 
-    private static void tldConfig(final JarScannerCallback callback, final URL current) {
+    private static void tldConfig(final TldConfig config, final URL current) {
         InputStream is = null;
         try {
             is = current.openStream();
-            final XmlErrorHandler handler = (XmlErrorHandler) tldConfigScanStream.invoke(tldConfig.get(callback), is);
+            final XmlErrorHandler handler = (XmlErrorHandler) tldConfigScanStream.invoke(config, is);
             handler.logFindings(log, current.toExternalForm());
         } catch (Exception e) {
             log.warn(sm.getString("jarScan.webinflibFail", current), e);
