@@ -138,9 +138,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
         if (synchronization != null) {
             synchronizers.add(new Synchronizer(synchronization));
-            if (interval < 0) {
-                interval = TimeUnit.SECONDS.toMillis(synchronization.getUpdateInterval());
-            }
+            interval = TimeUnit.SECONDS.toMillis(synchronization.getUpdateInterval());
         }
         if (synchronizations != null) {
             for (Synchronization s : synchronizations) {
