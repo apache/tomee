@@ -20,9 +20,11 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.server.cxf.rs.beans.HookedRest;
 import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
+import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
 import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
 import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.testing.Classes;
@@ -45,7 +47,7 @@ public class SimpleApplicationTest {
     public static final String BASE_URL = "http://localhost:4204/foo/my-app";
 
     @Module
-    @Classes({ RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo")

@@ -20,9 +20,12 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.service.invoker.Invoker;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class AutoJAXRSInvoker implements Invoker {
@@ -36,10 +39,18 @@ public class AutoJAXRSInvoker implements Invoker {
         // delegates
         jaxrsInvoker = new JAXRSInvoker();
         if (!ejbs.isEmpty()) {
-            ejbInvoker = new OpenEJBEJBInvoker();
+            ejbInvoker = new OpenEJBEJBInvoker(beanContexts(restEjbs));
         } else {
             ejbInvoker = null; // no need
         }
+    }
+
+    private static Collection<BeanContext> beanContexts(final Map<String, EJBRestServiceInfo> restEjbs) {
+        final Collection<BeanContext> bc = new ArrayList<BeanContext>();
+        for (EJBRestServiceInfo i : restEjbs.values()) {
+            bc.add(i.context);
+        }
+        return bc;
     }
 
     @Override

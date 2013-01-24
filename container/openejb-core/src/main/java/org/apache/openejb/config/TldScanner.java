@@ -259,6 +259,10 @@ public class TldScanner {
 
     // this method clean the cacheByhash too
     public static void forceCompleteClean(final ClassLoader loader) {
+        if (loader == null) {
+            return;
+        }
+
         quickClean(loader);
         cacheByhashCode.remove(hash(urls(loader)));
 

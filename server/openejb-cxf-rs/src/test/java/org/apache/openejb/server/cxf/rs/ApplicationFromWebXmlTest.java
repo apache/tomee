@@ -20,6 +20,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class ApplicationFromWebXmlTest {
     public static final String BASE_URL = "http://localhost:4204/foo/bar";
 
     @Module
+    @Classes(value = { MyFirstRestClass.class }, cdi = true)
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo")

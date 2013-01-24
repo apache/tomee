@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(ApplicationComposer.class)
 public class CDIApplicationTest {
     @Module
-    @Classes(cdi = true, value = { MyCdiRESTApplication.class, ACdiBeanInjectedInApp.class })
+    @Classes(cdi = true, value = { MyCdiRESTApplication.class, MyFirstRestClass.class,  ACdiBeanInjectedInApp.class })
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo")

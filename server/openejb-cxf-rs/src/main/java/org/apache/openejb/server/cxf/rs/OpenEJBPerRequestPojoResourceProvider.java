@@ -24,15 +24,19 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.intercept.InterceptorData;
+import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
@@ -44,18 +48,21 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
-    protected Collection<Injection> injections;
-    protected Context context;
-    protected WebBeansContext webbeansContext;
+    protected final Collection<Injection> injections;
+    protected final Context context;
+    protected final WebBeansContext webbeansContext;
 
-    protected Constructor<?> constructor;
-    protected Method postConstructMethod;
-    protected Method preDestroyMethod;
+    protected final Constructor<?> constructor;
+    protected final Method postConstructMethod;
+    protected final Method preDestroyMethod;
 
     private BeanCreator creator;
+    private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
 
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
@@ -68,16 +75,51 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         }
         postConstructMethod = ResourceUtils.findPostConstructMethod(clazz);
         preDestroyMethod = ResourceUtils.findPreDestroyMethod(clazz);
+
+        final Bean<?> bean;
+        final BeanManagerImpl bm = webbeansContext.getBeanManagerImpl();
+        if (bm.isInUse()) {
+            try {
+                final Set<Bean<?>> beans = bm.getBeans(clazz);
+                bean = bm.resolve(beans);
+                if (bean == null) {
+                    throw new NoBeanFoundException(clazz.getName());
+                }
+            } catch (InjectionException ie) {
+                final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
+                throw new WebApplicationException(Response.serverError().entity(msg).build());
+            }
+
+            if (bean instanceof AbstractInjectionTargetBean<?>) {
+                final List<InterceptorData> stack = ((AbstractInjectionTargetBean) bean).getInterceptorStack();
+                if (stack != null) {
+                    for (InterceptorData id : stack) {
+                        final Interceptor<?> webBeansInterceptor = id.getWebBeansInterceptor();
+                        if (webBeansInterceptor == null || webBeansInterceptor.getBeanClass() == null) {
+                            continue;
+                        }
+
+                        Contexts.findContextFields(webBeansInterceptor.getBeanClass(), contextTypes);
+                    }
+                }
+            }
+        } else {
+            bean = null;
+        }
+
+        Contexts.findContextFields(clazz, contextTypes); // for the class itself
+        if (bean != null) {
+            creator = new CdiBeanCreator(bm, bean);
+        } else { // do it manually
+            creator = null;
+        }
     }
 
     @Override
     public Object getInstance(Message m) {
-        Contexts.bind(m.getExchange());
+        Contexts.bind(m.getExchange(), contextTypes);
 
-        final BeanManagerImpl bm = webbeansContext.getBeanManagerImpl();
-        if (bm.isInUse()) {
-            creator = new CdiBeanCreator(bm);
-        } else { // do it manually
+        if (creator == null) {
             creator = new DefaultBeanCreator(m);
         }
 
@@ -155,29 +197,23 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     }
 
     private class CdiBeanCreator implements BeanCreator {
-        private BeanManager bm;
+        private final BeanManager bm;
+        private final Bean<?> bean;
         private CreationalContext<?> toClean;
 
-        public CdiBeanCreator(BeanManager bm) {
+        public CdiBeanCreator(BeanManager bm, final Bean<?> bean) {
             this.bm = bm;
+            this.bean = bean;
         }
 
         @Override
         public Object create() {
-            final Class<?> clazz = constructor.getDeclaringClass();
             try {
-                final Set<Bean<?>> beans = bm.getBeans(clazz);
-                final Bean<?> bean = bm.resolve(beans);
-                if (bean == null) {
-                    throw new NoBeanFoundException();
-                }
-
                 toClean = bm.createCreationalContext(bean);
-
                 try {
-                    return bm.getReference(bean, clazz, toClean);
+                    return bm.getReference(bean, bean.getBeanClass(), toClean);
                 } finally {
-                    if (bm.isNormalScope(bean.getScope())) {
+                    if (!WebBeansUtil.isDependent(bean)) {
                         toClean = null; // will be released by the container
                     }
                 }
@@ -269,5 +305,8 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     }
 
     private static class NoBeanFoundException extends RuntimeException {
+        public NoBeanFoundException(final String name) {
+            super(name);
+        }
     }
 }

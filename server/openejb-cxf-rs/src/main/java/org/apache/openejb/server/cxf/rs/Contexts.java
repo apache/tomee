@@ -20,23 +20,28 @@ import org.apache.cxf.jaxrs.ext.ContextProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
+import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -45,6 +50,22 @@ import java.util.Set;
 public final class Contexts {
     private Contexts() {
         // no-op
+    }
+
+    public static Collection<Class<?>> findContextFields(final Class<?> cls, final Collection<Class<?>> types) {
+        if (cls == Object.class || cls == null) {
+            return Collections.emptyList();
+        }
+        for (Field f : cls.getDeclaredFields()) {
+            for (Annotation a : f.getAnnotations()) {
+                if (a.annotationType() == Context.class || a.annotationType() == Resource.class
+                        && AnnotationUtils.isContextClass(f.getType())) {
+                    types.add(f.getType());
+                }
+            }
+        }
+        findContextFields(cls.getSuperclass(), types);
+        return types;
     }
 
     public static void bind(final Exchange exchange) {
@@ -72,7 +93,7 @@ public final class Contexts {
      * @param exchange
      * @param types
      */
-    public static void bind(Exchange exchange, Set<Class<?>> types) {
+    public static void bind(Exchange exchange, Collection<Class<?>> types) {
         for (Class<?> type : types) {
             if (Request.class.equals(type)) {
                 Request binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Request.class);

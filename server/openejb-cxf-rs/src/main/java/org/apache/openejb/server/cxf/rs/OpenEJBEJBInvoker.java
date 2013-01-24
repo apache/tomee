@@ -20,7 +20,9 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -29,19 +31,33 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
+    private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
+
+    public OpenEJBEJBInvoker(final Collection<BeanContext> restEjbs) {
+        for (BeanContext context : restEjbs) {
+            final Collection<Class<?>> classes = new HashSet<Class<?>>();
+            Contexts.findContextFields(context.getBeanClass(), classes);
+            for (InterceptorData id : context.getInterceptorData()) {
+                Contexts.findContextFields(id.getInterceptorClass(), classes);
+            }
+            for (InterceptorData id : context.getCallbackInterceptors()) {
+                Contexts.findContextFields(id.getInterceptorClass(), classes);
+            }
+            contextTypes.put(context.getBeanClass(), classes);
+        }
+    }
+
     @Override
     public Object invoke(final Exchange exchange, final Object request, final Object resourceObject) {
 
-        final Set<Class<?>> types = getContextTypes(resourceObject);
-
-        if (types != null) {
-            Contexts.bind(exchange, types);
-        } else {
-            Contexts.bind(exchange);
-        }
+        Contexts.bind(exchange, getContextTypes(resourceObject));
 
         try {
             return super.invoke(exchange, request, resourceObject);
@@ -50,18 +66,23 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
         }
     }
 
-    private Set<Class<?>> getContextTypes(Object resourceObject) {
+    private Collection<Class<?>> getContextTypes(Object resourceObject) {
         if (!ProxyManager.isProxyClass(resourceObject.getClass())
-                && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) return null;
+                && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) {
+            return Collections.emptySet();
+        }
+
         final InvocationHandler handler = ProxyManager.getInvocationHandler(resourceObject);
-        if (!(handler instanceof BeanContextInvocationHandler)) return null;
+        if (!(handler instanceof BeanContextInvocationHandler)) {
+            return Collections.emptySet();
+        }
 
         final BeanContext beanContext = ((BeanContextInvocationHandler) handler).getBeanContext();
-        final ContextReferenceTypes contextReferenceTypes = beanContext.get(ContextReferenceTypes.class);
 
-        if (contextReferenceTypes == null) return null;
-
-        return contextReferenceTypes.get();
+        if (beanContext == null) {
+            return Collections.emptySet();
+        }
+        return contextTypes.get(beanContext.getBeanClass());
     }
 
     @Override
