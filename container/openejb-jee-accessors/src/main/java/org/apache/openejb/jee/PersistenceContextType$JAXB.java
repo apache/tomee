@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBEnum;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.jaxb.JAXBEnum;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.XoXMLStreamReader;
 
 import javax.xml.namespace.QName;
 

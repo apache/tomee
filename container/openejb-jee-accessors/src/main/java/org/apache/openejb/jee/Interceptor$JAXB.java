@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.Attribute;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
-import com.envoisolutions.sxc.util.XoXMLStreamWriter;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.Attribute;
+import org.metatype.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.util.XoXMLStreamWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -96,7 +96,7 @@ public class Interceptor$JAXB
         }
 
         Interceptor interceptor = new Interceptor();
-        context.beforeUnmarshal(interceptor, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeUnmarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<AroundInvoke> aroundInvoke = null;
@@ -458,7 +458,7 @@ public class Interceptor$JAXB
             interceptor.afterCompletion = afterCompletion;
         }
 
-        context.afterUnmarshal(interceptor, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterUnmarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         return interceptor;
     }
@@ -485,7 +485,7 @@ public class Interceptor$JAXB
             return;
         }
 
-        context.beforeMarshal(interceptor, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeMarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
@@ -799,7 +799,7 @@ public class Interceptor$JAXB
             }
         }
 
-        context.afterMarshal(interceptor, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterMarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
     }
 
 }

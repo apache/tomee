@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.sxc;
 
-import com.envoisolutions.sxc.util.XoXMLStreamReaderImpl;
+import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 import org.apache.openejb.jee.Adapters;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.HandlerChains$JAXB;

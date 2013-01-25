@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.JAXBObjectFactory;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.JAXBObjectFactory;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -34,10 +34,10 @@ public class ObjectFactory$JAXB
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), Application$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-client".intern()), ApplicationClient$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jar".intern()), EjbJar$JAXB.class);
-        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relation-name".intern()), com.envoisolutions.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relation-name".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relationship-role".intern()), EjbRelationshipRole$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "description".intern()), Text$JAXB.class);
-        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "http-method".intern()), com.envoisolutions.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "http-method".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), WebApp$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "taglib".intern()), TldTaglib$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/j2ee".intern(), "java-wsdl-mapping".intern()), JavaWsdlMapping$JAXB.class);
