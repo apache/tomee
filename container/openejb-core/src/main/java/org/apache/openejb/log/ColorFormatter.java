@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.log;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -40,6 +42,33 @@ public class ColorFormatter extends SingleLineFormatter {
         // warn and more are important information so specify a visible color
         colors.put(Level.WARNING, color("warning", Ansi.Color.YELLOW.name()));
         colors.put(Level.SEVERE, color("severe", Ansi.Color.RED.name()));
+    }
+
+    @Override
+    public synchronized String format(LogRecord record) {
+        final boolean exception = record.getThrown() != null;
+        final Ansi sbuf = prefix(record);
+        sbuf.a(record.getLevel().getLocalizedName());
+        sbuf.a(" - ");
+        sbuf.a(formatMessage(record));
+        if (!exception) {
+            suffix(sbuf, record);
+        }
+        sbuf.newline();
+        if (exception) {
+            try {
+                final StringWriter sw = new StringWriter();
+                final PrintWriter pw = new PrintWriter(sw);
+                record.getThrown().printStackTrace(pw);
+                pw.close();
+                sbuf.a(sw.toString());
+            } catch (Exception ex) {
+                // no-op
+            } finally {
+                suffix(sbuf, record);
+            }
+        }
+        return sbuf.toString();
     }
 
     private Ansi.Color color(final String lvl, final String aDefault) {
