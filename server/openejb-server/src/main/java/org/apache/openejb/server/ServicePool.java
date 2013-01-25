@@ -27,7 +27,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,17 +46,17 @@ public class ServicePool extends ServerServiceFilter {
 
     public ServicePool(final ServerService next, final Properties properties) {
         /**Defaults.
-         * This suggests that 3 core threads should cope with up to 5 runnables (threads + queue).
-         * Any more than 5 runnables will spawn a thread to cope if the thread count is less than 50.
-         * If 50 threads are processing runnables and the queue is full then block and wait for
+         * This suggests that 10 core threads should cope with up to 19 runnables (threads + queue, whereby queue = threads - 1).
+         * Any more than 19 runnables will spawn a thread to cope if the thread count is less than 150.
+         * If 150 threads are processing runnables and the queue is full then block and wait for
          * a slot for up to 10 seconds before rejecting the runnable.
          * If a thread remains idle for more than 1 minute then it will be removed.
          */
-        this(next, new Options(properties).get("threadsCore", 3), new Options(properties).get("threads", 50), new Options(properties).get("queue", 2), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
+        this(next, new Options(properties).get("threadsCore", 10), new Options(properties).get("threads", 150), new Options(properties).get("queue", 0), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
     }
 
     public ServicePool(final ServerService next, final int threads) {
-        this(next, threads, threads, threads, true, KEEP_ALIVE_TIME);
+        this(next, threads, threads, 0, true, KEEP_ALIVE_TIME);
     }
 
     public ServicePool(final ServerService next, final int threads, final int queue, final boolean block) {
@@ -66,14 +70,15 @@ public class ServicePool extends ServerServiceFilter {
             keepAliveTime = KEEP_ALIVE_TIME;
         }
 
-        if (threadCore <= 0) {
-            threadCore = 3;
-        }
-        if (threads < threadCore) {
-            threads = threadCore + 1;
+        if (threadCore <= 2) {
+            threadCore = 2;
         }
 
-        if (queue >= threadCore) {
+        if (threads < threadCore) {
+            threads = threadCore;
+        }
+
+        if (queue >= threadCore || queue < 1) {
             queue = threadCore - 1;
         }
 
@@ -108,6 +113,10 @@ public class ServicePool extends ServerServiceFilter {
 
         });
 
+        final int c = threadCore;
+        final int t = threads;
+        final int q = queue;
+
         threadPool.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
             public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
@@ -117,7 +126,7 @@ public class ServicePool extends ServerServiceFilter {
                 }
 
                 if (log.isWarningEnabled()) {
-                    log.warning("ServicePool at capicity for process: " + r);
+                    log.warning(String.format("ServicePool with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s", c, t, q, r));
                 }
 
                 boolean offer = false;
@@ -143,6 +152,10 @@ public class ServicePool extends ServerServiceFilter {
         });
 
         SystemInstance.get().setComponent(ServicePool.class, this);
+
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Created ServicePool with (%1$s) core threads, limited to (%2$s) threads with a queue of (%3$s)", c, t, q));
+        }
     }
 
     public ThreadPoolExecutor getThreadPool() {
@@ -158,6 +171,12 @@ public class ServicePool extends ServerServiceFilter {
 
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         final Runnable ctxCL = new Runnable() {
+
+            @Override
+            public String toString() {
+                return "ServicePool.Socket:" + socket.getInetAddress();
+            }
+
             @Override
             public void run() {
 
@@ -228,82 +247,98 @@ public class ServicePool extends ServerServiceFilter {
 
         @Managed
         public boolean isShutdown() {
-            return threadPool.isShutdown();
+            return getThreadPool().isShutdown();
         }
 
         @Managed
         public boolean isTerminating() {
-            return threadPool.isTerminating();
+            return getThreadPool().isTerminating();
         }
 
         @Managed
         public boolean isTerminated() {
-            return threadPool.isTerminated();
+            return getThreadPool().isTerminated();
         }
 
         @Managed
         public int getPoolSize() {
-            return threadPool.getPoolSize();
+            return getThreadPool().getPoolSize();
         }
 
         @Managed
         public int getCorePoolSize() {
-            return threadPool.getCorePoolSize();
+            return getThreadPool().getCorePoolSize();
         }
 
         @Managed
         public int getMaximumPoolSize() {
-            return threadPool.getMaximumPoolSize();
+            return getThreadPool().getMaximumPoolSize();
         }
 
         @Managed
         public long getKeepAliveTime(final TimeUnit unit) {
-            return threadPool.getKeepAliveTime(unit);
+            return getThreadPool().getKeepAliveTime(unit);
         }
 
         @Managed
         public int getQueueSize() {
-            return threadPool.getQueue().size();
+            return getThreadPool().getQueue().size();
         }
 
         @Managed
         public int getActiveCount() {
-            return threadPool.getActiveCount();
+            return getThreadPool().getActiveCount();
         }
 
         @Managed
         public int getLargestPoolSize() {
-            return threadPool.getLargestPoolSize();
+            return getThreadPool().getLargestPoolSize();
         }
 
         @Managed
         public long getTaskCount() {
-            return threadPool.getTaskCount();
+            return getThreadPool().getTaskCount();
         }
 
         @Managed
         public long getCompletedTaskCount() {
-            return threadPool.getCompletedTaskCount();
+            return getThreadPool().getCompletedTaskCount();
         }
 
         @Managed
         public void setMaximumPoolSize(final int maximumPoolSize) {
-            threadPool.setMaximumPoolSize(maximumPoolSize);
+            getThreadPool().setMaximumPoolSize(maximumPoolSize);
+
+            if (log.isInfoEnabled()) {
+                log.info(String.format("Set ServicePool maximum threads to (%1$s)", maximumPoolSize));
+            }
         }
 
         @Managed
         public void setCorePoolSize(final int corePoolSize) {
             getThreadPool().setCorePoolSize(corePoolSize);
+
+            if (log.isInfoEnabled()) {
+                log.info(String.format("Set ServicePool core threads to (%1$s)", corePoolSize));
+            }
         }
 
         @Managed
         public void allowCoreThreadTimeOut(final boolean value) {
             getThreadPool().allowCoreThreadTimeOut(value);
+
+            if (log.isInfoEnabled()) {
+                log.info(String.format("Set ServicePool allow core thread timeout to (%1$s)", value));
+            }
         }
 
         @Managed(description = "Sets time in nanoseconds")
         public void setKeepAliveTime(final long time) {
             getThreadPool().setKeepAliveTime(time, TimeUnit.NANOSECONDS);
+
+            if (log.isInfoEnabled()) {
+                log.info(String.format("Set ServicePool keep alive time to (%1$s) nanoseconds", time));
+            }
         }
     }
 }

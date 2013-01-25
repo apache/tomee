@@ -19,28 +19,24 @@ package org.apache.openejb.core;
 import org.apache.openejb.ClientInjections;
 import org.apache.openejb.Core;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.Injection;
-import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.ServiceManagerProxy;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -55,19 +51,21 @@ public class LocalInitialContext extends ContextWrapper {
     static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("local"), LocalInitialContext.class);
 
     private final LocalInitialContextFactory factory;
-    private Properties properties;
+    private final Properties properties;
     private Object clientIdentity;
 
     public static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
-    private Close onClose;
-    private Options options;
+    private final Close onClose;
+    private final Options options;
     private ServiceManagerProxy serviceManager;
 
     public static enum Close {
-        LOGOUT, DESTROY
+        LOGOUT,
+        DESTROY
     }
 
-    public LocalInitialContext(Hashtable env, LocalInitialContextFactory factory) throws NamingException {
+    @SuppressWarnings("UseOfObsoleteCollectionType")
+    public LocalInitialContext(final Hashtable env, final LocalInitialContextFactory factory) throws NamingException {
         super(getContainerSystemEjbContext());
         properties = new Properties();
         properties.putAll(env);
@@ -86,14 +84,16 @@ public class LocalInitialContext extends ContextWrapper {
     public void close() throws NamingException {
         logger.debug("LocalIntialContext.close()");
 
-        switch(onClose){
+        switch (onClose) {
             case LOGOUT: {
                 logout();
-            } break;
+            }
+            break;
             case DESTROY: {
                 logout();
                 destroy();
-            } break;
+            }
+            break;
 
         }
     }
@@ -106,7 +106,7 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void tearDownOpenEJB() throws NamingException {
-        if (factory.bootedOpenEJB()){
+        if (factory.bootedOpenEJB()) {
             logger.info("Destroying container system");
             factory.close();
             context.close();
@@ -115,14 +115,16 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void login() throws AuthenticationException {
-        String user = (String) properties.get(Context.SECURITY_PRINCIPAL);
-        String pass = (String) properties.get(Context.SECURITY_CREDENTIALS);
-        String realmName = (String) properties.get("openejb.authentication.realmName");
+        final String user = (String) properties.get(Context.SECURITY_PRINCIPAL);
+        final String pass = (String) properties.get(Context.SECURITY_CREDENTIALS);
+        final String realmName = (String) properties.get("openejb.authentication.realmName");
 
-        if (user != null && pass != null){
+        if (user != null && pass != null) {
             try {
-                logger.info("Logging in");
-                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Logging in: " + user);
+                }
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 if (realmName == null) {
                     clientIdentity = securityService.login(user, pass);
                 } else {
@@ -130,16 +132,19 @@ public class LocalInitialContext extends ContextWrapper {
                 }
                 ClientSecurity.setIdentity(clientIdentity);
             } catch (LoginException e) {
-                throw (AuthenticationException) new AuthenticationException("User could not be authenticated: "+user).initCause(e);
+                throw (AuthenticationException) new AuthenticationException("User could not be authenticated: " + user).initCause(e);
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void logout() {
         try {
-            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
             if (clientIdentity != null) {
-                logger.info("Logging out");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Logging out: " + clientIdentity);
+                }
                 securityService.logout(clientIdentity);
                 ClientSecurity.setIdentity(null);
             }
@@ -157,10 +162,9 @@ public class LocalInitialContext extends ContextWrapper {
             serviceManager = new ServiceManagerProxy();
             serviceManager.start();
         } catch (ServiceManagerProxy.AlreadyStartedException e) {
-            logger.debug("Network services already started.  Ignoring option " + OPENEJB_EMBEDDED_REMOTABLE);            
+            logger.debug("Network services already started.  Ignoring option " + OPENEJB_EMBEDDED_REMOTABLE);
         }
     }
-
 
     private static Context getContainerSystemEjbContext() throws NamingException {
         Context context = getRoot();
@@ -169,12 +173,12 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private static Context getRoot() {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         return containerSystem.getJNDIContext();
     }
 
     @Override
-    public void bind(String name, Object obj) throws NamingException {
+    public void bind(final String name, final Object obj) throws NamingException {
         if ("inject".equalsIgnoreCase(name)) {
             inject(obj);
         } else {
@@ -182,7 +186,7 @@ public class LocalInitialContext extends ContextWrapper {
         }
     }
 
-    private void inject(Object obj) throws NamingException {
+    private void inject(final Object obj) throws NamingException {
         try {
             ClientInjections.clientInjector(obj).createInstance();
         } catch (OpenEJBException e) {
