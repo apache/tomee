@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.Attribute;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
-import com.envoisolutions.sxc.util.XoXMLStreamWriter;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.Attribute;
+import org.metatype.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.util.XoXMLStreamWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -96,7 +96,7 @@ public class ApplicationClient$JAXB
         }
 
         ApplicationClient applicationClient = new ApplicationClient();
-        context.beforeUnmarshal(applicationClient, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeUnmarshal(applicationClient, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         ArrayList<Text> displayNames = null;
@@ -413,7 +413,7 @@ public class ApplicationClient$JAXB
             applicationClient.dataSource = dataSource;
         }
 
-        context.afterUnmarshal(applicationClient, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterUnmarshal(applicationClient, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         return applicationClient;
     }
@@ -440,7 +440,7 @@ public class ApplicationClient$JAXB
             return;
         }
 
-        context.beforeMarshal(applicationClient, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeMarshal(applicationClient, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
@@ -735,7 +735,7 @@ public class ApplicationClient$JAXB
             }
         }
 
-        context.afterMarshal(applicationClient, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterMarshal(applicationClient, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
     }
 
 }

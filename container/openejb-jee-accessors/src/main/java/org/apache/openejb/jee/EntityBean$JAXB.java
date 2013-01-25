@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.Attribute;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
-import com.envoisolutions.sxc.util.XoXMLStreamWriter;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.Attribute;
+import org.metatype.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.util.XoXMLStreamWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -106,7 +106,7 @@ public class EntityBean$JAXB
         }
 
         EntityBean entityBean = new EntityBean();
-        context.beforeUnmarshal(entityBean, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeUnmarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         ArrayList<Text> displayNames = null;
@@ -581,7 +581,7 @@ public class EntityBean$JAXB
             entityBean.query = query;
         }
 
-        context.afterUnmarshal(entityBean, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterUnmarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         return entityBean;
     }
@@ -608,7 +608,7 @@ public class EntityBean$JAXB
             return;
         }
 
-        context.beforeMarshal(entityBean, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeMarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
@@ -1071,7 +1071,7 @@ public class EntityBean$JAXB
             }
         }
 
-        context.afterMarshal(entityBean, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterMarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
     }
 
 }

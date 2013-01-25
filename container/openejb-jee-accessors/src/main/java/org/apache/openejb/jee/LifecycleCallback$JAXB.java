@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jee;
 
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.Attribute;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
-import com.envoisolutions.sxc.util.XoXMLStreamWriter;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.Attribute;
+import org.metatype.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.util.XoXMLStreamWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -65,7 +65,7 @@ public class LifecycleCallback$JAXB
         }
 
         org.apache.openejb.jee.LifecycleCallback lifecycleCallback = new org.apache.openejb.jee.LifecycleCallback();
-        context.beforeUnmarshal(lifecycleCallback, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeUnmarshal(lifecycleCallback, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // Check xsi:type
@@ -116,7 +116,7 @@ public class LifecycleCallback$JAXB
             }
         }
 
-        context.afterUnmarshal(lifecycleCallback, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterUnmarshal(lifecycleCallback, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         return lifecycleCallback;
     }
@@ -143,7 +143,7 @@ public class LifecycleCallback$JAXB
             return;
         }
 
-        context.beforeMarshal(lifecycleCallback, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.beforeMarshal(lifecycleCallback, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // ELEMENT: lifecycleCallbackClass
@@ -176,7 +176,7 @@ public class LifecycleCallback$JAXB
             context.unexpectedNullValue(lifecycleCallback, "lifecycleCallbackMethod");
         }
 
-        context.afterMarshal(lifecycleCallback, com.envoisolutions.sxc.jaxb.LifecycleCallback.NONE);
+        context.afterMarshal(lifecycleCallback, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
     }
 
 }

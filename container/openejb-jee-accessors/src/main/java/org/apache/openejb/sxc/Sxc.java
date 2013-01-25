@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.sxc;
 
-import com.envoisolutions.sxc.jaxb.ExtendedMarshaller;
-import com.envoisolutions.sxc.jaxb.ExtendedUnmarshaller;
-import com.envoisolutions.sxc.jaxb.JAXBObject;
-import com.envoisolutions.sxc.jaxb.RuntimeContext;
-import com.envoisolutions.sxc.util.PrettyPrintXMLStreamWriter;
-import com.envoisolutions.sxc.util.RuntimeXMLStreamException;
-import com.envoisolutions.sxc.util.XmlFactories;
-import com.envoisolutions.sxc.util.XoXMLStreamReader;
-import com.envoisolutions.sxc.util.XoXMLStreamReaderImpl;
-import com.envoisolutions.sxc.util.XoXMLStreamWriter;
-import com.envoisolutions.sxc.util.XoXMLStreamWriterImpl;
+import org.metatype.sxc.jaxb.ExtendedMarshaller;
+import org.metatype.sxc.jaxb.ExtendedUnmarshaller;
+import org.metatype.sxc.jaxb.JAXBObject;
+import org.metatype.sxc.jaxb.RuntimeContext;
+import org.metatype.sxc.util.PrettyPrintXMLStreamWriter;
+import org.metatype.sxc.util.RuntimeXMLStreamException;
+import org.metatype.sxc.util.XmlFactories;
+import org.metatype.sxc.util.XoXMLStreamReader;
+import org.metatype.sxc.util.XoXMLStreamReaderImpl;
+import org.metatype.sxc.util.XoXMLStreamWriter;
+import org.metatype.sxc.util.XoXMLStreamWriterImpl;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
