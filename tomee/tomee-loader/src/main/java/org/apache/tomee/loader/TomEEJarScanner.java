@@ -158,6 +158,11 @@ public class TomEEJarScanner extends StandardJarScanner {
                     @Override
                     public void run() {
                         for (URL current : SERVER_URLS) {
+                            if (current.toExternalForm().contains("myfaces-impl-")) {
+                                // done elsewhere
+                                continue;
+                            }
+
                             tldConfig(config, current);
                             if (tldLocationsCache != null) {
                                 tldLocationCache(locationsCacheInstance, current);

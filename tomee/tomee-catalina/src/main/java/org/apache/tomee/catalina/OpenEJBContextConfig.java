@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -43,6 +44,8 @@ import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
+import org.apache.tomee.loader.TomEEJarScanner;
+import org.apache.tomee.loader.TomcatHelper;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.ws.rs.core.Application;
@@ -240,6 +243,8 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void webConfig() {
+        TomcatHelper.configureJarScanner(context);
+
         // read the real config
         super.webConfig();
 
@@ -307,6 +312,10 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void processAnnotationsUrl(URL currentUrl, WebXml fragment, boolean handlesTypeOnly) {
+        if (NewLoaderLogic.skip(currentUrl)) { // we potentially see all common loader urls
+            return;
+        }
+
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsUrl(currentUrl, fragment, handlesTypeOnly);
