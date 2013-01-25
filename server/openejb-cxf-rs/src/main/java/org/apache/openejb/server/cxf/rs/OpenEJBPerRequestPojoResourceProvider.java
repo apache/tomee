@@ -82,9 +82,6 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(clazz);
                 bean = bm.resolve(beans);
-                if (bean == null) {
-                    throw new NoBeanFoundException(clazz.getName());
-                }
             } catch (InjectionException ie) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
