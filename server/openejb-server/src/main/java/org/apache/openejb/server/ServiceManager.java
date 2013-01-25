@@ -67,7 +67,7 @@ public abstract class ServiceManager {
         return manager;
     }
 
-    protected static void setServiceManager(ServiceManager newManager) {
+    protected static void setServiceManager(final ServiceManager newManager) {
         manager = newManager;
     }
 
@@ -75,17 +75,17 @@ public abstract class ServiceManager {
         return true;
     }
 
-    protected List<ServerService> initServers(Map<String, Properties> availableServices)
-            throws IOException {
-        List<ServerService> enabledServers = new ArrayList<ServerService>();
+    protected List<ServerService> initServers(final Map<String, Properties> availableServices)
+        throws IOException {
+        final List<ServerService> enabledServers = new ArrayList<ServerService>();
 
-        for (Map.Entry<String, Properties> serviceInfo : availableServices.entrySet()) {
+        for (final Map.Entry<String, Properties> serviceInfo : availableServices.entrySet()) {
             final String serviceName = serviceInfo.getKey();
             if (!accept(serviceName)) {
                 continue;
             }
 
-            ServerService service = initServer(serviceName, serviceInfo.getValue());
+            final ServerService service = initServer(serviceName, serviceInfo.getValue());
             if (service != null) {
                 enabledServers.add(service);
             }
@@ -94,12 +94,12 @@ public abstract class ServiceManager {
         return enabledServers;
     }
 
-    protected ServerService initServer(String serviceName, Properties serviceProperties)
-            throws IOException {
+    protected ServerService initServer(final String serviceName, final Properties serviceProperties)
+        throws IOException {
 
-        DiscoveryRegistry registry = SystemInstance.get().getComponent(DiscoveryRegistry.class);
+        final DiscoveryRegistry registry = SystemInstance.get().getComponent(DiscoveryRegistry.class);
 
-        OpenEjbConfiguration conf = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        final OpenEjbConfiguration conf = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
 
         logger.debug("Processing ServerService(id=" + serviceName + ")");
 
@@ -107,7 +107,7 @@ public abstract class ServiceManager {
         serviceProperties.setProperty("name", serviceName);
 
         if (conf != null && conf.facilities != null) {
-            ServiceInfo info = new ServiceInfo();
+            final ServiceInfo info = new ServiceInfo();
             info.className = ((Class) serviceProperties.get(ServerService.class)).getName();
             info.service = "ServerService";
             info.id = serviceName;
@@ -115,19 +115,19 @@ public abstract class ServiceManager {
             conf.facilities.services.add(info);
         }
 
-        boolean enabled = isEnabled(serviceProperties);
+        final boolean enabled = isEnabled(serviceProperties);
 
         logger.debug("Found ServerService(id=" + serviceName + ", disabled=" + (!enabled) + ")");
 
         if (enabled) {
 
-            Class serviceClass = (Class) serviceProperties.get(ServerService.class);
+            final Class serviceClass = (Class) serviceProperties.get(ServerService.class);
 
             logger.info("Creating ServerService(id=" + serviceName + ")");
 
             // log all properties on debug
             if (logger.isDebugEnabled()) {
-                for (Map.Entry<Object, Object> entry : serviceProperties.entrySet()) {
+                for (final Map.Entry<Object, Object> entry : serviceProperties.entrySet()) {
                     logger.debug(entry.getKey() + " = " + entry.getValue());
                 }
             }
@@ -158,12 +158,12 @@ public abstract class ServiceManager {
                 service.init(serviceProperties);
 
                 if (service instanceof DiscoveryAgent) {
-                    DiscoveryAgent agent = (DiscoveryAgent) service;
+                    final DiscoveryAgent agent = (DiscoveryAgent) service;
                     registry.addDiscoveryAgent(agent);
                 }
 
                 if (LocalMBeanServer.isJMXActive()) {
-                    MBeanServer server = LocalMBeanServer.get();
+                    final MBeanServer server = LocalMBeanServer.get();
 
                     register(serviceName, service, server);
                 }
@@ -185,7 +185,7 @@ public abstract class ServiceManager {
         return jmxName.build();
     }
 
-    public static void register(String serviceName, ServerService service, MBeanServer server) {
+    public static void register(final String serviceName, final ServerService service, final MBeanServer server) {
         try {
             final ObjectName on = getObjectName(serviceName);
             if (server.isRegistered(on)) {
@@ -197,7 +197,7 @@ public abstract class ServiceManager {
         }
     }
 
-    public static ServerService manage(String serviceName, Properties serviceProperties, ServerService service) {
+    public static ServerService manage(final String serviceName, final Properties serviceProperties, ServerService service) {
         service = new NamedService(service, serviceName);
         service = new ServiceStats(service);
         service = new ServiceLogger(service);
@@ -207,7 +207,7 @@ public abstract class ServiceManager {
         return service;
     }
 
-    private void overrideProperties(String serviceName, Properties serviceProperties) throws IOException {
+    private void overrideProperties(final String serviceName, final Properties serviceProperties) throws IOException {
         final SystemInstance systemInstance = SystemInstance.get();
         final FileUtils base = systemInstance.getBase();
 
@@ -226,9 +226,9 @@ public abstract class ServiceManager {
                     public boolean accept(final File dir, String name) {
                         name = name.toLowerCase();
                         return name.equals("ejbd.properties")
-                                || name.equals("ejbds.properties")
-                                || name.equals("admin.properties")
-                                || name.equals("httpejbd.properties");
+                               || name.equals("ejbds.properties")
+                               || name.equals("admin.properties")
+                               || name.equals("httpejbd.properties");
                     }
                 });
 
@@ -298,9 +298,9 @@ public abstract class ServiceManager {
         fullProps.putAll(props);
     }
 
-    public static boolean isEnabled(Properties props) {
+    public static boolean isEnabled(final Properties props) {
         // if it should be started, continue
-        String disabled = props.getProperty("disabled", "");
+        final String disabled = props.getProperty("disabled", "");
 
         return !(disabled.equalsIgnoreCase("yes") || disabled.equalsIgnoreCase("true"));
     }
