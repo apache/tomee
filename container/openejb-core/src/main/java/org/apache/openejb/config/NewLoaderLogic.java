@@ -62,6 +62,7 @@ public class NewLoaderLogic {
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
     public static final String EXCLUSION_FILE = "exclusions.list";
     private static String[] exclusions = null;
+    private static Filter filter;
 
     public static UrlSet filterArchives(final Filter filter, final ClassLoader classLoader, UrlSet urlSet) {
 
@@ -161,27 +162,37 @@ public class NewLoaderLogic {
         return applyBuiltinExcludes(urlSet, includeFilter, null);
     }
 
-    public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
-        final Filter filter = Filters.prefixes(getExclusions());
+    public static boolean skip(final URL url) {
+        return skip(url, null, null);
+    }
 
+    public static boolean skip(final URL url, final Filter includeFilter, final Filter excludeFilter) {
+        if ("archive".equals(url.getProtocol())) {
+            return true;
+        }
+
+        final File file = URLs.toFile(url);
+
+        final String name = filter(file).getName();
+        if (includeFilter == null || !includeFilter.accept(name)) {
+            if (filter != null && filter.accept(name)) {
+                return true;
+            } else if (excludeFilter != null && excludeFilter.accept(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
         //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         final List<URL> urls = urlSet.getUrls();
         final Iterator<URL> iterator = urls.iterator();
         while (iterator.hasNext()) {
             final URL url = iterator.next();
-            if ("archive".equals(url.getProtocol())) {
-                continue;
-            }
-
-            final File file = URLs.toFile(url);
-
-            final String name = filter(file).getName();
-            if (includeFilter == null || !includeFilter.accept(name)) {
-                if (filter != null && filter.accept(name)) {
-                    iterator.remove();
-                } else if (excludeFilter != null && excludeFilter.accept(name)) {
-                    iterator.remove();
-                }
+            if (skip(url, includeFilter, excludeFilter)) {
+                iterator.remove();
             }
         }
 
@@ -190,6 +201,10 @@ public class NewLoaderLogic {
 
     public static void setExclusions(final String[] exclusionArray) {
         exclusions = exclusionArray;
+
+        // reinit the filter
+        filter = null;
+        getFilter();
     }
 
     public static String[] getExclusions() {
@@ -238,7 +253,16 @@ public class NewLoaderLogic {
             }
         }
 
+        getFilter(); // ensure filter is initialized
+
         return excludes.toArray(new String[excludes.size()]);
+    }
+
+    public static Filter getFilter() {
+        if (filter == null) {
+            filter = Filters.prefixes(getExclusions());
+        }
+        return filter;
     }
 
     private static String[] readDefaultExclusions() {

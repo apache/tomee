@@ -17,6 +17,7 @@
  */
 package org.apache.tomee.loader;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
@@ -158,7 +159,7 @@ public class TomcatHelper {
 		return System.getProperty("tomcat.version", "7.").startsWith("7.");
 	}
 
-	public static void configureJarScanner(StandardContext standardContext) {
+	public static void configureJarScanner(Context standardContext) {
 		try {
             standardContext.setJarScanner(new TomEEJarScanner());
 		} catch (Exception e) {
