@@ -16,16 +16,10 @@
  */
 package org.apache.openejb.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -40,6 +34,7 @@ import org.apache.openejb.loader.SystemInstance;
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import java.util.Properties;
 
 /*
 1  -D<deploymentId>.activation.<property>=<value>
@@ -77,6 +72,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "testString"));
         assertTrue(mdb.getActivationConfig().getActivationConfigProperty().size() == 1);
+        System.clearProperty("ENTERPRISEBEAN.mdb.activation.destinationType");
     }
 
     /**
@@ -85,11 +81,11 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
      * 
      * @throws OpenEJBException
      */
-
     public void testAddActivationConfigPropertyIfNotAlreadyPresent() throws OpenEJBException {
 
         // set overrides
         System.setProperty("ENTERPRISEBEAN.mdb.activation.destinationType", "testString");
+
         // deploy with an mdb that has no "destinationType" activationConfigProp
         MessageDrivenBean mdb = new MdbBuilder().anMdb().build();
         AppModule appModule = new AppModuleBuilder().anAppModule().withAnMdb(mdb).build();
@@ -98,6 +94,8 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "testString"));
         assertTrue(mdb.getActivationConfig().getActivationConfigProperty().size() == 1);
+
+        System.clearProperty("ENTERPRISEBEAN.mdb.activation.destinationType");
     }
 
     private boolean containsActivationKeyValuePair(MessageDrivenBean mdbBeingInspected, String activationPropKey, String activationPropValue) {
@@ -155,11 +153,13 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
     public void testMdbOverrideSystem() throws Exception {
         SystemInstance.reset();
-        final Properties properties = SystemInstance.get().getProperties();
+        final Properties systProps = SystemInstance.get().getProperties();
+        final Properties properties = new Properties();
         properties.setProperty("mdb.activation.maxSessions", "20");
         properties.setProperty("mdb.activation.maxMessagesPerSessions", "100");
         properties.setProperty("mdb.activation.destinationType", "javax.jms.Queue");
         properties.setProperty("mdb.activation.destination", "OVERRIDDEN.QUEUE");
+        systProps.putAll(properties);
 
         final Assembler assembler = new Assembler();
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -184,6 +184,10 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         assertEquals("100", yellow.activationProperties.get("maxMessagesPerSessions"));
         assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
+
+        for (String n : properties.stringPropertyNames()) {
+            systProps.remove(n);
+        }
     }
 
     public void testMdbOverrideOpenejbJar() throws Exception {
