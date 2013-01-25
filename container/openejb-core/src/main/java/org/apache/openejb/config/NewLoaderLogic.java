@@ -171,15 +171,19 @@ public class NewLoaderLogic {
             return true;
         }
 
-        final File file = URLs.toFile(url);
+        try {
+            final File file = URLs.toFile(url);
 
-        final String name = filter(file).getName();
-        if (includeFilter == null || !includeFilter.accept(name)) {
-            if (filter != null && filter.accept(name)) {
-                return true;
-            } else if (excludeFilter != null && excludeFilter.accept(name)) {
-                return true;
+            final String name = filter(file).getName();
+            if (includeFilter == null || !includeFilter.accept(name)) {
+                if (filter != null && filter.accept(name)) {
+                    return true;
+                } else if (excludeFilter != null && excludeFilter.accept(name)) {
+                    return true;
+                }
             }
+        } catch (IllegalArgumentException iae) {
+            // no-op
         }
 
         return false;
