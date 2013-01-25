@@ -125,6 +125,7 @@ public class MultiThreadedManagedDataSourceTest {
 
     @Test
     public void inserts() throws SQLException {
+        final int start = count("");
         final AtomicInteger errors = new AtomicInteger(0);
         final AtomicInteger fail = new AtomicInteger(0);
         run(new Runnable() {
@@ -147,7 +148,7 @@ public class MultiThreadedManagedDataSourceTest {
         });
         assertEquals(0, errors.get());
         assertEquals(0, fail.get());
-        assertEquals(INSERTS_NB, count(""));
+        assertEquals(INSERTS_NB, count("") - start);
     }
 
     @Test
