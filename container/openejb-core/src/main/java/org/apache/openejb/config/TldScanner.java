@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
@@ -98,7 +99,7 @@ public class TldScanner {
         tldUrls.addAll(scan(classLoader.getParent()));
 
         if (urls.size() > 0) {
-            final ExecutorService es = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors() + 1);
+            final ExecutorService es = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors() + 1, new DaemonThreadFactory("OpenEJB-tld-server-scanning"));
 
             final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
             for (URL url : urls) {
