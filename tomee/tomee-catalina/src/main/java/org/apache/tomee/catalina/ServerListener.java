@@ -128,6 +128,10 @@ public class ServerListener implements LifecycleListener {
     }
 
     private void installServerInfo() {
+        if (SystemInstance.get().getOptions().get("tomee.keep-server-info", false)) {
+            return;
+        }
+
         // force static init
         final String value = ServerInfo.getServerInfo();
 
