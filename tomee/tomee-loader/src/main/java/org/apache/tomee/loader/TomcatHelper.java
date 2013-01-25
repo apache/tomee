@@ -155,7 +155,7 @@ public class TomcatHelper {
 	}
 
 	public static boolean isTomcat7() {
-		return System.getProperty("tomcat.version").startsWith("7.");
+		return System.getProperty("tomcat.version", "7.").startsWith("7.");
 	}
 
 	public static void configureJarScanner(StandardContext standardContext) {
