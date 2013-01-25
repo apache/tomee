@@ -40,7 +40,9 @@ import static junit.framework.Assert.assertNotNull;
 public class EmbeddedTomEEContainerTest {
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war").addClass(AnEJB.class).addClass(AServlet.class).addClass(ARestService.class).setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").exportAsString()));
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(AnEJB.class, AServlet.class, ARestService.class)
+                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class).version("3.0").exportAsString()));
     }
 
     @EJB

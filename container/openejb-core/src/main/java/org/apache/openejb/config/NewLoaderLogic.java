@@ -169,6 +169,10 @@ public class NewLoaderLogic {
         final Iterator<URL> iterator = urls.iterator();
         while (iterator.hasNext()) {
             final URL url = iterator.next();
+            if ("archive".equals(url.getProtocol())) {
+                continue;
+            }
+
             final File file = URLs.toFile(url);
 
             final String name = filter(file).getName();

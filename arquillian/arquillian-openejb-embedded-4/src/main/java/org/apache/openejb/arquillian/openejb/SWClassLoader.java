@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -34,8 +35,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class SWClassLoader extends ClassLoader {
+    static {
+        try {
+            final Field handler = URL.class.getDeclaredField("handlers");
+            handler.setAccessible(true);
+            ((Hashtable<String, URLStreamHandler>) handler.get(null)).put("archive", new ArchiveStreamHandler());
+        } catch (Exception e) {
+            // no-op
+        }
+    }
+
     private final Archive<?> archive;
     private final String prefix;
     private final Collection<Closeable> closeables = new ArrayList<Closeable>();
@@ -44,6 +58,7 @@ public class SWClassLoader extends ClassLoader {
         super(parent);
         this.prefix = prefix;
         this.archive = ar;
+        ArchiveStreamHandler.set(ar, prefix, closeables);
     }
 
     @Override
@@ -51,7 +66,7 @@ public class SWClassLoader extends ClassLoader {
         final ArchivePath path = ArchivePaths.create(prefix + name);
         final Node node = archive.get(path);
         if (node != null) {
-            return new Enumerator(Arrays.asList(new URL(null, "archive:" + archive.getName() + "/", new ArchiveStreamHandler(node, closeables))));
+            return new Enumerator(Arrays.asList(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler())));
         }
         return super.findResources(name);
     }
@@ -62,7 +77,7 @@ public class SWClassLoader extends ClassLoader {
         final Node node = archive.get(path);
         if (node != null) {
             try {
-                return new URL(null, "archive:" + archive.getName() + "/", new ArchiveStreamHandler(node, closeables));
+                return new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler());
             } catch (MalformedURLException e) {
                 // no-op: let reuse parent method
             }
@@ -71,12 +86,21 @@ public class SWClassLoader extends ClassLoader {
     }
 
     private static class ArchiveStreamHandler extends URLStreamHandler {
-        private final Node node;
-        private final Collection<Closeable> closeables;
+        public static final Map<String, Archive<?>> archives = new HashMap<String, Archive<?>>();
+        public static final Map<String, String> prefixes = new HashMap<String, String>();
+        public static final Map<String, Collection<Closeable>> closeables = new HashMap<String, Collection<Closeable>>();
 
-        private ArchiveStreamHandler(final Node node, final Collection<Closeable> closeables) {
-            this.node = node;
-            this.closeables = closeables;
+        public static void set(final Archive<?> ar, final String p, final Collection<Closeable> c) {
+            final String archiveName = ar.getName();
+            archives.put(archiveName, ar);
+            prefixes.put(archiveName, p);
+            closeables.put(archiveName, c);
+        }
+
+        public static void reset(final String archiveName) {
+            archives.remove(archiveName);
+            prefixes.remove(archiveName);
+            closeables.remove(archiveName);
         }
 
         @Override
@@ -89,19 +113,42 @@ public class SWClassLoader extends ClassLoader {
 
                 @Override
                 public InputStream getInputStream() throws IOException {
-                    final Asset asset = node.getAsset();
+                    final String arName = key(url);
+                    final String path = prefixes.get(arName) + path(arName, url);
+                    final Asset asset = archives.get(arName).get(path).getAsset();
                     final InputStream input = asset.openStream();
-                    synchronized (closeables) {
-                        closeables.add(input);
-                    }
+                    final Collection<Closeable> c = closeables.get(arName);
+                    c.add(input);
                     return input;
 
                 }
             };
         }
+
+        private static String path(final String arName, final URL url) {
+            final String p = url.getPath();
+            String out = p.substring(arName.length(), p.length());
+            if (prefixes.get(arName).endsWith("/") && out.startsWith("/")) {
+                return out.substring(1);
+            }
+            return out;
+        }
+
+        private static String key(final URL url) {
+            final String p = url.getPath();
+            if (p == null) {
+                return null;
+            }
+            int endIndex = p.indexOf('/');
+            if (endIndex >= 0) {
+                return p.substring(0, endIndex);
+            }
+            return p;
+        }
     }
 
     public void close() {
+        ArchiveStreamHandler.reset(archive.getName());
         for (Closeable cl : closeables) {
             try {
                 cl.close();
