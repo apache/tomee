@@ -31,7 +31,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.JarScannerCallback;
@@ -54,17 +53,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class TomEEJarScanner extends StandardJarScanner {
 
@@ -158,11 +151,6 @@ public class TomEEJarScanner extends StandardJarScanner {
                     @Override
                     public void run() {
                         for (URL current : SERVER_URLS) {
-                            if (current.toExternalForm().contains("myfaces-impl-")) {
-                                // done elsewhere
-                                continue;
-                            }
-
                             tldConfig(config, current);
                             if (tldLocationsCache != null) {
                                 tldLocationCache(locationsCacheInstance, current);
@@ -171,6 +159,7 @@ public class TomEEJarScanner extends StandardJarScanner {
                     }
                 };
                 SERVER_SCANNING_THREAD.setName("TomEE-server-tld-reading");
+                SERVER_SCANNING_THREAD.setDaemon(true);
                 SERVER_SCANNING_THREAD.start();
             } else {
                 SERVER_SCANNING_THREAD = null;
@@ -214,7 +203,9 @@ public class TomEEJarScanner extends StandardJarScanner {
                         config.addTaglibUri(uri);
                     }
                     for (String listener : LISTENERS) {
-                        config.addApplicationListener(listener);
+                        if (!"org.apache.myfaces.webapp.StartupServletContextListener".equals(listener)) { // done elsewhere
+                            config.addApplicationListener(listener);
+                        }
                     }
 
                     return; // done, next code is a fallback if scan() throw an exception
