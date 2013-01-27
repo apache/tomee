@@ -161,7 +161,9 @@ public class TomcatHelper {
 
 	public static void configureJarScanner(Context standardContext) {
 		try {
-            standardContext.setJarScanner(new TomEEJarScanner());
+            if (!(standardContext.getJarScanner() instanceof TomEEJarScanner)) {
+                standardContext.setJarScanner(new TomEEJarScanner());
+            }
 		} catch (Exception e) {
 			// ignore
 		}
