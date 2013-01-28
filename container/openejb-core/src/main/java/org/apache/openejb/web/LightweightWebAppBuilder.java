@@ -174,9 +174,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             for (ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
                 for (String filterPath : info.list) {
-                    String classname = nameFromUrls(url, filterPath);
-
-                    final Class<?> clazz = webContext.getClassLoader().loadClass(classname);
+                    final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, filterPath);
                     final WebFilter annotation = clazz.getAnnotation(WebFilter.class);
                     if (annotation != null) {
                         final Properties initParams = new Properties();
@@ -187,7 +185,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                         final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
                         for (String mapping: annotation.urlPatterns()) {
                             try {
-                                addFilterMethod.invoke(null, classname, webContext, mapping, config);
+                                addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
                                 deployedWebObjects.filterMappings.add(mapping);
                             } catch (Exception e) {
                                 LOGGER.warning(e.getMessage(), e);
@@ -236,14 +234,12 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             for (ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
                 for (String servletPath : info.list) {
-                    String classname = nameFromUrls(url, servletPath);
-
-                    final Class<?> clazz = webContext.getClassLoader().loadClass(classname);
+                    final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, servletPath);
                     final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
                     if (annotation != null) {
                         for (String mapping: annotation.urlPatterns()) {
                             try {
-                                addServletMethod.invoke(null, classname, webContext, mapping);
+                                addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
                                 deployedWebObjects.mappings.add(mapping);
                             } catch (Exception e) {
                                 LOGGER.warning(e.getMessage(), e);
@@ -255,9 +251,16 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
     }
 
-    private static String nameFromUrls(final String url, final String path) {
-        final String value = path.substring(url.length()).replace(File.separatorChar, '/').replace('/', '.');
-        return value.substring(0, value.length() - ".class".length());
+    private static Class<?> loadFromUrls(final ClassLoader loader, final String url, final String path) throws ClassNotFoundException {
+        try { // in WEB-INF/classes
+            return loader.loadClass(className(path.substring(url.length())));
+        } catch (ClassNotFoundException cnfe) { // in a dependency (jar)
+            return loader.loadClass(className(path.substring(path.indexOf("!") + 2)));
+        }
+    }
+
+    private static String className(final String value) {
+        return value.substring(0, value.length() - ".class".length()).replace(File.separatorChar, '/').replace('/', '.');
     }
 
     @Override
