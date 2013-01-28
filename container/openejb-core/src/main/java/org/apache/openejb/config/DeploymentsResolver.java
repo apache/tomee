@@ -91,10 +91,10 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 loadFromDir(dep, path, jarList);
 
             } catch (Files.FileDoesNotExistException e) {
-                logger.warning("<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage());
+                logger.warning("File error: <Deployments dir=\"" + dep.getDir() + "\"> - " + e.getMessage());
 
             } catch (RuntimeException e) {
-                final String message = "<Deployments dir=\"" + dep.getFile() + "\"> - " + e.getMessage();
+                final String message = "Runtime error: <Deployments dir=\"" + dep.getDir() + "\"> - " + e.getMessage();
 
                 logger.error(message);
                 throw new DeploymentsConfigurationException(message);

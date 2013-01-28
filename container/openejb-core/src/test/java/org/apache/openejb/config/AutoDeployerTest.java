@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -26,7 +25,6 @@ import org.apache.openejb.util.Archives;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.PostConstruct;
@@ -43,17 +41,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
  */
 public class AutoDeployerTest extends Assert {
+
     @Before
     @After
-    public void stopAutoDeployer() {
+    public void before() {
         final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
         if (autoDeployer != null) {
             autoDeployer.stop();
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            //Ignore
         }
         SystemInstance.reset();
     }
@@ -87,6 +93,64 @@ public class AutoDeployerTest extends Assert {
             final List<String> autoDeploy = configuration.containerSystem.autoDeploy;
             assertEquals(1, autoDeploy.size());
             assertEquals("myapps", autoDeploy.get(0));
+        }
+
+        final Assembler assembler = new Assembler();
+        assembler.buildContainerSystem(configuration);
+
+        /// start with the testing...
+
+        assertFalse(Yellow.deployed);
+        assertFalse(Orange.deployed);
+
+        final File deployed = Files.path(apps, "colors.ear");
+
+        // Hot deploy the EAR
+        final File ear = createEar(tmpdir, Orange.class, State.class);
+        IO.copy(ear, deployed);
+
+        Orange.state.waitForChange(1, TimeUnit.MINUTES);
+
+        assertFalse(Yellow.deployed);
+        assertTrue(Orange.deployed);
+
+        Files.delete(deployed);
+
+        Orange.state.waitForChange(1, TimeUnit.MINUTES);
+
+        assertFalse(Yellow.deployed);
+        assertFalse(Orange.deployed);
+    }
+
+    @Test
+    public void testSpaces() throws Exception {
+        final File tmpdir = new File(Files.tmpdir() , "with spaces");
+        final File apps = Files.mkdir(tmpdir, "my apps");
+        final File conf = Files.mkdir(tmpdir, "conf");
+
+        final Properties properties = new Properties();
+        properties.setProperty("openejb.deployments.classpath", "false");
+        properties.setProperty("openejb.deployment.unpack.location", "false");
+        properties.setProperty("openejb.home", tmpdir.getAbsolutePath());
+        properties.setProperty("openejb.base", tmpdir.getAbsolutePath());
+
+        SystemInstance.init(properties);
+
+        { // Setup the configuration location
+            final File config = new File(conf, "openejb.xml");
+            IO.writeString(config, "<openejb><Deployments autoDeploy=\"true\" dir=\"my apps\"/> </openejb>");
+            SystemInstance.get().setProperty("openejb.configuration", config.getAbsolutePath());
+        }
+
+        final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+        configurationFactory.init(properties);
+        final OpenEjbConfiguration configuration = configurationFactory.getOpenEjbConfiguration();
+
+        { // Check the ContainerSystemInfo
+
+            final List<String> autoDeploy = configuration.containerSystem.autoDeploy;
+            assertEquals(1, autoDeploy.size());
+            assertEquals("my apps", autoDeploy.get(0));
         }
 
         final Assembler assembler = new Assembler();
@@ -177,7 +241,7 @@ public class AutoDeployerTest extends Assert {
         assertFalse(Orange.deployed);
     }
 
-    private File createEar(File tmpdir, final Class<?>... aClass) throws IOException {
+    private File createEar(final File tmpdir, final Class<?>... aClass) throws IOException {
         final File ear = new File(tmpdir, "colors.ear");
         final Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("foo.jar", Archives.jarArchive(aClass));
@@ -186,6 +250,7 @@ public class AutoDeployerTest extends Assert {
     }
 
     public static class State {
+
         private volatile boolean b;
         private final Lock lock = new ReentrantLock();
         private final Condition condition = lock.newCondition();
@@ -204,7 +269,7 @@ public class AutoDeployerTest extends Assert {
             return b;
         }
 
-        public void waitForChange(long time, TimeUnit unit) {
+        public void waitForChange(final long time, final TimeUnit unit) {
             lock.lock();
             try {
                 condition.await(time, unit);
