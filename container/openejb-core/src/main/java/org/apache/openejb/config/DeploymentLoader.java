@@ -254,7 +254,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // .rar
-        for (URL url : webModule.getRarUrls()) {
+        for (final URL url : webModule.getRarUrls()) {
             try {
                 final File file = URLs.toFile(url);
                 if (file.getName().endsWith(".rar")) {
@@ -267,7 +267,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
-        for (URL url : webModule.getScannableUrls()) {
+        for (final URL url : webModule.getScannableUrls()) {
             try {
                 final File file = URLs.toFile(url);
                 if (file.getName().endsWith(".jar")) {
@@ -832,10 +832,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         webUrls.addAll(Arrays.asList(urls.get(URLS_KEY)));
 
         final List<URL> addedUrls = new ArrayList<URL>();
-        for (URL url : urls.get(RAR_URLS_KEY)) { // eager unpack to be able to use it in classloader
+        for (final URL url : urls.get(RAR_URLS_KEY)) { // eager unpack to be able to use it in classloader
             final File[] files = unpack(URLs.toFile(url)).listFiles();
             if (files != null) {
-                for (File f : files) {
+                for (final File f : files) {
                     if (f.getName().endsWith(".jar")) {
                         try {
                             addedUrls.add(f.toURI().toURL());
@@ -1742,7 +1742,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         try {
             return JarExtractor.extract(jarFile, name);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
         }
     }

@@ -59,7 +59,8 @@ public class AutoDeployer {
         final Options options = SystemInstance.get().getOptions();
         final Duration interval = options.get("openejb.autodeploy.interval", new Duration(2, TimeUnit.SECONDS));
 
-        if (interval.getUnit() == null) interval.setUnit(TimeUnit.SECONDS);
+        if (interval.getUnit() == null)
+            interval.setUnit(TimeUnit.SECONDS);
 
         this.factory = factory;
         this.deployments.addAll(deployments);
@@ -88,22 +89,44 @@ public class AutoDeployer {
     }
 
     public synchronized boolean fileRemoved(final File file) {
+
+        if (null == file) {
+            return true;
+        }
+
         final String path = file.getAbsolutePath();
-        final Collection<AppInfo> apps = getAssembler().getDeployedApplications();
-        for (final AppInfo app : apps) {
-            if (app.paths.contains(path)) {
-                logger.info("Auto-Undeploying: " + app.appId + " - " + file.getAbsolutePath());
-                try {
-                    getAssembler().destroyApplication(app);
-                    for (final String location : app.paths) {
-                        final File delete = new File(location);
-                        Files.remove(delete);
-                        logger.info("Auto-Undeploy: Delete " + location);
+        final Assembler assembler = getAssembler();
+
+        if (null != assembler) {
+            final Collection<AppInfo> apps = assembler.getDeployedApplications();
+            for (final AppInfo app : apps) {
+                if (app.paths.contains(path)) {
+                    logger.info("Auto-Undeploying: " + app.appId + " - " + file.getAbsolutePath());
+                    try {
+                        assembler.destroyApplication(app);
+                        for (final String location : app.paths) {
+                            final File delete = new File(location.replace("%20", " "));
+
+                            for (int i = 0; i < 3; i++) {
+                                try {
+                                    Files.remove(delete);
+                                } catch (Exception e) {
+                                    if (i < 2) {
+                                        //Try again as file IO is not a science
+                                        Thread.sleep(100);
+                                    } else {
+                                        logger.warning("Failed to delete: " + delete);
+                                    }
+                                }
+                            }
+
+                            logger.info("Auto-Undeploy: Delete " + location);
+                        }
+                    } catch (Exception e) {
+                        logger.error("Auto-Undeploy Failed: " + file.getAbsolutePath(), e);
                     }
-                } catch (Exception e) {
-                    logger.error("Auto-Undeploy Failed: " + file.getAbsolutePath(), e);
+                    break;
                 }
-                break;
             }
         }
         return true;
@@ -173,7 +196,7 @@ public class AutoDeployer {
     /**
      * Looks for changes to the immediate contents of the directory we're watching.
      */
-    public void scan() {
+    public synchronized void scan() {
 
         final List<File> files = list();
 
@@ -245,6 +268,7 @@ public class AutoDeployer {
      * Provides details about a directory.
      */
     private static class DirectoryInfo extends FileInfo {
+
         public DirectoryInfo(final File dir) {
             //
             // We don't pay attention to the size of the directory or files in the
@@ -287,6 +311,7 @@ public class AutoDeployer {
      * Provides details about a file.
      */
     private static class FileInfo implements Serializable {
+
         private final String path;
 
         private long size;
