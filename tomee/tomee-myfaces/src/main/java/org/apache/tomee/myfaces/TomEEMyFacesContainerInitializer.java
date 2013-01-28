@@ -108,15 +108,12 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                 final ApplicationContext appCtx = (ApplicationContext) get(ApplicationContextFacade.class, ctx);
                 final Context tomcatCtx = (Context) get(ApplicationContext.class, appCtx);
                 if (tomcatCtx instanceof StandardContext) {
-                    final String[] servlets = ((StandardContext) tomcatCtx).getServlets();
+                    final Container[] servlets = tomcatCtx.findChildren();
                     if (servlets != null) {
-                        for (String s : servlets) {
-                            if ("Faces Servlet".equals(s)) {
-                                return true;
-                            }
-                            final Container c = tomcatCtx.findChild(s);
-                            if (c instanceof Wrapper) {
-                                if ("javax.faces.webapp.FacesServlet".equals(((Wrapper) c).getServletClass())) {
+                        for (Container s : servlets) {
+                            if (s instanceof Wrapper) {
+                                if ("javax.faces.webapp.FacesServlet".equals(((Wrapper) s).getServletClass())
+                                        || "Faces Servlet".equals(s.getName())) {
                                     return true;
                                 }
                             }
