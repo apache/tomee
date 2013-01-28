@@ -16,9 +16,12 @@
  */
 package org.apache.tomee.myfaces;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.core.ApplicationContextFacade;
+import org.apache.catalina.core.StandardContext;
 import org.apache.myfaces.context.servlet.StartupServletExternalContextImpl;
 import org.apache.myfaces.ee6.MyFacesContainerInitializer;
 import org.apache.myfaces.spi.FacesConfigResourceProvider;
@@ -68,7 +71,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                         Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
                 Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
 
-        if ((classes != null && !classes.isEmpty()) || isFacesConfigPresent(ctx)) {
+        if ((classes != null && !classes.isEmpty()) || isFacesConfigPresent(ctx) || isFacesServletPresent(ctx)) {
             // we found a faces-config.xml or some classes so let's delegate to myfaces
 
             // since we don't want to call isFacesConfigPresent again (it scan all jars!!!!)
@@ -97,6 +100,34 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             // finally delegating begin sure we'll not call isFacesConfigPresent
             delegate.onStartup(classes, ctx);
         }
+    }
+
+    private boolean isFacesServletPresent(final ServletContext ctx) {
+        if (ctx instanceof ApplicationContextFacade) {
+            try {
+                final ApplicationContext appCtx = (ApplicationContext) get(ApplicationContextFacade.class, ctx);
+                final Context tomcatCtx = (Context) get(ApplicationContext.class, appCtx);
+                if (tomcatCtx instanceof StandardContext) {
+                    final String[] servlets = ((StandardContext) tomcatCtx).getServlets();
+                    if (servlets != null) {
+                        for (String s : servlets) {
+                            if ("Faces Servlet".equals(s)) {
+                                return true;
+                            }
+                            final Container c = tomcatCtx.findChild(s);
+                            if (c instanceof Wrapper) {
+                                if ("javax.faces.webapp.FacesServlet".equals(((Wrapper) c).getServletClass())) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // no-op
+            }
+        }
+        return false;
     }
 
     private void addListener(final ServletContext ctx) {
