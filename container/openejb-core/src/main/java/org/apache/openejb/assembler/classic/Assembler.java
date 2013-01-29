@@ -1527,7 +1527,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         containerSystem.removeAppContext(appInfo.appId);
 
-        ClassLoaderUtil.destroyClassLoader(appInfo);
+        ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
 
         if (undeployException.getCauses().size() > 0) {
             throw undeployException;
