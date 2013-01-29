@@ -34,7 +34,7 @@ public class EjbJarXmlTest extends TestCase {
      * @throws Exception
      */
     public void testEjbJar() throws Exception {
-        String fileName = "ejb-jar-example1.xml";
+        final String fileName = "ejb-jar-example1.xml";
 
         final Event test = Event.start("Test");
 
@@ -53,17 +53,18 @@ public class EjbJarXmlTest extends TestCase {
 
         unmarshalEvent.stop();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         final Event marshall = Event.start("marshall");
         Sxc.marshall(jaxbType, value, baos);
         marshall.stop();
 
-        final String result = new String(baos.toByteArray());
-        assertEquals(expected, result);
+        final String result = new String(baos.toByteArray(), "UTF-8");
+        assertEquals(expected.trim(), result.trim());
         test.stop();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private static class Event {
         protected final long start = System.nanoTime();
         private final String description;
