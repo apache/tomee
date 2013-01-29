@@ -23,8 +23,9 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Archives;
 import org.junit.After;
-import org.junit.Assert;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.PostConstruct;
@@ -34,22 +35,55 @@ import javax.ejb.Startup;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 /**
  * @version $Rev$ $Date$
  */
-public class AutoDeployerTest extends Assert {
+public class AutoDeployerTest {
+
+    private static final Set<File> files = new HashSet<File>();
+
+    @BeforeClass
+    public static void beforeClass() {
+        files.clear();
+    }
+
+    @AfterClass
+    public static void afterClass() throws InterruptedException {
+
+        //Give async IO a reasonable chance to catch up.
+        SystemInstance.reset();
+        Thread.sleep(3000);
+
+        //Make sure files have been deleted.
+        for (final File file : files) {
+            if (file.exists()) {
+                final File[] exists = file.listFiles();
+                assertTrue("Application files still exist in: " + file.getAbsolutePath(), (null == exists || exists.length == 0));
+            }
+        }
+    }
 
     @Before
     @After
-    public void beforeAndAfter() {
+    public void beforeAndAfter() throws InterruptedException {
+
+        //Allow AutoDeployer scanning to complete
+        Thread.sleep(3000);
+
         final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
         if (autoDeployer != null) {
             autoDeployer.stop();
@@ -63,6 +97,8 @@ public class AutoDeployerTest extends Assert {
         final File tmpdir = Files.tmpdir();
         final File apps = Files.mkdir(tmpdir, "myapps");
         final File conf = Files.mkdir(tmpdir, "conf");
+
+        files.add(apps);
 
         final Properties properties = new Properties();
         properties.setProperty("openejb.deployments.classpath", "false");
@@ -122,6 +158,8 @@ public class AutoDeployerTest extends Assert {
         final File apps = Files.mkdir(tmpdir, "my apps");
         final File conf = Files.mkdir(tmpdir, "conf");
 
+        files.add(apps);
+
         final Properties properties = new Properties();
         properties.setProperty("openejb.deployments.classpath", "false");
         properties.setProperty("openejb.deployment.unpack.location", "false");
@@ -179,6 +217,8 @@ public class AutoDeployerTest extends Assert {
         final File tmpdir = Files.tmpdir();
         final File apps = Files.mkdir(tmpdir, "myapps");
         final File conf = Files.mkdir(tmpdir, "conf");
+
+        files.add(apps);
 
         final Properties properties = new Properties();
         properties.setProperty("openejb.deployments.classpath", "false");

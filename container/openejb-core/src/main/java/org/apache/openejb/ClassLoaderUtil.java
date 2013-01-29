@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.core.TempClassLoader;
@@ -59,6 +60,11 @@ public class ClassLoaderUtil {
     private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
     private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
     private static final UrlCache localUrlCache = new UrlCache();
+
+    public static void destroyClassLoader(final AppInfo info) {
+        destroyClassLoader(info.appId);
+        destroyClassLoader(info.path);
+    }
 
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
@@ -114,10 +120,11 @@ public class ClassLoaderUtil {
      * @param classLoader ClassLoader to destroy.
      */
     public static void destroyClassLoader(final ClassLoader classLoader) {
-        logger.debug("Destroying classLoader " + toString(classLoader));
 
         // remove from the indexes
         final Set<String> apps = appsByClassLoader.remove(classLoader);
+
+        logger.debug("Destroying classLoader '" + toString(classLoader) + "' for apps: " + apps);
 
         if (apps != null) {
 
@@ -192,6 +199,7 @@ public class ClassLoaderUtil {
         return files;
     }
 
+    @SuppressWarnings("UseOfObsoleteCollectionType")
     public boolean finalizeNativeLibs(final ClassLoader cl) {
 
         boolean res = false;
@@ -477,15 +485,14 @@ public class ClassLoaderUtil {
      * @param fieldName the name of the cache field
      */
     public static void clearSunSoftCache(final Class clazz, final String fieldName) {
-        synchronized (clazz) {
-            try {
-                final Field field = clazz.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                final Map cache = (Map) field.get(null);
-                cache.clear();
-            } catch (Throwable ignored) {
-                // there is nothing a user could do about this anyway
-            }
+
+        try {
+            final Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            final Map cache = (Map) field.get(null);
+            cache.clear();
+        } catch (Throwable ignored) {
+            // there is nothing a user could do about this anyway
         }
     }
 
