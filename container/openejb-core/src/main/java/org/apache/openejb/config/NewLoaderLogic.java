@@ -190,6 +190,8 @@ public class NewLoaderLogic {
     }
 
     public static UrlSet applyBuiltinExcludes(final UrlSet urlSet, final Filter includeFilter, final Filter excludeFilter) throws MalformedURLException {
+        getExclusions(); // force init
+
         //filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         final List<URL> urls = urlSet.getUrls();
         final Iterator<URL> iterator = urls.iterator();
