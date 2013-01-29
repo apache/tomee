@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
@@ -40,6 +41,9 @@ import java.util.concurrent.Callable;
  * @version $Rev$ $Date$
  */
 public class CdiInterceptor implements Serializable {
+    static {
+        InterceptorData.cacheScan(CdiInterceptor.class);
+    }
 
     private final CdiEjbBean<Object> bean;
     private final BeanManagerImpl manager;

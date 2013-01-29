@@ -16,22 +16,22 @@
  */
 package org.apache.openejb.monitoring;
 
+import org.apache.openejb.api.Monitor;
+import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.openejb.api.Monitor;
-import org.apache.openejb.core.interceptor.InterceptorData;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
+import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
 import javax.ejb.BeforeCompletion;
-import javax.ejb.AfterBegin;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 import javax.interceptor.AroundTimeout;
+import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
@@ -43,6 +43,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version $Rev$ $Date$
  */
 public class StatsInterceptor {
+    static {
+        InterceptorData.cacheScan(StatsInterceptor.class);
+    }
+
     private static final String DISABLE_STAT_INTERCEPTOR_PROPERTY = "openejb.stats.interceptor.disable";
 
     public static final InterceptorData metadata = InterceptorData.scan(StatsInterceptor.class);

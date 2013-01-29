@@ -28,6 +28,7 @@ c3p0-
 catalina-
 catalina.jar
 cglib-
+charsets.jar
 commons-beanutils
 commons-cli-
 commons-codec-
@@ -105,6 +106,7 @@ jsoup-
 jsp-api
 jsr299-
 jsr311-
+jsse.jar
 juli-
 junit-
 kahadb-
@@ -155,8 +157,11 @@ org.osgi.core-
 oro-
 pax-url
 plexus-
+plugin.jar
 quartz-
+resources.jar
 rmock-
+rt.jar
 saaj-
 sac-
 scannotation-

@@ -35,12 +35,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev$ $Date$
  */
 public class InterceptorData {
+    private static final Map<Class<?>, InterceptorData> CACHE = new ConcurrentHashMap<Class<?>, InterceptorData>();
 
     private Class clazz;
 
@@ -134,10 +137,28 @@ public class InterceptorData {
         return (clazz != null ? clazz.hashCode() : 0);
     }
 
-    public static InterceptorData scan(Class<?> clazz) {
-        ClassFinder finder = new ClassFinder(clazz);
+    public static void cacheScan(final Class<?> clazz) {
+        CACHE.put(clazz, scan(clazz));
+    }
 
-        InterceptorData data = new InterceptorData(clazz);
+    public static InterceptorData scan(Class<?> clazz) {
+        final InterceptorData model = CACHE.get(clazz);
+        if (model != null) {
+            final InterceptorData data = new InterceptorData(clazz);
+            data.aroundInvoke.addAll(model.getAroundInvoke());
+            data.postConstruct.addAll(model.getPostConstruct());
+            data.preDestroy.addAll(model.getPreDestroy());
+            data.postActivate.addAll(model.getPostActivate());
+            data.prePassivate.addAll(model.getPrePassivate());
+            data.afterBegin.addAll(model.getAfterBegin());
+            data.beforeCompletion.addAll(model.getBeforeCompletion());
+            data.afterCompletion.addAll(model.getAfterCompletion());
+            data.aroundTimeout.addAll(model.getAroundTimeout());
+            return data;
+        }
+
+        final ClassFinder finder = new ClassFinder(clazz);
+        final InterceptorData data = new InterceptorData(clazz);
 
         add(finder, data.aroundInvoke, AroundInvoke.class);
         add(finder, data.postConstruct, PostConstruct.class);
