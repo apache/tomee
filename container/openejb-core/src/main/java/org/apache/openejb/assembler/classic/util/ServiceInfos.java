@@ -35,8 +35,9 @@ import java.util.Properties;
 // mainly an utility class when using services as config. Null is returned if the action is not possible
 // (instead of throwing an exception)
 public final class ServiceInfos {
+
     private ServiceInfos() {
-         // no-op
+        // no-op
     }
 
     public static Object resolve(final Collection<ServiceInfo> services, final String id) {
@@ -52,7 +53,7 @@ public final class ServiceInfos {
     }
 
     public static ServiceInfo find(final Collection<ServiceInfo> services, final String id) {
-        for (ServiceInfo s : services) {
+        for (final ServiceInfo s : services) {
             if (id.equals(s.id)) {
                 return s;
             }
@@ -61,7 +62,7 @@ public final class ServiceInfos {
     }
 
     public static ServiceInfo findByClass(final Collection<ServiceInfo> services, final String clazz) {
-        for (ServiceInfo s : services) {
+        for (final ServiceInfo s : services) {
             if (clazz.equals(s.className)) {
                 return s;
             }
@@ -75,7 +76,7 @@ public final class ServiceInfos {
         }
 
         final List<Object> instances = new ArrayList<Object>();
-        for (String id : ids) {
+        for (final String id : ids) {
             Object instance = resolve(serviceInfos, id);
             if (instance == null) {  // maybe id == classname
                 try {
@@ -125,7 +126,7 @@ public final class ServiceInfos {
         if (MapFactory.class.getName().equals(info.className)) {
             serviceRecipe.setProperty("prop", info.properties);
         } else {
-            for (Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
+            for (final Map.Entry<Object, Object> entry : info.properties.entrySet()) { // manage links
                 final Object value = entry.getValue();
                 if (value instanceof String && value.toString().startsWith("$")) {
                     serviceRecipe.setProperty(entry.getKey().toString(), resolve(services, value.toString().substring(1)));

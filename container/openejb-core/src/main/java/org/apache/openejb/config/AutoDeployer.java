@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,7 +48,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class AutoDeployer {
 
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, AutoDeployer.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AutoDeployer.class);
+    private static final Semaphore SEMAPHORE = new Semaphore(1, true);
 
     private final ConfigurationFactory factory;
     private final long pollIntervalMillis;
@@ -65,30 +67,45 @@ public class AutoDeployer {
         this.factory = factory;
         this.deployments.addAll(deployments);
         this.pollIntervalMillis = interval.getUnit().toMillis(interval.getTime());
-        this.timer = new Timer(this.getClass().getSimpleName());
+        this.timer = new Timer(this.getClass().getSimpleName(), true);
     }
 
-    public synchronized boolean fileAdded(final File file) {
-        logger.info("Auto-Deploying: " + file.getAbsolutePath());
+    private boolean fileAdded(final File file) {
+        final String appPath = file.getAbsolutePath();
+        logger.info("Starting Auto-Deployment of: " + appPath);
+
         try {
+
             final AppInfo appInfo = factory.configureApplication(file);
-            appInfo.paths.add(file.getAbsolutePath());
+            appInfo.paths.add(appPath);
             appInfo.paths.add(appInfo.path);
-            for (final String path : appInfo.paths) {
-                logger.info("Auto-Deploy: Path " + path);
+
+            if (logger.isDebugEnabled()) {
+                for (final String path : appInfo.paths) {
+                    logger.debug("Auto-Deployment path: " + path);
+                }
             }
-            getAssembler().createApplication(appInfo);
+
+            final Assembler assembler = getAssembler();
+
+            if (null == assembler) {
+                throw new Exception("Assembler is not available for Auto-Deployment of: " + appPath);
+            }
+
+            assembler.createApplication(appInfo);
+
         } catch (Exception e) {
-            logger.error("Auto-Deploy Failed: " + file.getAbsolutePath(), e);
+            logger.error("Failed Auto-Deployment of: " + appPath, e);
         }
+
         return true;
     }
 
-    private Assembler getAssembler() {
+    private static Assembler getAssembler() {
         return SystemInstance.get().getComponent(Assembler.class);
     }
 
-    public synchronized boolean fileRemoved(final File file) {
+    private static boolean fileRemoved(final File file) {
 
         if (null == file) {
             return true;
@@ -98,13 +115,20 @@ public class AutoDeployer {
         final Assembler assembler = getAssembler();
 
         if (null != assembler) {
+
             final Collection<AppInfo> apps = assembler.getDeployedApplications();
+
             for (final AppInfo app : apps) {
+
                 if (app.paths.contains(path)) {
-                    logger.info("Auto-Undeploying: " + app.appId + " - " + file.getAbsolutePath());
+
+                    logger.info("Starting Auto-Undeployment of: " + app.appId + " - " + file.getAbsolutePath());
+
                     try {
                         assembler.destroyApplication(app);
+
                         for (final String location : app.paths) {
+
                             final File delete = new File(location.replace("%20", " "));
 
                             for (int i = 0; i < 3; i++) {
@@ -120,9 +144,12 @@ public class AutoDeployer {
                                 }
                             }
 
-                            logger.info("Auto-Undeploy: Delete " + location);
+                            logger.debug("Auto-Undeploy: Delete " + location);
                         }
-                    } catch (Exception e) {
+
+                        logger.info("Completed Auto-Undeployment of: " + app.appId);
+
+                    } catch (Throwable e) {
                         logger.error("Auto-Undeploy Failed: " + file.getAbsolutePath(), e);
                     }
                     break;
@@ -137,10 +164,6 @@ public class AutoDeployer {
         fileAdded(file);
     }
 
-    private Logger getLogger() {
-        return logger;
-    }
-
     @SuppressWarnings("UnusedParameters")
     public void observe(@Observes final ContainerSystemPostCreate postCreate) {
         start();
@@ -151,30 +174,55 @@ public class AutoDeployer {
         stop();
     }
 
-    public synchronized void stop() {
+    /**
+     * Will stop the AutoDeployer from scanning, and waits for a running scan to complete.
+     */
+    public void stop() {
+
         timer.cancel();
+
+        try {
+            //Will block if scanning
+            SEMAPHORE.acquire();
+        } catch (InterruptedException e) {
+            //Ignore
+        } finally {
+            SEMAPHORE.release();
+        }
+
     }
 
     public void start() {
-        initialize();
 
-        getLogger().debug("Scanner running.  Polling every " + pollIntervalMillis + " milliseconds.");
+        try {
+            SEMAPHORE.acquire();
+        } catch (InterruptedException e) {
+            logger.warning("AutoDeployer.start failed to obtain lock");
+            return;
+        }
 
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    scan();
-                } catch (Exception e) {
-                    getLogger().error("Scan failed.", e);
+        try {
+            initialize();
+
+            logger.info("Starting Auto-Deployer with a polling interval of " + pollIntervalMillis + "ms");
+
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        scan();
+                    } catch (Exception e) {
+                        logger.error("Scan failed.", e);
+                    }
                 }
-            }
-        }, pollIntervalMillis, pollIntervalMillis);
+            }, pollIntervalMillis, pollIntervalMillis);
+        } finally {
+            SEMAPHORE.release();
+        }
 
     }
 
     private void initialize() {
-        getLogger().debug("Doing initial scan of Deployments");
 
         for (final File file : list()) {
 
@@ -184,6 +232,8 @@ public class AutoDeployer {
 
             final FileInfo now = newInfo(file);
             now.setChanging(false);
+
+            logger.debug("Auto-Deployer initialization found: " + file.getAbsolutePath());
         }
     }
 
@@ -198,52 +248,63 @@ public class AutoDeployer {
      */
     public synchronized void scan() {
 
-        final List<File> files = list();
-
-        final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
-
-        for (final File file : files) {
-
-            missingFilesList.remove(file.getAbsolutePath());
-
-            if (!file.canRead()) {
-                getLogger().debug("not readable " + file.getName());
-                continue;
-            }
-
-            final FileInfo oldStatus = oldInfo(file);
-            final FileInfo newStatus = newInfo(file);
-
-            newStatus.diff(oldStatus);
-
-            if (oldStatus == null) {
-                // Brand new, but assume it's changing and
-                // wait a bit to make sure it's not still changing
-                getLogger().debug("File Discovered: " + newStatus);
-            } else if (newStatus.isChanging()) {
-                // The two records are different -- record the latest as a file that's changing
-                // and later when it stops changing we'll do the add or update as appropriate.
-                getLogger().debug("File Changing: " + newStatus);
-            } else if (oldStatus.isNewFile()) {
-                // Used to be changing, now in (hopefully) its final state
-                getLogger().info("New File: " + newStatus);
-                newStatus.setNewFile(!fileAdded(file));
-            } else if (oldStatus.isChanging()) {
-                getLogger().info("Updated File: " + newStatus);
-                fileUpdated(file);
-
-                missingFilesList.remove(oldStatus.getPath());
-            }
-            // else it's just totally unchanged and we ignore it this pass
+        try {
+            SEMAPHORE.acquire();
+        } catch (InterruptedException e) {
+            logger.warning("AutoDeployer.scan failed to obtain lock");
+            return;
         }
 
-        // Look for any files we used to know about but didn't find in this pass
-        for (final String path : missingFilesList) {
-            getLogger().info("File removed: " + path);
+        try {
+            final List<File> files = list();
 
-            if (fileRemoved(new File(path))) {
-                this.files.remove(path);
+            final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
+
+            for (final File file : files) {
+
+                missingFilesList.remove(file.getAbsolutePath());
+
+                if (!file.canRead()) {
+                    logger.debug("not readable " + file.getName());
+                    continue;
+                }
+
+                final FileInfo oldStatus = oldInfo(file);
+                final FileInfo newStatus = newInfo(file);
+
+                newStatus.diff(oldStatus);
+
+                if (oldStatus == null) {
+                    // Brand new, but assume it's changing and
+                    // wait a bit to make sure it's not still changing
+                    logger.debug("File Discovered: " + newStatus);
+                } else if (newStatus.isChanging()) {
+                    // The two records are different -- record the latest as a file that's changing
+                    // and later when it stops changing we'll do the add or update as appropriate.
+                    logger.debug("File Changing: " + newStatus);
+                } else if (oldStatus.isNewFile()) {
+                    // Used to be changing, now in (hopefully) its final state
+                    logger.info("New File: " + newStatus);
+                    newStatus.setNewFile(!fileAdded(file));
+                } else if (oldStatus.isChanging()) {
+                    logger.info("Updated Auto-Deployer File: " + newStatus);
+                    fileUpdated(file);
+
+                    missingFilesList.remove(oldStatus.getPath());
+                }
+                // else it's just totally unchanged and we ignore it this pass
             }
+
+            // Look for any files we used to know about but didn't find in this pass
+            for (final String path : missingFilesList) {
+                logger.info("File removed: " + path);
+
+                if (fileRemoved(new File(path))) {
+                    this.files.remove(path);
+                }
+            }
+        } finally {
+            SEMAPHORE.release();
         }
     }
 
