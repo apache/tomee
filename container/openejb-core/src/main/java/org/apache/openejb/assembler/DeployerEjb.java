@@ -16,10 +16,18 @@
  */
 package org.apache.openejb.assembler;
 
-import org.apache.openejb.*;
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.*;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -38,17 +46,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
 import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 
+@SuppressWarnings("EjbProhibitedPackageUsageInspection")
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
 @TransactionManagement(BEAN)
 @Alternative
 public class DeployerEjb implements Deployer {
+
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
 
@@ -58,19 +72,23 @@ public class DeployerEjb implements Deployer {
     private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
 
     static {
-        String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
-        String tempDir = System.getProperty("java.io.tmpdir");
+        final String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
+        final String tempDir = System.getProperty("java.io.tmpdir");
         File unique;
         try {
             unique = new File(tempDir, uniqueName).getCanonicalFile();
-            unique.createNewFile();
+            if (!unique.createNewFile()) {
+                throw new IOException("Failed to create file in temp: " + unique);
+            }
         } catch (IOException e) {
             // same trying in work directory
             unique = new File(SystemInstance.get().getBase().getDirectory(), "work");
             if (unique.exists()) {
                 try {
                     unique = new File(unique, uniqueName).getCanonicalFile();
-                    unique.createNewFile();
+                    if (!unique.createNewFile()) {
+                        throw new IOException("Failed to create file in work: " + unique);
+                    }
                 } catch (IOException e1) {
                     throw new OpenEJBRuntimeException(e);
                 }
@@ -92,23 +110,28 @@ public class DeployerEjb implements Deployer {
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 
+    @Override
     public String getUniqueFile() {
         return uniqueFile.getAbsolutePath();
     }
 
+    @Override
     public Collection<AppInfo> getDeployedApps() {
         return assembler.getDeployedApplications();
     }
 
-    public AppInfo deploy(String location) throws OpenEJBException {
+    @Override
+    public AppInfo deploy(final String location) throws OpenEJBException {
         return deploy(location, null);
     }
 
-    public AppInfo deploy(Properties properties) throws OpenEJBException {
+    @Override
+    public AppInfo deploy(final Properties properties) throws OpenEJBException {
         return deploy(null, properties);
     }
 
-    public AppInfo deploy(String inLocation, Properties properties) throws OpenEJBException {
+    @Override
+    public AppInfo deploy(final String inLocation, Properties properties) throws OpenEJBException {
         String rawLocation = inLocation;
         if (rawLocation == null && properties == null) {
             throw new NullPointerException("location and properties are null");
@@ -129,45 +152,45 @@ public class DeployerEjb implements Deployer {
             AUTO_DEPLOY.set(autoDeploy);
             try {
                 return SystemInstance.get().getComponent(WebAppDeployer.class)
-                        .deploy(contextRoot(properties, file.getAbsolutePath()), file);
+                                     .deploy(contextRoot(properties, file.getAbsolutePath()), file);
             } finally {
                 AUTO_DEPLOY.remove();
             }
         }
 
-        AppInfo appInfo;
+        AppInfo appInfo = null;
 
         try {
             appModule = deploymentLoader.load(file);
 
             // Add any alternate deployment descriptors to the modules
-            Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
-            for (DeploymentModule module : appModule.getEjbModules()) {
+            final Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
+            for (final DeploymentModule module : appModule.getEjbModules()) {
                 modules.put(module.getModuleId(), module);
             }
-            for (DeploymentModule module : appModule.getClientModules()) {
+            for (final DeploymentModule module : appModule.getClientModules()) {
                 modules.put(module.getModuleId(), module);
             }
-            for (WebModule module : appModule.getWebModules()) {
+            for (final WebModule module : appModule.getWebModules()) {
                 final String contextRoot = contextRoot(properties, module.getJarLocation());
                 if (contextRoot != null) {
                     module.setContextRoot(contextRoot);
                 }
                 modules.put(module.getModuleId(), module);
             }
-            for (DeploymentModule module : appModule.getConnectorModules()) {
+            for (final DeploymentModule module : appModule.getConnectorModules()) {
                 modules.put(module.getModuleId(), module);
             }
 
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
                 String name = (String) entry.getKey();
                 if (name.startsWith(ALT_DD + "/")) {
                     name = name.substring(ALT_DD.length() + 1);
 
-                    DeploymentModule module;
-                    int slash = name.indexOf('/');
+                    final DeploymentModule module;
+                    final int slash = name.indexOf('/');
                     if (slash > 0) {
-                        String moduleId = name.substring(0, slash);
+                        final String moduleId = name.substring(0, slash);
                         name = name.substring(slash + 1);
                         module = modules.get(moduleId);
                     } else {
@@ -175,8 +198,8 @@ public class DeployerEjb implements Deployer {
                     }
 
                     if (module != null) {
-                        String value = (String) entry.getValue();
-                        File dd = new File(value);
+                        final String value = (String) entry.getValue();
+                        final File dd = new File(value);
                         if (dd.canRead()) {
                             module.getAltDDs().put(name, dd.toURI().toURL());
                         } else {
@@ -192,15 +215,20 @@ public class DeployerEjb implements Deployer {
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
             }
-            assembler.createApplication(appInfo);
 
+            assembler.createApplication(appInfo);
             saveDeployment(file, true);
 
             return appInfo;
+
         } catch (Throwable e) {
             // destroy the class loader for the failed application
             if (appModule != null) {
                 ClassLoaderUtil.destroyClassLoader(appModule.getJarLocation());
+            }
+
+            if (null != appInfo) {
+                ClassLoaderUtil.destroyClassLoader(appInfo);
             }
 
             LOGGER.error("Can't deploy " + inLocation, e);
@@ -219,7 +247,7 @@ public class DeployerEjb implements Deployer {
         }
     }
 
-    private synchronized void saveDeployment(final File file, boolean add) {
+    private synchronized void saveDeployment(final File file, final boolean add) {
         final Deployments deps = new Deployments();
         if (file.isDirectory()) {
             deps.setDir(file.getAbsolutePath());
@@ -258,7 +286,7 @@ public class DeployerEjb implements Deployer {
                     additionalDeployments.getDeployments().add(deps);
                 }
             } else {
-                Iterator<Deployments> it = additionalDeployments.getDeployments().iterator();
+                final Iterator<Deployments> it = additionalDeployments.getDeployments().iterator();
                 while (it.hasNext()) {
                     final Deployments current = it.next();
                     if (deps.getDir() != null && deps.getDir().equals(current.getDir())) {
@@ -268,7 +296,7 @@ public class DeployerEjb implements Deployer {
                         it.remove();
                         break;
                     } else { // exploded dirs
-                        String jar = deps.getFile();
+                        final String jar = deps.getFile();
                         if (jar != null && jar.length() > 3 && jar.substring(0, jar.length() - 4).equals(deps.getDir())) {
                             it.remove();
                             break;
@@ -285,7 +313,8 @@ public class DeployerEjb implements Deployer {
         }
     }
 
-    public void undeploy(String moduleId) throws UndeployException, NoSuchApplicationException {
+    @Override
+    public void undeploy(final String moduleId) throws UndeployException, NoSuchApplicationException {
         try {
             assembler.destroyApplication(moduleId);
         } catch (NoSuchApplicationException nsae) {
@@ -306,12 +335,13 @@ public class DeployerEjb implements Deployer {
         saveDeployment(new File(moduleId), false);
     }
 
-    private static String contextRoot(final Properties properties, final String jarPath) {
+    private String contextRoot(final Properties properties, final String jarPath) {
         return properties.getProperty("webapp." + jarPath + ".context-root");
     }
 
+    @Override
     public void reload(final String moduleId) {
-        for (AppInfo info : assembler.getDeployedApplications()) {
+        for (final AppInfo info : assembler.getDeployedApplications()) {
             if (info.path.equals(moduleId)) {
                 reload(info);
                 break;
