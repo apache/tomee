@@ -77,6 +77,7 @@
         <version>2.13</version>
         <configuration>
           <useFile>false</useFile>
+          <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
