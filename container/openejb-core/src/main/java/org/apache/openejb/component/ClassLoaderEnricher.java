@@ -29,7 +29,9 @@ public class ClassLoaderEnricher {
     }
 
     public void addUrl(final URL url) {
-        applicationURLs.add(url);
+        if (!applicationURLs.contains(url)) {
+            applicationURLs.add(url);
+        }
     }
 
     public void removeUrl(final URL url) {
