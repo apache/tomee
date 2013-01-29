@@ -61,9 +61,9 @@ public class ClassLoaderUtil {
     private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
     private static final UrlCache localUrlCache = new UrlCache();
 
-    public static void destroyClassLoader(final AppInfo info) {
-        destroyClassLoader(info.appId);
-        destroyClassLoader(info.path);
+    public static void destroyClassLoader(final String appId, final String appPath) {
+        destroyClassLoader(appId);
+        destroyClassLoader(appPath);
     }
 
     public static ClassLoader getContextClassLoader() {

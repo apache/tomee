@@ -228,7 +228,7 @@ public class DeployerEjb implements Deployer {
             }
 
             if (null != appInfo) {
-                ClassLoaderUtil.destroyClassLoader(appInfo);
+                ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
             }
 
             LOGGER.error("Can't deploy " + inLocation, e);
