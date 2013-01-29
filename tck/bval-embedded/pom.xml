@@ -88,6 +88,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.13</version>
         <configuration>
+		  <useFile>false</useFile>
+		  <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
