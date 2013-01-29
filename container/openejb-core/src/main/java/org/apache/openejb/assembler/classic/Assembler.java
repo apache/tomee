@@ -57,6 +57,7 @@ import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -123,6 +124,7 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
@@ -275,6 +277,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void installExtensions() {
+        try {
+            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(Assembler.class.getClassLoader())).getUrls();
+            EventHelper.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
+            return;
+        } catch (MalformedURLException e) {
+            // no-op
+        } catch (IOException e) {
+            // no-op
+        }
+
+        // if an error occured do it brutely
         EventHelper.installExtensions(new ResourceFinder("META-INF"));
     }
 
