@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import javax.ejb.EJB;
-import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -30,6 +29,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class TomEEContainerTest {
@@ -48,7 +50,7 @@ public class TomEEContainerTest {
 
     @Test
     public void testEjbIsNotNull() throws Exception {
-        Assert.assertNotNull(ejb);
+        assertNotNull(ejb);
     }
 
     @Test
@@ -69,7 +71,7 @@ public class TomEEContainerTest {
         os.close();
 
         String output = new String(os.toByteArray(), "UTF-8");
-        Assert.assertTrue(output.contains("Hello, OpenEJB"));
+        assertTrue(output.contains("Hello, OpenEJB"));
     }
 
 }
