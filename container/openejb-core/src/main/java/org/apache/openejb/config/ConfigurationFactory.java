@@ -281,8 +281,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(final boolean offline,
-                                final DynamicDeployer preAutoConfigDeployer,
-                                final OpenEjbConfiguration configuration) {
+                                   final DynamicDeployer preAutoConfigDeployer,
+                                   final OpenEjbConfiguration configuration) {
         this(offline, preAutoConfigDeployer);
         sys = configuration;
     }
@@ -323,6 +323,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static class ProxyBeanClassUpdate implements DynamicDeployer {
 
+        @SuppressWarnings("unchecked")
         @Override
         public AppModule deploy(final AppModule appModule) throws OpenEJBException {
             for (final EjbModule module : appModule.getEjbModules()) {
@@ -592,7 +593,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         if (autoDeploy.size() > 0) {
-            SystemInstance.get().addObserver(new AutoDeployer(this, autoDeploy));
+            final AutoDeployer autoDeployer = new AutoDeployer(this, autoDeploy);
+            SystemInstance.get().setComponent(AutoDeployer.class, autoDeployer);
+            SystemInstance.get().addObserver(autoDeployer);
         }
 
         return declaredAppsUrls;
@@ -1194,12 +1197,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * 4.  If this fails, check the hardcoded defaults for a default providerId using the supplied 'type'
      * 5.  If this fails, throw NoSuchProviderException
      *
-     * @param type
-     * @param serviceId
-     * @param declaredProperties
-     * @param providerId
-     * @param serviceType
-     * @return
+     * @param type               Class T
+     * @param serviceId          String
+     * @param declaredProperties Properties
+     * @param providerId         String
+     * @param serviceType        String
+     * @return ServiceInfo T
      * @throws org.apache.openejb.OpenEJBException
      *
      */

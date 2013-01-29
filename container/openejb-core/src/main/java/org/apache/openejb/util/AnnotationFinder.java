@@ -185,9 +185,10 @@ public class AnnotationFinder {
         return urlSet.getUrls();
     }
 
+    @SuppressWarnings("deprecation")
     private static List<String> file(final URL location) {
         final List<String> classNames = new ArrayList<String>();
-        File dir = null;
+        File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
         } catch (Exception e) {

@@ -592,7 +592,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (used.size() > 0) {
             String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
             for (final String id : used) {
-                logger.debug("createApplication.deploymentIdInUse", id);
+                logger.error("createApplication.deploymentIdInUse", id);
                 message += "\n    " + id;
             }
             throw new DuplicateDeploymentIdException(message);
@@ -832,7 +832,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-
             deployedApplications.put(appInfo.path, appInfo);
             systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo));
 
@@ -852,7 +851,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public List<BeanContext> initEjbs(final ClassLoader classLoader, final AppInfo appInfo, final AppContext appContext,
-                         final Set<Injection> injections, final List<BeanContext> allDeployments, final String webappId) throws OpenEJBException {
+                                         final Set<Injection> injections, final List<BeanContext> allDeployments, final String webappId) throws OpenEJBException {
         final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             boolean skip = false;
@@ -974,7 +973,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     if (container.getBeanContext(deployment.getDeploymentID()) == null) {
                         container.deploy(deployment);
                         if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                                && !deployment.isHidden()) {
+                            && !deployment.isHidden()) {
                             logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                         }
                         if (logger.isDebugEnabled()) {
@@ -995,7 +994,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     final Container container = deployment.getContainer();
                     container.start(deployment);
                     if (!((String) deployment.getDeploymentID()).endsWith(".Comp")
-                            && !deployment.isHidden()) {
+                        && !deployment.isHidden()) {
                         logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                     }
                 } catch (Throwable t) {
@@ -1039,10 +1038,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final MBeanServer server = LocalMBeanServer.get();
             try {
                 final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
-                        .set("application", id)
-                        .set("group", clazz.getPackage().getName())
-                        .set("name", clazz.getSimpleName())
-                        .build();
+                                            .set("application", id)
+                                            .set("group", clazz.getPackage().getName())
+                                            .set("name", clazz.getSimpleName())
+                                            .build();
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
@@ -1910,7 +1909,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // init cm if needed
             final Object eagerInit = unset.remove("eagerInit");
             if (eagerInit != null && eagerInit instanceof String && "true".equalsIgnoreCase((String) eagerInit)
-                            && connectionManager instanceof AbstractConnectionManager) {
+                && connectionManager instanceof AbstractConnectionManager) {
                 try {
                     ((AbstractConnectionManager) connectionManager).doStart();
                     try {
@@ -2328,14 +2327,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         public void afterApplicationCreated(
-                @Observes
-                final AssemblerAfterApplicationCreated event) {
+                                               @Observes
+                                               final AssemblerAfterApplicationCreated event) {
             delegate.afterApplicationCreated(event.getApp());
         }
 
         public void beforeApplicationDestroyed(
-                @Observes
-                final AssemblerBeforeApplicationDestroyed event) {
+                                                  @Observes
+                                                  final AssemblerBeforeApplicationDestroyed event) {
             delegate.beforeApplicationDestroyed(event.getApp());
         }
 

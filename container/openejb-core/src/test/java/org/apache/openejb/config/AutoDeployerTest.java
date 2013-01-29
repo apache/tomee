@@ -41,8 +41,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @version $Rev$ $Date$
@@ -51,16 +49,12 @@ public class AutoDeployerTest extends Assert {
 
     @Before
     @After
-    public void before() {
+    public void beforeAndAfter() {
         final AutoDeployer autoDeployer = SystemInstance.get().getComponent(AutoDeployer.class);
         if (autoDeployer != null) {
             autoDeployer.stop();
         }
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            //Ignore
-        }
+
         SystemInstance.reset();
     }
 
@@ -124,7 +118,7 @@ public class AutoDeployerTest extends Assert {
 
     @Test
     public void testSpaces() throws Exception {
-        final File tmpdir = new File(Files.tmpdir() , "with spaces");
+        final File tmpdir = new File(Files.tmpdir(), "with spaces");
         final File apps = Files.mkdir(tmpdir, "my apps");
         final File conf = Files.mkdir(tmpdir, "conf");
 

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 public final class EventHelper {
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, EventHelper.class);
 
     private EventHelper() {
@@ -32,7 +33,7 @@ public final class EventHelper {
     public static void installExtensions(final ResourceFinder finder) {
         try {
             final List<Class<?>> classes = finder.findAvailableClasses("org.apache.openejb.extension");
-            for (Class<?> clazz : classes) {
+            for (final Class<?> clazz : classes) {
                 try {
                     final Object object = clazz.newInstance();
                     SystemInstance.get().addObserver(object);
