@@ -46,7 +46,15 @@ public class UpdatableSessionContextManager extends SessionContextManager {
     }
 
     public void updateSessionIdMapping(final String oldId, final String newId) {
+        if (oldId == null) {
+            return;
+        }
+
         final SessionContext sc = getSessionContextWithSessionId(oldId);
+        if (sc == null) {
+            return;
+        }
+
         addNewSessionContext(newId, sc);
         contextById.remove(oldId);
     }
