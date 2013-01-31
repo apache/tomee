@@ -336,7 +336,6 @@
         <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
-        <module>osgi</module>
       </modules>
     </profile>
     <profile>
@@ -404,7 +403,6 @@
         <module>assembly</module>
         <module>utils</module>
         <module>tomee</module>
-        <module>osgi</module>
       </modules>
       <build>
         <plugins>
