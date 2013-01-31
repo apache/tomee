@@ -18,13 +18,24 @@ package org.apache.openejb.async;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.DaemonThreadFactory;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.ExecutorBuilder;
 
 import javax.ejb.EJBException;
 import javax.ejb.NoSuchEJBException;
 import java.rmi.NoSuchObjectException;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,10 +45,12 @@ public class AsynchronousPool {
 
     private final BlockingQueue<Runnable> blockingQueue;
     private final ExecutorService executor;
+    private final Duration awaitDuration;
 
-    public AsynchronousPool(final ThreadPoolExecutor threadPoolExecutor) {
+    public AsynchronousPool(final ThreadPoolExecutor threadPoolExecutor, final Duration awaitDuration) {
         this.blockingQueue = threadPoolExecutor.getQueue();
         this.executor = threadPoolExecutor;
+        this.awaitDuration = awaitDuration;
     }
 
     public static AsynchronousPool create(final AppContext appContext) {
@@ -47,7 +60,11 @@ public class AsynchronousPool {
                 .size(3)
                 .threadFactory(new DaemonThreadFactory("@Asynchronous", appContext.getId()));
 
-        return new AsynchronousPool(builder.build(appContext.getOptions()));
+        final Options options = appContext.getOptions();
+        final AsynchronousPool asynchronousPool = new AsynchronousPool(
+                builder.build(options),
+                options.get("AsynchronousPool.ShutdownWaitDuration", new Duration(1, TimeUnit.MINUTES)));
+        return asynchronousPool;
     }
 
     public Object invoke(final Callable<Object> callable, final boolean isVoid) throws Throwable {
@@ -62,6 +79,15 @@ public class AsynchronousPool {
             return new FutureAdapter<Object>(future, asynchronousCancelled);
         } catch (RejectedExecutionException e) {
             throw new EJBException("fail to allocate internal resource to execute the target task", e);
+        }
+    }
+
+    public void stop() {
+        executor.shutdown();
+        try { // shouldn't really wait
+            executor.awaitTermination(awaitDuration.getTime(), awaitDuration.getUnit());
+        } catch (InterruptedException e) {
+            // no-op
         }
     }
 
