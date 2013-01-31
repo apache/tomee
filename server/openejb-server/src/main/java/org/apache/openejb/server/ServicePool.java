@@ -52,7 +52,7 @@ public class ServicePool extends ServerServiceFilter {
          * a slot for up to 10 seconds before rejecting the runnable.
          * If a thread remains idle for more than 1 minute then it will be removed.
          */
-        this(next, new Options(properties).get("threadsCore", 10), new Options(properties).get("threads", 150), new Options(properties).get("queue", 0), new Options(properties).get("block", false), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
+        this(next, new Options(properties).get("threadsCore", 10), new Options(properties).get("threads", 150), new Options(properties).get("queue", 0), new Options(properties).get("block", true), new Options(properties).get("keepAliveTime", KEEP_ALIVE_TIME));
     }
 
     public ServicePool(final ServerService next, final int threads) {
@@ -99,12 +99,12 @@ public class ServicePool extends ServerServiceFilter {
 
             @Override
             public Thread newThread(final Runnable r) {
-                final Thread t = new Thread(r, "OpenEJB." + getName() + "." + i.incrementAndGet());
+                final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
                 t.setDaemon(true);
                 t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(final Thread t, final Throwable e) {
-                        log.error("Uncaught error in: " + t.getName(), e);
+                        log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
                     }
                 });
 
@@ -126,7 +126,8 @@ public class ServicePool extends ServerServiceFilter {
                 }
 
                 if (log.isWarningEnabled()) {
-                    log.warning(String.format("ServicePool with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s", c, t, q, r));
+                    log.warning(String.format("ServicePool '" + ServicePool.this.getName() + "' with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s"
+                                              + "\nConsider increasing the 'threadCore','threads' and 'queue' size properties.", c, t, q, r));
                 }
 
                 boolean offer = false;
@@ -137,15 +138,21 @@ public class ServicePool extends ServerServiceFilter {
                 }
 
                 if (!offer) {
-                    log.error("ServicePool failed to run asynchronous process: " + r);
 
                     if (block) {
                         try {
                             //Last ditch effort to run the process in the current thread
                             r.run();
+
+                            log.warning("ServicePool '" + ServicePool.this.getName() + "' forced execution on the current server thread: " + r
+                                        + "\nIt is highly recommended that the service 'threadCore','threads' and 'queue' size properties are increased!");
+
                         } catch (Throwable e) {
-                            log.error("ServicePool failed to run synchronous process: " + r);
+                            log.error("ServicePool '" + ServicePool.this.getName() + "' failed to run a process in the current server thread: " + r);
                         }
+                    } else {
+                        log.error("ServicePool '" + ServicePool.this.getName() + "' rejected asynchronous process: " + r
+                                  + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
                     }
                 }
             }
@@ -154,7 +161,7 @@ public class ServicePool extends ServerServiceFilter {
         SystemInstance.get().setComponent(ServicePool.class, this);
 
         if (log.isInfoEnabled()) {
-            log.info(String.format("Created ServicePool with (%1$s) core threads, limited to (%2$s) threads with a queue of (%3$s)", c, t, q));
+            log.info(String.format("Created ServicePool '%1$s' with (%2$s) core threads, limited to (%3$s) threads with a queue of (%4$s)", getName(), c, t, q));
         }
     }
 
@@ -174,7 +181,7 @@ public class ServicePool extends ServerServiceFilter {
 
             @Override
             public String toString() {
-                return "ServicePool.Socket:" + socket.getInetAddress();
+                return "ServicePool." + ServicePool.this.getName() + ".Socket:" + socket.getInetAddress();
             }
 
             @Override
@@ -193,21 +200,21 @@ public class ServicePool extends ServerServiceFilter {
                     ServicePool.super.service(socket);
 
                 } catch (SecurityException e) {
-                    final String msg = "ServicePool: Security error: " + e.getMessage();
+                    final String msg = "ServicePool '" + ServicePool.this.getName() + "': Security error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.error(msg, e);
                     } else {
                         log.error(msg + " - Debug for StackTrace");
                     }
                 } catch (IOException e) {
-                    final String msg = "ServicePool: Unexpected IO error: " + e.getMessage();
+                    final String msg = "ServicePool '" + ServicePool.this.getName() + "': Unexpected IO error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.debug(msg, e);
                     } else {
                         log.warning(msg + " - Debug for StackTrace");
                     }
                 } catch (Throwable e) {
-                    final String msg = "ServicePool: Unexpected error: " + e.getMessage();
+                    final String msg = "ServicePool '" + ServicePool.this.getName() + "': Unexpected error: " + e.getMessage();
                     if (log.isDebugEnabled()) {
                         log.error(msg, e);
                     } else {
@@ -223,11 +230,9 @@ public class ServicePool extends ServerServiceFilter {
                             socket.close();
                         }
                     } catch (Throwable t) {
-                        final String msg = "ServicePool: Error closing socket";
+
                         if (log.isDebugEnabled()) {
-                            log.debug(msg, t);
-                        } else {
-                            log.warning(msg);
+                            log.debug("ServicePool '" + ServicePool.this.getName() + "': Error closing socket", t);
                         }
                     }
 
@@ -310,7 +315,7 @@ public class ServicePool extends ServerServiceFilter {
             getThreadPool().setMaximumPoolSize(maximumPoolSize);
 
             if (log.isInfoEnabled()) {
-                log.info(String.format("Set ServicePool maximum threads to (%1$s)", maximumPoolSize));
+                log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' maximum threads to (%1$s)", maximumPoolSize));
             }
         }
 
@@ -319,7 +324,7 @@ public class ServicePool extends ServerServiceFilter {
             getThreadPool().setCorePoolSize(corePoolSize);
 
             if (log.isInfoEnabled()) {
-                log.info(String.format("Set ServicePool core threads to (%1$s)", corePoolSize));
+                log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' core threads to (%1$s)", corePoolSize));
             }
         }
 
@@ -328,7 +333,7 @@ public class ServicePool extends ServerServiceFilter {
             getThreadPool().allowCoreThreadTimeOut(value);
 
             if (log.isInfoEnabled()) {
-                log.info(String.format("Set ServicePool allow core thread timeout to (%1$s)", value));
+                log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' allow core thread timeout to (%1$s)", value));
             }
         }
 
@@ -337,7 +342,7 @@ public class ServicePool extends ServerServiceFilter {
             getThreadPool().setKeepAliveTime(time, TimeUnit.NANOSECONDS);
 
             if (log.isInfoEnabled()) {
-                log.info(String.format("Set ServicePool keep alive time to (%1$s) nanoseconds", time));
+                log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' keep alive time to (%1$s) nanoseconds", time));
             }
         }
     }
