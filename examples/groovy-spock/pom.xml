@@ -48,6 +48,11 @@
             <artifactId>groovy-eclipse-compiler</artifactId>
             <version>2.7.0-01</version>
           </dependency>
+		  <dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>org.eclipse.core.contenttype</artifactId>
+			<version>3.4.100.v20100505-1235</version>
+		  </dependency>
         </dependencies>
       </plugin>
       <plugin>
