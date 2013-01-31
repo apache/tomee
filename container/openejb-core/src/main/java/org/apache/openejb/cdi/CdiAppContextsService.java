@@ -252,6 +252,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         //Clear thread locals
+        conversationContext.set(null);
+        conversationContext.remove();
+        sessionContext.set(null);
+        sessionContext.remove();
         requestContext.set(null);
         requestContext.remove();
 
