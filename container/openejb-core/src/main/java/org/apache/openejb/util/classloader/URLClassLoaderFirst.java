@@ -215,7 +215,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (apache.startsWith("jasper.")) return true;
                 if (apache.startsWith("tomcat.")) return true;
                 if (apache.startsWith("el.")) return true;
-                if (apache.startsWith("jsp")) return true;
+                // if (apache.startsWith("jsp")) return true; // precompiled jsp have to be loaded from the webapp
                 if (apache.startsWith("naming")) return true;
                 if (apache.startsWith("taglibs.")) return true;
 
