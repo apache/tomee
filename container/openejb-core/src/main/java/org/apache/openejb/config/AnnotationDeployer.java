@@ -1511,6 +1511,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if ((pu.isExcludeUnlistedClasses() == null || !pu.isExcludeUnlistedClasses())
                                 && "true".equalsIgnoreCase(pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN))) {
                             final String packageName = pu.getProperties().getProperty(OPENEJB_JPA_AUTO_SCAN_PACKAGE);
+                            String[] packageNames = null;
+                            if (packageName != null) {
+                                packageNames = packageName.split(",");
+                            }
 
                             // no need of meta currently since JPA providers doesn't support it
                             final List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -1520,8 +1524,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                             final List<String> existingClasses = pu.getClazz();
                             for (Class<?> clazz : classes) {
                                 final String name = clazz.getName();
-                                if ((packageName == null || name.startsWith(packageName)) && !existingClasses.contains(name)) {
+                                if (existingClasses.contains(name)) {
+                                    continue;
+                                }
+
+                                if (packageNames == null) {
                                     pu.getClazz().add(name);
+                                } else {
+                                    for (String pack : packageNames) {
+                                        if (name.startsWith(pack)) {
+                                            pu.getClazz().add(name);
+                                        }
+                                    }
                                 }
                             }
                             pu.setScanned(true);
