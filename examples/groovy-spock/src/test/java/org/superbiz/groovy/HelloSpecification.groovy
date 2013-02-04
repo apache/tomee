@@ -29,23 +29,25 @@ import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
 class HelloSpecification extends spock.lang.Specification {
+
     @Inject
-    private Hello hello
+    private org.superbiz.groovy.Hello hello
 
     @Deployment
     def static WebArchive "create archive"() {
         ShrinkWrap.create(WebArchive.class)
-            .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
-            .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-            .addClasses(Hello.class)
+                  .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
+                  .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                  .addClasses(Hello.class)
     }
 
     def "Hello.hi() method should return 'hi'"() {
         when:
-            assertNotNull hello
+        println("Checking hello instance: " + hello)
+        assertNotNull hello
 
         then:
-            println("Compare 'hi' to '" + hello.hi() + "'")
-            assertEquals "hi", hello.hi()
+        println("Comparing 'hi' to '" + hello.hi() + "'")
+        assertEquals "hi", hello.hi()
     }
 }
