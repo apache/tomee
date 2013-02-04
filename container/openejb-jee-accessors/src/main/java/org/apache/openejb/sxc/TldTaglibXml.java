@@ -19,7 +19,10 @@ package org.apache.openejb.sxc;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.TldTaglib$JAXB;
 import org.apache.openejb.loader.IO;
+import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.StreamReaderDelegate;
 import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +40,8 @@ public class TldTaglibXml {
     public static TldTaglib unmarshal(URL url) throws Exception {
         final InputStream inputStream = IO.read(url);
         try {
-            return Sxc.unmarshalJavaee(new TldTaglib$JAXB(), inputStream);
+            final XMLStreamReader filter = new TaglibNamespaceFilter(Sxc.prepareReader(inputStream));
+            return Sxc.unmarhsal(new TldTaglib$JAXB(), new XoXMLStreamReaderImpl(filter));
         } finally {
             IO.close(inputStream);
         }
@@ -45,5 +49,37 @@ public class TldTaglibXml {
 
     public static void marshal(TldTaglib taglib, OutputStream outputStream) throws Exception {
         Sxc.marshal(new TldTaglib$JAXB(), taglib, new StreamResult(outputStream));
+    }
+
+    public static class TaglibNamespaceFilter extends StreamReaderDelegate {
+        public TaglibNamespaceFilter(final XMLStreamReader xmlStreamReader) {
+            super(xmlStreamReader);
+        }
+
+        @Override
+        public String getLocalName() {
+            return fixLocalName(super.getLocalName());
+        }
+
+        protected String fixLocalName(final String localName) {
+            if (localName.equals("tlibversion")) {
+                return "tlib-version";
+            } else if (localName.equals("jspversion")) {
+                return "jsp-version";
+            } else if (localName.equals("shortname")) {
+                return "short-name";
+            } else if (localName.equals("tagclass")) {
+                return "tag-class";
+            } else if (localName.equals("teiclass")) {
+                return "tei-class";
+            } else if (localName.equals("bodycontent")) {
+                return "body-content";
+            } else if (localName.equals("jspversion")) {
+                return "jsp-version";
+            } else if (localName.equals("info")) {
+                return "description";
+            }
+            return localName;
+        }
     }
 }
