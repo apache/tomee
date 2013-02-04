@@ -64,6 +64,9 @@ public class StickyConnectionStrategyTest {
         logger.addHandler(consoleHandler);
         logger.setLevel(Level.FINER);
         logger.setUseParentHandlers(false);
+		
+		//Set a high socket timeout for tests
+		System.setProperty("openejb.client.connection.socket.timeout", System.getProperty("openejb.client.connection.socket.timeout", "5000");
     }
 
     @Test
