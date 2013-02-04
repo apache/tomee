@@ -1287,11 +1287,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
             return;
         } else {
-            final AsynchronousPool pool = appContext.get(AsynchronousPool.class);
-            if (pool != null) {
-                pool.stop();
-            }
-
             final WebBeansContext webBeansContext = appContext.getWebBeansContext();
             if (webBeansContext != null) {
                 final ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -1435,6 +1430,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                     }
                 }
+        }
+
+        // stop this executor only now since @PreDestroy can trigger some stop events
+        final AsynchronousPool pool = appContext.get(AsynchronousPool.class);
+        if (pool != null) {
+            pool.stop();
         }
 
         for (final String sId : moduleIds) {
