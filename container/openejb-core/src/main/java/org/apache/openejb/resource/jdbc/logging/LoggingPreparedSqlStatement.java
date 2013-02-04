@@ -32,10 +32,12 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
     private final PreparedStatement delegate;
     private final String sql;
     private final List<Parameter> parameters = new ArrayList<Parameter>();
+    private int parameterIndex;
 
     public LoggingPreparedSqlStatement(final PreparedStatement result, final String query) {
         delegate = result;
         sql= query;
+        parameterIndex = 0;
     }
 
     @Override
@@ -46,39 +48,72 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
         final TimeWatcherExecutor.TimerWatcherResult result = TimeWatcherExecutor.execute(method, delegate, args, execute);
 
         if (mtdName.startsWith("set") && args.length >= 2 && (args[0].getClass().equals(Integer.TYPE) || args[0].getClass().equals(Integer.class))) {
-            parameters.add(new Parameter(mtdName.substring(3), (Integer) args[0], args[1]));
+            parameters.add(new Parameter(mtdName.substring(3), parameterIndex, (Integer) args[0], args[1]));
         } else if (execute) {
             String str = sql;
             if (str.contains("?")) {
                 Collections.sort(parameters);
-                for (Parameter param : parameters) {
-                    try {
-                        str = str.replaceFirst("\\?", param.value.toString());
-                    } catch (Exception e) {
-                        str = str.replaceFirst("\\?", param.value.getClass().getName());
+                int lastBatch = 0;
+                for (int i = 0; i < parameters.size(); i++) {
+                    final Parameter param = parameters.get(i);
+                    if (str.contains("?")) {
+                        try {
+                            str = str.replaceFirst("\\?", param.value.toString());
+                        } catch (Exception e) {
+                            str = str.replaceFirst("\\?", param.value.getClass().getName());
+                        }
+                        lastBatch = param.batchIndex;
+                    } else {
+                        if (lastBatch != param.batchIndex) {
+                            str += ", (";
+                            lastBatch = param.batchIndex;
+                        }
+
+                        try {
+                            str += param.value.toString();
+                        } catch (Exception e) {
+                            str += param.value.getClass().getName();
+                        }
+
+                        if (i == parameters.size() - 1 || parameters.get(i + 1).batchIndex != lastBatch) {
+                            str += ")";
+                        } else {
+                            str += ",";
+                        }
                     }
                 }
             }
             LOGGER.info(format(str, result.getDuration()));
+        } else if ("clearParameters".equals(mtdName)) {
+            parameters.clear();
+            parameterIndex = 0;
+        } else if ("addBatch".equals(mtdName)) {
+            parameterIndex++;
         }
 
         return result.getResult();
     }
 
     protected static class Parameter implements Comparable<Parameter> {
-        private String type;
-        private int key;
-        private Object value;
+        private final String type;
+        private final int batchIndex;
+        private final int key;
+        private final Object value;
 
-        public Parameter(String type, int key, Object value) {
+        public Parameter(String type, int batchIdx, int key, Object value) {
             this.type = type;
+            this.batchIndex = batchIdx;
             this.key = key;
             this.value = value;
         }
 
         @Override
         public int compareTo(final Parameter o) {
-            return key - o.key;
+            int comp = batchIndex - o.batchIndex;
+            if (comp == 0) {
+                return key - o.key;
+            }
+            return comp;
         }
 
         @Override
