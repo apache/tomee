@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.resource.quartz;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -24,6 +25,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.listeners.SchedulerListenerSupport;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
@@ -33,166 +35,236 @@ import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @version $Rev$ $Date$
  */
 public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter {
 
-    private static Exception ex = null;
-    private Scheduler scheduler;
-    private BootstrapContext bootstrapContext;
-    private Thread startThread;
+    public static final String OPENEJB_QUARTZ_TIMEOUT = "openejb.quartz.timeout";
 
-    public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+    //Start and stop may be called from different threads so use atomics
+    private final AtomicReference<Exception> ex = new AtomicReference<Exception>();
+    private final AtomicReference<Scheduler> scheduler = new AtomicReference<Scheduler>();
+    private final AtomicReference<BootstrapContext> bootstrapContext = new AtomicReference<BootstrapContext>();
+    private final AtomicReference<Thread> startThread = new AtomicReference<Thread>();
 
-        this.bootstrapContext = bootstrapContext;
+    @Override
+    public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
 
-        startThread = new Thread("Quartz Scheduler Start") {
+        if (null != this.bootstrapContext.getAndSet(bootstrapContext)) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("QuartzResourceAdapter is already starting");
+            return;
+        }
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        long timeout = SystemInstance.get().getOptions().get(QuartzResourceAdapter.OPENEJB_QUARTZ_TIMEOUT, 10000L);
+
+        if (timeout < 1000L) {
+            timeout = 1000L;
+        }
+
+        if (timeout > 60000L) {
+            timeout = 60000L;
+        }
+
+        //Allow org.quartz.InterruptableJob implementors to be interrupted on shutdown
+        System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN
+                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true"));
+        System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT
+                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true"));
+
+        startThread.set(new Thread("Quartz Scheduler Start") {
 
             @Override
             public void run() {
 
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
-                synchronized (QuartzResourceAdapter.this) {
-
-                    try {
-                        scheduler = StdSchedulerFactory.getDefaultScheduler();
-                    } catch (Exception e) {
-                        ex = e;
-                        return;
-                    }
+                try {
+                    QuartzResourceAdapter.this.scheduler.set(StdSchedulerFactory.getDefaultScheduler());
+                } catch (Exception e) {
+                    QuartzResourceAdapter.this.ex.set(e);
+                    return;
                 }
 
                 try {
-                    scheduler.start();
+                    QuartzResourceAdapter.this.scheduler.get().getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
+                        @Override
+                        public void schedulerStarted() {
+                            signal.countDown();
+                        }
+                    });
+
+                    QuartzResourceAdapter.this.scheduler.get().start();
+
                 } catch (Exception e) {
-                    ex = e;
+                    QuartzResourceAdapter.this.ex.set(e);
+                    signal.countDown();
                 }
             }
-        };
+        });
 
-        startThread.setDaemon(true);
-        startThread.start();
+        startThread.get().setDaemon(true);
+        startThread.get().start();
 
+        boolean started = false;
         try {
-            startThread.join(5000);
+            started = signal.await(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            //Ignore
         }
 
-
-        if (null != ex) {
-            throw new ResourceAdapterInternalException("Failed to create Quartz Scheduler", ex);
+        final Exception exception = ex.get();
+        if (null != exception) {
+            final String err = "Error creating Quartz Scheduler";
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error(err, exception);
+            throw new ResourceAdapterInternalException(err, exception);
         }
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Started Quartz Scheduler");
+        if (started) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Started Quartz Scheduler");
+        } else {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Failed to start Quartz Scheduler within defined timeout, status unknown");
+        }
     }
 
     public Scheduler getScheduler() {
-        return scheduler;
+        return scheduler.get();
     }
 
     public BootstrapContext getBootstrapContext() {
-        return bootstrapContext;
+        return bootstrapContext.get();
     }
 
+    @Override
     public void stop() {
 
-        synchronized (this) {
+        final Scheduler s = scheduler.getAndSet(null);
 
-            if (null != scheduler) {
+        if (null != s) {
 
-                if (startThread.isAlive()) {
-                    startThread.interrupt();
-                }
+            if (null != startThread.get()) {
+                startThread.get().interrupt();
+            }
 
-                Thread stopThread = new Thread("Quartz Scheduler Requested Stop") {
+            long timeout = SystemInstance.get().getOptions().get(QuartzResourceAdapter.OPENEJB_QUARTZ_TIMEOUT, 10000L);
 
-                    @Override
-                    public void run() {
-                        try {
-                            scheduler.shutdown(true);
-                        } catch (Exception e) {
-                            ex = e;
-                        }
-                    }
-                };
+            if (timeout < 1000L) {
+                timeout = 1000L;
+            }
 
-                stopThread.setDaemon(true);
-                stopThread.start();
+            if (timeout > 60000L) {
+                timeout = 60000L;
+            }
 
-                try {
-                    //Block for a maximum of 5 seconds waiting for this thread to die.
-                    stopThread.join(5000);
-                } catch (InterruptedException ie) {
-                    //Ignore
-                }
+            final CountDownLatch shutdownWait = new CountDownLatch(1);
 
-                try {
-                    if (!scheduler.isShutdown()) {
+            Thread stopThread = new Thread("Quartz Scheduler Requested Stop") {
 
-                        stopThread = new Thread("Quartz Scheduler Forced Stop") {
+                @Override
+                public void run() {
+                    try {
+                        s.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
 
                             @Override
-                            public void run() {
-                                try {
-                                    //Try to force a shutdown
-                                    scheduler.shutdown(false);
-                                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
-                                } catch (Exception e) {
-                                    ex = e;
-                                }
+                            public void schedulerShutdown() {
+                                shutdownWait.countDown();
                             }
-                        };
+                        });
 
-                        stopThread.setDaemon(true);
-                        stopThread.start();
+                        //Shutdown, but give running jobs a chance to complete.
+                        //User scheduled jobs should really implement InterruptableJob
+                        s.shutdown(true);
+                    } catch (Exception e) {
+                        QuartzResourceAdapter.this.ex.set(e);
                     }
-                } catch (Exception e) {
-                    ex = e;
                 }
+            };
+
+            stopThread.setDaemon(true);
+            stopThread.start();
+
+            boolean stopped = false;
+            try {
+                stopped = shutdownWait.await(timeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                //Ignore
+            }
+
+            try {
+                if (!stopped || !s.isShutdown()) {
+
+                    stopThread = new Thread("Quartz Scheduler Forced Stop") {
+
+                        @Override
+                        public void run() {
+                            try {
+                                //Force a shutdown without waiting for jobs to complete.
+                                s.shutdown(false);
+                                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
+                            } catch (Exception e) {
+                                QuartzResourceAdapter.this.ex.set(e);
+                            }
+                        }
+                    };
+
+                    stopThread.setDaemon(true);
+                    stopThread.start();
+
+                    try {
+                        //Give the forced shutdown a chance to complete
+                        stopThread.join(timeout);
+                    } catch (InterruptedException e) {
+                        //Ignore
+                    }
+                }
+            } catch (Exception e) {
+                ex.set(e);
             }
         }
 
-        this.bootstrapContext = null;
+        this.bootstrapContext.set(null);
 
-        if (null != ex) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Error stopping Quartz Scheduler", ex);
-            return;
+        if (null != ex.get()) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Error stopping Quartz Scheduler", ex.get());
+        } else {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped Quartz Scheduler");
         }
-
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped Quartz Scheduler");
     }
 
-    public void endpointActivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) throws ResourceException {
+    @Override
+    public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) throws ResourceException {
 
-        if (null == scheduler) {
+        final Scheduler s = scheduler.get();
+        if (null == s) {
             throw new ResourceException("Quartz Scheduler is not available");
         }
 
         try {
 
-            JobSpec spec = (JobSpec) activationSpec;
+            final JobSpec spec = (JobSpec) activationSpec;
 
-            MessageEndpoint endpoint = messageEndpointFactory.createEndpoint(null);
+            final MessageEndpoint endpoint = messageEndpointFactory.createEndpoint(null);
             spec.setEndpoint(endpoint);
 
-            Job job = (Job) endpoint;
+            final Job job = (Job) endpoint;
 
-            JobDataMap jobDataMap = spec.getDetail().getJobDataMap();
+            final JobDataMap jobDataMap = spec.getDetail().getJobDataMap();
             jobDataMap.put(Data.class.getName(), new Data(job));
 
-            scheduler.scheduleJob(spec.getDetail(), spec.getTrigger());
+            s.scheduleJob(spec.getDetail(), spec.getTrigger());
         } catch (SchedulerException e) {
             throw new ResourceException("Failed to schedule job", e);
         }
     }
 
-    public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
+    @Override
+    public void endpointDeactivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec) {
 
-        if (null == scheduler) {
+        final Scheduler s = scheduler.get();
+        if (null == s) {
             throw new IllegalStateException("Quartz Scheduler is not available");
         }
 
@@ -200,7 +272,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
 
         try {
             spec = (JobSpec) activationSpec;
-            scheduler.deleteJob(spec.jobKey());
+            s.deleteJob(spec.jobKey());
 
         } catch (SchedulerException e) {
             throw new IllegalStateException("Failed to delete job", e);
@@ -215,24 +287,25 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
 
         private static Method method = null;
 
-        public void execute(JobExecutionContext execution) throws JobExecutionException {
+        @Override
+        public void execute(final JobExecutionContext execution) throws JobExecutionException {
 
             MessageEndpoint endpoint = null;
+            JobExecutionException ex = null;
 
             try {
 
-                JobDataMap jobDataMap = execution.getJobDetail().getJobDataMap();
+                final JobDataMap jobDataMap = execution.getJobDetail().getJobDataMap();
 
-                Data data = Data.class.cast(jobDataMap.get(Data.class.getName()));
+                final Data data = Data.class.cast(jobDataMap.get(Data.class.getName()));
 
-                Job job = data.job;
-
-                endpoint = (MessageEndpoint) job;
+                final Job job = data.job;
 
                 if (null == method) {
-                    method = Job.class.getMethod("execute", JobExecutionContext.class);
+                    method = job.getClass().getMethod("execute", JobExecutionContext.class);
                 }
 
+                endpoint = (MessageEndpoint) job;
                 endpoint.beforeDelivery(method);
 
                 job.execute(execution);
@@ -240,18 +313,22 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             } catch (ResourceException e) {
-                throw new JobExecutionException(e);
+                ex = new JobExecutionException(e);
             } catch (Throwable t) {
-                throw new JobExecutionException(new Exception(t));
+                ex = new JobExecutionException(new Exception(t));
             } finally {
 
                 if (null != endpoint) {
                     try {
                         endpoint.afterDelivery();
                     } catch (ResourceException e) {
-                        throw new JobExecutionException(e);
+                        ex = new JobExecutionException(e);
                     }
                 }
+            }
+
+            if (null != ex) {
+                throw ex;
             }
         }
     }
@@ -265,12 +342,13 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
 
         private final Job job;
 
-        private Data(Job job) {
+        private Data(final Job job) {
             this.job = job;
         }
     }
 
-    public XAResource[] getXAResources(ActivationSpec[] activationSpecs) throws ResourceException {
+    @Override
+    public XAResource[] getXAResources(final ActivationSpec[] activationSpecs) throws ResourceException {
         return new XAResource[0];
     }
 }
