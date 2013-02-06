@@ -59,7 +59,15 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
         if (currentListeners.size() == 1 && currentListeners.iterator().next() == TomEEClusterListener.INSTANCE) {
             currentListeners.clear();
         }
+
+        // else force the new cluster listener
+        for (ClusterListener clusterListener : currentListeners) {
+            clusterListener.setCluster(this);
+        }
+
         super.checkDefaults();
         addClusterListener(TomEEClusterListener.INSTANCE);
+
+
     }
 }
