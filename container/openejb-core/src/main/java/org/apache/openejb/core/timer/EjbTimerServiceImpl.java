@@ -331,7 +331,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
 
             final CountDownLatch shutdownWait = new CountDownLatch(1);
-            final AtomicReference<Exception> ex = new AtomicReference<Exception>();
+            final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 
             String n = "Unknown";
             try {
@@ -358,8 +358,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         //Shutdown, but give running jobs a chance to complete.
                         //User scheduled jobs should really implement InterruptableJob
                         s.shutdown(true);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         ex.set(e);
+                        shutdownWait.countDown();
                     }
                 }
             };
@@ -385,7 +386,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                 //Force a shutdown without waiting for jobs to complete.
                                 s.shutdown(false);
                                 log.warning("Forced " + name + " shutdown - Jobs may be incomplete");
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 ex.set(e);
                             }
                         }
@@ -401,7 +402,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         //Ignore
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 ex.set(e);
             }
 
