@@ -31,11 +31,6 @@ public class StartTomEEMojo extends UpdatableTomEEMojo {
     }
 
     @Override
-    public void run() {
-        super.run();
-    }
-
-    @Override
     protected boolean getWaitTomEE() {
         return false;
     }

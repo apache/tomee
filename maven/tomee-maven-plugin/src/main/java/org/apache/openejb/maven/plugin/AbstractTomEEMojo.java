@@ -208,6 +208,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.keep-server-xml", defaultValue = "false")
     protected boolean keepServerXmlAsthis;
 
+    @Parameter(property = "tomee-plugin.check-started", defaultValue = "false")
+    protected boolean checkStarted;
+
     /**
      * The current user system settings for use in Maven.
      */
@@ -652,7 +655,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
-        server.start(strings, getCmd(), false);
+        server.start(strings, getCmd(), checkStarted);
     }
 
     protected void addShutdownHooks(final RemoteServer server) {
