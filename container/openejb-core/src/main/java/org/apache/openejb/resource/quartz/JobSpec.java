@@ -38,7 +38,7 @@ import java.util.TimeZone;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public final class JobSpec implements ActivationSpec {
 
     private MessageEndpoint endpoint;
@@ -67,7 +67,7 @@ public final class JobSpec implements ActivationSpec {
         return triggerName;
     }
 
-    public void setTriggerName(String s) {
+    public void setTriggerName(final String s) {
         triggerName = s;
     }
 
@@ -75,7 +75,7 @@ public final class JobSpec implements ActivationSpec {
         return triggerGroup;
     }
 
-    public void setTriggerGroup(String s) {
+    public void setTriggerGroup(final String s) {
         triggerGroup = s;
     }
 
@@ -85,13 +85,13 @@ public final class JobSpec implements ActivationSpec {
         return jobName;
     }
 
-    public void setJobName(String s) {
+    public void setJobName(final String s) {
         jobName = s;
     }
 
     // -- Job Group
 
-    public void setJobGroup(String s) {
+    public void setJobGroup(final String s) {
         jobGroup = s;
     }
 
@@ -105,13 +105,13 @@ public final class JobSpec implements ActivationSpec {
         return description;
     }
 
-    public void setDescription(String s) {
+    public void setDescription(final String s) {
         description = s;
     }
 
     // -- Recoverable
 
-    public void setRequestsRecovery(boolean b) {
+    public void setRequestsRecovery(final boolean b) {
         recoverable = b;
     }
 
@@ -125,13 +125,13 @@ public final class JobSpec implements ActivationSpec {
         return durable;
     }
 
-    public void setDurable(boolean b) {
+    public void setDurable(final boolean b) {
         durable = b;
     }
 
     // -- Calendar name
 
-    public void setCalendarName(String s) {
+    public void setCalendarName(final String s) {
         calendarName = s;
     }
 
@@ -141,7 +141,7 @@ public final class JobSpec implements ActivationSpec {
 
     // -- Expression
 
-    public void setCronExpression(String s) {
+    public void setCronExpression(final String s) {
         cronExpression = s;
     }
 
@@ -151,60 +151,60 @@ public final class JobSpec implements ActivationSpec {
 
     /**
      * An alias for CronExpression
+     * See http://quartz-scheduler.org/api/2.0.0/org/quartz/CronExpression.html
      *
-     * @param s
+     * @param s Valid cron expression
      */
-    public void setCronTrigger(String s) {
+    public void setCronTrigger(final String s) {
         setCronExpression(s);
     }
 
     // --
 
-    public void setTimeZone(String timeZone) {
+    public void setTimeZone(final String timeZone) {
         this.timeZone = timeZone;
     }
 
     // --
 
-    public void setStartTime(String startTime) {
-        Date date = parse(startTime);
+    public void setStartTime(final String startTime) {
+        final Date date = parse(startTime);
         if (date != null) {
             this.startTime = startTime;
         }
     }
 
-    public void setEndTime(String endTime) {
-        Date date = parse(endTime);
+    public void setEndTime(final String endTime) {
+        final Date date = parse(endTime);
         if (date != null) {
             this.endTime = endTime;
         }
     }
 
+    private Date parse(final String value) {
 
-    private Date parse(String value) {
-
-        String[] formats = {
-                "EEE MMM d HH:mm:ss z yyyy",
-                "EEE, d MMM yyyy HH:mm:ss Z",
-                "yyyy-MM-dd HH:mm:ss.S",
-                "yyyy-MM-dd HH:mm:ss.SZ",
-                "yyyy-MM-dd HH:mm:ss.S",
-                "yyyy-MM-dd HH:mm:ssZ",
-                "yyyy-MM-dd HH:mm:ss",
-                "yyyy-MM-dd HH:mmZ",
-                "yyyy-MM-dd HH:mm",
-                "yyyy-MM-dd'T'HH:mm:ss.SZ",
-                "yyyy-MM-dd'T'HH:mm:ss.S",
-                "yyyy-MM-dd'T'HH:mm:ssZ",
-                "yyyy-MM-dd'T'HH:mm:ss",
-                "yyyy-MM-dd'T'HH:mmZ",
-                "yyyy-MM-dd'T'HH:mm",
-                "yyyy-MM-dd",
-                "yyyyMMdd"
+        final String[] formats = {
+                                     "EEE MMM d HH:mm:ss z yyyy",
+                                     "EEE, d MMM yyyy HH:mm:ss Z",
+                                     "yyyy-MM-dd HH:mm:ss.S",
+                                     "yyyy-MM-dd HH:mm:ss.SZ",
+                                     "yyyy-MM-dd HH:mm:ss.S",
+                                     "yyyy-MM-dd HH:mm:ssZ",
+                                     "yyyy-MM-dd HH:mm:ss",
+                                     "yyyy-MM-dd HH:mmZ",
+                                     "yyyy-MM-dd HH:mm",
+                                     "yyyy-MM-dd'T'HH:mm:ss.SZ",
+                                     "yyyy-MM-dd'T'HH:mm:ss.S",
+                                     "yyyy-MM-dd'T'HH:mm:ssZ",
+                                     "yyyy-MM-dd'T'HH:mm:ss",
+                                     "yyyy-MM-dd'T'HH:mmZ",
+                                     "yyyy-MM-dd'T'HH:mm",
+                                     "yyyy-MM-dd",
+                                     "yyyyMMdd"
         };
 
-        for (String format : formats) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        for (final String format : formats) {
+            final SimpleDateFormat dateFormat = new SimpleDateFormat(format);
             try {
                 return dateFormat.parse(value);
             } catch (ParseException e) {
@@ -218,36 +218,41 @@ public final class JobSpec implements ActivationSpec {
 
     // -- ActivationSpec methods
 
+    @SuppressWarnings("unchecked")
+    @Override
     public void validate() throws InvalidPropertyException {
-        if (invalidProperty != null) throw invalidProperty;
+        if (invalidProperty != null)
+            throw invalidProperty;
 
-        int i = hashCode();
+        final int i = hashCode();
         detail = JobBuilder.newJob(QuartzResourceAdapter.JobEndpoint.class)
-                .withIdentity("Job" + i, Scheduler.DEFAULT_GROUP)
-                .withDescription(description)
-                .requestRecovery(recoverable)
-                .storeDurably(durable)
-                .build();
+                           .withIdentity("Job" + i, Scheduler.DEFAULT_GROUP)
+                           .withDescription(description)
+                           .requestRecovery(recoverable)
+                           .storeDurably(durable)
+                           .build();
         final TriggerBuilder tb = TriggerBuilder.newTrigger()
-                .forJob(detail)
-                .withIdentity("Trigger" + i, Scheduler.DEFAULT_GROUP)
-                .withDescription(description);
+                                                .forJob(detail)
+                                                .withIdentity("Trigger" + i, Scheduler.DEFAULT_GROUP)
+                                                .withDescription(description);
         if (startTime != null) {
-                tb.startAt(parse(startTime));
+            tb.startAt(parse(startTime));
         }
+
         if (endTime != null) {
-                tb.endAt(parse(endTime));
+            tb.endAt(parse(endTime));
         }
+
         if (calendarName != null) {
-                tb.modifiedByCalendar(calendarName);
+            tb.modifiedByCalendar(calendarName);
         }
+
         final CronScheduleBuilder csb = CronScheduleBuilder.cronSchedule(getCronExpression());
         if (timeZone != null) {
             csb.inTimeZone(TimeZone.getTimeZone(timeZone));
         }
-        tb.withSchedule(CronScheduleBuilder.cronSchedule(getCronExpression()));
-        trigger = tb.build();
-        
+
+        trigger = tb.withSchedule(csb).build();
 
         try {
             ((CronTriggerImpl) trigger).validate();
@@ -256,11 +261,13 @@ public final class JobSpec implements ActivationSpec {
         }
     }
 
+    @Override
     public ResourceAdapter getResourceAdapter() {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+    @Override
+    public void setResourceAdapter(final ResourceAdapter resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
@@ -268,7 +275,7 @@ public final class JobSpec implements ActivationSpec {
         return endpoint;
     }
 
-    void setEndpoint(MessageEndpoint endpoint) {
+    void setEndpoint(final MessageEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
