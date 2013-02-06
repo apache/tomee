@@ -47,7 +47,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
     public static final String OPENEJB_QUARTZ_TIMEOUT = "openejb.quartz.timeout";
 
     //Start and stop may be called from different threads so use atomics
-    private final AtomicReference<Exception> ex = new AtomicReference<Exception>();
+    private final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
     private final AtomicReference<Scheduler> scheduler = new AtomicReference<Scheduler>();
     private final AtomicReference<BootstrapContext> bootstrapContext = new AtomicReference<BootstrapContext>();
     private final AtomicReference<Thread> startThread = new AtomicReference<Thread>();
@@ -105,7 +105,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
 
                     QuartzResourceAdapter.this.scheduler.get().start();
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     QuartzResourceAdapter.this.ex.set(e);
                     signal.countDown();
                 }
@@ -122,7 +122,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
             //Ignore
         }
 
-        final Exception exception = ex.get();
+        final Throwable exception = ex.get();
         if (null != exception) {
             final String err = "Error creating Quartz Scheduler";
             org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error(err, exception);
@@ -183,8 +183,9 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
                         //Shutdown, but give running jobs a chance to complete.
                         //User scheduled jobs should really implement InterruptableJob
                         s.shutdown(true);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         QuartzResourceAdapter.this.ex.set(e);
+                        shutdownWait.countDown();
                     }
                 }
             };
@@ -210,7 +211,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
                                 //Force a shutdown without waiting for jobs to complete.
                                 s.shutdown(false);
                                 org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 QuartzResourceAdapter.this.ex.set(e);
                             }
                         }
@@ -226,7 +227,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
                         //Ignore
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 ex.set(e);
             }
         }
