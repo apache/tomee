@@ -301,7 +301,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private void manageCluster(final Cluster cluster) {
-        if (cluster == null) {
+        if (cluster == null || cluster instanceof SimpleTomEETcpCluster) {
             return;
         }
 
