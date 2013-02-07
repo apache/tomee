@@ -72,6 +72,7 @@ import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
@@ -555,6 +556,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             deployments.addAll(openejb.getDeployments());
         }
 
+        Collection<Deployments> additionalDeploymentsList = Collections.emptyList();
         try {
             final File additionalDeploymentFile = SystemInstance.get().getBase().getFile(ADDITIONAL_DEPLOYMENTS, false);
 
@@ -563,7 +565,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 try {
                     fis = IO.read(additionalDeploymentFile);
                     final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
-                    deployments.addAll(additionalDeployments.getDeployments());
+                    additionalDeploymentsList = additionalDeployments.getDeployments();
                 } catch (Exception e) {
                     logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
                 } finally {
@@ -589,6 +591,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     autoDeploy.add(deployment);
             } catch (SecurityException se) {
                 logger.warning("Security check failed on deployment: " + deployment.getFile(), se);
+            }
+        }
+        for (final Deployments additionalDep : additionalDeploymentsList) {
+            if (additionalDep.getFile() != null) {
+                declaredAppsUrls.add(Files.path(base.getDirectory().getAbsoluteFile(), additionalDep.getFile()));
+            } else if (additionalDep.getDir() != null) {
+                declaredAppsUrls.add(Files.path(base.getDirectory().getAbsoluteFile(), additionalDep.getDir()));
+            }
+            if (additionalDep.isAutoDeploy()) {
+                autoDeploy.add(additionalDep);
             }
         }
 
