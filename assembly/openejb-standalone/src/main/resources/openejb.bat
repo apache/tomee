@@ -44,7 +44,7 @@ set "OPENEJB_HOME=%CD%"
 
 REM echo OPENEJB_HOME is: %OPENEJB_HOME%
 
-set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar"
+set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar;$OPENEJB_HOME/lib/javaee-api-*.jar"
 set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
 
 for %%a in (%OPENEJB_CORE_JAR%) do (
@@ -69,7 +69,7 @@ set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
 REM echo %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
-java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
+java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -cp %OPENEJB_CORE_JAR%  org.apache.openejb.cli.Bootstrap %*
 
 :EOF
 ENDLOCAL
