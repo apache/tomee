@@ -629,7 +629,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, web, o.getClass().getName()));
-        listener.deploySingleton(getFullContext(address.base, contextRoot), o, appInstance, additionalProviders, configuration);
+        listener.deploySingleton(contextRoot, getFullContext(address.base, contextRoot), o, appInstance, additionalProviders, configuration);
 
         LOGGER.info("deployed REST singleton: " + o);
     }
@@ -645,7 +645,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName()));
-        listener.deployPojo(getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
+        listener.deployPojo(contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
                             additionalProviders, config);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
@@ -657,7 +657,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(web, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName()));
-        listener.deployEJB(getFullContext(address.base, context), beanContext,
+        listener.deployEJB(context, getFullContext(address.base, context), beanContext,
                            additionalProviders, new ServiceConfiguration(beanContext.getProperties(), serviceInfos));
 
         LOGGER.info("REST Service: " + address.complete + "  -> EJB " + beanContext.getEjbName());

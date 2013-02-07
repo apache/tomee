@@ -116,7 +116,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (httpRequest instanceof HttpRequestImpl) {
             ((HttpRequestImpl) httpRequest).initPathFromContext(context);
         }
-        httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", BaseUrlHelper.getBaseURL(httpRequest) + "/");
+
+
+        String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
+        if (!baseURL.endsWith("/")) {
+            baseURL += "/";
+        }
+
+        httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
 
         // delegate invocation
         destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
@@ -184,31 +191,38 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     @Override
-    public void deploySingleton(String fullContext, Object o, Application appInstance,
+    public void deploySingleton(String contextRoot, String fullContext, Object o, Application appInstance,
                                 Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
+        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration);
     }
 
     @Override
-    public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
+    public void deployPojo(String contextRoot, String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
                            Context context, WebBeansContext owbCtx, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
+        deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
                             null, app, null, additionalProviders, configuration);
     }
 
     @Override
-    public void deployEJB(String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
+    public void deployEJB(String contextRoot, String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
-        deploy(beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
+        deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
                 proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
     }
 
-    private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker,
-                        Collection<Object> additionalProviders, ServiceConfiguration configuration) {
+    private void deploy(String contextRoot, Class<?> clazz, String address, ResourceProvider rp, Object serviceBean,
+                        Application app, Invoker invoker, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
         final JAXRSServerFactoryBean factory = newFactory(address);
         configureFactory(additionalProviders, configuration, factory);
         factory.setResourceClasses(clazz);
+        context = contextRoot;
+        if (context == null) {
+            context = "";
+        }
+        if (!context.startsWith("/")) {
+            context = "/" + context;
+        }
 
         if (rp != null) {
             factory.setResourceProvider(rp);
