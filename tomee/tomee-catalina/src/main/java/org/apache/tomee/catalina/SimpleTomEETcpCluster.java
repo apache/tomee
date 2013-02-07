@@ -64,6 +64,9 @@ public class SimpleTomEETcpCluster extends SimpleTcpCluster {
         for (ClusterListener clusterListener : currentListeners) {
             clusterListener.setCluster(this); // we don't care about TomEEClusterListener since it is stateless
         }
+        if (getClusterDeployer() != null) {
+            getClusterDeployer().setCluster(this);
+        }
 
         super.checkDefaults();
         addClusterListener(TomEEClusterListener.INSTANCE); // since that's a singleton and all listeners have to be unique (contains()) we can always add it
