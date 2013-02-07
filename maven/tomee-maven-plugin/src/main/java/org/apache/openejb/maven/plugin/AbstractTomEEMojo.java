@@ -140,6 +140,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected File catalinaBase;
 
     /**
+     * rename the current artifact
+     */
+    @Parameter
+    protected String context;
+
+    /**
      * relative to tomee.base.
      */
     @Parameter(defaultValue = "webapps")
@@ -227,12 +233,19 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             tomeeVersion = "1" + version.substring(1, version.length());
         }
 
+        final Collection<String> existingWebapps; // added before using the plugin with maven dependency plugin or sthg like that
+        if (removeDefaultWebapps) {
+            existingWebapps = webappsAlreadyAdded();
+        } else {
+            existingWebapps = Collections.emptyList();
+        }
+
         unzip(resolve(), catalinaBase);
         if (removeDefaultWebapps) { // do it first to let add other war
-            removeDefaultWebapps(removeTomeeWebapp);
+            removeDefaultWebapps(removeTomeeWebapp, existingWebapps);
         }
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
-        copyLibs(webapps, new File(catalinaBase, webappDir), "war"); // TODO: manage custom context ?context=foo
+        copyLibs(webapps, new File(catalinaBase, webappDir), "war");
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
         overrideConf(config);
         overrideConf(lib);
@@ -257,6 +270,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             copyWar();
         }
         run();
+    }
+
+    private List<String> webappsAlreadyAdded() {
+        final List<String> list = new ArrayList<String>();
+        final File webapps = new File(catalinaBase, webappDir);
+        if (webapps.exists() && webapps.isDirectory()) {
+            final File[] files = webapps.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    list.add(f.getName());
+                }
+            }
+        }
+        return list;
     }
 
     private String activateSimpleLog() {
@@ -284,17 +311,19 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return null;
     }
 
-    private void removeDefaultWebapps(final boolean removeTomee) {
+    private void removeDefaultWebapps(final boolean removeTomee, final Collection<String> providedWebapps) {
         final File webapps = new File(catalinaBase, webappDir);
         if (webapps.isDirectory()) {
             final File[] files = webapps.listFiles();
-            if (null != files) for (File webapp : files) {
-                final String name = webapp.getName();
-                if (webapp.isDirectory() && (removeTomee || !name.equals("tomee"))) {
-                    try {
-                        deleteDirectory(webapp);
-                    } catch (IOException ignored) {
-                        // no-op
+            if (null != files) {
+                for (File webapp : files) {
+                    final String name = webapp.getName();
+                    if (webapp.isDirectory() && !providedWebapps.contains(name) && (removeTomee || !name.equals("tomee"))) {
+                        try {
+                            deleteDirectory(webapp);
+                        } catch (IOException ignored) {
+                            // no-op
+                        }
                     }
                 }
             }
@@ -411,7 +440,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         final boolean war = "war".equals(packaging);
-        final String name = warFile.getName();
+        final String name = destinationName();
         final File out;
         if (war) {
             out = new File(catalinaBase, webappDir + "/" + name);
@@ -460,6 +489,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         deployedFile = out;
+    }
+
+    private String destinationName() {
+        if (context != null) {
+            if (warFile.getName().endsWith(".war")) {
+                return context + ".war";
+            }
+            return context;
+        }
+        return warFile.getName();
     }
 
     private void overrideAddresses() {
@@ -668,18 +707,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected boolean getWaitTomEE() {
         return true;
-    }
-
-    protected String cp() {
-        final boolean unix = !System.getProperty("os.name").toLowerCase().startsWith("win");
-        final char cpSep;
-        if (unix) {
-            cpSep = ':';
-        } else {
-            cpSep = ';';
-        }
-
-        return "bin/bootstrap.jar" + cpSep + "bin/tomcat-juli.jar";
     }
 
     private File resolve() {
