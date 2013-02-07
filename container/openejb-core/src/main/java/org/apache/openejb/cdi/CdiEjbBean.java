@@ -72,7 +72,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override // copied to be able to produce EM (should be fixed in OWB for next CDI spec)
     public void validatePassivationDependencies() {
-        if(isPassivationCapable()) {
+        // if(isPassivationCapable()) {
+        if(getWebBeansContext().getBeanManagerImpl().isPassivatingScope(getScope())) { // not @Dependent otherwise we either can't inject EJB in serializable beans or the opposite
             final Set<InjectionPoint> beanInjectionPoints = getInjectionPoints();
             for(InjectionPoint injectionPoint : beanInjectionPoints) {
                 if(!injectionPoint.isTransient()) {
@@ -82,6 +83,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
                                 || EntityManager.class.equals(injectionPoint.getAnnotated().getBaseType())) {
                             continue;
                         }
+
                         throw new WebBeansConfigurationException(
                                 "Passivation capable beans must satisfy passivation capable dependencies. " +
                                         "Bean : " + toString() + " does not satisfy. Details about the Injection-point: " +
