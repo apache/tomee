@@ -31,6 +31,7 @@ import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.ServiceInfo;
@@ -111,6 +112,13 @@ public class CxfRsHttpListener implements RsHttpListener {
             return;
         }
 
+        // fix the address (to manage multiple connectors)
+        if (httpRequest instanceof HttpRequestImpl) {
+            ((HttpRequestImpl) httpRequest).initPathFromContext(context);
+        }
+        httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", BaseUrlHelper.getBaseURL(httpRequest) + "/");
+
+        // delegate invocation
         destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
             // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
             // cxf uses implicitly getRawPath() from the endpoint but not for the request URI

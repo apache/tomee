@@ -143,6 +143,7 @@ public class HttpRequestImpl implements HttpRequest {
     private HttpSession session;
     private String encoding = "UTF-8";
     private ServletContext context = null;
+    private String contextPath = "";
 
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
@@ -721,7 +722,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getContextPath() {
-        return path;
+        return contextPath;
     }
 
     public String extractContextPath() {
@@ -1022,7 +1023,14 @@ public class HttpRequestImpl implements HttpRequest {
 
         final String rawPath = requestRawPath();
         if (context != null) {
-            setPath(rawPath.substring(1 + context.length(), rawPath.length())); // 1 because of the first /
+            if (context.endsWith("/")) {
+                final int endIndex = context.length() - 1;
+                path = rawPath.substring(endIndex, rawPath.length());
+                contextPath = context.substring(0, endIndex);
+            } else {
+                path = rawPath.substring(context.length(), rawPath.length()); // 1 because of the first /
+                contextPath = context;
+            }
         }
     }
 

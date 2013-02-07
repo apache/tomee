@@ -41,6 +41,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -66,6 +67,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         super(beanClass, toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
+        passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
     }
 
     @Override // copied to be able to produce EM (should be fixed in OWB for next CDI spec)
@@ -153,11 +155,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     @Override
-    public String getId() {
-        return beanContext.getDeploymentID() + getReturnType().getName();
-    }
-
-    @Override
     protected void afterConstructor(T instance, CreationalContext<T> tCreationalContext) {
         // no-op
     }
@@ -216,23 +213,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @SuppressWarnings("unchecked")
     protected T getInstance(final CreationalContext<T> creationalContext) {
         return createEjb(creationalContext);
-
-        /*
-        final T instance;
-        if (scopeClass == null || Dependent.class == scopeClass) { // no need to add any layer, null = @New
-            instance = createEjb(creationalContext);
-        } else { // only stateful normally
-            final InstanceBean<T> bean = new InstanceBean<T>(this);
-            if (webBeansContext.getBeanManagerImpl().isScopeTypeNormal(scopeClass)) {
-                instance = (T) webBeansContext.getProxyFactory().createNormalScopedBeanProxy(bean, creationalContext);
-            } else {
-                final Context context = webBeansContext.getBeanManagerImpl().getContext(scopeClass);
-                instance = context.get(bean, creationalContext);
-            }
-            bean.setOWBProxy(instance);
-        }
-        return instance;
-        */
     }
 
     @Override
@@ -310,8 +290,9 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
      * @see org.apache.webbeans.component.AbstractBean#isPassivationCapable()
      */
     @Override
-    public boolean isPassivationCapable() {
-        return getWebBeansContext().getBeanManagerImpl().isPassivatingScope(getScope());
+    public boolean isPassivationCapable() { // dependent means EJB serialization
+        final Class<? extends Annotation> scope = getScope();
+        return Dependent.class.equals(scope) || getWebBeansContext().getBeanManagerImpl().isPassivatingScope(scope);
     }
 
     @SuppressWarnings("unchecked")

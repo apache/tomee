@@ -115,6 +115,9 @@ public final class Contexts {
                 ThreadLocalContextManager.PROVIDERS.set(providers);
             } else if (ServletRequest.class.equals(type)) {
                 ServletRequest servletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletRequest.class);
+                if (servletRequest == null) { // probably the case with CXF
+                    servletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletRequest.class);
+                }
                 ThreadLocalContextManager.SERVLET_REQUEST.set(servletRequest);
             } else if (HttpServletRequest.class.equals(type)) {
                 HttpServletRequest httpServletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletRequest.class);

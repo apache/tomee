@@ -31,6 +31,7 @@ import javax.ejb.Singleton;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -100,10 +101,9 @@ public class RsInterceptorInjectionTest {
         @Context
         private HttpServletRequest httpServletRequest;
 
-// TODO TOMEE-684
-//        @Context
-//        private ServletRequest servletRequest;
-//
+        @Context
+        private ServletRequest servletRequest;
+
         @Context
         private UriInfo uriInfo;
 
@@ -113,7 +113,7 @@ public class RsInterceptorInjectionTest {
         @Context
         private ContextResolver contextResolver;
 
-// TODO TOMEE-685
+// TODO TOMEE-685 - does it make sense since we don't define a strict servlet?
 //        @Context
 //        private ServletConfig servletConfig;
 
