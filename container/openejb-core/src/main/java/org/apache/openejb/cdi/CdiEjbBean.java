@@ -70,10 +70,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
     }
 
-    @Override // copied to be able to produce EM (should be fixed in OWB for next CDI spec)
+    @Override
     public void validatePassivationDependencies() {
-        // if(isPassivationCapable()) {
-        if(getWebBeansContext().getBeanManagerImpl().isPassivatingScope(getScope())) { // not @Dependent otherwise we either can't inject EJB in serializable beans or the opposite
+        if (!BeanType.STATEFUL.equals(beanContext.getComponentType())) { // always serializable since we redo a lookup
+            return;
+        }
+
+        final Class<? extends Annotation> scope = getScope();
+        if(getWebBeansContext().getBeanManagerImpl().isPassivatingScope(scope)) { // not @Dependent otherwise we either can't inject EJB in serializable beans or the opposite
             final Set<InjectionPoint> beanInjectionPoints = getInjectionPoints();
             for(InjectionPoint injectionPoint : beanInjectionPoints) {
                 if(!injectionPoint.isTransient()) {
@@ -107,12 +111,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         for (InterceptorData interceptorData : interceptorStack) {
             if (interceptorData.isDefinedWithWebBeansInterceptor()) {
                 WebBeansInterceptor<?> interceptor = (WebBeansInterceptor<?>) interceptorData.getWebBeansInterceptor();
-                if (!interceptor.isPassivationCapable()) {
-                    throw new WebBeansConfigurationException(MessageFormat.format(
-                            WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
-                } else {
-                    interceptor.validatePassivationDependencies();
-                }
+                    if (!interceptor.isPassivationCapable()) {
+                        throw new WebBeansConfigurationException(MessageFormat.format(
+                                WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
+                    } else {
+                        interceptor.validatePassivationDependencies();
+                    }
             } else {
                 if (interceptorData.isDefinedInInterceptorClass()) {
                     Class<?> interceptorClass = interceptorData.getInterceptorClass();
