@@ -57,9 +57,6 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     @Parameter(property = "tomee-plugin.baseDir", defaultValue = "${project.basedir}", readonly = true)
     private File baseDir;
 
-    @Parameter(property = "tomee-plugin.finalName", defaultValue = "${project.build.finalName}")
-    private String finalName;
-
     @Parameter(property = "tomee-plugin.reload-on-update", defaultValue = "false")
     private boolean reloadOnUpdate;
 
@@ -85,6 +82,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     }
 
     private void initSynchronization(final Synchronization synchronization) {
+        final String destination = destinationName().replaceAll("\\.[jew]ar", "");
         if (synchronization.getBinariesDir() == null) {
             synchronization.setBinariesDir(new File(buildDir, "classes"));
         }
@@ -92,10 +90,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             synchronization.setResourcesDir(new File(baseDir, "src/main/webapp"));
         }
         if (synchronization.getTargetResourcesDir() == null) {
-            synchronization.setTargetResourcesDir(new File(catalinaBase, webappDir + "/" + finalName));
+            synchronization.setTargetResourcesDir(new File(catalinaBase, webappDir + "/" + destination));
         }
         if (synchronization.getTargetBinariesDir() == null) {
-            synchronization.setTargetBinariesDir(new File(catalinaBase, webappDir + "/" + finalName + "/WEB-INF/classes"));
+            synchronization.setTargetBinariesDir(new File(catalinaBase, webappDir + "/" + destination + "/WEB-INF/classes"));
         }
         if (synchronization.getUpdateInterval() <= 0) {
             synchronization.setUpdateInterval(5); // sec
