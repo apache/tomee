@@ -491,7 +491,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         deployedFile = out;
     }
 
-    private String destinationName() {
+    protected String destinationName() {
         if (context != null) {
             if (warFile.getName().endsWith(".war")) {
                 return context + ".war";
