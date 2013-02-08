@@ -37,10 +37,11 @@ import org.superbiz.cdi.bookshow.interceptorbinding.Log;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.io.Serializable;
 
 @Interceptor
 @Log
-public class LoggingInterceptor {
+public class LoggingInterceptor implements Serializable {
     private static final long serialVersionUID = 8139854519874743530L;
 
     @AroundInvoke
