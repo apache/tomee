@@ -116,6 +116,12 @@ public class ManagedContainer implements RpcContainer {
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(final BeanContext beanContext) {
         final Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
+        try {
+            methods.put(BeanContext.Removable.class.getDeclaredMethod("$$remove"), MethodType.REMOVE);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Internal code change: BeanContext.Removable.$$remove() method was deleted", e);
+        }
+
         final List<Method> removeMethods = beanContext.getRemoveMethods();
         for (final Method removeMethod : removeMethods) {
             methods.put(removeMethod, MethodType.REMOVE);
@@ -457,7 +463,10 @@ public class ManagedContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            checkAuthorization(callMethod, interfaceType);
+            boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();
+            if (!internalRemove) {
+                checkAuthorization(callMethod, interfaceType);
+            }
 
             // If a bean managed transaction is active, the bean can not be removed
             if (interfaceType.isComponent()) {
@@ -499,34 +508,36 @@ public class ManagedContainer implements RpcContainer {
                     }
                 }
 
-                // Register the entity managers
-                registerEntityManagers(instance, callContext);
+                if (!internalRemove) {
+                    // Register the entity managers
+                    registerEntityManagers(instance, callContext);
 
-                // Register for synchronization callbacks
-                registerSessionSynchronization(instance, callContext);
+                    // Register for synchronization callbacks
+                    registerSessionSynchronization(instance, callContext);
 
-                // Setup for remove invocation
-                callContext.setCurrentOperation(Operation.REMOVE);
-                callContext.setCurrentAllowedStates(null);
-                callContext.setInvokedInterface(callInterface);
-                runMethod = beanContext.getMatchingBeanMethod(callMethod);
-                callContext.set(Method.class, runMethod);
+                    // Setup for remove invocation
+                    callContext.setCurrentOperation(Operation.REMOVE);
+                    callContext.setCurrentAllowedStates(null);
+                    callContext.setInvokedInterface(callInterface);
+                    runMethod = beanContext.getMatchingBeanMethod(callMethod);
+                    callContext.set(Method.class, runMethod);
 
-                // Do not pass arguments on home.remove(remote) calls
-                final Class<?> declaringClass = callMethod.getDeclaringClass();
-                if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)) {
-                    args = new Object[]{};
-                }
+                    // Do not pass arguments on home.remove(remote) calls
+                    final Class<?> declaringClass = callMethod.getDeclaringClass();
+                    if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)) {
+                        args = new Object[]{};
+                    }
 
-                // Initialize interceptor stack
-                final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
-                final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
+                    // Initialize interceptor stack
+                    final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
+                    final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
 
-                // Invoke
-                if (args == null) {
-                    returnValue = interceptorStack.invoke();
-                } else {
-                    returnValue = interceptorStack.invoke(args);
+                    // Invoke
+                    if (args == null) {
+                        returnValue = interceptorStack.invoke();
+                    } else {
+                        returnValue = interceptorStack.invoke(args);
+                    }
                 }
             } catch (InvalidateReferenceException e) {
                 throw new ApplicationException(e.getRootCause());
