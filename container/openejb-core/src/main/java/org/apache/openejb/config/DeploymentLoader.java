@@ -699,8 +699,6 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public void addWebModule(final AppModule appModule, final URL warUrl, final ClassLoader parentClassLoader, final String contextRoot, final String moduleName) throws OpenEJBException {
         final WebModule webModule = createWebModule(appModule.getJarLocation(), URLs.toFilePath(warUrl), parentClassLoader, contextRoot, moduleName);
-        final List<URL> parentUrls = filterWebappUrls(appModule.getAdditionalLibraries().toArray(new URL[appModule.getAdditionalLibraries().size()]), (URL) webModule.getAltDDs().get(NewLoaderLogic.EXCLUSION_FILE));
-        webModule.getScannableUrls().addAll(parentUrls);
         addWebModule(webModule, appModule);
     }
 

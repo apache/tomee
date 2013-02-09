@@ -51,7 +51,7 @@ deploy.jar
 derby-
 derbyclient-
 derbynet-
-dom4j-
+dom4j
 ecj-
 eclipselink-
 fusemq-leveldb-
@@ -59,7 +59,7 @@ geronimo-
 google-
 gragent.jar
 groovy-
-gson
+gson-
 guice-
 hamcrest-
 hawtbuf-
@@ -79,6 +79,7 @@ jackson-core-
 jackson-databind-
 jackson-mapper-asl-
 jackson-module-jaxb-annotations-
+janino-
 jansi-
 jasper.jar
 jasper-el.jar
@@ -147,6 +148,7 @@ openejb-rest
 openejb-server
 openejb-webservices
 openjpa-
+openmdx-
 opensaml-
 openwebbeans-
 openws-
@@ -156,8 +158,10 @@ org.junit.
 org.osgi.core-
 oro-
 pax-url
+PDFBox
 plexus-
 plugin.jar
+poi-
 quartz-
 resources.jar
 rmock-
@@ -168,11 +172,12 @@ scannotation-
 serializer-
 serp-
 servlet-api-
-servlet-api.jar
 sisu-inject
 sisu-guice
 shrinkwrap-
 slf4j-
+smack-
+smackx-
 snappy-java-
 spring-
 sshd-
@@ -183,6 +188,7 @@ sxc-
 testng-
 tomcat-
 tomee-
+twitter4j-
 velocity-
 wagon-
 webbeans-ee
@@ -190,6 +196,7 @@ webbeans-ejb
 webbeans-impl
 webbeans-spi
 woodstox-core-asl-
+ws-commons-util-
 wsdl4j-
 wss4j-
 wstx-asl-
@@ -198,6 +205,7 @@ xbean-
 xercesImpl-
 xml-apis-
 xml-resolver-
+xmlbeans-
 xmlrpc-
 xmlschema-
 xmlsec-

@@ -1215,6 +1215,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
                     final List<String> classNames = getBeanClasses(finder);
+
+                    if (ejbModule.isWebapp()) { // add parent classes to let them be injectable (note we skipped scanning so we do it now)
+                        final AppModule appModule = ejbModule.getAppModule();
+                        if (appModule != null) {
+                            for (final EjbModule module : appModule.getEjbModules()) {
+                                if (!module.isWebapp()) {
+                                    classNames.addAll(getBeanClasses(module.getFinder()));
+                                }
+                            }
+                        }
+                    }
+
                     for (String rawClassName : classNames) {
                         final String className = realClassName(rawClassName);
                         try {
