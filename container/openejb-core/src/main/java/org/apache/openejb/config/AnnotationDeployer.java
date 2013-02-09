@@ -1220,8 +1220,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         final AppModule appModule = ejbModule.getAppModule();
                         if (appModule != null) {
                             for (final EjbModule module : appModule.getEjbModules()) {
-                                if (!module.isWebapp()) {
+                                if (module.getModuleId().startsWith("ear-scoped-cdi-beans_")) {
                                     classNames.addAll(getBeanClasses(module.getFinder()));
+                                    break;
                                 }
                             }
                         }
