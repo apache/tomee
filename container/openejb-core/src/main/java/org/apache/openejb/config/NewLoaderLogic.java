@@ -33,6 +33,7 @@ import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 import org.apache.xbean.finder.filter.PatternFilter;
+import org.apache.xbean.finder.filter.PrefixFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -266,7 +267,12 @@ public class NewLoaderLogic {
 
     public static Filter getFilter() {
         if (filter == null) {
-            filter = Filters.prefixes(getExclusions());
+            final List<Filter> filters = new ArrayList<Filter>();
+            for (String s : getExclusions()) {
+                filters.add(new PrefixOrStringFilter(s));
+            }
+
+            filter = Filters.optimize(filters);
         }
         return filter;
     }
@@ -532,5 +538,24 @@ public class NewLoaderLogic {
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
 
+    }
+
+    private static class PrefixOrStringFilter extends PrefixFilter {
+        protected final String simplePrefix;
+
+        public PrefixOrStringFilter(final String s) {
+            super(s);
+            if (s.endsWith("-")) {
+                simplePrefix = s.substring(0, s.length() - 1);
+            } else {
+                simplePrefix = s;
+            }
+        }
+
+        @Override
+        public boolean accept(final String name) {
+            return super.accept(name)
+                    || (name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix));
+        }
     }
 }
