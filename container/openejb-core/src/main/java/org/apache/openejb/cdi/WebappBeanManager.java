@@ -447,6 +447,8 @@ public class WebappBeanManager extends BeanManagerImpl {
         }
         deploymentBeans.addAll(super.getBeans());
 
+        webappCtx.getBeanManagerImpl().getInjectionResolver().clearCaches(); // to force new resolution with new beans
+
         started = true;
     }
 

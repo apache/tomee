@@ -199,7 +199,10 @@ public class CdiScanner implements ScannerService {
 
     private void process(final ClassLoader classLoader, final Set<String> ejbClasses, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
         final String className = it.next();
-        if (ejbClasses.contains(className)) it.remove();
+        if (ejbClasses.contains(className)) {
+            it.remove();
+            return;
+        }
         final Class clazz = load(className, classLoader);
         if (clazz == null) {
             return;

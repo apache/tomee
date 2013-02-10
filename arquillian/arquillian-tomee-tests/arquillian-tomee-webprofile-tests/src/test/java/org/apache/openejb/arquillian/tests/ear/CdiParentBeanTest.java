@@ -16,9 +16,10 @@
  */
 package org.apache.openejb.arquillian.tests.ear;
 
-import org.apache.openejb.loader.JarLocation;
+import org.apache.openejb.arquillian.tests.ear.cdi.SimpleBean;
 import org.apache.ziplock.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,32 +40,26 @@ import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @version $Rev$ $Date$
  */
+@RunAsClient
 @RunWith(Arquillian.class)
 public class CdiParentBeanTest {
 
     @ArquillianResource
     private URL url;
 
-    @Deployment(testable = false)
+    @Deployment
     public static EnterpriseArchive createDeployment() {
-
-        final JavaArchive lib = ShrinkWrap.create(JavaArchive.class, "parent-cdi-beans.jar")
-                        .addClass(Bean.class)
-                        .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "myear.ear")
-                .addAsLibraries(lib)
+        return ShrinkWrap.create(EnterpriseArchive.class, "myear.ear")
+                .addAsLibraries(ShrinkWrap.create(JavaArchive.class, "parent-cdi-beans.jar")
+                                .addClass(SimpleBean.class)
+                                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml"))
                 .addAsModule(ShrinkWrap.create(WebArchive.class, "web.war")
                         .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                        .addClass(ClassLoaderServlet.class));
-        ear.addAsLibraries(JarLocation.jarLocation(Test.class));
-
-        return ear;
+                        .addClasses(ClassLoaderServlet.class, CdiParentBeanTest.class));
     }
 
     @Test
@@ -73,16 +68,10 @@ public class CdiParentBeanTest {
         assertFalse(slurp + " should not contain WebappClassLoader", slurp.toLowerCase().contains("webappclassloader"));
     }
 
-    public static class Bean {
-        public String classloaderAsStr() {
-            return getClass().getClassLoader().toString();
-        }
-    }
-
     @WebServlet("/classloader")
     public static class ClassLoaderServlet extends HttpServlet {
         @Inject
-        private Bean bean;
+        private SimpleBean bean;
 
         @Override
         protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
