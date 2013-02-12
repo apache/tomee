@@ -25,6 +25,11 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
+import org.apache.naming.resources.DirContextURLConnection;
+import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.naming.resources.FileDirContext;
+import org.apache.naming.resources.ProxyDirContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -39,12 +44,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
-import org.apache.tomee.loader.TomEEJarScanner;
 import org.apache.tomee.loader.TomcatHelper;
 
 import javax.servlet.ServletContainerInitializer;
@@ -54,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -301,6 +307,14 @@ public class OpenEJBContextConfig extends ContextConfig {
 
     @Override
     protected void processAnnotationsFile(File file, WebXml fragment, boolean handlesTypesOnly) {
+        try {
+            if (NewLoaderLogic.skip(file.toURI().toURL())) {
+                return;
+            }
+        } catch (MalformedURLException e) {
+            // no-op: let it be
+        }
+
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo == null) {
             super.processAnnotationsFile(file, fragment, handlesTypesOnly);
@@ -327,42 +341,25 @@ public class OpenEJBContextConfig extends ContextConfig {
             currentUrlAsFile = URLs.toFile(currentUrl);
         } catch (IllegalArgumentException iae) {
             if ("jndi".equals(currentUrl.getProtocol())) {
-                String path = webAppInfo.path;
-                if (path.endsWith("/")) {
-                    path = path.substring(0, path.length() - 1);
-                }
-
-                final String file = currentUrl.getFile();
-                String webAppDir = new File(path).getName();
-                if ("ROOT".equals(webAppDir)) { // no contextroot so use the host
-                    webAppDir = webAppInfo.host;
-                    if (webAppDir == null) {
-                        webAppDir = "";
+                String file = currentUrl.getFile();
+                try {
+                    final URLConnection connection = currentUrl.openConnection();
+                    if (connection instanceof DirContextURLConnection) {
+                        final DirContextURLStreamHandler handler = DirContextURLStreamHandler.class.cast(Reflections.get(currentUrl, "handler"));
+                        final ProxyDirContext dirContext = ProxyDirContext.class.cast(Reflections.get(handler, "context"));
+                        final FileDirContext fileDirContext = FileDirContext.class.cast(Reflections.get(dirContext, "dirContext"));
+                        final String host = String.class.cast(Reflections.get(dirContext, "hostName"));
+                        final String contextPath = String.class.cast(Reflections.get(dirContext, "contextPath"));
+                        file = file.replace("/" + host + contextPath , fileDirContext.getDocBase());
+                        currentUrlAsFile = new File(file);
+                    } else {
+                        throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]");
                     }
-                }
-                int idx = file.indexOf(webAppDir);
-
-                // some more tries to manage context config (path can be different from context)
-                if (idx < 0) {
-                    webAppDir = webAppInfo.moduleId;
-                    idx = file.indexOf(webAppDir);
-                }
-                if (idx < 0) {
-                    webAppDir = webAppInfo.contextRoot;
-                    idx = file.indexOf(webAppDir);
-                }
-
-                if (idx > 0) {
-                    String pathUnderWebapp = file.substring(idx + webAppDir.length());
-                    if (!pathUnderWebapp.startsWith("/")) {
-                        pathUnderWebapp = '/' + pathUnderWebapp;
-                    }
-                    currentUrlAsFile = new File(path + pathUnderWebapp);
-                } else {
-                    throw new IllegalArgumentException("can't find path under current webapp deployment [" + webAppInfo.contextRoot + "]");
+                } catch (final Exception ex) {
+                    throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]");
                 }
             } else {
-                throw iae;
+                throw new OpenEJBRuntimeException("protocol not supported '" + currentUrl.getProtocol() + "'");
             }
         }
 
