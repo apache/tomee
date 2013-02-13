@@ -17,21 +17,22 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
-import javax.resource.spi.UnavailableException;
+import javax.management.ObjectName;
 import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
-import javax.management.ObjectName;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EndpointFactory implements MessageEndpointFactory {
+
     private final ActivationSpec activationSpec;
     private final MdbContainer container;
     private final BeanContext beanContext;
@@ -41,7 +42,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final XAResourceWrapper xaResourceWrapper;
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
-    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, BeanContext beanContext, MdbInstanceFactory instanceFactory, XAResourceWrapper xaResourceWrapper) {
+    public EndpointFactory(final ActivationSpec activationSpec, final MdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
         this.container = container;
         this.beanContext = beanContext;
@@ -59,16 +60,17 @@ public class EndpointFactory implements MessageEndpointFactory {
         return instanceFactory;
     }
 
+    @Override
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
         if (xaResource != null && xaResourceWrapper != null) {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
-        EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
+        final EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
         try {
             return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
         } catch (InternalError e) {
             //try to create the proxy with tccl once again.
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             if (tccl == classLoader) {
                 tccl = beanContext.getClassLoader();
             }
@@ -80,12 +82,13 @@ public class EndpointFactory implements MessageEndpointFactory {
         }
     }
 
-    public MessageEndpoint createEndpoint(XAResource xaResource, long timeout)  throws UnavailableException {
+    @Override
+    public MessageEndpoint createEndpoint(final XAResource xaResource, final long timeout) throws UnavailableException {
         if (timeout <= 0) {
             return createEndpoint(xaResource);
         }
 
-        long end = System.currentTimeMillis() + timeout;
+        final long end = System.currentTimeMillis() + timeout;
         MessageEndpoint messageEndpoint = null;
 
         while (System.currentTimeMillis() <= end) {
@@ -104,8 +107,9 @@ public class EndpointFactory implements MessageEndpointFactory {
         }
     }
 
-    public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
-        TransactionType transactionType = beanContext.getTransactionType(method);
+    @Override
+    public boolean isDeliveryTransacted(final Method method) throws NoSuchMethodException {
+        final TransactionType transactionType = beanContext.getTransactionType(method);
         return TransactionType.Required == transactionType;
     }
 }
