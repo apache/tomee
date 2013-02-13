@@ -70,7 +70,7 @@ public class EndpointFactory implements MessageEndpointFactory {
             return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
         } catch (InternalError e) {
             //try to create the proxy with tccl once again.
-            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             if (tccl == classLoader) {
                 tccl = beanContext.getClassLoader();
             }
