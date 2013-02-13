@@ -105,7 +105,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public void destroy(final Object destroyObject) {
         //Destroy application context
         endContext(ApplicationScoped.class, destroyObject);
-//
+
         //Destroy singleton context
         endContext(Singleton.class, destroyObject);
 
@@ -178,10 +178,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else if (scopeType.equals(SessionScoped.class)) {
                 initSessionContext((HttpSession) startParameter);
             } else if (scopeType.equals(ApplicationScoped.class)) {
+                // Do nothing
             } else if (scopeType.equals(Dependent.class)) {
                 // Do nothing
             } else if (scopeType.equals(Singleton.class)) {
-                initSingletonContext();
+                // Do nothing
             } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
                 initConversationContext((ConversationContext) startParameter);
             } else {
@@ -206,7 +207,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void initRequestContext(ServletRequestEvent event) {
-
         RequestContext rq = new ServletRequestContext();
         rq.setActive(true);
 
@@ -222,12 +222,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 if (session != null) {
                     initSessionContext(session);
                 }
-
-//                //Init thread local application context
-//                initApplicationContext(event.getServletContext());
-//
-//                //Init thread local sigleton context
-//                initSingletonContext(event.getServletContext());
             }
         }
     }
@@ -258,20 +252,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         sessionContext.remove();
         requestContext.set(null);
         requestContext.remove();
-
-        //Also clear application and singleton context
-//        applicationContext.set(null);
-//        applicationContext.remove();
-
-        //Singleton context
-//        singletonContext.set(null);
-//        singletonContext.remove();
-
-        //Conversation context
-        if (null != conversationContext) {
-            conversationContext.set(null);
-            conversationContext.remove();
-        }
 
         RequestScopedBeanInterceptorHandler.removeThreadLocals();
     }
@@ -376,9 +356,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private void destroyApplicationContext() {
         applicationContext.destroy();
-    }
-
-    private void initSingletonContext() {
     }
 
     private void destroySingletonContext() {
@@ -487,10 +464,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 try {
                     HttpSession currentSession = servletRequest.getSession();
                     initSessionContext(currentSession);
-//                    if (failoverService != null && failoverService.isSupportFailOver())
-//                    {
-//                        failoverService.sessionIsInUse(currentSession);
-//                    }
+
+                    /*
+                    final FailOverService failoverService = webBeansContext.getService(FailOverService.class);
+                    if (failoverService != null && failoverService.isSupportFailOver()) {
+                        failoverService.sessionIsInUse(currentSession);
+                    }
+                    */
 
                     if (logger.isDebugEnabled()) {
                         logger.debug("Lazy SESSION context initialization SUCCESS");
