@@ -86,13 +86,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
             }
 
             // read descriptors
-            ScanUtil.ScanHandler scan;
-            if (scanXml != null) {
-                scan = ScanUtil.read(scanXml);
-            } else {
-                scan = new ScanUtil.ScanHandler();
-            }
-
+            final ScanUtil.ScanHandler scan = ScanUtil.read(scanXml);
             final Archive packageArchive = packageArchive(scan.getPackages(), loader, location);
             final Archive classesArchive = classesArchive(scan.getPackages(), scan.getClasses(), loader);
 
