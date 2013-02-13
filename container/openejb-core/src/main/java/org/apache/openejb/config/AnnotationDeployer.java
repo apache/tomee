@@ -1110,6 +1110,19 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * JSF
              */
+
+            // we need to look for JSF stuff in ear libs (converters...) so get back the finder for this part
+            IAnnotationFinder parentFinder = null;
+            final AppModule appModule = webModule.getAppModule();
+            if (appModule != null) {
+                for (final EjbModule module : appModule.getEjbModules()) {
+                    if (!module.getModuleId().startsWith(DeploymentLoader.EAR_SCOPED_CDI_BEANS)) {
+                        parentFinder = module.getFinder();
+                        break;
+                    }
+                }
+            }
+
             final ClassLoader classLoader = webModule.getClassLoader();
             for (String jsfClass : JSF_CLASSES) {
                 final Class<? extends Annotation> clazz;
@@ -1119,11 +1132,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
+                final Set<String> convertedClasses = new HashSet<String>();
+
+                if (parentFinder != null) {
+                    final List<Annotated<Class<?>>> foundParent = parentFinder.findMetaAnnotatedClasses(clazz);
+                    for (Annotated<Class<?>> annotated : foundParent) {
+                        convertedClasses.add(annotated.get().getName());
+                    }
+                }
+
                 final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
-                final Set<String> convertedClasses = new HashSet<String>(found.size());
                 for (Annotated<Class<?>> annotated : found) {
                     convertedClasses.add(annotated.get().getName());
                 }
+
                 webModule.getJsfAnnotatedClasses().put(jsfClass, convertedClasses);
             }
 

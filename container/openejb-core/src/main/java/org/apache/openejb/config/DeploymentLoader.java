@@ -97,6 +97,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private static final String ddDir = "META-INF/";
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
+    public static final String EAR_SCOPED_CDI_BEANS = "ear-scoped-cdi-beans_";
     public static final String RAR_URLS_KEY = "rar-urls";
     public static final String URLS_KEY = "urls";
     private boolean scanManagedBeans = true;
@@ -973,8 +974,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (complete == null) return;
 
-        // don't change the name without looking in tomee and org.apache.openejb.config.AnnotationDeployer.DiscoverAnnotatedBeans.deploy()
-        final EjbModule ejbModule = new EjbModule(appModule.getClassLoader(), "ear-scoped-cdi-beans_" + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
+        final EjbModule ejbModule = new EjbModule(appModule.getClassLoader(), EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
         ejbModule.setBeans(complete);
         ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls))));
 
