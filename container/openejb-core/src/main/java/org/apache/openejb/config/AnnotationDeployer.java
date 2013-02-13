@@ -250,30 +250,29 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
     private static final String[] JSF_CLASSES = new String[] {
+            "javax.faces.application.ResourceDependencies",
+            "javax.faces.application.ResourceDependency",
             "javax.faces.bean.ApplicationScoped",
             "javax.faces.bean.CustomScoped",
-            "javax.faces.convert.FacesConverter",
-            "javax.faces.render.FacesBehaviorRenderer",
-            "javax.faces.component.FacesComponent",
-            "javax.faces.convert.FacesConverter",
-            "javax.faces.render.FacesRenderer",
-            "javax.faces.validator.FacesValidator",
-            "javax.faces.event.ListenerFor",
-            "javax.faces.event.ListenersFor",
             "javax.faces.bean.ManagedBean",
             "javax.faces.bean.ManagedProperty",
-            "javax.faces.event.NamedEvent",
             "javax.faces.bean.NoneScoped",
             "javax.faces.bean.ReferencedBean",
             "javax.faces.bean.RequestScoped",
-            "javax.faces.application.ResourceDependencies",
-            "javax.faces.application.ResourceDependency",
             "javax.faces.bean.SessionScoped",
             "javax.faces.bean.ViewScoped",
+            "javax.faces.component.FacesComponent",
             "javax.faces.component.UIComponent",
             "javax.faces.convert.Converter",
-            "javax.faces.validator.Validator",
-            "javax.faces.render.Renderer"
+            "javax.faces.convert.FacesConverter",
+            "javax.faces.event.ListenerFor",
+            "javax.faces.event.ListenersFor",
+            "javax.faces.event.NamedEvent",
+            "javax.faces.render.FacesBehaviorRenderer",
+            "javax.faces.render.FacesRenderer",
+            "javax.faces.render.Renderer",
+            "javax.faces.validator.FacesValidator",
+            "javax.faces.validator.Validator"
     };
 
     private static final String[] WEB_CLASSES = new String[] {
