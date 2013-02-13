@@ -4,7 +4,9 @@ activation-
 activeio-
 activemq-
 aether-
-akka-
+akka-actor-
+akka-cluster-
+akka-remote-
 antlr-
 aopalliance-
 arquillian-common
@@ -169,7 +171,8 @@ rmock-
 rt.jar
 saaj-
 sac-
-scala-
+scala-library-
+scalatest
 scannotation-
 serializer-
 serp-
