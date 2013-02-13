@@ -178,9 +178,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             } else if (scopeType.equals(SessionScoped.class)) {
                 initSessionContext((HttpSession) startParameter);
             } else if (scopeType.equals(ApplicationScoped.class)) {
-                // Do nothing
+                initApplicationContext();
             } else if (scopeType.equals(Dependent.class)) {
-                // Do nothing
+                initSingletonContext();
             } else if (scopeType.equals(Singleton.class)) {
                 // Do nothing
             } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
@@ -193,6 +193,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 }
             }
         }
+    }
+
+    private void initSingletonContext() {
+        singletonContext.setActive(true);
+    }
+
+    private void initApplicationContext() { // in case contexts are stop/start
+        applicationContext.setActive(true);
     }
 
     @Override
