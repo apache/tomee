@@ -67,6 +67,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     public static final String CLIENT = "OpenEJB.MCP.Client:";
     public static final String EMPTY = "NoService";
 
+    private final Set<String> ignore = new HashSet<String>();
     private final Set<URI> uriSet = new HashSet<URI>();
     private AtomicBoolean running = new AtomicBoolean(false);
     final ArrayList<Future> futures = new ArrayList<Future>();
@@ -96,6 +97,21 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         final Options o = new Options(p);
         o.setLogger(new OptionsLog(log));
 
+        this.ignore.add("localhost");
+        this.ignore.add("::1");
+        this.ignore.add("127.0.0.1");
+
+        try {
+            final String[] ignoreList = o.get("ignore", "").split(",");
+            for (final String s : ignoreList) {
+                if (null != s && s.trim().length() > 0) {
+                    this.ignore.add(s.trim().toLowerCase());
+                }
+            }
+        } catch (Exception e) {
+            log.warning("Invalid ignore parameter. Should be a lowercase single or comma seperated list like: ignore=host1,host2");
+        }
+
         this.multicast = p.getProperty("bind", this.multicast);
         this.port = o.get("port", this.port);
         this.group = o.get("group", this.group);
@@ -115,7 +131,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             }
         }
 
-        final String hosts = getHosts();
+        final String hosts = getHosts(this.ignore);
         final StringBuilder sb = new StringBuilder(SERVER);
         sb.append(this.group);
         sb.append(':');
@@ -240,8 +256,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                             if (MulticastPulseAgent.this.loopbackOnly) {
                                                 //We only have local services, so make sure the request is from a local source else ignore it
                                                 if (!MulticastPulseAgent.isLocalAddress(client, false)) {
-                                                    log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available"
-                                                            , client, s));
+                                                    log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available", client, s));
                                                     continue;
                                                 }
                                             }
@@ -476,7 +491,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         }
     }
 
-    private static String getHosts() {
+    private static String getHosts(final Set<String> ignore) {
 
         final Set<String> hosts = new TreeSet<String>(new Comparator<String>() {
 
@@ -529,7 +544,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         final StringBuilder sb = new StringBuilder();
         for (final String host : hosts) {
             final String lc = host.toLowerCase();
-            if (!"localhost".equals(lc) && !"::1".equals(lc) && !"127.0.0.1".equals(lc)) {
+            if (!ignore.contains(lc)) {
                 if (sb.length() > 0) {
                     sb.append(',');
                 }

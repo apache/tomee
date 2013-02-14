@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class CommandParser {
 
     private final Map<String, Option> opts = new LinkedHashMap<String, Option>();
@@ -37,9 +37,10 @@ public class CommandParser {
         init();
     }
 
-    protected void init(){}
+    protected void init() {
+    }
 
-    protected List<String> validate(Arguments arguments) {
+    protected List<String> validate(final Arguments arguments) {
         return new ArrayList<String>();
     }
 
@@ -47,21 +48,22 @@ public class CommandParser {
         return new ArrayList<String>();
     }
 
-    public void category(String name) {
+    public void category(final String name) {
         opts.put("-@" + name, new Category(name));
     }
 
-    public Option opt(String _long) {
+    public Option opt(final String _long) {
         return opt(new Option(_long));
     }
 
-    public Option opt(char _short, String _long) {
+    public Option opt(final char _short, final String _long) {
         return opt(new Option(_short, _long));
     }
 
-    private Option opt(Option o) {
+    private Option opt(final Option o) {
         opts.put(o.getName(), o);
-        if (o.getMini() != null) opts.put(o.getMini(), o);
+        if (o.getMini() != null)
+            opts.put(o.getMini(), o);
         return o;
     }
 
@@ -77,10 +79,11 @@ public class CommandParser {
             System.out.println("  or   " + usage.next());
         }
 
-        List<Option> seen = new ArrayList<Option>();
+        final List<Option> seen = new ArrayList<Option>();
 
-        for (Option option : opts.values()) {
-            if (seen.contains(option)) continue;
+        for (final Option option : opts.values()) {
+            if (seen.contains(option))
+                continue;
             seen.add(option);
 
             if (option instanceof Category) {
@@ -89,7 +92,7 @@ public class CommandParser {
                 continue;
             }
 
-            StringBuilder s = new StringBuilder();
+            final StringBuilder s = new StringBuilder();
             if (option.getMini() != null) {
                 s.append(" -");
                 s.append(option.getMini());
@@ -118,7 +121,8 @@ public class CommandParser {
                 }
 
                 if (option.getValue() != null) {
-                    if (option.getDescription() != null) s.append(" ");
+                    if (option.getDescription() != null)
+                        s.append(" ");
                     s.append("Default is ");
                     s.append(option.getValue());
                 }
@@ -128,31 +132,33 @@ public class CommandParser {
         }
     }
 
-    public Arguments parse(String[] args) throws HelpException, InvalidOptionsException {
-        List<String> list = new ArrayList<String>(Arrays.asList(args));
+    public Arguments parse(final String[] args) throws HelpException, InvalidOptionsException {
+        final List<String> list = new ArrayList<String>(Arrays.asList(args));
 
-        ListIterator<String> items = list.listIterator();
+        final ListIterator<String> items = list.listIterator();
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
 
         while (items.hasNext()) {
             String arg = items.next();
 
-            if (!arg.startsWith("-")) break;
+            if (!arg.startsWith("-"))
+                break;
 
             items.remove();
 
-            boolean longOption = arg.startsWith("--");
+            final boolean longOption = arg.startsWith("--");
 
             arg = arg.replaceFirst("-+", "");
 
             if (longOption) {
-                String name, value = "";
+                final String name;
+                final String value;
 
                 if (arg.equals("help")) {
                     props.put("help", "");
                     continue;
-                } else if (arg.indexOf("=") > -1) {
+                } else if (arg.contains("=")) {
                     name = arg.substring(0, arg.indexOf("="));
                     value = arg.substring(arg.indexOf("=") + 1);
                 } else {
@@ -163,21 +169,21 @@ public class CommandParser {
                     value = value(items, option);
                 }
 
-                Option option = opts.get(name);
+                final Option option = opts.get(name);
 
                 checkOption("--" + name, option);
                 checkValue("--" + name, value, option);
                 props.put(option.getName(), value);
             } else {
-                char[] chars = new char[arg.length()];
+                final char[] chars = new char[arg.length()];
                 arg.getChars(0, chars.length, chars, 0);
 
                 for (int i = 0; i < chars.length; i++) {
-                    char c = chars[i];
+                    final char c = chars[i];
 
-                    String name = c + "";
+                    final String name = c + "";
 
-                    Option option = opts.get(name);
+                    final Option option = opts.get(name);
 
                     checkOption("-" + name, option);
 
@@ -207,24 +213,25 @@ public class CommandParser {
 
         if (issues.size() > 0) {
 
-            for (String issue : issues) {
+            for (final String issue : issues) {
                 System.err.println(issue);
             }
 
             System.err.println();
-            
+
             help();
 
             throw new InvalidOptionsException();
         }
-        
+
         return arguments;
     }
 
-    private void checkValue(String optString, String value, Option option) {
+    private void checkValue(final String optString, final String value, final Option option) {
         checkOption(optString, option);
 
-        if (option.getType() == null) return;
+        if (option.getType() == null)
+            return;
 
         if (value == null || value.equals("")) {
             System.err.println("Missing param " + optString + " <" + option.getType().getSimpleName() + ">");
@@ -232,8 +239,9 @@ public class CommandParser {
         }
     }
 
-    private void checkOption(String invalid, Option option) {
-        if (option != null) return;
+    private void checkOption(final String invalid, final Option option) {
+        if (option != null)
+            return;
 
         System.err.println("Unknown option: " + invalid);
 
@@ -242,10 +250,10 @@ public class CommandParser {
         System.exit(1);
     }
 
-    private String value(ListIterator<String> items, Option option) {
+    private String value(final ListIterator<String> items, final Option option) {
         if (option.getType() != null && items.hasNext()) {
 
-            String possibleValue = items.next();
+            final String possibleValue = items.next();
 
             if (!possibleValue.startsWith("-")) {
                 items.remove();
@@ -260,10 +268,11 @@ public class CommandParser {
     }
 
     public static final class Arguments {
+
         private final Options options;
         private final List<String> args;
 
-        public Arguments(Options options, List<String> args) {
+        public Arguments(final Options options, final List<String> args) {
             this.options = options;
             this.args = args;
         }
@@ -278,45 +287,49 @@ public class CommandParser {
     }
 
     public static class Category extends Option {
-        public Category(String name) {
+
+        public Category(final String name) {
             super(name);
         }
     }
 
     public static class Option {
+
         private final String mini;
         private final String name;
         private String description;
         private Class type;
         private Object value;
 
-        Option(char mini, String name) {
+        Option(final char mini, final String name) {
             this(mini + "", name);
         }
 
-        Option(String name) {
+        Option(final String name) {
             this(null, name);
         }
 
-        Option(String mini, String name) {
+        Option(final String mini, final String name) {
             this.mini = mini;
             this.name = name;
         }
 
         public Option description(String description) {
-            if (!description.endsWith(".")) description += ".";
+            if (!description.endsWith("."))
+                description += ".";
             this.setDescription(description);
             return this;
         }
 
-        public Option type(Class type) {
+        public Option type(final Class type) {
             this.setType(type);
             return this;
         }
 
-        public Option value(Object value) {
+        public Option value(final Object value) {
             this.setValue(value);
-            if (getType() == null) this.setType(value.getClass());
+            if (getType() == null)
+                this.setType(value.getClass());
             return this;
         }
 
@@ -332,7 +345,7 @@ public class CommandParser {
             return description;
         }
 
-        public void setDescription(String description) {
+        public void setDescription(final String description) {
             this.description = description;
         }
 
@@ -340,7 +353,7 @@ public class CommandParser {
             return type;
         }
 
-        public void setType(Class type) {
+        public void setType(final Class type) {
             this.type = type;
         }
 
@@ -348,17 +361,16 @@ public class CommandParser {
             return value;
         }
 
-        public void setValue(Object value) {
+        public void setValue(final Object value) {
             this.value = value;
         }
     }
 
-    
     public static class HelpException extends Exception {
 
     }
 
     public static class InvalidOptionsException extends Exception {
-        
+
     }
 }
