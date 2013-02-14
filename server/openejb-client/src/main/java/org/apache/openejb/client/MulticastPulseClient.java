@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -53,12 +55,17 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MulticastPulseClient extends MulticastConnectionFactory {
 
+    public static final String ORG_APACHE_OPENEJB_MULTIPULSE_TTL = "org.apache.openejb.multipulse.ttl";
+    public static final String ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT = "org.apache.openejb.multipulse.uri.limit";
+
+    private static final Logger log = Logger.getLogger("OpenEJB.client");
     private static final String SERVER = "OpenEJB.MCP.Server:";
     private static final String CLIENT = "OpenEJB.MCP.Client:";
     private static final String EMPTY = "NoService";
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final int TTL = Integer.parseInt(System.getProperty("org.apache.openejb.multipulse.ttl", "32"));
-    private static final Set<URI> badUri = new HashSet<URI>();
+    private static final int TTL = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_TTL, "32"));
+    private static final int LIMIT = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT, "50000"));
+    private static final Map<URI, Set<URI>> knownUris = new HashMap<URI, Set<URI>>();
     private static final NetworkInterface[] interfaces = getNetworkInterfaces();
     private static final ExecutorService executor = Executors.newFixedThreadPool(interfaces.length + 1);
 
@@ -70,46 +77,48 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
      */
     @Override
     public Connection getConnection(final URI uri) throws IOException {
-        final Map<String, String> params;
-        try {
-            params = URIs.parseParamters(uri);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid multicast uri " + uri.toString(), e);
+
+        if (knownUris.size() >= LIMIT) {
+            //This is here just as a brake to prevent DOS or OOME.
+            //There is no way we should have more than this number of unique MutliPulse URI's in a LAN
+            throw new IllegalArgumentException("Unique MultiPulse URI limit of " + LIMIT + " reached. Increase using the system property '" + ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT + "'");
         }
 
-        final Set<String> schemes = getSet(params, "schemes", this.getDefaultSchemes());
-        final String group = getString(params, "group", "default");
-        final long timeout = getLong(params, "timeout", 250);
+        Set<URI> uriSet = knownUris.get(uri);
 
-        final Set<URI> uriSet;
-        try {
-            uriSet = MulticastPulseClient.discoverURIs(group, schemes, uri.getHost(), uri.getPort(), timeout);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Unable to find an ejb server via the MulticastPulse URI: " + uri);
+        if (null == uriSet || uriSet.isEmpty()) {
+
+            final Map<String, String> params;
+            try {
+                params = URIs.parseParamters(uri);
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Invalid MultiPulse uri " + uri.toString(), e);
+            }
+
+            final Set<String> schemes = getSet(params, "schemes", this.getDefaultSchemes());
+            final String group = getString(params, "group", "default");
+            final long timeout = getLong(params, "timeout", 250);
+
+            try {
+                uriSet = MulticastPulseClient.discoverURIs(group, schemes, uri.getHost(), uri.getPort(), timeout);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Unable to find an ejb server via the MultiPulse URI: " + uri);
+            }
+
+            knownUris.put(uri, uriSet);
         }
 
         for (final URI serviceURI : uriSet) {
-
-            if (badUri.contains(serviceURI)) {
-                continue;
-            }
 
             try {
                 //Strip serverhost and group and try to connect
                 return ConnectionManager.getConnection(URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart()));
             } catch (Throwable e) {
-                badUri.add(serviceURI);
+                uriSet.remove(serviceURI);
             }
         }
 
-        throw new IllegalArgumentException("Unable to connect an ejb server via the MulticastPulse URI: " + uri);
-    }
-
-    /**
-     * Clear the list of bad URIs that may have been collected (if any).
-     */
-    public static void clearBadUris() {
-        badUri.clear();
+        throw new IOException("Unable to connect an ejb server via the MultiPulse URI: " + uri);
     }
 
     /**
@@ -525,17 +534,13 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         protected void init() {
             category("Options");
 
-            opt('g', "group").type(String.class).value("*")
-                    .description("Group name");
+            opt('g', "group").type(String.class).value("*").description("Group name");
 
-            opt('h', "host").type(String.class).value("239.255.3.2")
-                    .description("Multicast address");
+            opt('h', "host").type(String.class).value("239.255.3.2").description("Multicast address");
 
-            opt('p', "port").type(int.class).value(6142)
-                    .description("Multicast port");
+            opt('p', "port").type(int.class).value(6142).description("Multicast port");
 
-            opt('t', "timeout").type(int.class).value(1000)
-                    .description("Pulse back timeout");
+            opt('t', "timeout").type(int.class).value(1000).description("Pulse back timeout");
         }
 
         @Override
@@ -549,6 +554,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
     };
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(final String[] args) throws Exception {
 
         final CommandParser.Arguments arguments;
@@ -568,6 +574,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final String mchost = options.get("host", "239.255.3.2");
         final int mcport = options.get("port", 6142);
         final int timeout = options.get("timeout", 1500);
+
+        System.out.println(String.format("Using discovery options group=%1$s, host=%2$s, port=%3$s, timeout=%4$s", discover, mchost, mcport, timeout));
+        System.out.println();
+
         final AtomicBoolean running = new AtomicBoolean(true);
 
         final Thread t = new Thread(new Runnable() {
@@ -578,11 +588,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                     Set<URI> uriSet = null;
                     try {
-                        uriSet = MulticastPulseClient.discoverURIs(discover,
-                                                                   new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")),
-                                                                   mchost,
-                                                                   mcport,
-                                                                   timeout);
+                        uriSet = MulticastPulseClient.discoverURIs(discover, new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")), mchost, mcport, timeout);
                     } catch (Throwable e) {
                         System.err.println(e.getMessage());
                     }
