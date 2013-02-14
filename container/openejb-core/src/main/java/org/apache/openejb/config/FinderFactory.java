@@ -21,6 +21,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.ClasspathArchive;
@@ -34,6 +35,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +67,9 @@ public class FinderFactory {
         } else if (module instanceof ConnectorModule) {
             ConnectorModule connectorModule = (ConnectorModule) module;
             finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+        } else if (module instanceof AppModule) {
+            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(module.getClassLoader())).getUrls();
+            finder = new AnnotationFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
             File file = new File(location);

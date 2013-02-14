@@ -23,6 +23,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.util.SuperProperties;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
 import java.net.URI;
@@ -64,6 +65,7 @@ public class AppModule implements DeploymentModule {
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
     private final Collection<String> jaxRsProviders = new TreeSet<String>();
     private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<String, PojoConfiguration>();
+    private IAnnotationFinder earLibFinder = null;
 
     private ID id;
     private boolean webapp = false;
@@ -348,5 +350,13 @@ public class AppModule implements DeploymentModule {
 
     public Map<String, PojoConfiguration> getPojoConfigurations() {
         return pojoConfigurations;
+    }
+
+    public IAnnotationFinder getEarLibFinder() {
+        return earLibFinder;
+    }
+
+    public void setEarLibFinder(final IAnnotationFinder earLibFinder) {
+        this.earLibFinder = earLibFinder;
     }
 }

@@ -102,7 +102,7 @@ public class TempClassLoader extends URLClassLoader {
          * 2. Since this class loader uses Class.forName to load classes starting with java, javax or sun, it cannot load javax.faces.FacesServlet
          * 3. Result is , AnnotationDeployer throws a ClassNotFoundException
          */
-        if (this.skip(name)) {
+        if (this.skip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(getParent(), name))) {
             return Class.forName(name, resolve, this.getClass().getClassLoader());
         }
 
