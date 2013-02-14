@@ -69,8 +69,8 @@
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-core</artifactId>
-        <version>5.6.0</version>
+        <artifactId>activemq-broker</artifactId>
+        <version>5.8.0</version>
         <scope>runtime</scope>
       </dependency>
 
