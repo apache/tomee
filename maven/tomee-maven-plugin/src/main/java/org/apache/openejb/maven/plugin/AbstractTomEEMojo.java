@@ -493,8 +493,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected String destinationName() {
         if (context != null) {
-            if (warFile.getName().endsWith(".war")) {
-                return context + ".war";
+            if (!context.contains(".")) {
+                return context + "." + packaging;
             }
             return context;
         }
