@@ -409,7 +409,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
-            if (!appModule.isWebapp()) {
+            if (!appModule.isWebapp() && appModule.getEjbModules() == null) {
                 try {
                     appModule.setEarLibFinder(FinderFactory.createFinder(appModule));
                 } catch (final Exception e) {

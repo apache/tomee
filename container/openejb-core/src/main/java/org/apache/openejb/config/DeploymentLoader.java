@@ -974,9 +974,18 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (complete == null) return;
 
+        IAnnotationFinder finder;
+        try {
+            finder = FinderFactory.createFinder(appModule);
+        } catch (Exception e) {
+            finder = new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls)));
+        }
+        appModule.setEarLibFinder(finder);
+
         final EjbModule ejbModule = new EjbModule(appModule.getClassLoader(), EAR_SCOPED_CDI_BEANS + appModule.getModuleId(), new EjbJar(), new OpenejbJar());
         ejbModule.setBeans(complete);
-        ejbModule.setFinder(new FinderFactory.ModuleLimitedFinder(new org.apache.xbean.finder.AnnotationFinder(new WebappAggregatedArchive(appModule.getClassLoader(), appModule.getAltDDs(), xmls))));
+        ejbModule.setFinder(finder);
+        ejbModule.setEjbJar(new EmptyEjbJar());
 
         appModule.getEjbModules().add(ejbModule);
     }
