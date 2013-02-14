@@ -137,7 +137,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <bval.version>0.5</bval.version>
-    <org.apache.activemq.version>5.7.0</org.apache.activemq.version>
+    <org.apache.activemq.version>5.8.0</org.apache.activemq.version>
     <quartz.version>2.1.6</quartz.version>
     <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
     <junit.version>4.11</junit.version>
@@ -916,6 +916,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-jdbc-store</artifactId>
+        <version>${org.apache.activemq.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
         <version>${org.apache.activemq.version}</version>
         <exclusions>
@@ -940,7 +951,7 @@
             <artifactId>scala-library</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>activemq</groupId>
+            <groupId>javax.jmdns</groupId>
             <artifactId>jmdns</artifactId>
           </exclusion>
           <exclusion>
@@ -951,7 +962,7 @@
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
           </exclusion>
-		      <exclusion>
+              <exclusion>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
           </exclusion>
@@ -961,14 +972,14 @@
           </exclusion>
         </exclusions>
       </dependency>
-	    <dependency>
+        <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
         <version>${commons-net.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-core</artifactId>
+        <artifactId>activemq-broker</artifactId>
         <version>${org.apache.activemq.version}</version>
         <exclusions>
           <exclusion>
@@ -1076,7 +1087,7 @@
             <artifactId>regexp</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>activemq</groupId>
+            <groupId>javax.jmdns</groupId>
             <artifactId>jmdns</artifactId>
           </exclusion>
           <exclusion>
@@ -1381,10 +1392,10 @@
         <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
-		<groupId>org.javassist</groupId>
-		<artifactId>javassist</artifactId>
-		<version>3.17.1-GA</version>
-	  </dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.17.1-GA</version>
+      </dependency>
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
@@ -1606,11 +1617,11 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-		<artifactId>commons-lang3</artifactId>
+        <artifactId>commons-lang3</artifactId>
         <groupId>org.apache.commons</groupId>
         <version>${commons-lang3.version}</version>
       </dependency>
-	  <dependency>
+      <dependency>
         <artifactId>commons-lang</artifactId>
         <groupId>commons-lang</groupId>
         <version>2.6</version>

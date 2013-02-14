@@ -114,11 +114,11 @@
       javax.xml.ws.soap,
       javax.xml.ws.spi,
       javax.xml.ws.wsaddressing,
-      org.apache.activemq.broker;resolution:=optional;version="[5.4,6)",
-      org.apache.activemq.ra;resolution:=optional;version="[5.4,6)",
-      org.apache.activemq.store;resolution:=optional;version="[5.4,6)",
-      org.apache.activemq.store.jdbc;resolution:=optional;version="[5.4,6)",
-      org.apache.activemq.store.memory;resolution:=optional;version="[5.4,6)",
+      org.apache.activemq.broker;resolution:=optional;version="[5.8,6.0)",
+      org.apache.activemq.ra;resolution:=optional;version="[5.8,6.0)",
+      org.apache.activemq.store;resolution:=optional;version="[5.8,6.0)",
+      org.apache.activemq.store.jdbc;resolution:=optional;version="[5.8,6.0)",
+      org.apache.activemq.store.memory;resolution:=optional;version="[5.8,6.0)",
       org.apache.bval.jsr303;resolution:=optional,
       org.apache.bval.jsr303.resolver;resolution:=optional,
       org.apache.commons.beanutils,
@@ -463,7 +463,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-core</artifactId>
+      <artifactId>activemq-broker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>

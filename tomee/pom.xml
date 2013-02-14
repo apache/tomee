@@ -80,7 +80,7 @@
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-core</artifactId>
+              <artifactId>activemq-broker</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
@@ -129,7 +129,7 @@
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-core</artifactId>
+              <artifactId>activemq-broker</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
@@ -161,7 +161,7 @@
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-core</artifactId>
+              <artifactId>activemq-broker</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>

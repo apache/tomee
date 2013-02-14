@@ -128,7 +128,7 @@
           <groupId>org.apache.activemq</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>activemq-core</artifactId>
+          <artifactId>activemq-broker</artifactId>
           <groupId>org.apache.activemq</groupId>
         </exclusion>
         <exclusion>
