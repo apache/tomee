@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.classloader;
 
+import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // look for it in this classloader
-        boolean ok = !shouldSkip(name);
+        boolean ok = !(shouldSkip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name)));
         if (ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
@@ -317,6 +318,33 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
+    }
+
+    public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
+        ClassLoader parentLoader = loader.getParent();
+        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
+            parentLoader = parentLoader.getParent();
+        }
+        if (parentLoader == null) {
+            return true;
+        }
+
+        // using annotation to test to avoid to load more classes with deps
+        final String testClass;
+        if ("javax.faces.bean.RequestScoped".equals(name)) {
+            testClass = "javax.faces.bean.SessionScoped";
+        } else {
+            testClass = "javax.faces.bean.RequestScoped";
+        }
+
+        final String classname = testClass.replace('.', '/') + ".class";
+        final URL thisJSf = loader.getResource(classname);
+        if (thisJSf == null) {
+            return true;
+        }
+        final URL containerJsf = loader.getResource(classname);
+        return containerJsf != null && thisJSf.equals(containerJsf);
+
     }
 
     // in org.apache.openejb.

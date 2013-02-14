@@ -409,6 +409,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
+            if (!appModule.isWebapp()) {
+                try {
+                    appModule.setEarLibFinder(FinderFactory.createFinder(appModule));
+                } catch (final Exception e) {
+                    logger.error("Can't create a finder for ear libs", e);
+                }
+            }
+
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 ejbModule.initAppModule(appModule);
                 setModule(ejbModule);
@@ -1114,12 +1122,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             IAnnotationFinder parentFinder = null;
             final AppModule appModule = webModule.getAppModule();
             if (appModule != null) {
-                for (final EjbModule module : appModule.getEjbModules()) {
-                    if (!module.getModuleId().startsWith(DeploymentLoader.EAR_SCOPED_CDI_BEANS)) {
-                        parentFinder = module.getFinder();
-                        break;
-                    }
-                }
+                parentFinder = appModule.getEarLibFinder();
             }
 
             final ClassLoader classLoader = webModule.getClassLoader();

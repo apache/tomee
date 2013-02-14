@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +61,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
         archive = new CompositeArchive(archives);
     }
 
-    public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, ArrayList<URL> xmls) {
+    public WebappAggregatedArchive(final ClassLoader classLoader, final Map<String, Object> altDDs, Collection<URL> xmls) {
         this(new ConfigurableClasspathArchive.FakeModule(classLoader, altDDs), xmls);
     }
 

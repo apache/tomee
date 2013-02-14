@@ -1662,7 +1662,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private boolean isUnDeployable(final ContextInfo contextInfo) {
-        return contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null
+        return contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null && contextInfo.appInfo.webAppAlone
                 && getAssembler().getDeployedApplications().contains(contextInfo.appInfo);
     }
 
@@ -1708,7 +1708,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
             ClassLoaderUtil.cleanOpenJPACache(old);
         }
-        removeContextInfo(standardContext);
+        if (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone) {
+            removeContextInfo(standardContext);
+        }
     }
 
     /**
