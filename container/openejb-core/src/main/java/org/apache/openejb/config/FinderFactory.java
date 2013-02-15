@@ -68,7 +68,7 @@ public class FinderFactory {
             ConnectorModule connectorModule = (ConnectorModule) module;
             finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module instanceof AppModule) {
-            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(module.getClassLoader())).getUrls();
+            final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = new AnnotationFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();

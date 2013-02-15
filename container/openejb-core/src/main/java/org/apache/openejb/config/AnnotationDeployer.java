@@ -1138,13 +1138,27 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (parentFinder != null) {
                     final List<Annotated<Class<?>>> foundParent = parentFinder.findMetaAnnotatedClasses(clazz);
-                    for (Annotated<Class<?>> annotated : foundParent) {
+                    for (final Annotated<Class<?>> annotated : foundParent) {
                         convertedClasses.add(annotated.get().getName());
+                    }
+
+                    for (final EjbModule module : appModule.getEjbModules()) {
+                        // if we are deplying a webapp we don't need to (re)do it
+                        // or if this module is another webapp we don't need to look it
+                        // otherwise that's a common part of ear we want to scan
+                        if (appModule.isWebapp() || (module.isWebapp() && !module.getModuleId().equals(webModule.getModuleId()))) {
+                            continue;
+                        }
+
+                        final List<Annotated<Class<?>>> ejbFound = module.getFinder().findMetaAnnotatedClasses(clazz);
+                        for (final Annotated<Class<?>> annotated : ejbFound) {
+                            convertedClasses.add(annotated.get().getName());
+                        }
                     }
                 }
 
                 final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
-                for (Annotated<Class<?>> annotated : found) {
+                for (final Annotated<Class<?>> annotated : found) {
                     convertedClasses.add(annotated.get().getName());
                 }
 
