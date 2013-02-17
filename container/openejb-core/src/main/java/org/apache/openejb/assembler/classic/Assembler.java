@@ -211,6 +211,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private SecurityService securityService;
     protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
+    private final Map<ObjectName, CreationalContext> creationalContextForAppMbeans = new HashMap<ObjectName, CreationalContext>();
     private final Set<String> moduleIds = new HashSet<String>();
     private final Set<ObjectName> containerObjectNames = new HashSet<ObjectName>();
     private final RemoteResourceMonitor remoteResourceMonitor = new RemoteResourceMonitor();
@@ -1005,36 +1006,36 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     @SuppressWarnings("unchecked")
-    private static void deployMBean(final WebBeansContext wc, final ClassLoader cl, final String mbeanClass, final Properties appMbeans, final String id) {
-        final Class<?> clazz;
-        try {
-            clazz = cl.loadClass(mbeanClass);
-        } catch (ClassNotFoundException e) {
-            throw new OpenEJBRuntimeException(e);
-        }
-        final BeanManager bm = wc.getBeanManagerImpl();
-        final Set<Bean<?>> beans = bm.getBeans(clazz);
-        final Bean bean = bm.resolve(beans);
-        final Object instance;
-        if (bean == null) {
-            try {
-                instance = clazz.newInstance();
-            } catch (InstantiationException e) {
-                logger.error("the mbean " + mbeanClass + " can't be registered because it can't be instantiated", e);
-                return;
-            } catch (IllegalAccessException e) {
-                logger.error("the mbean " + mbeanClass + " can't be registered because it can't be accessed", e);
-                return;
-            }
-        } else {
-            final CreationalContext creationalContext = bm.createCreationalContext(bean);
-            instance = bm.getReference(bean, clazz, creationalContext);
-            if (Dependent.class.equals(bean.getScope())) {
-                creationalContext.release();
-            }
-        }
-
+    private void deployMBean(final WebBeansContext wc, final ClassLoader cl, final String mbeanClass, final Properties appMbeans, final String id) {
         if (LocalMBeanServer.isJMXActive()) {
+            final Class<?> clazz;
+            try {
+                clazz = cl.loadClass(mbeanClass);
+            } catch (ClassNotFoundException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+
+            final BeanManager bm = wc.getBeanManagerImpl();
+            final Set<Bean<?>> beans = bm.getBeans(clazz);
+            final Bean bean = bm.resolve(beans);
+            final Object instance;
+            final CreationalContext creationalContext;
+            if (bean == null) {
+                try {
+                    instance = clazz.newInstance();
+                } catch (InstantiationException e) {
+                    logger.error("the mbean " + mbeanClass + " can't be registered because it can't be instantiated", e);
+                    return;
+                } catch (IllegalAccessException e) {
+                    logger.error("the mbean " + mbeanClass + " can't be registered because it can't be accessed", e);
+                    return;
+                }
+                creationalContext = null;
+            } else {
+                creationalContext = bm.createCreationalContext(bean);
+                instance = bm.getReference(bean, clazz, creationalContext);
+            }
+
             final MBeanServer server = LocalMBeanServer.get();
             try {
                 final ObjectName leaf = new ObjectNameBuilder("openejb.user.mbeans")
@@ -1045,6 +1046,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
+                if (Dependent.class.equals(bean.getScope())) {
+                    creationalContextForAppMbeans.put(leaf, creationalContext);
+                }
                 logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
             } catch (Exception e) {
                 logger.error("the mbean " + mbeanClass + " can't be registered", e);
@@ -1479,6 +1483,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final ObjectName on = new ObjectName((String) objectName);
                 if (server.isRegistered(on)) {
                     server.unregisterMBean(on);
+                }
+                final CreationalContext cc = creationalContextForAppMbeans.remove(on);
+                if (cc != null) {
+                    cc.release();
                 }
             } catch (InstanceNotFoundException e) {
                 logger.warning("can't unregister " + objectName + " because the mbean was not found", e);
