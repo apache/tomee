@@ -182,7 +182,7 @@ public class WebContext {
             // if the bean is dependent simply cleanup the creational context once it is created
             final Class<? extends Annotation> scope = beanDefinition.getScope();
             if (scope == null || Dependent.class.equals(scope)) {
-                creationalContext.release();
+                creatonalContexts.put(beanInstance, creationalContext);
             }
 
             return beanInstance;
