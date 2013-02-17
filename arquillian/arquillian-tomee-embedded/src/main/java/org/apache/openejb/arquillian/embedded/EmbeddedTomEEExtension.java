@@ -30,7 +30,7 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.transaction.spi.provider.TransactionProvider;
 
 public class EmbeddedTomEEExtension implements LoadableExtension {
-    private static final String ADAPTER = "tomee-embedded";
+    public static final String ADAPTER = "tomee-embedded";
 
     @Override
     public void register(final ExtensionBuilder builder) {
