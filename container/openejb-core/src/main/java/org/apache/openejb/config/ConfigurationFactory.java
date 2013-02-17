@@ -1318,7 +1318,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-                if (isResourceType(resourceInfo.service, resourceInfo.types, type) && implies(required, resourceInfo.properties)) {
+                if (((type != null && type.equals(resourceInfo.className)) || isResourceType(resourceInfo.service, resourceInfo.types, type)) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
                     resourceIds.addAll(resourceInfo.aliases);
                 }

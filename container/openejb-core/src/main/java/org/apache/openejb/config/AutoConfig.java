@@ -1097,7 +1097,17 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     id = id.substring("java:".length());
                 }
                 try {
-                    id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                    final AppModule appModule = ejbModule.getAppModule();
+                    if (appModule != null) {
+                        final String newId = findResourceId(appModule.getModuleId() + '/' + id.replace("java:", "").replaceAll("^comp/env/", ""), refType, new Properties(), appResources);
+                        if (newId != null) { // app scoped resources, try to find it without creating it first
+                            id = getResourceId(ejbModule.getModuleId(), newId, refType, appResources);
+                        } else {
+                            id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                        }
+                    } else {
+                        id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
+                    }
                 } catch (OpenEJBException e) { // changing the message to be explicit
                     throw new OpenEJBException("Can't find resource for " + ref.getOrigin() + ". (" + e.getMessage() + ")", e.getCause());
                 }
@@ -1819,15 +1829,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         List<String> resourceIds = getResourceIds(appResources, type, required);
         Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
             @Override
-            public int compare(String o1, String o2) {
+            public int compare(String o1, String o2) { // don't change global order, just put app scoped resource before others
                 if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
-                    return o1.compareTo(o2);
+                    return 1;
                 } else if (o1.startsWith(prefix)) {
                     return 1;
                 } else if (o2.startsWith(prefix)) {
                     return -1;
                 }
-                return o1.compareTo(o2);
+                return 1;
             }
         });
         String idd = null;
