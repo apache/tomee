@@ -128,9 +128,14 @@ public class Logs {
         public final String method;
 
         public LogOperationEndpointInfo(final String http, final String address, final String method) {
-            this.http = http;
             this.address = address;
             this.method = method;
+
+            if (http != null) {
+                this.http = http;
+            } else { // can happen with subresource locators
+                this.http = "";
+            }
         }
 
         @Override
