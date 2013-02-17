@@ -1826,18 +1826,18 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String firstMatching(final String prefix, String type, Properties required, AppResources appResources) {
-        List<String> resourceIds = getResourceIds(appResources, type, required);
+        List<String> resourceIds = new ArrayList<String>(getResourceIds(appResources, type, required));
         Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
             @Override
             public int compare(String o1, String o2) { // don't change global order, just put app scoped resource before others
                 if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
-                    return 1;
-                } else if (o1.startsWith(prefix)) {
-                    return 1;
-                } else if (o2.startsWith(prefix)) {
                     return -1;
+                } else if (o1.startsWith(prefix)) {
+                    return -1;
+                } else if (o2.startsWith(prefix)) {
+                    return 1;
                 }
-                return 1;
+                return -1;
             }
         });
         String idd = null;
