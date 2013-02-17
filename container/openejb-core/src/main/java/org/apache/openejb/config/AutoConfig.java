@@ -83,6 +83,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -882,7 +883,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
         final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (Resource resource : resources) {
-            resource.setId(value(resource.getId()));
+            final String originalId = value(resource.getId());
+            resource.setId(module.getModuleId() + "/" + replaceJavaAndSlash(originalId));
             resource.setJndi(value(resource.getJndi()));
             resource.getProperties().putAll(holds(resource.getProperties()));
 
@@ -921,13 +923,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             resourceRef.setMappedName(resourceInfo.id);
 
+            final ResourceRef strictRef = new ResourceRef(OPENEJB_RESOURCE_JNDI_PREFIX + originalId, resourceRef.getResType(), resourceRef.getResAuth(), resourceRef.getResSharingScope());
+            strictRef.setMappedName(resourceInfo.id);
+
             for (JndiConsumer consumer : jndiConsumers) {
-                final ResourceRef existing = consumer.getResourceRefMap().get(resourceRef.getKey());
-                if (existing != null) {
-                    existing.setMappedName(resourceRef.getMappedName());
-                } else {
-                    consumer.getResourceRef().add(resourceRef);
-                }
+                addResource(consumer, resourceRef); // for injections etc...
+                addResource(consumer, strictRef); // for lookups (without prefix)
             }
 
             resourceInfos.add(resourceInfo);
@@ -942,6 +943,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         resourceInfos.clear();
         // resources.clear(); // don't clear it since we want to keep this to be able to undeploy resources with the app
+    }
+
+    private static void addResource(final JndiConsumer consumer, final ResourceRef resourceRef) {
+        final ResourceRef existing = consumer.getResourceRefMap().get(resourceRef.getKey());
+        if (existing != null) {
+            existing.setMappedName(resourceRef.getMappedName());
+        } else {
+            consumer.getResourceRef().add(resourceRef);
+        }
     }
 
     private static String chooseType(final ClassLoader classLoader, final List<String> types, final String defaultType) {
@@ -1258,29 +1268,25 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
 
+            final String prefix = app.getModuleId() + "/";
+
             required.put("JtaManaged", "true");
-            String jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            String jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            if (jtaDataSourceId == null) {
+                jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            }
 
             required.put("JtaManaged", "false");
-            String nonJtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+            String nonJtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+            if (nonJtaDataSourceId == null) {
+                nonJtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
+            }
 
             if (jtaDataSourceId != null && nonJtaDataSourceId != null){
                 // Both DataSources were explicitly configured.
                 setJtaDataSource(unit, jtaDataSourceId);
                 setNonJtaDataSource(unit, nonJtaDataSourceId);
                 continue;
-            }
-
-            // another try prefixing datasource name with app moduleid, case of datasourcedefinition for instance
-            final String prefix = app.getModuleId() + "/";
-            if (jtaDataSourceId == null) {
-                required.put("JtaManaged", "true");
-                jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
-            }
-
-            if (nonJtaDataSourceId == null) {
-                required.put("JtaManaged", "false");
-                nonJtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
             }
 
             if (jtaDataSourceId != null && nonJtaDataSourceId != null){
@@ -1454,12 +1460,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                 required.clear();
                 required.put("JtaManaged", "true");
-                jtaDataSourceId = firstMatching("DataSource", required, null);
+                jtaDataSourceId = firstMatching(prefix, "DataSource", required, null);
 
                 if (jtaDataSourceId == null){
                     required.clear();
                     required.put("JtaManaged", "false");
-                    nonJtaDataSourceId = firstMatching("DataSource", required, null);
+                    nonJtaDataSourceId = firstMatching(prefix, "DataSource", required, null);
                 }
             }
 
@@ -1494,7 +1500,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         if (jtaProperties.containsKey(key)) required.put(key, jtaProperties.get(key));
                     }
 
-                    nonJtaDataSourceId = firstMatching("DataSource", required, null);
+                    nonJtaDataSourceId = firstMatching(prefix, "DataSource", required, null);
 
                     // Strategy 2: Copy
 
@@ -1551,7 +1557,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         if (nonJtaProperties.containsKey(key)) required.put(key, nonJtaProperties.get(key));
                     }
 
-                    jtaDataSourceId = firstMatching("DataSource", required, null);
+                    jtaDataSourceId = firstMatching(prefix, "DataSource", required, null);
 
                     // Strategy 2: Copy
 
@@ -1757,7 +1763,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
 
         // check for existing resource with specified resourceId and type and properties
-        String id = findResourceId(resourceId, type, required, appResources);
+        String id = findResourceId(beanName + '/' + resourceId, type, required, appResources); // check first in app namespace
+        if (id != null) return id;
+
+        id = findResourceId(resourceId, type, required, appResources);
         if (id != null) return id;
 
         // expand search to any type -- may be asking for a reference to a sub-type
@@ -1783,7 +1792,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         // if there are any resources of the desired type, use the first one
-        id = firstMatching(type, required, appResources);
+        id = firstMatching(beanName, type, required, appResources);
         if (id != null) return id;
 
         // Auto create a resource using the first provider that can supply a resource of the desired type
@@ -1806,8 +1815,21 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         logger.info("Auto-creating a Resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
     }
 
-    private String firstMatching(String type, Properties required, AppResources appResources) {
+    private String firstMatching(final String prefix, String type, Properties required, AppResources appResources) {
         List<String> resourceIds = getResourceIds(appResources, type, required);
+        Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
+                    return o1.compareTo(o2);
+                } else if (o1.startsWith(prefix)) {
+                    return 1;
+                } else if (o2.startsWith(prefix)) {
+                    return -1;
+                }
+                return o1.compareTo(o2);
+            }
+        });
         String idd = null;
         if (resourceIds.size() > 0) {
             idd = resourceIds.get(0);
