@@ -135,7 +135,12 @@ public class OpenEJBNamingResource extends NamingResources {
         if (name.startsWith(JAVA_PREFIX)) { // tomcat adds mbeans and a ":" in a mbean is not very cool for the objectname
             ref.setName(name.substring(JAVA_PREFIX.length()));
         } else if (name.startsWith("openejb/Resource/")) {
-            ref.setProperty(NamingUtil.JNDI_NAME, "openejb:" + name.substring("openejb/".length()));
+            final String id = (String) ref.getProperty(NamingUtil.RESOURCE_ID);
+            if (id != null) { // id can be != substring (else) in case of app resource scope
+                ref.setProperty(NamingUtil.JNDI_NAME, "openejb:Resource/" + id);
+            } else {
+                ref.setProperty(NamingUtil.JNDI_NAME, "openejb:" + name.substring("openejb/".length()));
+            }
         }
         if (ref.getType() == null) {
             ref.setType("");
