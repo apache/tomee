@@ -20,15 +20,16 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Properties;
@@ -37,8 +38,11 @@ public class RemoteInitialContextObserver {
     private static final String REMOTE_INITIAL_CONTEXT_FACTORY = "org.apache.openejb.client.RemoteInitialContextFactory";
 
     @Inject
-    @SuiteScoped
+    @ApplicationScoped
     private InstanceProducer<Context> context;
+
+    @Inject
+    private Instance<Context> existingContext;
 
     @Inject
     private Instance<ProtocolMetaData> protocolMetadata;
@@ -57,7 +61,14 @@ public class RemoteInitialContextObserver {
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, REMOTE_INITIAL_CONTEXT_FACTORY);
             props.setProperty(Context.PROVIDER_URL, "http://" + httpContext.getHost() + ":" + httpContext.getPort() + "/tomee/ejb");
 
-            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(new InitialContext(), new InitialContext(props))));
+            Context existing = null;
+            try {
+                existing = existingContext.get();
+            } catch (Throwable t) {
+                // no-op
+            }
+
+            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(new InitialContext(), existing, new InitialContext(props))));
         } catch (ClassNotFoundException e) {
             // no-op
         } catch (NamingException e) {
@@ -66,9 +77,9 @@ public class RemoteInitialContextObserver {
     }
 
     private static class MultipleContextHandler implements InvocationHandler {
-        private final InitialContext[] contexts;
+        private final Context[] contexts;
 
-        public MultipleContextHandler(final InitialContext... initialContexts) {
+        public MultipleContextHandler(final Context... initialContexts) {
             contexts = initialContexts;
         }
 
@@ -76,6 +87,10 @@ public class RemoteInitialContextObserver {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Exception err = null;
             for (Context ctx : contexts) {
+                if (ctx == null) {
+                    continue;
+                }
+
                 try {
                     return method.invoke(ctx, args);
                 } catch (Exception e) {
@@ -83,6 +98,9 @@ public class RemoteInitialContextObserver {
                 }
             }
             if (err != null) {
+                if (err instanceof InvocationTargetException) {
+                    throw err.getCause();
+                }
                 throw err;
             }
             return null;
