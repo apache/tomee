@@ -888,6 +888,16 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             resource.setJndi(value(resource.getJndi()));
             resource.getProperties().putAll(holds(resource.getProperties()));
 
+            final Collection<String> aliases = resource.getAliases();
+            if (!aliases.isEmpty()) {
+                final Collection<String> newAliases = new ArrayList<String>();
+                for (String s : aliases) {
+                    newAliases.add(module.getModuleId() + "/" + s);
+                }
+                resource.getAliases().clear();
+                resource.getAliases().addAll(newAliases);
+            }
+
             Properties properties = resource.getProperties();
 
             if (DataSource.class.getName().equals(resource.getType())
