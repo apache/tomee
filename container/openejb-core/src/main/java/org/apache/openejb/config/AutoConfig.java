@@ -884,7 +884,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (Resource resource : resources) {
             final String originalId = value(resource.getId());
-            resource.setId(module.getModuleId() + "/" + replaceJavaAndSlash(originalId));
+            final String modulePrefix = module.getModuleId() + "/";
+
+            if ("/".equals(modulePrefix)) {
+                resource.setId(replaceJavaAndSlash(originalId));
+            } else {
+                resource.setId(modulePrefix + replaceJavaAndSlash(originalId));
+            }
             resource.setJndi(value(resource.getJndi()));
             resource.getProperties().putAll(holds(resource.getProperties()));
 
@@ -938,7 +944,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             for (JndiConsumer consumer : jndiConsumers) {
                 addResource(consumer, resourceRef); // for injections etc...
-                addResource(consumer, strictRef); // for lookups (without prefix)
+                if (!"/".equals(modulePrefix)) {
+                    addResource(consumer, strictRef); // for lookups (without prefix)
+                }
             }
 
             resourceInfos.add(resourceInfo);
