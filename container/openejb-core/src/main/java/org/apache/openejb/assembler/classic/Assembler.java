@@ -67,6 +67,7 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.security.SecurityContextHandler;
@@ -1046,7 +1047,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 server.registerMBean(new DynamicMBeanWrapper(wc, instance), leaf);
                 appMbeans.put(mbeanClass, leaf.getCanonicalName());
-                if (Dependent.class.equals(bean.getScope())) {
+                if (creationalContext != null && (bean.getScope() == null || Dependent.class.equals(bean.getScope()))) {
                     creationalContextForAppMbeans.put(leaf, creationalContext);
                 }
                 logger.info("Deployed MBean(" + leaf.getCanonicalName() + ")");
@@ -1974,11 +1975,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         bindResource(serviceInfo.id, service);
-        if (serviceInfo.originAppName != null) {
-            serviceInfo.aliases.add(serviceInfo.id.substring(serviceInfo.originAppName.length() + 1));
-        }
         for (final String alias : serviceInfo.aliases) {
             bindResource(alias, service);
+        }
+        if (serviceInfo.originAppName != null) {
+            final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
+            serviceInfo.aliases.add(baseJndiName);
+            final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
+            bindResource(baseJndiName, ref);
         }
 
         // Update the config tree
@@ -1991,8 +1995,34 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void bindResource(final String id, final Object service) throws OpenEJBException {
         final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+        Object existing = null;
         try {
-            containerSystem.getJNDIContext().bind(name, service);
+            ContextualJndiReference.followReference.set(false);
+            existing = containerSystem.getJNDIContext().lookup(name);
+        } catch (final Exception ignored) {
+            // no-op
+        }
+
+        boolean rebind = false;
+        if (existing != null) {
+            final boolean existingIsContextual = ContextualJndiReference.class.isInstance(existing);
+            final boolean serviceIsExisting = ContextualJndiReference.class.isInstance(service);
+            if (!existingIsContextual && serviceIsExisting) {
+                ContextualJndiReference.class.cast(service).setDefaultValue(existing);
+                rebind = true;
+            } else if (existingIsContextual && !serviceIsExisting) {
+                ContextualJndiReference.class.cast(existing).setDefaultValue(service);
+            } else if (existingIsContextual) { // && serviceIsExisting is always true here
+                return;
+            }
+        }
+
+        try {
+            if (rebind) {
+                containerSystem.getJNDIContext().rebind(name, service);
+            } else {
+                containerSystem.getJNDIContext().bind(name, service);
+            }
         } catch (NameAlreadyBoundException nabe) {
             logger.warning("unbounding resource " + name + " can happen because of a redeployment or because of a duplicated id");
             try {
