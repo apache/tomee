@@ -2001,6 +2001,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             existing = containerSystem.getJNDIContext().lookup(name);
         } catch (final Exception ignored) {
             // no-op
+        } finally {
+            ContextualJndiReference.followReference.remove(); // if the lookup fails the remove is not done
         }
 
         boolean rebind = false;
