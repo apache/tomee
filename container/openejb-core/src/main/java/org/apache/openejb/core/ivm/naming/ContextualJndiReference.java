@@ -25,6 +25,8 @@ import org.apache.openejb.util.Strings;
 import javax.naming.Context;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ContextualJndiReference extends IntraVmJndiReference {
     public static final ThreadLocal<Boolean> followReference = new ThreadLocal<Boolean>() {
@@ -47,12 +49,9 @@ public class ContextualJndiReference extends IntraVmJndiReference {
     @Override
     public Object getObject() throws NamingException {
         final Boolean rawValue = !followReference.get();
-        try {
-            if (rawValue) {
-                return this;
-            }
-        } finally {
-            followReference.remove();
+        followReference.remove();
+        if (rawValue) {
+            return this;
         }
 
         final String prefix = findPrefix();
@@ -64,6 +63,22 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             } catch (final NamingException e) {
                 // no-op
             }
+        }
+
+        final Collection<Object> values = new ArrayList<Object>();
+        for (final String p : allPrefixes()) {
+            try {
+                values.add(lookup(p + '/' + jndiName));
+            } catch (final NamingException e) {
+                // no-op
+            }
+        }
+
+        if (1 == values.size()) {
+            return values.iterator().next();
+        } else if (!values.isEmpty()) {
+            throw new NameNotFoundException("Ambiguous resource '" + getJndiName()
+                    + "'  for classloader " + Thread.currentThread().getContextClassLoader());
         }
 
         return defaultValue;
@@ -84,7 +99,19 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             }
         }
 
+        if (1 == containerSystem.getAppContexts().size()) {
+            return containerSystem.getAppContexts().iterator().next().getId();
+        }
+
         return null;
+    }
+
+    private Collection<String> allPrefixes() {
+        final Collection<String> prefixes = new ArrayList<String>();
+        for (final AppContext appContext : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
+            prefixes.add(appContext.getId());
+        }
+        return prefixes;
     }
 
     private Object lookup(final String s) throws NamingException {
