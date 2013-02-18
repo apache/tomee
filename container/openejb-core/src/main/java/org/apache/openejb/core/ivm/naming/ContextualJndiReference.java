@@ -57,7 +57,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
         final String prefix = findPrefix();
         final String jndiName = getJndiName();
 
-        if (prefix != null) {
+        if (prefix != null && !prefix.isEmpty()) {
             try {
                 return lookup(prefix + '/' + jndiName);
             } catch (final NamingException e) {
@@ -67,10 +67,12 @@ public class ContextualJndiReference extends IntraVmJndiReference {
 
         final Collection<Object> values = new ArrayList<Object>();
         for (final String p : allPrefixes()) {
-            try {
-                values.add(lookup(p + '/' + jndiName));
-            } catch (final NamingException e) {
-                // no-op
+            if (prefix != null && !prefix.isEmpty()) {
+                try {
+                    values.add(lookup(p + '/' + jndiName));
+                } catch (final NamingException e) {
+                    // no-op
+                }
             }
         }
 
