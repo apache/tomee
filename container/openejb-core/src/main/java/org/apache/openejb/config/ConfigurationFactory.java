@@ -1518,6 +1518,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     if (ids.contains(value)) {
                         return (String) value;
                     }
+                    for (final String s : ids) {
+                        if (s.endsWith((String) value)) {
+                            return s;
+                        }
+                    }
                 }
             }
             return null;

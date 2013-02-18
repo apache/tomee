@@ -1818,6 +1818,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // ignored
             }
         }
+
         serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
 
         replaceResourceAdapterProperty(serviceRecipe);
@@ -1973,6 +1974,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         bindResource(serviceInfo.id, service);
+        if (serviceInfo.originAppName != null) {
+            serviceInfo.aliases.add(serviceInfo.id.substring(serviceInfo.originAppName.length() + 1));
+        }
         for (final String alias : serviceInfo.aliases) {
             bindResource(alias, service);
         }
