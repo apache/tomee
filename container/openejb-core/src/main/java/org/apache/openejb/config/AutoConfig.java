@@ -947,8 +947,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         Collections.sort(resourceInfos, new ConfigurationFactory.ResourceInfoComparator(resourceInfos));
         for (ResourceInfo resourceInfo : resourceInfos) {
+            final int originalSize = resourceInfo.aliases.size();
             final String id = installResource(module.getModuleId(), resourceInfo);
-            resourcesMap.remove(resourceInfo).setId(id);
+
+            final Resource resource = resourcesMap.remove(resourceInfo);
+            resource.setId(id);
+            if (resourceInfo.aliases.size() > originalSize) { // an aliases is generally added to be able to bind in global jndi tree
+                resource.getAliases().add(resourceInfo.aliases.get(resourceInfo.aliases.size() - 1));
+            }
         }
 
         resourceInfos.clear();

@@ -1514,6 +1514,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        for (final String id : appInfo.resourceAliases) {
+            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+            ContextualJndiReference.followReference.set(false);
+            if (globalContext instanceof IvmContext) {
+                IvmContext.class.cast(globalContext).ignoreCache(name);
+            }
+            try {
+                final Object object;
+                try {
+                    object = globalContext.lookup(name);
+                } finally {
+                    ContextualJndiReference.followReference.remove();
+                }
+                if (object instanceof ContextualJndiReference) {
+                    final ContextualJndiReference contextualJndiReference = ContextualJndiReference.class.cast(object);
+                    contextualJndiReference.removePrefix(appContext.getId());
+                    if (contextualJndiReference.hasNoMorePrefix()) {
+                        globalContext.unbind(name);
+                    } // else not the last deployed application to use this resource so keep it
+                } else {
+                    globalContext.unbind(name);
+                }
+            } catch (NamingException e) {
+                logger.warning("can't unbind resource '{0}'", id);
+            }
+        }
         for (final String id : appInfo.resourceIds) {
             final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
             try {
@@ -1525,14 +1551,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     clazz = object.getClass().getName();
                 }
                 destroyResource(id, clazz, object);
-                globalContext.unbind(name);
-            } catch (NamingException e) {
-                logger.warning("can't unbind resource '{0}'", id);
-            }
-        }
-        for (final String id : appInfo.resourceAliases) {
-            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
-            try {
                 globalContext.unbind(name);
             } catch (NamingException e) {
                 logger.warning("can't unbind resource '{0}'", id);
@@ -1982,6 +2000,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
             serviceInfo.aliases.add(baseJndiName);
             final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
+            ref.addPrefix(serviceInfo.originAppName);
             bindResource(baseJndiName, ref);
         }
 
@@ -1995,10 +2014,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void bindResource(final String id, final Object service) throws OpenEJBException {
         final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+        final Context jndiContext = containerSystem.getJNDIContext();
         Object existing = null;
         try {
             ContextualJndiReference.followReference.set(false);
-            existing = containerSystem.getJNDIContext().lookup(name);
+            if (jndiContext instanceof IvmContext) {
+                IvmContext.class.cast(jndiContext).ignoreCache(name);
+            }
+            existing = jndiContext.lookup(name);
         } catch (final Exception ignored) {
             // no-op
         } finally {
@@ -2015,21 +2038,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } else if (existingIsContextual && !serviceIsExisting) {
                 ContextualJndiReference.class.cast(existing).setDefaultValue(service);
             } else if (existingIsContextual) { // && serviceIsExisting is always true here
+                ContextualJndiReference.class.cast(existing).addPrefix(ContextualJndiReference.class.cast(service).lastPrefix());
                 return;
             }
         }
 
         try {
             if (rebind) {
-                containerSystem.getJNDIContext().rebind(name, service);
+                jndiContext.rebind(name, service);
             } else {
-                containerSystem.getJNDIContext().bind(name, service);
+                jndiContext.bind(name, service);
             }
         } catch (NameAlreadyBoundException nabe) {
             logger.warning("unbounding resource " + name + " can happen because of a redeployment or because of a duplicated id");
             try {
-                containerSystem.getJNDIContext().unbind(name);
-                containerSystem.getJNDIContext().bind(name, service);
+                jndiContext.unbind(name);
+                jndiContext.bind(name, service);
             } catch (NamingException e) {
                 throw new OpenEJBException("Cannot bind resource adapter with id " + id, e);
             }
