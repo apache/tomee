@@ -469,6 +469,10 @@ public class IvmContext implements Context, Serializable {
         if (readOnly) throw new OperationNotSupportedException();
     }
 
+    public void ignoreCache(final String name) {
+        fastCache.remove(name);
+    }
+
     protected class MyBindingEnumeration extends MyNamingEnumeration {
 
         public MyBindingEnumeration(NameNode parentNode) {

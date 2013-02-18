@@ -27,6 +27,8 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ContextualJndiReference extends IntraVmJndiReference {
     public static final ThreadLocal<Boolean> followReference = new ThreadLocal<Boolean>() {
@@ -37,6 +39,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
     };
 
     private Object defaultValue;
+    private List<String> prefixes = new CopyOnWriteArrayList<String>();
 
     public ContextualJndiReference(final String jndiName) {
         super(jndiName);
@@ -44,6 +47,29 @@ public class ContextualJndiReference extends IntraVmJndiReference {
 
     public void setDefaultValue(final Object defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public void addPrefix(final String value) {
+        if (value != null) {
+            prefixes.add(value);
+        }
+    }
+
+    public void removePrefix(final String value) {
+        if (value != null) {
+            prefixes.remove(value);
+        }
+    }
+
+    public String lastPrefix() {
+        if (prefixes.isEmpty()) {
+            return null;
+        }
+        return prefixes.get(prefixes.size() - 1);
+    }
+
+    public boolean hasNoMorePrefix() {
+        return prefixes.isEmpty();
     }
 
     @Override
@@ -66,8 +92,8 @@ public class ContextualJndiReference extends IntraVmJndiReference {
         }
 
         final Collection<Object> values = new ArrayList<Object>();
-        for (final String p : allPrefixes()) {
-            if (prefix != null && !prefix.isEmpty()) {
+        for (final String p : prefixes) {
+            if (p != null && !p.isEmpty()) {
                 try {
                     values.add(lookup(p + '/' + jndiName));
                 } catch (final NamingException e) {
@@ -106,14 +132,6 @@ public class ContextualJndiReference extends IntraVmJndiReference {
         }
 
         return null;
-    }
-
-    private Collection<String> allPrefixes() {
-        final Collection<String> prefixes = new ArrayList<String>();
-        for (final AppContext appContext : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
-            prefixes.add(appContext.getId());
-        }
-        return prefixes;
     }
 
     private Object lookup(final String s) throws NamingException {
