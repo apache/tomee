@@ -152,7 +152,7 @@ public class IvmContext implements Context, Serializable {
             }
 
             // don't cache proxies
-            if (!(obj instanceof IntraVmProxy)) {
+            if (!(obj instanceof IntraVmProxy) && !(obj instanceof ContextualJndiReference)) {
             	fastCache.put(compoundName, obj);
             }
         }
@@ -467,10 +467,6 @@ public class IvmContext implements Context, Serializable {
 
     protected void checkReadOnly() throws OperationNotSupportedException {
         if (readOnly) throw new OperationNotSupportedException();
-    }
-
-    public void ignoreCache(final String name) {
-        fastCache.remove(name);
     }
 
     protected class MyBindingEnumeration extends MyNamingEnumeration {

@@ -1517,9 +1517,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final String id : appInfo.resourceAliases) {
             final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
             ContextualJndiReference.followReference.set(false);
-            if (globalContext instanceof IvmContext) {
-                IvmContext.class.cast(globalContext).ignoreCache(name);
-            }
             try {
                 final Object object;
                 try {
@@ -1996,7 +1993,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final String alias : serviceInfo.aliases) {
             bindResource(alias, service);
         }
-        if (serviceInfo.originAppName != null) {
+        if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)) {
             final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
             serviceInfo.aliases.add(baseJndiName);
             final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
@@ -2018,9 +2015,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Object existing = null;
         try {
             ContextualJndiReference.followReference.set(false);
-            if (jndiContext instanceof IvmContext) {
-                IvmContext.class.cast(jndiContext).ignoreCache(name);
-            }
             existing = jndiContext.lookup(name);
         } catch (final Exception ignored) {
             // no-op
