@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -359,7 +360,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         final RequestInfo value = forceRequestInfo();
         final SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
         if (remoteSocketAddress != null && InetSocketAddress.class.isInstance(remoteSocketAddress)) {
-            value.ip = InetSocketAddress.class.cast(remoteSocketAddress).getHostString();
+            final InetSocketAddress socketAddress = InetSocketAddress.class.cast(remoteSocketAddress);
+            final InetAddress address = socketAddress.getAddress();
+            if (address != null) {
+                value.ip = address.getHostAddress();
+            } else {
+                value.ip = socketAddress.getHostName();
+            }
         }
     }
 
