@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -322,12 +323,11 @@ public class KeepAliveServer implements ServerService {
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
-        final EjbDaemon ejbDaemon = EjbDaemon.getEjbDaemon();
-        ejbDaemon.initRequestInfo(socket);
+        RequestInfos.initRequestInfo(socket);
         try {
             new Session(this, socket).service();
         } finally {
-            ejbDaemon.clearRequestInfo();
+            RequestInfos.clearRequestInfo();
         }
     }
 
