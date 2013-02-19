@@ -44,6 +44,7 @@ import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.server.context.RequestInfos;
 import org.omg.CORBA.ORB;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
@@ -177,10 +178,10 @@ class JndiRequestHandler {
     }
 
     private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
-        final EjbDaemon daemon = EjbDaemon.getEjbDaemon();
-        logger.debug("JNDI REQUEST: " + req + " (size = " + daemon.currentRequestSize()
-                    + "b, remote-ip =" + daemon.currentClientIp()
-                    + ") -- RESPONSE: " + res + " (size = " + daemon.currentResponseSize() + "b)");
+        final RequestInfos.RequestInfo info = RequestInfos.info();
+        logger.debug("JNDI REQUEST: " + req + " (size = " + info.inputStream.getCount()
+                    + "b, remote-ip =" + info.ip
+                    + ") -- RESPONSE: " + res + " (size = " + info.outputStream.getCount() + "b)");
     }
 
     private String getPrefix(JNDIRequest req) throws NamingException {

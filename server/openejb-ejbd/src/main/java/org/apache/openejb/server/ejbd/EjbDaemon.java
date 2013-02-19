@@ -26,11 +26,13 @@ import org.apache.openejb.client.RequestType;
 import org.apache.openejb.client.ServerMetaData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.context.RequestInfos;
+import org.apache.openejb.server.stream.CountingInputStream;
+import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -38,10 +40,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
@@ -49,7 +48,6 @@ import java.util.zip.GZIPInputStream;
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
-    private static final ThreadLocal<RequestInfo> REQUEST_INFO = new ThreadLocal<RequestInfo>();
 
     static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
@@ -111,7 +109,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
             }
 
-            initRequestInfo(socket);
+            RequestInfos.initRequestInfo(socket);
 
             service(in, out);
         } finally {
@@ -147,7 +145,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 }
             }
 
-            clearRequestInfo();
+            RequestInfos.clearRequestInfo();
         }
     }
 
@@ -157,8 +155,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         final CountingInputStream in = new CountingInputStream(rawIn);
         final CountingOutputStream out = new CountingOutputStream(rawOut);
 
-        REQUEST_INFO.get().inputStream = in;
-        REQUEST_INFO.get().outputStream = out;
+        final RequestInfos.RequestInfo info = RequestInfos.info();
+        info.inputStream = in;
+        info.outputStream = out;
 
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
@@ -321,159 +320,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     public boolean isGzip() {
         return gzip;
-    }
-
-    public int currentRequestSize() {
-        final RequestInfo info = REQUEST_INFO.get();
-        if (info == null) {
-            REQUEST_INFO.remove();
-            return 0;
-        }
-        return info.inputStream.getCount();
-    }
-
-    public int currentResponseSize() {
-        final RequestInfo info = REQUEST_INFO.get();
-        if (info == null) {
-            REQUEST_INFO.remove();
-            return 0;
-        }
-        return info.outputStream.getCount();
-    }
-
-    public String currentClientIp() {
-        final RequestInfo info = REQUEST_INFO.get();
-        if (info == null) {
-            REQUEST_INFO.remove();
-            return "?";
-        }
-        return info.ip;
-    }
-
-    public void initRequestInfo(final HttpServletRequest request) {
-        final RequestInfo value = new RequestInfo();
-        value.ip = request.getRemoteAddr();
-        REQUEST_INFO.set(value);
-    }
-
-    public void initRequestInfo(final Socket socket) {
-        final RequestInfo value = forceRequestInfo();
-        final SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
-        if (remoteSocketAddress != null && InetSocketAddress.class.isInstance(remoteSocketAddress)) {
-            final InetSocketAddress socketAddress = InetSocketAddress.class.cast(remoteSocketAddress);
-            final InetAddress address = socketAddress.getAddress();
-            if (address != null) {
-                value.ip = address.getHostAddress();
-            } else {
-                value.ip = socketAddress.getHostName();
-            }
-        }
-    }
-
-    private RequestInfo forceRequestInfo() {
-        RequestInfo value = REQUEST_INFO.get();
-        if (value == null) {
-            value = new RequestInfo();
-            REQUEST_INFO.set(value);
-        }
-        return value;
-    }
-
-    public void clearRequestInfo() {
-        REQUEST_INFO.remove();
-    }
-
-    public static class RequestInfo {
-        public String ip;
-        public CountingInputStream inputStream;
-        public CountingOutputStream outputStream;
-
-        @Override
-        public String toString() {
-            return "RequestInfo{"
-                        + "ip='" + ip + '\''
-                        + ", request-size=" + inputStream.getCount()
-                        + ", response-size=" + outputStream.getCount()
-                    + '}';
-        }
-    }
-
-    private static class CountingInputStream extends InputStream {
-        private final InputStream delegate;
-        private int count = 0;
-
-        public CountingInputStream(final InputStream rawIn) {
-            delegate = rawIn;
-        }
-
-        @Override
-        public int read() throws IOException {
-            final int r = delegate.read();
-            if (r == -1) {
-                return -1;
-            }
-
-            count++;
-            return r;
-        }
-
-        @Override
-        public int available() throws IOException {
-            return delegate.available();
-        }
-
-        @Override
-        public void close() throws IOException {
-            delegate.close();
-        }
-
-        @Override
-        public void mark(int readlimit) {
-            delegate.mark(readlimit);
-        }
-
-        @Override
-        public void reset() throws IOException {
-            delegate.reset();
-        }
-
-        @Override
-        public boolean markSupported() {
-            return delegate.markSupported();
-        }
-
-        public int getCount() {
-            return count;
-        }
-    }
-
-    private static class CountingOutputStream extends OutputStream {
-        private final OutputStream delegate;
-        private int count = 0;
-
-        public CountingOutputStream(final OutputStream rawIn) {
-            delegate = rawIn;
-        }
-
-        @Override
-        public void write(final int b) throws IOException {
-            count++;
-            delegate.write(b);
-        }
-
-        @Override
-        public void flush() throws IOException {
-            delegate.flush();
-        }
-
-        @Override
-        public void close() throws IOException {
-            delegate.close();
-        }
-
-        private int getCount() {
-            return count;
-        }
     }
 }
 

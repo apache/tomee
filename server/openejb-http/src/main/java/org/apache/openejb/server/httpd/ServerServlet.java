@@ -19,7 +19,7 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ejbd.EjbDaemon;
+import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.server.ejbd.EjbServer;
 
 import javax.servlet.ServletConfig;
@@ -53,14 +53,13 @@ public class ServerServlet extends HttpServlet {
 
         ServletInputStream in = request.getInputStream();
         ServletOutputStream out = response.getOutputStream();
-        final EjbDaemon ejbDaemon = EjbDaemon.getEjbDaemon();
         try {
-            ejbDaemon.initRequestInfo(request);
+            RequestInfos.initRequestInfo(request);
             ejbServer.service(in, out);
         } catch (ServiceException e) {
             throw new ServletException("ServerService error: " + ejbServer.getClass().getName() + " -- " + e.getMessage(), e);
         } finally {
-            ejbDaemon.clearRequestInfo();
+            RequestInfos.clearRequestInfo();
         }
     }
 }

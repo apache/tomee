@@ -20,6 +20,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.context.RequestInfos;
+import org.apache.openejb.server.stream.CountingInputStream;
+import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
@@ -95,8 +98,10 @@ public class OpenEJBHttpServer implements HttpServer {
         OutputStream out = null;
 
         try {
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
+            RequestInfos.initRequestInfo(socket);
+
+            in = new CountingInputStream(socket.getInputStream());
+            out = new CountingOutputStream(socket.getOutputStream());
 
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
