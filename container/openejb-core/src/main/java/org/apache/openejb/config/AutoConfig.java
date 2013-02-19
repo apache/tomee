@@ -105,6 +105,7 @@ import static org.apache.openejb.util.PropertyPlaceHolderHelper.value;
 public class AutoConfig implements DynamicDeployer, JndiConstants {
     public static final String ORIGIN_ANNOTATION = "Annotation";
     public static final String ORIGIN_FLAG = "Origin";
+    public static final String ORIGINAL_ID = "OriginalId";
 
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, AutoConfig.class);
 
@@ -886,9 +887,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final String originalId = value(resource.getId());
             final String modulePrefix = module.getModuleId() + "/";
 
-            if ("/".equals(modulePrefix)) {
+            if ("/".equals(modulePrefix) || originalId.startsWith("global") || originalId.startsWith("/global")) {
                 resource.setId(replaceJavaAndSlash(originalId));
             } else {
+                resource.getProperties().setProperty(ORIGINAL_ID, originalId);
                 resource.setId(modulePrefix + replaceJavaAndSlash(originalId));
             }
             resource.setJndi(value(resource.getJndi()));
@@ -920,10 +922,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     && resource.getProperties().containsKey(ORIGIN_FLAG)
                     && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION)) {
                 properties.remove(ORIGIN_FLAG);
-
-                if (!(resourceInfo.id.startsWith("global") || resourceInfo.id.startsWith("/global"))) {
-                    resourceInfo.id = module.getModuleId() + "/" + resourceInfo.id;
-                }
 
                 if (properties.get("JdbcUrl") == null) {
                     final String url = getVendorUrl(properties);
