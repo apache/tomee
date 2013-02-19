@@ -33,7 +33,7 @@ public final class RequestInfos {
     }
 
     public static void initRequestInfo(final HttpServletRequest request) {
-        final RequestInfo value = new RequestInfo();
+        final RequestInfo value = forceRequestInfo();
         value.ip = request.getRemoteAddr();
         REQUEST_INFO.set(value);
     }
@@ -52,7 +52,7 @@ public final class RequestInfos {
         }
     }
 
-    public static RequestInfo forceRequestInfo() {
+    private static RequestInfo forceRequestInfo() {
         RequestInfo value = REQUEST_INFO.get();
         if (value == null) {
             value = new RequestInfo();
