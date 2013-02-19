@@ -1993,7 +1993,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final String alias : serviceInfo.aliases) {
             bindResource(alias, service);
         }
-        if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)) {
+        if (serviceInfo.originAppName != null && !serviceInfo.originAppName.isEmpty() && !"/".equals(serviceInfo.originAppName)
+                && !serviceInfo.id.startsWith("global")) {
             final String baseJndiName = serviceInfo.id.substring(serviceInfo.originAppName.length() + 1);
             serviceInfo.aliases.add(baseJndiName);
             final ContextualJndiReference ref = new ContextualJndiReference(baseJndiName);
