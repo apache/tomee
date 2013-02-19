@@ -1026,7 +1026,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             if (service.getId() == null)
                 service.setId(provider.getId());
 
-            final Properties overrides = trim(getSystemProperties(service.getId(), provider.getService()));
+            final Properties overrides = trim(getSystemProperties(overrideKey(service), provider.getService()));
 
             final Properties serviceProperties = service.getProperties();
 
@@ -1107,6 +1107,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final String message = logger.fatal("configureService.failed", e, service.getId());
             throw new OpenEJBException(message, e);
         }
+    }
+
+    private String overrideKey(final org.apache.openejb.config.Service service) {
+        final String origin = String.class.cast(service.getProperties().remove(AutoConfig.ORIGINAL_ID));
+        if (origin != null) {
+            return origin;
+        }
+        return service.getId();
     }
 
     private static String getProviderType(final org.apache.openejb.config.Service service) {
