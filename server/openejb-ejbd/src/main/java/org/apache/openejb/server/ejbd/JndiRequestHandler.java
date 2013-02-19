@@ -124,8 +124,9 @@ class JndiRequestHandler {
 
             if (logger.isDebugEnabled()) {
                 try {
-                    logger.debug("JNDI REQUEST: " + req + " -- RESPONSE: " + res);
+                    logRequestResponse(req, res);
                 } catch (Exception ignore) {
+                    // no-op
                 }
             }
 
@@ -158,19 +159,28 @@ class JndiRequestHandler {
             res.setResult(new ThrowableArtifact(namingException));
         } finally {
 
-            if (logger.isDebugEnabled()) {
-                try {
-                    logger.debug("JNDI REQUEST: " + req + " -- RESPONSE: " + res);
-                } catch (Exception ignore) {
-                }
-            }
-
             try {
                 res.writeExternal(out);
             } catch (Throwable e) {
                 logger.fatal("Couldn't write JndiResponse to output stream", e);
             }
+
+            if (logger.isDebugEnabled()) {
+                try {
+                    out.flush(); // force it to as correct as possible response size
+                    logRequestResponse(req, res);
+                } catch (Exception ignore) {
+                    // no-op
+                }
+            }
         }
+    }
+
+    private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
+        final EjbDaemon daemon = EjbDaemon.getEjbDaemon();
+        logger.debug("JNDI REQUEST: " + req + " (size = " + daemon.currentRequestSize()
+                    + "b, remote-ip =" + daemon.currentClientIp()
+                    + ") -- RESPONSE: " + res + " (size = " + daemon.currentResponseSize() + "b)");
     }
 
     private String getPrefix(JNDIRequest req) throws NamingException {

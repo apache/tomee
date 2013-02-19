@@ -322,8 +322,13 @@ public class KeepAliveServer implements ServerService {
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
-        final Session session = new Session(this, socket);
-        session.service();
+        final EjbDaemon ejbDaemon = EjbDaemon.getEjbDaemon();
+        ejbDaemon.initRequestInfo(socket);
+        try {
+            new Session(this, socket).service();
+        } finally {
+            ejbDaemon.clearRequestInfo();
+        }
     }
 
     @Override
