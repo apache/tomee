@@ -99,10 +99,9 @@ public class JNDIRequest implements ClusterableRequest {
         StringBuilder sb = new StringBuilder(100);
 
         sb.append(requestMethod);
-        sb.append(this.moduleId).append(":");
+        sb.append(this.moduleId != null ? moduleId : "").append(":");
         sb.append(this.requestString);
         return sb.toString();
     }
-
 }
 
