@@ -87,10 +87,11 @@ public final class PropertyPlaceHolderHelper {
 
     private static class PropertiesLookup extends StrLookup<Object> {
         private static final Properties PROPERTIES = SystemInstance.get().getProperties();
+        private static final Map<String, String> ENV = System.getenv();
 
         @Override
         public String lookup(final String key) {
-            return PROPERTIES.getProperty(key);
+            return PROPERTIES.getProperty(key, ENV.get(key));
         }
     }
 }
