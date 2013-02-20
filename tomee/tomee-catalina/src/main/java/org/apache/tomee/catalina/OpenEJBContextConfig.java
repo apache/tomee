@@ -25,9 +25,9 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
+import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.DirContextURLConnection;
 import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -347,16 +347,22 @@ public class OpenEJBContextConfig extends ContextConfig {
                     if (connection instanceof DirContextURLConnection) {
                         final DirContextURLStreamHandler handler = DirContextURLStreamHandler.class.cast(Reflections.get(currentUrl, "handler"));
                         final ProxyDirContext dirContext = ProxyDirContext.class.cast(Reflections.get(handler, "context"));
-                        final FileDirContext fileDirContext = FileDirContext.class.cast(Reflections.get(dirContext, "dirContext"));
                         final String host = String.class.cast(Reflections.get(dirContext, "hostName"));
                         final String contextPath = String.class.cast(Reflections.get(dirContext, "contextPath"));
-                        file = file.replace("/" + host + contextPath , fileDirContext.getDocBase());
+                        final Object context = Reflections.get(dirContext, "dirContext");
+
+                        if (BaseDirContext.class.isInstance(context)) {
+                            file = file.replace("/" + host + contextPath, BaseDirContext.class.cast(context).getDocBase());
+                        } else {
+                            throw new OpenEJBRuntimeException("Context not supported: " + context);
+                        }
+
                         currentUrlAsFile = new File(file);
                     } else {
-                        throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]");
+                        throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "], connection is not a DirContextURLConnection " + connection);
                     }
                 } catch (final Exception ex) {
-                    throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]");
+                    throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "]", ex);
                 }
             } else {
                 throw new OpenEJBRuntimeException("protocol not supported '" + currentUrl.getProtocol() + "'");
