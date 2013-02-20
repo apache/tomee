@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.BeanManagerBean;
 import org.apache.webbeans.component.BuildInOwbBean;
 import org.apache.webbeans.component.ConversationBean;
@@ -61,6 +62,7 @@ public class WebappBeanManager extends BeanManagerImpl {
         super(ctx);
         webappCtx = ctx;
         deploymentBeans = super.getBeans(); // use the parent one while starting
+        Reflections.set(this, "injectionResolver", new WebAppInjectionResolver(ctx));
     }
 
     @Override
