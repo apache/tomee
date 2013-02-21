@@ -693,7 +693,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             } else {
                 final Scanner reader = new Scanner(originalIn);
 
-                getLog().warn("Waiting for command: " + availableCommands());
+                getLog().info("Waiting for command: " + availableCommands());
 
                 String line;
                 while ((line = reader.nextLine()) != null) {
