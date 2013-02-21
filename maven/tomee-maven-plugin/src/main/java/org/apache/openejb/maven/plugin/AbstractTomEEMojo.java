@@ -57,6 +57,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.SimpleFormatter;
 import java.util.zip.ZipEntry;
@@ -78,6 +79,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private static final String NAME_STR = "?name=";
     private static final String UNZIP_PREFIX = "unzip:";
     private static final String REMOVE_PREFIX = "remove:";
+    public static final String QUIT_CMD = "quit";
+    public static final String EXIT_CMD = "exit";
 
     @Component
     protected ArtifactFactory factory;
@@ -217,6 +220,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.check-started", defaultValue = "false")
     protected boolean checkStarted;
 
+    @Parameter(property = "tomee-plugin.use-console", defaultValue = "true")
+    protected boolean useConsole;
+
     /**
      * The current user system settings for use in Maven.
      */
@@ -224,6 +230,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected Settings settings;
 
     protected File deployedFile = null;
+    protected Thread shutdownHook = null;
+    protected RemoteServer server = null;
     private String additionalCp = null;
 
     @Override
@@ -647,34 +655,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
 
-        final RemoteServer server = new RemoteServer(getConnectAttempts(), false);
+        server = new RemoteServer(getConnectAttempts(), false);
         if (additionalCp != null) {
             server.setAdditionalClasspath(additionalCp);
         }
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
-        final CountDownLatch stopCondition;
-        if (getWaitTomEE()) {
-            stopCondition = new CountDownLatch(1);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        server.stop();
-                    } catch (Exception e) {
-                        // no-op
-                    }
-                    try {
-                        server.getServer().waitFor();
-                        getLog().info("TomEE stopped");
-                        stopCondition.countDown();
-                    } catch (Exception e) {
-                        getLog().error("Can't stop TomEE", e);
-                    }
-                }
-            });
-        } else {
-            stopCondition = null;
+        if (!getWaitTomEE()) {
             strings.add("-Dtomee.noshutdownhook=true");
         }
 
@@ -682,15 +669,69 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
                 + " (plugin shutdown port is " + tomeeShutdownPort + ")");
 
+        final InputStream originalIn = System.in; // piped when starting resmote server so saving it
+
         serverCmd(server, strings);
 
-        if (stopCondition != null) {
-            try {
-                stopCondition.await();
-            } catch (InterruptedException e) {
-                // no-op
+        if (getWaitTomEE()) {
+            if (!useConsole) {
+                final CountDownLatch stopCondition = new CountDownLatch(1);
+                shutdownHook = new Thread() {
+                    @Override
+                    public void run() {
+                        stopServer();
+                        stopCondition.countDown();
+                    }
+                };
+                Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+                try {
+                    stopCondition.await();
+                } catch (InterruptedException e) {
+                    // no-op
+                }
+            } else {
+                final Scanner reader = new Scanner(originalIn);
+
+                getLog().warn("Waiting for command: " + availableCommands());
+
+                String line;
+                while ((line = reader.nextLine()) != null) {
+                    if (QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line)) {
+                        break;
+                    }
+
+                    if (!handleLine(line.trim())) {
+                        getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
+                    }
+                }
+
+                reader.close();
+                stopServer();
             }
         }
+    }
+
+    protected Collection<String> availableCommands() {
+        return Arrays.asList(QUIT_CMD, EXIT_CMD);
+    }
+
+    protected void stopServer() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            // no-op
+        }
+        try {
+            server.getServer().waitFor();
+            getLog().info("TomEE stopped");
+        } catch (Exception e) {
+            getLog().error("Can't stop TomEE", e);
+        }
+    }
+
+    protected boolean handleLine(final String line) {
+        return false;
     }
 
     protected void serverCmd(final RemoteServer server, final List<String> strings) {

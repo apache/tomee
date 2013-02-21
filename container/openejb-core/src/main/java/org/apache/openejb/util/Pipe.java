@@ -33,9 +33,13 @@ public final class Pipe implements Runnable {
         this.out = out;
     }
 
-    public static void pipe(Process process) {
+    public static void pipeOut(final Process process) {
         pipe(process.getInputStream(), System.out);
         pipe(process.getErrorStream(), System.err);
+    }
+
+    public static void pipe(final Process process) {
+        pipeOut(process);
         pipe(System.in, process.getOutputStream());
     }
 
