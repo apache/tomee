@@ -230,7 +230,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected Settings settings;
 
     protected File deployedFile = null;
-    protected Thread shutdownHook = null;
     protected RemoteServer server = null;
     private String additionalCp = null;
 
@@ -674,23 +673,15 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         serverCmd(server, strings);
 
         if (getWaitTomEE()) {
-            if (!useConsole) {
-                final CountDownLatch stopCondition = new CountDownLatch(1);
-                shutdownHook = new Thread() {
-                    @Override
-                    public void run() {
-                        stopServer();
-                        stopCondition.countDown();
-                    }
-                };
-                Runtime.getRuntime().addShutdownHook(shutdownHook);
-
-                try {
-                    stopCondition.await();
-                } catch (InterruptedException e) {
-                    // no-op
+            final CountDownLatch stopCondition = new CountDownLatch(1);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    stopServer(stopCondition);
                 }
-            } else {
+            });
+
+            if (useConsole) {
                 final Scanner reader = new Scanner(originalIn);
 
                 getLog().info("Waiting for command: " + availableCommands());
@@ -707,7 +698,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
 
                 reader.close();
-                stopServer();
+                stopServer(stopCondition); // better than using shutdown hook since it doesn't rely on the hook which are not sent by eclipse for instance
+            }
+
+            try {
+                stopCondition.await();
+            } catch (InterruptedException e) {
+                // no-op
             }
         }
     }
@@ -716,7 +713,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return Arrays.asList(QUIT_CMD, EXIT_CMD);
     }
 
-    protected void stopServer() {
+    protected synchronized void stopServer(final CountDownLatch stopCondition) {
+        if (server == null) {
+            return;
+        }
+
         try {
             server.stop();
         } catch (Exception e) {
@@ -728,6 +729,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         } catch (Exception e) {
             getLog().error("Can't stop TomEE", e);
         }
+
+        server = null;
+        stopCondition.countDown();
     }
 
     protected boolean handleLine(final String line) {
