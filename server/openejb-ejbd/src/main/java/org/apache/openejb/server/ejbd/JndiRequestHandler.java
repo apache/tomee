@@ -16,38 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import javax.jms.ConnectionFactory;
-import javax.jms.Topic;
-import javax.naming.Context;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.resource.Referenceable;
-import javax.sql.DataSource;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.xml.namespace.QName;
-
-import org.apache.openejb.resource.jdbc.DataSourceFactory;
-import org.apache.openejb.server.context.RequestInfos;
-import org.omg.CORBA.ORB;
-import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
@@ -73,10 +41,39 @@ import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.omg.CORBA.ORB;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Topic;
+import javax.naming.Context;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.resource.Referenceable;
+import javax.sql.DataSource;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.xml.namespace.QName;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
 
 class JndiRequestHandler {
