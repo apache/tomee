@@ -474,6 +474,7 @@ public class JndiBuilder {
                 String name = strategy.getName(interfce, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
+                bind("openejb/remote/" + computeGlobalName(bean, interfce), ref, bindings, beanInfo, interfce);
                 bindJava(bean, interfce, ref, bindings, beanInfo);
                 if (USE_OLD_JNDI_NAMES) {
                     bean.getModuleContext().getAppContext().getBindings().put(name, ref);
@@ -639,6 +640,20 @@ public class JndiBuilder {
     }
 
     //ee6 specified ejb bindings in module, app, and global contexts
+
+    private String computeGlobalName(final BeanContext cdi, final Class<?> intrface) {
+        final ModuleContext module = cdi.getModuleContext();
+        final AppContext application = module.getAppContext();
+
+        final String appName = application.isStandaloneModule() ? "" : application.getId() + "/";
+        final String moduleName = cdi.getModuleName() + "/";
+        String beanName = cdi.getEjbName();
+        if (intrface != null) {
+            beanName = beanName + "!" + intrface.getName();
+        }
+
+        return "global/" + appName + moduleName + beanName;
+    }
 
     private void bindJava(BeanContext cdi, Class intrface, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo) throws NamingException {
         final ModuleContext module = cdi.getModuleContext();
