@@ -315,7 +315,11 @@ public class RemoteServer {
                 // kill3UNIXDebug();
 
                 final Process process = Runtime.getRuntime().exec(args);
-                Pipe.pipe(process);
+                if (tomcat) {
+                    Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
+                } else {
+                    Pipe.pipe(process);
+                }
 
                 if ("start".equals(cmd)) {
                     server = process;

@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 
 public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     public static final int INITIAL_DELAY = 5000;
+    public static final String RELOAD_CMD = "reload";
 
     @Parameter
     private Synchronization synchronization;
@@ -161,6 +162,34 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         return false;
     }
 
+    @Override
+    protected Collection<String> availableCommands() {
+        final Collection<String> cmds = new ArrayList<String>();
+        cmds.addAll(super.availableCommands());
+        cmds.add(RELOAD_CMD);
+        return cmds;
+    }
+
+    @Override
+    protected boolean handleLine(final String line) {
+        if (super.handleLine(line)) {
+            return true;
+        } else if (RELOAD_CMD.equalsIgnoreCase(line)) {
+            reload();
+            return true;
+        }
+        return false;
+    }
+
+    protected synchronized void reload() {
+        String path = deployedFile.getAbsolutePath();
+        if (path.endsWith(".war") || path.endsWith(".ear")) {
+            path = path.substring(0, path.length() - ".war".length());
+        }
+        getLog().info("Reloading " + path);
+        deployer().reload(path);
+    }
+
     private class SynchronizerRedeployer extends TimerTask {
         private final Collection<Synchronizer> delegates;
 
@@ -181,12 +210,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
             if (updated > 0 && reloadOnUpdate) {
                 if (deployedFile != null && deployedFile.exists()) {
-                    String path = deployedFile.getAbsolutePath();
-                    if (path.endsWith(".war") || path.endsWith(".ear")) {
-                        path = path.substring(0, path.length() - ".war".length());
-                    }
-                    getLog().info("Reloading " + path);
-                    deployer().reload(path);
+                    reload();
                 }
             }
         }
