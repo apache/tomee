@@ -17,6 +17,7 @@
 package org.apache.openejb.maven.plugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Synchronization {
@@ -70,6 +71,9 @@ public class Synchronization {
     }
 
     public List<String> getExtensions() {
+        if (extensions == null) {
+            extensions = new ArrayList<String>();
+        }
         return extensions;
     }
 
@@ -86,6 +90,9 @@ public class Synchronization {
     }
 
     public List<String> getUpdateOnlyExtenions() {
+        if (updateOnlyExtensions == null) {
+            updateOnlyExtensions = new ArrayList<String>();
+        }
         return updateOnlyExtensions;
     }
 

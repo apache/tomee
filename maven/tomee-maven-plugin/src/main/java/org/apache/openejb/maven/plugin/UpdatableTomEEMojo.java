@@ -148,7 +148,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             }
         }
 
-        // serialazing synchronizers to avoid multiple updates at the same time and reload a single time the app
+        // serializing synchronizers to avoid multiple updates at the same time and reload a single time the app
         if (!synchronizers.isEmpty()) {
             task = new SynchronizerRedeployer(synchronizers);
             getLog().info("Starting synchronizer with an update interval of " + interval);
@@ -182,12 +182,17 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     }
 
     protected synchronized void reload() {
-        String path = deployedFile.getAbsolutePath();
-        if (path.endsWith(".war") || path.endsWith(".ear")) {
-            path = path.substring(0, path.length() - ".war".length());
+        if (deployOpenEjbApplication) {
+            String path = deployedFile.getAbsolutePath();
+            if (path.endsWith(".war") || path.endsWith(".ear")) {
+                path = path.substring(0, path.length() - ".war".length());
+            }
+            getLog().info("Reloading " + path);
+            deployer().reload(path);
+        } else {
+            getLog().warn("Reload command needs to activate openejb internal application. " +
+              "Add <deployOpenEjbApplication>true</deployOpenEjbApplication> to the plugin configuration to force it.");
         }
-        getLog().info("Reloading " + path);
-        deployer().reload(path);
     }
 
     private class SynchronizerRedeployer extends TimerTask {
