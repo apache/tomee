@@ -28,6 +28,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
@@ -42,18 +43,14 @@ public final class OpenEJBEnricher {
     }
 
     public static void enrich(final Object testInstance, final AppContext ctx) {
-        if (ctx == null) { // deployment exception
-            return;
-        }
-
         // don't rely on arquillian since this enrichment should absolutely be done before the following ones
         new MockitoEnricher().enrich(testInstance);
 
         final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class)
                 .getBeanContext(testInstance.getClass().getName());
 
-        final BeanManagerImpl bm = ctx.getWebBeansContext().getBeanManagerImpl();
-        if (bm.isInUse()) {
+        final BeanManagerImpl bm = findBeanManager(ctx);
+        if (bm != null && bm.isInUse()) {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(testInstance.getClass());
                 final Bean<?> bean = bm.resolve(beans);
@@ -92,4 +89,19 @@ public final class OpenEJBEnricher {
             }
         }
     }
+
+    private static BeanManagerImpl findBeanManager(final AppContext ctx) {
+        if (ctx != null) {
+            return ctx.getWebBeansContext().getBeanManagerImpl();
+        }
+
+        try { // else try to find it from tccl through our SingletonService
+            return WebBeansContext.currentInstance().getBeanManagerImpl();
+        } catch (final Exception e) { // if not found IllegalStateException or a NPE can be thrown
+            // no-op
+        }
+
+        return null;
+    }
+
 }
