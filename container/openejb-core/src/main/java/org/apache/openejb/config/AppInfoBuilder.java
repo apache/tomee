@@ -693,6 +693,7 @@ class AppInfoBuilder {
         public static final String JTADATASOURCE_PROP = "javax.persistence.jtaDataSource";
         public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
         private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+        public static final String FORCE_PROVIDER_ENV = "openejb.jpa.force." + PROVIDER_PROP;
 
         public static final String HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS = "hibernate.transaction.manager_lookup_class";
         public static final String HIBERNATE_JTA_PLATFORM = "hibernate.transaction.jta.platform";
@@ -703,12 +704,14 @@ class AppInfoBuilder {
         private static final String PREFIX_SESSION_CUSTOMIZER = "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer";
 
         private static String providerEnv;
+        private static boolean forceProviderEnv;
         private static String transactionTypeEnv;
         private static String jtaDataSourceEnv;
         private static String nonJtaDataSourceEnv;
 
         static {
             providerEnv = SystemInstance.get().getOptions().get(PROVIDER_PROP, (String) null);
+            forceProviderEnv = SystemInstance.get().getOptions().get(FORCE_PROVIDER_ENV, true);
             transactionTypeEnv = SystemInstance.get().getOptions().get(TRANSACTIONTYPE_PROP, (String) null);
             jtaDataSourceEnv = SystemInstance.get().getOptions().get(JTADATASOURCE_PROP, (String) null);
             nonJtaDataSourceEnv = SystemInstance.get().getOptions().get(NON_JTADATASOURCE_PROP, (String) null);
@@ -874,7 +877,7 @@ class AppInfoBuilder {
         }
 
         private static void overrideFromSystemProp(final PersistenceUnitInfo info) {
-            if (providerEnv != null) {
+            if (providerEnv != null && (info.provider == null || forceProviderEnv)) {
                 info.provider = providerEnv;
             }
             if (info.provider == null) {
