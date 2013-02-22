@@ -157,4 +157,9 @@ public class SWClassLoader extends ClassLoader {
             }
         }
     }
+
+    // to let frameworks using TCCL use the archive directly
+    public Archive<?> getArchive() {
+        return archive;
+    }
 }
