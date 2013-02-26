@@ -16,19 +16,28 @@
  */
 package org.apache.openejb.bval;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public final class ValidatorUtil {
     private ValidatorUtil() {
-         // no-op
+        // no-op
     }
 
     public static ValidatorFactory validatorFactory() {
@@ -51,7 +60,7 @@ public final class ValidatorUtil {
     // it is better to do it lazily
     // this is mainly done for tests since the first lookup will work in TomEE
     private static <T> T proxy(final Class<T> t, final String jndi) {
-        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{t},
+        return t.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{t},
                 new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -61,8 +70,60 @@ public final class ValidatorUtil {
 
                         final ThreadContext ctx = ThreadContext.getThreadContext();
                         if (ctx != null) {
-                            return method.invoke((T) ctx.getBeanContext().getJndiContext().lookup(jndi), args);
+                            return method.invoke(ctx.getBeanContext().getJndiContext().lookup(jndi), args);
                         }
+
+                        // try to find from current ClassLoader
+                        // can lead to find the bad validator regarding module separation
+                        // but since it shares the same classloader
+                        // it will probably share the same config
+                        // so the behavior will be the same
+                        // + this code should rarely be used
+                        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+                        Object value = null;
+                        for (final AppContext appContext : containerSystem.getAppContexts()) {
+                            if (appContext.getClassLoader().equals(tccl)) {
+                                final Collection<String> tested = new ArrayList<String>();
+                                for (final BeanContext bean : appContext.getBeanContexts()) {
+                                    if (BeanContext.Comp.class.equals(bean.getBeanClass())) {
+                                        final String uniqueId = bean.getModuleContext().getUniqueId();
+                                        if (tested.contains(uniqueId)) {
+                                            continue;
+                                        }
+
+                                        tested.add(uniqueId);
+
+                                        try {
+                                            value = containerSystem.getJNDIContext().lookup(
+                                                    (jndi.endsWith("Factory") ?
+                                                            Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT
+                                                            : Assembler.VALIDATOR_NAMING_CONTEXT)
+                                                            + uniqueId);
+                                            break;
+                                        } catch (final NameNotFoundException nnfe) {
+                                            // no-op
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            for (final WebContext web : appContext.getWebContexts()) {
+                                if (web.getClassLoader().equals(tccl)) {
+                                    value = web.getJndiEnc().lookup(jndi);
+                                    break;
+                                }
+                            }
+                            if (value != null) {
+                                break;
+                            }
+                        }
+
+                        if (value != null) {
+                            return method.invoke(value, args);
+                        }
+
                         return null;
                     }
 
@@ -70,6 +131,6 @@ public final class ValidatorUtil {
                     public String toString() {
                         return "Proxy::" + t.getName();
                     }
-                });
+                }));
     }
 }
