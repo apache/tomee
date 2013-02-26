@@ -73,8 +73,13 @@ public class SWClassLoader extends ClassLoader {
 
     @Override
     protected URL findResource(String name) {
-        final ArchivePath path = ArchivePaths.create(prefix + name);
-        final Node node = archive.get(path);
+        ArchivePath path = ArchivePaths.create(prefix + name);
+        Node node = archive.get(path);
+        if (node == null) {
+            path = ArchivePaths.create(name);
+            node = archive.get(path);
+        }
+
         if (node != null) {
             try {
                 return new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler());
@@ -114,8 +119,15 @@ public class SWClassLoader extends ClassLoader {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     final String arName = key(url);
-                    final String path = prefixes.get(arName) + path(arName, url);
-                    final Asset asset = archives.get(arName).get(path).getAsset();
+
+                    String path = prefixes.get(arName) + path(arName, url);
+                    Node node = archives.get(arName).get(path);
+                    if (node == null) {
+                        path = path(arName, url);
+                        node = archives.get(arName).get(path);
+                    }
+
+                    final Asset asset = node.getAsset();
                     final InputStream input = asset.openStream();
                     final Collection<Closeable> c = closeables.get(arName);
                     c.add(input);
