@@ -63,8 +63,13 @@ public class SWClassLoader extends ClassLoader {
 
     @Override
     protected Enumeration<URL> findResources(final String name) throws IOException {
-        final ArchivePath path = ArchivePaths.create(prefix + name);
-        final Node node = archive.get(path);
+        ArchivePath path = ArchivePaths.create(prefix + name);
+        Node node = archive.get(path);
+        if (node == null) {
+            path = ArchivePaths.create(name);
+            node = archive.get(path);
+        }
+
         if (node != null) {
             return new Enumerator(Arrays.asList(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler())));
         }
@@ -72,7 +77,7 @@ public class SWClassLoader extends ClassLoader {
     }
 
     @Override
-    protected URL findResource(String name) {
+    protected URL findResource(final String name) {
         ArchivePath path = ArchivePaths.create(prefix + name);
         Node node = archive.get(path);
         if (node == null) {
