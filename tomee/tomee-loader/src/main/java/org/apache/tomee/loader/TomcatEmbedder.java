@@ -136,6 +136,11 @@ public class TomcatEmbedder {
             if (url.contains(" ")) {
                 url = url.replaceAll(" ", "%20");
             }
+
+            if (url.contains("#")) {
+                url = url.replaceAll("#", "%23");
+            }
+
             uri = new URI(url);
 
             if (uri.getPath() == null){

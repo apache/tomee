@@ -123,7 +123,7 @@ public class AnnotationFinder {
                 } else if (location.getProtocol().equals("file")) {
                     try {
                         // See if it's actually a jar
-                        final URL jarUrl = new URL("jar", "", location.toExternalForm().replace("%20", " ") + "!/");
+                        final URL jarUrl = new URL("jar", "", location.toExternalForm().replace("%20", " ").replace("%23", "#") + "!/");
                         final JarURLConnection juc = (JarURLConnection) jarUrl.openConnection();
                         classNames.addAll(jar(juc.getJarFile()));
                     } catch (IOException e) {
@@ -227,7 +227,7 @@ public class AnnotationFinder {
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
-            final JarFile jarFile = new JarFile(url.getFile().replace("%20", " "));
+            final JarFile jarFile = new JarFile(url.getFile().replace("%20", " ").replace("%23", "#"));
             return jar(jarFile);
         } else {
             InputStream in = url.openStream();

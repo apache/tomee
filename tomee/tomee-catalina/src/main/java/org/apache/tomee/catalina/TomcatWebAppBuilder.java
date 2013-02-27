@@ -1154,8 +1154,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // appInfo is null when deployment fails
         if (contextInfo.appInfo != null) {
             for (final WebAppInfo w : contextInfo.appInfo.webApps) {
-                final String wId = getId(w.host, w.contextRoot);
-                if (id.equals(wId)) {
+                if (id.equals(getId(w.host, w.contextRoot)) || id.equals(getId(w.host, w.moduleId))) {
                     if (webAppInfo == null) {
                         webAppInfo = w;
                     } else if (w.host != null && w.host.equals(standardContext.getHostname())) {

@@ -55,7 +55,7 @@ public class LinkResolver<E> {
     }
 
     private URI resolve(URI moduleURI, String name) {
-        name = name.replace(" ", "%20");
+        name = name.replace(" ", "%20").replace("#", "%23");
         return moduleURI.resolve("#" + name);
     }
 

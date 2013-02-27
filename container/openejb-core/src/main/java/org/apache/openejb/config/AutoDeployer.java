@@ -129,7 +129,7 @@ public class AutoDeployer {
 
                         for (final String location : app.paths) {
 
-                            final File delete = new File(location.replace("%20", " "));
+                            final File delete = new File(location.replace("%20", " ").replace("%23", "#"));
 
                             for (int i = 0; i < 3; i++) {
                                 try {
