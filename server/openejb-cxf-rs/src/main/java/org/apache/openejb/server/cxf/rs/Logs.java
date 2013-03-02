@@ -131,6 +131,12 @@ public class Logs {
             this.http = http;
             this.address = address;
             this.method = method;
+
+            if (http != null) {
+                this.http = http;
+            } else { // can happen with subresource locators
+                this.http = "";
+            }
         }
 
         @Override
