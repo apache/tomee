@@ -38,6 +38,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
+import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
@@ -128,6 +130,35 @@ public class OpenEJBContextConfig extends ContextConfig {
                     context.removeChild(child);
                 }
             }
+        }
+    }
+
+    @Override
+    protected void processAnnotationWebServlet(final String className, final AnnotationEntry ae, final WebXml fragment) {
+        try {
+            super.processAnnotationWebServlet(className, ae, fragment);
+        } catch (IllegalArgumentException iae) {
+            // otherwise TCKs are not passing, hope to be able to let it with next TCK versions
+
+            String[] urlPatterns = null;
+            for (ElementValuePair evp : ae.getElementValuePairs()) {
+                String name = evp.getNameString();
+                if ("value".equals(name) || "urlPatterns".equals(name)) {
+                    urlPatterns = processAnnotationsStringArray(evp.getValue());
+                    break;
+                }
+            }
+
+            if (urlPatterns != null) {
+                for (String pattern : urlPatterns) {
+                    if (fragment.getServletMappings().containsKey(pattern)) {
+                        logger.warning(iae.getMessage(), iae);
+                        return;
+                    }
+                }
+            }
+
+            throw iae;
         }
     }
 
