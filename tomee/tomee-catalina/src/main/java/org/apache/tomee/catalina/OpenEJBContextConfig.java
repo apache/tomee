@@ -407,6 +407,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         try {
             super.processAnnotationWebServlet(className, ae, fragment);
         } catch (IllegalArgumentException iae) {
+            // otherwise TCKs are not passing, hope to be able to let it with next TCK versions
+
             String[] urlPatterns = null;
             for (ElementValuePair evp : ae.getElementValuePairs()) {
                 String name = evp.getNameString();
