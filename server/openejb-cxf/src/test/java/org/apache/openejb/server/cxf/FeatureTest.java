@@ -58,7 +58,7 @@ public class FeatureTest {
         final OpenejbJar openejbJar = new OpenejbJar();
         openejbJar.addEjbDeployment(new EjbDeployment(jar.getEnterpriseBeans()[0]));
         final Properties properties = openejbJar.getEjbDeployment().iterator().next().getProperties();
-        properties.setProperty(CxfService.OPENEJB_JAXWS_CXF_FEATURES, MyFeature.class.getName());
+        properties.setProperty("features", MyFeature.class.getName());
         properties.setProperty("cxf.jaxws.features", "my-feature");
         properties.setProperty("cxf.jaxws.properties", "my-props");
 

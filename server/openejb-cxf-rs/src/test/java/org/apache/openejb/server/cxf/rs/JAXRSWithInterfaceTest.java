@@ -69,6 +69,7 @@ public class JAXRSWithInterfaceTest {
         }
     }
 
+    @Path("/")
     public static interface Itf {
         @Path("itf")
         @GET

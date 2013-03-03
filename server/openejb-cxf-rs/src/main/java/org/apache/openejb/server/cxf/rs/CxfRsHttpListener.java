@@ -17,15 +17,9 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.JAXRSServiceImpl;
-import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
-import org.apache.cxf.jaxrs.model.ClassResourceInfo;
-import org.apache.cxf.jaxrs.model.MethodDispatcher;
-import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
@@ -41,7 +35,6 @@ import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.LogCategory;
@@ -53,72 +46,36 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
 import javax.naming.Context;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Pattern;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
-    public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
-    public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
-    public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
-
-    private static final Map<String, String> STATIC_CONTENT_TYPES;
 
     private final HTTPTransportFactory transportFactory;
-    private final String wildcard;
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
-    private Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
 
-    static {
-        STATIC_CONTENT_TYPES = new HashMap<String, String>();
-        STATIC_CONTENT_TYPES.put("html", "text/html");
-        STATIC_CONTENT_TYPES.put("xhtml", "text/html");
-        STATIC_CONTENT_TYPES.put("txt", "text/plain");
-        STATIC_CONTENT_TYPES.put("css", "text/css");
-        STATIC_CONTENT_TYPES.put("jpg", "image/jpg");
-        STATIC_CONTENT_TYPES.put("png", "image/png");
-        STATIC_CONTENT_TYPES.put("ico", "image/ico");
-        STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
-        STATIC_CONTENT_TYPES.put("xsd", "application/xml");
-    }
-
-    public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
+    public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory) {
         transportFactory = httpTransportFactory;
-        wildcard = star;
-
     }
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-        if (matchPath(httpRequest)) {
-            serveStaticContent(httpRequest, httpResponse, httpRequest.getPathInfo());
-            return;
-        }
-
         destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
             // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
             // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
@@ -132,48 +89,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 return strip(context, super.getRequestURI());
             }
         }, httpResponse);
-    }
-
-    private boolean matchPath(final HttpServletRequest request) {
-        if (staticResourcesList.isEmpty()) {
-            return false;
-        }
-
-        String path = request.getPathInfo();
-        if (path == null) {
-            path = "/";
-        }
-        for (Pattern pattern : staticResourcesList) {
-            if (pattern.matcher(path).matches()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void serveStaticContent(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final String pathInfo) throws ServletException {
-        final InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
-        if (is == null) {
-            throw new ServletException("Static resource " + pathInfo + " is not available");
-        }
-        try {
-            int ind = pathInfo.lastIndexOf(".");
-            if (ind != -1 && ind < pathInfo.length()) {
-                String type = STATIC_CONTENT_TYPES.get(pathInfo.substring(ind + 1));
-                if (type != null) {
-                    response.setContentType(type);
-                }
-            }
-
-            final ServletOutputStream os = response.getOutputStream();
-            IOUtils.copy(is, os);
-            os.flush();
-        } catch (IOException ex) {
-            throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
-        }
-
     }
 
     private String strip(final String context, final String requestURI) {
@@ -276,135 +191,6 @@ public class CxfRsHttpListener implements RsHttpListener {
         server.stop();
     }
 
-    @Override
-    public void deployApplication(final Application application, final String prefix, final String webContext,
-                                  final Collection<Object> additionalProviders,
-                                  final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader,
-                                  final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx,
-                                  final ServiceConfiguration serviceConfiguration) {
-        final JAXRSServerFactoryBean factory = newFactory(prefix);
-        configureFactory(additionalProviders, serviceConfiguration, factory);
-        factory.setApplication(application);
-
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
-
-        for (Class<?> clazz : application.getClasses()) {
-            if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
-                classes.add(clazz);
-            }
-        }
-
-        for (Object o : application.getSingletons()) {
-            if (!additionalProviders.contains(o)) {
-                final Class<?> clazz = o.getClass();
-                classes.add(clazz);
-            }
-        }
-
-        for (Class<?> clazz : classes) {
-            final String name = clazz.getName();
-            if (restEjbs.containsKey(name)) {
-                final BeanContext bc = restEjbs.get(name).context;
-                final Object proxy = ProxyEJB.subclassProxy(bc);
-                addContextTypes(bc);
-                factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
-            } else {
-                factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(clazz, injections, context, owbCtx));
-            }
-        }
-
-        factory.setResourceClasses(classes);
-        factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
-
-        server = factory.create();
-        this.context = webContext;
-        if (!webContext.startsWith("/")) {
-            this.context = "/" + webContext;
-        }
-        destination = (AbstractHTTPDestination) server.getDestination();
-
-        final String base;
-        if (prefix.endsWith("/")) {
-            base = prefix.substring(0, prefix.length() - 1);
-        } else if (prefix.endsWith(wildcard)) {
-            base = prefix.substring(0, prefix.length() - wildcard.length());
-        } else {
-            base = prefix;
-        }
-
-        // stack info to log to get nice logs
-
-        final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<Logs.LogResourceEndpointInfo>();
-        int classSize = 0;
-        int addressSize = 0;
-
-        final JAXRSServiceImpl service = (JAXRSServiceImpl) factory.getServiceFactory().getService();
-        final List<ClassResourceInfo> resources = service.getClassResourceInfos();
-        for (final ClassResourceInfo info : resources) {
-            if (info.getResourceClass() == null) { // possible?
-                continue;
-            }
-
-            final String address = Logs.singleSlash(base, info.getURITemplate().getValue());
-
-            String clazz = info.getResourceClass().getName();
-            final String type;
-            if (restEjbs.containsKey(clazz)) {
-                type = "EJB";
-            } else {
-                type = "Pojo";
-            }
-
-            classSize = Math.max(classSize, clazz.length());
-            addressSize = Math.max(addressSize, address.length());
-
-            int methodSize = 7;
-            int methodStrSize = 0;
-
-            final List<Logs.LogOperationEndpointInfo> toLog = new ArrayList<Logs.LogOperationEndpointInfo>();
-
-            final MethodDispatcher md = info.getMethodDispatcher();
-            for (OperationResourceInfo ori : md.getOperationResourceInfos()) {
-                final String httpMethod = ori.getHttpMethod();
-                final String currentAddress = Logs.singleSlash(address, ori.getURITemplate().getValue());
-                final String methodToStr = Logs.toSimpleString(ori.getMethodToInvoke());
-                toLog.add(new Logs.LogOperationEndpointInfo(httpMethod, currentAddress, methodToStr));
-
-                if (httpMethod != null) {
-                    methodSize = Math.max(methodSize, httpMethod.length());
-                }
-                addressSize = Math.max(addressSize, currentAddress.length());
-                methodStrSize = Math.max(methodStrSize, methodToStr.length());
-            }
-
-            Collections.sort(toLog);
-
-            resourcesToLog.add(new Logs.LogResourceEndpointInfo(type, address, clazz, toLog, methodSize, methodStrSize));
-        }
-
-        // effective logging
-
-        LOGGER.info("REST Application: " + Logs.forceLength(prefix, addressSize, true) + " -> " + application.getClass().getName());
-
-        Collections.sort(resourcesToLog);
-        for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
-            LOGGER.info("     Service URI: "
-                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
-                    + Logs.forceLength(resource.type, 4, false) + " "
-                    + Logs.forceLength(resource.classname, classSize, true));
-
-            for (Logs.LogOperationEndpointInfo log : resource.operations) {
-                LOGGER.info("          "
-                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
-                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
-                        + Logs.forceLength(log.method, resource.methodStrSize, true));
-            }
-
-            resource.operations.clear();
-        }
-        resourcesToLog.clear();
-    }
-
     private JAXRSServerFactoryBean newFactory(String prefix) {
         final JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setDestinationFactory(transportFactory);
@@ -417,38 +203,6 @@ public class CxfRsHttpListener implements RsHttpListener {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
-
-        final String staticSubresourceResolution = serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + STATIC_SUB_RESOURCE_RESOLUTION_KEY);
-        if (staticSubresourceResolution != null) {
-            factory.setStaticSubresourceResolution("true".equalsIgnoreCase(staticSubresourceResolution));
-        }
-
-        // resource comparator
-        final String resourceComparator = serviceConfiguration.getProperties().getProperty(RESOURCE_COMPARATOR_KEY);
-        if (resourceComparator != null) {
-            try {
-                ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
-                if (instance == null) {
-                    instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
-                            .loadClass(resourceComparator).newInstance();
-                }
-                factory.setResourceComparator(instance);
-            } catch (Exception e) {
-                LOGGER.error("Can't create the resource comparator " + resourceComparator, e);
-            }
-        }
-
-        // static resources
-        final String staticResources = serviceConfiguration.getProperties().getProperty(STATIC_RESOURCE_KEY);
-        if (staticResources != null) {
-            final String[] resources = staticResources.split(",");
-            for (String r : resources) {
-                final String trimmed = r.trim();
-                if (!trimmed.isEmpty()) {
-                    staticResourcesList.add(Pattern.compile(trimmed));
-                }
-            }
-        }
 
         // providers
         final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);

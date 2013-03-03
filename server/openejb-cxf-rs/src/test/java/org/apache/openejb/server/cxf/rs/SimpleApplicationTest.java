@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -77,11 +76,6 @@ public class SimpleApplicationTest {
             writer.write(c);
         }
         assertEquals("hi Pink Floyd", writer.toString());
-    }
-
-    @Test(expected = ServerWebApplicationException.class)
-    public void nonListed() {
-        WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class);
     }
 
     @Test

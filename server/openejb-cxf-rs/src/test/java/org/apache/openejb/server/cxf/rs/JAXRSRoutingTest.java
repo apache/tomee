@@ -69,6 +69,7 @@ public class JAXRSRoutingTest {
         }
     }
 
+    @Path("")
     public static class FirstService {
         @Path("routing")
         @GET
