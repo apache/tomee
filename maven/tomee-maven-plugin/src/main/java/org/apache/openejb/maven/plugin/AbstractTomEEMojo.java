@@ -668,6 +668,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
                 + " (plugin shutdown port is " + tomeeShutdownPort + ")");
 
+        // because server will write in the console from another process we have to flush
+        System.out.flush();
+
         final InputStream originalIn = System.in; // piped when starting resmote server so saving it
 
         serverCmd(server, strings);
@@ -684,7 +687,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if (useConsole) {
                 final Scanner reader = new Scanner(originalIn);
 
+                System.out.flush();
                 getLog().info("Waiting for command: " + availableCommands());
+                System.out.flush();
 
                 String line;
                 while ((line = reader.nextLine()) != null) {
@@ -693,7 +698,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     }
 
                     if (!handleLine(line.trim())) {
+                        System.out.flush();
                         getLog().warn("Command '" + line + "' not understood. Use one of " + availableCommands());
+                        System.out.flush();
                     }
                 }
 
