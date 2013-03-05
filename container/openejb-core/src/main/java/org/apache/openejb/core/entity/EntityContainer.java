@@ -124,11 +124,6 @@ public class EntityContainer implements RpcContainer {
     }
     
     public void undeploy(BeanContext info) throws OpenEJBException {
-        EjbTimerService timerService = info.getEjbTimerService();
-        if (timerService != null) {
-            timerService.stop();
-        }
-
         instanceManager.undeploy(info);
 
         synchronized (this) {

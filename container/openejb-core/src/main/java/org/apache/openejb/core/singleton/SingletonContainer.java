@@ -138,11 +138,6 @@ public class SingletonContainer implements RpcContainer {
             ThreadContext.exit(old);
         }
 
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.stop();
-        }
-
         instanceManager.undeploy(beanContext);
 
         synchronized (this) {

@@ -1664,7 +1664,7 @@ public class BeanContext extends DeploymentContext {
 
     public void stop() {
         if (ejbTimerService != null && ejbTimerService instanceof EjbTimerServiceImpl) {
-            ((EjbTimerServiceImpl) ejbTimerService).shutdownMe();
+            ((EjbTimerServiceImpl) ejbTimerService).stop();
         }
     }
 

@@ -129,6 +129,7 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
+import org.quartz.Scheduler;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
@@ -839,6 +840,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             logger.info("createApplication.success", appInfo.path);
 
+            resumePersistentSchedulers(appContext);
+
             return appContext;
         } catch (ValidationException ve) {
             throw ve;
@@ -849,6 +852,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    private void resumePersistentSchedulers(final AppContext appContext) {
+        final Scheduler globalScheduler = SystemInstance.get().getComponent(Scheduler.class);
+        final Collection<Scheduler> schedulers = new ArrayList<Scheduler>();
+        for (final BeanContext ejb : appContext.getBeanContexts()) {
+            final Scheduler scheduler = ejb.get(Scheduler.class);
+            if (scheduler == globalScheduler || schedulers.contains(scheduler)) {
+                continue;
+            }
+
+            schedulers.add(scheduler);
+            try {
+                scheduler.resumeAll();
+            } catch (final Exception e) {
+                logger.warning("Can't resume scheduler for " + ejb.getEjbName(), e);
+            }
         }
     }
 
