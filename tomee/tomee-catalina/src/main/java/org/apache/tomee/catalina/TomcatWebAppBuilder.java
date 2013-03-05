@@ -47,6 +47,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
+import org.apache.catalina.loader.VirtualWebappLoader;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
@@ -104,6 +105,7 @@ import org.apache.openejb.server.httpd.EndWebBeansListener;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomee.catalina.cluster.ClusterObserver;
@@ -1017,12 +1019,35 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 sc.setSessionTrackingModes(newModes);
             }
         }
+        initContextLoader(standardContext);
+
+
+    }
+
+    private void initContextLoader(final StandardContext standardContext) {
+        final Loader standardContextLoader = standardContext.getLoader();
+        if (standardContextLoader != null
+                && !VirtualWebappLoader.class.equals(standardContextLoader.getClass())
+                && !WebappLoader.class.equals(standardContextLoader.getClass())) {
+            // custom loader, we don't know it
+            // and since we don't have a full delegate pattern for our lazy stop loader
+            // simply skip lazy stop loader - normally sides effect will be an early shutdown for ears and some particular features
+            // only affecting the app if the classes were not laoded at all
+            return;
+        }
 
         // we just want to wrap it to lazy stop it (afterstop)
         // to avoid classnotfound in @PreDestoy or destroyApplication()
-        final WebappLoader loader = new LazyStopWebappLoader(standardContext);
+        final VirtualWebappLoader loader = new LazyStopWebappLoader(standardContext);
         loader.setDelegate(standardContext.getDelegate());
         loader.setLoaderClass(LazyStopWebappClassLoader.class.getName());
+
+        if (VirtualWebappLoader.class.isInstance(standardContextLoader)) {
+            final VirtualWebappLoader vwl = VirtualWebappLoader.class.cast(standardContextLoader);
+            loader.setSearchVirtualFirst(vwl.getSearchVirtualFirst());
+            loader.setVirtualClasspath(String.class.cast(Reflections.get(vwl, "virtualClasspath")));
+        }
+
         final Loader lazyStopLoader = new LazyStopLoader(loader);
         standardContext.setLoader(lazyStopLoader);
     }

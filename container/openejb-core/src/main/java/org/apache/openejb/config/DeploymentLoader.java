@@ -847,6 +847,13 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
         webUrls.addAll(addedUrls);
 
+        // context.xml can define some additional libraries
+        final File contextXml = new File(warFile, "META-INF/context.xml");
+        if (contextXml.exists()) {
+            final QuickContextXmlParser parser = QuickContextXmlParser.parse(contextXml);
+            webUrls.addAll(parser.getAdditionalURLs());
+        }
+
         final URL[] webUrlsArray = webUrls.toArray(new URL[webUrls.size()]);
 
         // in TomEE this is done in init hook since we don't manage tomee webapp classloader

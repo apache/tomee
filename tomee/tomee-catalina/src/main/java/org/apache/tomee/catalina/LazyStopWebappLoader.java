@@ -18,9 +18,9 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.loader.VirtualWebappLoader;
 
-public class LazyStopWebappLoader extends WebappLoader {
+public class LazyStopWebappLoader extends VirtualWebappLoader {
     private static String currentAppId = null;
 
     private Context standardContext = null;
@@ -73,5 +73,10 @@ public class LazyStopWebappLoader extends WebappLoader {
             return null;
         }
         return standardContext.getName();
+    }
+
+    @Override
+    public String toString() {
+        return "LazyStop" + super.toString();
     }
 }
