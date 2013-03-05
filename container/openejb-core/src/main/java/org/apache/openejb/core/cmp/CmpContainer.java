@@ -187,10 +187,6 @@ public class CmpContainer implements RpcContainer {
     }
     
     public void undeploy(BeanContext beanContext) throws OpenEJBException {
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.stop();
-        }
         synchronized (this) {
             deploymentsById.remove(beanContext.getDeploymentID());
             beansByClass.remove(beanContext.getCmpImplClass());

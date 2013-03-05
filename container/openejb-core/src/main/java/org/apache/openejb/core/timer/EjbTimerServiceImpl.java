@@ -152,7 +152,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             putAll(properties, deployment.getModuleContext().getProperties());
             putAll(properties, deployment.getProperties());
 
-            // custom config -> don't use default scheduler
+            // custom config -> don't use default/global scheduler
+            // if one day we want to keep a global config for a global scheduler (SystemInstance.get().getProperties()) we'll need to manage resume/pause etc correctly by app
+            // since we have a scheduler by ejb today in such a case we don't need
             final boolean newInstance = properties.size() > 0;
 
             final SystemInstance systemInstance = SystemInstance.get();
@@ -261,7 +263,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
     }
 
-    public void shutdownMe() {
+    @Override
+    public void stop() {
         cleanTimerData();
         shutdownMyScheduler();
     }
@@ -284,8 +287,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
             final TriggerKey key = trigger.getKey();
             try {
-                scheduler.unscheduleJob(key);
-            } catch (SchedulerException ignored) {
+                data.stop();
+            } catch (final EJBException ignored) {
                 log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID());
             }
         }
@@ -346,6 +349,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 public void run() {
                     try {
                         s.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
+                            @Override
+                            public void schedulerShuttingdown() {
+                                try {
+                                    s.pauseAll();
+                                } catch (SchedulerException e) {
+                                    // no-op
+                                }
+                            }
 
                             @Override
                             public void schedulerShutdown() {
@@ -420,20 +431,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         for (final TimerData timerData : timerDatas) {
             initializeNewTimer(timerData);
         }
-    }
-
-    @Override
-    public void stop() {
-        // stop all timers
-        for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
-            try {
-                timerData.stop();
-            } catch (EJBException e) {
-                //Suppress all the exception as we are in the shutdown process
-                log.error("fail to stop timer", e);
-            }
-        }
-        //scheduler.shutdown();
     }
 
     public TransactionManager getTransactionManager() {

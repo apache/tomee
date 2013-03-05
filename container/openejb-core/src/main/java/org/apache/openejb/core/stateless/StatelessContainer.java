@@ -128,12 +128,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
     
     public void undeploy(BeanContext beanContext) {
-        
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.stop();
-        }
-        
         instanceManager.undeploy(beanContext);
         
         synchronized (this) {

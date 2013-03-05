@@ -104,7 +104,7 @@ public abstract class TimerData implements Serializable {
         this.deploymentId = deploymentId;
         this.primaryKey = primaryKey;
         this.info = timerConfig == null ? null : timerConfig.getInfo();
-        this.persistent = timerConfig == null ? true : timerConfig.isPersistent();
+        this.persistent = timerConfig == null || timerConfig.isPersistent();
         this.timer = new TimerImpl(this);
         this.timeoutMethod = timeoutMethod;
     }
@@ -159,7 +159,11 @@ public abstract class TimerData implements Serializable {
                 final Scheduler s = timerService.getScheduler();
                 
                 if(!s.isShutdown()) {
-                    s.unscheduleJob(trigger.getKey());
+                    if (!isPersistent()) {
+                        s.unscheduleJob(trigger.getKey());
+                    } else {
+                        s.pauseTrigger(trigger.getKey());
+                    }
                 }
             } catch (SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
