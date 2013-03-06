@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,7 +51,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private Synchronization synchronization;
 
     @Parameter
-    private List<Synchronization> synchronizations;
+    private List<Synch> synchronizations;
 
     @Parameter(property = "tomee-plugin.buildDir", defaultValue = "${project.build.directory}", readonly = true)
     private File buildDir;
@@ -70,8 +71,12 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             initSynchronization(synchronization);
         }
         if (synchronizations != null) {
-            for (Synchronization s :synchronizations) {
-                initSynchronization(s);
+            for (final Synch s : synchronizations) {
+                if (s.getSource() == null || s.getTarget() == null) {
+                    getLog().warn("Source or Target directory missing to a <synch> block, skipping");
+                    continue;
+                }
+                initSynch(s);
             }
         }
 
@@ -79,10 +84,22 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             forceReloadable = true;
         }
 
+        if (removeTomeeWebapp) {
+            getLog().warn("TomEE webapp is asked to be removed (<removeTomeeWebapp>true</removeTomeeWebapp>) so you can use reload feature");
+        }
+
         super.run();
     }
 
+    private void initSynch(final AbstractSynchronizable s) {
+        s.getExtensions().addAll(s.getUpdateOnlyExtenions());
+        if (reloadOnUpdate) {
+            deployOpenEjbApplication = true;
+        }
+    }
+
     private void initSynchronization(final Synchronization synchronization) {
+        // defaults values for main synchronization block
         final String destination = destinationName().replaceAll("\\.[jew]ar", "");
         if (synchronization.getBinariesDir() == null) {
             synchronization.setBinariesDir(new File(buildDir, "classes"));
@@ -106,12 +123,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             synchronization.setUpdateOnlyExtensions(Collections.<String>emptyList());
         }
 
-        // merge update only and normal extensions to browse more easily extensions in the timer task
-        synchronization.getExtensions().addAll(synchronization.getUpdateOnlyExtenions());
-
-        if (reloadOnUpdate) {
-            deployOpenEjbApplication = true;
-        }
+        initSynch(synchronization);
     }
 
     @Override
@@ -140,7 +152,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             interval = TimeUnit.SECONDS.toMillis(synchronization.getUpdateInterval());
         }
         if (synchronizations != null) {
-            for (Synchronization s : synchronizations) {
+            for (final AbstractSynchronizable s : synchronizations) {
                 synchronizers.add(new Synchronizer(s));
                 if (interval < s.getUpdateInterval()) {
                     interval = TimeUnit.SECONDS.toMillis(s.getUpdateInterval());
@@ -224,10 +236,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private class Synchronizer implements Callable<Integer> {
         private final FileFilter fileFilter;
         private final FileFilter updateOnlyFilter;
-        private final Synchronization synchronization;
+        private final AbstractSynchronizable synchronization;
         private long lastUpdate = System.currentTimeMillis();
 
-        public Synchronizer(final Synchronization synch) {
+        public Synchronizer(final AbstractSynchronizable synch) {
             synchronization = synch;
             updateOnlyFilter = new SuffixesFileFilter(synchronization.getUpdateOnlyExtenions());
             if (synchronization.getRegex() != null) {
@@ -240,8 +252,10 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         @Override
         public Integer call() throws Exception {
             final long ts = System.currentTimeMillis();
-            int updated = updateFiles(synchronization.getResourcesDir(), synchronization.getTargetResourcesDir(), ts)
-                + updateFiles(synchronization.getBinariesDir(), synchronization.getTargetBinariesDir(), ts);
+            int updated = 0;
+            for (final Map.Entry<File, File> pair : synchronization.updates().entrySet()) {
+                updated += updateFiles(pair.getKey(), pair.getValue(), ts);
+            }
             lastUpdate = ts;
             return updated;
         }
@@ -301,7 +315,9 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
                     FileUtils.forceMkdir(output.getParentFile());
                 }
                 FileUtils.copyFile(file, output);
-                output.setLastModified(ts);
+                if (!output.setLastModified(ts)) {
+                    getLog().debug("Can't update last modified date of " + file);
+                }
             } catch (IOException e) {
                 getLog().error(e);
             }

@@ -18,17 +18,15 @@ package org.apache.openejb.maven.plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Synchronization {
+public class Synchronization extends AbstractSynchronizable {
     private File resourcesDir;
     private File binariesDir;
     private File targetBinariesDir;
     private File targetResourcesDir;
-    private int updateInterval;
-    private List<String> extensions;
-    private List<String> updateOnlyExtensions;
-    private String regex;
 
     public File getResourcesDir() {
         return resourcesDir;
@@ -62,41 +60,17 @@ public class Synchronization {
         this.targetResourcesDir = targetResourcesDir;
     }
 
-    public int getUpdateInterval() {
-        return updateInterval;
-    }
-
-    public void setUpdateInterval(int updateInterval) {
-        this.updateInterval = updateInterval;
-    }
-
-    public List<String> getExtensions() {
-        if (extensions == null) {
-            extensions = new ArrayList<String>();
+    @Override
+    public Map<File, File> updates() {
+        if (updates == null) {
+            updates = new HashMap<File, File>();
+            if (resourcesDir != null && targetResourcesDir != null) {
+                updates.put(resourcesDir, targetResourcesDir);
+            }
+            if (binariesDir != null && targetBinariesDir != null) {
+                updates.put(binariesDir, targetBinariesDir);
+            }
         }
-        return extensions;
-    }
-
-    public void setExtensions(List<String> extensions) {
-        this.extensions = extensions;
-    }
-
-    public String getRegex() {
-        return regex;
-    }
-
-    public void setRegex(String regex) {
-        this.regex = regex;
-    }
-
-    public List<String> getUpdateOnlyExtenions() {
-        if (updateOnlyExtensions == null) {
-            updateOnlyExtensions = new ArrayList<String>();
-        }
-        return updateOnlyExtensions;
-    }
-
-    public void setUpdateOnlyExtensions(List<String> updateOnlyExtensions) {
-        this.updateOnlyExtensions = updateOnlyExtensions;
+        return updates;
     }
 }
