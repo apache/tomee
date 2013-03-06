@@ -88,8 +88,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private transient TimerStore timerStore;
     private transient Scheduler scheduler = null;
 
-    public EjbTimerServiceImpl(final BeanContext deployment) {
-        this(deployment, getDefaultTransactionManager(), new MemoryTimerStore(getDefaultTransactionManager()), -1);
+    public EjbTimerServiceImpl(final BeanContext deployment, final TimerStore timerStore) {
+        this(deployment, getDefaultTransactionManager(), timerStore, -1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
