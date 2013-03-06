@@ -145,7 +145,7 @@ public class ScriptLoginModule implements LoginModule {
         if (script == null) {
             script = getScriptFile(System.getProperty("openejb.ScriptLoginModule.scriptURI"));
             if (script == null) {
-                script = getScriptFile(System.getProperty(null));
+                script = getScriptFile(null);
             }
         }
         if (script == null) {
