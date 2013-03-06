@@ -28,6 +28,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentContext;
 import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
@@ -72,6 +73,7 @@ import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.security.SecurityContextHandler;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.timer.MemoryTimerStore;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.core.timer.TimerStore;
@@ -167,6 +169,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
@@ -204,6 +207,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
     private static final String GLOBAL_UNIQUE_ID = "global";
+    public static final String TIMER_STORE_CLASS = "timerStore.class";
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
     private final CoreContainerSystem containerSystem;
@@ -860,7 +864,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Collection<Scheduler> schedulers = new ArrayList<Scheduler>();
         for (final BeanContext ejb : appContext.getBeanContexts()) {
             final Scheduler scheduler = ejb.get(Scheduler.class);
-            if (scheduler == null ||    scheduler == globalScheduler || schedulers.contains(scheduler)) {
+            if (scheduler == null || scheduler == globalScheduler || schedulers.contains(scheduler)) {
                 continue;
             }
 
@@ -940,7 +944,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     if (timerServiceRequired) {
                         // Create the timer
-                        final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
+                        final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext, newTimerStore(beanContext));
                         //Load auto-start timers
                         final TimerStore timerStore = timerService.getTimerStore();
                         for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
@@ -982,6 +986,29 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final List<BeanContext> ejbs = sort(allDeployments);
         appContext.getBeanContexts().addAll(ejbs);
         return ejbs;
+    }
+
+    private static TimerStore newTimerStore(final BeanContext beanContext) {
+        for (final DeploymentContext context : Arrays.asList(beanContext, beanContext.getModuleContext(), beanContext.getModuleContext().getAppContext())) {
+            final String timerStoreClass = context.getProperties().getProperty(TIMER_STORE_CLASS);
+            if (timerStoreClass != null) {
+                logger.info("Found timer class: " + timerStoreClass);
+
+                try {
+                    final Class<?> clazz = beanContext.getClassLoader().loadClass(timerStoreClass);
+                    try {
+                        final Constructor<?> constructor = clazz.getConstructor(TransactionManager.class);
+                        return TimerStore.class.cast(constructor.newInstance(EjbTimerServiceImpl.getDefaultTransactionManager()));
+                    } catch (final Exception ignored) {
+                        return TimerStore.class.cast(clazz.newInstance());
+                    }
+                } catch (final Exception e) {
+                    logger.error("Can't instantiate " + timerStoreClass + ", using default memory timer store");
+                }
+            }
+        }
+
+        return new MemoryTimerStore(EjbTimerServiceImpl.getDefaultTransactionManager());
     }
 
     public void startEjbs(final boolean start, final List<BeanContext> allDeployments) throws OpenEJBException {
