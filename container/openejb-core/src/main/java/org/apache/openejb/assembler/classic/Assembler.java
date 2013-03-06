@@ -860,7 +860,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Collection<Scheduler> schedulers = new ArrayList<Scheduler>();
         for (final BeanContext ejb : appContext.getBeanContexts()) {
             final Scheduler scheduler = ejb.get(Scheduler.class);
-            if (scheduler == globalScheduler || schedulers.contains(scheduler)) {
+            if (scheduler == null ||    scheduler == globalScheduler || schedulers.contains(scheduler)) {
                 continue;
             }
 
