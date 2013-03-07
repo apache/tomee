@@ -18,6 +18,7 @@ package org.apache.openejb.classloader;
 
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -27,6 +28,7 @@ import org.apache.xbean.finder.filter.Filters;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,14 +61,24 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
         if (addedFolder != null) {
             final File parent = new File(addedFolder);
             if (parent.exists()) {
-                final File[] files = parent.listFiles();
-                if (files != null) {
-                    for (final File f : files) {
-                        final String name = f.getName();
-                        if (f.isDirectory() || name.endsWith(".zip") || name.endsWith(".jar")) {
-                            addedList.add(f.getAbsolutePath());
+                if (parent.isDirectory()) {
+                    final File[] files = parent.listFiles();
+                    if (files != null) {
+                        for (final File f : files) {
+                            final String name = f.getName();
+                            if (f.isDirectory() || name.endsWith(".zip") || name.endsWith(".jar")) {
+                                addedList.add(f.getAbsolutePath());
+                            }
                         }
                     }
+                } else if (addedFolder.endsWith(".zip")) {
+                    try {
+                        setAddedFolder(JarExtractor.extract(parent, parent.getName()).getAbsolutePath());
+                    } catch (IOException e) {
+                        LOGGER.error("Can't unpack " + parent.getPath());
+                    }
+                } else {
+                    LOGGER.warning("Ignoring " + addedFolder + " because that's not a folder or a zip");
                 }
             }
         }
@@ -108,15 +120,6 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
 
     private static class TrueFilter implements Filter {
         public static final TrueFilter INSTANCE = new TrueFilter();
-
-        @Override
-        public boolean accept(final String name) {
-            return true;
-        }
-    }
-
-    private static class FalseFilter implements Filter {
-        public static final FalseFilter INSTANCE = new FalseFilter();
 
         @Override
         public boolean accept(final String name) {
