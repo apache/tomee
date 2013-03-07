@@ -45,6 +45,7 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
@@ -1248,13 +1249,19 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return;
         }
 
-        Persistence persistence = persistenceModule.getPersistence();
-        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+        final Persistence persistence = persistenceModule.getPersistence();
+        for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
             if (unit.getProvider() != null){
                 logger.info("Configuring PersistenceUnit(name="+unit.getName()+", provider="+unit.getProvider()+")");
             } else {
                 logger.info("Configuring PersistenceUnit(name="+unit.getName()+")");
             }
+
+            if (unit.getJtaDataSource() == null && unit.getNonJtaDataSource() == null) {
+                unit.setTransactionType(TransactionType.JTA); // 8.2.1.5 of JPA 2.0 spec
+            }
+
+            final boolean resourceLocal = TransactionType.RESOURCE_LOCAL.equals(unit.getTransactionType());
 
             Properties required = new Properties();
 
@@ -1302,10 +1309,13 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             final String prefix = app.getModuleId() + "/";
 
-            required.put("JtaManaged", "true");
-            String jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
-            if (jtaDataSourceId == null) {
-                jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+            String jtaDataSourceId = null;
+            if (!resourceLocal) {
+                required.put("JtaManaged", "true");
+                jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+                if (jtaDataSourceId == null) {
+                    jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+                }
             }
 
             required.put("JtaManaged", "false");
@@ -1314,16 +1324,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 nonJtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
             }
 
-            if (jtaDataSourceId != null && nonJtaDataSourceId != null){
+            if ((jtaDataSourceId != null || resourceLocal) && nonJtaDataSourceId != null){
                 // Both DataSources were explicitly configured.
-                setJtaDataSource(unit, jtaDataSourceId);
-                setNonJtaDataSource(unit, nonJtaDataSourceId);
-                continue;
-            }
-
-            if (jtaDataSourceId != null && nonJtaDataSourceId != null){
-                // Both DataSources were explicitly configured.
-                setJtaDataSource(unit, jtaDataSourceId);
+                if (jtaDataSourceId != null) {
+                    setJtaDataSource(unit, jtaDataSourceId);
+                }
                 setNonJtaDataSource(unit, nonJtaDataSourceId);
                 continue;
             }
@@ -1336,7 +1341,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
                 required.put("JtaManaged", NONE);
 
-                jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+                if (!resourceLocal) {
+                    jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+                }
                 nonJtaDataSourceId = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
 
                 if (jtaDataSourceId != null || nonJtaDataSourceId != null) {
@@ -1569,9 +1576,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  and finally setting JtaManaged=false
             //
 
-            final String deduceJtaFromNonJta = SystemInstance.get().getOptions().get(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY, (String) null);
+            final String deduceJtaFromNonJta = unit.getProperty(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY, SystemInstance.get().getOptions().get(AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY, (String) null));
             if (nonJtaDataSourceId != null && jtaDataSourceId == null
                     // hibernate uses the fact that this ds is missing to get a non jta em instead of a JTA one
+                    && (!resourceLocal || deduceJtaFromNonJta != null)
                     && (deduceJtaFromNonJta == null || (deduceJtaFromNonJta != null && Boolean.parseBoolean(deduceJtaFromNonJta)))) {
 
                 ResourceInfo nonJtaResourceInfo = configFactory.getResourceInfo(nonJtaDataSourceId);
@@ -1625,8 +1633,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  via the service-jar.xml file.
             //
             if (jtaDataSourceId == null && nonJtaDataSourceId == null){
-                required.put("JtaManaged", "true");
-                jtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());
+                if (!resourceLocal) {
+                    required.put("JtaManaged", "true");
+                    jtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());
+                }
 
                 required.put("JtaManaged", "false");
                 nonJtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());

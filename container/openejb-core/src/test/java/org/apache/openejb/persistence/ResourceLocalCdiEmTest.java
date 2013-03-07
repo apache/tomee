@@ -56,6 +56,7 @@ public class ResourceLocalCdiEmTest {
         p.put("ResourceLocalCdiEmTest", "new://Resource?type=DataSource");
         p.put("ResourceLocalCdiEmTest.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("ResourceLocalCdiEmTest.JdbcUrl", "jdbc:hsqldb:mem:ResourceLocalCdiEmTest");
+        p.put("ResourceLocalCdiEmTest.JtaManaged", "false");
         return p;
     }
 
@@ -68,6 +69,7 @@ public class ResourceLocalCdiEmTest {
     public Persistence persistence() {
         final PersistenceUnit unit = new PersistenceUnit("rl-unit");
         unit.setTransactionType(TransactionType.RESOURCE_LOCAL);
+        unit.setNonJtaDataSource("ResourceLocalCdiEmTest");
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
         unit.setExcludeUnlistedClasses(true);
