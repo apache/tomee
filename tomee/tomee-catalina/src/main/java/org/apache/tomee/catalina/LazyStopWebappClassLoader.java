@@ -78,7 +78,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 final ClassLoader old = system;
                 system = NoClassClassLoader.INSTANCE;
                 try {
-                    return super.loadClass(name);
+                    return _loadClass(name);
                 } finally {
                     system = old;
                 }
@@ -88,14 +88,30 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         // avoid to redefine classes from server in this classloader is it not already loaded
         if (URLClassLoaderFirst.shouldSkip(name)) {
             try {
-                return OpenEJB.class.getClassLoader().loadClass(name);
+                return load(OpenEJB.class.getClassLoader(), name);
             } catch (ClassNotFoundException e) {
-                return super.loadClass(name);
+                return _loadClass(name);
             } catch (NoClassDefFoundError ncdfe) {
-                return super.loadClass(name);
+                return _loadClass(name);
             }
         }
-        return super.loadClass(name);
+        return _loadClass(name);
+    }
+
+    private Class<?> _loadClass(String name) throws ClassNotFoundException {
+        try {
+            return super.loadClass(name);
+        } catch (LinkageError e) {
+            return super.loadClass(name);
+        }
+    }
+
+    private static Class<?> load(final ClassLoader loader, final String name) throws ClassNotFoundException {
+        try {
+            return loader.loadClass(name);
+        } catch (LinkageError e) {
+            return loader.loadClass(name);
+        }
     }
 
     public void internalStop() throws LifecycleException {
