@@ -241,6 +241,10 @@ public class Container {
         configurationFactory = new ConfigurationFactory();
     }
 
+    public ConfigurationFactory getConfigurationFactory() {
+        return configurationFactory;
+    }
+
     private String getBaseDir() {
 
         File file = null;

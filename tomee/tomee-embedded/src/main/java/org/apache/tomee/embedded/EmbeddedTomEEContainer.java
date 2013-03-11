@@ -19,7 +19,10 @@ package org.apache.tomee.embedded;
 
 import org.apache.geronimo.osgi.locator.ProviderLocator;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Exceptions;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.catalina.TomEERuntimeException;
 
@@ -30,7 +33,9 @@ import javax.naming.Context;
 import javax.validation.ValidationException;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -40,23 +45,42 @@ public class EmbeddedTomEEContainer extends EJBContainer {
     private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");
 
     private Container container = new Container();
-    private String appId;
+    private Collection<String> deployedIds = new ArrayList<String>();
 
-    private EmbeddedTomEEContainer(String id) {
-        appId = id;
+    private EmbeddedTomEEContainer() {
+        // no-op
+    }
+
+    public Container getDelegate() {
+        return container;
     }
 
     @Override
     public void close() {
-        try {
-            if (tomEEContainer.container.getAppContexts(appId) != null) {
-                tomEEContainer.container.undeploy(appId);
+        final Collection<Exception> errors = new ArrayList<Exception>();
+        for (final String id : deployedIds) {
+            if (tomEEContainer.container.getAppContexts(id) != null) {
+                try {
+                    tomEEContainer.container.undeploy(id);
+                } catch (final Exception ex) {
+                    Logger.getInstance(LogCategory.OPENEJB, EmbeddedTomEEContainer.class).error(ex.getMessage(), ex);
+                    errors.add(ex);
+                }
             }
+        }
+        deployedIds.clear();
+
+        try {
             tomEEContainer.container.stop();
-        } catch (Exception e) {
-            throw Exceptions.newEJBException(e);
+        } catch (final Exception ex) {
+            errors.add(ex);
+            Logger.getInstance(LogCategory.OPENEJB, EmbeddedTomEEContainer.class).error(ex.getMessage(), ex);
         }
         tomEEContainer = null;
+
+        if (!errors.isEmpty()) {
+            throw Exceptions.newEJBException(new TomEERuntimeException(errors.toString()));
+        }
     }
 
     @Override
@@ -77,7 +101,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
 
             if ((provider == null && ejbContainerProviders > 1)
                     || (!provider.equals(EmbeddedTomEEContainer.class)
-                    && !CONTAINER_NAMES.contains(provider))) {
+                    && !CONTAINER_NAMES.contains(provider.toString()))) {
                 return null;
             }
 
@@ -88,7 +112,7 @@ public class EmbeddedTomEEContainer extends EJBContainer {
             final String appId = (String) properties.get(EJBContainer.APP_NAME);
             final Object modules = properties.get(EJBContainer.MODULES);
 
-            tomEEContainer = new EmbeddedTomEEContainer(appId);
+            tomEEContainer = new EmbeddedTomEEContainer();
             Configuration configuration = new Configuration();
             if (properties.containsKey(TOMEE_EJBCONTAINER_HTTP_PORT)) {
                 int port;
@@ -111,25 +135,32 @@ public class EmbeddedTomEEContainer extends EJBContainer {
                 tomEEContainer.container.start();
 
                 if (modules instanceof File) {
-                    tomEEContainer.container.deploy(appId, ((File) modules), true);
+                    tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, ((File) modules), appId != null).getId());
                 } else if (modules instanceof String) {
-                    tomEEContainer.container.deploy(appId, new File((String) modules), true);
+                    tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, new File((String) modules), appId != null).getId());
                 } else if (modules instanceof String[]) {
-                    for (String path : (String[]) modules) {
-                        tomEEContainer.container.deploy(appId, new File(path), true);
+                    for (final String path : (String[]) modules) {
+                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, new File(path), appId != null).getId());
                     }
                 } else if (modules instanceof File[]) {
-                    for (File file : (File[]) modules) {
-                        tomEEContainer.container.deploy(appId, file, true);
+                    for (final File file : (File[]) modules) {
+                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, file, appId != null).getId());
                     }
                 } else {
-                    try {
-                        tomEEContainer.close();
-                    } catch (Exception e) {
-                        // no-op
+                    SystemInstance.get().getProperties().putAll(properties);
+                    final Collection<File> files = tomEEContainer.container.getConfigurationFactory().getModulesFromClassPath(null, Thread.currentThread().getContextClassLoader());
+                    if (files.size() == 0) {
+                        try {
+                            tomEEContainer.close();
+                        } catch (Exception e) {
+                            // no-op
+                        }
+                        tomEEContainer = null;
+                        throw Exceptions.newNoModulesFoundException();
                     }
-                    tomEEContainer = null;
-                    throw Exceptions.newNoModulesFoundException();
+                    for (final File file : files) {
+                        tomEEContainer.deployedIds.add(tomEEContainer.container.deploy(appId, file, appId != null).getId());
+                    }
                 }
 
                 return tomEEContainer;
