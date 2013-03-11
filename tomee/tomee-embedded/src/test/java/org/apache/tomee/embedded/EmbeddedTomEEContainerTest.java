@@ -18,8 +18,10 @@
 package org.apache.tomee.embedded;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.openejb.OpenEjbContainer;
+import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -33,15 +35,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class EmbeddedTomEEContainerTest {
-    @Test(expected = OpenEjbContainer.NoModulesFoundException.class)
-    public void noModule() {
-        Properties p = new Properties();
-        p.setProperty(EJBContainer.APP_NAME, "test");
-        p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
-        p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1");
-        EJBContainer.createEJBContainer(p);
-    }
-
     @Test
     public void containerTest() throws Exception {
         File war = createWar();
@@ -64,6 +57,20 @@ public class EmbeddedTomEEContainerTest {
                 FileUtils.deleteQuietly(war);
             }
         }
+    }
+
+    @Test
+    public void classpath() throws Exception {
+        final Properties p = new Properties();
+        p.setProperty(EJBContainer.PROVIDER, EmbeddedTomEEContainer.class.getName());
+        p.setProperty(DeploymentsResolver.CLASSPATH_INCLUDE, ".*tomee-embedded.*");
+        p.setProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT, "-1");
+        final EJBContainer container = EJBContainer.createEJBContainer(p);
+        assertNotNull(container);
+        final ABean bean = ABean.class.cast(container.getContext().lookup("java:global/tomee-embedded/ABean"));
+        assertNotNull(bean);
+        assertEquals("ok", bean.embedded());
+        container.close();
     }
 
     private File createWar() throws IOException {
