@@ -45,6 +45,7 @@ public class WebContext {
     private Map<Object, CreationalContext<?>> creatonalContexts = new ConcurrentHashMap<Object, CreationalContext<?>>();
     private WebBeansContext webbeansContext;
     private String contextRoot;
+    private String host;
     private Context initialContext;
 
     public Context getInitialContext() {
@@ -55,6 +56,14 @@ public class WebContext {
             throw new IllegalStateException(e);
         }
         return initialContext;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public void setInitialContext(final Context initialContext) {
