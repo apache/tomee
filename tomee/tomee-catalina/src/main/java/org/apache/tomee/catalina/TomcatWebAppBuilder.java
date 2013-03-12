@@ -1261,6 +1261,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.setClassLoader(classLoader);
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setContextRoot(webAppInfo.contextRoot);
+                webContext.setHost(webAppInfo.host);
                 webContext.setBindings(bindings);
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
@@ -1621,7 +1622,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final String name = removeFirstSlashAndWar(web.getContextRoot());
             if (stdName.equals(name)) {
                 webBeansContext = web.getWebbeansContext();
-                break;
+                if (contextInfo.standardContext.getHostname().equals(web.getHost())) {
+                    break;
+                } // else loop hoping to find a better matching
             }
         }
 
