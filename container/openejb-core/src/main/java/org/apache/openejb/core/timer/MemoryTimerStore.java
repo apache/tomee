@@ -53,76 +53,79 @@ public class MemoryTimerStore implements TimerStore {
 
     private final TransactionManager transactionManager;
 
-    public MemoryTimerStore(TransactionManager transactionManager) {
+    public MemoryTimerStore(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
-    public TimerData getTimer(String deploymentId, long timerId) {
+    @Override
+    public TimerData getTimer(final String deploymentId, final long timerId) {
         try {
-            TimerDataView tasks = getTasks();
-            TimerData timerData = tasks.getTasks().get(new Long(timerId));
-            return timerData;
+            final TimerDataView tasks = getTasks();
+            return tasks.getTasks().get(timerId);
         } catch (TimerStoreException e) {
             return null;
         }
     }
 
-    public Collection<TimerData> getTimers(String deploymentId) {
+    @Override
+    public Collection<TimerData> getTimers(final String deploymentId) {
         try {
-            TimerDataView tasks = getTasks();
-            Collection<TimerData> timerDatas = new ArrayList<TimerData>(tasks.getTasks().values());
-            return timerDatas;
+            final TimerDataView tasks = getTasks();
+            return new ArrayList<TimerData>(tasks.getTasks().values());
         } catch (TimerStoreException e) {
             return Collections.emptySet();
         }
     }
 
-    public Collection<TimerData> loadTimers(EjbTimerServiceImpl timerService, String deploymentId) throws TimerStoreException {
-        TimerDataView tasks = getTasks();
-        Collection<TimerData> timerDatas = new ArrayList<TimerData>(tasks.getTasks().values());
-        return timerDatas;
+    @Override
+    public Collection<TimerData> loadTimers(final EjbTimerServiceImpl timerService, final String deploymentId) throws TimerStoreException {
+        final TimerDataView tasks = getTasks();
+        return new ArrayList<TimerData>(tasks.getTasks().values());
     }
 
     // used to re-register a TimerData, if a cancel() is rolledback...
-    public void addTimerData(TimerData timerData) throws TimerStoreException {
+    @Override
+    public void addTimerData(final TimerData timerData) throws TimerStoreException {
         getTasks().addTimerData(timerData);
     }
 
     @Override
-    public TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression scheduleExpression, TimerConfig timerConfig)
+    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig)
             throws TimerStoreException {
-        long id = counter.incrementAndGet();
-        TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression);
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression);
         getTasks().addTimerData(timerData);
         return timerData;
     }
 
     @Override
-    public TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig)
+    public TimerData createIntervalTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig)
             throws TimerStoreException {
-        long id = counter.incrementAndGet();
-        TimerData timerData = new IntervalTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, initialExpiration, intervalDuration);
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new IntervalTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, initialExpiration, intervalDuration);
         getTasks().addTimerData(timerData);
         return timerData;
     }
 
     @Override
-    public TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig) throws TimerStoreException {
-        long id = counter.incrementAndGet();
-        TimerData timerData = new SingleActionTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, expiration);
+    public TimerData createSingleActionTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig) throws TimerStoreException {
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new SingleActionTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, expiration);
         getTasks().addTimerData(timerData);
         return timerData;
     }
 
-    public void removeTimer(long id) {
+    @Override
+    public void removeTimer(final long id) {
         try {
-            getTasks().removeTimerData(new Long(id));
+            getTasks().removeTimerData(id);
         } catch (TimerStoreException e) {
             log.warning("Unable to remove timer data from memory store", e);
         }
     }
 
-    public void updateIntervalTimer(TimerData timerData) {
+    @Override
+    public void updateIntervalTimer(final TimerData timerData) {
     }
 
     private TimerDataView getTasks() throws TimerStoreException {
@@ -157,15 +160,18 @@ public class MemoryTimerStore implements TimerStore {
     }
 
     private class LiveTimerDataView implements TimerDataView {
+        @Override
         public Map<Long,TimerData> getTasks() {
             return new TreeMap<Long,TimerData>(taskStore);
         }
 
-        public void addTimerData(TimerData timerData) {
-            taskStore.put(new Long(timerData.getId()), timerData);
+        @Override
+        public void addTimerData(final TimerData timerData) {
+            taskStore.put(timerData.getId(), timerData);
         }
 
-        public void removeTimerData(Long timerId) {
+        @Override
+        public void removeTimerData(final Long timerId) {
             taskStore.remove(timerId);
         }
     }
@@ -185,7 +191,8 @@ public class MemoryTimerStore implements TimerStore {
          * @param transaction
          * @throws TimerStoreException
          */
-        public TxTimerDataView(Transaction transaction) throws TimerStoreException {
+        @SuppressWarnings("LockAcquiredButNotSafelyReleased")
+        public TxTimerDataView(final Transaction transaction) throws TimerStoreException {
             // We're going to lock this timer inside this transaction and essentially
             // never let it go.  Any other threads attempting to invoke this object
             // will immediately throw an exception.
@@ -206,18 +213,20 @@ public class MemoryTimerStore implements TimerStore {
             if (!lock.tryLock()) throw new IllegalStateException("Illegal access by Thread[" + Thread.currentThread().getName() + "]", concurentException);
         }
 
+        @Override
         public Map<Long,TimerData> getTasks() {
             checkThread();
-            TreeMap<Long, TimerData> allTasks = new TreeMap<Long, TimerData>();
+            final TreeMap<Long, TimerData> allTasks = new TreeMap<Long, TimerData>();
             allTasks.putAll(taskStore);
-            for (Long key : remove) allTasks.remove(key);
+            for (final Long key : remove) allTasks.remove(key);
             allTasks.putAll(add);
             return Collections.unmodifiableMap(allTasks);
         }
 
-        public void addTimerData(TimerData timerData) {
+        @Override
+        public void addTimerData(final TimerData timerData) {
             checkThread();
-            Long timerId = new Long(timerData.getId());
+            final Long timerId = timerData.getId();
 
             // remove it from the remove set, if it is there
             remove.remove(timerId);
@@ -226,7 +235,8 @@ public class MemoryTimerStore implements TimerStore {
             add.put(timerId, timerData);
         }
 
-        public void removeTimerData(Long timerId) {
+        @Override
+        public void removeTimerData(final Long timerId) {
             checkThread();
 
             // remove it from the add set, if it is there
@@ -236,11 +246,13 @@ public class MemoryTimerStore implements TimerStore {
             remove.add(timerId);
         }
 
+        @Override
         public void beforeCompletion() {
             checkThread();
         }
 
-        public void afterCompletion(int status) {
+        @Override
+        public void afterCompletion(final int status) {
             checkThread();
 
             // if the tx was not committed, there is nothign to update

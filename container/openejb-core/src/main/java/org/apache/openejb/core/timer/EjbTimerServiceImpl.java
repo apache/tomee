@@ -198,7 +198,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 // adding our custom persister
                 if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
                     properties.put("org.quartz.jobStore.driverDelegateInitString",
-                                      "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+                                   "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
                 }
 
                 if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
@@ -255,9 +255,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         for (final Map.Entry<Object, Object> entry : b.entrySet()) {
             final String key = entry.getKey().toString();
             if (key.startsWith("org.quartz.")
-                    || key.startsWith("openejb.quartz.")
-                    || DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE.equals(key)
-                    || "org.terracotta.quartz.skipUpdateCheck".equals(key)) {
+                || key.startsWith("openejb.quartz.")
+                || DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE.equals(key)
+                || "org.terracotta.quartz.skipUpdateCheck".equals(key)) {
                 a.put(entry.getKey(), entry.getValue());
             }
         }
@@ -302,7 +302,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         boolean defaultScheduler = false;
         final Scheduler ds = SystemInstance.get().getComponent(Scheduler.class);
         try { // == is the faster way to test, we rely on name (key in quartz registry) only for serialization
-            defaultScheduler = ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName());
+            defaultScheduler = (ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName()));
         } catch (Exception e) {
             // no-op: default should be fine
         }
@@ -319,105 +319,106 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     private static void shutdown(final Scheduler s) throws OpenEJBRuntimeException {
 
-        if (null != s) {
+        try {
+            if (null != s && !s.isShutdown() && s.isStarted()) {
 
-            long timeout = SystemInstance.get().getOptions().get(QuartzResourceAdapter.OPENEJB_QUARTZ_TIMEOUT, 10000L);
+                try {
+                    s.pauseAll();
+                } catch (SchedulerException e) {
+                    // no-op
+                }
 
-            if (timeout < 1000L) {
-                timeout = 1000L;
-            }
+                long timeout = SystemInstance.get().getOptions().get(QuartzResourceAdapter.OPENEJB_QUARTZ_TIMEOUT, 10000L);
 
-            if (timeout > 60000L) {
-                timeout = 60000L;
-            }
+                if (timeout < 1000L) {
+                    timeout = 1000L;
+                }
 
-            final CountDownLatch shutdownWait = new CountDownLatch(1);
-            final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
+                if (timeout > 60000L) {
+                    timeout = 60000L;
+                }
 
-            String n = "Unknown";
-            try {
-                n = s.getSchedulerName();
-            } catch (SchedulerException e) {
-                log.warning("EjbTimerService scheduler has no name");
-            }
+                final CountDownLatch shutdownWait = new CountDownLatch(1);
+                final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 
-            final String name = n;
+                String n = "Unknown";
+                try {
+                    n = s.getSchedulerName();
+                } catch (SchedulerException e) {
+                    log.warning("EjbTimerService scheduler has no name");
+                }
 
-            Thread stopThread = new Thread(name + " shutdown wait") {
+                final String name = n;
 
-                @Override
-                public void run() {
-                    try {
-                        s.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
+                Thread stopThread = new Thread(name + " shutdown wait") {
+
+                    @Override
+                    public void run() {
+                        try {
+                            s.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
+                                @Override
+                                public void schedulerShutdown() {
+                                    shutdownWait.countDown();
+                                }
+                            });
+
+                            //Shutdown, but give running jobs a chance to complete.
+                            //User scheduled jobs should really implement InterruptableJob
+                            s.shutdown(true);
+                        } catch (Throwable e) {
+                            ex.set(e);
+                            shutdownWait.countDown();
+                        }
+                    }
+                };
+
+                stopThread.setDaemon(true);
+                stopThread.start();
+
+                boolean stopped = false;
+                try {
+                    stopped = shutdownWait.await(timeout, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+
+                try {
+                    if (!stopped || !s.isShutdown()) {
+
+                        stopThread = new Thread(name + " shutdown forced") {
+
                             @Override
-                            public void schedulerShuttingdown() {
+                            public void run() {
                                 try {
-                                    s.pauseAll();
-                                } catch (SchedulerException e) {
-                                    // no-op
+                                    //Force a shutdown without waiting for jobs to complete.
+                                    s.shutdown(false);
+                                    log.warning("Forced " + name + " shutdown - Jobs may be incomplete");
+                                } catch (Throwable e) {
+                                    ex.set(e);
                                 }
                             }
+                        };
 
-                            @Override
-                            public void schedulerShutdown() {
-                                shutdownWait.countDown();
-                            }
-                        });
+                        stopThread.setDaemon(true);
+                        stopThread.start();
 
-                        //Shutdown, but give running jobs a chance to complete.
-                        //User scheduled jobs should really implement InterruptableJob
-                        s.shutdown(true);
-                    } catch (Throwable e) {
-                        ex.set(e);
-                        shutdownWait.countDown();
-                    }
-                }
-            };
-
-            stopThread.setDaemon(true);
-            stopThread.start();
-
-            boolean stopped = false;
-            try {
-                stopped = shutdownWait.await(timeout, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                //Ignore
-            }
-
-            try {
-                if (!stopped || !s.isShutdown()) {
-
-                    stopThread = new Thread(name + " shutdown forced") {
-
-                        @Override
-                        public void run() {
-                            try {
-                                //Force a shutdown without waiting for jobs to complete.
-                                s.shutdown(false);
-                                log.warning("Forced " + name + " shutdown - Jobs may be incomplete");
-                            } catch (Throwable e) {
-                                ex.set(e);
-                            }
+                        try {
+                            //Give the forced shutdown a chance to complete
+                            stopThread.join(timeout);
+                        } catch (InterruptedException e) {
+                            //Ignore
                         }
-                    };
-
-                    stopThread.setDaemon(true);
-                    stopThread.start();
-
-                    try {
-                        //Give the forced shutdown a chance to complete
-                        stopThread.join(timeout);
-                    } catch (InterruptedException e) {
-                        //Ignore
                     }
+                } catch (Throwable e) {
+                    ex.set(e);
                 }
-            } catch (Throwable e) {
-                ex.set(e);
-            }
 
-            if (null != ex.get()) {
-                throw new OpenEJBRuntimeException("Unable to shutdown " + name + " scheduler", ex.get());
+                if (null != ex.get()) {
+                    throw new OpenEJBRuntimeException("Unable to shutdown " + name + " scheduler", ex.get());
+                }
             }
+        } catch (SchedulerException e) {
+            //Ignore - This can only be a shutdown issue that we have no control over.
         }
     }
 
@@ -443,8 +444,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      * @param timerData the timer to schedule
      */
     public void schedule(final TimerData timerData) {
-        if (scheduler == null)
+        if (scheduler == null) {
             throw new IllegalStateException("Scheduler is not configured properly");
+        }
 
         timerData.setScheduler(scheduler);
 
@@ -529,9 +531,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     @Override
-    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long duration, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        if (duration < 0)
+    public Timer createTimer(final Object primaryKey,
+                             final Method timeoutMethod,
+                             final long duration,
+                             final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        if (duration < 0) {
             throw new IllegalArgumentException("duration is negative: " + duration);
+        }
         checkState();
 
         final Date expiration = new Date(System.currentTimeMillis() + duration);
@@ -545,16 +551,28 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     @Override
-    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long initialDuration, final long intervalDuration, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        if (initialDuration < 0)
+    public Timer createTimer(final Object primaryKey,
+                             final Method timeoutMethod,
+                             final long initialDuration,
+                             final long intervalDuration,
+                             final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        if (initialDuration < 0) {
             throw new IllegalArgumentException("initialDuration is negative: " + initialDuration);
-        if (intervalDuration < 0)
+        }
+        if (intervalDuration < 0) {
             throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
+        }
         checkState();
 
         final Date initialExpiration = new Date(System.currentTimeMillis() + initialDuration);
         try {
-            final TimerData timerData = timerStore.createIntervalTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, initialExpiration, intervalDuration, timerConfig);
+            final TimerData timerData = timerStore.createIntervalTimer(this,
+                                                                       (String) deployment.getDeploymentID(),
+                                                                       primaryKey,
+                                                                       timeoutMethod,
+                                                                       initialExpiration,
+                                                                       intervalDuration,
+                                                                       timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
@@ -563,11 +581,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     @Override
-    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        if (expiration == null)
+    public Timer createTimer(final Object primaryKey,
+                             final Method timeoutMethod,
+                             final Date expiration,
+                             final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        if (expiration == null) {
             throw new IllegalArgumentException("expiration is null");
-        if (expiration.getTime() < 0)
+        }
+        if (expiration.getTime() < 0) {
             throw new IllegalArgumentException("expiration is negative: " + expiration.getTime());
+        }
         checkState();
 
         try {
@@ -580,17 +603,30 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     @Override
-    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        if (initialExpiration == null)
+    public Timer createTimer(final Object primaryKey,
+                             final Method timeoutMethod,
+                             final Date initialExpiration,
+                             final long intervalDuration,
+                             final TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        if (initialExpiration == null) {
             throw new IllegalArgumentException("initialExpiration is null");
-        if (initialExpiration.getTime() < 0)
+        }
+        if (initialExpiration.getTime() < 0) {
             throw new IllegalArgumentException("initialExpiration is negative: " + initialExpiration.getTime());
-        if (intervalDuration < 0)
+        }
+        if (intervalDuration < 0) {
             throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
+        }
         checkState();
 
         try {
-            final TimerData timerData = timerStore.createIntervalTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, initialExpiration, intervalDuration, timerConfig);
+            final TimerData timerData = timerStore.createIntervalTimer(this,
+                                                                       (String) deployment.getDeploymentID(),
+                                                                       primaryKey,
+                                                                       timeoutMethod,
+                                                                       initialExpiration,
+                                                                       intervalDuration,
+                                                                       timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
@@ -672,7 +708,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     final RpcContainer container = (RpcContainer) deployment.getContainer();
                     final Method ejbTimeout = timerData.getTimeoutMethod();
                     SetAccessible.on(ejbTimeout);
-                    container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[]{timer}, timerData.getPrimaryKey());
+                    container.invoke(deployment.getDeploymentID(),
+                                     InterfaceType.TIMEOUT,
+                                     ejbTimeout.getDeclaringClass(),
+                                     ejbTimeout,
+                                     new Object[]{timer},
+                                     timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     retry = true;
                     // exception from a timer does not necessairly mean failure

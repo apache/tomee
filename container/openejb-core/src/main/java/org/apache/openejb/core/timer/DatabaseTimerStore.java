@@ -59,7 +59,7 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
     private final DataSource dataSource;
     private boolean useSequence = false;
 
-    protected DatabaseTimerStore(String serverUniqueId, DataSource datasource, boolean useSequence) throws SQLException {
+    protected DatabaseTimerStore(final String serverUniqueId, final DataSource datasource, final boolean useSequence) throws SQLException {
         this.serverUniqueId = serverUniqueId;
         this.dataSource = datasource;
         this.useSequence = useSequence;
@@ -71,46 +71,48 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
         }
     }
 
-    public TimerData getTimer(String deploymentId, long timerId) {
-        // todo not implemented
-        return null;
-    }
-
-    public Collection<TimerData> getTimers(String deploymentId) {
+    @Override
+    public TimerData getTimer(final String deploymentId, final long timerId) {
         // todo not implemented
         return null;
     }
 
     @Override
-    public TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig)
+    public Collection<TimerData> getTimers(final String deploymentId) {
+        // todo not implemented
+        return null;
+    }
+
+    @Override
+    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression schedule, final TimerConfig timerConfig)
             throws TimerStoreException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration,
-            TimerConfig timerConfig) throws TimerStoreException {
+    public TimerData createIntervalTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration,
+            final TimerConfig timerConfig) throws TimerStoreException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig)
+    public TimerData createSingleActionTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig)
             throws TimerStoreException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public TimerData createTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) throws TimerStoreException {
+    public TimerData createTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Object info, final Date expiration, final long intervalDuration) throws TimerStoreException {
         boolean threwException = false;
-        Connection c = getConnection();
+        final Connection c = getConnection();
         long id;
         try {
             if (useSequence) {
-                PreparedStatement seqStatement = c.prepareStatement(sequenceSQL);
+                final PreparedStatement seqStatement = c.prepareStatement(sequenceSQL);
                 try {
-                    ResultSet seqRS = seqStatement.executeQuery();
+                    final ResultSet seqRS = seqStatement.executeQuery();
                     try {
                         seqRS.next();
                         id = seqRS.getLong(1);
@@ -120,10 +122,10 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
                 } finally {
                     seqStatement.close();
                 }
-                PreparedStatement insertStatement = c.prepareStatement(insertSQLWithSequence);
+                final PreparedStatement insertStatement = c.prepareStatement(insertSQLWithSequence);
                 try {
-                    String serializedPrimaryKey = serializeObject(primaryKey);
-                    String serializedInfo = serializeObject(info);
+                    final String serializedPrimaryKey = serializeObject(primaryKey);
+                    final String serializedInfo = serializeObject(info);
                     insertStatement.setLong(1, id);
                     insertStatement.setString(2, serverUniqueId);
                     insertStatement.setString(3, deploymentId);
@@ -131,7 +133,7 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
                     insertStatement.setString(5, serializedInfo);
                     insertStatement.setLong(6, expiration.getTime());
                     insertStatement.setLong(7, intervalDuration);
-                    int result = insertStatement.executeUpdate();
+                    final int result = insertStatement.executeUpdate();
                     if (result != 1) {
                         throw new TimerStoreException("Could not insert!");
                     }
@@ -139,26 +141,26 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
                     insertStatement.close();
                 }
             } else {
-                PreparedStatement insertStatement = c.prepareStatement(insertSQLWithIdentity);
+                final PreparedStatement insertStatement = c.prepareStatement(insertSQLWithIdentity);
                 try {
-                    String serializedPrimaryKey = serializeObject(primaryKey);
-                    String serializedInfo = serializeObject(info);
+                    final String serializedPrimaryKey = serializeObject(primaryKey);
+                    final String serializedInfo = serializeObject(info);
                     insertStatement.setString(1, serverUniqueId);
                     insertStatement.setString(2, deploymentId);
                     insertStatement.setString(3, serializedPrimaryKey);
                     insertStatement.setString(4, serializedInfo);
                     insertStatement.setLong(5, expiration.getTime());
                     insertStatement.setLong(6, intervalDuration);
-                    int result = insertStatement.executeUpdate();
+                    final int result = insertStatement.executeUpdate();
                     if (result != 1) {
                         throw new TimerStoreException("Could not insert!");
                     }
                 } finally {
                     insertStatement.close();
                 }
-                PreparedStatement identityStatement = c.prepareStatement(identitySQL);
+                final PreparedStatement identityStatement = c.prepareStatement(identitySQL);
                 try {
-                    ResultSet seqRS = identityStatement.executeQuery();
+                    final ResultSet seqRS = identityStatement.executeQuery();
                     try {
                         seqRS.next();
                         id = seqRS.getLong(1);
@@ -185,18 +187,20 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
     /**
      * Used to restore a Timer that was cancelled, but the Transaction has been rolled back.
      */
-    public void addTimerData(TimerData timerData) throws TimerStoreException {
+    @Override
+    public void addTimerData(final TimerData timerData) throws TimerStoreException {
         // TODO Need to verify how to handle this. Presumably, the Transaction rollback would "restore" this timer. So, no further action would be required.
         // The MemoryTimerStore does require this capability...
     }
 
-    public void removeTimer(long timerId) {
+    @Override
+    public void removeTimer(final long timerId) {
         boolean threwException = false;
 
         Connection c = null;
         try {
             c = getConnection();
-            PreparedStatement deleteStatement = c.prepareStatement(deleteSQL);
+            final PreparedStatement deleteStatement = c.prepareStatement(deleteSQL);
             try {
                 deleteStatement.setLong(1, timerId);
                 deleteStatement.execute();
@@ -213,26 +217,27 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
         }
     }
 
-    public Collection<TimerData> loadTimers(EjbTimerServiceImpl timerService, String deploymentId) throws TimerStoreException {
-        Collection<TimerData> timerDatas = new ArrayList<TimerData>();
+    @Override
+    public Collection<TimerData> loadTimers(final EjbTimerServiceImpl timerService, final String deploymentId) throws TimerStoreException {
+        final Collection<TimerData> timerDatas = new ArrayList<TimerData>();
         boolean threwException = false;
-        Connection c = getConnection();
+        final Connection c = getConnection();
         try {
-            PreparedStatement selectStatement = c.prepareStatement(selectSQL);
+            final PreparedStatement selectStatement = c.prepareStatement(selectSQL);
             selectStatement.setString(1, serverUniqueId);
             selectStatement.setString(2, deploymentId);
             try {
-                ResultSet taskRS = selectStatement.executeQuery();
+                final ResultSet taskRS = selectStatement.executeQuery();
                 try {
                     while (taskRS.next()) {
-                        long id = taskRS.getLong(1);
-                        String serizalizedUserId = taskRS.getString(2);
-                        Object userId = deserializeObject(serizalizedUserId);
-                        String serializedUserInfo = taskRS.getString(3);
-                        Object userInfo = deserializeObject(serializedUserInfo);
-                        long timeMillis = taskRS.getLong(4);
-                        Date time = new Date(timeMillis);
-                        long period = taskRS.getLong(5);
+                        final long id = taskRS.getLong(1);
+                        final String serizalizedUserId = taskRS.getString(2);
+                        final Object userId = deserializeObject(serizalizedUserId);
+                        final String serializedUserInfo = taskRS.getString(3);
+                        final Object userInfo = deserializeObject(serializedUserInfo);
+                        final long timeMillis = taskRS.getLong(4);
+                        final Date time = new Date(timeMillis);
+                        final long period = taskRS.getLong(5);
 
                         /*TimerData timerData = new TimerData(id, timerService, deploymentId, userId, userInfo, time, period);
                         timerDatas.add(timerData);*/
@@ -252,12 +257,13 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
         return timerDatas;
     }
 
-    public void updateIntervalTimer(TimerData timerData) {
+    @Override
+    public void updateIntervalTimer(final TimerData timerData) {
         boolean threwException = false;
         Connection c = null;
         try {
             c = getConnection();
-            PreparedStatement updateStatement = c.prepareStatement(fixedRateUpdateSQL);
+            final PreparedStatement updateStatement = c.prepareStatement(fixedRateUpdateSQL);
             try {
                 //updateStatement.setLong(1, timerData.getExpiration().getTime());
                 updateStatement.setLong(2, timerData.getId());
@@ -275,35 +281,35 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
         }
     }
 
-    private String serializeObject(Object object) {
+    private String serializeObject(final Object object) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ObjectOutputStream out = new ObjectOutputStream(baos);
             out.writeObject(object);
             out.close();
 
-            byte[] encoded = Base64.encodeBase64(baos.toByteArray());
+            final byte[] encoded = Base64.encodeBase64(baos.toByteArray());
             return new String(encoded);
         } catch (IOException e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
 
-    private Object deserializeObject(String serializedValue) {
+    private Object deserializeObject(final String serializedValue) {
         try {
-            byte[] bytes = Base64.decodeBase64(serializedValue.getBytes());
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream in = new ObjectInputStream(bais);
+            final byte[] bytes = Base64.decodeBase64(serializedValue.getBytes());
+            final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            final ObjectInputStream in = new ObjectInputStream(bais);
             return in.readObject();
         } catch (Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
 
-    private void execSQL(String sql) throws SQLException {
-        Connection connection = dataSource.getConnection();
+    private void execSQL(final String sql) throws SQLException {
+        final Connection connection = dataSource.getConnection();
         try {
-            PreparedStatement updateStatement = connection.prepareStatement(sql);
+            final PreparedStatement updateStatement = connection.prepareStatement(sql);
             try {
                 updateStatement.execute();
             } catch (SQLException e) {
@@ -324,7 +330,7 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
         }
     }
 
-    private void close(Connection connection, boolean reportSqlException) {
+    private void close(final Connection connection, final boolean reportSqlException) {
         if (connection != null) {
             try {
                 connection.close();
