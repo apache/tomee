@@ -51,8 +51,13 @@ public class ServiceUtils {
                 defaultValue = "org.apache.openejb.embedded";
             }
         } catch (Exception ignored) {
+            // no-op
         }
-        DEFAULT_PROVIDER_URL = SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
+        DEFAULT_PROVIDER_URL = defaultValue;
+    }
+
+    private static String currentDefaultProviderUrl(String defaultValue) {
+        return SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
     }
 
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -104,7 +109,7 @@ public class ServiceUtils {
     }
 
     public static ServiceProvider getServiceProvider(String idString) throws OpenEJBException {
-        final ID id = ID.parse(idString, DEFAULT_PROVIDER_URL);
+        final ID id = ID.parse(idString, currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
         {
             final ServiceProvider provider = getManager().get(id.getNamespace(), id.getName());
@@ -129,7 +134,7 @@ public class ServiceUtils {
         ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
         if (type == null) return providers;
 
-        List<ServiceProvider> services = getServiceProviders(DEFAULT_PROVIDER_URL);
+        List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
         for (ServiceProvider service : services) {
             if (service.getService().equals(type)) {
@@ -144,7 +149,7 @@ public class ServiceUtils {
         if (type == null) return null;
         if (required == null) required = new Properties();
 
-        List<ServiceProvider> services = getServiceProviders(DEFAULT_PROVIDER_URL);
+        List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
         for (ServiceProvider service : services) {
             if (service.getTypes().contains(type) && implies(required, service.getProperties())) {
@@ -192,7 +197,7 @@ public class ServiceUtils {
     }
 
     public static List<ServiceProvider> getServiceProviders() throws OpenEJBException {
-        return getServiceProviders(DEFAULT_PROVIDER_URL);
+        return getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
     }
 
     public static List<ServiceProvider> getServiceProviders(String packageName) throws OpenEJBException {
@@ -214,7 +219,7 @@ public class ServiceUtils {
             providerName = id.substring(0, id.indexOf(":"));
             serviceName = id.substring(id.indexOf(":") + 1);
         } else {
-            providerName = DEFAULT_PROVIDER_URL;
+            providerName = currentDefaultProviderUrl(DEFAULT_PROVIDER_URL);
             serviceName = id;
         }
 
