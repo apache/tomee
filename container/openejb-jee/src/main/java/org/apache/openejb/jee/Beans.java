@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -220,5 +221,18 @@ public class Beans {
             duplicatedAlternatives = new Alternatives();
         }
         return duplicatedAlternatives;
+    }
+
+    public void removeDuplicates() {
+        removeDuplicates(getAlternativeClasses());
+        removeDuplicates(getAlternativeStereotypes());
+        removeDuplicates(getDecorators());
+        removeDuplicates(getInterceptors());
+    }
+
+    private <T> void removeDuplicates(final List<T> list) {
+        final List<T> classes = new ArrayList<T>(list);
+        list.clear();
+        list.addAll(new HashSet<T>(classes));
     }
 }

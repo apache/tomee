@@ -934,6 +934,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             if (url == null) continue;
             complete = mergeBeansXml(complete, url);
         }
+        if (complete != null) {
+            complete.removeDuplicates();
+        }
 
         webModule.getAltDDs().put("beans.xml", complete);
     }
@@ -983,6 +986,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         if (complete == null) return;
+        complete.removeDuplicates();
 
         IAnnotationFinder finder;
         try {
