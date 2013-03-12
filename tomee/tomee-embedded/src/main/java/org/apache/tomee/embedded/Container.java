@@ -229,13 +229,18 @@ public class Container {
             // no-op
         }
 
-        SystemInstance.init(System.getProperties());
-        SystemInstance.get().setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
-
         final TomcatLoader loader = new TomcatLoader();
         loader.initDefaults(properties);
-        loader.initialize(properties);
 
+        // need to add properties after having initialized defaults
+        // to properties passed to SystemInstance otherwise we loose some of them
+        final Properties initProps = new Properties();
+        initProps.putAll(System.getProperties());
+        initProps.putAll(properties);
+        SystemInstance.init(initProps);
+        SystemInstance.get().setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
+
+        loader.initialize(properties);
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
         configurationFactory = new ConfigurationFactory();
