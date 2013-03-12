@@ -16,55 +16,57 @@
  */
 package org.apache.openejb.core.security;
 
+import org.apache.geronimo.connector.work.WorkContextHandler;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+
 import javax.resource.spi.work.SecurityContext;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
-import org.apache.geronimo.connector.work.WorkContextHandler;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
-
-public class SecurityContextHandler implements WorkContextHandler<SecurityContext>{
+public class SecurityContextHandler implements WorkContextHandler<SecurityContext> {
 
     private ConnectorCallbackHandler callbackHandler;
-	private final String securityRealmName;
+    private final String securityRealmName;
 
-	public SecurityContextHandler(final String securityRealmName) {
-		this.securityRealmName = securityRealmName;
-	}
+    public SecurityContextHandler(final String securityRealmName) {
+        this.securityRealmName = securityRealmName;
+    }
 
-	@Override
+    @Override
     public void before(final SecurityContext securityContext) throws WorkCompletedException {
         if (securityContext != null) {
             callbackHandler = new ConnectorCallbackHandler(securityRealmName);
-            
+
             final Subject clientSubject = new Subject();
-			securityContext.setupSecurityContext(callbackHandler, clientSubject, null);
+            securityContext.setupSecurityContext(callbackHandler, clientSubject, null);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void after(final SecurityContext securityContext) throws WorkCompletedException {
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final Object loginObj = securityService.disassociate();
+        if (loginObj != null) {
+            try {
+                securityService.logout(loginObj);
+            } catch (LoginException e) {
+                //Ignore
+            }
         }
     }
 
     @Override
-    public void after(final SecurityContext securityContext) throws WorkCompletedException {
-    	final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-    	final Object loginObj = securityService.disassociate();
-    	if (loginObj != null) {
-    		try {
-				securityService.logout(loginObj);
-			} catch (LoginException e) {
-			}
-    	}
+    public boolean supports(final Class<? extends WorkContext> clazz) {
+        return SecurityContext.class.isAssignableFrom(clazz);
     }
 
-	@Override
-    public boolean supports(final Class<? extends WorkContext> clazz) {
-		return SecurityContext.class.isAssignableFrom(clazz);
-	}
-
-	@Override
+    @Override
     public boolean required() {
-		return false;
-	}
+        return false;
+    }
 
 }
