@@ -231,8 +231,14 @@ public class Beans {
     }
 
     private <T> void removeDuplicates(final List<T> list) {
-        final List<T> classes = new ArrayList<T>(list);
+        // don't use a set to keep order
+        final List<T> classes = new ArrayList<T>();
+        for (T t : list) {
+            if (!classes.contains(t)) {
+                classes.add(t);
+            }
+        }
         list.clear();
-        list.addAll(new HashSet<T>(classes));
+        list.addAll(classes);
     }
 }
