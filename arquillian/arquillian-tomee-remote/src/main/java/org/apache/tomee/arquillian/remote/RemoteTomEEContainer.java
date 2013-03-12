@@ -24,6 +24,7 @@ import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.tomee.util.InstallationEnrichers;
+import org.apache.tomee.util.SimpleTomEEFormatter;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.shrinkwrap.api.Archive;
 
