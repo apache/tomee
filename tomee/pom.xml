@@ -84,6 +84,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
+              <artifactId>activemq-jdbc-store</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-ra</artifactId>
             </exclusion>
             <exclusion>
@@ -133,6 +137,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
+              <artifactId>activemq-jdbc-store</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-ra</artifactId>
             </exclusion>
             <exclusion>
@@ -162,6 +170,10 @@
             <exclusion>
               <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-broker</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.activemq</groupId>
+              <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
