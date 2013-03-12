@@ -96,10 +96,13 @@ public class DeploymentLoader implements DeploymentFilterable {
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
 
     private static final String ddDir = "META-INF/";
+
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
     public static final String EAR_SCOPED_CDI_BEANS = "ear-scoped-cdi-beans_";
     public static final String RAR_URLS_KEY = "rar-urls";
     public static final String URLS_KEY = "urls";
+
+    private static final String RESOURCES_XML = "resources.xml";
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
@@ -134,7 +137,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             if (ResourcesModule.class.equals(moduleClass)) {
                 final AppModule appModule = new AppModule(null, jarPath);
                 final ResourcesModule module = new ResourcesModule();
-                module.getAltDDs().put("resources.xml", baseUrl);
+                module.getAltDDs().put(RESOURCES_XML, baseUrl);
                 ReadDescriptors.readResourcesXml(module);
                 module.initAppModule(appModule);
                 // here module is no more useful since everything is in the appmodule
@@ -1477,6 +1480,24 @@ public class DeploymentLoader implements DeploymentFilterable {
                     for (final File file : files) {
                         if (!file.isDirectory()) {
                             descriptors.put(file.getName(), file.toURI().toURL());
+                        }
+                    }
+                }
+            }
+
+            // handle some few file(s) which can be in META-INF too
+            final File webAppDdDir = new File(webInfDir, "classes/" + ddDir);
+            if (webAppDdDir.isDirectory()) {
+                final File[] files = webInfDir.listFiles();
+                if (files != null) {
+                    for (final File file : files) {
+                        final String name = file.getName();
+                        if (RESOURCES_XML.equals(name)) {
+                            if (!descriptors.containsKey(name)) {
+                                descriptors.put(name, file.toURI().toURL());
+                            } else {
+                                logger.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
+                            }
                         }
                     }
                 }
