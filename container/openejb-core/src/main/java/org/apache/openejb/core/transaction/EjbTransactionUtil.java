@@ -134,10 +134,10 @@ public final class EjbTransactionUtil {
         if (callContext != null) {
             operation = callContext.getCurrentOperation();
         }
-        if (operation != null && operation.isCallback()) {
-            logger.error("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
+        if (operation != null) {
+            logger.error("EjbTransactionUtil.handleSystemException: " + sysException.getMessage(), sysException);
         } else {
-            logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
+            logger.debug("EjbTransactionUtil.handleSystemException: " + sysException.getMessage(), sysException);
         }
 
         // Mark the transaction for rollback
