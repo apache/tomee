@@ -40,6 +40,7 @@
   <ServiceProvider id="Default ORB" parent="org.apache.openejb.embedded:Default ORB"/>
   <ServiceProvider id="Default Mail Session" parent="org.apache.openejb.embedded:Default Mail Session"/>
   <ServiceProvider id="Default Remote Jndi Provider" parent="org.apache.openejb.embedded:Default Remote Jndi Provider"/>
+  <ServiceProvider id="RoutedDataSource" parent="org.apache.openejb:RoutedDataSource"/>
   <ServiceProvider id="ProvidedByTomcat" service="Resource" class-name="org.apache.tomee.catalina.TomcatResourceFactory" factory-name="create">
     jndiName =
     appName =
