@@ -58,14 +58,22 @@ public class CxfRSService extends RESTService {
 
         final Bus bus = CxfUtil.getBus();
 
-        // force init of bindings
-        if (!CxfUtil.hasService(JAXRSBindingFactory.JAXRS_BINDING_ID)) {
-            // cxf does it but with the pattern "if not here install it". It is slow so installing it without testing for presence here.
-            final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
-            try {
-                bfm.registerBindingFactory(JAXRSBindingFactory.JAXRS_BINDING_ID, new JAXRSBindingFactory(bus));
-            } catch (Throwable b) {
-                // no-op
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            // force init of bindings
+            if (!CxfUtil.hasService(JAXRSBindingFactory.JAXRS_BINDING_ID)) {
+                // cxf does it but with the pattern "if not here install it". It is slow so installing it without testing for presence here.
+                final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
+                try {
+                    bfm.registerBindingFactory(JAXRSBindingFactory.JAXRS_BINDING_ID, new JAXRSBindingFactory(bus));
+                } catch (Throwable b) {
+                    // no-op
+                }
+            }
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
             }
         }
     }

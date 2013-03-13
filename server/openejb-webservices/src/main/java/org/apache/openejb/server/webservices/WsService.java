@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;

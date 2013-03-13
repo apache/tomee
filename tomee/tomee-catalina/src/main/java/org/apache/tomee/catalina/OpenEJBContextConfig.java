@@ -18,6 +18,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ContextResource;
@@ -33,7 +34,9 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -91,7 +94,45 @@ public class OpenEJBContextConfig extends ContextConfig {
     public void configureStart() {
         super.configureStart();
         adjustDataSourceNameIfNecessary(); // doing it here to potentially factorize resource id resolution
+        addAddedJAXWsServices();
         cleanUpRestServlets();
+    }
+
+    private void addAddedJAXWsServices() {
+        final WebAppInfo webAppInfo = info.get();
+        final AppInfo appInfo = info.app();
+        if (webAppInfo == null || appInfo == null || "false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxws.add-missing-servlets", "true"))) {
+            return;
+        }
+
+        try { // if no jaxws classes are here don't try anything
+            OpenEJBContextConfig.class.getClassLoader().loadClass("org.apache.openejb.server.webservices.WsServlet");
+        } catch (final ClassNotFoundException e) {
+            return;
+        } catch (final NoClassDefFoundError e) {
+            return;
+        }
+
+        for (final ServletInfo servlet : webAppInfo.servlets) {
+            if (!servlet.mappings.iterator().hasNext()) { // no need to do anything
+                continue;
+            }
+
+            for (final ParamValueInfo pv : servlet.initParams) {
+                if ("openejb-internal".equals(pv.name) && "true".equals(pv.value)) {
+                    if (context.findChild(servlet.servletName) == null) {
+                        final Wrapper wrapper = context.createWrapper();
+                        wrapper.setName(servlet.servletName);
+                        wrapper.setServletClass("org.apache.openejb.server.webservices.WsServlet");
+
+                        // add servlet to context
+                        context.addChild(wrapper);
+                        context.addServletMapping(servlet.mappings.iterator().next(), wrapper.getName());
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     private void cleanUpRestServlets() {

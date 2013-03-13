@@ -20,6 +20,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingFactory;
 import org.apache.cxf.binding.BindingFactoryManager;
+import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.bus.managers.BindingFactoryManagerImpl;
@@ -59,34 +60,25 @@ public final class CxfUtil {
 
     private static volatile boolean usingBindingFactoryMap = false;
     private static final Map<String, BindingFactory> bindingFactoryMap = new ConcurrentHashMap<String, BindingFactory>(8, 0.75f, 4);
+    private static final Bus DEFAULT_BUS = initDefaultBus(); // has to be initializd after bindingFactoryMap
 
     private CxfUtil() {
         // no-op
     }
 
-    /*
-     * Ensure the bus created is unqiue and non-shared.
-     * The very first bus created is set as a default bus which then can
-     * be (re)used in other places.
-     */
-    public static Bus getBus() {
-        getDefaultBus();
-        return new ExtensionManagerBus();
+    public static boolean hasService(final String name) {
+        return usingBindingFactoryMap && bindingFactoryMap.containsKey(name);
     }
 
-    /*
-     * Ensure the Spring bus is initialized with the CXF module classloader
-     * instead of the application classloader.
-     */
-    public static Bus getDefaultBus() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    private static Bus initDefaultBus() {
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.class.getClassLoader());
-        try {
-            final Bus bus = BusFactory.getDefaultBus();
+        try { // create the bus reusing cxf logic but skipping factory lookup
+            final Bus bus = BusFactory.newInstance(CXFBusFactory.class.getName()).createBus();
             final BindingFactoryManager bfm = bus.getExtension(BindingFactoryManager.class);
 
-            if (bfm instanceof BindingFactoryManagerImpl) {
-                ((BindingFactoryManagerImpl) bfm).setMapProvider(new MapProvider<String, BindingFactory>() {
+            if (BindingFactoryManagerImpl.class.isInstance(bfm) && !usingBindingFactoryMap) {
+                BindingFactoryManagerImpl.class.cast(bfm).setMapProvider(new MapProvider<String, BindingFactory>() {
                     @Override
                     public Map<String, BindingFactory> createMap() {
                         usingBindingFactoryMap = true;
@@ -101,8 +93,33 @@ public final class CxfUtil {
         }
     }
 
-    public static boolean hasService(final String name) {
-        return usingBindingFactoryMap && bindingFactoryMap.containsKey(name);
+    public static Bus getBus() {
+        return DEFAULT_BUS;
+    }
+
+    @Deprecated // no more useful since we create it once
+    public static Bus getDefaultBus() {
+        return getBus();
+    }
+
+    public static ClassLoader initBusLoader() {
+        final ClassLoader loader = CxfUtil.getBus().getExtension(ClassLoader.class);
+        if (loader != null) {
+            if (CxfContainerClassLoader.class.isInstance(loader)) {
+                CxfContainerClassLoader.class.cast(loader).tccl(Thread.currentThread().getContextClassLoader());
+            }
+            return loader;
+        }
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    public static void clearBusLoader(final ClassLoader old) {
+        final ClassLoader loader = CxfUtil.getBus().getExtension(ClassLoader.class);
+        if (loader != null && CxfContainerClassLoader.class.isInstance(loader)
+                && (old == null || !CxfContainerClassLoader.class.isInstance(old))) {
+            CxfContainerClassLoader.class.cast(loader).clear();
+        }
+        Thread.currentThread().setContextClassLoader(old);
     }
 
     public static void configureEndpoint(final AbstractEndpointFactory svrFactory, final ServiceConfiguration configuration, final String prefix) {
@@ -199,7 +216,11 @@ public final class CxfUtil {
             return;
         }
 
-        final Bus bus = getDefaultBus();
+        final Bus bus = getBus();
+
+        // ensure cxf classes are loaded from container to avoid conflicts with app
+        bus.setExtension(new CxfContainerClassLoader(), ClassLoader.class);
+
         if (bus instanceof CXFBusImpl) {
             final ServiceConfiguration configuration = new ServiceConfiguration(SystemInstance.get().getProperties(),
                     SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services);
