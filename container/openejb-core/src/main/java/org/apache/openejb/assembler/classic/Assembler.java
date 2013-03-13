@@ -206,6 +206,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String OPENEJB_URL_PKG_PREFIX = IvmContext.class.getPackage().getName();
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
     public static final String OPENEJB_JPA_DEPLOY_TIME_ENHANCEMENT_PROP = "openejb.jpa.deploy-time-enhancement";
+    public static final String PROPAGATE_APPLICATION_EXCEPTIONS = "openejb.propagate.application-exceptions";
     private static final String GLOBAL_UNIQUE_ID = "global";
     public static final String TIMER_STORE_CLASS = "timerStore.class";
 
@@ -741,6 +742,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final List<BeanContext> allDeployments = initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), null);
 
+            if ("true".equalsIgnoreCase(SystemInstance.get()
+                    .getProperty(PROPAGATE_APPLICATION_EXCEPTIONS,
+                            appInfo.properties.getProperty(PROPAGATE_APPLICATION_EXCEPTIONS, "false")))) {
+                propagateApplicationExceptions(appInfo, classLoader, allDeployments);
+            }
+
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
             ensureWebBeansContext(appContext);
@@ -856,6 +863,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    private void propagateApplicationExceptions(final AppInfo appInfo, final ClassLoader classLoader, final List<BeanContext> allDeployments) {
+        for (final BeanContext context : allDeployments) {
+            if (BeanContext.Comp.class.equals(context.getBeanClass())) {
+                continue;
+            }
+
+            for (final EjbJarInfo jar : appInfo.ejbJars) {
+                for (final ApplicationExceptionInfo exception : jar.applicationException) {
+                    try {
+                        final Class<?> exceptionClass = classLoader.loadClass(exception.exceptionClass);
+                        context.addApplicationException(exceptionClass, exception.rollback, exception.inherited);
+                    } catch (final Exception e) {
+                        // no-op: not a big deal since by jar config is respected, mainly means propagation didn't work because of classloader constraints
+                    }
+                }
+            }
         }
     }
 
