@@ -41,11 +41,13 @@
 
           <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
           <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
+          <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.container.test.spi.RemoteLoadableExtension" />
           <exclude name="arquillian/arquillian-tomee-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
           <exclude name="arquillian/arquillian-tomee-tests/arquillian-tomee-webprofile-tests/src/test/resources/test.getresources"/>
           <exclude name="arquillian/arquillian-tomee-webapp-remote/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
           <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
+          <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/cucumber.runtime.io.ResourceIteratorFactory" />
           <exclude name="container/openejb-jee/src/main/xsdlist/xsdlist.txt"/>
           <exclude name="container/openejb-core/src/main/resources/default.exclusions"/>
           <exclude name="container/openejb-core/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
@@ -71,9 +73,11 @@
           <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/javax.ejb.spi.EJBContainerProvider"/>
           <exclude name="tomee/tomee-embedded/src/main/resources/META-INF/services/org.apache.webbeans.spi.plugins.OpenWebBeansPlugin"/>
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProviderFactory"/>
+          <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigurationProviderFactory" />
           <exclude name="tomee/tomee-myfaces/src/main/resources/META-INF/services/org.apache.myfaces.spi.FacesConfigResourceProviderFactory"/>
           <exclude name="tomee/tomee-mojarra/src/main/resources/META-INF/services/com.sun.faces.spi.injectionprovider" />
           <exclude name="tomee/tomee-jdbc/src/test/resources/META-INF/org.apache.openejb.resource.jdbc.cipher.PasswordCipher/Mock" />
+          <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/require/**" />
           <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/bootstrap/**" /> 
           <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/codemirror/**" /> 
           <exclude name="tomee/tomee-webapp/src/main/webapp/app/lib/handlebars/**" /> 
