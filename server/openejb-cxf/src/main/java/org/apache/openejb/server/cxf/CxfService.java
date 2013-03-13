@@ -39,10 +39,6 @@ public class CxfService extends WsService {
 
     private final Map<String, CxfWsContainer> wsContainers = new TreeMap<String, CxfWsContainer>();
 
-    public CxfService() {
-        SaajInterceptor.registerInterceptors();
-    }
-
     public String getName() {
         return "cxf";
     }
@@ -50,41 +46,67 @@ public class CxfService extends WsService {
     public void init(final Properties props) throws java.lang.Exception {
         super.init(props);
         CxfUtil.configureBus();
+        SaajInterceptor.registerInterceptors();
     }
 
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration config) {
-        Bus bus = CxfUtil.getBus();
+        final Bus bus = CxfUtil.getBus();
 
-        CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-        EjbWsContainer container = new EjbWsContainer(bus, port, beanContext, config);
-        container.start();
-        wsContainers.put(beanContext.getDeploymentID().toString(), container);
-        return container;
-    }
-
-    protected void destroyEjbWsContainer(String deploymentId) {
-        CxfWsContainer container = wsContainers.remove(deploymentId);
-        if (container != null) {
-            container.destroy();
+            final EjbWsContainer container = new EjbWsContainer(bus, port, beanContext, config);
+            container.start();
+            wsContainers.put(beanContext.getDeploymentID().toString(), container);
+            return container;
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
+            }
         }
     }
 
     protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
         Bus bus = CxfUtil.getBus();
 
-        CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-        PojoWsContainer container = new PojoWsContainer(bus, port, context, target, bdgs, services);
-        container.start();
-        wsContainers.put(serviceId, container);
-        return container;
+            PojoWsContainer container = new PojoWsContainer(bus, port, context, target, bdgs, services);
+            container.start();
+            wsContainers.put(serviceId, container);
+            return container;
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
+            }
+        }
     }
 
-    protected void destroyPojoWsContainer(String serviceId) {
+    protected void destroyPojoWsContainer(final String serviceId) {
+        destroyWsContainer(serviceId);
+    }
+
+    protected void destroyEjbWsContainer(final String deploymentId) {
+        destroyWsContainer(deploymentId);
+    }
+
+    protected void destroyWsContainer(final String serviceId) {
         CxfWsContainer container = wsContainers.remove(serviceId);
         if (container != null) {
-            container.destroy();
+            final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+            try {
+                container.destroy();
+            } finally {
+                if (oldLoader != null) {
+                    CxfUtil.clearBusLoader(oldLoader);
+                }
+            }
         }
     }
 }

@@ -54,7 +54,7 @@ public class GlobalFeatureConfigTest {
 
     @Test
     public void run() {
-        final Bus bus = CxfUtil.getDefaultBus();
+        final Bus bus = CxfUtil.getBus();
         assertEquals(1, bus.getFeatures().size());
         assertThat(bus.getFeatures().iterator().next(), instanceOf(LoggingFeature.class));
     }

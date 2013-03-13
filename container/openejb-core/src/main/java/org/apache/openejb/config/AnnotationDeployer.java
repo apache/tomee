@@ -1078,9 +1078,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // create webApp and webservices objects if they don't exist already
 
                 // add new <servlet/> element
-                Servlet servlet = new Servlet();
+                final Servlet servlet = new Servlet();
                 servlet.setServletName(webServiceClass.getName());
                 servlet.setServletClass(webServiceClass.getName());
+                final ParamValue param = new ParamValue();
+                param.setParamName("openejb-internal");
+                param.setParamValue("true");
+                servlet.getInitParam().add(param);
                 webApp.getServlet().add(servlet);
             }
 

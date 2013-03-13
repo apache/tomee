@@ -213,34 +213,42 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private void deploy(String contextRoot, Class<?> clazz, String address, ResourceProvider rp, Object serviceBean,
                         Application app, Invoker invoker, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        final JAXRSServerFactoryBean factory = newFactory(address);
-        configureFactory(additionalProviders, configuration, factory);
-        factory.setResourceClasses(clazz);
-        context = contextRoot;
-        if (context == null) {
-            context = "";
-        }
-        if (!context.startsWith("/")) {
-            context = "/" + context;
-        }
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            final JAXRSServerFactoryBean factory = newFactory(address);
+            configureFactory(additionalProviders, configuration, factory);
+            factory.setResourceClasses(clazz);
+            context = contextRoot;
+            if (context == null) {
+                context = "";
+            }
+            if (!context.startsWith("/")) {
+                context = "/" + context;
+            }
 
-        if (rp != null) {
-            factory.setResourceProvider(rp);
-        }
-        if (app != null) {
-            factory.setApplication(app);
-        }
-        if (invoker != null) {
-            factory.setInvoker(invoker);
-        }
-        if (serviceBean != null) {
-            factory.setServiceBean(serviceBean);
-        } else {
-            factory.setServiceClass(clazz);
-        }
+            if (rp != null) {
+                factory.setResourceProvider(rp);
+            }
+            if (app != null) {
+                factory.setApplication(app);
+            }
+            if (invoker != null) {
+                factory.setInvoker(invoker);
+            }
+            if (serviceBean != null) {
+                factory.setServiceBean(serviceBean);
+            } else {
+                factory.setServiceClass(clazz);
+            }
 
-        server = factory.create();
-        destination = (AbstractHTTPDestination) server.getDestination();
+            server = factory.create();
+            destination = (AbstractHTTPDestination) server.getDestination();
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
+            }
+        }
     }
 
     private Collection<Object> providers(final Collection<ServiceInfo> services, final Collection<Object> additionalProviders) {
@@ -266,12 +274,18 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     public void undeploy() {
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             server.stop();
         } catch (final RuntimeException ise) {
             LOGGER.warning("Can't stop correctly the endpoint " + server);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(ise.getMessage(), ise);
+            }
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
             }
         }
     }
@@ -282,57 +296,70 @@ public class CxfRsHttpListener implements RsHttpListener {
                                   final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader,
                                   final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx,
                                   final ServiceConfiguration serviceConfiguration) {
-        final JAXRSServerFactoryBean factory = newFactory(prefix);
-        configureFactory(additionalProviders, serviceConfiguration, factory);
-        factory.setApplication(application);
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            final JAXRSServerFactoryBean factory = newFactory(prefix);
+            configureFactory(additionalProviders, serviceConfiguration, factory);
+            factory.setApplication(application);
 
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+            final List<Class<?>> classes = new ArrayList<Class<?>>();
 
-        for (Class<?> clazz : application.getClasses()) {
-            if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
-                classes.add(clazz);
+            for (Class<?> clazz : application.getClasses()) {
+                if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
+                    classes.add(clazz);
+                }
             }
-        }
 
-        for (Object o : application.getSingletons()) {
-            if (!additionalProviders.contains(o)) {
-                final Class<?> clazz = o.getClass();
-                classes.add(clazz);
+            for (Object o : application.getSingletons()) {
+                if (!additionalProviders.contains(o)) {
+                    final Class<?> clazz = o.getClass();
+                    classes.add(clazz);
+                }
             }
-        }
 
-        for (Class<?> clazz : classes) {
-            final String name = clazz.getName();
-            if (restEjbs.containsKey(name)) {
-                final BeanContext bc = restEjbs.get(name).context;
-                final Object proxy = ProxyEJB.subclassProxy(bc);
-                factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
+            for (Class<?> clazz : classes) {
+                final String name = clazz.getName();
+                if (restEjbs.containsKey(name)) {
+                    final BeanContext bc = restEjbs.get(name).context;
+                    final Object proxy = ProxyEJB.subclassProxy(bc);
+                    factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
+                } else {
+                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(clazz, injections, context, owbCtx));
+                }
+            }
+
+            factory.setResourceClasses(classes);
+            factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
+
+            server = factory.create();
+            this.context = webContext;
+            if (!webContext.startsWith("/")) {
+                this.context = "/" + webContext;
+            }
+            destination = (AbstractHTTPDestination) server.getDestination();
+
+            final String base;
+            if (prefix.endsWith("/")) {
+                base = prefix.substring(0, prefix.length() - 1);
+            } else if (prefix.endsWith(wildcard)) {
+                base = prefix.substring(0, prefix.length() - wildcard.length());
             } else {
-                factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(clazz, injections, context, owbCtx));
+                base = prefix;
+            }
+
+            // stack info to log to get nice logs
+            logEndpoints(application, prefix, restEjbs, factory, base);
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
 
-        factory.setResourceClasses(classes);
-        factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
-
-        server = factory.create();
-        this.context = webContext;
-        if (!webContext.startsWith("/")) {
-            this.context = "/" + webContext;
-        }
-        destination = (AbstractHTTPDestination) server.getDestination();
-
-        final String base;
-        if (prefix.endsWith("/")) {
-            base = prefix.substring(0, prefix.length() - 1);
-        } else if (prefix.endsWith(wildcard)) {
-            base = prefix.substring(0, prefix.length() - wildcard.length());
-        } else {
-            base = prefix;
-        }
-
-        // stack info to log to get nice logs
-
+    private void logEndpoints(final Application application, final String prefix,
+                              final Map<String, EJBRestServiceInfo> restEjbs,
+                              final JAXRSServerFactoryBean factory, final String base) {
         final List<Logs.LogResourceEndpointInfo> resourcesToLog = new ArrayList<Logs.LogResourceEndpointInfo>();
         int classSize = 0;
         int addressSize = 0;

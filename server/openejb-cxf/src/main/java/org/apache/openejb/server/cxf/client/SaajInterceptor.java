@@ -21,6 +21,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
 public abstract class SaajInterceptor extends AbstractPhaseInterceptor<Message> {
@@ -34,11 +35,19 @@ public abstract class SaajInterceptor extends AbstractPhaseInterceptor<Message> 
     
     public static synchronized void registerInterceptors() {
         if (!interceptorsRegistered) {
-            Bus bus = BusFactory.getDefaultBus();
-            SaajUniverse universe = new SaajUniverse();
-            bus.getOutInterceptors().add(new SaajOutInterceptor(universe));
-            bus.getInInterceptors().add(new SaajInInterceptor(universe));
-            bus.getInInterceptors().add(new SaajInFaultInterceptor(universe));
+            final Bus bus = CxfUtil.getBus();
+            final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+            try {
+                SaajUniverse universe = new SaajUniverse();
+                bus.getOutInterceptors().add(new SaajOutInterceptor(universe));
+                bus.getInInterceptors().add(new SaajInInterceptor(universe));
+                bus.getInInterceptors().add(new SaajInFaultInterceptor(universe));
+            } finally {
+                if (oldLoader != null) {
+                    CxfUtil.clearBusLoader(oldLoader);
+                }
+            }
             interceptorsRegistered = true;
         }
     }
