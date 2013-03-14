@@ -20,42 +20,38 @@ import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
 import org.apache.openejb.client.ResponseCodes;
-import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.IOException;
-
-import javax.security.auth.login.LoginException;
 
 class AuthRequestHandler {
 
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
 
-    AuthRequestHandler(EjbDaemon daemon) {
+    AuthRequestHandler(final EjbDaemon daemon) {
     }
 
-    public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
-        AuthenticationRequest req = new AuthenticationRequest();
-        AuthenticationResponse res = new AuthenticationResponse();
+    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+        final AuthenticationRequest req = new AuthenticationRequest();
+        final AuthenticationResponse res = new AuthenticationResponse();
 
         try {
             req.readExternal(in);
 
-            String securityRealm = req.getRealm();
-            String username = req.getUsername();
-            String password = req.getCredentials();
+            final String securityRealm = req.getRealm();
+            final String username = req.getUsername();
+            final String password = req.getCredentials();
 
-            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            Object token = securityService.login(securityRealm, username, password);
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            final Object token = securityService.login(securityRealm, username, password);
 
-            ClientMetaData client = new ClientMetaData();
+            final ClientMetaData client = new ClientMetaData();
             client.setClientIdentity(token);
 
             res.setIdentity(client);
@@ -64,10 +60,11 @@ class AuthRequestHandler {
             res.setResponseCode(ResponseCodes.AUTH_DENIED);
             res.setDeniedCause(t);
         } finally {
-            if (logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 try {
-                    logger.debug("AUTH REQUEST: "+req+" -- RESPONSE: " + res);
-                } catch (Exception justInCase) {}
+                    logger.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
+                } catch (Exception justInCase) {
+                }
             }
 
             try {
@@ -77,6 +74,5 @@ class AuthRequestHandler {
             }
         }
     }
-
 
 }

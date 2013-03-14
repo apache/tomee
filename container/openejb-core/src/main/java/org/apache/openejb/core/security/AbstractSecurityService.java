@@ -16,42 +16,41 @@
  */
 package org.apache.openejb.core.security;
 
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.spi.CallerPrincipal;
-import org.apache.openejb.core.ThreadContextListener;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.CallerPrincipal;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
-import javax.security.jacc.PolicyContext;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
+import javax.security.jacc.PolicyContext;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.security.AccessControlContext;
-import java.security.PrivilegedAction;
-import java.security.AccessController;
-import java.security.Principal;
 import java.security.AccessControlException;
-import java.security.Permission;
+import java.security.AccessController;
 import java.security.Policy;
-import java.util.UUID;
-import java.util.List;
+import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.LinkedHashSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.lang.reflect.Method;
 
 /**
  * This security service chooses a UUID as its token as this can be serialized
@@ -59,6 +58,7 @@ import java.lang.reflect.Method;
  * addition openejb-core classes.
  */
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
+
     static private final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
     static protected final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected String defaultUser = "guest";
@@ -83,7 +83,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         SystemInstance.get().setComponent(BasicPolicyConfiguration.RoleResolver.class, this);
     }
 
-
     public String getRealmName() {
         return realmName;
     }
@@ -91,7 +90,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public void setRealmName(final String realmName) {
         this.realmName = realmName;
     }
-    
+
     /**
      * @return the defaultUser
      */
@@ -104,7 +103,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
      */
     public void setDefaultUser(final String defaultUser) {
         this.defaultUser = defaultUser;
-        
+
         // set the default subject and the default context for the new default user
         updateSecurityContext();
     }
@@ -114,7 +113,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         defaultSubject = createSubject(defaultUser);
         defaultContext = new SecurityContext(defaultSubject);
     }
-    
+
     @Override
     public void init(final Properties props) throws Exception {
     }
@@ -143,7 +142,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        final BeanContext callingBeanContext = (oldContext != null)? oldContext.getBeanContext(): null;
+        final BeanContext callingBeanContext = (oldContext != null) ? oldContext.getBeanContext() : null;
         final Subject runAsSubject = getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) {
 
@@ -152,7 +151,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         } else if (securityContext == null) {
 
             final Identity identity = clientIdentity.get();
-            if (identity != null){
+            if (identity != null) {
                 securityContext = new SecurityContext(identity.subject);
             } else {
                 securityContext = defaultContext;
@@ -163,7 +162,9 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
-        if (callingBeanContext == null) return null;
+        if (callingBeanContext == null) {
+            return null;
+        }
 
         final String runAsRole = callingBeanContext.getRunAs();
         return createRunAsSubject(runAsRole);
@@ -192,7 +193,9 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     @Override
     public void logout(final UUID securityIdentity) throws LoginException {
         final Identity identity = identities.get(securityIdentity);
-        if (identity == null) throw new LoginException("Identity is not currently logged in: " + securityIdentity);
+        if (identity == null) {
+            throw new LoginException("Identity is not currently logged in: " + securityIdentity);
+        }
         identities.remove(securityIdentity);
     }
 
@@ -202,12 +205,18 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     @Override
     public void associate(final UUID securityIdentity) throws LoginException {
-        if (clientIdentity.get() != null) throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite.");
-        if (securityIdentity == null) throw new NullPointerException("The security token passed in is null");
+        if (clientIdentity.get() != null) {
+            throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite.");
+        }
+        if (securityIdentity == null) {
+            throw new NullPointerException("The security token passed in is null");
+        }
 
         // The securityIdentity token must associated with a logged in Identity
         final Identity identity = identities.get(securityIdentity);
-        if (identity == null) throw new LoginException("Identity is not currently logged in: " + securityIdentity);
+        if (identity == null) {
+            throw new LoginException("Identity is not currently logged in: " + securityIdentity);
+        }
 
         clientIdentity.set(identity);
     }
@@ -216,7 +225,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public UUID disassociate() {
         try {
             final Identity identity = clientIdentity.get();
-            return (identity == null)? null: identity.getToken();
+            return (identity == null) ? null : identity.getToken();
         } finally {
             clientIdentity.remove();
         }
@@ -224,23 +233,25 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     @Override
     public boolean isCallerInRole(final String role) {
-        if (role == null) throw new IllegalArgumentException("Role must not be null");
+        if (role == null) {
+            throw new IllegalArgumentException("Role must not be null");
+        }
 
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
-    	final Set<Group> grps = securityContext.subject.getPrincipals(Group.class);
-    	for (final Group grp : grps) {
-			if(grp.getName().equals(role)) {
-				return true;
-			}
-		}
+        final Set<Group> grps = securityContext.subject.getPrincipals(Group.class);
+        for (final Group grp : grps) {
+            if (grp.getName().equals(role)) {
+                return true;
+            }
+        }
         final Set<GroupPrincipal> grpsp = securityContext.subject.getPrincipals(GroupPrincipal.class);
         for (final GroupPrincipal grp : grpsp) {
-        	if(grp.getName().equals(role)) {
-        		return true;
-        	}			
-		}
+            if (grp.getName().equals(role)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -272,14 +283,12 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
             final String ejbName = beanContext.getEjbName();
 
-            String name = (type == null)? null: type.getSpecName();
+            String name = (type == null) ? null : type.getSpecName();
             if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
                 name = null;
             }
 
-            final Permission permission = new EJBMethodPermission(ejbName, name, method);
-
-            if (permission != null) securityContext.acc.checkPermission(permission);
+            securityContext.acc.checkPermission(new EJBMethodPermission(ejbName, name, method));
 
         } catch (AccessControlException e) {
             return false;
@@ -308,7 +317,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
-
         final String policyProvider = SystemInstance.get().getOptions().get("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -317,12 +325,14 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             policy.refresh();
             Policy.setPolicy(policy);
         } catch (Exception e) {
-            throw new IllegalStateException("Could not install JACC Policy Provider: "+policyProvider, e);
+            throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
         }
     }
 
     protected Subject createSubject(final String name) {
-        if (name == null) return null;
+        if (name == null) {
+            return null;
+        }
 
         final User user = new User(name);
         final Group group = new Group(name);
@@ -352,6 +362,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         public final Subject subject;
         public final AccessControlContext acc;
 
+        @SuppressWarnings("unchecked")
         public SecurityContext(final Subject subject) {
             this.subject = subject;
             this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, new PrivilegedAction() {
@@ -364,6 +375,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     protected static class Identity implements Serializable {
+
         private final Subject subject;
         private final UUID token;
 
@@ -387,6 +399,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     public static class Group implements java.security.acl.Group {
+
         private final List<Principal> members = new ArrayList<Principal>();
         private final String name;
 
@@ -421,6 +434,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     public static class User implements Principal {
+
         private final String name;
 
         public User(final String name) {

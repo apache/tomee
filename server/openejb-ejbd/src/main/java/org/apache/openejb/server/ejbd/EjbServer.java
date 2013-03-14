@@ -74,10 +74,12 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
 
     @Override
     public void service(final InputStream inputStream, final OutputStream outputStream) throws ServiceException, IOException {
+
         ServerFederation.setApplicationServer(server);
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             server.service(inputStream, outputStream);
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);

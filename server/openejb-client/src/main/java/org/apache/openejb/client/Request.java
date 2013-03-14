@@ -25,8 +25,10 @@ public interface Request extends Externalizable {
 
     public RequestType getRequestType();
 
+    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 
+    @Override
     public void writeExternal(ObjectOutput out) throws IOException;
 }
 

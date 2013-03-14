@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.client;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.lang.reflect.Method;
-import java.rmi.Remote;
+import org.omg.CORBA.ORB;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.rmi.CORBA.Stub;
 import javax.rmi.CORBA.Tie;
 import javax.rmi.PortableRemoteObject;
-
-import org.omg.CORBA.ORB;
-
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Method;
+import java.rmi.Remote;
+import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
 
@@ -118,6 +118,7 @@ public class EJBRequest implements ClusterableRequest {
 
     public static class Body implements java.io.Externalizable {
 
+        private transient volatile String toString = null;
         private transient EJBMetaDataImpl ejb;
         private transient ORB orb;
         private transient Method methodInstance;
@@ -165,6 +166,7 @@ public class EJBRequest implements ClusterableRequest {
             return methodParamTypes;
         }
 
+        @SuppressWarnings("unchecked")
         public void setMethodInstance(final Method methodInstance) {
             if (methodInstance == null) {
                 throw new NullPointerException("methodInstance input parameter is null");
@@ -212,6 +214,7 @@ public class EJBRequest implements ClusterableRequest {
             this.requestId = requestId;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -220,34 +223,39 @@ public class EJBRequest implements ClusterableRequest {
             requestId = null;
             ClassNotFoundException result = null;
             primaryKey = null;
-//            methodClass = null;
             methodName = null;
             methodInstance = null;
             try {
                 requestId = (String) in.readObject();
                 primaryKey = in.readObject();
                 interfaceClass = (Class) in.readObject();
-//                methodClass = (Class) in.readObject();
             } catch (ClassNotFoundException cnfe) {
                 result = cnfe;
             }
+
             methodName = in.readUTF();
 
             try {
                 readMethodParameters(in);
             } catch (ClassNotFoundException cnfe) {
-                if (result == null) result = cnfe;
+                if (result == null) {
+                    result = cnfe;
+                }
             }
 
             if (interfaceClass != null) {
                 try {
                     methodInstance = interfaceClass.getMethod(methodName, methodParamTypes);
                 } catch (NoSuchMethodException nsme) {
-                    //if (result == null) result = nsme;
+                    if (result == null) {
+                        throw new ClassNotFoundException(interfaceClass.getSimpleName() + "#" + methodName + " is not valid");
+                    }
                 }
             }
-            if (result != null)
+
+            if (result != null) {
                 throw result;
+            }
         }
 
         @Override
@@ -260,7 +268,7 @@ public class EJBRequest implements ClusterableRequest {
             out.writeObject(primaryKey);
 
             out.writeObject(interfaceClass);
-//            out.writeObject(methodClass);
+            //            out.writeObject(methodClass);
             out.writeUTF(methodName);
 
             writeMethodParameters(out, methodParamTypes, methodParameters);
@@ -271,52 +279,52 @@ public class EJBRequest implements ClusterableRequest {
             out.writeByte(types.length);
 
             for (int i = 0; i < types.length; i++) {
-                final Class type = types[i];
+                final Class clazz = types[i];
                 Object obj = args[i];
 
-                if (type.isPrimitive()) {
-                    if (type == Byte.TYPE) {
-                        out.write(B);
+                if (clazz.isPrimitive()) {
+                    if (clazz == Byte.TYPE) {
+                        out.write(BYTE);
                         final byte bytevalue = (Byte) obj;
                         out.writeByte(bytevalue);
 
-                    } else if (type == Character.TYPE) {
-                        out.write(C);
+                    } else if (clazz == Character.TYPE) {
+                        out.write(CHAR);
                         final char charvalue = (Character) obj;
                         out.writeChar(charvalue);
 
-                    } else if (type == Integer.TYPE) {
-                        out.write(I);
+                    } else if (clazz == Integer.TYPE) {
+                        out.write(INT);
                         final int intvalue = (Integer) obj;
                         out.writeInt(intvalue);
 
-                    } else if (type == Boolean.TYPE) {
-                        out.write(Z);
+                    } else if (clazz == Boolean.TYPE) {
+                        out.write(BOOLEAN);
                         final boolean booleanvalue = (Boolean) obj;
                         out.writeBoolean(booleanvalue);
 
-                    } else if (type == Long.TYPE) {
-                        out.write(J);
+                    } else if (clazz == Long.TYPE) {
+                        out.write(LONG);
                         final long longvalue = (Long) obj;
                         out.writeLong(longvalue);
 
-                    } else if (type == Float.TYPE) {
-                        out.write(F);
+                    } else if (clazz == Float.TYPE) {
+                        out.write(FLOAT);
                         final float fvalue = (Float) obj;
                         out.writeFloat(fvalue);
 
-                    } else if (type == Double.TYPE) {
-                        out.write(D);
+                    } else if (clazz == Double.TYPE) {
+                        out.write(DOUBLE);
                         final double dvalue = (Double) obj;
                         out.writeDouble(dvalue);
 
-                    } else if (type == Short.TYPE) {
-                        out.write(S);
+                    } else if (clazz == Short.TYPE) {
+                        out.write(SHORT);
                         final short shortvalue = (Short) obj;
                         out.writeShort(shortvalue);
 
                     } else {
-                        throw new IOException("Unkown primitive type: " + type);
+                        throw new IOException("Unkown primitive type: " + clazz);
                     }
                 } else {
                     if (obj instanceof PortableRemoteObject && obj instanceof Remote) {
@@ -328,8 +336,8 @@ public class EJBRequest implements ClusterableRequest {
                         tie.orb(orb);
                         obj = PortableRemoteObject.toStub((Remote) obj);
                     }
-                    out.write(L);
-                    out.writeObject(type);
+                    out.write(OBJECT);
+                    out.writeObject(clazz);
                     out.writeObject(obj);
                 }
             }
@@ -376,53 +384,53 @@ public class EJBRequest implements ClusterableRequest {
             final Object[] args = new Object[length];
 
             for (int i = 0; i < types.length; i++) {
-                Class clazz = null;
-                Object obj = null;
+                final Class clazz;
+                final Object obj;
 
                 final int type = in.read();
 
                 switch (type) {
-                    case B:
+                    case BYTE:
                         clazz = Byte.TYPE;
                         obj = in.readByte();
                         break;
 
-                    case C:
+                    case CHAR:
                         clazz = Character.TYPE;
                         obj = in.readChar();
                         break;
 
-                    case I:
+                    case INT:
                         clazz = Integer.TYPE;
                         obj = in.readInt();
                         break;
 
-                    case Z:
+                    case BOOLEAN:
                         clazz = Boolean.TYPE;
                         obj = in.readBoolean();
                         break;
 
-                    case J:
+                    case LONG:
                         clazz = Long.TYPE;
                         obj = in.readLong();
                         break;
 
-                    case F:
+                    case FLOAT:
                         clazz = Float.TYPE;
                         obj = in.readFloat();
                         break;
 
-                    case D:
+                    case DOUBLE:
                         clazz = Double.TYPE;
                         obj = in.readDouble();
                         break;
 
-                    case S:
+                    case SHORT:
                         clazz = Short.TYPE;
                         obj = in.readShort();
                         break;
 
-                    case L:
+                    case OBJECT:
                         clazz = (Class) in.readObject();
                         obj = in.readObject();
                         if (obj instanceof Stub) {
@@ -443,16 +451,35 @@ public class EJBRequest implements ClusterableRequest {
             methodParameters = args;
         }
 
-        private static final int I = 0;
-        private static final int B = 1;
-        private static final int J = 2;
-        private static final int F = 3;
-        private static final int D = 4;
-        private static final int S = 5;
-        private static final int C = 6;
-        private static final int Z = 7;
-        private static final int L = 8;
-        private static final int A = 9;
+        private static final int INT = 0;
+        private static final int BYTE = 1;
+        private static final int LONG = 2;
+        private static final int FLOAT = 3;
+        private static final int DOUBLE = 4;
+        private static final int SHORT = 5;
+        private static final int CHAR = 6;
+        private static final int BOOLEAN = 7;
+        private static final int OBJECT = 8;
+
+        @Override
+        public String toString() {
+            if (null == toString) {
+                toString = "Body{" +
+                           "ejb=" + ejb +
+                           ", orb=" + orb +
+                           ", methodInstance=" + methodInstance +
+                           ", interfaceClass=" + interfaceClass +
+                           ", methodName='" + methodName + '\'' +
+                           ", methodParamTypes=" + (methodParamTypes == null ? null : Arrays.asList(methodParamTypes)) +
+                           ", methodParameters=" + (methodParameters == null ? null : Arrays.asList(methodParameters)) +
+                           ", primaryKey=" + primaryKey +
+                           ", requestId='" + requestId + '\'' +
+                           ", version=" + version +
+                           '}';
+            }
+
+            return toString;
+        }
     }
 
     @Override
@@ -514,9 +541,7 @@ public class EJBRequest implements ClusterableRequest {
             sb.append(", type=").append(requestMethod);
         }
         if (body != null) {
-            sb.append(", method='").append(body.getMethodName());
-            sb.append("', primaryKey='").append(body.getPrimaryKey());
-            sb.append("'");
+            sb.append(", ").append(body.toString());
         }
         sb.append("}");
         return sb.toString();
@@ -553,11 +578,14 @@ public class EJBRequest implements ClusterableRequest {
         try {
             clientIdentity = in.readObject();
         } catch (ClassNotFoundException cnfe) {
-            if (result == null) result = cnfe;
+            if (result == null) {
+                result = cnfe;
+            }
         }
         serverHash = in.readInt();
-        if (result != null)
+        if (result != null) {
             throw result;
+        }
     }
 
     @Override

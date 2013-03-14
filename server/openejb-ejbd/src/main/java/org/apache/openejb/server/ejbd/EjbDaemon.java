@@ -75,7 +75,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-//        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
+        //        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
 
         clientObjectFactory = new ClientObjectFactory(this, props);
 
@@ -272,7 +272,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     protected BeanContext getDeployment(final EJBRequest req) throws RemoteException {
         final String deploymentId = req.getDeploymentId();
         final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
-        if (beanContext == null) throw new RemoteException("No deployment: " + deploymentId);
+        if (beanContext == null) {
+            throw new RemoteException("No deployment: " + deploymentId);
+        }
         return beanContext;
     }
 
