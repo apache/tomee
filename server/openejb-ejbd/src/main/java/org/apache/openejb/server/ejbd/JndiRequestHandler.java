@@ -75,7 +75,6 @@ import java.util.Set;
 
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
-
 class JndiRequestHandler {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
@@ -89,8 +88,8 @@ class JndiRequestHandler {
     private final ClusterableRequestHandler clusterableRequestHandler;
     private Context rootContext;
 
-    JndiRequestHandler(EjbDaemon daemon) throws Exception {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+    JndiRequestHandler(final EjbDaemon daemon) throws Exception {
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
 
@@ -108,15 +107,15 @@ class JndiRequestHandler {
         return new BasicClusterableRequestHandler();
     }
 
-    public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
-        JNDIResponse res = new JNDIResponse();
+    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+        final JNDIResponse res = new JNDIResponse();
         JNDIRequest req = null;
         try {
             req = new JNDIRequest();
             req.readExternal(in);
         } catch (Throwable e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-            NamingException namingException = new NamingException("Could not read jndi request");
+            final NamingException namingException = new NamingException("Could not read jndi request");
             namingException.setRootCause(e);
             res.setResult(new ThrowableArtifact(namingException));
 
@@ -139,7 +138,7 @@ class JndiRequestHandler {
             if (req.getRequestString().startsWith("/")) {
                 req.setRequestString(req.getRequestString().substring(1));
             }
-            String prefix = getPrefix(req);
+            final String prefix = getPrefix(req);
 
             switch (req.getRequestMethod()) {
                 case JNDI_LOOKUP:
@@ -152,7 +151,7 @@ class JndiRequestHandler {
 
         } catch (Throwable e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-            NamingException namingException = new NamingException("Unknown error in container");
+            final NamingException namingException = new NamingException("Unknown error in container");
             namingException.setRootCause(e);
             res.setResult(new ThrowableArtifact(namingException));
         } finally {
@@ -177,13 +176,13 @@ class JndiRequestHandler {
     private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
         final RequestInfos.RequestInfo info = RequestInfos.info();
         logger.debug("JNDI REQUEST: " + req + " (size = " + info.inputStream.getCount()
-                    + "b, remote-ip =" + info.ip
-                    + ") -- RESPONSE: " + res + " (size = " + info.outputStream.getCount() + "b)");
+                     + "b, remote-ip =" + info.ip
+                     + ") -- RESPONSE: " + res + " (size = " + info.outputStream.getCount() + "b)");
     }
 
-    private String getPrefix(JNDIRequest req) throws NamingException {
-        String prefix;
-        String name = req.getRequestString();
+    private String getPrefix(final JNDIRequest req) throws NamingException {
+        final String prefix;
+        final String name = req.getRequestString();
 
         if (name.startsWith("openejb/Deployment/")) {
             prefix = "";
@@ -199,19 +198,21 @@ class JndiRequestHandler {
         return prefix;
     }
 
-    private void doLookup(JNDIRequest req, JNDIResponse res, String prefix) {
+    private void doLookup(final JNDIRequest req, final JNDIResponse res, final String prefix) {
         Object object;
-        String name = req.getRequestString();
+        final String name = req.getRequestString();
 
         try {
 
             if (name.equals("info/injections")) {
 
                 //noinspection unchecked
-                List<Injection> injections = (List<Injection>) rootContext.lookup(prefix + name);
-                InjectionMetaData metaData = new InjectionMetaData();
-                for (Injection injection : injections) {
-                    if (injection.getTarget() == null) continue;
+                final List<Injection> injections = (List<Injection>) rootContext.lookup(prefix + name);
+                final InjectionMetaData metaData = new InjectionMetaData();
+                for (final Injection injection : injections) {
+                    if (injection.getTarget() == null) {
+                        continue;
+                    }
                     metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
                 }
                 res.setResponseCode(ResponseCodes.JNDI_INJECTIONS);
@@ -233,8 +234,8 @@ class JndiRequestHandler {
             } else if (object instanceof DataSource) {
                 if (DataSourceFactory.knows(object)) {
                     try {
-                        DbcpDataSource cf = new DbcpDataSource(object);
-                        DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
+                        final DbcpDataSource cf = new DbcpDataSource(object);
+                        final DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
                         res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
                         res.setResult(dataSourceMetaData);
                     } catch (Exception e) {
@@ -273,7 +274,7 @@ class JndiRequestHandler {
                 return;
             }
 
-            ServiceRefData serviceRef;
+            final ServiceRefData serviceRef;
             if (object instanceof ServiceRefData) {
                 serviceRef = (ServiceRefData) object;
             } else {
@@ -281,7 +282,7 @@ class JndiRequestHandler {
             }
 
             if (serviceRef != null) {
-                WsMetaData serviceMetaData = new WsMetaData();
+                final WsMetaData serviceMetaData = new WsMetaData();
 
                 // service class
                 String serviceClassName = null;
@@ -303,7 +304,7 @@ class JndiRequestHandler {
                 }
 
                 // get the port addresses for this service
-                PortAddressRegistry portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
+                final PortAddressRegistry portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
                 Set<PortAddress> portAddresses = null;
                 if (portAddressRegistry != null) {
                     portAddresses = portAddressRegistry.getPorts(serviceRef.getId(), serviceRef.getServiceQName(), referenceClassName);
@@ -314,27 +315,27 @@ class JndiRequestHandler {
                     serviceMetaData.setWsdlUrl(serviceRef.getWsdlURL().toExternalForm());
                 }
                 if (portAddresses.size() == 1) {
-                    PortAddress portAddress = portAddresses.iterator().next();
+                    final PortAddress portAddress = portAddresses.iterator().next();
                     serviceMetaData.setWsdlUrl(portAddress.getAddress() + "?wsdl");
                 }
 
                 // add handler chains
-                for (HandlerChainData handlerChain : serviceRef.getHandlerChains()) {
-                    HandlerChainMetaData handlerChainMetaData = new HandlerChainMetaData();
+                for (final HandlerChainData handlerChain : serviceRef.getHandlerChains()) {
+                    final HandlerChainMetaData handlerChainMetaData = new HandlerChainMetaData();
                     handlerChainMetaData.setServiceNamePattern(handlerChain.getServiceNamePattern());
                     handlerChainMetaData.setPortNamePattern(handlerChain.getPortNamePattern());
                     handlerChainMetaData.getProtocolBindings().addAll(handlerChain.getProtocolBindings());
-                    for (HandlerData handler : handlerChain.getHandlers()) {
-                        HandlerMetaData handlerMetaData = new HandlerMetaData();
+                    for (final HandlerData handler : handlerChain.getHandlers()) {
+                        final HandlerMetaData handlerMetaData = new HandlerMetaData();
                         handlerMetaData.setHandlerClass(handler.getHandlerClass().getName());
-                        for (Method method : handler.getPostConstruct()) {
-                            CallbackMetaData callbackMetaData = new CallbackMetaData();
+                        for (final Method method : handler.getPostConstruct()) {
+                            final CallbackMetaData callbackMetaData = new CallbackMetaData();
                             callbackMetaData.setClassName(method.getDeclaringClass().getName());
                             callbackMetaData.setMethod(method.getName());
                             handlerMetaData.getPostConstruct().add(callbackMetaData);
                         }
-                        for (Method method : handler.getPreDestroy()) {
-                            CallbackMetaData callbackMetaData = new CallbackMetaData();
+                        for (final Method method : handler.getPreDestroy()) {
+                            final CallbackMetaData callbackMetaData = new CallbackMetaData();
                             callbackMetaData.setClassName(method.getDeclaringClass().getName());
                             callbackMetaData.setMethod(method.getName());
                             handlerMetaData.getPreDestroy().add(callbackMetaData);
@@ -345,9 +346,9 @@ class JndiRequestHandler {
                 }
 
                 // add port refs
-                Map<QName, PortRefMetaData> portsByQName = new HashMap<QName, PortRefMetaData>();
-                for (PortRefData portRef : serviceRef.getPortRefs()) {
-                    PortRefMetaData portRefMetaData = new PortRefMetaData();
+                final Map<QName, PortRefMetaData> portsByQName = new HashMap<QName, PortRefMetaData>();
+                for (final PortRefData portRef : serviceRef.getPortRefs()) {
+                    final PortRefMetaData portRefMetaData = new PortRefMetaData();
                     portRefMetaData.setQName(portRef.getQName());
                     portRefMetaData.setServiceEndpointInterface(portRef.getServiceEndpointInterface());
                     portRefMetaData.setEnableMtom(portRef.isEnableMtom());
@@ -360,7 +361,7 @@ class JndiRequestHandler {
                 }
 
                 // add PortRefMetaData for any portAddress not added above
-                for (PortAddress portAddress : portAddresses) {
+                for (final PortAddress portAddress : portAddresses) {
                     PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getPortQName());
                     if (portRefMetaData == null) {
                         portRefMetaData = new PortRefMetaData();
@@ -389,13 +390,12 @@ class JndiRequestHandler {
             return;
         }
 
-
         BaseEjbProxyHandler handler;
         try {
             handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
         } catch (Exception e) {
             try {
-                Field field = object.getClass().getDeclaredField("invocationHandler");
+                final Field field = object.getClass().getDeclaredField("invocationHandler");
                 field.setAccessible(true);
                 handler = (BaseEjbProxyHandler) field.get(object);
             } catch (Exception e1) {
@@ -406,31 +406,34 @@ class JndiRequestHandler {
                     return;
                 } else {
                     res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                    NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" + object.getClass().getName() + ", toString=" + object);
+                    final NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" +
+                                                                                object.getClass().getName() +
+                                                                                ", toString=" +
+                                                                                object);
                     res.setResult(new ThrowableArtifact(namingException));
                     return;
                 }
             }
         }
 
-        ProxyInfo proxyInfo = handler.getProxyInfo();
-        BeanContext beanContext = proxyInfo.getBeanContext();
-        String deploymentID = beanContext.getDeploymentID().toString();
+        final ProxyInfo proxyInfo = handler.getProxyInfo();
+        final BeanContext beanContext = proxyInfo.getBeanContext();
+        final String deploymentID = beanContext.getDeploymentID().toString();
 
         updateServer(req, res, proxyInfo);
 
         switch (proxyInfo.getInterfaceType()) {
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
-                EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                                                               beanContext.getRemoteInterface(),
-                                                               beanContext.getPrimaryKeyClass(),
-                                                               beanContext.getComponentType().toString(),
-                                                               deploymentID,
-                                                               -1,
-                                                               convert(proxyInfo.getInterfaceType()),
-                                                               null,
-                                                               beanContext.getAsynchronousMethodSignatures());
+                final EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
+                                                                     beanContext.getRemoteInterface(),
+                                                                     beanContext.getPrimaryKeyClass(),
+                                                                     beanContext.getComponentType().toString(),
+                                                                     deploymentID,
+                                                                     -1,
+                                                                     convert(proxyInfo.getInterfaceType()),
+                                                                     null,
+                                                                     beanContext.getAsynchronousMethodSignatures());
                 metaData.loadProperties(beanContext.getProperties());
                 log(metaData);
                 res.setResult(metaData);
@@ -438,21 +441,23 @@ class JndiRequestHandler {
             }
             case EJB_LOCAL_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                NamingException namingException = new NamingException("Not remotable: '" + name + "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
+                final NamingException namingException = new NamingException("Not remotable: '" +
+                                                                            name +
+                                                                            "'. EJBLocalHome interfaces are not remotable as per the EJB specification.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             case BUSINESS_REMOTE: {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
-                EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                                                               null,
-                                                               beanContext.getPrimaryKeyClass(),
-                                                               beanContext.getComponentType().toString(),
-                                                               deploymentID,
-                                                               -1,
-                                                               convert(proxyInfo.getInterfaceType()),
-                                                               proxyInfo.getInterfaces(),
-                                                               beanContext.getAsynchronousMethodSignatures());
+                final EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
+                                                                     null,
+                                                                     beanContext.getPrimaryKeyClass(),
+                                                                     beanContext.getComponentType().toString(),
+                                                                     deploymentID,
+                                                                     -1,
+                                                                     convert(proxyInfo.getInterfaceType()),
+                                                                     proxyInfo.getInterfaces(),
+                                                                     beanContext.getAsynchronousMethodSignatures());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(beanContext.getProperties());
 
@@ -462,26 +467,28 @@ class JndiRequestHandler {
             }
             case BUSINESS_LOCAL: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                NamingException namingException = new NamingException("Not remotable: '" + name + "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                final NamingException namingException = new NamingException("Not remotable: '" +
+                                                                            name +
+                                                                            "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             case LOCALBEAN: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                NamingException namingException = new NamingException("Not remotable: '" + name + "'. LocalBean classes are not remotable as per the EJB specification.");
+                final NamingException namingException = new NamingException("Not remotable: '" + name + "'. LocalBean classes are not remotable as per the EJB specification.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             default: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                NamingException namingException = new NamingException("Not remotable: '" + name + "'.");
+                final NamingException namingException = new NamingException("Not remotable: '" + name + "'.");
                 res.setResult(new ThrowableArtifact(namingException));
             }
         }
 
     }
 
-    private void log(EJBMetaDataImpl metaData) {
+    private void log(final EJBMetaDataImpl metaData) {
         if (logger.isDebugEnabled()) {
             final StringBuilder sb = new StringBuilder();
             sb.append("Sending Ejb(");
@@ -490,7 +497,7 @@ class JndiRequestHandler {
             sb.append(metaData.getDeploymentID());
             sb.append(", properties=[");
             final String delimiter = "|";
-            for (Map.Entry<Object, Object> entry : metaData.getProperties().entrySet()) {
+            for (final Map.Entry<Object, Object> entry : metaData.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append("=").append(entry.getValue()).append(delimiter);
             }
             if (metaData.getProperties().size() > 1) {
@@ -501,21 +508,21 @@ class JndiRequestHandler {
         }
     }
 
-    protected void updateServer(JNDIRequest req, JNDIResponse res, ProxyInfo proxyInfo) {
+    protected void updateServer(final JNDIRequest req, final JNDIResponse res, final ProxyInfo proxyInfo) {
         clusterableRequestHandler.updateServer(proxyInfo.getBeanContext(), req, res);
     }
 
-    private void doList(JNDIRequest req, JNDIResponse res, String prefix) {
-        String name = req.getRequestString();
+    private void doList(final JNDIRequest req, final JNDIResponse res, final String prefix) {
+        final String name = req.getRequestString();
         try {
-            NamingEnumeration<NameClassPair> namingEnumeration = rootContext.list(prefix + name);
+            final NamingEnumeration<NameClassPair> namingEnumeration = rootContext.list(prefix + name);
             if (namingEnumeration == null) {
                 res.setResponseCode(ResponseCodes.JNDI_OK);
                 res.setResult(null);
             } else {
                 res.setResponseCode(ResponseCodes.JNDI_ENUMERATION);
-                ArrayList<NameClassPair> list = Collections.list(namingEnumeration);
-                for (NameClassPair pair : list) {
+                final ArrayList<NameClassPair> list = Collections.list(namingEnumeration);
+                for (final NameClassPair pair : list) {
                     if (pair.getClassName().equals(IvmContext.class.getName())) {
                         pair.setClassName(javax.naming.Context.class.getName());
                     }
@@ -530,23 +537,23 @@ class JndiRequestHandler {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     public static class DbcpDataSource {
 
         private final Object object;
         private final Class clazz;
 
-        public DbcpDataSource(Object object) {
+        public DbcpDataSource(final Object object) {
             clazz = object.getClass();
             this.object = object;
         }
 
         public java.lang.String getDriverClassName() throws Exception {
             try {
-            return (String) clazz.getMethod("getDriverClassName").invoke(object);
+                return (String) clazz.getMethod("getDriverClassName").invoke(object);
             } catch (NoSuchMethodException nsme) {
                 return (String) clazz.getMethod("getDriverClass").invoke(object);
-        }
+            }
         }
 
         public java.lang.String getPassword() throws Exception {
@@ -555,10 +562,10 @@ class JndiRequestHandler {
 
         public java.lang.String getUrl() throws Exception {
             try {
-            return (String) clazz.getMethod("getUrl").invoke(object);
+                return (String) clazz.getMethod("getUrl").invoke(object);
             } catch (NoSuchMethodException nsme) {
                 return (String) clazz.getMethod("getJdbcUrl").invoke(object);
-        }
+            }
         }
 
         public java.lang.String getUsername() throws Exception {

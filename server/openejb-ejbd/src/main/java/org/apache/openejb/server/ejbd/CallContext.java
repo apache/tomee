@@ -22,10 +22,11 @@ import org.apache.openejb.client.ServerMetaData;
 
 import java.util.HashMap;
 
+@SuppressWarnings("unchecked")
 public class CallContext {
 
-    private static final ThreadLocal threads = new ThreadLocal();
-    private final HashMap<Class, Object> data = new HashMap();
+    private static final ThreadLocal<CallContext> threads = new ThreadLocal<CallContext>();
+    private final HashMap data = new HashMap();
 
     public CallContext() {
     }
@@ -34,11 +35,11 @@ public class CallContext {
         data.clear();
     }
 
-    public <T> T get(Class<T> type) {
-        return (T)data.get(type);
+    public <T> T get(final Class<T> type) {
+        return (T) data.get(type);
     }
 
-    public <T> T set(Class<T> type, T value) {
+    public <T> T set(final Class<T> type, final T value) {
         return (T) data.put(type, value);
     }
 
@@ -46,38 +47,39 @@ public class CallContext {
         return get(BeanContext.class);
     }
 
-    public void setBeanContext(BeanContext info) {
+    public void setBeanContext(final BeanContext info) {
         set(BeanContext.class, info);
     }
 
-
-    public void setServerMetaData(ServerMetaData serverMetaData){
+    public void setServerMetaData(final ServerMetaData serverMetaData) {
         set(ServerMetaData.class, serverMetaData);
     }
 
-    public ServerMetaData getServerMetaData(){
+    public ServerMetaData getServerMetaData() {
         return get(ServerMetaData.class);
     }
-    
+
     public EJBRequest getEJBRequest() {
         return get(EJBRequest.class);
     }
 
-    public void setEJBRequest(EJBRequest request) {
+    public void setEJBRequest(final EJBRequest request) {
         set(EJBRequest.class, request);
     }
 
     public static void setCallContext(CallContext ctx) {
         if (ctx == null) {
-            ctx = (CallContext) threads.get();
-            if (ctx != null) ctx.reset();
+            ctx = threads.get();
+            if (ctx != null) {
+                ctx.reset();
+            }
         } else {
             threads.set(ctx);
         }
     }
 
     public static CallContext getCallContext() {
-        CallContext ctx = (CallContext) threads.get();
+        CallContext ctx = threads.get();
         if (ctx == null) {
             ctx = new CallContext();
             threads.set(ctx);

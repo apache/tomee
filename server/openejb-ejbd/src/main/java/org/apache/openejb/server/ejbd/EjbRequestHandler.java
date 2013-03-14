@@ -32,6 +32,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.security.auth.login.LoginException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
@@ -43,6 +44,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class EjbRequestHandler {
+
     public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("ejb"), "org.apache.openejb.server.util.resources");
@@ -83,56 +85,72 @@ class EjbRequestHandler {
         }
 
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        try {
-            final Object clientIdentity = req.getClientIdentity();
-            if (clientIdentity != null) {//noinspection unchecked
-                securityService.associate(clientIdentity);
-            }
-        } catch (Throwable t) {
-            replyWithFatalError(version, out, t, "Client identity is not valid - " + req);
-            return;
-        }
-
+        boolean failed = false;
         final CallContext call;
-        final BeanContext di;
 
         try {
-            di = this.daemon.getDeployment(req);
-        } catch (RemoteException e) {
-            replyWithFatalError(version, out, e, "No such deployment");
-            return;
-        } catch (Throwable t) {
-            replyWithFatalError(version, out, t, "Unkown error occured while retrieving deployment");
-            return;
-        }
+            try {
+                final Object clientIdentity = req.getClientIdentity();
+                if (clientIdentity != null) {//noinspection unchecked
+                    securityService.associate(clientIdentity);
+                }
+            } catch (LoginException t) {
+                replyWithFatalError(version, out, t, "Client identity is not valid - " + req);
+                failed = true;
+                return;
+            }
 
-        //  Need to set this for deserialization of the body
-        final ClassLoader classLoader = di.getBeanClass().getClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
+            final BeanContext di;
 
-        try {
-            res.start(EJBResponse.Time.DESERIALIZATION);
+            try {
+                di = this.daemon.getDeployment(req);
+            } catch (RemoteException e) {
+                replyWithFatalError(version, out, e, "No such deployment");
+                failed = true;
+                return;
+            } catch (Throwable t) {
+                replyWithFatalError(version, out, t, "Unkown error occured while retrieving deployment: " + req);
+                failed = true;
+                return;
+            }
 
-            req.getBody().readExternal(in);
-            version = req.getVersion();
+            try {
 
-            res.stop(EJBResponse.Time.DESERIALIZATION);
-        } catch (Throwable t) {
-            replyWithFatalError(version, out, t, "Error caught during request processing");
-            return;
-        }
+                //Need to set this for deserialization of the body - Will always be reset by EjbDaemon
+                final ClassLoader classLoader = di.getBeanClass().getClassLoader();
+                Thread.currentThread().setContextClassLoader(classLoader);
 
-        try {
-            call = CallContext.getCallContext();
-            call.setEJBRequest(req);
-            call.setBeanContext(di);
-        } catch (Throwable t) {
-            replyWithFatalError(version, out, t, "Unable to set the thread context for this request");
-            return;
+                res.start(EJBResponse.Time.DESERIALIZATION);
+
+                req.getBody().readExternal(in);
+                version = req.getVersion();
+
+                res.stop(EJBResponse.Time.DESERIALIZATION);
+            } catch (Throwable t) {
+                replyWithFatalError(version, out, t, "Error caught during request body deserialization: " + req);
+                failed = true;
+                return;
+            }
+
+            try {
+                call = CallContext.getCallContext();
+                call.setEJBRequest(req);
+                call.setBeanContext(di);
+            } catch (Throwable t) {
+                replyWithFatalError(version, out, t, "Unable to set the thread call context for this request: " + req);
+                failed = true;
+                return;
+            }
+
+        } finally {
+            if (failed) {
+                securityService.disassociate();
+            }
         }
 
         res.start(EJBResponse.Time.CONTAINER);
         boolean respond = true;
+
         try {
             switch (req.getRequestMethod()) {
                 // Remote interface methods
@@ -205,9 +223,10 @@ class EjbRequestHandler {
                 case FUTURE_CANCEL:
                     doFUTURE_CANCEL_METHOD(req, res);
                     break;
-            }
 
-            res.stop(EJBResponse.Time.CONTAINER);
+                default:
+                    throw new org.apache.openejb.SystemException("Unexpected request method: " + req.getRequestMethod());
+            }
 
         } catch (org.apache.openejb.InvalidateReferenceException e) {
             res.setResponse(version, ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
@@ -215,13 +234,19 @@ class EjbRequestHandler {
             res.setResponse(version, ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.apache.openejb.SystemException e) {
             res.setResponse(version, ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
-            logger.error(req + ": OpenEJB encountered an unknown system error in container: ", e);
+            logger.error("System error in container for request: " + req, e);
         } catch (Throwable t) {
 
             replyWithFatalError(version, out, t, "Unknown error in container");
             respond = false;
 
         } finally {
+
+            try {
+                res.stop(EJBResponse.Time.CONTAINER);
+            } catch (Throwable e) {
+                //Ignore
+            }
 
             if (logger.isDebugEnabled()) {
                 //The req and res toString overrides are volatile
@@ -281,19 +306,19 @@ class EjbRequestHandler {
             }
             final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
-//            Object result = c.invoke(req.getDeploymentId(),
-//                    req.getInterfaceClass(), req.getMethodInstance(),
-//                    req.getMethodParameters(),
-//                    req.getPrimaryKey()
-//            );
+            //            Object result = c.invoke(req.getDeploymentId(),
+            //                    req.getInterfaceClass(), req.getMethodInstance(),
+            //                    req.getMethodParameters(),
+            //                    req.getPrimaryKey()
+            //            );
 
             Object result = c.invoke(
-                    req.getDeploymentId(),
-                    InterfaceType.EJB_OBJECT,
-                    req.getInterfaceClass(),
-                    req.getMethodInstance(),
-                    req.getMethodParameters(),
-                    req.getPrimaryKey());
+                                        req.getDeploymentId(),
+                                        InterfaceType.EJB_OBJECT,
+                                        req.getInterfaceClass(),
+                                        req.getMethodInstance(),
+                                        req.getMethodParameters(),
+                                        req.getPrimaryKey());
 
             //Pass the internal value to the remote client, as AsyncResult is not serializable
             if (result != null && asynchronous) {
@@ -315,13 +340,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         final Object result = c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_HOME,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                                          req.getDeploymentId(),
+                                          InterfaceType.EJB_HOME,
+                                          req.getInterfaceClass(),
+                                          req.getMethodInstance(),
+                                          req.getMethodParameters(),
+                                          req.getPrimaryKey()
+                                      );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, result);
     }
@@ -332,13 +357,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_HOME,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                                    req.getDeploymentId(),
+                                    InterfaceType.EJB_HOME,
+                                    req.getInterfaceClass(),
+                                    req.getMethodInstance(),
+                                    req.getMethodParameters(),
+                                    req.getPrimaryKey()
+                                );
 
         if (result instanceof ProxyInfo) {
             final ProxyInfo info = (ProxyInfo) result;
@@ -357,13 +382,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_HOME,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                                    req.getDeploymentId(),
+                                    InterfaceType.EJB_HOME,
+                                    req.getInterfaceClass(),
+                                    req.getMethodInstance(),
+                                    req.getMethodParameters(),
+                                    req.getPrimaryKey()
+                                );
 
         /* Multiple instances found */
         if (result instanceof Collection) {
@@ -405,9 +430,9 @@ class EjbRequestHandler {
         } else {
 
             final String message = "The bean is not EJB compliant. " +
-                    "The finder method [" + req.getMethodInstance().getName() + "] is declared " +
-                    "to return neither Collection nor the Remote Interface, " +
-                    "but [" + result.getClass().getName() + "]";
+                                   "The finder method [" + req.getMethodInstance().getName() + "] is declared " +
+                                   "to return neither Collection nor the Remote Interface, " +
+                                   "but [" + result.getClass().getName() + "]";
             result = new RemoteException(message);
             logger.error(req + " " + message);
             res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, result);
@@ -436,13 +461,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_OBJECT,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                    req.getDeploymentId(),
+                    InterfaceType.EJB_OBJECT,
+                    req.getInterfaceClass(),
+                    req.getMethodInstance(),
+                    req.getMethodParameters(),
+                    req.getPrimaryKey()
+                );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
@@ -461,13 +486,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_HOME,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                    req.getDeploymentId(),
+                    InterfaceType.EJB_HOME,
+                    req.getInterfaceClass(),
+                    req.getMethodInstance(),
+                    req.getMethodParameters(),
+                    req.getPrimaryKey()
+                );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
@@ -478,13 +503,13 @@ class EjbRequestHandler {
         final RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         c.invoke(
-                req.getDeploymentId(),
-                InterfaceType.EJB_HOME,
-                req.getInterfaceClass(),
-                req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
+                    req.getDeploymentId(),
+                    InterfaceType.EJB_HOME,
+                    req.getInterfaceClass(),
+                    req.getMethodInstance(),
+                    req.getMethodParameters(),
+                    req.getPrimaryKey()
+                );
 
         res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, null);
     }
@@ -497,7 +522,7 @@ class EjbRequestHandler {
 
         //This is fatal for the client, but not the server.
         if (logger.isWarningEnabled()) {
-            logger.warning(message + " - Debug for stacktrace: " + error);
+            logger.warning(message + " - Debug " + logger + " for stacktrace: " + error);
         } else if (logger.isDebugEnabled()) {
             logger.debug(message, error);
         }

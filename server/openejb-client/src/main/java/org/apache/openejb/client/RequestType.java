@@ -19,11 +19,11 @@ package org.apache.openejb.client;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  *
  */
 public enum RequestType {
+
     NOP_REQUEST((byte) -1),
     EJB_REQUEST((byte) 0),
     JNDI_REQUEST((byte) 1),
@@ -38,10 +38,12 @@ public enum RequestType {
     private final static Map<Byte, RequestType> ENUM_MAP = new HashMap<Byte, RequestType>();
 
     static {
-        for (RequestType e : RequestType.values()) ENUM_MAP.put(e.code, e);
+        for (final RequestType e : RequestType.values()) {
+            ENUM_MAP.put(e.code, e);
+        }
     }
 
-    private RequestType(byte code) {
+    private RequestType(final byte code) {
         this.code = code;
     }
 
@@ -49,9 +51,11 @@ public enum RequestType {
         return code;
     }
 
-    public static RequestType valueOf(byte key) {
-        RequestType result = ENUM_MAP.get(key);
-        if (result == null) throw new IllegalArgumentException();
+    public static RequestType valueOf(final byte key) {
+        final RequestType result = ENUM_MAP.get(key);
+        if (result == null) {
+            throw new IllegalArgumentException();
+        }
         return result;
     }
 }

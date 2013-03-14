@@ -24,26 +24,29 @@ import org.apache.openejb.util.Base64;
 import javax.security.auth.login.LoginException;
 
 public class BasicAuthHttpListenerWrapper implements HttpListener {
-    private HttpListener httpListener;
-    private String realmName;
 
-    public BasicAuthHttpListenerWrapper(HttpListener httpListener, String realmName) {
+    private final HttpListener httpListener;
+    private final String realmName;
+
+    public BasicAuthHttpListenerWrapper(final HttpListener httpListener, final String realmName) {
         this.httpListener = httpListener;
         this.realmName = realmName;
     }
 
-    public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
+    @Override
+    @SuppressWarnings("unchecked")
+    public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         Object token = null;
 
         String auth = request.getHeader("Authorization");
         if (auth != null && auth.length() > 0) {
             if (auth.toUpperCase().startsWith("BASIC ")) {
                 auth = auth.substring(6);
-                String decoded = new String(Base64.decodeBase64(auth.getBytes()));
-                String[] parts = decoded.split(":");
+                final String decoded = new String(Base64.decodeBase64(auth.getBytes()));
+                final String[] parts = decoded.split(":");
                 if (parts != null && parts.length == 2) {
-                    String username = parts[0];
-                    String password = parts[1];
+                    final String username = parts[0];
+                    final String password = parts[1];
 
                     try {
                         final SecurityService securityService = getSecurityService();
@@ -65,13 +68,12 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
         }
 
         if (token != null) {
-           getSecurityService().disassociate();
+            getSecurityService().disassociate();
         }
     }
 
     private SecurityService getSecurityService() {
-        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        return securityService;
+        return SystemInstance.get().getComponent(SecurityService.class);
     }
 
 }

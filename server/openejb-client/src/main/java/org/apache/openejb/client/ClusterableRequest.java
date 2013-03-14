@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.client;
 
-
 public interface ClusterableRequest extends Request {
+
     void setServerHash(int serverHash);
 
     int getServerHash();

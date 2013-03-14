@@ -28,15 +28,17 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.login.LoginException;
 
 public class OpenEJBLoginValidator extends UsernameTokenValidator {
+
+    @SuppressWarnings("unchecked")
     @Override
-    protected void verifyDigestPassword(UsernameToken usernameToken,
-                                        RequestData data) throws WSSecurityException {
+    protected void verifyDigestPassword(final UsernameToken usernameToken,
+                                        final RequestData data) throws WSSecurityException {
         // check password
         super.verifyDigestPassword(usernameToken, data);
 
         // get the plain text password
-        WSPasswordCallback pwCb = new WSPasswordCallback(usernameToken.getName(),
-                null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN, data);
+        final WSPasswordCallback pwCb = new WSPasswordCallback(usernameToken.getName(),
+                                                               null, usernameToken.getPasswordType(), WSPasswordCallback.USERNAME_TOKEN, data);
         try {
             data.getCallbackHandler().handle(new Callback[]{pwCb});
         } catch (Exception e) {
@@ -46,8 +48,8 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
         // log the user
         final String user = usernameToken.getName();
         final String password = pwCb.getPassword();
-        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        Object token;
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final Object token;
         try {
             securityService.disassociate();
 
