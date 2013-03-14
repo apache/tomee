@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -30,13 +31,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class ProvisioningUtil {
     public static final String OPENEJB_DEPLOYER_CACHE_FOLDER = "openejb.deployer.cache.folder";
     public static final String HTTP_PREFIX = "http";
+    public static final String MVN_PREFIX = "mvn:";
     private static final int CONNECT_TIMEOUT = 10000;
 
     private static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
+    private static final String REPO1 = "http://repo1.maven.org/maven2/";
     private static final String ZIP_KEY = "zip";
     private static final String DESTINATION_KEY = "destination";
     private static final String JAR_KEY = "jar";
@@ -112,8 +116,74 @@ public class ProvisioningUtil {
             final LocationResolver instance = (LocationResolver) clazz.newInstance();
             return instance.resolve(rawLocation);
         } catch (Exception e) {
+            if (rawLocation.startsWith(MVN_PREFIX)) {
+                try {
+                    final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
+                    return realLocation(repo1Url);
+                } catch (MalformedURLException e1) {
+                    Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
+                }
+            }
             return rawLocation;
         }
+    }
+
+    private static String quickMvnUrl(final String raw) throws MalformedURLException {
+        final StringBuilder builder = new StringBuilder();
+        final String toParse;
+        if (!raw.contains("!")) {
+            builder.append(REPO1);
+            toParse = raw;
+        } else {
+            final int repoIdx = raw.lastIndexOf("!");
+            toParse = raw.substring(repoIdx + 1);
+            final String repo = raw.substring(0, repoIdx);
+            builder.append(repo);
+            if (!repo.endsWith("/")) {
+                builder.append("/");
+            }
+        }
+
+        final String[] segments = toParse.split("/");
+        if (segments.length < 3) {
+            throw new MalformedURLException("Invalid path. " + raw);
+        }
+
+        final String group = segments[0];
+        if (group.trim().isEmpty()) {
+            throw new MalformedURLException("Invalid groupId. " + raw);
+        }
+        builder.append(group.replace('.', '/')).append("/");
+
+        final String artifact = segments[1];
+        if (artifact.trim().isEmpty()) {
+            throw new MalformedURLException("Invalid artifactId. " + raw);
+        }
+        builder.append(artifact).append("/");
+
+        final String version = segments[2];
+        if (version.trim().isEmpty()) {
+            throw new MalformedURLException("Invalid artifactId. " + raw);
+        }
+        builder.append(version).append("/");
+
+        String type = "jar";
+        if (segments.length >= 4 && segments[3].trim().length() > 0) {
+            type = segments[3];
+        }
+
+        String fullClassifier = null;
+        if (segments.length >= 5 && segments[4].trim().length() > 0) {
+            fullClassifier = "-" + segments[4];
+        }
+
+        builder.append(artifact).append("-").append(version);
+        if (fullClassifier != null) {
+            builder.append(fullClassifier);
+        }
+        builder.append(".").append(type);
+
+        return builder.toString();
     }
 
     public static void addAdditionalLibraries() throws IOException {

@@ -18,6 +18,7 @@ package org.apache.openejb.resolver;
 
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.LocationResolver;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.resolver.maven.Handler;
 import org.apache.openejb.resolver.maven.Parser;
 
@@ -27,18 +28,16 @@ import java.net.URL;
 import static org.apache.openejb.loader.ProvisioningUtil.cacheFile;
 
 public class Resolver implements LocationResolver {
-    public static final String MVN_PREFIX = "mvn:";
-
     @Override
     public String resolve(final String rawLocation) throws Exception {
-        if (rawLocation.startsWith(MVN_PREFIX) && rawLocation.length() > MVN_PREFIX.length()) {
+        if (rawLocation.startsWith(ProvisioningUtil.MVN_PREFIX) && rawLocation.length() > ProvisioningUtil.MVN_PREFIX.length()) {
 
-            final String info = rawLocation.substring(MVN_PREFIX.length());
+            final String info = rawLocation.substring(ProvisioningUtil.MVN_PREFIX.length());
             final Parser parser = new Parser(info);
             final File file = cacheFile(parser.getArtifactPath());
             if (!file.exists() || !file.canRead()) {
                 try {
-                    final URL url = new URL(MVN_PREFIX.substring(MVN_PREFIX.length() - 1), "localhost", -1, info, new Handler());
+                    final URL url = new URL(ProvisioningUtil.MVN_PREFIX.substring(ProvisioningUtil.MVN_PREFIX.length() - 1), "localhost", -1, info, new Handler());
                     final File parentFile = file.getParentFile();
                     if (!parentFile.exists()) {
                         if (!parentFile.mkdirs()) {
