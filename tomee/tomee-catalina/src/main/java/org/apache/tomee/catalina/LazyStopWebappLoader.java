@@ -21,18 +21,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.VirtualWebappLoader;
 
 public class LazyStopWebappLoader extends VirtualWebappLoader {
-    private static String currentAppId = null;
-
-    private Context standardContext = null;
-
-    public LazyStopWebappLoader(final Context ctx) {
-        super(ctx.getParentClassLoader());
-        standardContext = ctx;
-    }
-
-    public LazyStopWebappLoader() {
-        // no-op
-    }
+    private static final ThreadLocal<String> currentAppId = new ThreadLocal<String>();
 
     @Override
     public void backgroundProcess() {
@@ -52,27 +41,27 @@ public class LazyStopWebappLoader extends VirtualWebappLoader {
 
     @Override
     protected synchronized void startInternal() throws LifecycleException {
-        currentAppId = standardContext.getName(); // needed by classloader instantiated by next line
+        currentAppId.set(getContainer().getName()); // needed by classloader instantiated by next line
         try {
             super.startInternal();
         } finally {
-            currentAppId = null;
-        }
-
-        if (getClassLoader() instanceof LazyStopWebappClassLoader) {
-            ((LazyStopWebappClassLoader) getClassLoader()).setRelatedContext(standardContext);
+            currentAppId.remove();
         }
     }
 
     public static String getCurrentAppId() {
-        return currentAppId;
+        final String id = currentAppId.get();
+        if (id == null) {
+            currentAppId.remove();
+        }
+        return id;
     }
 
     public String getAppId() {
-        if (standardContext == null) {
+        if (getContainer() == null) {
             return null;
         }
-        return standardContext.getName();
+        return getContainer().getName();
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.openejb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
+import org.apache.openejb.config.QuickJarsXmlParser;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -308,6 +309,9 @@ public class ClassLoaderUtil {
             }
         }
 
+        final Collection<URL> jarsXmlUrls = QuickJarsXmlParser.parse(new File(appId, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs();
+        jarsXmlUrls.addAll(QuickJarsXmlParser.parse(new File(appId, "WEB-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
+
         final URL[] urls;
         ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(updatedAppId);
         if (configurer == null) { // try the complete path
@@ -321,10 +325,18 @@ public class ClassLoaderUtil {
                 }
             }
             urlList.addAll(Arrays.asList(configurer.additionalURLs()));
+            urlList.addAll(jarsXmlUrls);
             urls = urlList.toArray(new URL[urlList.size()]);
-        } else {
+        } else if (jarsXmlUrls.isEmpty()) {
             urls = rawUrls;
+        } else {
+            final Collection<URL> urlList = new ArrayList<URL>();
+            urlList.addAll(Arrays.asList(rawUrls));
+            urlList.addAll(jarsXmlUrls);
+            urls = urlList.toArray(new URL[urlList.size()]);
         }
+
+
 
         return new TempClassLoader(createClassLoader(appId, urls, parent));
     }
@@ -522,6 +534,9 @@ public class ClassLoaderUtil {
         String id = rawId;
         if (id != null && (id.startsWith("/") || id.startsWith("\\")) && !new File(id).exists() && id.length() > 1) {
             id = id.substring(1);
+        }
+        if (id == null) {
+            id = "";
         }
 
         // TODO: see how to manage tomee/openejb prefix

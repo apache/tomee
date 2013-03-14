@@ -46,7 +46,8 @@ public class QuickContextXmlParser extends DefaultHandler {
                              final String qName, final Attributes attributes) throws SAXException {
         if ("Loader".equalsIgnoreCase(localName)) {
             final String className = attributes.getValue("className");
-            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)) {
+            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)
+                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
                 virtualClasspath = attributes.getValue("virtualClasspath");
             } // else ?
         }

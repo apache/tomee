@@ -59,6 +59,7 @@ import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.config.QuickJarsXmlParser;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -1707,6 +1708,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             jars.addAll(Arrays.asList(configurer.additionalURLs()));
         }
+
+        final String prefix;
+        if (appInfo.webAppAlone) {
+            prefix = "WEB-INF/";
+        } else {
+            prefix = "META-INF/";
+        }
+        jars.addAll(QuickJarsXmlParser.parse(new File(appInfo.path, prefix + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
 
         final URL[] filtered = jars.toArray(new URL[jars.size()]);
 

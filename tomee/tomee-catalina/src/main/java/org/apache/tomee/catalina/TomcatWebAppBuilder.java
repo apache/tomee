@@ -19,7 +19,6 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -34,7 +33,6 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardWrapper;
@@ -666,7 +664,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final StandardContext standardContext = contextInfo.standardContext;
 
                 undeploy(standardContext, contextInfo);
-                final File extracted = warPath(standardContext);
+                final File extracted = Contexts.warPath(standardContext);
                 if (isExtracted(extracted)) {
                     deleteDir(extracted);
                 }
@@ -732,7 +730,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         initJ2EEInfo(standardContext);
 
-        File warFile = warPath(standardContext);
+        File warFile = Contexts.warPath(standardContext);
         if (!warFile.isDirectory()) {
             try {
                 warFile = DeploymentLoader.unpack(warFile);
@@ -834,99 +832,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         return path;
     }
 
-    private static File warPath(final StandardContext standardContext) {
-        final File file = realWarPath(standardContext);
-        if (file == null) {
-            return file;
-        }
-
-        final String name = file.getName();
-        if (!file.isDirectory() && name.endsWith(".war")) {
-            final File extracted = new File(file.getParentFile(), name.substring(0, name.length() - ".war".length()));
-            if (extracted.exists()) {
-                return extracted;
-            }
-        }
-        return file;
-    }
-
-    private static File realWarPath(final StandardContext standardContext) {
-        File docBase;
-        Container container = standardContext;
-        while (container != null) {
-            if (container instanceof Host) {
-                break;
-            }
-            container = container.getParent();
-        }
-
-        File file = new File(standardContext.getDocBase());
-        if (!file.isAbsolute()) {
-            if (container == null) {
-                docBase = new File(engineBase(standardContext), standardContext.getDocBase());
-            } else {
-                final String appBase = ((Host) container).getAppBase();
-                file = new File(appBase);
-                if (!file.isAbsolute()) {
-                    file = new File(engineBase(standardContext), appBase);
-                }
-                docBase = new File(file, standardContext.getDocBase());
-            }
-        } else {
-            docBase = file;
-        }
-
-        if (!docBase.exists()) { // for old compatibility, will be removed soon
-            return oldRealWarPath(standardContext);
-        }
-
-        final String name = docBase.getName();
-        if (name.endsWith(".war")) {
-            final File extracted = new File(docBase.getParentFile(), name.substring(0, name.length() - ".war".length()));
-            if (extracted.exists()) {
-                return extracted;
-            }
-        }
-
-        return docBase;
-    }
-
-    private static File engineBase(final StandardContext standardContext) {
-        String base=System.getProperty(Globals.CATALINA_BASE_PROP);
-        if( base == null ) {
-            final StandardEngine eng = (StandardEngine) standardContext.getParent().getParent();
-            base = eng.getBaseDir();
-        }
-        return new File(base);
-    }
-
-    @Deprecated
-    private static File oldRealWarPath(final StandardContext standardContext) {
-        String doc = standardContext.getDocBase();
-        // handle ROOT case
-        if (doc == null || doc.length() == 0) {
-            doc = "ROOT";
-        }
-
-        File war = new File(doc);
-        if (war.exists()) {
-            return war;
-        }
-
-        final StandardHost host = (StandardHost) standardContext.getParent();
-        final String base = host.getAppBase();
-        war = new File(base, doc);
-        if (war.exists()) {
-            return war;
-        }
-
-        war = new File(new File(System.getProperty("catalina.home"), base), doc);
-        if (war.exists()) {
-            return war;
-        }
-        return new File(new File(System.getProperty("catalina.base"), base), doc); // shouldn't occur
-    }
-
     public ContextInfo getContextInfo(final String appName) {
         ContextInfo info = null;
         for (Map.Entry<String, ContextInfo> current : infos.entrySet()) {
@@ -1020,8 +925,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
         initContextLoader(standardContext);
-
-
     }
 
     private void initContextLoader(final StandardContext standardContext) {
@@ -1036,9 +939,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
+        if (standardContextLoader != null && LazyStopWebappLoader.class.isInstance(standardContextLoader)) {
+            standardContextLoader.setContainer(standardContext);
+            return; // no need to replace the loader
+        }
+
         // we just want to wrap it to lazy stop it (afterstop)
         // to avoid classnotfound in @PreDestoy or destroyApplication()
-        final VirtualWebappLoader loader = new LazyStopWebappLoader(standardContext);
+        final VirtualWebappLoader loader = new ProvisioningWebappLoader();
         loader.setDelegate(standardContext.getDelegate());
         loader.setLoaderClass(LazyStopWebappClassLoader.class.getName());
 
@@ -1759,7 +1667,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final StandardContext standardContext = contextInfo.standardContext;
                 final HostConfig deployer = contextInfo.deployer;
                 deployer.unmanageApp(standardContext.getPath());
-                final File realPath = warPath(standardContext);
+                final File realPath = Contexts.warPath(standardContext);
                 if (realPath != null) {
                     deleteDir(realPath);
                 }
@@ -1933,7 +1841,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final TomcatDeploymentLoader tomcatDeploymentLoader = new TomcatDeploymentLoader(standardContext, id);
         final AppModule appModule;
         try {
-            appModule = tomcatDeploymentLoader.load(warPath(standardContext));
+            appModule = tomcatDeploymentLoader.load(Contexts.warPath(standardContext));
         } catch (OpenEJBException e) {
             throw new TomEERuntimeException(e);
         }
