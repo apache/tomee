@@ -19,9 +19,15 @@ package org.apache.openejb.loader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -293,6 +299,57 @@ public class Files {
         return sb.substring(0, sb.length() - delimiter.length());
     }
 
+    // return the token as url if simply a path otheriwse if ending by *.jar returning the list of
+    // files in the folder
+    public static Set<URL> listJars(final String path) {
+        final Set<URL> set = new HashSet<URL>();
+
+        String token = path;
+        if (token.endsWith("*.jar")) {
+            token = token.substring(0, token.length() - "*.jar".length());
+
+            final File directory = new File(token);
+            if (!directory.isDirectory()) {
+                return set;
+            }
+
+            final String filenames[] = directory.list();
+            Arrays.sort(filenames);
+
+            for (final String rawFilename : filenames) {
+                final String filename = rawFilename.toLowerCase(Locale.ENGLISH);
+                if (!filename.endsWith(".jar")) {
+                    continue;
+                }
+
+                final File file = new File(directory, rawFilename);
+                if (!file.isFile()) {
+                    continue;
+                }
+
+                try {
+                    set.add(file.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    // no-op
+                }
+            }
+        } else {
+            // single file or directory
+            final File file = new File(token);
+            if (!file.exists()) {
+                return set;
+            }
+
+            try {
+                set.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                // no-op
+            }
+        }
+
+        return set;
+    }
+
     public static class FileRuntimeException extends RuntimeException {
         public FileRuntimeException(final String str) {
             super(str);
@@ -312,5 +369,4 @@ public class Files {
             super(e);
         }
     }
-
 }

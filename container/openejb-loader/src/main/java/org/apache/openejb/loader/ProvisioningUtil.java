@@ -111,7 +111,7 @@ public class ProvisioningUtil {
                 return path;
             }
         }
-        try {
+        try { // full maven resolution
             final Class<?> clazz = ProvisioningUtil.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
             final LocationResolver instance = (LocationResolver) clazz.newInstance();
             return instance.resolve(rawLocation);
@@ -123,17 +123,44 @@ public class ProvisioningUtil {
                 } catch (MalformedURLException e1) {
                     Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
                 }
+            } else { // try url
+                try {
+                    final File file = cacheFile(lastPart(rawLocation));
+                    final URL url = new URL(rawLocation);
+                    InputStream is = null;
+                    try {
+                        is = new BufferedInputStream(url.openStream());
+                        IO.copy(is, file);
+                        return file.getAbsolutePath();
+                    } finally {
+                        IO.close(is);
+                    }
+                } catch (final Exception e1) {
+                    // no-op
+                }
             }
+
+            // if it was not an url that's just a file path
             return rawLocation;
         }
     }
 
     private static String quickMvnUrl(final String raw) throws MalformedURLException {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         final String toParse;
         if (!raw.contains("!")) {
+            // try first local file with default maven settings
+            final File file = new File(new StringBuilder(System.getProperty("user.home")).append("/.m2/repository/").append(mvnArtifactPath(raw)).toString());
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            }
+
+            // else use repo1
+            builder = new StringBuilder();
             builder.append(REPO1);
             toParse = raw;
+
+            // try first locally
         } else {
             final int repoIdx = raw.lastIndexOf("!");
             toParse = raw.substring(repoIdx + 1);
@@ -144,26 +171,33 @@ public class ProvisioningUtil {
             }
         }
 
+        builder.append(mvnArtifactPath(toParse));
+
+        return builder.toString();
+    }
+
+    private static String mvnArtifactPath(final String toParse) throws MalformedURLException {
+        final StringBuilder builder = new StringBuilder();
         final String[] segments = toParse.split("/");
         if (segments.length < 3) {
-            throw new MalformedURLException("Invalid path. " + raw);
+            throw new MalformedURLException("Invalid path. " + toParse);
         }
 
         final String group = segments[0];
         if (group.trim().isEmpty()) {
-            throw new MalformedURLException("Invalid groupId. " + raw);
+            throw new MalformedURLException("Invalid groupId. " + toParse);
         }
         builder.append(group.replace('.', '/')).append("/");
 
         final String artifact = segments[1];
         if (artifact.trim().isEmpty()) {
-            throw new MalformedURLException("Invalid artifactId. " + raw);
+            throw new MalformedURLException("Invalid artifactId. " + toParse);
         }
         builder.append(artifact).append("/");
 
         final String version = segments[2];
         if (version.trim().isEmpty()) {
-            throw new MalformedURLException("Invalid artifactId. " + raw);
+            throw new MalformedURLException("Invalid artifactId. " + toParse);
         }
         builder.append(version).append("/");
 
@@ -181,9 +215,8 @@ public class ProvisioningUtil {
         if (fullClassifier != null) {
             builder.append(fullClassifier);
         }
-        builder.append(".").append(type);
 
-        return builder.toString();
+        return builder.append(".").append(type).toString();
     }
 
     public static void addAdditionalLibraries() throws IOException {

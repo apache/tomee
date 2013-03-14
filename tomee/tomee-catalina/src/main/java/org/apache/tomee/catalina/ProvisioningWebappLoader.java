@@ -19,7 +19,7 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.openejb.config.QuickJarsXmlParser;
+import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
@@ -57,10 +57,9 @@ public class ProvisioningWebappLoader extends LazyStopWebappLoader {
         // WEB-INF/jars.xml
         if (Context.class.isInstance(getContainer())) {
             final File war = Contexts.warPath(Context.class.cast(getContainer()));
-            final File jarsXml = new File(war, "WEB-INF/" + QuickJarsXmlParser.FILE_NAME);
+            final File jarsXml = new File(war, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME);
             if (jarsXml.exists()) {
-                final QuickJarsXmlParser parser = QuickJarsXmlParser.parse(jarsXml);
-                for (final URL url : parser.getAdditionalURLs()) {
+                for (final URL url : QuickJarsTxtParser.parse(jarsXml)) {
                     builder.append(URLs.toFile(url)).append(";"); // provisiningutil already called so simply decode url
                 }
             }
