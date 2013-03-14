@@ -396,7 +396,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 createApplicationFromFiles(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, files);
             }
 
-            final Collection<URL> jarsXmlUrls = QuickJarsXmlParser.parse(new File(appDir, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs();
+            final Collection<URL> jarsXmlUrls = QuickJarsTxtParser.parse(new File(appDir, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
             final Collection<URL> jarsXmlLib = new ArrayList<URL>();
             if (!jarsXmlUrls.isEmpty()) {
                 for (final URL url : jarsXmlUrls) {
@@ -881,7 +881,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             webUrls.addAll(parser.getAdditionalURLs());
         }
 
-        webUrls.addAll(QuickJarsXmlParser.parse(new File(warFile, "WEB-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
+        webUrls.addAll(QuickJarsTxtParser.parse(new File(warFile, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME)));
 
         final URL[] webUrlsArray = webUrls.toArray(new URL[webUrls.size()]);
 
@@ -1301,7 +1301,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create the class loader
         final List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
-        classPath.addAll(QuickJarsXmlParser.parse(new File(rarFile, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
+        classPath.addAll(QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME)));
         final URL[] urls = classPath.toArray(new URL[classPath.size()]);
         final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, parentClassLoader);
 

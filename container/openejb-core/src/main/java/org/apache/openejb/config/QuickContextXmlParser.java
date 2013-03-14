@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.loader.Files;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -62,47 +64,7 @@ public class QuickContextXmlParser extends DefaultHandler {
                 continue;
             }
 
-            if (token.endsWith("*.jar")) {
-                token = token.substring(0, token.length() - "*.jar".length());
-
-                final File directory = new File(token);
-                if (!directory.isDirectory()) {
-                    continue;
-                }
-
-                final String filenames[] = directory.list();
-                Arrays.sort(filenames);
-
-                for (final String rawFilename : filenames) {
-                    final String filename = rawFilename.toLowerCase(Locale.ENGLISH);
-                    if (!filename.endsWith(".jar")) {
-                        continue;
-                    }
-
-                    final File file = new File(directory, rawFilename);
-                    if (!file.isFile()) {
-                        continue;
-                    }
-
-                    try {
-                        set.add(file.toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        // no-op
-                    }
-                }
-            } else {
-                // single file or directory
-                final File file = new File(token);
-                if (!file.exists()) {
-                    continue;
-                }
-
-                try {
-                    set.add(file.toURI().toURL());
-                } catch (MalformedURLException e) {
-                    // no-op
-                }
-            }
+            set.addAll(Files.listJars(token));
         }
         return set;
     }

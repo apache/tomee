@@ -16,10 +16,9 @@
  */
 package org.apache.openejb;
 
-import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
-import org.apache.openejb.config.QuickJarsXmlParser;
+import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -309,8 +308,8 @@ public class ClassLoaderUtil {
             }
         }
 
-        final Collection<URL> jarsXmlUrls = QuickJarsXmlParser.parse(new File(appId, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs();
-        jarsXmlUrls.addAll(QuickJarsXmlParser.parse(new File(appId, "WEB-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
+        final Collection<URL> jarsXmlUrls = QuickJarsTxtParser.parse(new File(appId, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
+        jarsXmlUrls.addAll(QuickJarsTxtParser.parse(new File(appId, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME)));
 
         final URL[] urls;
         ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(updatedAppId);
