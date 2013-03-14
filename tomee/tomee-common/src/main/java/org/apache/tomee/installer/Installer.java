@@ -188,7 +188,9 @@ public class Installer {
             Installers.writeAll(tomeeXml,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<tomee>\n" +
-                "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n" +
+                "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
+                "  <!-- activate next line to be able to deploy applications in apps -->\n" +
+                "  <!-- <Deployments dir=\"apps\" /> -->\n" +
                 "</tomee>\n", alerts);
         }
     }
