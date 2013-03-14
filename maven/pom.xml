@@ -38,6 +38,7 @@
     <module>openejb-embedded-maven-plugin</module>
     <module>maven-util</module>
     <module>tomee-webapp-archetype</module>
+    <module>jarstxt-maven-plugin</module>
   </modules>
 
   <dependencyManagement>
