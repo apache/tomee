@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
@@ -150,7 +151,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (EjbModule.class.equals(moduleClass)) {
-                final URL[] urls = new URL[]{baseUrl};
+                final URL[] urls = new URL[]{ baseUrl };
 
                 SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
 
@@ -224,7 +225,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (PersistenceModule.class.equals(moduleClass)) {
                 final String jarLocation = URLs.toFilePath(baseUrl);
-                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, getOpenEJBClassLoader());
+                final ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{ baseUrl }, getOpenEJBClassLoader());
 
                 // wrap the EJB Module with an Application Module
                 final AppModule appModule = new AppModule(classLoader, jarLocation);
@@ -392,32 +393,19 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 // todo we should also filter URLs here using DeploymentsResolver.loadFromClasspath
 
-                for (final Map.Entry<String, URL> entry : files.entrySet()) {
-                    // if (entry.getKey().startsWith("lib/")) continue;// will not be scanned since we don't get folder anymore
-                    if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
+                createApplicationFromFiles(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, files);
+            }
 
+            final Collection<URL> jarsXmlUrls = QuickJarsXmlParser.parse(new File(appDir, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs();
+            final Collection<URL> jarsXmlLib = new ArrayList<URL>();
+            if (!jarsXmlUrls.isEmpty()) {
+                for (final URL url : jarsXmlUrls) {
                     try {
-                        final ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{entry.getValue()}, tmpClassLoader);
-
-                        final Class<? extends DeploymentModule> moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
-
-                        if (EjbModule.class.equals(moduleType)) {
-                            ejbModules.put(entry.getKey(), entry.getValue());
-                        } else if (ClientModule.class.equals(moduleType)) {
-                            clientModules.put(entry.getKey(), entry.getValue());
-                        } else if (ConnectorModule.class.equals(moduleType)) {
-                            resouceModules.put(entry.getKey(), entry.getValue());
-                        } else if (WebModule.class.equals(moduleType)) {
-                            webModules.put(entry.getKey(), entry.getValue());
-                        }
-                    } catch (UnsupportedOperationException e) {
-                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
-                        logger.info("Ignoring unknown module type: " + entry.getKey());
-                    } catch (UnknownModuleTypeException e) {
-                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
-                        logger.info("Ignoring unknown module type: " + entry.getKey());
-                    } catch (Exception e) {
-                        throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
+                        detectAndAddModuleToApplication(appId, tmpClassLoader,
+                                ejbModules, clientModules, resouceModules, webModules,
+                                new ImmutablePair<String, URL>(URLs.toFile(url).getAbsolutePath(), url));
+                    } catch (final Exception e) {
+                        jarsXmlLib.add(url);
                     }
                 }
             }
@@ -483,6 +471,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             classPath.addAll(clientModules.values());
             classPath.addAll(rarLibs.values());
             classPath.addAll(extraLibs);
+            classPath.addAll(jarsXmlLib);
             final URL[] urls = classPath.toArray(new URL[classPath.size()]);
 
             SystemInstance.get().fireEvent(new BeforeDeploymentEvent(urls));
@@ -607,6 +596,41 @@ public class DeploymentLoader implements DeploymentFilterable {
         } catch (OpenEJBException e) {
             logger.error("Unable to load EAR: " + jarPath, e);
             throw e;
+        }
+    }
+
+    private void createApplicationFromFiles(String appId, ClassLoader tmpClassLoader, Map<String, URL> ejbModules, Map<String, URL> clientModules, Map<String, URL> resouceModules, Map<String, URL> webModules, HashMap<String, URL> files) throws OpenEJBException {
+        for (final Map.Entry<String, URL> entry : files.entrySet()) {
+            // if (entry.getKey().startsWith("lib/")) continue;// will not be scanned since we don't get folder anymore
+            if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
+
+            try {
+                detectAndAddModuleToApplication(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, entry);
+            } catch (UnsupportedOperationException e) {
+                // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                logger.info("Ignoring unknown module type: " + entry.getKey());
+            } catch (UnknownModuleTypeException e) {
+                // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
+                logger.info("Ignoring unknown module type: " + entry.getKey());
+            } catch (Exception e) {
+                throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void detectAndAddModuleToApplication(String appId, ClassLoader tmpClassLoader, Map<String, URL> ejbModules, Map<String, URL> clientModules, Map<String, URL> resouceModules, Map<String, URL> webModules, Map.Entry<String, URL> entry) throws IOException, UnknownModuleTypeException {
+        final ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{entry.getValue()}, tmpClassLoader);
+
+        final Class<? extends DeploymentModule> moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
+
+        if (EjbModule.class.equals(moduleType)) {
+            ejbModules.put(entry.getKey(), entry.getValue());
+        } else if (ClientModule.class.equals(moduleType)) {
+            clientModules.put(entry.getKey(), entry.getValue());
+        } else if (ConnectorModule.class.equals(moduleType)) {
+            resouceModules.put(entry.getKey(), entry.getValue());
+        } else if (WebModule.class.equals(moduleType)) {
+            webModules.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -856,6 +880,8 @@ public class DeploymentLoader implements DeploymentFilterable {
             final QuickContextXmlParser parser = QuickContextXmlParser.parse(contextXml);
             webUrls.addAll(parser.getAdditionalURLs());
         }
+
+        webUrls.addAll(QuickJarsXmlParser.parse(new File(warFile, "WEB-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
 
         final URL[] webUrlsArray = webUrls.toArray(new URL[webUrls.size()]);
 
@@ -1275,6 +1301,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create the class loader
         final List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
+        classPath.addAll(QuickJarsXmlParser.parse(new File(rarFile, "META-INF/" + QuickJarsXmlParser.FILE_NAME)).getAdditionalURLs());
         final URL[] urls = classPath.toArray(new URL[classPath.size()]);
         final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, parentClassLoader);
 
