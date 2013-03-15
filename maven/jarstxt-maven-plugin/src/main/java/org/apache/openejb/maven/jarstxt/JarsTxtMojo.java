@@ -57,6 +57,8 @@ public class JarsTxtMojo extends AbstractMojo {
                     continue;
                 }
 
+                a.setScope(Artifact.SCOPE_PROVIDED);
+
                 writer.write("mvn:" + a.getGroupId() + "/" + a.getArtifactId() + "/" + a.getVersion());
                 writer.write("\n");
             }
