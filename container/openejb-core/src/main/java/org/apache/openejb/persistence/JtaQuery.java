@@ -22,7 +22,10 @@ import javax.persistence.LockModeType;
 import javax.persistence.Parameter;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,22 +36,44 @@ import java.util.Set;
  * when the query is finished.  This implementation is only for non-transaction queryies
  */
 public class JtaQuery implements Query {
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
+    private final Object[] args;
+    private final Method method;
     private final JtaEntityManager jtaEntityManager;
-    private final Query query;
+    private final Collection<QueryOperation> appliedOperations = new ArrayList<QueryOperation>();
 
-    public JtaQuery(EntityManager entityManager, JtaEntityManager jtaEntityManager, Query query) {
+    private boolean underTx = false;
+    private Query query = null;
+
+    public JtaQuery(EntityManager entityManager, JtaEntityManager jtaEntityManager, Method method, Object... args) {
         this.entityManager = entityManager;
         this.jtaEntityManager = jtaEntityManager;
-        this.query = query;
+        this.method = method;
+        this.args = args;
+        this.underTx = jtaEntityManager.isTransactionActive();
+        createQuery();
+    }
+
+    private void createQuery() {
+        query = jtaEntityManager.createQuery(queryType(), entityManager, method, args);
+        if (!underTx) {
+            for (final QueryOperation op : appliedOperations) {
+                query = op.apply(query);
+            }
+        }
+    }
+
+    protected Class<? extends Query> queryType() {
+        return Query.class;
     }
 
     private EntityManager getEntityManager() {
-        EntityManager em = entityManager;
-        if (!jtaEntityManager.isTransactionActive()) {
-            em = jtaEntityManager.getEntityManager();
+        if (!underTx) {
+            entityManager = jtaEntityManager.getEntityManager();
+            this.underTx = jtaEntityManager.isTransactionActive();
+            createQuery();
         }
-        return em;
+        return entityManager;
     }
 
     public List getResultList() {
@@ -78,53 +103,133 @@ public class JtaQuery implements Query {
         }
     }
 
-    public Query setMaxResults(int i) {
+    public Query setMaxResults(final int i) {
         query.setMaxResults(i);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setMaxResults(i);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setFirstResult(int i) {
+    public Query setFirstResult(final int i) {
         query.setFirstResult(i);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setFirstResult(i);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setFlushMode(FlushModeType flushModeType) {
+    public Query setFlushMode(final FlushModeType flushModeType) {
         query.setFlushMode(flushModeType);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setFlushMode(flushModeType);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setHint(String s, Object o) {
+    public Query setHint(final String s, final Object o) {
         query.setHint(s, o);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setHint(s, o);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(String s, Object o) {
+    public Query setParameter(final String s, final Object o) {
         query.setParameter(s, o);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(s, o);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(String s, Date date, TemporalType temporalType) {
+    public Query setParameter(final String s, final Date date, final TemporalType temporalType) {
         query.setParameter(s, date, temporalType);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(s, date, temporalType);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(String s, Calendar calendar, TemporalType temporalType) {
+    public Query setParameter(final String s, final Calendar calendar, final TemporalType temporalType) {
         query.setParameter(s, calendar, temporalType);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(s, calendar, temporalType);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(int i, Object o) {
+    public Query setParameter(final int i, final Object o) {
         query.setParameter(i, o);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(i, o);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(int i, Date date, TemporalType temporalType) {
+    public Query setParameter(final int i, final Date date, final TemporalType temporalType) {
         query.setParameter(i, date, temporalType);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(i, date, temporalType);
+                }
+            });
+        }
         return this;
     }
 
-    public Query setParameter(int i, Calendar calendar, TemporalType temporalType) {
+    public Query setParameter(final int i, final Calendar calendar, final TemporalType temporalType) {
         query.setParameter(i, calendar, temporalType);
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(i, calendar, temporalType);
+                }
+            });
+        }
         return this;
     }
 
@@ -230,28 +335,60 @@ public class JtaQuery implements Query {
     /* (non-Javadoc)
      * @see javax.persistence.Query#setLockMode(javax.persistence.LockModeType)
      */
-    public Query setLockMode(LockModeType lockMode) {
+    public Query setLockMode(final LockModeType lockMode) {
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setLockMode(lockMode);
+                }
+            });
+        }
         return query.setLockMode(lockMode);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.lang.Object)
      */
-    public <T> Query setParameter(Parameter<T> param, T value) {
+    public <T> Query setParameter(final Parameter<T> param, final T value) {
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(param, value);
+                }
+            });
+        }
         return query.setParameter(param, value);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.util.Calendar, javax.persistence.TemporalType)
      */
-    public Query setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
+    public Query setParameter(final Parameter<Calendar> param, final Calendar value, final TemporalType temporalType) {
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(param, value, temporalType);
+                }
+            });
+        }
         return query.setParameter(param, value, temporalType);
     }
 
     /* (non-Javadoc)
      * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.util.Date, javax.persistence.TemporalType)
      */
-    public Query setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
+    public Query setParameter(final Parameter<Date> param, final Date value, final TemporalType temporalType) {
+        if (!underTx) {
+            appliedOperations.add(new QueryOperation() {
+                @Override
+                public Query apply(final Query query) {
+                    return query.setParameter(param, value, temporalType);
+                }
+            });
+        }
         return query.setParameter(param, value, temporalType);
     }
 
