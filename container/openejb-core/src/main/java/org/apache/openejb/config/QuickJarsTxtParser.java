@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public final class QuickJarsTxtParser {
+    private static final boolean ACTIVATED = SystemInstance.get().getOptions().get("openejb.jarstxt.activated", true);
+
     public static final String FILE_NAME = "jars.txt";
 
     private QuickJarsTxtParser() {
@@ -37,7 +40,7 @@ public final class QuickJarsTxtParser {
     }
 
     public static Collection<URL> parse(final File file) {
-        if (!file.exists()) {
+        if (!ACTIVATED || !file.exists()) {
             return new ArrayList<URL>(); // need to be modifiable
         }
 
