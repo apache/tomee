@@ -26,6 +26,14 @@ public final class Reflections {
         // no-op
     }
 
+    public static Method findMethod(final String name, final Class<?> type, final Class<?>... args) {
+        try {
+            return type.getMethod(name, args);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Can't find public method " + name + " in " + type.getName());
+        }
+    }
+
     public static Object invokeByReflection(final Object obj, final String mtdName, final Class<?>[] paramTypes, final Object[] args) {
         Class<?> clazz = obj.getClass();
         while (clazz != null) {

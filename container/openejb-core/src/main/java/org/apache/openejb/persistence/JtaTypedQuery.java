@@ -23,6 +23,7 @@ import javax.persistence.Parameter;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +34,13 @@ import java.util.List;
  */
 public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
 
-    public JtaTypedQuery(EntityManager entityManager, JtaEntityManager jtaEm, Query query) {
-        super(entityManager, jtaEm, query);
+    public JtaTypedQuery(EntityManager entityManager, JtaEntityManager jtaEm, Method method, Object... args) {
+        super(entityManager, jtaEm, method, args);
+    }
+
+    @Override
+    protected Class<? extends Query> queryType() {
+        return TypedQuery.class;
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +62,7 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
     }
 
     @Override
-    public TypedQuery<X> setFlushMode(FlushModeType flushModeType) {
+    public TypedQuery<X> setFlushMode(final FlushModeType flushModeType) {
         super.setFlushMode(flushModeType);
         return this;
     }

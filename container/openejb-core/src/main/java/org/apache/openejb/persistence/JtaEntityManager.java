@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.reflection.Reflections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -35,6 +35,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.Metamodel;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +55,15 @@ import java.util.concurrent.TimeUnit;
 public class JtaEntityManager implements EntityManager, Serializable {
 
     private static final Logger baseLogger = Logger.getInstance(LogCategory.OPENEJB.createChild("persistence"), JtaEntityManager.class);
+
+    private static final Method CREATE_NAMED_QUERY_FROM_NAME = Reflections.findMethod("createNamedQuery", EntityManager.class, String.class);
+    private static final Method CREATE_QUERY_FROM_NAME = Reflections.findMethod("createQuery", EntityManager.class, String.class);
+    private static final Method CREATE_NATIVE_FROM_NAME = Reflections.findMethod("createNativeQuery", EntityManager.class, String.class);
+    private static final Method CREATE_NAMED_QUERY_FROM_NAME_CLASS = Reflections.findMethod("createNamedQuery", EntityManager.class, String.class, Class.class);
+    private static final Method CREATE_QUERY_FROM_NAME_CLASS = Reflections.findMethod("createQuery", EntityManager.class, String.class, Class.class);
+    private static final Method CREATE_QUERY_FROM_CRITERIA = Reflections.findMethod("createQuery", EntityManager.class, CriteriaQuery.class);
+    private static final Method CREATE_NATIVE_FROM_NAME_CLASS = Reflections.findMethod("createNativeQuery", EntityManager.class, String.class, Class.class);
+    private static final Method CREATE_NATIVE_FROM_NAME_MAPPING = Reflections.findMethod("createNativeQuery", EntityManager.class, String.class, String.class);
 
     private final JtaEntityManagerRegistry registry;
     private final EntityManagerFactory entityManagerFactory;
@@ -259,9 +270,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public Query createQuery(String qlString) {
         final Timer timer = Op.createQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            Query query = entityManager.createQuery(qlString);
-            return proxyIfNoTx(entityManager, query);
+            return proxyIfNoTx(CREATE_QUERY_FROM_NAME, qlString);
         } finally {
             timer.stop();
         }
@@ -270,9 +279,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public Query createNamedQuery(String name) {
         final Timer timer = Op.createNamedQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            Query query = entityManager.createNamedQuery(name);
-            return proxyIfNoTx(entityManager, query);
+            return proxyIfNoTx(CREATE_NAMED_QUERY_FROM_NAME, name);
         } finally {
             timer.stop();
         }
@@ -281,9 +288,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public Query createNativeQuery(String sqlString) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            Query query = entityManager.createNativeQuery(sqlString);
-            return proxyIfNoTx(entityManager, query);
+            return proxyIfNoTx(CREATE_NATIVE_FROM_NAME, sqlString);
         } finally {
             timer.stop();
         }
@@ -292,9 +297,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public Query createNativeQuery(String sqlString, Class resultClass) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            Query query = entityManager.createNativeQuery(sqlString, resultClass);
-            return proxyIfNoTx(entityManager, query);
+            return proxyIfNoTx(CREATE_NATIVE_FROM_NAME_CLASS, sqlString, resultClass);
         } finally {
             timer.stop();
         }
@@ -303,26 +306,38 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public Query createNativeQuery(String sqlString, String resultSetMapping) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            Query query = entityManager.createNativeQuery(sqlString, resultSetMapping);
-            return proxyIfNoTx(entityManager, query);
+            return proxyIfNoTx(CREATE_NATIVE_FROM_NAME_MAPPING, sqlString, resultSetMapping);
         } finally {
             timer.stop();
         }
     }
 
-    private Query proxyIfNoTx(EntityManager entityManager, Query query) {
+    private Query proxyIfNoTx(Method method, Object... args) {
         if (!extended && !isTransactionActive()) {
-            return new JtaQuery(entityManager, this, query);
+            return new JtaQuery(getEntityManager(), this, method, args);
         }
-        return query;
+        return createQuery(Query.class, getEntityManager(), method, args);
     }
     
-    private <T> TypedQuery<T> proxyIfNoTx(EntityManager entityManager, TypedQuery<T> query) {
+    private <T> TypedQuery<T> typedProxyIfNoTx(Method method, Object... args) {
         if (!extended && !isTransactionActive()) {
-            return new JtaTypedQuery<T>(entityManager, this, query);
+            return new JtaTypedQuery<T>(getEntityManager(), this, method, args);
         }
-        return query;
+        return createQuery(TypedQuery.class, getEntityManager(), method, args);
+    }
+
+    <T> T createQuery(final Class<T> expected, final EntityManager entityManager, final Method method, Object... args) {
+        try {
+            return expected.cast(method.invoke(entityManager, args));
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        } catch (InvocationTargetException e) {
+            final Throwable t = e.getCause();
+            if (RuntimeException.class.isInstance(t)) {
+                throw RuntimeException.class.cast(t);
+            }
+            throw new OpenEJBRuntimeException(t.getMessage(), t);
+        }
     }
 
     public void joinTransaction() {
@@ -356,9 +371,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
         final Timer timer = Op.createNamedQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            TypedQuery<T> query = entityManager.createNamedQuery(name, resultClass);
-            return proxyIfNoTx(entityManager, query);
+            return typedProxyIfNoTx(CREATE_NAMED_QUERY_FROM_NAME_CLASS, name, resultClass);
         } finally {
             timer.stop();
         }
@@ -369,9 +382,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
         final Timer timer = Op.createQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
-            return proxyIfNoTx(entityManager, query);
+            return typedProxyIfNoTx(CREATE_QUERY_FROM_CRITERIA, criteriaQuery);
         } finally {
             timer.stop();
         }
@@ -382,9 +393,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
         final Timer timer = Op.createQuery.start(this);
         try {
-            EntityManager entityManager = getEntityManager();
-            TypedQuery<T> query = entityManager.createQuery(qlString, resultClass);
-            return proxyIfNoTx(entityManager, query);
+            return typedProxyIfNoTx(CREATE_QUERY_FROM_NAME_CLASS, qlString, resultClass);
         } finally {
             timer.stop();
         }
