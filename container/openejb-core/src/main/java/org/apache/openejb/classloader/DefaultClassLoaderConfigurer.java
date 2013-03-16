@@ -117,13 +117,4 @@ public class DefaultClassLoaderConfigurer implements ClassLoaderConfigurer {
             excluded = Filters.prefixes(excludedPrefixes);
         }
     }
-
-    private static class TrueFilter implements Filter {
-        public static final TrueFilter INSTANCE = new TrueFilter();
-
-        @Override
-        public boolean accept(final String name) {
-            return true;
-        }
-    }
 }

@@ -16,7 +16,14 @@
  */
 package org.apache.openejb.maven.jarstxt;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,11 +33,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.openejb.loader.Files;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
 @Mojo(name = "generate", threadSafe = true,
@@ -41,6 +51,21 @@ public class JarsTxtMojo extends AbstractMojo {
 
     @Parameter(property = "outputFile", defaultValue = "${project.build.directory}/${project.build.finalName}/WEB-INF/jars.txt" )
     protected File outputFile;
+
+    @Parameter(property = "hash")
+    protected String hashAlgo;
+
+    @Component
+    protected ArtifactFactory factory;
+
+    @Component
+    protected ArtifactResolver resolver;
+
+    @Parameter(defaultValue = "${localRepository}", readonly = true)
+    protected ArtifactRepository local;
+
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
+    protected List<ArtifactRepository> remoteRepos;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -59,7 +84,25 @@ public class JarsTxtMojo extends AbstractMojo {
 
                 a.setScope(Artifact.SCOPE_PROVIDED);
 
-                writer.write("mvn:" + a.getGroupId() + "/" + a.getArtifactId() + "/" + a.getVersion());
+                final StringBuilder line = new StringBuilder("mvn:")
+                        .append(a.getGroupId()).append("/")
+                        .append(a.getArtifactId()).append("/")
+                        .append(a.getVersion());
+                if (hashAlgo != null) {
+                    final Artifact artifact = factory.createDependencyArtifact(a.getGroupId(), a.getArtifactId(), VersionRange.createFromVersion(a.getVersion()), a.getType(), a.getClassifier(), a.getScope());
+                    try {
+                        resolver.resolve(artifact, remoteRepos, local);
+                    } catch (final ArtifactResolutionException e) {
+                        throw new MojoExecutionException(e.getMessage(), e);
+                    } catch (ArtifactNotFoundException e) {
+                        throw new MojoExecutionException(e.getMessage(), e);
+                    }
+                    final File file = artifact.getFile();
+                    line.append("#").append(Files.hash((Set<URL>) Collections.singleton(file.toURI().toURL()), hashAlgo))
+                        .append("#").append(hashAlgo);
+                }
+
+                writer.write(line.toString());
                 writer.write("\n");
             }
 

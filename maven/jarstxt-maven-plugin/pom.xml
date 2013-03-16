@@ -44,6 +44,11 @@ Licensed to the Apache Software Foundation (ASF) under one or more
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <properties>

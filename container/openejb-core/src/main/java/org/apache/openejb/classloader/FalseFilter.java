@@ -23,6 +23,6 @@ public class FalseFilter  implements Filter {
 
     @Override
     public boolean accept(final String name) {
-        return true;
+        return false;
     }
 }
