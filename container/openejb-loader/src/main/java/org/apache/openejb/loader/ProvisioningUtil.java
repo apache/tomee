@@ -152,7 +152,7 @@ public class ProvisioningUtil {
         final String toParse;
         if (!raw.contains("!")) {
             // try first local file with default maven settings
-            final File file = new File(new StringBuilder(System.getProperty("user.home")).append("/.m2/repository/").append(mvnArtifactPath(raw)).toString());
+            final File file = new File(m2Home() + mvnArtifactPath(raw));
             if (file.exists()) {
                 return file.getAbsolutePath();
             }
@@ -176,6 +176,10 @@ public class ProvisioningUtil {
         builder.append(mvnArtifactPath(toParse));
 
         return builder.toString();
+    }
+
+    private static String m2Home() {
+        return SystemInstance.get().getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/");
     }
 
     private static String mvnArtifactPath(final String toParse) throws MalformedURLException {
