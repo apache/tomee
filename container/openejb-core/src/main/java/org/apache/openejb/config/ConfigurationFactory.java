@@ -488,9 +488,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 final AppInfo appInfo = configureApplication(jarFile);
                 sys.containerSystem.applications.add(appInfo);
 
-            } catch (OpenEJBException alreadyHandled) {
+            } catch (final OpenEJBException alreadyHandled) {
                 final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
-                exceptionManager.pushDelpoymentException(alreadyHandled);
+                if (exceptionManager != null) {
+                    exceptionManager.pushDelpoymentException(alreadyHandled);
+                }
             }
         }
 
