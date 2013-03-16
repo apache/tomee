@@ -31,18 +31,19 @@ import java.io.FileReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Configuration
  * <configurer prefix>.configuration = /foo/bar/config.txt
- *
+ * <p/>
  * Handled file format:
  * -xbean
  * +http://..../camel-core.jar
  * +mvn:org.foo:bar:1.0
- *
+ * <p/>
  * The maven like urls needs the openejb-provisinning module
- *
+ * <p/>
  * Note: if a line doesn't start with '+' it is considered as an addition
  */
 public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer {
@@ -88,7 +89,33 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
                     if (line.startsWith("+")) {
                         line = line.substring(1);
                     }
-                    toAdd.addAll(Files.listJars(ProvisioningUtil.realLocation(line)));
+
+                    String location = line;
+                    String algo = "MD5";
+                    String hash = null;
+                    final boolean validJar = line.contains("#");
+
+                    if (validJar) {
+                        final String[] segments = line.split("#");
+                        location = segments[0];
+                        if (segments.length >= 2) {
+                            hash = segments[1];
+                        }
+                        if (segments.length >= 3) {
+                            algo = segments[2].trim();
+                        }
+
+                    }
+
+                    final Set<URL> repos = Files.listJars(ProvisioningUtil.realLocation(location));
+                    toAdd.addAll(repos);
+
+                    if (validJar) {
+                        final String computedHash = Files.hash(repos, algo);
+                        if (!computedHash.equals(hash)) {
+                            throw new IllegalStateException("Hash of " + location + "(" + computedHash + ") doesn't match expected one (" + hash + ")");
+                        }
+                    }
                 }
             }
 

@@ -18,22 +18,32 @@ package org.apache.openejb.loader;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import static org.apache.openejb.loader.JarLocation.decode;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Files {
+    private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
 
     public static File path(final String... parts) {
         File dir = null;
@@ -348,6 +358,84 @@ public class Files {
         }
 
         return set;
+    }
+
+    public static File toFile(final URL url) {
+        if ("jar".equals(url.getProtocol())) {
+            try {
+                final String spec = url.getFile();
+
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                return toFile(new URL(spec.substring(0, separator++)));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if ("file".equals(url.getProtocol())) {
+            return new File(decode(url.getFile()));
+        } else {
+            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+        }
+    }
+
+    public static String hash(final Set<URL> urls, final String algo) {
+        final Collection<File> files = new ArrayList<File>();
+
+        for (final URL u : urls) {
+            final File file = toFile(u);
+            if (!file.isDirectory()) {
+                files.add(file);
+            } else {
+                files.addAll(Files.collect(file, TrueFilter.INSTANCE));
+            }
+        }
+
+        MessageDigest digest = DIGESTS.get(algo);
+        if (digest == null) {
+            try {
+                digest = MessageDigest.getInstance(algo);
+            } catch (final NoSuchAlgorithmException e) {
+                throw new LoaderRuntimeException(e);
+            }
+            DIGESTS.put(algo, digest);
+        }
+
+        for (final File file : files) {
+            if (!file.exists()) {
+                continue;
+            }
+
+            DigestInputStream is = null;
+            try {
+                is = new DigestInputStream(new FileInputStream(file), digest);
+                IO.copy(is, new NoopOutputStream()); // read the stream
+            } catch (final IOException e) {
+                // no-op: shouldn't occur here
+            } finally {
+                IO.close(is);
+            }
+        }
+
+        final byte[] hash = digest.digest();
+        digest.reset();
+
+        final StringBuilder sb = new StringBuilder("");
+        for (final byte b : hash) { // hex convertion
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return sb.toString();
+    }
+
+    private static class NoopOutputStream extends OutputStream {
+        @Override
+        public void write(final int b) throws IOException {
+            // no-op
+        }
     }
 
     public static class FileRuntimeException extends RuntimeException {

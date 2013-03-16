@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 
+import org.apache.openejb.loader.Files;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
@@ -25,33 +26,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import static org.apache.openejb.loader.JarLocation.decode;
-
 
 /**
  * @version $Rev$ $Date$
  */
 public class URLs {
     public static File toFile(final URL url) {
-        if ("jar".equals(url.getProtocol())) {
-            try {
-                final String spec = url.getFile();
-
-                int separator = spec.indexOf('!');
-                /*
-                 * REMIND: we don't handle nested JAR URLs
-                 */
-                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
-
-                return toFile(new URL(spec.substring(0, separator++)));
-            } catch (MalformedURLException e) {
-                throw new IllegalStateException(e);
-            }
-        } else if ("file".equals(url.getProtocol())) {
-            return new File(decode(url.getFile()));
-        } else {
-            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
-        }
+        return Files.toFile(url);
     }
 
     public static URL toFileUrl(final URL url) {
