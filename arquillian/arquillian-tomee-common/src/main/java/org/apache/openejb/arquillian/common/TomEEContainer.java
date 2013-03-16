@@ -80,13 +80,41 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         if (prefixes == null) return;
 
-        ConfigurationOverrides.apply(configuration, System.getProperties(), prefixes.value());
+        //
+        // Override the config with system properties
+        //
+        final ObjectMap map = new ObjectMap(configuration);
+        for (String key : map.keySet()) {
+            for (String prefix : prefixes.value()) {
+                final String property = prefix + "." + key;
+                final String value = System.getProperty(property);
+
+                if (value == null) {
+                    LOGGER.log(Level.FINE, String.format("Unset '%s'", property));
+                    continue;
+                }
+
+                try {
+                    LOGGER.log(Level.INFO, String.format("Applying override '%s=%s'", property, value));
+                    map.put(key, value);
+                } catch (Exception e) {
+                    try {
+                        map.put(key, Integer.parseInt(value)); // we manage String and int and boolean so let's try an int
+                    } catch (Exception ignored) {
+                        try {
+                            map.put(key, Boolean.parseBoolean(value)); // idem let's try a boolean
+                        } catch (Exception ignored2) {
+                            LOGGER.log(Level.WARNING, String.format("Override failed '%s=%s'", property, value), e);
+                        }
+                    }
+                }
+            }
+        }
 
         setPorts();
 
         // with multiple containers we don't want it so let the user eb able to skip it
         if (configuration.getExportConfAsSystemProperty()) {
-            final ObjectMap map = new ObjectMap(configuration);
             //
             // Export the config back out to properties
             //
