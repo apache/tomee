@@ -67,18 +67,19 @@ public class EndpointFactory implements MessageEndpointFactory {
         }
         final EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
         try {
-            return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces);
-        } catch (InternalError e) {
+            return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(beanContext.getClassLoader(), endpointHandler, beanContext.getBeanClass(), interfaces);
+        } catch (final InternalError e) {
             //try to create the proxy with tccl once again.
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            if (tccl == classLoader) {
-                tccl = beanContext.getClassLoader();
+            try {
+                return MessageEndpoint.class.cast(LocalBeanProxyFactory.newProxyInstance(Thread.currentThread().getContextClassLoader(), endpointHandler, beanContext.getBeanClass(), interfaces));
+            } catch (final InternalError ie) {
+                try {
+                    return MessageEndpoint.class.cast(LocalBeanProxyFactory.newProxyInstance(classLoader, endpointHandler, beanContext.getBeanClass(), interfaces));
+                } catch (final InternalError ie2) {
+                    // no-op
+                }
             }
-            if (tccl != null) {
-                return (MessageEndpoint) LocalBeanProxyFactory.newProxyInstance(tccl, endpointHandler, beanContext.getBeanClass(), interfaces);
-            } else {
-                throw e;
-            }
+            throw e;
         }
     }
 
