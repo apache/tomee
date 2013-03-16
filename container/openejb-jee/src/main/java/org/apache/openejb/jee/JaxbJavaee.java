@@ -248,10 +248,10 @@ public class JaxbJavaee {
         });
 
         JaxbJavaee.HandlerChainsNamespaceFilter xmlFilter = new JaxbJavaee.HandlerChainsNamespaceFilter(parser.getXMLReader());
-        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
-        HandlerChainsStringQNameAdapter adapter = new HandlerChainsStringQNameAdapter();
-        adapter.setHandlerChainsNamespaceFilter(xmlFilter);
-        unmarshaller.setAdapter(HandlerChainsStringQNameAdapter.class, adapter);
+//        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+//        HandlerChainsStringQNameAdapter adapter = new HandlerChainsStringQNameAdapter();
+//        adapter.setHandlerChainsNamespaceFilter(xmlFilter);
+//        unmarshaller.setAdapter(HandlerChainsStringQNameAdapter.class, adapter);
 
         SAXSource source = new SAXSource(xmlFilter, inputSource);
 
