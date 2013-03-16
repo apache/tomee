@@ -16,19 +16,11 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.loader.Files;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.classloader.ProvisioningClassLoaderConfigurer;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public final class QuickJarsTxtParser {
     private static final boolean ACTIVATED = SystemInstance.get().getOptions().get("openejb.jarstxt.activated", true);
@@ -39,33 +31,13 @@ public final class QuickJarsTxtParser {
          // no-op
     }
 
-    public static Collection<URL> parse(final File file) {
+    public static ClassLoaderConfigurer parse(final File file) {
         if (!ACTIVATED || !file.exists()) {
-            return new ArrayList<URL>(); // need to be modifiable
+            return null;
         }
 
-        final Collection<URL> deps = new ArrayList<URL>();
-
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String value = line.trim();
-                if (line.startsWith("#") || value.isEmpty()) {
-                    continue;
-                }
-
-                deps.addAll(Files.listJars(new File(ProvisioningUtil.realLocation(value)).getAbsolutePath()));
-            }
-        } catch (final Throwable e) {
-            Logger.getInstance(LogCategory.OPENEJB, QuickContextXmlParser.class.getName())
-                    .warning("QuickJarsTxtParser#parse: Failed to read provided stream");
-        } finally {
-            IO.close(reader);
-        }
-
-        return deps;
+        final ProvisioningClassLoaderConfigurer configurer = new ProvisioningClassLoaderConfigurer();
+        configurer.setConfiguration(file.getAbsolutePath());
+        return configurer;
     }
 }

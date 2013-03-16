@@ -21,6 +21,7 @@ import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
@@ -396,10 +397,10 @@ public class DeploymentLoader implements DeploymentFilterable {
                 createApplicationFromFiles(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, files);
             }
 
-            final Collection<URL> jarsXmlUrls = QuickJarsTxtParser.parse(new File(appDir, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
+            final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(appDir, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
             final Collection<URL> jarsXmlLib = new ArrayList<URL>();
-            if (!jarsXmlUrls.isEmpty()) {
-                for (final URL url : jarsXmlUrls) {
+            if (configurer != null) {
+                for (final URL url : configurer.additionalURLs()) {
                     try {
                         detectAndAddModuleToApplication(appId, tmpClassLoader,
                                 ejbModules, clientModules, resouceModules, webModules,
@@ -881,7 +882,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             webUrls.addAll(parser.getAdditionalURLs());
         }
 
-        webUrls.addAll(QuickJarsTxtParser.parse(new File(warFile, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME)));
+        final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(warFile, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME));
+        if (configurer != null) {
+            ClassLoaderConfigurer.Helper.configure(webUrls, configurer);
+        }
 
         final URL[] webUrlsArray = webUrls.toArray(new URL[webUrls.size()]);
 
@@ -1301,7 +1305,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         // create the class loader
         final List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
-        classPath.addAll(QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME)));
+
+        final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
+        if (configurer != null) {
+            ClassLoaderConfigurer.Helper.configure(classPath, configurer);
+        }
+
         final URL[] urls = classPath.toArray(new URL[classPath.size()]);
         final ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, parentClassLoader);
 

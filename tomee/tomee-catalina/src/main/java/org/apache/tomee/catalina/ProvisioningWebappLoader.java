@@ -19,13 +19,15 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.loader.VirtualWebappLoader;
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.ProvisioningUtil;
-import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * Usage example in META-INF/context.xml
@@ -42,7 +44,23 @@ import java.net.URL;
 
  *
  */
-public class ProvisioningWebappLoader extends LazyStopWebappLoader {
+public class ProvisioningWebappLoader extends VirtualWebappLoader {
+    @Override
+    public void backgroundProcess() {
+        final ClassLoader classloader = super.getClassLoader();
+        if (classloader instanceof LazyStopWebappClassLoader) {
+            final LazyStopWebappClassLoader lazyStopWebappClassLoader = (LazyStopWebappClassLoader) classloader;
+            lazyStopWebappClassLoader.restarting();
+            try {
+                super.backgroundProcess();
+            } finally {
+                lazyStopWebappClassLoader.restarted();
+            }
+        } else {
+            super.backgroundProcess();
+        }
+    }
+
     @Override
     protected void startInternal() throws LifecycleException {
         // standard tomcat part
@@ -54,14 +72,15 @@ public class ProvisioningWebappLoader extends LazyStopWebappLoader {
             }
         }
 
+        ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(getContainer().getName());
+
         // WEB-INF/jars.xml
         if (Context.class.isInstance(getContainer())) {
             final File war = Contexts.warPath(Context.class.cast(getContainer()));
             final File jarsXml = new File(war, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME);
-            if (jarsXml.exists()) {
-                for (final URL url : QuickJarsTxtParser.parse(jarsXml)) {
-                    builder.append(URLs.toFile(url)).append(";"); // provisiningutil already called so simply decode url
-                }
+            final ClassLoaderConfigurer configurerTxt = QuickJarsTxtParser.parse(jarsXml);
+            if (configurerTxt != null) {
+                configurer = new CompositeClassLoaderConfigurer(configurer, configurerTxt);
             }
         }
 
@@ -72,6 +91,16 @@ public class ProvisioningWebappLoader extends LazyStopWebappLoader {
         }
         Reflections.set(this, "virtualClasspath", cp);
 
-        super.startInternal();
+        LazyStopWebappClassLoader.initContext(configurer);
+        try {
+            super.startInternal();
+        } finally {
+            LazyStopWebappClassLoader.cleanInitContext();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Provisioning" + super.toString();
     }
 }

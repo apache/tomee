@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.classloader;
 
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.util.LogCategory;
@@ -27,7 +28,6 @@ import org.apache.xbean.finder.filter.Filters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +39,7 @@ import java.util.Collection;
  * Handled file format:
  * -xbean
  * +http://..../camel-core.jar
- * +org.foo:bar:1.0
+ * +mvn:org.foo:bar:1.0
  *
  * The maven like urls needs the openejb-provisinning module
  *
@@ -68,7 +68,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
     }
 
     public void setConfiguration(final String configFile) {
-        final Collection<String> toAdd = new ArrayList<String>();
+        final Collection<URL> toAdd = new ArrayList<URL>();
         final Collection<String> toExclude = new ArrayList<String>();
 
         BufferedReader reader = null;
@@ -88,7 +88,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
                     if (line.startsWith("+")) {
                         line = line.substring(1);
                     }
-                    toAdd.add(ProvisioningUtil.realLocation(line));
+                    toAdd.addAll(Files.listJars(ProvisioningUtil.realLocation(line)));
                 }
             }
 
@@ -98,16 +98,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
             IO.close(reader);
         }
 
-        added = new URL[toAdd.size()];
-        int i = 0;
-        for (final String path : toAdd) {
-            try {
-                added[i++] = new File(path).toURI().toURL();
-            } catch (MalformedURLException e) {
-                LOGGER.warning("Can't add file " + path, e);
-            }
-        }
-
+        added = toAdd.toArray(new URL[toAdd.size()]);
         if (toExclude.size() > 0) {
             excluded = Filters.prefixes(toExclude.toArray(new String[toExclude.size()]));
         }

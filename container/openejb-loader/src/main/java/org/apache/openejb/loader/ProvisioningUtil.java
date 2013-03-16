@@ -51,12 +51,11 @@ public class ProvisioningUtil {
     }
 
     public static String cache() {
-        return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, "temp");
+        return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, new File(System.getProperty("openejb.base", "."), "temp").getAbsolutePath());
     }
 
     public static File cacheFile(final String path) {
-        return new File(SystemInstance.get().getBase().getDirectory(),
-                cache() + File.separator + path);
+        return new File(SystemInstance.get().getBase().getDirectory(), cache() + File.separator + path);
     }
 
     public static String copyTryingProxies(final URI source, final File destination) throws Exception {
@@ -99,6 +98,9 @@ public class ProvisioningUtil {
     public static String realLocation(final String rawLocation) {
         if (rawLocation.startsWith(HTTP_PREFIX)) {
             final File file = cacheFile(lastPart(rawLocation));
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            }
 
             String path = null;
             try {

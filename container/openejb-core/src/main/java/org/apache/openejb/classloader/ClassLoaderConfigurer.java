@@ -17,8 +17,27 @@
 package org.apache.openejb.classloader;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 public interface ClassLoaderConfigurer {
     URL[] additionalURLs();
     boolean accept(final URL url);
+
+    public static class Helper {
+        private Helper() {
+            // no-op
+        }
+
+        public static void configure(final Collection<URL> urls, final ClassLoaderConfigurer configurer) {
+            final Iterator<URL> it = urls.iterator();
+            while (it.hasNext()) {
+                if (!configurer.accept(it.next())) {
+                    it.remove();
+                }
+            }
+            urls.addAll(Arrays.asList(configurer.additionalURLs()));
+        }
+    }
 }

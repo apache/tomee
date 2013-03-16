@@ -19,7 +19,6 @@ package org.apache.tomee.catalina;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
-import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
@@ -36,6 +35,7 @@ import java.util.Enumeration;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
+    private static final ThreadLocal<ClassLoaderConfigurer> INIT_CONFIGURER = new ThreadLocal<ClassLoaderConfigurer>();
 
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
@@ -55,7 +55,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     private void construct() {
         setDelegate(isDelegate());
-        configurer = ClassLoaderUtil.configurer(LazyStopWebappLoader.getCurrentAppId());
+        configurer = INIT_CONFIGURER.get();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         if (configurer != null) {
             // add now we removed all we wanted
             final URL[] enrichment = configurer.additionalURLs();
-            for (URL url : enrichment) {
+            for (final URL url : enrichment) {
                 super.addURL(url);
             }
         }
@@ -191,6 +191,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public String toString() {
         return "LazyStop" + super.toString();
+    }
+
+    public static void initContext(final ClassLoaderConfigurer configurer) {
+        INIT_CONFIGURER.set(configurer);
+    }
+
+    public static void cleanInitContext() {
+        INIT_CONFIGURER.remove();
     }
 
     private static class NoClassClassLoader extends ClassLoader {
