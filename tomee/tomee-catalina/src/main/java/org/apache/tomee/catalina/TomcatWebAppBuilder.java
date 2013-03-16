@@ -88,7 +88,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.config.WebModule;
-import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -737,10 +736,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             } catch (OpenEJBException e) {
                 logger.error("can't unpack '" + warFile.getAbsolutePath() + "'");
             }
-        }
-
-        if (warFile.exists()) {
-            SystemInstance.get().fireEvent(new BeforeDeploymentEvent(DeploymentLoader.getWebappUrls(warFile)));
         }
 
         standardContext.setCrossContext(SystemInstance.get().getOptions().get(OPENEJB_CROSSCONTEXT_PROPERTY, false));
@@ -1858,7 +1853,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      *
      * @param standardContext tomcat context instance
      */
-    private void loadWebModule(final AppModule appModule, final StandardContext standardContext) {
+    private void    loadWebModule(final AppModule appModule, final StandardContext standardContext) {
         final WebModule webModule = appModule.getWebModules().get(0);
         final WebApp webApp = webModule.getWebApp();
 
