@@ -93,10 +93,10 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
                     String location = line;
                     String algo = "MD5";
                     String hash = null;
-                    final boolean validJar = line.contains("#");
+                    final boolean validJar = line.contains("|");
 
                     if (validJar) {
-                        final String[] segments = line.split("#");
+                        final String[] segments = line.split("|");
                         location = segments[0];
                         if (segments.length >= 2) {
                             hash = segments[1];

@@ -98,8 +98,8 @@ public class JarsTxtMojo extends AbstractMojo {
                         throw new MojoExecutionException(e.getMessage(), e);
                     }
                     final File file = artifact.getFile();
-                    line.append("#").append(Files.hash((Set<URL>) Collections.singleton(file.toURI().toURL()), hashAlgo))
-                        .append("#").append(hashAlgo);
+                    line.append("|").append(Files.hash((Set<URL>) Collections.singleton(file.toURI().toURL()), hashAlgo))
+                        .append("|").append(hashAlgo);
                 }
 
                 writer.write(line.toString());
