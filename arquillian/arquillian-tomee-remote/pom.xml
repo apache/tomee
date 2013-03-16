@@ -140,12 +140,6 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
     <testResources>
       <testResource>
         <directory>${project.basedir}/src/test/resources</directory>

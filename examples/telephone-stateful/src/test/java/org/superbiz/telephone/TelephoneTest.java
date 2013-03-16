@@ -32,8 +32,8 @@ public class TelephoneTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         final Properties properties = new Properties();
-//        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-//        properties.setProperty("openejb.embedded.remotable", "true");
+        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        properties.setProperty("openejb.embedded.remotable", "true");
         // Uncomment these properties to change the defaults
         //properties.setProperty("ejbd.port", "4202");
         //properties.setProperty("ejbd.bind", "localhost");
@@ -83,7 +83,7 @@ public class TelephoneTest extends TestCase {
     public void testTalkOverRemoteNetwork() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        properties.setProperty(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
+        properties.setProperty(Context.PROVIDER_URL, "ejbd://localhost:" + Integer.parseInt(System.getProperty("ejbd.port", "4201")));
         final InitialContext remoteContext = new InitialContext(properties);
 
         final Telephone telephone = (Telephone) remoteContext.lookup("TelephoneBeanRemote");

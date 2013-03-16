@@ -28,11 +28,11 @@ import java.util.List;
 @Prefixes({"tomee", "tomee.remote"})
 public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
-    private String groupId;
-    private String artifactId;
-    private String version;
-    private String classifier;
-    private String type;
+    private String groupId = "org.apache.openejb";
+    private String artifactId = "apache-tomee";
+    private String version = "LATEST";
+    private String classifier = "webprofile";
+    private String type = "zip";
     private boolean removeUnusedWebapps = true;
     private int ajpPort = 8009;
     private String conf;
