@@ -510,8 +510,10 @@ public class DeploymentsElementTest extends Assert {
             final File dir = server.deploymentsDir("myapps");
 
             assertTrue(dir.setReadable(false));
-            final OpenEjbConfiguration configuration = server.init();
-            assertEquals(0, configuration.containerSystem.applications.size());
+            if (!dir.canRead()) { // else can't do the test
+                final OpenEjbConfiguration configuration = server.init();
+                assertEquals(0, configuration.containerSystem.applications.size());
+            }
         }
     }
 
@@ -568,8 +570,10 @@ public class DeploymentsElementTest extends Assert {
             assertTrue(file.createNewFile());
             assertTrue(file.setReadable(false));
 
-            final OpenEjbConfiguration configuration = server.init();
-            assertEquals(0, configuration.containerSystem.applications.size());
+            if (!file.canRead()) { // else can't do the test
+                final OpenEjbConfiguration configuration = server.init();
+                assertEquals(0, configuration.containerSystem.applications.size());
+            }
         }
     }
 
