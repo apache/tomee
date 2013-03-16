@@ -579,6 +579,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             appInfo.path = appInfo.appId;
         }
 
+        EventHelper.addEventClasses(classLoader, appInfo.eventClassesNeedingAppClassloader);
+
         logger.info("createApplication.start", appInfo.path);
 
         //        try {

@@ -20,6 +20,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public final class EventHelper {
@@ -30,19 +32,43 @@ public final class EventHelper {
         // no-op
     }
 
+    public static Collection<Class<?>> findExtensions(final ResourceFinder finder) {
+        try {
+            return finder.findAvailableClasses("org.apache.openejb.extension");
+        } catch (IOException e) {
+            LOGGER.error("Extension scanning of 'META-INF/org.apache.openejb.extension' files failed", e);
+            return Collections.emptySet();
+        }
+    }
+
     public static void installExtensions(final ResourceFinder finder) {
         try {
             final List<Class<?>> classes = finder.findAvailableClasses("org.apache.openejb.extension");
-            for (final Class<?> clazz : classes) {
-                try {
-                    final Object object = clazz.newInstance();
-                    SystemInstance.get().addObserver(object);
-                } catch (Throwable t) {
-                    LOGGER.error("Extension construction failed" + clazz.getName(), t);
-                }
-            }
+            addEventClasses(classes);
         } catch (IOException e) {
             LOGGER.error("Extension scanning of 'META-INF/org.apache.openejb.extension' files failed", e);
+        }
+    }
+
+    public static void addEventClasses(final ClassLoader loader, final Collection<String> classes) {
+        for (final String clazz : classes) {
+            try {
+                final Object object = loader.loadClass(clazz).newInstance();
+                SystemInstance.get().addObserver(object);
+            } catch (final Throwable t) {
+                LOGGER.error("Extension construction failed" + clazz, t);
+            }
+        }
+    }
+
+    public static void addEventClasses(final Collection<Class<?>> classes) {
+        for (final Class<?> clazz : classes) {
+            try {
+                final Object object = clazz.newInstance();
+                SystemInstance.get().addObserver(object);
+            } catch (final Throwable t) {
+                LOGGER.error("Extension construction failed" + clazz.getName(), t);
+            }
         }
     }
 }

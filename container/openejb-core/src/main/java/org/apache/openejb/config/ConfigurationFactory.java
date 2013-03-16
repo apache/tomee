@@ -105,6 +105,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -866,9 +867,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(final AppModule appModule) throws OpenEJBException {
+        final Collection<Class<?>> extensions = new HashSet<Class<?>>();
+        final Collection<String> notLoaded = new HashSet<String>();
+
         final List<URL> libs = appModule.getAdditionalLibraries();
         if (libs != null && libs.size() > 0) {
-            EventHelper.installExtensions(new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()])));
+            final ResourceFinder finder = new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()]));
+            extensions.addAll(EventHelper.findExtensions(finder));
+            notLoaded.addAll(finder.getResourcesNotLoaded());
         }
         for (final EjbModule ejb : appModule.getEjbModules()) {
             try {
@@ -876,7 +882,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 if (uri.isAbsolute()) {
                     final URL url = uri.toURL();
                     if (libs != null && !libs.contains(url)) {
-                        EventHelper.installExtensions(new ResourceFinder("META-INF", url));
+                        final ResourceFinder finder = new ResourceFinder("META-INF", url);
+                        extensions.addAll(EventHelper.findExtensions(finder));
+                        notLoaded.addAll(finder.getResourcesNotLoaded());
                     }
                 }
             } catch (IllegalArgumentException iae) {
@@ -890,16 +898,24 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         for (final WebModule web : appModule.getWebModules()) {
             final List<URL> webLibs = web.getScannableUrls();
             if (webLibs != null && webLibs.size() > 0) {
-                EventHelper.installExtensions(new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()])));
+                final ResourceFinder finder = new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()]));
+                extensions.addAll(EventHelper.findExtensions(finder));
+                notLoaded.addAll(finder.getResourcesNotLoaded());
             }
         }
+
+        // add it as early as possible, the ones needing the app classloader will be added later
+        EventHelper.addEventClasses(extensions);
 
         final String location = appModule.getJarLocation();
         logger.info("config.configApp", null != location ? location : appModule.getModuleId());
         deployer.deploy(appModule);
         final AppInfoBuilder appInfoBuilder = new AppInfoBuilder(this);
 
-        return appInfoBuilder.build(appModule);
+        final AppInfo info = appInfoBuilder.build(appModule);
+        info.eventClassesNeedingAppClassloader.addAll(notLoaded);
+
+        return info;
     }
 
     private static class DefaultService {
