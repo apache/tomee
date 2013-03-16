@@ -939,7 +939,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
-        if (standardContextLoader != null && LazyStopWebappLoader.class.isInstance(standardContextLoader)) {
+        if (standardContextLoader != null && ProvisioningWebappLoader.class.isInstance(standardContextLoader)) {
             standardContextLoader.setContainer(standardContext);
             return; // no need to replace the loader
         }

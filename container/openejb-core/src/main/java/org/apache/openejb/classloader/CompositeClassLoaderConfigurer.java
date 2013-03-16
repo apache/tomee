@@ -25,12 +25,14 @@ public class CompositeClassLoaderConfigurer implements ClassLoaderConfigurer {
     private final ClassLoaderConfigurer[] composites;
     private final URL[] urls;
 
-    public CompositeClassLoaderConfigurer(final ClassLoaderConfigurer[] configurers) {
+    public CompositeClassLoaderConfigurer(final ClassLoaderConfigurer... configurers) {
         composites = configurers;
 
         final Set<URL> urlSet = new HashSet<URL>();
-        for (ClassLoaderConfigurer configurer : configurers) {
-            urlSet.addAll(Arrays.asList(configurer.additionalURLs()));
+        for (final ClassLoaderConfigurer configurer : configurers) {
+            if (configurer != null) {
+                urlSet.addAll(Arrays.asList(configurer.additionalURLs()));
+            }
         }
         urls = urlSet.toArray(new URL[urlSet.size()]);
     }
@@ -42,8 +44,8 @@ public class CompositeClassLoaderConfigurer implements ClassLoaderConfigurer {
 
     @Override
     public boolean accept(final URL url) {
-        for (ClassLoaderConfigurer configurer : composites) {
-            if (!configurer.accept(url)) {
+        for (final ClassLoaderConfigurer configurer : composites) {
+            if (configurer != null && !configurer.accept(url)) {
                 return false;
             }
         }

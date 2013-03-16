@@ -56,6 +56,7 @@ import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
+import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
@@ -1698,24 +1699,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             parent = parentFinder.getParentClassLoader(parent);
         }
 
-        final ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(appInfo.appId);
-        if (configurer != null) {
-            final Iterator<URL> it = jars.iterator();
-            while (it.hasNext()) {
-                if (!configurer.accept(it.next())) {
-                    it.remove();
-                }
-            }
-            jars.addAll(Arrays.asList(configurer.additionalURLs()));
-        }
-
         final String prefix;
         if (appInfo.webAppAlone) {
             prefix = "WEB-INF/";
         } else {
             prefix = "META-INF/";
         }
-        jars.addAll(QuickJarsTxtParser.parse(new File(appInfo.path, prefix + QuickJarsTxtParser.FILE_NAME)));
+        final ClassLoaderConfigurer configurer1 = QuickJarsTxtParser.parse(new File(appInfo.path, prefix + QuickJarsTxtParser.FILE_NAME));
+        final ClassLoaderConfigurer configurer2 = ClassLoaderUtil.configurer(appInfo.appId);
+
+        if (configurer1 != null || configurer2 != null) {
+            final ClassLoaderConfigurer configurer = new CompositeClassLoaderConfigurer(configurer1, configurer2);
+            ClassLoaderConfigurer.Helper.configure(jars, configurer);
+        }
 
         final URL[] filtered = jars.toArray(new URL[jars.size()]);
 

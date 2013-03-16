@@ -308,34 +308,26 @@ public class ClassLoaderUtil {
             }
         }
 
-        final Collection<URL> jarsXmlUrls = QuickJarsTxtParser.parse(new File(appId, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
-        jarsXmlUrls.addAll(QuickJarsTxtParser.parse(new File(appId, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME)));
+        // from the app
+        final ClassLoaderConfigurer configurer1 = QuickJarsTxtParser.parse(new File(appId, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
+        final ClassLoaderConfigurer configurer2 = QuickJarsTxtParser.parse(new File(appId, "WEB-INF/" + QuickJarsTxtParser.FILE_NAME));
+
+        // external config
+        ClassLoaderConfigurer configurer3 = ClassLoaderUtil.configurer(updatedAppId);
+        if (configurer3 == null) { // try the complete path
+            configurer3 = ClassLoaderUtil.configurer(appId);
+        }
 
         final URL[] urls;
-        ClassLoaderConfigurer configurer = ClassLoaderUtil.configurer(updatedAppId);
-        if (configurer == null) { // try the complete path
-            configurer = ClassLoaderUtil.configurer(appId);
-        }
-        if (configurer != null) {
-            final Collection<URL> urlList = new ArrayList<URL>();
-            for (final URL rawUrl : rawUrls) {
-                if (configurer.accept(rawUrl)) {
-                    urlList.add(rawUrl);
-                }
-            }
-            urlList.addAll(Arrays.asList(configurer.additionalURLs()));
-            urlList.addAll(jarsXmlUrls);
-            urls = urlList.toArray(new URL[urlList.size()]);
-        } else if (jarsXmlUrls.isEmpty()) {
+        if (configurer1 == null && configurer2 == null && configurer3 == null) {
             urls = rawUrls;
         } else {
-            final Collection<URL> urlList = new ArrayList<URL>();
-            urlList.addAll(Arrays.asList(rawUrls));
-            urlList.addAll(jarsXmlUrls);
-            urls = urlList.toArray(new URL[urlList.size()]);
+            final CompositeClassLoaderConfigurer configurer = new CompositeClassLoaderConfigurer(configurer1, configurer2, configurer3);
+            final Collection<URL> list = new ArrayList<URL>();
+            list.addAll(Arrays.asList(rawUrls));
+            ClassLoaderConfigurer.Helper.configure(list, configurer);
+            urls = list.toArray(new URL[list.size()]);
         }
-
-
 
         return new TempClassLoader(createClassLoader(appId, urls, parent));
     }
