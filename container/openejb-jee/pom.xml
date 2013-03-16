@@ -30,12 +30,11 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Java EE</name>
 
-
- <properties>
-      <openejb.osgi.import.pkg>
-        org.apache.geronimo.specs.jpa;resolution:=optional,
-        org.apache.geronimo.specs.activation;resolution:=optional,
-        *
+  <properties>
+    <openejb.osgi.import.pkg>
+    org.apache.geronimo.specs.jpa;resolution:=optional,
+    org.apache.geronimo.specs.activation;resolution:=optional,
+    *
     </openejb.osgi.import.pkg>
   </properties>
 

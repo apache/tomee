@@ -1,0 +1,34 @@
+<foo>
+  <!-- after this the default space is
+        "http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+   -->
+
+  <tlibversion>2.0</tlibversion>
+  <jspversion>1.2</jspversion>
+  <shortname>BSF JSP Support</shortname>
+  <uri>http://jakarta.apache.org/taglibs/</uri>
+  <info> Just testing </info>
+
+  <tag>
+    <name>scriptlet</name>
+    <tagclass>org.apache.taglibs.bsf.scriptlet</tagclass>
+    <bodycontent>tagdependent</bodycontent>
+    <info>Run script</info>
+    <attribute>
+      <name>language</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>expression</name>
+    <tagclass>org.apache.taglibs.bsf.expression</tagclass>
+    <bodycontent>tagdependent</bodycontent>
+    <info>Run expression</info>
+    <attribute>
+      <name>language</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+
+</foo>

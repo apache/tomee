@@ -42,6 +42,8 @@ public class TldTaglibXml {
         try {
             final XMLStreamReader filter = new TaglibNamespaceFilter(Sxc.prepareReader(inputStream));
             return Sxc.unmarhsal(new TldTaglib$JAXB(), new XoXMLStreamReaderImpl(filter));
+        } catch (Exception e) {
+            return new TldTaglib();
         } finally {
             IO.close(inputStream);
         }
