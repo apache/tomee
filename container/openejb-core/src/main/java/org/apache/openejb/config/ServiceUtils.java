@@ -20,16 +20,16 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.provider.ID;
 import org.apache.openejb.config.provider.ProviderManager;
 import org.apache.openejb.config.provider.ServiceJarXmlLoader;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.ServiceProvider;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
 
 public class ServiceUtils {
     public static final String ANY = ServiceUtils.class.getName() + "@ANY";
@@ -57,7 +57,7 @@ public class ServiceUtils {
     }
 
     private static String currentDefaultProviderUrl(String defaultValue) {
-        return SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
+        return SystemInstance.get().getProperty("openejb.provider.default", defaultValue);
     }
 
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
