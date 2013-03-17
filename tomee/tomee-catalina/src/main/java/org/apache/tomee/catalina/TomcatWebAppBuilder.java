@@ -543,7 +543,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private static boolean isRoot(final String name) {
-        return "/ROOT".equals(name) || "ROOT".equals(name);
+        return "/ROOT".equals(name) || "ROOT".equals(name) || name == null || name.isEmpty();
     }
 
     public void deployWar(final StandardContext standardContext, final String host, final AppInfo info) {
@@ -822,7 +822,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static String finalName(final String path) {
         if (isRoot(path)) {
-            return "";
+            return "/";
         }
         return path;
     }
