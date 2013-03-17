@@ -497,7 +497,8 @@ public class DeploymentsElementTest extends Assert {
     @Test
     public void invalidDir_notReadable() throws Exception {
 
-        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")) {
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")
+                && !"root".equals(System.getProperty("user.name", "openejb"))) {
 
             //File.setReadable(false) does nothing on win platforms
 
@@ -510,10 +511,9 @@ public class DeploymentsElementTest extends Assert {
             final File dir = server.deploymentsDir("myapps");
 
             assertTrue(dir.setReadable(false));
-            if (!dir.canRead() && !"root".equals(System.getProperty("user.name", "openejb"))) { // else can't do the test
-                final OpenEjbConfiguration configuration = server.init();
-                assertEquals(0, configuration.containerSystem.applications.size());
-            }
+
+            final OpenEjbConfiguration configuration = server.init();
+            assertEquals(0, configuration.containerSystem.applications.size());
         }
     }
 
@@ -555,7 +555,8 @@ public class DeploymentsElementTest extends Assert {
     @Test
     public void invalidFile_notReadable() throws Exception {
 
-        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")) {
+        if (!System.getProperty("os.name", "unknown").toLowerCase().startsWith("win")
+                && !"root".equals(System.getProperty("user.name", "openejb"))) {
 
             //File.setReadable(false) does nothing on win platforms
 
@@ -570,10 +571,8 @@ public class DeploymentsElementTest extends Assert {
             assertTrue(file.createNewFile());
             assertTrue(file.setReadable(false));
 
-            if (!file.canRead() && !"root".equals(System.getProperty("user.name", "openejb"))) { // else can't do the test
-                final OpenEjbConfiguration configuration = server.init();
-                assertEquals(0, configuration.containerSystem.applications.size());
-            }
+            final OpenEjbConfiguration configuration = server.init();
+            assertEquals(0, configuration.containerSystem.applications.size());
         }
     }
 
