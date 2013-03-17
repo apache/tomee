@@ -24,11 +24,11 @@
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.openejb.maven</groupId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.5.2</version>
   </parent>
 
   <artifactId>tomee-embedded-maven-plugin</artifactId>
-  <version>1.5.2-SNAPSHOT</version>
+  <version>1.5.2</version>
   <packaging>maven-plugin</packaging>
   <name>OpenEJB :: Maven Plugins :: TomEE Embedded Maven Plugin</name>
 

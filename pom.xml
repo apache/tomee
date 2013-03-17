@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.5.2-SNAPSHOT</version>
+  <version>4.5.2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -90,8 +90,8 @@
 
   <properties>
 
-    <openejb.version>4.5.2-SNAPSHOT</openejb.version>
-    <tomee.version>1.5.2-SNAPSHOT</tomee.version>
+    <openejb.version>4.5.2</openejb.version>
+    <tomee.version>1.5.2</tomee.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -114,7 +114,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-5-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>6.0-5</javaee-api.version>
 
     <jaxb.version>2.2.6</jaxb.version>
 

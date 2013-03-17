@@ -25,7 +25,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.5.2-SNAPSHOT</version>
+    <version>4.5.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core</artifactId>
@@ -420,11 +420,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-jee</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-jee-accessors</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
