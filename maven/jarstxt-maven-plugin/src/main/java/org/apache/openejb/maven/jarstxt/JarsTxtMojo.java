@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 @Mojo(name = "generate", threadSafe = true,
-        requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.COMPILE)
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.COMPILE)
 public class JarsTxtMojo extends AbstractMojo {
     @Component
     protected MavenProject project;
