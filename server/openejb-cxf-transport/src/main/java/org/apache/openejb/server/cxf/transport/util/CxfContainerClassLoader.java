@@ -101,4 +101,14 @@ public class CxfContainerClassLoader extends ClassLoader {
     protected Enumeration<URL> findResources(final String name) throws IOException {
         return tccl().getResources(name);
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        return tccl().equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return tccl().hashCode();
+    }
 }
