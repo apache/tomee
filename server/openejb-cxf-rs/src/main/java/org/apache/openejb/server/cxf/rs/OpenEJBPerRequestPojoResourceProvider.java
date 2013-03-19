@@ -65,10 +65,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     private BeanCreator creator;
     private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
 
-    public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
+    public OpenEJBPerRequestPojoResourceProvider(final ClassLoader loader, final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
         webbeansContext = owbCtx;
-        classLoader = clazz.getClassLoader();
+        classLoader = loader;
         context = (Context) Proxy.newProxyInstance(classLoader, new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
 
         constructor = ResourceUtils.findResourceConstructor(clazz, true);

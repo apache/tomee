@@ -32,8 +32,9 @@ public interface RsHttpListener extends HttpListener {
     void deploySingleton(String webContext, String fullContext, Object o, Application appInstance,
                          Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
-    void deployPojo(String webContext, String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
-                    Context context, WebBeansContext owbCtx, Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
+    void deployPojo(ClassLoader classloader, String webContext, String fullContext, Class<?> loadedClazz, Application app,
+                    Collection<Injection> injections, Context context, WebBeansContext owbCtx,
+                    Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 
     void deployEJB(String webContext, String fullContext, BeanContext beanContext, Collection<Object> additionalProviders, ServiceConfiguration serviceInfos);
 

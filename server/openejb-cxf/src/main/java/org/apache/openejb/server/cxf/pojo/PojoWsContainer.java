@@ -29,17 +29,19 @@ public class PojoWsContainer extends CxfWsContainer {
     private final Context context;
     private final Class target;
     private final Map<String, Object> bindings;
+    private final ClassLoader loader;
 
-    public PojoWsContainer(Bus bus, PortData port, Context context, Class target,
+    public PojoWsContainer(ClassLoader loader, Bus bus, PortData port, Context context, Class target,
                            Map<String, Object> bdgs, ServiceConfiguration configuration) {
         super(bus, port, configuration);
         if (target == null) throw new NullPointerException("target is null");
         this.context = context;
         this.target = target;
         this.bindings = bdgs;
+        this.loader = loader;
     }
 
     protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(bus, port, context, target, httpTransportFactory, bindings, serviceConfiguration);
+        return new PojoEndpoint(loader, bus, port, context, target, httpTransportFactory, bindings, serviceConfiguration);
     }
 }

@@ -68,7 +68,7 @@ public class CxfService extends WsService {
         }
     }
 
-    protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
+    protected HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
         Bus bus = CxfUtil.getBus();
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -76,7 +76,7 @@ public class CxfService extends WsService {
         try {
             CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-            PojoWsContainer container = new PojoWsContainer(bus, port, context, target, bdgs, services);
+            PojoWsContainer container = new PojoWsContainer(loader, bus, port, context, target, bdgs, services);
             container.start();
             wsContainers.put(serviceId, container);
             return container;

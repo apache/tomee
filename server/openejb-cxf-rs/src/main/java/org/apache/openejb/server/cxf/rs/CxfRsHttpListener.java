@@ -197,9 +197,9 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     @Override
-    public void deployPojo(String contextRoot, String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
+    public void deployPojo(ClassLoader loader, String contextRoot, String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections,
                            Context context, WebBeansContext owbCtx, Collection<Object> additionalProviders, ServiceConfiguration configuration) {
-        deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context, owbCtx),
+        deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
                             null, app, null, additionalProviders, configuration);
     }
 
@@ -325,7 +325,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     final Object proxy = ProxyEJB.subclassProxy(bc);
                     factory.setResourceProvider(clazz, new NoopResourceProvider(bc.getBeanClass(), proxy));
                 } else {
-                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(clazz, injections, context, owbCtx));
+                    factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(classLoader, clazz, injections, context, owbCtx));
                 }
             }
 
