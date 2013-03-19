@@ -376,7 +376,11 @@ public class Files {
                 throw new IllegalStateException(e);
             }
         } else if ("file".equals(url.getProtocol())) {
-            return new File(decode(url.getFile()));
+            String path = decode(url.getFile());
+            if (path.endsWith("!")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            return new File(path);
         } else {
             throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
         }
