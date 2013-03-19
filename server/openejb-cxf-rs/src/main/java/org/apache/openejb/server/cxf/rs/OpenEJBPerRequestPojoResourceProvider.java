@@ -60,6 +60,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     protected final Constructor<?> constructor;
     protected final Method postConstructMethod;
     protected final Method preDestroyMethod;
+    protected final ClassLoader classLoader;
 
     private BeanCreator creator;
     private final Collection<Class<?>> contextTypes = new HashSet<Class<?>>();
@@ -67,7 +68,8 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     public OpenEJBPerRequestPojoResourceProvider(final Class<?> clazz, final Collection<Injection> injectionCollection, final Context initialContext, final WebBeansContext owbCtx) {
         injections = injectionCollection;
         webbeansContext = owbCtx;
-        context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
+        classLoader = clazz.getClassLoader();
+        context = (Context) Proxy.newProxyInstance(classLoader, new Class<?>[]{Context.class}, new InitialContextWrapper(initialContext));
 
         constructor = ResourceUtils.findResourceConstructor(clazz, true);
         if (constructor == null) {
@@ -120,11 +122,16 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             creator = new DefaultBeanCreator(m);
         }
 
+        // important to switch of classloader to get the right InitialContext
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
         try {
             return creator.create();
         } catch (NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m);
             return creator.create();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldLoader);
         }
     }
 
