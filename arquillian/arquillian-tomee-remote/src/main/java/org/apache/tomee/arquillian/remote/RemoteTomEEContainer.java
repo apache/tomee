@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -113,7 +114,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private List<String> args() {
         String opts = configuration.getCatalina_opts();
         if (opts == null || (opts = opts.trim()).isEmpty()) {
-            return Collections.emptyList();
+            return Arrays.asList("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false");
         }
 
         final List<String> splitOnSpace = new ArrayList<String>();
@@ -124,6 +125,9 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             splitOnSpace.add(it.next());
         }
 
+        if (!splitOnSpace.contains("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true")) {
+            splitOnSpace.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false");
+        }
         return splitOnSpace;
     }
 
