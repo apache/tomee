@@ -1713,7 +1713,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 throw new UnknownModuleTypeException("Unknown module type: url=" + path + " which can't be a war.");
             }
 
-            logger.info("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
+            logger.debug("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
             return defaultType;
         }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
