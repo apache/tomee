@@ -611,11 +611,18 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected void run() {
         final String deployOpenEjbAppKey = "openejb.system.apps";
+        final String servletCompliance = "org.apache.catalina.STRICT_SERVLET_COMPLIANCE";
+
+        boolean deactivateStrictServletCompliance = args == null || !args.contains(servletCompliance);
 
         final List<String> strings = new ArrayList<String>();
         if (systemVariables != null) {
             for (Map.Entry<String, String> entry : systemVariables.entrySet()) {
                 final String key = entry.getKey();
+                if (servletCompliance.equals(key)) {
+                    deactivateStrictServletCompliance = false;
+                }
+
                 final String value = entry.getValue();
                 if (value == null) {
                     strings.add("-D" + key);
@@ -629,6 +636,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     deployOpenEjbApplication = true;
                 }
             }
+        }
+        if (deactivateStrictServletCompliance) {
+            strings.add("-D" + servletCompliance + "=false");
         }
         if (quickSession) {
             strings.add("-Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
