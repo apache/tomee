@@ -21,7 +21,7 @@
   <parent>
     <artifactId>deps</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.5.2-SNAPSHOT</version>
+    <version>4.5.3-SNAPSHOT</version>
   </parent>
   <artifactId>mbean-annotation-api</artifactId>
   <name>OpenEJB :: Dependencies :: MBean Annotation API</name>

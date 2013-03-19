@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-configproperty</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: DeltaSpike @ConfigProperty</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,13 +76,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.5.2-SNAPSHOT</version>
+      <version>4.5.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.5.2-SNAPSHOT</version>
+      <version>1.5.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
