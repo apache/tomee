@@ -44,7 +44,7 @@ import static org.apache.openejb.InjectionProcessor.unwrap;
 public class PojoEndpoint extends CxfEndpoint {
     private InjectionProcessor<Object> injectionProcessor;
 
-    public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance,
+    public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
                         HTTPTransportFactory httpTransportFactory,
                         Map<String, Object> bindings, ServiceConfiguration config) {
     	super(bus, port, context, instance, httpTransportFactory, config);
@@ -65,7 +65,9 @@ public class PojoEndpoint extends CxfEndpoint {
 
         service = serviceFactory.create();
 
-        // instantiate and inject resources into service
+        // instantiate and inject resources into service using the app classloader to be sure to get the right InitialContext
+        final ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(loader);
         try {
             injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
             injectionProcessor.createInstance();
@@ -74,6 +76,8 @@ public class PojoEndpoint extends CxfEndpoint {
             injectCxfResources(implementor);
         } catch (Exception e) {
             throw new WebServiceException("Service resource injection failed", e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
         }
 
         service.setInvoker(new JAXWSMethodInvoker(implementor));

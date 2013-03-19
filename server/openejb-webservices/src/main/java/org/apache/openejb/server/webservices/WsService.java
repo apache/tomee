@@ -207,7 +207,9 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     protected abstract void destroyEjbWsContainer(String deploymentId);
 
-    protected abstract HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bindings, ServiceConfiguration configuration) throws Exception;
+    protected abstract HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId,
+                                                          Class target, Context context, String contextRoot,
+                                                          Map<String, Object> bindings, ServiceConfiguration configuration) throws Exception;
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
@@ -370,7 +372,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                 pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
-                final HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink,
+                final HttpListener container = createPojoWsContainer(classLoader, moduleBaseUrl, port, portInfo.serviceLink,
                                                                      target, context, webApp.contextRoot, bindings,
                                                                      new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 

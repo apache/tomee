@@ -678,7 +678,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName()));
-        listener.deployPojo(contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
+        listener.deployPojo(classLoader, contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
                 additionalProviders, config);
 
         LOGGER.info("REST Service: " + address.complete + "  -> Pojo " + loadedClazz.getName());
