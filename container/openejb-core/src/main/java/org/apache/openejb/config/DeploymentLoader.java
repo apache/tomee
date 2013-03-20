@@ -31,6 +31,7 @@ import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.jee.Taglib;
@@ -42,7 +43,6 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.sxc.ApplicationXml;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
@@ -54,7 +54,9 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
+import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -358,7 +360,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             final Application application;
             if (applicationXmlUrl != null) {
 
-                application = unmarshal(applicationXmlUrl);
+                application = unmarshal(Application.class, "application.xml", applicationXmlUrl);
                 for (final Module module : application.getModule()) {
                     try {
                         if (module.getEjb() != null) {
@@ -1504,11 +1506,17 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static Application unmarshal(final URL url) throws OpenEJBException {
+    public static <T> T unmarshal(final Class<T> type, final String descriptor, final URL url) throws OpenEJBException {
         try {
-            return ApplicationXml.unmarshal(url);
+            return (T) JaxbJavaee.unmarshalJavaee(type, new BufferedInputStream(url.openStream()));
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the " + descriptor + " file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the " + descriptor + " file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the " + descriptor + " file: " + url.toExternalForm(), e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered error parsing the application.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the " + descriptor + " file: " + url.toExternalForm(), e);
         }
     }
 

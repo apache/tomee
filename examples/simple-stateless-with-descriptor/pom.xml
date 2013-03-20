@@ -74,12 +74,6 @@
       <version>4.5.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-jee-accessors</artifactId>
-      <version>4.5.2</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <!--
