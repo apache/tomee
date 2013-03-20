@@ -1638,7 +1638,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
             ClassLoaderUtil.cleanOpenJPACache(old);
         }
-        if (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone) {
+        if (contextInfo != null && (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone)) {
             removeContextInfo(standardContext);
         }
     }
