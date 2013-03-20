@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.common;
 import junit.framework.TestCase;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,10 +34,15 @@ public class ConfigurationOverridesTest extends TestCase {
      *
      * Do not change the order
      *
+     * Note: the order is guaranteed by org.apache.openejb.arquillian.common.ConfigurationOverrides#apply(java.lang.Object, java.util.Properties, java.lang.String...)
+     *      because it needs to know if we work on a default or not property file
+     *      to be able to not override already set properties with defaults ones
+     *
      * @throws Exception
      */
     public void testFindPropertiesFiles() throws Exception {
-        final List<URL> color = ConfigurationOverrides.findPropertiesFiles("color", "color.orange");
+        String[] prefixes = { "color", "color.orange" };
+        final List<URL> color = ConfigurationOverrides.apply(new Color(), new Properties(), prefixes);
 
         assertEquals(4, color.size());
         assertTrue(color.get(0).toExternalForm().endsWith("/default.arquillian-color.properties"));
