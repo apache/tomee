@@ -34,10 +34,14 @@ public class ConfigurationOverrides {
 
     public static List<URL> apply(Object configuration, final Properties systemProperties, String... prefixes) {
         final List<URL> propertiesFiles = findPropertiesFiles("default.arquillian-%s.properties", prefixes);
-        apply(configuration, systemProperties, propertiesFiles, false, prefixes);
+        if (!propertiesFiles.isEmpty()) {
+            apply(configuration, systemProperties, propertiesFiles, false, prefixes);
+        }
 
         final List<URL> overridePropFiles = findPropertiesFiles("arquillian-%s.properties", prefixes);
-        apply(configuration, systemProperties, overridePropFiles, true, prefixes);
+        if (!overridePropFiles.isEmpty()) {
+            apply(configuration, systemProperties, overridePropFiles, true, prefixes);
+        }
 
         propertiesFiles.addAll(overridePropFiles);
         return propertiesFiles;
