@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Mojo(name = "generate", threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.COMPILE)
@@ -54,6 +55,9 @@ public class JarsTxtMojo extends AbstractMojo {
 
     @Parameter(property = "hash")
     protected String hashAlgo;
+
+    @Parameter(property = "useTimeStamp", defaultValue = "false")
+    protected boolean useTimeStamp;
 
     @Component
     protected ArtifactFactory factory;
@@ -77,6 +81,8 @@ public class JarsTxtMojo extends AbstractMojo {
         try {
             writer = new FileWriter(outputFile);
 
+            final TreeSet<String> set = new TreeSet<String>();
+
             for (final Artifact a : (Set<Artifact>) project.getArtifacts()) {
                 if (!acceptScope(a.getScope()) || !acceptType(a.getType())) {
                     continue;
@@ -87,7 +93,7 @@ public class JarsTxtMojo extends AbstractMojo {
                 final StringBuilder line = new StringBuilder("mvn:")
                         .append(a.getGroupId()).append("/")
                         .append(a.getArtifactId()).append("/")
-                        .append(a.getVersion());
+                        .append(version(a));
                 if (hashAlgo != null) {
                     final Artifact artifact = factory.createDependencyArtifact(a.getGroupId(), a.getArtifactId(), VersionRange.createFromVersion(a.getVersion()), a.getType(), a.getClassifier(), a.getScope());
                     try {
@@ -102,7 +108,12 @@ public class JarsTxtMojo extends AbstractMojo {
                         .append("|").append(hashAlgo);
                 }
 
-                writer.write(line.toString());
+                set.add(line.toString());
+            }
+
+            // written after to be sorted, more readable
+            for (final String line : set) {
+                writer.write(line);
                 writer.write("\n");
             }
 
@@ -118,6 +129,13 @@ public class JarsTxtMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private String version(final Artifact a) {
+        if (!useTimeStamp && a.getBaseVersion().endsWith("SNAPSHOT")) {
+            return a.getBaseVersion();
+        }
+        return a.getVersion();
     }
 
     private boolean acceptType(final String type) {
