@@ -32,13 +32,18 @@ import java.util.logging.Logger;
 public class ConfigurationOverrides {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
-    public static void apply(Object configuration, final Properties systemProperties, String... prefixes) {
-        final List<URL> urls = findPropertiesFiles(prefixes);
+    public static List<URL> apply(Object configuration, final Properties systemProperties, String... prefixes) {
+        final List<URL> propertiesFiles = findPropertiesFiles("default.arquillian-%s.properties", prefixes);
+        apply(configuration, systemProperties, propertiesFiles, false, prefixes);
 
-        apply(configuration, systemProperties, urls, prefixes);
+        final List<URL> overridePropFiles = findPropertiesFiles("arquillian-%s.properties", prefixes);
+        apply(configuration, systemProperties, overridePropFiles, true, prefixes);
+
+        propertiesFiles.addAll(overridePropFiles);
+        return propertiesFiles;
     }
 
-    public static void apply(final Object configuration, final Properties systemProperties, final List<URL> urls, final String... prefixes) {
+    public static void apply(final Object configuration, final Properties systemProperties, final List<URL> urls, final boolean overrideNotNull, final String... prefixes) {
         final List<Properties> propertiesList = read(urls);
 
         final Properties defaults = new Properties();
@@ -52,7 +57,7 @@ public class ConfigurationOverrides {
         for (Map.Entry<Object, Object> entry : defaults.entrySet()) {
             final String key = entry.getKey().toString();
             final String value = entry.getValue().toString();
-            setProperty(map, key, key, value, Level.FINE);
+            setProperty(map, key, key, value, Level.FINE, overrideNotNull);
         }
 
         //
@@ -63,7 +68,7 @@ public class ConfigurationOverrides {
                 final String property = prefix + "." + key;
                 final String value = systemProperties.getProperty(property);
 
-                setProperty(map, key, property, value, Level.INFO);
+                setProperty(map, key, property, value, Level.INFO, overrideNotNull);
             }
         }
     }
@@ -80,20 +85,16 @@ public class ConfigurationOverrides {
         return propertiesList;
     }
 
-    public static List<URL> findPropertiesFiles(String... prefixes) {
+    public static List<URL> findPropertiesFiles(final String name, final String... prefixes) {
         final List<URL> urls = new ArrayList<URL>();
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         for (String prefix : prefixes) {
-            final String resourceName = String.format("default.arquillian-%s.properties", prefix.replace('.', '-'));
+            final String resourceName = String.format(name, prefix.replace('.', '-'));
             addResources(urls, loader, resourceName);
         }
 
-        for (String prefix : prefixes) {
-            final String resourceName = String.format("arquillian-%s.properties", prefix.replace('.', '-'));
-            addResources(urls, loader, resourceName);
-        }
         return urls;
     }
 
@@ -108,9 +109,14 @@ public class ConfigurationOverrides {
         }
     }
 
-    private static void setProperty(ObjectMap map, String key, String property, String value, final Level info) {
+    private static void setProperty(ObjectMap map, String key, String property, String value, final Level info, final boolean overrideNotNull) {
         if (value == null) {
             LOGGER.log(Level.FINE, String.format("Unset '%s'", property));
+            return;
+        }
+
+        if (!overrideNotNull && !isNull(map.get(key))) {
+            LOGGER.log(Level.FINE, String.format("Unset '%s' because already set", property));
             return;
         }
 
@@ -128,5 +134,12 @@ public class ConfigurationOverrides {
                 }
             }
         }
+    }
+
+    private static boolean isNull(final Object o) {
+        if (Number.class.isInstance(o)) {
+            return Number.class.cast(o).intValue() == 0;
+        }
+        return o == null;
     }
 }
