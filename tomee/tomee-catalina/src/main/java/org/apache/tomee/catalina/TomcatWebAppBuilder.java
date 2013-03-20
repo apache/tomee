@@ -1577,7 +1577,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         if (name.startsWith("/")) {
             name = name.substring(1);
         }
-        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".tomcat-only", "false"));
+
+        final SystemInstance systemInstance = SystemInstance.get();
+        return "true".equalsIgnoreCase(systemInstance.getProperty(name + ".tomcat-only", systemInstance.getProperty("tomcat-only", "false")));
     }
 
     /**
