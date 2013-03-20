@@ -3086,7 +3086,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && sessionBean.getRemote() == null
                         && sessionBean.getLocalHome() == null
                         && sessionBean.getLocal() == null
-                        && sessionBean.getServiceEndpoint() == null
                         && all.local.isEmpty()
                         && all.remote.isEmpty()
                         ) {
