@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.metatype.sxc</groupId>
       <artifactId>sxc-jaxb-core</artifactId>
-      <version>0.8-SNAPSHOT</version>
+      <version>0.8</version>
       <exclusions>
         <exclusion>
           <groupId>stax</groupId>
