@@ -99,15 +99,15 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             converted.setProperty("username", user);
         }
         final String maxWait = toMillis((String) properties.remove("maxWaitTime"));
-        if (properties.containsKey("maxWaitTime") && !properties.containsKey("maxWait")) {
+        if (maxWait != null && !properties.containsKey("maxWait")) {
             converted.setProperty("maxWait", maxWait);
         }
         final String tb = toMillis((String) properties.remove("timeBetweenEvictionRuns"));
-        if (properties.containsKey("timeBetweenEvictionRuns") && !properties.containsKey("timeBetweenEvictionRunsMillis")) {
+        if (tb != null && !properties.containsKey("timeBetweenEvictionRunsMillis")) {
             converted.setProperty("timeBetweenEvictionRunsMillis", tb);
         }
         final String minEvict = toMillis((String) properties.remove("minEvictableIdleTime"));
-        if (properties.containsKey("minEvictableIdleTime") && !properties.containsKey("minEvictableIdleTimeMillis")) {
+        if (minEvict != null && !properties.containsKey("minEvictableIdleTimeMillis")) {
             converted.setProperty("minEvictableIdleTimeMillis", minEvict);
         }
 
