@@ -18,7 +18,6 @@ package org.apache.tomee.arquillian.webapp;
 
 import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
-import org.apache.openejb.resolver.maven.VersionResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +29,12 @@ import java.util.List;
 public class TomEEWebappConfiguration extends TomEEConfiguration {
     private static final String TOMCAT_REFERENCE_ARTIFACT = "org.apache.tomcat:tomcat-catalina";
     private static final String TOMCAT_VERSION_PREFIX = "7.";
-    private static final String DEFAULT_TOMCAT_VERSION = TOMCAT_VERSION_PREFIX + "0.29";
 
-    private String tomcatVersion = null;
-    private String groupId = "org.apache.openejb";
-    private String artifactId = "tomee-webapp";
-    private String version = "LATEST";
-    private String type = "war";
+    private String tomcatVersion;
+    private String groupId;
+    private String artifactId;
+    private String version; // let the version be set from properties file otherwise latest will be 4.0.0
+    private String type;
     private boolean removeUnusedWebapps = true;
     private boolean useInstallerServlet = false;
     private int ajpPort = 8009;
@@ -88,9 +86,6 @@ public class TomEEWebappConfiguration extends TomEEConfiguration {
     }
 
     public String getTomcatVersion() {
-        if (tomcatVersion == null || "LATEST".equals(tomcatVersion)) {
-            tomcatVersion = VersionResolver.highestVersion(TOMCAT_REFERENCE_ARTIFACT, TOMCAT_VERSION_PREFIX, DEFAULT_TOMCAT_VERSION);
-        }
         return tomcatVersion;
     }
 
