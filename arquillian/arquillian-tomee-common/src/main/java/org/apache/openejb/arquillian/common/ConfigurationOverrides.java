@@ -72,7 +72,7 @@ public class ConfigurationOverrides {
                 final String property = prefix + "." + key;
                 final String value = systemProperties.getProperty(property);
 
-                setProperty(map, key, property, value, Level.INFO, overrideNotNull);
+                setProperty(map, key, property, value, Level.INFO, true); // always override with system properties
             }
         }
     }
