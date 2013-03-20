@@ -83,10 +83,9 @@ public class Container {
     private Tomcat tomcat;
 
     public Container() {
-        final Configuration configuration = new Configuration();
+        configuration = new Configuration();
         configuration.setHttpPort(23880);
         configuration.setStopPort(23881);
-        setup(configuration);
     }
 
     public void setup(final Configuration configuration) {
@@ -120,6 +119,10 @@ public class Container {
     }
 
     public void start() throws Exception {
+        if (base == null) {
+            setup(configuration);
+        }
+
         Logger.configure();
 
         final File conf = new File(base, "conf");
@@ -257,8 +260,12 @@ public class Container {
         try {
 
             final String dir = configuration.getDir();
-            if (dir != null && new File(dir).exists()) {
-                return dir;
+            if (dir != null) {
+                final File dirFile = new File(dir);
+                if (dirFile.exists()) {
+                    return dir;
+                }
+                return Files.mkdir(dirFile).getAbsolutePath();
             }
 
             try {
