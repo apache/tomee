@@ -114,7 +114,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- to change easily the javaee api version -->
-    <javaee-api.version>6.0-5-SNAPSHOT</javaee-api.version>
+    <javaee-api.version>6.0-5</javaee-api.version>
 
     <jaxb.version>2.2.6</jaxb.version>
 
@@ -143,7 +143,7 @@
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <org.apache.openwebbeans.version>1.1.8-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.1.8</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
@@ -464,6 +464,28 @@
     </profile>
   </profiles>
   <repositories>
+  <repository>
+    <id>openwebbeans-staging</id>
+      <name>openwebbeans-staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-008</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>javaee-api-staging</id>
+      <name>javaee-api-staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-009</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <!--<repository>-->
     <!--<id>codehaus-snapshot</id>-->
     <!--<name>CodeHaus SNAPSHOT repository</name>-->
