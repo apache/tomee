@@ -329,6 +329,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
     }
 
+    public boolean isValid() {
+        return !isInvalidReference;
+    }
+
     private void isValidReference(final Method method) throws NoSuchObjectException {
         if (isInvalidReference) {
             if (interfaceType.isComponent() && interfaceType.isLocal()) {

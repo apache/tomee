@@ -20,6 +20,9 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.WebBeansDecorator;
@@ -42,6 +45,7 @@ import javax.enterprise.inject.spi.SessionBeanType;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -354,7 +358,17 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private void destroyScopedStateful(final T instance, final CreationalContext<T> cc) {
         try {
             instance.hashCode(); // force the instance to be created - otherwise we'll miss @PreDestroy for instance
-        } catch (NoSuchEJBException e) {
+        } catch (final NoSuchEJBException e) {
+            InvocationHandler handler = null;
+            if (LocalBeanProxyFactory.isProxy(instance.getClass())) {
+                handler = LocalBeanProxyFactory.getInvocationHandler(instance);
+            } else if (ProxyManager.isProxyClass(instance.getClass())) {
+                handler = ProxyManager.getInvocationHandler(instance);
+            }
+            if (BaseEjbProxyHandler.class.isInstance(handler) && !BaseEjbProxyHandler.class.cast(handler).isValid()) {
+                return; // already destroyed
+            } // else log error
+
             logger.log(Level.FINE, "The stateful instance " + instance + " can't be removed since it was invalidated", e);
             return;
         }
