@@ -444,7 +444,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         @Override
         public boolean equals(final Object o) {
-            return this == o || bean == o;
+            return this == o || bean.equals(o);
         }
 
         @Override
