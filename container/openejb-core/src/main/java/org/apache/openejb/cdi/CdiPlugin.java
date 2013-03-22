@@ -18,6 +18,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
+import org.apache.webbeans.component.AbstractOwbBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
@@ -247,6 +248,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     // does pretty much nothing
     // used only to get a layer between our EJB proxies and OWB proxies to let them manage the scope
+    // /!\ don't extend AbstractOwbBean without checking equals()
     private static class InstanceBean<T> implements OwbBean<T>, PassivationCapable {
         private final CdiEjbBean<T> bean;
         private T OWBProxy;
@@ -444,7 +446,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         @Override
         public boolean equals(final Object o) {
-            return this == o || bean.equals(o);
+            if (AbstractOwbBean.class.isInstance(o)) {
+                return bean.equals(o);
+            }
+            return InstanceBean.class.isInstance(o) && bean.equals(InstanceBean.class.cast(o).bean);
         }
 
         @Override
