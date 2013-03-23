@@ -51,9 +51,44 @@ public class OpenEjbContainerTest extends TestCase {
         widget = null;
 
         openEjbContainer.getContext().bind("inject", this);
+
+        openEjbContainer.close();
+    }
+
+    public void testStartContainerFromInnerClass() throws Exception {
+        new SomeInnerClass().startTheContainer();
     }
 
     public static class Widget {
 
+    }
+
+    public static final class SomeInnerClass {
+        @EJB
+        private Widget widget;
+
+        public void startTheContainer() throws Exception {
+            Map<String, Object> map = new HashMap<String, Object>();
+
+
+            final EjbJar ejbJar = new EjbJar();
+            ejbJar.addEnterpriseBean(new SingletonBean(Widget.class));
+            map.put(EJBContainer.MODULES, ejbJar);
+
+            OpenEjbContainer openEjbContainer = (OpenEjbContainer) EJBContainer.createEJBContainer(map);
+
+            try {
+                openEjbContainer.inject(this);
+
+                assertNotNull(widget);
+
+                widget = null;
+
+                openEjbContainer.getContext().bind("inject", this);
+            } finally {
+                openEjbContainer.close();
+            }
+
+        }
     }
 }
