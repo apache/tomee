@@ -1258,6 +1258,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     managedClasses = beans.getManagedClasses();
                     final List<String> classNames = getBeanClasses(finder);
 
+                    final Set<String> notLoadedClasses = new TreeSet<String>();
                     for (String rawClassName : classNames) {
                         final String className = realClassName(rawClassName);
                         try {
@@ -1276,11 +1277,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (Extension.class.isAssignableFrom(clazz)) continue;
 
                             managedClasses.add(className);
-                        } catch (ClassNotFoundException e) {
-                            // todo log debug warning
-                        } catch (java.lang.NoClassDefFoundError e) {
+                        } catch (final ClassNotFoundException e) {
+                            notLoadedClasses.add(rawClassName);
+                        } catch (final java.lang.NoClassDefFoundError e) {
                             // no-op
                         }
+                    }
+
+                    if (!notLoadedClasses.isEmpty()) { // don't log in info or warning since not 100% JavaEE/CDI libs will break the whole logs
+                        logger.debug("Some classes can't be loaded: " + Join.join("\n", notLoadedClasses.toArray(new String[notLoadedClasses.size()])));
                     }
 
                     // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
