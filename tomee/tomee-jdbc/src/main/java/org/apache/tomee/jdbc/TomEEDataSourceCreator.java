@@ -231,6 +231,27 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         private static PoolConfiguration readOnly(final PoolConfiguration pool) {
+            // if validationQuery is not filled disable testXXX
+            if (pool.getValidationQuery() == null || pool.getValidationQuery().isEmpty()) {
+                if (pool.isTestOnBorrow()) {
+                    LOGGER.info("Disabling testOnBorrow since no validation query is provided");
+                    pool.setTestOnBorrow(false);
+                }
+                if (pool.isTestOnConnect()) {
+                    LOGGER.info("Disabling testOnConnect since no validation query is provided");
+                    pool.setTestOnConnect(false);
+                }
+                if (pool.isTestOnReturn()) {
+                    LOGGER.info("Disabling testOnReturn since no validation query is provided");
+                    pool.setTestOnReturn(false);
+                }
+                if (pool.isTestWhileIdle()) {
+                    LOGGER.info("Disabling testWhileIdle since no validation query is provided");
+                    pool.setTestWhileIdle(false);
+                }
+            }
+
+            // prevent overriding of the configuration
             return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
         }
 
