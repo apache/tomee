@@ -125,3 +125,7 @@ This product includes software Copyright University of Southampton IT Innovation
 =========================================================================
   - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
     License: Apache V2
+
+=========================================================================
+  - HawtBuf (http://fusesource.com/forge/projects/hawtbuf)
+    License: Apache V2
