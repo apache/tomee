@@ -1069,7 +1069,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     // todo add watched resources to context
 
                     for (final BeanContext deployment : appContext.getBeanContexts()) {
-                        if (deployment.isLocalbean()) { // init proxy eagerly otherwise deserialization of serialized object can't work
+                        if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
                             final List<Class> interfaces = new ArrayList<Class>(2);
                             interfaces.add(Serializable.class);
                             interfaces.add(IntraVmProxy.class);
