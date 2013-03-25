@@ -62,6 +62,7 @@ import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.ResourceRef;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
@@ -92,6 +93,7 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
@@ -102,6 +104,7 @@ import org.apache.openejb.server.httpd.EndWebBeansListener;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.util.digester.Digester;
@@ -109,6 +112,7 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
+import org.apache.tomee.catalina.session.OWBStandardManager;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.TomcatVersion;
@@ -135,6 +139,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -751,7 +756,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
                 } catch (ClassNotFoundException e) {
                     logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
-                    sessionManagerClass = StandardManager.class;
+                    sessionManagerClass = OWBStandardManager.class;
                 }
             }
 
@@ -761,6 +766,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             } catch (Exception e) {
                 logger.error("can't instantiate '" + sessionManager + "', StandardManager will be used", e);
             }
+        } else if (standardContext.getCluster() == null) { // else let it use the cluster to create the manager
+            standardContext.setManager(new OWBStandardManager());
         }
 
         if (standardContext.getConfigFile() == null) {
@@ -1060,6 +1067,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
+
+                    for (final BeanContext deployment : appContext.getBeanContexts()) {
+                        if (deployment.isLocalbean()) { // init proxy eagerly otherwise deserialization of serialized object can't work
+                            final List<Class> interfaces = new ArrayList<Class>(2);
+                            interfaces.add(Serializable.class);
+                            interfaces.add(IntraVmProxy.class);
+                            final BeanType type = deployment.getComponentType();
+                            if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
+                                interfaces.add(BeanContext.Removable.class);
+                            }
+                            try {
+                                LocalBeanProxyFactory.createProxy(deployment.getBeanClass(), classLoader, interfaces.toArray(new Class<?>[interfaces.size()]));
+                            } catch (final Exception e) {
+                                // no-op: as before
+                            }
+                        }
+                    }
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext, e);
                     undeploy(standardContext, contextInfo);
