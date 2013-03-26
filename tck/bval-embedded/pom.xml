@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.1-SNAPSHOT</version>
+    <version>4.6.0.beta1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

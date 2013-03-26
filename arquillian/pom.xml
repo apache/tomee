@@ -23,11 +23,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.1-SNAPSHOT</version>
+    <version>4.6.0.beta1</version>
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>1.6.1-SNAPSHOT</version>
+  <version>1.6.0.beta1</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
@@ -48,6 +48,5 @@
     <module>arquillian-tomee-moviefun-example</module>
     <module>arquillian-openejb-embedded-4</module>
     <module>ziplock</module>
-    <module>arquillian-tck</module>
   </modules>
 </project>

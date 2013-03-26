@@ -17,7 +17,7 @@
 # It has just some handy shortcuts.
 TOMEE_VERSION=1.5.1
 TOMCAT_ZIP_NAME=apache-tomcat-7.0.33
-TOMCAT_ZIP=tomee/apache-tomcat/target/$(TOMCAT_ZIP_NAME)-SNAPSHOT.zip
+TOMCAT_ZIP=tomee/apache-tomcat/target/$(TOMCAT_ZIP_NAME).beta1.zip
 TOMEEPLUS_WAR=tomee/tomee-plus-webapp/target/tomee-plus-webapp-$(TOMEE_VERSION).war
 TOMEE_WAR=/home/tveronezi/dev/ws/openejb/trunk/tomee/tomee-webapp/target/tomee-webapp-$(TOMEE_VERSION).war
 TOMEEPLUS_ZIP=tomee/apache-tomee/target/apache-tomee-plus-$(TOMEE_VERSION).tar.gz
@@ -54,7 +54,7 @@ start-tomee: kill-tomee tomee
 	mkdir -p target/runnner
 	cp $(TOMCAT_ZIP) target/runnner/
 	rm -Rf target/runnner/$(TOMCAT_ZIP_NAME) 
-	cd target/runnner/ && unzip $(TOMCAT_ZIP_NAME)-SNAPSHOT.zip
+	cd target/runnner/ && unzip $(TOMCAT_ZIP_NAME).beta1.zip
 	cp tomee/tomee-plus-webapp/target/tomee-plus-webapp-$(TOMEE_VERSION).war \
 		target/runnner/$(TOMCAT_ZIP_NAME)/webapps/
 	rm target/runnner/apache-tomcat-7.0.33/conf/tomcat-users.xml 	
