@@ -21,14 +21,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.OptionsLog;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -45,9 +43,6 @@ public class ServicePool extends ServerServiceFilter {
 
     private final ThreadPoolExecutor threadPool;
     private final AtomicBoolean stop = new AtomicBoolean();
-    private final CleanUpThread cleanupThread = new CleanUpThread();
-    private long maxResponseSize = Long.MAX_VALUE;
-    private int cleanupTimeout = 500;
 
     public ServicePool(final ServerService next, final Properties properties) {
         /**Defaults.
@@ -175,37 +170,6 @@ public class ServicePool extends ServerServiceFilter {
     }
 
     @Override
-    public void init(final Properties props) throws Exception {
-        super.init(props);
-        final Options options = new Options(props);
-        options.setLogger(new OptionsLog(log));
-        cleanupTimeout = options.get("cleanupTimeout", 500);
-        maxResponseSize = options.get("maxResponseSize", Long.MAX_VALUE);
-    }
-
-    @Override
-    public void start() throws ServiceException {
-        if (!cleanupThread.isAlive()) {
-            cleanupThread.setName("CleanUp Socket Thread");
-            cleanupThread.setDaemon(true);
-            cleanupThread.start();
-        }
-    }
-
-    @Override
-    public void stop() throws ServiceException {
-        if (cleanupThread.isAlive()) {
-            cleanupThread.setActive(false);
-            try {
-                cleanupThread.join(cleanupTimeout);
-            } catch (final InterruptedException e) {
-                // no-op
-            }
-            cleanupThread.interrupt();
-        }
-    }
-
-    @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
@@ -260,10 +224,6 @@ public class ServicePool extends ServerServiceFilter {
                 } finally {
 
                     //Ensure delegated socket is closed here
-                    final Runnable closeTask = new CloseTask(socket);
-                    if (!cleanupThread.isAlive() || !cleanupThread.add(closeTask)) {
-                        closeTask.run();
-                    }
 
                     try {
                         if (socket != null) {
@@ -384,85 +344,6 @@ public class ServicePool extends ServerServiceFilter {
             if (log.isInfoEnabled()) {
                 log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' keep alive time to (%1$s) nanoseconds", time));
             }
-        }
-    }
-
-    private class CloseTask implements Runnable {
-        private final Socket socket;
-
-        public CloseTask(final Socket socket) {
-            this.socket = socket;
-        }
-
-        @Override
-        public void run() {
-
-            int count = 0;
-            try {
-                final InputStream in = socket.getInputStream(); // should throw an exception is socket is closed
-                while (in.read() != -1) {
-                    // wait client cuts the connection
-                    count++;
-                    if (count > maxResponseSize && maxResponseSize >= 0) {
-                        break;
-                    }
-                }
-                in.close();
-            } catch (final Throwable e) {
-                //Ignore
-            }
-
-            try {
-                socket.getOutputStream().close();
-            } catch (final Throwable e) {
-                //Ignore
-            }
-
-            try {
-                socket.close();
-            } catch (Throwable e) {
-                log.error("Encountered problem while closing connection with client: " + e.getMessage());
-            }
-        }
-    }
-
-    private static class CleanUpThread extends Thread {
-        private final AtomicBoolean active = new AtomicBoolean(true);
-        private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-
-        @Override
-        public void run() {
-            while (active.get()) {
-                try {
-                    queue.take().run();
-                } catch (final InterruptedException e) {
-                    // no-op
-                }
-            }
-        }
-
-        public void setActive(final boolean value) {
-            active.set(value);
-
-            // close all
-            if (!value) {
-                for (final Runnable r : queue) {
-                    r.run();
-                }
-            }
-
-            queue.add(new NoOpRunnable()); // if queue was empty simply force the loop to stop
-        }
-
-        public boolean add(final Runnable run) {
-            return queue.add(run);
-        }
-    }
-
-    private static class NoOpRunnable implements Runnable {
-        @Override
-        public void run() {
-            // no-op
         }
     }
 }
