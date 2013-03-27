@@ -88,11 +88,21 @@ public class OpenEJBHttpServer implements HttpServer {
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
-        RequestInfos.initRequestInfo(socket);
-        final InputStream in = new CountingInputStream(socket.getInputStream());
-        final OutputStream out = new CountingOutputStream(socket.getOutputStream());
+        /**
+         * The InputStream used to receive incoming messages from the client.
+         */
+        InputStream in = null;
+        /**
+         * The OutputStream used to send outgoing response messages to the client.
+         */
+        OutputStream out = null;
 
         try {
+            RequestInfos.initRequestInfo(socket);
+
+            in = new CountingInputStream(socket.getInputStream());
+            out = new CountingOutputStream(socket.getOutputStream());
+
             //TODO: if ssl change to https
             final URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
             processRequest(socketURI, in, out);
@@ -100,10 +110,31 @@ public class OpenEJBHttpServer implements HttpServer {
         } catch (Throwable e) {
             log.error("Unexpected error", e);
         } finally {
+            if (out != null) {
+                try {
+                    out.flush();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+                try {
+                    out.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Throwable e) {
+                    //Ignore
+                }
+            }
+
             try {
-                out.flush();
+                socket.close();
             } catch (Throwable e) {
-                //Ignore
+                log.error("Encountered problem while closing connection with client: " + e.getMessage());
             }
         }
     }
@@ -129,12 +160,10 @@ public class OpenEJBHttpServer implements HttpServer {
 
     @Override
     public void start() throws ServiceException {
-        // no-op
     }
 
     @Override
     public void stop() throws ServiceException {
-        // no-op
     }
 
     @Override
