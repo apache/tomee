@@ -188,7 +188,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         }
     }
 
-    protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType type)
+    private Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType type)
             throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
