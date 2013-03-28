@@ -285,17 +285,6 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
-    }
-
     public Object invoke(Object deploymentId, InterfaceType type, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
         BeanContext beanContext = getBeanContext(deploymentId);
 

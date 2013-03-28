@@ -340,20 +340,6 @@ public class StatefulContainer implements RpcContainer {
         beanContext.set(EJBContext.class, this.sessionContext);
     }
 
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    @Deprecated
-    @Override
-    public Object invoke(final Object deployID, final Method callMethod, final Object[] args, final Object primKey, final Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    @Override
-    public Object invoke(final Object deployID, final Class callInterface, final Method callMethod, final Object[] args, final Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
-    }
-
     @Override
     public Object invoke(final Object deployID, InterfaceType type, final Class callInterface, final Method callMethod, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = this.getBeanContext(deployID);
