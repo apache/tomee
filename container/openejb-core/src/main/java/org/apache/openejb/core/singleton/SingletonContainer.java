@@ -148,20 +148,6 @@ public class SingletonContainer implements RpcContainer {
         }
     }
 
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    @Deprecated
-    @Override
-    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    @Override
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
-    }
-
     @Override
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         BeanContext beanContext = this.getBeanContext(deployID);
