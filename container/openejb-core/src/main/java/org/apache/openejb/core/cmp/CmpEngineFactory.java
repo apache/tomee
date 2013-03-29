@@ -27,11 +27,7 @@ public interface CmpEngineFactory {
 
     void setTransactionManager(TransactionManager transactionManager);
 
-    TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
-
     void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry synchronizationRegistry);
-
-    CmpCallback getCmpCallback();
 
     void setCmpCallback(CmpCallback cmpCallback);
 

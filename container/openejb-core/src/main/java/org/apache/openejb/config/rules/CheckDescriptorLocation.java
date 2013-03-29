@@ -34,9 +34,6 @@ import static org.apache.openejb.util.CollectionsUtil.safe;
 
 public class CheckDescriptorLocation extends ValidationBase {
 
-
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
-
     @Override
     public void validate(AppModule appModule){
 
@@ -58,9 +55,6 @@ public class CheckDescriptorLocation extends ValidationBase {
         }
 
     }
-
-
-
 
     private void validateWebModule(DeploymentModule webModule) {
         URL baseUrl = null;

@@ -21,7 +21,7 @@ import org.apache.openejb.BeanContext;
 /**
  * @version $Rev$ $Date$
  */
-public class    BusinessRemoteReference extends Reference {
+public class BusinessRemoteReference extends Reference {
 
     private final BeanContext.BusinessRemoteHome businessHome;
 

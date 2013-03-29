@@ -26,11 +26,4 @@ public interface OpenEjbConfigurationFactory {
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException;
 
-    /*
-     * Not used yet.
-     * Will be used in the future to give the ability to load and reload container systems
-     * after OpenEJB has been started.
-    public ContainerSystemInfo getContainerSystemInformation()throws OpenEJBException;
-     */
-
 }
