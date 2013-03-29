@@ -22,7 +22,7 @@ import org.apache.openejb.OpenEJBException;
  * @version $Revision$ $Date$
  */
 public interface DynamicDeployer {
-//    EjbModule deploy(EjbModule ejbModule) throws OpenEJBException;
-//    ClientModule deploy(ClientModule clientModule) throws OpenEJBException;
+
     AppModule deploy(AppModule appModule) throws OpenEJBException;
+
 }

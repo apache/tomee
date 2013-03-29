@@ -239,7 +239,7 @@ class AppInfoBuilder {
                 jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleName, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
 
 
-                jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleName);
+                jndiEncInfoBuilder.buildDependsOnRefs(enterpriseBean, beanInfo, ejbJar.moduleName);
             }
         }
 

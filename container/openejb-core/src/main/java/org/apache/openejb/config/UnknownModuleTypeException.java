@@ -20,8 +20,6 @@ package org.apache.openejb.config;
  * @version $Rev$ $Date$
  */
 public class UnknownModuleTypeException extends UnsupportedModuleTypeException {
-    public UnknownModuleTypeException() {
-    }
 
     public UnknownModuleTypeException(String message) {
         super(message);
@@ -31,7 +29,4 @@ public class UnknownModuleTypeException extends UnsupportedModuleTypeException {
         super(message, rootCause);
     }
 
-    public UnknownModuleTypeException(Throwable rootCause) {
-        super(rootCause);
-    }
 }

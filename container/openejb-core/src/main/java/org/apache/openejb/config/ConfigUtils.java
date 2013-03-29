@@ -40,14 +40,6 @@ public class ConfigUtils {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    public static String searchForConfiguration() throws OpenEJBException {
-        return searchForConfiguration(SystemInstance.get().getOptions().get("openejb.configuration", (String) null));
-    }
-
-    public static String searchForConfiguration(String path) throws OpenEJBException {
-        return ConfigUtils.searchForConfiguration(path, SystemInstance.get().getProperties());
-    }
-
     /**
      * TODO: It should always be assumed that the path input param is a URL or URL-convertible
      * 

@@ -24,6 +24,6 @@ public class EjbReferenceInfo extends InjectableInfo {
     public boolean ambiguous;
     public boolean externalReference;
     public String link;
-
     public boolean localbean;
+
 }

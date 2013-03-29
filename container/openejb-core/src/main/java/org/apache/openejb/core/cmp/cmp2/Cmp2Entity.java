@@ -26,8 +26,6 @@ package org.apache.openejb.core.cmp.cmp2;
 public interface Cmp2Entity {
     Object OpenEJB_getPrimaryKey();
 
-    void OpenEJB_deleted();
-
     Object OpenEJB_addCmr(String name, Object bean);
 
     void OpenEJB_removeCmr(String name, Object value);
