@@ -51,7 +51,6 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("defaultDataSource", "DataSource", null), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("yellowDataSource", "DataSource", null), ResourceInfo.class));
-        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("orangeDataSource", "DataSource", null), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpleDataSource", "DataSource", null), ResourceInfo.class));
 
         EjbJar ejbJar = new EjbJar();
@@ -73,7 +72,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         info = refs.get("orangeDataSource");
         assertNotNull(info);
-        assertEquals("orangeDataSource", info.resourceID);
+        assertEquals("defaultDataSource", info.resourceID);
 
         info = refs.get("purpleDataSource");
         assertNotNull(info);
@@ -94,7 +93,6 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("DeFAultDataSource", "DataSource", null), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("YeLLowDataSource", "DataSource", null), ResourceInfo.class));
-        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("oRangedAtasourCE", "DataSource", null), ResourceInfo.class));
         assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpLEDataSource", "DataSource", null), ResourceInfo.class));
 
         EjbJar ejbJar = new EjbJar();
@@ -116,7 +114,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         info = refs.get("orangeDataSource");
         assertNotNull(info);
-        assertEquals("oRangedAtasourCE", info.resourceID);
+        assertEquals("DeFAultDataSource", info.resourceID);
 
         info = refs.get("purpleDataSource");
         assertNotNull(info);
