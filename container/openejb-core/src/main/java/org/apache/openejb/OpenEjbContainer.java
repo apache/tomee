@@ -28,6 +28,8 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ParentClassLoaderFinder;
+import org.apache.openejb.core.ProvidedClassLoaderFinder;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Beans;
@@ -326,6 +328,14 @@ public class OpenEjbContainer extends EJBContainer {
                 SystemInstance.init(properties);
                 SystemInstance.get().setProperty("openejb.embedded", "true");
                 SystemInstance.get().setProperty(EJBContainer.class.getName(), "true");
+
+                if (SystemInstance.get().getComponent(ParentClassLoaderFinder.class) == null) {
+                    ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                    if (tccl == null) {
+                        tccl = OpenEjbContainer.class.getClassLoader();
+                    }
+                    SystemInstance.get().setComponent(ParentClassLoaderFinder.class, new ProvidedClassLoaderFinder(tccl));
+                }
 
                 OptionsLog.install();
 
