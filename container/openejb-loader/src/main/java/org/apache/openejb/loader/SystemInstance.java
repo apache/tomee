@@ -180,7 +180,23 @@ public class SystemInstance {
      * @throws IllegalStateException of the component isn't found
      */
     public <T> T getComponent(final Class<T> type) {
-        return (T) components.get(type);
+        final T component = (T) components.get(type);
+        if (component != null) {
+            return component;
+        }
+
+        final String classname = getProperty(type.getName());
+        if (classname != null) {
+            try {
+                final T instance = type.cast(Thread.currentThread().getContextClassLoader()
+                                                                .loadClass(classname).newInstance());
+                components.put(type, instance);
+                return instance;
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
+        return null;
     }
 
     public <T> T removeComponent(final Class<T> type) {
