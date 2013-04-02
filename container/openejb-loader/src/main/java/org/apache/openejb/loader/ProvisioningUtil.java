@@ -51,7 +51,7 @@ public class ProvisioningUtil {
     }
 
     public static String cache() {
-        return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, new File(System.getProperty("openejb.base", "."), "temp").getAbsolutePath());
+        return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, TEMP_DIR);
     }
 
     public static File cacheFile(final String path) {

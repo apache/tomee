@@ -23,7 +23,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.DeployerEjb;
+import org.apache.openejb.loader.IO;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -36,19 +41,50 @@ public class DeployMojo extends AbstractDeployMojo {
     @Parameter
     protected Map<String, String> systemVariables = new HashMap<String, String>();
 
+    @Parameter(property = "tomee-plugin.binary", defaultValue = "false")
+    private boolean useBinaries;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Deployer deployer = (Deployer) lookup("openejb/DeployerBusinessRemote");
-        try {
-            if (systemVariables.isEmpty()) {
-                deployer.deploy(path);
-            } else {
+        if ((!"localhost".equals(tomeeHost) && !tomeeHost.startsWith("127.")) || useBinaries) {
+
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final byte[] archive;
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(path);
+                IO.copy(fis, baos);
+                archive = baos.toByteArray();
+            } catch (Exception e) {
+                throw new TomEEException(e.getMessage(), e);
+            } finally {
+                IO.close(fis);
+                IO.close(baos);
+            }
+
+            try {
                 final Properties prop = new Properties();
                 prop.putAll(systemVariables);
+                prop.put(DeployerEjb.OPENEJB_USE_BINARIES, "true");
+                prop.put(DeployerEjb.OPENEJB_PATH_BINARIES, new File(path).getName());
+                prop.put(DeployerEjb.OPENEJB_VALUE_BINARIES, archive);
                 deployer.deploy(path, prop);
+            } catch (OpenEJBException e) {
+                throw new TomEEException(e.getMessage(), e);
             }
-        } catch (OpenEJBException e) {
-            throw new TomEEException(e.getMessage(), e);
+        } else {
+            try {
+                if (systemVariables.isEmpty()) {
+                    deployer.deploy(path);
+                } else {
+                    final Properties prop = new Properties();
+                    prop.putAll(systemVariables);
+                    deployer.deploy(path, prop);
+                }
+            } catch (OpenEJBException e) {
+                throw new TomEEException(e.getMessage(), e);
+            }
         }
     }
 }

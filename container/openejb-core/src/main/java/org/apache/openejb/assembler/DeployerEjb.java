@@ -31,7 +31,9 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.AdditionalDeployments;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -62,9 +64,13 @@ import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 @TransactionManagement(BEAN)
 @Alternative
 public class DeployerEjb implements Deployer {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
 
     public static final String OPENEJB_DEPLOYER_FORCED_APP_ID_PROP = "openejb.deployer.forced.appId";
-    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DeployerEjb.class);
+
+    public static final String OPENEJB_USE_BINARIES = "openejb.deployer.binaries.use";
+    public static final String OPENEJB_PATH_BINARIES = "openejb.deployer.binaries.path";
+    public static final String OPENEJB_VALUE_BINARIES = "openejb.deployer.binaries.value";
 
     public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
 
@@ -145,7 +151,13 @@ public class DeployerEjb implements Deployer {
 
         AppModule appModule = null;
 
-        final File file = new File(realLocation(rawLocation));
+        final File file;
+        if ("true".equalsIgnoreCase(properties.getProperty(OPENEJB_USE_BINARIES, "false"))) {
+            file = copyBinaries(properties);
+        } else {
+            file = new File(realLocation(rawLocation));
+        }
+
         final boolean autoDeploy = Boolean.parseBoolean(properties.getProperty("openejb.app.autodeploy", "false"));
 
         if (WebAppDeployer.Helper.isWebApp(file) && !oldWarDeployer) {
@@ -245,6 +257,26 @@ public class DeployerEjb implements Deployer {
             }
             throw new OpenEJBException(e);
         }
+    }
+
+    private static File copyBinaries(final Properties props) throws OpenEJBException {
+        final File dump = ProvisioningUtil.cacheFile(props.getProperty(OPENEJB_PATH_BINARIES, "dump.war"));
+        if (dump.exists()) {
+            Files.delete(dump);
+            final String name = dump.getName();
+            if (name.endsWith("ar") && name.length() > 4) {
+                final File exploded = new File(dump.getParentFile(), name.substring(0, name.length() - 4));
+                if (exploded.exists()) {
+                    Files.delete(exploded);
+                }
+            }
+        }
+        try {
+            IO.copy(byte[].class.cast(props.get(OPENEJB_VALUE_BINARIES)), dump);
+        } catch (final IOException e) {
+            throw new OpenEJBException(e);
+        }
+        return dump;
     }
 
     private synchronized void saveDeployment(final File file, final boolean add) {
