@@ -58,7 +58,7 @@ public class AppModule implements DeploymentModule {
     private final Collection<org.apache.openejb.config.sys.Service> services = new HashSet<org.apache.openejb.config.sys.Service>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
-    private final Map<String,Object> altDDs = new HashMap<String,Object>();
+    private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
     private boolean delegateFirst = true;
@@ -70,11 +70,11 @@ public class AppModule implements DeploymentModule {
     private ID id;
     private boolean webapp = false;
 
-    public AppModule(ClassLoader classLoader, String jarLocation) {
+    public AppModule(final ClassLoader classLoader, final String jarLocation) {
         this(classLoader, jarLocation, null, false);
     }
 
-    public <T extends DeploymentModule> AppModule(T module) {
+    public <T extends DeploymentModule> AppModule(final T module) {
         this.standaloneModule = true;
         this.classLoader = module.getClassLoader();
         this.application = new Application(module.getModuleId());
@@ -107,6 +107,7 @@ public class AppModule implements DeploymentModule {
         this.delegateFirst = delegateFirst;
     }
 
+    @Override
     public Properties getProperties() {
         return properties;
     }
@@ -116,11 +117,11 @@ public class AppModule implements DeploymentModule {
         return this;
     }
 
-    public AppModule(ClassLoader classLoader, String jarLocation, Application application, boolean standaloneModule) {
+    public AppModule(final ClassLoader classLoader, final String jarLocation, final Application application, final boolean standaloneModule) {
         this.classLoader = classLoader;
         this.application = application;
-        
-        File file = (jarLocation == null) ? null : new File(jarLocation);
+
+        final File file = (jarLocation == null) ? null : new File(jarLocation);
         this.id = new ID(null, application, null, file, null, this);
         this.validation = new ValidationContext(this);
         this.standaloneModule = standaloneModule;
@@ -130,114 +131,153 @@ public class AppModule implements DeploymentModule {
         return additionalLibMbeans;
     }
 
+    @Override
     public boolean isStandaloneModule() {
         return standaloneModule;
     }
-    
-    public void setStandaloneModule(boolean isStandalone) {
-       //do nothing
-    }    
 
+    @Override
+    public void setStandaloneModule(final boolean isStandalone) {
+        //do nothing
+    }
+
+    @Override
     public ValidationContext getValidation() {
         return validation;
     }
 
     public boolean hasWarnings() {
-        if (validation.hasWarnings()) return true;
-        for (EjbModule module : ejbModules) {
-            if (module.getValidation().hasWarnings()) return true;
+        if (validation.hasWarnings()) {
+            return true;
         }
-        for (ClientModule module : clientModules) {
-            if (module.getValidation().hasWarnings()) return true;
+        for (final EjbModule module : ejbModules) {
+            if (module.getValidation().hasWarnings()) {
+                return true;
+            }
         }
-        for (ConnectorModule module : connectorModules) {
-            if (module.getValidation().hasWarnings()) return true;
+        for (final ClientModule module : clientModules) {
+            if (module.getValidation().hasWarnings()) {
+                return true;
+            }
         }
-        for (WebModule module : webModules) {
-            if (module.getValidation().hasWarnings()) return true;
+        for (final ConnectorModule module : connectorModules) {
+            if (module.getValidation().hasWarnings()) {
+                return true;
+            }
+        }
+        for (final WebModule module : webModules) {
+            if (module.getValidation().hasWarnings()) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean hasFailures() {
-        if (validation.hasFailures()) return true;
-        for (EjbModule module : ejbModules) {
-            if (module.getValidation().hasFailures()) return true;
+        if (validation.hasFailures()) {
+            return true;
         }
-        for (ClientModule module : clientModules) {
-            if (module.getValidation().hasFailures()) return true;
+        for (final EjbModule module : ejbModules) {
+            if (module.getValidation().hasFailures()) {
+                return true;
+            }
         }
-        for (ConnectorModule module : connectorModules) {
-            if (module.getValidation().hasFailures()) return true;
+        for (final ClientModule module : clientModules) {
+            if (module.getValidation().hasFailures()) {
+                return true;
+            }
         }
-        for (WebModule module : webModules) {
-            if (module.getValidation().hasFailures()) return true;
+        for (final ConnectorModule module : connectorModules) {
+            if (module.getValidation().hasFailures()) {
+                return true;
+            }
+        }
+        for (final WebModule module : webModules) {
+            if (module.getValidation().hasFailures()) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean hasErrors() {
-        if (validation.hasErrors()) return true;
-        for (EjbModule module : ejbModules) {
-            if (module.getValidation().hasErrors()) return true;
+        if (validation.hasErrors()) {
+            return true;
         }
-        for (ClientModule module : clientModules) {
-            if (module.getValidation().hasErrors()) return true;
+        for (final EjbModule module : ejbModules) {
+            if (module.getValidation().hasErrors()) {
+                return true;
+            }
         }
-        for (ConnectorModule module : connectorModules) {
-            if (module.getValidation().hasErrors()) return true;
+        for (final ClientModule module : clientModules) {
+            if (module.getValidation().hasErrors()) {
+                return true;
+            }
         }
-        for (WebModule module : webModules) {
-            if (module.getValidation().hasErrors()) return true;
+        for (final ConnectorModule module : connectorModules) {
+            if (module.getValidation().hasErrors()) {
+                return true;
+            }
+        }
+        for (final WebModule module : webModules) {
+            if (module.getValidation().hasErrors()) {
+                return true;
+            }
         }
         return false;
     }
 
     public List<ValidationContext> getValidationContexts() {
-        List<ValidationContext> contexts = new ArrayList<ValidationContext>();
+        final List<ValidationContext> contexts = new ArrayList<ValidationContext>();
 
         contexts.add(getValidation());
 
-        for (EjbModule module : ejbModules) {
+        for (final EjbModule module : ejbModules) {
             contexts.add(module.getValidation());
         }
-        for (ClientModule module : clientModules) {
+        for (final ClientModule module : clientModules) {
             contexts.add(module.getValidation());
         }
-        for (ConnectorModule module : connectorModules) {
+        for (final ConnectorModule module : connectorModules) {
             contexts.add(module.getValidation());
         }
-        for (WebModule module : webModules) {
+        for (final WebModule module : webModules) {
             contexts.add(module.getValidation());
         }
         return contexts;
     }
 
+    @Override
     public String getJarLocation() {
         return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
-    
-    public void setModuleId(String moduleId) {
-        
-        this.id = new ID(null, application, moduleId, id.getLocation(), id.getUri(), this);
-    }    
 
+    public void setModuleId(final String moduleId) {
+
+        this.id = new ID(null, application, moduleId, id.getLocation(), id.getUri(), this);
+    }
+
+    @Override
     public String getModuleId() {
         return id.getName();
     }
 
+    @Override
     public File getFile() {
         return id.getLocation();
     }
 
+    @Override
     public URI getModuleUri() {
         return id.getUri();
     }
 
+    @Override
     public Map<String, Object> getAltDDs() {
         return altDDs;
     }
 
+    @Override
     public ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -266,7 +306,7 @@ public class AppModule implements DeploymentModule {
         return cmpMappings;
     }
 
-    public void setCmpMappings(EntityMappings cmpMappings) {
+    public void setCmpMappings(final EntityMappings cmpMappings) {
         this.cmpMappings = cmpMappings;
     }
 
@@ -278,6 +318,7 @@ public class AppModule implements DeploymentModule {
         return webModules;
     }
 
+    @Override
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
@@ -291,7 +332,7 @@ public class AppModule implements DeploymentModule {
     }
 
     public Collection<DeploymentModule> getDeploymentModule() {
-        ArrayList<DeploymentModule> modules = new ArrayList<DeploymentModule>();
+        final ArrayList<DeploymentModule> modules = new ArrayList<DeploymentModule>();
         modules.addAll(ejbModules);
         modules.addAll(webModules);
         modules.addAll(connectorModules);
@@ -299,12 +340,11 @@ public class AppModule implements DeploymentModule {
         return modules;
     }
 
-
     @Override
     public String toString() {
         return "AppModule{" +
-                "moduleId='" + id.getName() + '\'' +
-                '}';
+               "moduleId='" + id.getName() + '\'' +
+               '}';
     }
 
     public void setStandloneWebModule() {
@@ -323,13 +363,13 @@ public class AppModule implements DeploymentModule {
         persistenceModules.add(root);
 
         final Persistence persistence = root.getPersistence();
-        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+        for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
             txTypeByUnit.put(unit.getName(), unit.getTransactionType());
         }
     }
 
     public void addPersistenceModules(final Collection<PersistenceModule> roots) {
-        for (PersistenceModule root : roots) {
+        for (final PersistenceModule root : roots) {
             addPersistenceModule(root);
         }
     }
