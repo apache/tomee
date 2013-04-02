@@ -23,6 +23,7 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
@@ -71,6 +72,14 @@ public abstract class CxfWsContainer implements HttpListener {
 
     @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
-        destination.invoke(null, request.getServletContext(), request, response);
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            destination.invoke(null, request.getServletContext(), request, response);
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
+            }
+        }
     }
 }
