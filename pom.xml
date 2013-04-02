@@ -464,34 +464,6 @@
     </profile>
   </profiles>
   <repositories>
-  <repository>
-    <id>tomcat-staging</id>
-    <url>https://repository.apache.org/content/repositories/orgapachetomcat-015/</url>
-    <releases><enabled>true</enabled></releases>
-    <snapshots><enabled>false</enabled></snapshots>
-  </repository>
-  <repository>
-    <id>openwebbeans-staging</id>
-      <name>openwebbeans-staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-008</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>javaee-api-staging</id>
-      <name>javaee-api-staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-009</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
     <!--<repository>-->
     <!--<id>codehaus-snapshot</id>-->
     <!--<name>CodeHaus SNAPSHOT repository</name>-->
