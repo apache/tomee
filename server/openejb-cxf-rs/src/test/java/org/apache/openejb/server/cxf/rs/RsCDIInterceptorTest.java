@@ -53,7 +53,7 @@ public class RsCDIInterceptorTest {
 
     @Test
     public void ejb() throws IOException {
-        final String response = IO.slurp(new URL("http://127.0.0.1:4204/foo/ejb/check-rest"));
+        final String response = IO.slurp(new URL("http://127.0.0.1:4204/foo/session-bean/check-ejb"));
         assertEquals("mock", response);
     }
 
@@ -63,12 +63,12 @@ public class RsCDIInterceptorTest {
         assertEquals("mock", response);
     }
 
-    @Path("/ejb")
+    @Path("/session-bean")
     @Singleton
     @IBinding
     public static class InterceptedEJBRs {
         @GET
-        @Path("/check-rest")
+        @Path("/check-ejb")
         public String check() {
             return null;
         }
