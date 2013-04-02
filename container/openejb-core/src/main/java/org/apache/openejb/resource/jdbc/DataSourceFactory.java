@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
     public static final String LOG_SQL_PROPERTY = "LogSql";
@@ -52,14 +53,20 @@ public class DataSourceFactory {
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
     private static final Map<DataSource, DataSourceCreator> creatorByDataSource = new HashMap<DataSource, DataSourceCreator>();
-    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER){{
+    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
         put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only
         put("tomcat", "org.apache.tomee.jdbc.TomEEDataSourceCreator"); // tomee
         put("bonecp", "org.apache.openejb.bonecp.BoneCPDataSourceCreator"); // bonecp
     }};
 
-    public static DataSource create(final String name, final boolean configuredManaged, final Class impl, final String definition, Duration maxWaitTime, Duration timeBetweenEvictionRuns, Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
+    public static DataSource create(final String name,
+                                    final boolean configuredManaged,
+                                    final Class impl,
+                                    final String definition,
+                                    final Duration maxWaitTime,
+                                    final Duration timeBetweenEvictionRuns,
+                                    final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
@@ -76,10 +83,9 @@ public class DataSourceFactory {
             managed = Boolean.parseBoolean((String) properties.remove("transactional")) || managed;
         }
 
-        boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
-                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+        final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
+                                                                     "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
-
 
         DataSource ds;
         if (createDataSourceFromClass(impl)) { // opposed to "by driver"
@@ -127,20 +133,24 @@ public class DataSourceFactory {
 
         if (logSql) {
             ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { DataSource.class }, new LoggingSqlDataSource(ds));
+                                                     new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
         }
 
         return ds;
     }
 
-    private static void convert(Properties properties, Duration duration, String key, String oldKey) {
+    private static void convert(final Properties properties, final Duration duration, final String key, final String oldKey) {
         properties.remove(key);
 
         // If someone is using the legacy property, use it
-        if (properties.contains(oldKey)) return;
+        if (properties.contains(oldKey)) {
+            return;
+        }
         properties.remove(oldKey);
 
-        if (duration == null) return;
+        if (duration == null) {
+            return;
+        }
         if (duration.getUnit() == null) {
             duration.setUnit(TimeUnit.MILLISECONDS);
         }
@@ -149,11 +159,11 @@ public class DataSourceFactory {
         properties.put(oldKey, milliseconds + "");
     }
 
-    public static DataSourceCreator creator(final Object creatorName, boolean willBeProxied) {
+    public static DataSourceCreator creator(final Object creatorName, final boolean willBeProxied) {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
-                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+            && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;
@@ -192,7 +202,7 @@ public class DataSourceFactory {
         return properties;
     }
 
-    public static void trimNotSupportedDataSourceProperties(Properties properties) {
+    public static void trimNotSupportedDataSourceProperties(final Properties properties) {
         properties.remove("LoginTimeout");
     }
 
@@ -201,6 +211,7 @@ public class DataSourceFactory {
     }
 
     // TODO: should we get a get and a clear method instead of a single one?
+    @SuppressWarnings("SuspiciousMethodCalls")
     public static ObjectRecipe forgetRecipe(final Object rawObject, final ObjectRecipe defaultValue) {
         final Object object = realInstance(rawObject);
         final DataSourceCreator creator = creatorByDataSource.get(object);
@@ -214,6 +225,7 @@ public class DataSourceFactory {
         return recipe;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     public static void destroy(final Object o) throws Throwable {
         final Object instance = realInstance(o);
         final DataSourceCreator remove = creatorByDataSource.remove(instance);
