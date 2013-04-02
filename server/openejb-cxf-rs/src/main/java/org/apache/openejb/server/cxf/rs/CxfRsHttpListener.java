@@ -126,19 +126,27 @@ public class CxfRsHttpListener implements RsHttpListener {
         httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
 
         // delegate invocation
-        destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
-            // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
-            // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
-            // so without stripping the address until the context the behavior is weird
-            // this is just a workaround waiting for something better
-            @Override
-            public String getRequestURI() {
-                if (httpRequest instanceof HttpRequestImpl) {
-                    return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
+                // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
+                // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
+                // so without stripping the address until the context the behavior is weird
+                // this is just a workaround waiting for something better
+                @Override
+                public String getRequestURI() {
+                    if (httpRequest instanceof HttpRequestImpl) {
+                        return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
+                    }
+                    return strip(context, super.getRequestURI());
                 }
-                return strip(context, super.getRequestURI());
+            }, httpResponse);
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
             }
-        }, httpResponse);
+        }
     }
 
     private boolean matchPath(final HttpServletRequest request) {
