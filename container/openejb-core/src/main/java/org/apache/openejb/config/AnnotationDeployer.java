@@ -2883,7 +2883,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (!clazz.isInterface()) { // dynamic proxy implementation
                     for (Class<?> interfce : clazz.getInterfaces()) {
                         String name = interfce.getName();
-                        if (!name.equals("java.io.Serializable") &&
+                        if (!name.equals("groovy.lang.GroovyObject") &&
+                                !name.equals("java.io.Serializable") &&
                                 !name.equals("java.io.Externalizable") &&
                                 !name.startsWith("javax.ejb.") &&
                                 !descriptor.contains(interfce.getName()) &&
