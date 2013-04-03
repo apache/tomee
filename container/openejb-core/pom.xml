@@ -91,11 +91,11 @@
       javax.ws.rs,
       javax.ws.rs.core,
       javax.ws.rs.ext,
-      javax.wsdl,
-      javax.wsdl.extensions.http,
-      javax.wsdl.extensions.soap,
-      javax.wsdl.factory,
-      javax.wsdl.xml,
+      javax.wsdl;resolution:=optional,,
+      javax.wsdl.extensions.http;resolution:=optional,,
+      javax.wsdl.extensions.soap;resolution:=optional,,
+      javax.wsdl.factory;resolution:=optional,,
+      javax.wsdl.xml;resolution:=optional,,
       javax.xml.bind,
       javax.xml.bind.annotation,
       javax.xml.bind.annotation.adapters,
@@ -541,6 +541,7 @@
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.quartz-scheduler</groupId>

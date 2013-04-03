@@ -63,9 +63,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -673,23 +670,6 @@ public class ReadDescriptors implements DynamicDeployer {
             throw new OpenEJBException("Encountered unknown error parsing the JaxRPC mapping file: " + url.toExternalForm(), e);
         }
         return wsdlMapping;
-    }
-
-    public static Definition readWsdl(final URL url) throws OpenEJBException {
-        final Definition definition;
-        try {
-            final WSDLFactory factory = WSDLFactory.newInstance();
-            final WSDLReader reader = factory.newWSDLReader();
-            reader.setFeature("javax.wsdl.verbose", true);
-            reader.setFeature("javax.wsdl.importDocuments", true);
-            final WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
-            definition = reader.readWSDL(wsdlResolver);
-        } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the wsdl file: " + url.toExternalForm(), e);
-        }
-        return definition;
     }
 
     public static Connector readConnector(final URL url) throws OpenEJBException {
