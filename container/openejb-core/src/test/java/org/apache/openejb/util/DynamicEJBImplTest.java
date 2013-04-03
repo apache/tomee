@@ -57,16 +57,17 @@ import static junit.framework.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class DynamicEJBImplTest {
-    private static boolean initDone = false;
+
+    private static volatile boolean initDone = false;
 
     @EJB
-    private UserDAO dao = null;
+    private UserDAO dao;
     @EJB
-    private UtilBean util = null;
+    private UtilBean util;
     @EJB
-    private UserDAOChild child = null;
+    private UserDAOChild child;
     @EJB
-    private DynamicCustomProxy custom = null;
+    private DynamicCustomProxy custom;
 
     @Test
     public void custom() {
@@ -83,20 +84,20 @@ public class DynamicEJBImplTest {
 
     @After
     public void checkAll() {
-        Collection<User> users = dao.findAll();
+        final Collection<User> users = dao.findAll();
         assertEquals(10, users.size());
     }
 
     @Test
     public void simple() {
-        User user = dao.findById(1);
+        final User user = dao.findById(1);
         assertNotNull(user);
         assertEquals(1, user.getId());
     }
 
     @Test
     public void findAll() {
-        Collection<User> users = dao.findAll();
+        final Collection<User> users = dao.findAll();
         assertEquals(10, users.size());
     }
 
@@ -112,7 +113,7 @@ public class DynamicEJBImplTest {
 
     @Test
     public void persist() {
-        User u = new User();
+        final User u = new User();
         dao.save(u);
         assertNotNull(u.getId());
         util.remove(u);
@@ -120,10 +121,11 @@ public class DynamicEJBImplTest {
 
     @Test
     public void remove() {
-        User u = new User();
+        final User u = new User();
         dao.save(u);
         assertNotNull(u.getId());
         dao.delete(u);
+        java.util.logging.Logger.getLogger(this.getClass().getName()).info("Expecting a SEVERE javax.persistence.NoResultException");
         try {
             dao.findById(u.getId());
             fail();
@@ -134,7 +136,7 @@ public class DynamicEJBImplTest {
 
     @Test
     public void merge() {
-        User u = new User();
+        final User u = new User();
         u.setInfo("one");
         dao.save(u);
         assertEquals("one", u.getInfo());
@@ -149,33 +151,33 @@ public class DynamicEJBImplTest {
 
     @Test
     public void oneCriteria() {
-        Collection<User> users = dao.findByName("foo");
+        final Collection<User> users = dao.findByName("foo");
         assertEquals(4, users.size());
-        for (User user : users) {
+        for (final User user : users) {
             assertEquals("foo", user.getName());
         }
     }
 
     @Test
     public void twoCriteria() {
-        Collection<User> users = dao.findByNameAndInfo("bar-1", "1");
+        final Collection<User> users = dao.findByNameAndInfo("bar-1", "1");
         assertEquals(1, users.size());
 
-        User user = users.iterator().next();
+        final User user = users.iterator().next();
         assertEquals("bar-1", user.getName());
         assertEquals("1", user.getInfo());
     }
 
     @Test
     public void checkInjections() {
-        UserDAO injection = util.getDao();
+        final UserDAO injection = util.getDao();
         assertNotNull(injection);
         assertEquals(10, injection.findAll().size());
     }
 
     @Test
     public void query() {
-        Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("name", "foo");
 
         Collection<User> users = dao.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
@@ -201,7 +203,7 @@ public class DynamicEJBImplTest {
 
     @Test
     public void inheritance() {
-        Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("name", "foo");
 
         Collection<User> users = child.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
@@ -228,6 +230,7 @@ public class DynamicEJBImplTest {
     @Stateless
     @PersistenceContext(name = "pu")
     public static interface UserDAO {
+
         User findById(long id);
 
         Collection<User> findByName(String name);
@@ -262,22 +265,26 @@ public class DynamicEJBImplTest {
     }
 
     @NamedQueries({
-            @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name"),
-            @NamedQuery(name = "dynamic-ejb-impl-test.all", query = "SELECT u FROM DynamicEJBImplTest$User AS u")
-    })
+                      @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name"),
+                      @NamedQuery(name = "dynamic-ejb-impl-test.all", query = "SELECT u FROM DynamicEJBImplTest$User AS u")
+                  })
     @Entity
     public static class User {
+
         @Id
         @GeneratedValue
         private long id;
         private String name;
         private String info;
 
+        public User() {
+        }
+
         public long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(final long id) {
             this.id = id;
         }
 
@@ -285,7 +292,7 @@ public class DynamicEJBImplTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
 
@@ -293,7 +300,7 @@ public class DynamicEJBImplTest {
             return info;
         }
 
-        public void setInfo(String info) {
+        public void setInfo(final String info) {
             this.info = info;
         }
 
@@ -305,14 +312,18 @@ public class DynamicEJBImplTest {
 
     @Singleton
     public static class UtilBean {
+
+        public UtilBean() {
+        }
+
         @PersistenceContext
         private EntityManager em;
         @EJB
-        private UserDAO dao = null;
+        private UserDAO dao;
 
         public void init() {
             for (int i = 0; i < 10; i++) {
-                User u = new User();
+                final User u = new User();
                 if (i % 3 == 0) {
                     u.setName("foo");
                 } else {
@@ -327,14 +338,18 @@ public class DynamicEJBImplTest {
             return dao;
         }
 
-        public void remove(User u) {
+        public void remove(final User u) {
             em.remove(em.find(u.getClass(), u.getId()));
         }
     }
 
     public static class Handler implements InvocationHandler {
+
+        public Handler() {
+        }
+
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return "method = " + method.getName();
         }
     }
@@ -342,6 +357,7 @@ public class DynamicEJBImplTest {
     @Singleton
     @Proxy(Handler.class)
     public static interface DynamicCustomProxy {
+
         public String foo();
     }
 
@@ -356,7 +372,7 @@ public class DynamicEJBImplTest {
 
     @Module
     public EjbJar app() throws Exception {
-        EjbJar ejbJar = new EjbJar("dynamic");
+        final EjbJar ejbJar = new EjbJar("dynamic");
         ejbJar.addEnterpriseBean(new SingletonBean(UtilBean.class));
         ejbJar.addEnterpriseBean(new SingletonBean(DynamicCustomProxy.class));
         ejbJar.addEnterpriseBean(new StatelessBean(UserDAO.class));
@@ -366,12 +382,12 @@ public class DynamicEJBImplTest {
 
     @Module
     public Persistence persistence() {
-        PersistenceUnit unit = new PersistenceUnit("pu");
+        final PersistenceUnit unit = new PersistenceUnit("pu");
         unit.addClass(User.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.setExcludeUnlistedClasses(true);
 
-        Persistence persistence = new Persistence(unit);
+        final Persistence persistence = new Persistence(unit);
         persistence.setVersion("2.0");
         return persistence;
     }

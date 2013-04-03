@@ -194,6 +194,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
@@ -211,6 +212,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String PROPAGATE_APPLICATION_EXCEPTIONS = "openejb.propagate.application-exceptions";
     private static final String GLOBAL_UNIQUE_ID = "global";
     public static final String TIMER_STORE_CLASS = "timerStore.class";
+    private static final ReentrantLock lock = new ReentrantLock(true);
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
     private final CoreContainerSystem containerSystem;
@@ -240,14 +242,30 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return securityService;
     }
 
-    public synchronized void addDeploymentListener(final DeploymentListener deploymentListener) {
-        logger.warning("DeploymentListener API is replaced by @Observes event");
-        SystemInstance.get().addObserver(new DeploymentListenerObserver(deploymentListener));
+    public void addDeploymentListener(final DeploymentListener deploymentListener) {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            logger.warning("DeploymentListener API is replaced by @Observes event");
+            SystemInstance.get().addObserver(new DeploymentListenerObserver(deploymentListener));
+        } finally {
+            l.unlock();
+        }
     }
 
-    public synchronized void removeDeploymentListener(final DeploymentListener deploymentListener) {
-        // the wrapping is done here to get the correct equals/hashcode methods
-        SystemInstance.get().removeObserver(new DeploymentListenerObserver(deploymentListener));
+    public void removeDeploymentListener(final DeploymentListener deploymentListener) {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            // the wrapping is done here to get the correct equals/hashcode methods
+            SystemInstance.get().removeObserver(new DeploymentListenerObserver(deploymentListener));
+        } finally {
+            l.unlock();
+        }
     }
 
     protected SafeToolkit toolkit = SafeToolkit.getToolkit("Assembler");
@@ -343,16 +361,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         installNaming(prefix, false);
     }
 
-    public static synchronized void installNaming(final String prefix, final boolean clean) {
-        final Properties systemProperties = System.getProperties();
+    public static void installNaming(final String prefix, final boolean clean) {
 
-        String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
-        if (str == null || clean) {
-            str = prefix;
-        } else if (!str.contains(prefix)) {
-            str = str + ":" + prefix;
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            final Properties systemProperties = System.getProperties();
+
+            String str = systemProperties.getProperty(Context.URL_PKG_PREFIXES);
+            if (str == null || clean) {
+                str = prefix;
+            } else if (!str.contains(prefix)) {
+                str = str + ":" + prefix;
+            }
+            systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
+        } finally {
+            l.unlock();
         }
-        systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
     }
 
     private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
@@ -1242,68 +1268,75 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     @Override
-    public synchronized void destroy() {
+    public void destroy() {
 
-        SystemInstance.get().fireEvent(new ContainerSystemPreDestroy());
+        final ReentrantLock l = lock;
+        l.lock();
 
         try {
-            EjbTimerServiceImpl.shutdown();
-        } catch (Exception e) {
-            logger.warning("Unable to shutdown scheduler", e);
-        }
+            SystemInstance.get().fireEvent(new ContainerSystemPreDestroy());
 
-        logger.debug("Undeploying Applications");
-        final Assembler assembler = this;
-        for (final AppInfo appInfo : assembler.getDeployedApplications()) {
             try {
-                assembler.destroyApplication(appInfo.path);
-            } catch (UndeployException e) {
-                logger.error("Undeployment failed: " + appInfo.path, e);
-            } catch (NoSuchApplicationException e) {
-                //Ignore
+                EjbTimerServiceImpl.shutdown();
+            } catch (Exception e) {
+                logger.warning("Unable to shutdown scheduler", e);
             }
-        }
 
-        final Iterator<ObjectName> it = containerObjectNames.iterator();
-        final MBeanServer server = LocalMBeanServer.get();
-        while (it.hasNext()) {
+            logger.debug("Undeploying Applications");
+            final Assembler assembler = this;
+            for (final AppInfo appInfo : assembler.getDeployedApplications()) {
+                try {
+                    assembler.destroyApplication(appInfo.path);
+                } catch (UndeployException e) {
+                    logger.error("Undeployment failed: " + appInfo.path, e);
+                } catch (NoSuchApplicationException e) {
+                    //Ignore
+                }
+            }
+
+            final Iterator<ObjectName> it = containerObjectNames.iterator();
+            final MBeanServer server = LocalMBeanServer.get();
+            while (it.hasNext()) {
+                try {
+                    server.unregisterMBean(it.next());
+                } catch (Exception ignored) {
+                    // no-op
+                }
+                it.remove();
+            }
             try {
-                server.unregisterMBean(it.next());
+                remoteResourceMonitor.unregister();
             } catch (Exception ignored) {
                 // no-op
             }
-            it.remove();
-        }
-        try {
-            remoteResourceMonitor.unregister();
-        } catch (Exception ignored) {
-            // no-op
-        }
 
-        NamingEnumeration<Binding> namingEnumeration = null;
-        try {
-            namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/Resource");
-        } catch (NamingException ignored) {
-            // no resource adapters were created
-        }
-        while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
-            final Binding binding = namingEnumeration.nextElement();
-            final Object object = binding.getObject();
-            destroyResource(binding.getName(), binding.getClassName(), object);
-        }
+            NamingEnumeration<Binding> namingEnumeration = null;
+            try {
+                namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/Resource");
+            } catch (NamingException ignored) {
+                // no resource adapters were created
+            }
+            while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
+                final Binding binding = namingEnumeration.nextElement();
+                final Object object = binding.getObject();
+                destroyResource(binding.getName(), binding.getClassName(), object);
+            }
 
-        try {
-            containerSystem.getJNDIContext().unbind("java:global");
-        } catch (NamingException ignored) {
-            // no-op
-        }
+            try {
+                containerSystem.getJNDIContext().unbind("java:global");
+            } catch (NamingException ignored) {
+                // no-op
+            }
 
-        SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
-        SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
-        SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
-        SystemInstance.get().removeComponent(EjbResolver.class);
-        SystemInstance.get().fireEvent(new AssemblerDestroyed());
-        SystemInstance.reset();
+            SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
+            SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
+            SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
+            SystemInstance.get().removeComponent(EjbResolver.class);
+            SystemInstance.get().fireEvent(new AssemblerDestroyed());
+            SystemInstance.reset();
+        } finally {
+            l.unlock();
+        }
     }
 
     private static void destroyResource(final String name, final String className, final Object object) {
@@ -1363,307 +1396,332 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    public synchronized void destroyApplication(final String filePath) throws UndeployException, NoSuchApplicationException {
-        final AppInfo appInfo = deployedApplications.remove(filePath);
-        if (appInfo == null) {
-            throw new NoSuchApplicationException(filePath);
+    public void destroyApplication(final String filePath) throws UndeployException, NoSuchApplicationException {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            final AppInfo appInfo = deployedApplications.remove(filePath);
+            if (appInfo == null) {
+                throw new NoSuchApplicationException(filePath);
+            }
+            destroyApplication(appInfo);
+        } finally {
+            l.unlock();
         }
-        destroyApplication(appInfo);
     }
 
-    public synchronized void destroyApplication(final AppContext appContext) throws UndeployException {
-        final AppInfo appInfo = deployedApplications.remove(appContext.getId());
-        if (appInfo == null) {
-            throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
+    public void destroyApplication(final AppContext appContext) throws UndeployException {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            final AppInfo appInfo = deployedApplications.remove(appContext.getId());
+            if (appInfo == null) {
+                throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
+            }
+            destroyApplication(appInfo);
+        } finally {
+            l.unlock();
         }
-        destroyApplication(appInfo);
     }
 
-    public synchronized void destroyApplication(final AppInfo appInfo) throws UndeployException {
-        deployedApplications.remove(appInfo.path);
-        logger.info("destroyApplication.start", appInfo.path);
+    public void destroyApplication(final AppInfo appInfo) throws UndeployException {
 
-        SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo));
+        final ReentrantLock l = lock;
+        l.lock();
 
-        final Context globalContext = containerSystem.getJNDIContext();
-        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+        try {
+            deployedApplications.remove(appInfo.path);
+            logger.info("destroyApplication.start", appInfo.path);
 
-        if (null == appContext) {
-            logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
-            return;
-        } else {
-            final WebBeansContext webBeansContext = appContext.getWebBeansContext();
-            if (webBeansContext != null) {
-                final ClassLoader old = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
-                try {
-                    webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
-                } finally {
-                    Thread.currentThread().setContextClassLoader(old);
-                }
-            }
+            SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo));
 
-            final Map<String, Object> cb = appContext.getBindings();
+            final Context globalContext = containerSystem.getJNDIContext();
+            final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
-            // dumpJndiTree(globalContext, "\n\nJndi Tree Before unbinds:\n===================\n\n");
-
-            for (final Map.Entry<String, Object> value : cb.entrySet()) {
-                String path = value.getKey();
-                if (path.startsWith("global")) {
-                    path = "java:" + path;
-                }
-                if (!path.startsWith("java:global")) {
-                    continue;
-                }
-
-                unbind(globalContext, path);
-                unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
-                unbind(globalContext, path.substring("java:global".length()));
-            }
-
-            if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
-                unbind(globalContext, "global/" + appInfo.appId);
-                unbind(globalContext, appInfo.appId);
-            }
-
-            // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
-        }
-
-        final EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
-        for (final AppInfo info : deployedApplications.values()) {
-            globalResolver.addAll(info.ejbJars);
-        }
-        SystemInstance.get().setComponent(EjbResolver.class, globalResolver);
-
-        final UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
-
-        final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
-        if (webAppBuilder != null) {
-            try {
-                webAppBuilder.undeployWebApps(appInfo);
-            } catch (Exception e) {
-                undeployException.getCauses().add(new Exception("App: " + appInfo.path + ": " + e.getMessage(), e));
-            }
-        }
-
-        // get all of the ejb deployments
-        List<BeanContext> deployments = new ArrayList<BeanContext>();
-        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                final String deploymentId = beanInfo.ejbDeploymentId;
-                final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
-                if (beanContext == null) {
-                    undeployException.getCauses().add(new Exception("deployment not found: " + deploymentId));
-                } else {
-                    deployments.add(beanContext);
-                }
-            }
-        }
-
-        // Just as with startup we need to get things in an
-        // order that respects the singleton @DependsOn information
-        // Theoreticlly if a Singleton depends on something in its
-        // @PostConstruct, it can depend on it in its @PreDestroy.
-        // Therefore we want to make sure that if A dependsOn B,
-        // that we destroy A first then B so that B will still be
-        // usable in the @PreDestroy method of A.
-
-        // Sort them into the original starting order
-        deployments = sort(deployments);
-        // reverse that to get the stopping order
-        Collections.reverse(deployments);
-
-        // stop
-        for (final BeanContext deployment : deployments) {
-            final String deploymentID = deployment.getDeploymentID() + "";
-            try {
-                final Container container = deployment.getContainer();
-                container.stop(deployment);
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
-            }
-        }
-
-        // undeploy
-        for (final BeanContext bean : deployments) {
-            final String deploymentID = bean.getDeploymentID() + "";
-            try {
-                final Container container = bean.getContainer();
-                container.undeploy(bean);
-                bean.setContainer(null);
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
-            } finally {
-                bean.setDestroyed(true);
-            }
-        }
-
-        // get the client ids
-        final List<String> clientIds = new ArrayList<String>();
-        for (final ClientInfo clientInfo : appInfo.clients) {
-            clientIds.add(clientInfo.moduleId);
-            for (final String className : clientInfo.localClients) {
-                clientIds.add(className);
-            }
-            for (final String className : clientInfo.remoteClients) {
-                clientIds.add(className);
-            }
-        }
-
-        if (appContext != null) {
-            for (final WebContext webContext : appContext.getWebContexts()) {
-                containerSystem.removeWebContext(webContext);
-            }
-            TldScanner.forceCompleteClean(appContext.getClassLoader());
-        }
-
-        // Clear out naming for all components first
-        for (final BeanContext deployment : deployments) {
-            final String deploymentID = deployment.getDeploymentID() + "";
-            try {
-                containerSystem.removeBeanContext(deployment);
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception(deploymentID, t));
-            }
-
-            final JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
-            if (bindings != null) {
-                for (final String name : bindings.getBindings()) {
+            if (null == appContext) {
+                logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
+                return;
+            } else {
+                final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+                if (webBeansContext != null) {
+                    final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
                     try {
-                        globalContext.unbind(name);
-                    } catch (Throwable t) {
-                        undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
+                        webBeansContext.getService(ContainerLifecycle.class).stopApplication(null);
+                    } finally {
+                        Thread.currentThread().setContextClassLoader(old);
+                    }
+                }
+
+                final Map<String, Object> cb = appContext.getBindings();
+
+                // dumpJndiTree(globalContext, "\n\nJndi Tree Before unbinds:\n===================\n\n");
+
+                for (final Entry<String, Object> value : cb.entrySet()) {
+                    String path = value.getKey();
+                    if (path.startsWith("global")) {
+                        path = "java:" + path;
+                    }
+                    if (!path.startsWith("java:global")) {
+                        continue;
+                    }
+
+                    unbind(globalContext, path);
+                    unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
+                    unbind(globalContext, path.substring("java:global".length()));
+                }
+
+                if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
+                    unbind(globalContext, "global/" + appInfo.appId);
+                    unbind(globalContext, appInfo.appId);
+                }
+
+                // dumpJndiTree(globalContext, "\n\nJndi Tree After unbinds:\n======================\n\n");
+            }
+
+            final EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
+            for (final AppInfo info : deployedApplications.values()) {
+                globalResolver.addAll(info.ejbJars);
+            }
+            SystemInstance.get().setComponent(EjbResolver.class, globalResolver);
+
+            final UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
+
+            final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+            if (webAppBuilder != null) {
+                try {
+                    webAppBuilder.undeployWebApps(appInfo);
+                } catch (Exception e) {
+                    undeployException.getCauses().add(new Exception("App: " + appInfo.path + ": " + e.getMessage(), e));
+                }
+            }
+
+            // get all of the ejb deployments
+            List<BeanContext> deployments = new ArrayList<BeanContext>();
+            for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
+                    final String deploymentId = beanInfo.ejbDeploymentId;
+                    final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+                    if (beanContext == null) {
+                        undeployException.getCauses().add(new Exception("deployment not found: " + deploymentId));
+                    } else {
+                        deployments.add(beanContext);
                     }
                 }
             }
-        }
 
-        // stop this executor only now since @PreDestroy can trigger some stop events
-        final AsynchronousPool pool = appContext.get(AsynchronousPool.class);
-        if (pool != null) {
-            pool.stop();
-        }
+            // Just as with startup we need to get things in an
+            // order that respects the singleton @DependsOn information
+            // Theoreticlly if a Singleton depends on something in its
+            // @PostConstruct, it can depend on it in its @PreDestroy.
+            // Therefore we want to make sure that if A dependsOn B,
+            // that we destroy A first then B so that B will still be
+            // usable in the @PreDestroy method of A.
 
-        for (final String sId : moduleIds) {
-            try {
-                globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + sId);
-                globalContext.unbind(VALIDATOR_NAMING_CONTEXT + sId);
-            } catch (NamingException e) {
-                undeployException.getCauses().add(new Exception("validator: " + sId + ": " + e.getMessage(), e));
-            }
-        }
-        moduleIds.clear();
+            // Sort them into the original starting order
+            deployments = sort(deployments);
+            // reverse that to get the stopping order
+            Collections.reverse(deployments);
 
-        // dumpJndiTree(globalContext, "-->");
-
-        try {
-            if (globalContext instanceof IvmContext) {
-                final IvmContext ivmContext = (IvmContext) globalContext;
-                ivmContext.prune("openejb/Deployment");
-                ivmContext.prune("openejb/local");
-                ivmContext.prune("openejb/remote");
-                ivmContext.prune("openejb/global");
-            }
-        } catch (NamingException e) {
-            undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/local namespaces, this could cause future deployments to fail.", e));
-        }
-
-        deployments.clear();
-
-        for (final String clientId : clientIds) {
-            try {
-                globalContext.unbind("/openejb/client/" + clientId);
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("client: " + clientId + ": " + t.getMessage(), t));
-            }
-        }
-
-        // mbeans
-        final MBeanServer server = LocalMBeanServer.get();
-        for (final Object objectName : appInfo.jmx.values()) {
-            try {
-                final ObjectName on = new ObjectName((String) objectName);
-                if (server.isRegistered(on)) {
-                    server.unregisterMBean(on);
-                }
-                final CreationalContext cc = creationalContextForAppMbeans.remove(on);
-                if (cc != null) {
-                    cc.release();
-                }
-            } catch (InstanceNotFoundException e) {
-                logger.warning("can't unregister " + objectName + " because the mbean was not found", e);
-            } catch (MBeanRegistrationException e) {
-                logger.warning("can't unregister " + objectName, e);
-            } catch (MalformedObjectNameException mone) {
-                logger.warning("can't unregister because the ObjectName is malformed: " + objectName, mone);
-            }
-        }
-
-        // destroy PUs before resources since the JPA provider can use datasources
-        for (final PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
-            try {
-                final Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-                globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
-
-                // close EMF so all resources are released
-                final ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
-                remf.close();
-                persistenceClassLoaderHandler.destroy(unitInfo.id);
-                remf.unregister();
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
-            }
-        }
-
-        for (final String id : appInfo.resourceAliases) {
-            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
-            ContextualJndiReference.followReference.set(false);
-            try {
-                final Object object;
+            // stop
+            for (final BeanContext deployment : deployments) {
+                final String deploymentID = deployment.getDeploymentID() + "";
                 try {
-                    object = globalContext.lookup(name);
+                    final Container container = deployment.getContainer();
+                    container.stop(deployment);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
+                }
+            }
+
+            // undeploy
+            for (final BeanContext bean : deployments) {
+                final String deploymentID = bean.getDeploymentID() + "";
+                try {
+                    final Container container = bean.getContainer();
+                    container.undeploy(bean);
+                    bean.setContainer(null);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 } finally {
-                    ContextualJndiReference.followReference.remove();
+                    bean.setDestroyed(true);
                 }
-                if (object instanceof ContextualJndiReference) {
-                    final ContextualJndiReference contextualJndiReference = ContextualJndiReference.class.cast(object);
-                    contextualJndiReference.removePrefix(appContext.getId());
-                    if (contextualJndiReference.hasNoMorePrefix()) {
-                        globalContext.unbind(name);
-                    } // else not the last deployed application to use this resource so keep it
-                } else {
-                    globalContext.unbind(name);
-                }
-            } catch (NamingException e) {
-                logger.warning("can't unbind resource '{0}'", id);
             }
-        }
-        for (final String id : appInfo.resourceIds) {
-            final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+
+            // get the client ids
+            final List<String> clientIds = new ArrayList<String>();
+            for (final ClientInfo clientInfo : appInfo.clients) {
+                clientIds.add(clientInfo.moduleId);
+                for (final String className : clientInfo.localClients) {
+                    clientIds.add(className);
+                }
+                for (final String className : clientInfo.remoteClients) {
+                    clientIds.add(className);
+                }
+            }
+
+            if (appContext != null) {
+                for (final WebContext webContext : appContext.getWebContexts()) {
+                    containerSystem.removeWebContext(webContext);
+                }
+                TldScanner.forceCompleteClean(appContext.getClassLoader());
+            }
+
+            // Clear out naming for all components first
+            for (final BeanContext deployment : deployments) {
+                final String deploymentID = deployment.getDeploymentID() + "";
+                try {
+                    containerSystem.removeBeanContext(deployment);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception(deploymentID, t));
+                }
+
+                final JndiBuilder.Bindings bindings = deployment.get(JndiBuilder.Bindings.class);
+                if (bindings != null) {
+                    for (final String name : bindings.getBindings()) {
+                        try {
+                            globalContext.unbind(name);
+                        } catch (Throwable t) {
+                            undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
+                        }
+                    }
+                }
+            }
+
+            // stop this executor only now since @PreDestroy can trigger some stop events
+            final AsynchronousPool pool = appContext.get(AsynchronousPool.class);
+            if (pool != null) {
+                pool.stop();
+            }
+
+            for (final String sId : moduleIds) {
+                try {
+                    globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + sId);
+                    globalContext.unbind(VALIDATOR_NAMING_CONTEXT + sId);
+                } catch (NamingException e) {
+                    undeployException.getCauses().add(new Exception("validator: " + sId + ": " + e.getMessage(), e));
+                }
+            }
+            moduleIds.clear();
+
+            // dumpJndiTree(globalContext, "-->");
+
             try {
-                final Object object = globalContext.lookup(name);
-                final String clazz;
-                if (object == null) { // should it be possible?
-                    clazz = "?";
-                } else {
-                    clazz = object.getClass().getName();
+                if (globalContext instanceof IvmContext) {
+                    final IvmContext ivmContext = (IvmContext) globalContext;
+                    ivmContext.prune("openejb/Deployment");
+                    ivmContext.prune("openejb/local");
+                    ivmContext.prune("openejb/remote");
+                    ivmContext.prune("openejb/global");
                 }
-                destroyResource(id, clazz, object);
-                globalContext.unbind(name);
             } catch (NamingException e) {
-                logger.warning("can't unbind resource '{0}'", id);
+                undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/local namespaces, this could cause future deployments to fail.",
+                                                                e));
             }
+
+            deployments.clear();
+
+            for (final String clientId : clientIds) {
+                try {
+                    globalContext.unbind("/openejb/client/" + clientId);
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("client: " + clientId + ": " + t.getMessage(), t));
+                }
+            }
+
+            // mbeans
+            final MBeanServer server = LocalMBeanServer.get();
+            for (final Object objectName : appInfo.jmx.values()) {
+                try {
+                    final ObjectName on = new ObjectName((String) objectName);
+                    if (server.isRegistered(on)) {
+                        server.unregisterMBean(on);
+                    }
+                    final CreationalContext cc = creationalContextForAppMbeans.remove(on);
+                    if (cc != null) {
+                        cc.release();
+                    }
+                } catch (InstanceNotFoundException e) {
+                    logger.warning("can't unregister " + objectName + " because the mbean was not found", e);
+                } catch (MBeanRegistrationException e) {
+                    logger.warning("can't unregister " + objectName, e);
+                } catch (MalformedObjectNameException mone) {
+                    logger.warning("can't unregister because the ObjectName is malformed: " + objectName, mone);
+                }
+            }
+
+            // destroy PUs before resources since the JPA provider can use datasources
+            for (final PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
+                try {
+                    final Object object = globalContext.lookup(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+                    globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
+
+                    // close EMF so all resources are released
+                    final ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                    remf.close();
+                    persistenceClassLoaderHandler.destroy(unitInfo.id);
+                    remf.unregister();
+                } catch (Throwable t) {
+                    undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
+                }
+            }
+
+            for (final String id : appInfo.resourceAliases) {
+                final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+                ContextualJndiReference.followReference.set(false);
+                try {
+                    final Object object;
+                    try {
+                        object = globalContext.lookup(name);
+                    } finally {
+                        ContextualJndiReference.followReference.remove();
+                    }
+                    if (object instanceof ContextualJndiReference) {
+                        final ContextualJndiReference contextualJndiReference = ContextualJndiReference.class.cast(object);
+                        contextualJndiReference.removePrefix(appContext.getId());
+                        if (contextualJndiReference.hasNoMorePrefix()) {
+                            globalContext.unbind(name);
+                        } // else not the last deployed application to use this resource so keep it
+                    } else {
+                        globalContext.unbind(name);
+                    }
+                } catch (NamingException e) {
+                    logger.warning("can't unbind resource '{0}'", id);
+                }
+            }
+            for (final String id : appInfo.resourceIds) {
+                final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
+                try {
+                    final Object object = globalContext.lookup(name);
+                    final String clazz;
+                    if (object == null) { // should it be possible?
+                        clazz = "?";
+                    } else {
+                        clazz = object.getClass().getName();
+                    }
+                    destroyResource(id, clazz, object);
+                    globalContext.unbind(name);
+                } catch (NamingException e) {
+                    logger.warning("can't unbind resource '{0}'", id);
+                }
+            }
+
+            containerSystem.removeAppContext(appInfo.appId);
+
+            ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
+
+            if (undeployException.getCauses().size() > 0) {
+                throw undeployException;
+            }
+
+            logger.debug("destroyApplication.success", appInfo.path);
+        } finally {
+            l.unlock();
         }
-
-        containerSystem.removeAppContext(appInfo.appId);
-
-        ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
-
-        if (undeployException.getCauses().size() > 0) {
-            throw undeployException;
-        }
-
-        logger.debug("destroyApplication.success", appInfo.path);
     }
 
     private void unbind(final Context context, final String name) {

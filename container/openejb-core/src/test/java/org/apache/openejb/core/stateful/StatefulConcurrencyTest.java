@@ -16,28 +16,26 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.Local;
-import javax.ejb.Stateful;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
+
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.Local;
+import javax.ejb.Stateful;
+import javax.naming.InitialContext;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 public class StatefulConcurrencyTest extends TestCase {
 
@@ -58,21 +56,21 @@ public class StatefulConcurrencyTest extends TestCase {
         assembler.createContainer(statefulContainerInfo);
 
         final EjbJar ejbJar = new EjbJar();
-                
-        StatefulBean bean1 = new StatefulBean(MyLocalBeanImpl.class);
-        Timeout timeout1 = new Timeout();
+
+        final StatefulBean bean1 = new StatefulBean(MyLocalBeanImpl.class);
+        final Timeout timeout1 = new Timeout();
         timeout1.setTimeout(1000);
         timeout1.setUnit(TimeUnit.MILLISECONDS);
-        ConcurrentMethod method1 = new ConcurrentMethod();
+        final ConcurrentMethod method1 = new ConcurrentMethod();
         method1.setMethod(new NamedMethod("*"));
         method1.setAccessTimeout(timeout1);
         bean1.getConcurrentMethod().add(method1);
-        
-        StatefulBean bean2 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
-        Timeout timeout2 = new Timeout();
+
+        final StatefulBean bean2 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
+        final Timeout timeout2 = new Timeout();
         timeout2.setTimeout(-1);
         timeout2.setUnit(TimeUnit.MILLISECONDS);
-        ConcurrentMethod method2 = new ConcurrentMethod();
+        final ConcurrentMethod method2 = new ConcurrentMethod();
         method2.setMethod(new NamedMethod("*"));
         method2.setAccessTimeout(timeout2);
         bean2.getConcurrentMethod().add(method2);
@@ -85,18 +83,19 @@ public class StatefulConcurrencyTest extends TestCase {
 
     public void testConcurrentMethodCall() throws Exception {
         MyLocalBeanImpl.semaphore = new Semaphore(0);
-        
-        InitialContext ctx = new InitialContext();
-        MyLocalBean bean = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
-        MyLocalBean bean2 = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
-        
-        CallRentrantThread call = new CallRentrantThread(bean, 3000);
+
+        final InitialContext ctx = new InitialContext();
+        final MyLocalBean bean = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
+        final MyLocalBean bean2 = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
+
+        final CallRentrantThread call = new CallRentrantThread(bean, 3000);
         (new Thread(call)).start();
-        
+
         // ensure the call on thread came in
         assertTrue(MyLocalBeanImpl.semaphore.tryAcquire(1, 30, TimeUnit.SECONDS));
-        
+
         try {
+            java.util.logging.Logger.getLogger(this.getClass().getName()).info("Expecting a SEVERE javax.ejb.ConcurrentAccessTimeoutException");
             bean2.callRentrant(bean, 0);
             fail("Expected exception");
         } catch (Exception e) {
@@ -107,16 +106,16 @@ public class StatefulConcurrencyTest extends TestCase {
             }
         }
     }
-  
+
     public void testNegativeAccessTimeout() throws Exception {
         MyLocalBeanImpl.semaphore = new Semaphore(0);
-        
-        InitialContext ctx = new InitialContext();
-        MyLocalBean bean = (MyLocalBean) ctx.lookup("BeanNegativeLocal");
-        
-        CallRentrantThread call = new CallRentrantThread(bean, 3000);
+
+        final InitialContext ctx = new InitialContext();
+        final MyLocalBean bean = (MyLocalBean) ctx.lookup("BeanNegativeLocal");
+
+        final CallRentrantThread call = new CallRentrantThread(bean, 3000);
         (new Thread(call)).start();
-        
+
         // ensure the call on thread came in
         assertTrue(MyLocalBeanImpl.semaphore.tryAcquire(1, 30, TimeUnit.SECONDS));
 
@@ -125,7 +124,9 @@ public class StatefulConcurrencyTest extends TestCase {
 
     @Local
     public static interface MyLocalBean {
+
         void callRentrant(MyLocalBean myself, long sleep);
+
         void sleep(long sleep);
     }
 
@@ -133,13 +134,15 @@ public class StatefulConcurrencyTest extends TestCase {
     public static class MyLocalBeanImpl implements MyLocalBean {
 
         public static Semaphore semaphore;
-        
-        public void callRentrant(MyLocalBean myself, long sleep) {
+
+        @Override
+        public void callRentrant(final MyLocalBean myself, final long sleep) {
             semaphore.release();
             myself.sleep(sleep);
         }
 
-        public void sleep(long sleep) {
+        @Override
+        public void sleep(final long sleep) {
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
@@ -147,16 +150,18 @@ public class StatefulConcurrencyTest extends TestCase {
             }
         }
     }
-    
+
     public class CallRentrantThread implements Runnable {
+
         private final MyLocalBean bean;
         private final long sleep;
-        
-        public CallRentrantThread(MyLocalBean bean, long sleep) {
+
+        public CallRentrantThread(final MyLocalBean bean, final long sleep) {
             this.bean = bean;
             this.sleep = sleep;
         }
 
+        @Override
         public void run() {
             bean.callRentrant(bean, sleep);
         }
