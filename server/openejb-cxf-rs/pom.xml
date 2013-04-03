@@ -64,10 +64,6 @@
           <artifactId>javax.ws.rs-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.codehaus.woodstox</groupId>
-          <artifactId>woodstox-core-asl</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>xalan</groupId>
           <artifactId>xalan</artifactId>
         </exclusion>
