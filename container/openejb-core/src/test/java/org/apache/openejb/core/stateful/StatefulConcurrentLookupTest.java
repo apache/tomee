@@ -15,22 +15,13 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import javax.ejb.Local;
-import javax.ejb.Stateful;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
@@ -38,7 +29,17 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import javax.ejb.Local;
+import javax.ejb.Stateful;
+import javax.naming.InitialContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Using real non-pooled multithreaded access to test concurrent code execution on a stateful bean.
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
  */
 public class StatefulConcurrentLookupTest {
 
-    private static final int THREAD_COUNT = 1000;
+    private static final int THREAD_COUNT = 100;
 
     @BeforeClass
     public static synchronized void beforeClass() throws Exception {
@@ -88,7 +89,7 @@ public class StatefulConcurrentLookupTest {
         runScenario(true);
     }
 
-    private void runScenario(boolean throwException) throws InterruptedException {
+    private void runScenario(final boolean throwException) throws InterruptedException {
         final CountDownLatch startingLine = new CountDownLatch(THREAD_COUNT);
         final CountDownLatch finishingLine = new CountDownLatch(THREAD_COUNT);
 
@@ -178,7 +179,7 @@ public class StatefulConcurrentLookupTest {
         public String get() {
 
             if (this.throwException) {
-                throw new UnsupportedOperationException(this.txt);
+                throw new UnsupportedOperationException(this.txt + " - This is an expected test Exception");
             }
 
             return this.txt;
