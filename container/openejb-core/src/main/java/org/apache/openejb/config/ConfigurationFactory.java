@@ -127,6 +127,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private static final Messages messages = new Messages(ConfigurationFactory.class);
 
     private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
+    private static final boolean WSDL4J_AVAILABLE = exists("javax.wsdl.xml.WSDLLocator");
 
     private String configLocation;
     private OpenEjbConfiguration sys;
@@ -142,6 +143,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory() {
         this(!shouldAutoDeploy());
+    }
+
+    private static boolean exists(final String s) {
+        try {
+            ConfigurationFactory.class.getClassLoader().loadClass(s);
+            return true;
+        } catch (final ClassNotFoundException e) {
+            return false;
+        } catch (final NoClassDefFoundError e) {
+            return false;
+        }
     }
 
     private static boolean shouldAutoDeploy() {
@@ -224,7 +236,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new DebuggableVmHackery());
         }
 
-        if (options.get(WEBSERVICES_ENABLED, true)) {
+        if (options.get(WEBSERVICES_ENABLED, true) && WSDL4J_AVAILABLE) {
             chain.add(new WsDeployer());
         } else {
             chain.add(new RemoveWebServices());

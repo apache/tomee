@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JndiConsumer;
@@ -32,18 +33,23 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.xml.sax.InputSource;
 
 import javax.jws.HandlerChain;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -378,7 +384,7 @@ public class WsDeployer implements DynamicDeployer {
                 wsdlUrl = new URL(baseUrl, wsdlFile);
             }
 
-            Definition definition = ReadDescriptors.readWsdl(wsdlUrl);
+            Definition definition = readWsdl(wsdlUrl);
             module.getAltDDs().put(wsdlFile, definition);
             return definition;
         } catch (Exception e) {
@@ -386,6 +392,24 @@ public class WsDeployer implements DynamicDeployer {
         }
 
         return null;
+    }
+
+    // don't put it in ReadDescriptors to respect classloader dependencies (wsdl4j is optional)
+    public static Definition readWsdl(final URL url) throws OpenEJBException {
+        final Definition definition;
+        try {
+            final WSDLFactory factory = WSDLFactory.newInstance();
+            final WSDLReader reader = factory.newWSDLReader();
+            reader.setFeature("javax.wsdl.verbose", true);
+            reader.setFeature("javax.wsdl.importDocuments", true);
+            final WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
+            definition = reader.readWSDL(wsdlResolver);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the wsdl file: " + url.toExternalForm(), e);
+        }
+        return definition;
     }
 
     private URL getBaseUrl(DeploymentModule module) throws MalformedURLException {
