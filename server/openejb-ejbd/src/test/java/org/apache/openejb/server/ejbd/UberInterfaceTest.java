@@ -72,7 +72,6 @@ public class UberInterfaceTest extends TestCase {
 
         assertEquals(asList(Everything.class.getName()), beanInfo.businessLocal);
         assertEquals(asList(Everything.class.getName()), beanInfo.businessRemote);
-        assertEquals(Everything.class.getName(), beanInfo.serviceEndpoint);
 
         assembler.createApplication(ejbJarInfo);
 
@@ -81,7 +80,6 @@ public class UberInterfaceTest extends TestCase {
 
         assertEquals(asList(Everything.class), deployment.getBusinessLocalInterfaces());
         assertEquals(asList(Everything.class), deployment.getBusinessRemoteInterfaces());
-        assertEquals(Everything.class, deployment.getServiceEndpointInterface());
 
         { // remote invoke
             Properties props = new Properties();
