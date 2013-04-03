@@ -1528,7 +1528,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             // handle some few file(s) which can be in META-INF too
             final File webAppDdDir = new File(webInfDir, "classes/" + ddDir);
             if (webAppDdDir.isDirectory()) {
-                final File[] files = webInfDir.listFiles();
+                final File[] files = webAppDdDir.listFiles();
                 if (files != null) {
                     for (final File file : files) {
                         final String name = file.getName();
