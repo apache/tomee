@@ -48,7 +48,6 @@ import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -1153,11 +1152,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
                 injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
-                // jndi bindings
-                final Map<String, Object> bindings = new HashMap<String, Object>();
-                bindings.putAll(appContext.getBindings());
-                bindings.putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
-
                 // merge OpenEJB jndi into Tomcat jndi
                 final TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
                 NamingUtil.setCurrentContext(standardContext);
@@ -1189,7 +1183,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setContextRoot(webAppInfo.contextRoot);
                 webContext.setHost(webAppInfo.host);
-                webContext.setBindings(bindings);
+                webContext.setBindings(new HashMap<String, Object>());
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
@@ -1198,7 +1192,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
                     new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
                     assembler.startEjbs(true, beanContexts);
+                    assembler.bindGlobals(appContext.getBindings());
                 }
+
+                // jndi bindings
+                webContext.getBindings().putAll(appContext.getBindings());
+                webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
 
                 standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());

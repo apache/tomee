@@ -250,7 +250,7 @@ public class TomcatJndiBuilder {
         if (root != null) {
             try {
                 root.bind("global", SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("global"));
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 // bind only global bindings
                 if (webContext != null && webContext.getBindings() != null) {
                     for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
