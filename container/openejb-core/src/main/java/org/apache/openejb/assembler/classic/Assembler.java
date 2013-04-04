@@ -845,22 +845,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // bind all global values on global context
-            for (final Map.Entry<String, Object> value : appContext.getBindings().entrySet()) {
-                final String path = value.getKey();
-                // keep only global bindings
-                if (path.startsWith("module/") || path.startsWith("app/") || path.startsWith("comp/") || path.equalsIgnoreCase("global/dummy")) {
-                    continue;
-                }
-
-                // a bit weird but just to be consistent if user doesn't lookup directly the resource
-                final Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
-                try {
-                    lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
-                } catch (NameAlreadyBoundException nabe) {
-                    nabe.printStackTrace();
-                }
-                containerSystemContext.rebind(path, value.getValue());
-            }
+            bindGlobals(appContext.getBindings());
 
             // deploy MBeans
             for (final String mbean : appInfo.mbeans) {
@@ -894,6 +879,26 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    public void bindGlobals(final Map<String, Object> bindings) throws NamingException {
+        final Context containerSystemContext = containerSystem.getJNDIContext();
+        for (final Entry<String, Object> value : bindings.entrySet()) {
+            final String path = value.getKey();
+            // keep only global bindings
+            if (path.startsWith("module/") || path.startsWith("app/") || path.startsWith("comp/") || path.equalsIgnoreCase("global/dummy")) {
+                continue;
+            }
+
+            // a bit weird but just to be consistent if user doesn't lookup directly the resource
+            final Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
+            try {
+                lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
+            } catch (final NameAlreadyBoundException nabe) {
+                nabe.printStackTrace();
+            }
+            containerSystemContext.rebind(path, value.getValue());
         }
     }
 
