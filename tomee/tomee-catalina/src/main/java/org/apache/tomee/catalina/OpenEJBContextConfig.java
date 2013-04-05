@@ -78,6 +78,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
     private static final String ADJUST_DATASOURCE_JNDI_NAMES = SystemInstance.get().getProperty("tomee.resources.adjust-web-xml-jndi-name", "true");
+    private static final File BASE = SystemInstance.get().getBase().getDirectory();;
 
     private TomcatWebAppBuilder.StandardContextInfo info;
 
@@ -493,6 +494,9 @@ public class OpenEJBContextConfig extends ContextConfig {
                 webInf = true; // if class loaded from JVM classloader we'll not find it in the war
             }
             current = current.getParentFile();
+            if (BASE.equals(current)) {
+                return false;
+            }
         }
         return !webInf; // not in the file but not in a war too so use it
     }
