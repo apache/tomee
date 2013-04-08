@@ -2235,6 +2235,23 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
 
+            for (final Resource r : appModule.getResources()) {
+                final String type = r.getType();
+                if (type != null) {
+                    for (final String t : type.trim().split(",")) {
+                        List<String> ids = resourceIdsByType.get(t);
+                        if (ids == null) {
+                            ids = new ArrayList<String>();
+                            resourceIdsByType.put(t, ids);
+                        }
+                        ids.add(r.getId());
+                        if (r.getJndi() != null) {
+                            ids.add(r.getJndi());
+                        }
+                    }
+                }
+            }
+
             //            for (EjbModule module : appModule.getEjbModules()) {
             //                EnterpriseBean[] enterpriseBeans = module.getEjbJar().getEnterpriseBeans();
             //                OpenejbJar openejbJar = module.getOpenejbJar();
