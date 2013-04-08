@@ -90,7 +90,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
 
         // prefix server uri with 'broker:' so our broker factory is used
-        if (brokerXmlConfig != null) {
+        if (brokerXmlConfig != null && !brokerXmlConfig.isEmpty()) {
 
             try {
 
@@ -116,8 +116,12 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             } catch (URISyntaxException e) {
                 throw new ResourceAdapterInternalException("Invalid BrokerXmlConfig", e);
             }
-        }
 
+            createInternalBroker(brokerXmlConfig, properties);
+        }
+    }
+
+    private void createInternalBroker(String brokerXmlConfig, Properties properties) {
         ActiveMQFactory.setThreadProperties(properties);
 
         try {
