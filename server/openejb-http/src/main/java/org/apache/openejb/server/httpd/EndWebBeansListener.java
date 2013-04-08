@@ -35,9 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @version $Rev$ $Date$
+ *
+ * Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
 
@@ -47,6 +51,12 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, EndWebBeansListener.class);
+    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
+        @Override
+        protected Collection<Runnable> initialValue() {
+            return new ArrayList<Runnable>();
+        }
+    };
 
     protected FailOverService failoverService;
 
@@ -62,8 +72,12 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     public EndWebBeansListener(WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
-        this.failoverService = this.webBeansContext.getService(FailOverService.class);
-        this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
+        if (webBeansContext != null) {
+            this.failoverService = this.webBeansContext.getService(FailOverService.class);
+            this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
+        } else {
+            this.contextKey = "notused";
+        }
     }
 
     /**
@@ -71,10 +85,23 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      * request's Thread, are removed in order to prevent memory leaks.
      */
     private void cleanupRequestThreadLocals() {
-        // TODO maybe there are more to cleanup
+        for (final Runnable r : endRequestRunnables.get()) {
+            try {
+                r.run();
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        endRequestRunnables.remove();
 
-        InjectionPointBean.removeThreadLocal();
-        WebContextsService.removeThreadLocals();
+        if (webBeansContext != null) {
+            InjectionPointBean.removeThreadLocal();
+            WebContextsService.removeThreadLocals();
+        }
+    }
+
+    public static void pushRequestReleasable(final Runnable runnable) {
+        endRequestRunnables.get().add(runnable);
     }
 
     /**
@@ -82,6 +109,11 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     @Override
     public void requestDestroyed(ServletRequestEvent event) {
+        if (webBeansContext == null) {
+            cleanupRequestThreadLocals();
+            return;
+        }
+
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
         }
@@ -139,6 +171,10 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
+        if (webBeansContext == null) {
+            return;
+        }
+
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
         }
@@ -155,6 +191,10 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
 
     @Override
     public void sessionWillPassivate(HttpSessionEvent event) {
+        if (webBeansContext == null) {
+            return;
+        }
+
         if (failoverService != null && failoverService.isSupportPassivation()) {
             failoverService.sessionWillPassivate(event.getSession());
         }

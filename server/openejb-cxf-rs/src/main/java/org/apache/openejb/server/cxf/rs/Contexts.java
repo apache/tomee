@@ -25,6 +25,7 @@ import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+import org.apache.openejb.server.httpd.EndWebBeansListener;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
@@ -48,6 +49,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class Contexts {
+    private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<Exchange>();
+
     private Contexts() {
         // no-op
     }
@@ -56,7 +59,7 @@ public final class Contexts {
         if (cls == Object.class || cls == null) {
             return Collections.emptyList();
         }
-        for (Field f : cls.getDeclaredFields()) {
+        for (final Field f : cls.getDeclaredFields()) {
             for (Annotation a : f.getAnnotations()) {
                 if (a.annotationType() == Context.class || a.annotationType() == Resource.class
                         && AnnotationUtils.isContextClass(f.getType())) {
@@ -77,7 +80,7 @@ public final class Contexts {
 
         // binding context fields
         final Set<Class<?>> types = new HashSet<Class<?>>();
-        for (Field field : cri.getContextFields()) {
+        for (final Field field : cri.getContextFields()) {
             types.add(field.getType());
         }
 
@@ -94,6 +97,9 @@ public final class Contexts {
      * @param types
      */
     public static void bind(Exchange exchange, Collection<Class<?>> types) {
+        EXCHANGE.set(exchange); // used in lazy mode by RESTResourceFinder if cdi beans uses @Context, === initThreadLocal
+        EndWebBeansListener.pushRequestReleasable(CleanUpThreadLocal.INSTANCE);
+
         for (Class<?> type : types) {
             if (Request.class.equals(type)) {
                 Request binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Request.class);
@@ -141,6 +147,20 @@ public final class Contexts {
                     map.put(type.getName(), value);
                 }
             }
+        }
+    }
+
+    public static <T> T find(final Class<T> clazz) {
+        return JAXRSUtils.createContextValue(EXCHANGE.get().getInMessage(), null, clazz);
+    }
+
+    private static class CleanUpThreadLocal implements Runnable {
+        public static final Runnable INSTANCE = new CleanUpThreadLocal();
+
+        @Override
+        public void run() {
+            EXCHANGE.remove();
+            ThreadLocalContextManager.reset();
         }
     }
 }

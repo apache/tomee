@@ -17,12 +17,15 @@
 
 package org.apache.openejb.rest;
 
-import java.security.Principal;
 import javax.ws.rs.core.SecurityContext;
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
+import java.security.Principal;
 
-public class ThreadLocalSecurityContext extends AbstractThreadLocalProxy<SecurityContext>
+public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<SecurityContext>
     implements SecurityContext {
+
+    protected ThreadLocalSecurityContext() {
+        super(SecurityContext.class);
+    }
 
     public String getAuthenticationScheme() {
         return get().getAuthenticationScheme();

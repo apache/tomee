@@ -17,8 +17,6 @@
 
 package org.apache.openejb.rest;
 
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -32,8 +30,12 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-public class ThreadLocalServletRequest extends AbstractThreadLocalProxy<ServletRequest>
+public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<ServletRequest>
     implements ServletRequest {
+
+    protected ThreadLocalServletRequest() {
+        super(ServletRequest.class);
+    }
 
     @Override
     public AsyncContext getAsyncContext() {

@@ -17,13 +17,15 @@
 
 package org.apache.openejb.rest;
 
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.util.Enumeration;
 
-public class ThreadLocalServletConfig extends AbstractThreadLocalProxy<ServletConfig>  implements ServletConfig {
+public class ThreadLocalServletConfig extends AbstractRestThreadLocalProxy<ServletConfig>  implements ServletConfig {
+    protected ThreadLocalServletConfig() {
+        super(ServletConfig.class);
+    }
+
     @Override
     public String getServletName() {
         return get().getServletName();

@@ -1490,6 +1490,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
                 standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
             }
+        } else {
+            // just add the end listener to be able to stack tasks to execute at the request end
+            final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
+
+            {
+                final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+                final Object[] newEventListeners = new Object[appEventListeners.length + 1];
+
+                System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationEventListeners(newEventListeners);
+            }
+
+            {
+                final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+                final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 1];
+
+                System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+            }
         }
 
         LinkageErrorProtection.preload(standardContext);

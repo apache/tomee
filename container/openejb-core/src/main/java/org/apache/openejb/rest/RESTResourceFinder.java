@@ -14,21 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.rest;
 
-import javax.ws.rs.ext.ContextResolver;
-
-public class ThreadLocalContextResolver extends AbstractRestThreadLocalProxy<ContextResolver>
-    implements ContextResolver {
-
-    protected ThreadLocalContextResolver() {
-        super(ContextResolver.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Object getContext(Class type) {
-        return get() != null ? get().getContext(type) : null;
-    }
-
+public interface RESTResourceFinder {
+    <T> T find(Class<T> clazz);
 }

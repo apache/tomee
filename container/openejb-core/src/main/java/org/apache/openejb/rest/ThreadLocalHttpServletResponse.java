@@ -17,24 +17,19 @@
 
 package org.apache.openejb.rest;
 
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
-
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-import javax.ws.rs.ext.Providers;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Principal;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Locale;
 
-public class ThreadLocalHttpServletResponse extends AbstractThreadLocalProxy<HttpServletResponse>  implements HttpServletResponse {
+public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy<HttpServletResponse>  implements HttpServletResponse {
+    protected ThreadLocalHttpServletResponse() {
+        super(HttpServletResponse.class);
+    }
+
     @Override
     public void addCookie(final Cookie cookie) {
         get().addCookie(cookie);

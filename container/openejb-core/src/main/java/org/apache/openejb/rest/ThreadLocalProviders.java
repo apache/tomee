@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.rest;
 
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -27,7 +25,11 @@ import javax.ws.rs.ext.Providers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public class ThreadLocalProviders extends AbstractThreadLocalProxy<Providers> implements Providers {
+public class ThreadLocalProviders extends AbstractRestThreadLocalProxy<Providers> implements Providers {
+    protected ThreadLocalProviders() {
+        super(Providers.class);
+    }
+
     @Override
     public <T> ContextResolver<T> getContextResolver(Class<T> rawType, MediaType mediaType) {
         return get().getContextResolver(rawType, mediaType);
