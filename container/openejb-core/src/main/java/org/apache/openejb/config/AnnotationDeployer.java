@@ -2611,7 +2611,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (mdb.getActivationConfig() == null) {
                                 mdb.setActivationConfig(activationConfig);
                             }
-                            activationConfig.addProperty("destinationType", Queue.class.getName());
+                            if (!activationConfig.toProperties().containsKey("destinationType")) {
+                                activationConfig.addProperty("destinationType", Queue.class.getName());
+                            }
                             activationConfig.addProperty("destination", messageDriven.mappedName());
                         }
 
