@@ -23,7 +23,6 @@ import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.cdi.CdiInterceptor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -64,17 +63,11 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
 
     @Override
     public Object invoke(final Exchange exchange, final Object request, final Object resourceObject) {
-
         Contexts.bind(exchange, getContextTypes(resourceObject));
-
-        try {
-            return super.invoke(exchange, request, resourceObject);
-        } finally {
-            ThreadLocalContextManager.reset();
-        }
+        return super.invoke(exchange, request, resourceObject);
     }
 
-    private Collection<Class<?>> getContextTypes(Object resourceObject) {
+    private Collection<Class<?>> getContextTypes(final Object resourceObject) {
         if (!ProxyManager.isProxyClass(resourceObject.getClass())
                 && !LocalBeanProxyFactory.isProxy(resourceObject.getClass())) {
             return Collections.emptySet();

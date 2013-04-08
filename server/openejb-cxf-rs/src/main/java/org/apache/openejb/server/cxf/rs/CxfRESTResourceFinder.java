@@ -14,21 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.server.cxf.rs;
 
-package org.apache.openejb.rest;
+import org.apache.openejb.rest.RESTResourceFinder;
 
-import javax.ws.rs.ext.ContextResolver;
-
-public class ThreadLocalContextResolver extends AbstractRestThreadLocalProxy<ContextResolver>
-    implements ContextResolver {
-
-    protected ThreadLocalContextResolver() {
-        super(ContextResolver.class);
+public class CxfRESTResourceFinder implements RESTResourceFinder {
+    @Override
+    public <T> T find(final Class<T> clazz) {
+        return Contexts.find(clazz);
     }
-
-    @SuppressWarnings("unchecked")
-    public Object getContext(Class type) {
-        return get() != null ? get().getContext(type) : null;
-    }
-
 }

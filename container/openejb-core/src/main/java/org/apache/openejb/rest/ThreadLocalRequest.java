@@ -17,16 +17,19 @@
 
 package org.apache.openejb.rest;
 
-import java.util.Date;
-import java.util.List;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Variant;
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
+import java.util.Date;
+import java.util.List;
 
-public class ThreadLocalRequest extends AbstractThreadLocalProxy<Request>
+public class ThreadLocalRequest extends AbstractRestThreadLocalProxy<Request>
     implements Request {
+
+    protected ThreadLocalRequest() {
+        super(Request.class);
+    }
 
     public ResponseBuilder evaluatePreconditions(EntityTag eTag) {
         return get().evaluatePreconditions(eTag);
