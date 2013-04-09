@@ -490,6 +490,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             createContainer(serviceInfo);
         }
 
+        createJavaGlobal(); // before any deployment bind global to be able to share the same context
+
         for (final AppInfo appInfo : containerSystemInfo.applications) {
 
             try {
@@ -507,6 +509,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         SystemInstance.get().fireEvent(new ContainerSystemPostCreate());
+    }
+
+    private void createJavaGlobal() {
+        try {
+            containerSystem.getJNDIContext().createSubcontext("global");
+        } catch (final NamingException e) {
+            // no-op
+        }
     }
 
     public boolean isDeployed(final String path) {
