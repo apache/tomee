@@ -314,7 +314,12 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.org.apache.")) return true;
+        if (name.startsWith("com.sun.")) {
+            final String sun = name.substring("com.sun.".length());
+            if (sun.startsWith("org.apache.")) return true;
+            if (sun.startsWith("crypto.")) return true;
+            return false;
+        }
         if (name.startsWith("javassist")) return true;
         if (name.startsWith("serp.bytecode")) return true;
 
