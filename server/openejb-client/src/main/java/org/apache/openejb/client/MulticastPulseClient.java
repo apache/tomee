@@ -81,7 +81,11 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         if (knownUris.size() >= LIMIT) {
             //This is here just as a brake to prevent DOS or OOME.
             //There is no way we should have more than this number of unique MutliPulse URI's in a LAN
-            throw new IllegalArgumentException("Unique MultiPulse URI limit of " + LIMIT + " reached. Increase using the system property '" + ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT + "'");
+            throw new IllegalArgumentException("Unique MultiPulse URI limit of " +
+                                               LIMIT +
+                                               " reached. Increase using the system property '" +
+                                               ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT +
+                                               "'");
         }
 
         Set<URI> uriSet = knownUris.get(uri);
@@ -232,7 +236,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             //Start threads that listen for multicast packets on our channel.
             //These need to start 'before' we pulse a request.
             final ArrayList<Future> futures = new ArrayList<Future>();
-            final CountDownLatch latch = new CountDownLatch(clientSocketsFinal.length);
+            final CountDownLatch latchListeners = new CountDownLatch(clientSocketsFinal.length);
 
             for (final MulticastSocket socket : clientSocketsFinal) {
 
@@ -240,8 +244,8 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     @Override
                     public void run() {
                         try {
-                            latch.countDown();
                             final DatagramPacket response = new DatagramPacket(new byte[2048], 2048);
+                            latchListeners.countDown();
 
                             while (running.get()) {
                                 try {
@@ -354,17 +358,38 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             }
 
             try {
-                //Give threads a reasonable amount of time to start
-                if (latch.await(5, TimeUnit.SECONDS)) {
+                //Give listener threads a reasonable amount of time to start
+                if (latchListeners.await(5, TimeUnit.SECONDS)) {
 
-                    //Pulse the server - It is thread safe to use same sockets as send/receive synchronization is only on the packet
-                    for (final MulticastSocket socket : clientSocketsFinal) {
-                        try {
-                            socket.send(request);
-                        } catch (Throwable e) {
-                            //Ignore
+                    //Start pulsing request every 20ms - This will ensure we have at least 2 pulses within our minimum timeout
+                    futures.add(0, executor.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (running.get()) {
+                                //Pulse to listening servers - It is thread safe to use same sockets as send/receive synchronization is only on the packet
+                                for (final MulticastSocket socket : clientSocketsFinal) {
+
+                                    if (running.get()) {
+                                        try {
+                                            socket.send(request);
+                                        } catch (Throwable e) {
+                                            //Ignore
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                }
+
+                                if (running.get()) {
+                                    try {
+                                        Thread.sleep(20);
+                                    } catch (InterruptedException e) {
+                                        break;
+                                    }
+                                }
+                            }
                         }
-                    }
+                    }));
                 } else {
                     timeout = 1;
                 }

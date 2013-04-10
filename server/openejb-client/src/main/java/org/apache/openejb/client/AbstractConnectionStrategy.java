@@ -20,59 +20,77 @@ import org.apache.openejb.client.event.BootstrappingConnection;
 import org.apache.openejb.client.event.FailoverSelection;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version $Rev$ $Date$
  */
 public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
 
+    private final ReentrantLock lock = new ReentrantLock(true);
+
     @Override
-    public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException {
-        final Set<URI> failed = Client.getFailed();
-        final Set<URI> remaining = new HashSet<URI>();
+    public Connection connect(final ClusterMetaData cluster, final ServerMetaData server) throws IOException {
 
-        boolean failover = false;
+        final ReentrantLock l = lock;
+        l.lock();
 
-        final Iterable<URI> iterable = getIterable(cluster);
-        for (URI uri : iterable) {
-            if (failed.contains(uri)) continue;
+        try {
+            final Set<URI> failed = Client.getFailed();
+            final Set<URI> remaining = new HashSet<URI>();
 
-            if (failover) Client.fireEvent(createFailureEvent(remaining, failed, uri));
+            boolean failover = false;
 
-            try {
-                return connect(cluster, uri);
-            } catch (IOException e) {
-
-                if (!failover) {
-                    Collections.addAll(remaining, cluster.getLocations());
-                    remaining.removeAll(failed);
+            final Iterable<URI> iterable = getIterable(cluster);
+            for (final URI uri : iterable) {
+                if (failed.contains(uri)) {
+                    continue;
                 }
 
-                failed.add(uri);
-                remaining.remove(uri);
-                failover = true;
+                if (failover) {
+                    Client.fireEvent(createFailureEvent(remaining, failed, uri));
+                }
+
+                try {
+                    return connect(cluster, uri);
+                } catch (IOException e) {
+
+                    if (!failover) {
+                        Collections.addAll(remaining, cluster.getLocations());
+                        remaining.removeAll(failed);
+                    }
+
+                    failed.add(uri);
+                    remaining.remove(uri);
+                    failover = true;
+                }
             }
+
+            final URI uri = server.getLocation();
+
+            if (uri == null) {
+                throw new RemoteFailoverException("Attempted to connect to " + failed.size() + " servers.");
+            }
+
+            Client.fireEvent(new BootstrappingConnection(uri));
+
+            return connect(cluster, uri);
+        } finally {
+            l.unlock();
         }
-
-        final URI uri = server.getLocation();
-
-        if (uri == null) throw new RemoteFailoverException("Attempted to connect to " + failed.size() + " servers.");
-
-        Client.fireEvent(new BootstrappingConnection(uri));
-
-        return connect(cluster, uri);
     }
 
-    private Iterable<URI> getIterable(ClusterMetaData cluster) {
+    private Iterable<URI> getIterable(final ClusterMetaData cluster) {
         final Context context = cluster.getContext();
         final StrategyData data = context.getComponent(StrategyData.class);
 
-        if (data != null) return data.getIterable();
+        if (data != null) {
+            return data.getIterable();
+        }
 
         context.setComponent(StrategyData.class, new StrategyData(createIterable(cluster)));
 
@@ -83,8 +101,8 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
 
     protected abstract Iterable<URI> createIterable(ClusterMetaData cluster);
 
-    protected Connection connect(ClusterMetaData cluster, URI uri) throws IOException {
-        Connection connection = ConnectionManager.getConnection(uri);
+    protected Connection connect(final ClusterMetaData cluster, final URI uri) throws IOException {
+        final Connection connection = ConnectionManager.getConnection(uri);
 
         // Grabbing the URI from the associated connection allows the ConnectionFactory to
         // employ discovery to find and connect to a server.  We then attempt to connect
@@ -94,9 +112,10 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
     }
 
     private static class StrategyData {
+
         private final Iterable<URI> iterable;
 
-        private StrategyData(Iterable<URI> iterable) {
+        private StrategyData(final Iterable<URI> iterable) {
             this.iterable = iterable;
         }
 
