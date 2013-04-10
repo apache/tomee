@@ -212,51 +212,43 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
             if (m.getDeclaringClass().equals(Object.class)) {
 
-                if (m.equals(TOSTRING))
+                if (m.equals(TOSTRING)) {
                     return "proxy=" + this;
-
-                else if (m.equals(EQUALS))
+                } else if (m.equals(EQUALS)) {
                     return equals(m, a, p);
-
-                else if (m.equals(HASHCODE))
+                } else if (m.equals(HASHCODE)) {
                     return this.hashCode();
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else if (m.getDeclaringClass() == EJBObjectProxy.class) {
 
-                if (m.equals(GETHANDLER))
+                if (m.equals(GETHANDLER)) {
                     return this;
-
-                else if (m.getName().equals("writeReplace"))
+                } else if (m.getName().equals("writeReplace")) {
                     return new EJBObjectProxyHandle(this);
-
-                else if (m.getName().equals("readResolve"))
+                } else if (m.getName().equals("readResolve")) {
                     return null;
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else if (m.getDeclaringClass() == javax.ejb.EJBObject.class) {
 
-                if (m.equals(GETHANDLE))
+                if (m.equals(GETHANDLE)) {
                     return getHandle(m, a, p);
-
-                else if (m.equals(GETPRIMARYKEY))
+                } else if (m.equals(GETPRIMARYKEY)) {
                     return getPrimaryKey(m, a, p);
-
-                else if (m.equals(ISIDENTICAL))
+                } else if (m.equals(ISIDENTICAL)) {
                     return isIdentical(m, a, p);
-
-                else if (m.equals(GETEJBHOME))
+                } else if (m.equals(GETEJBHOME)) {
                     return getEJBHome(m, a, p);
-
-                else if (m.equals(REMOVE))
+                } else if (m.equals(REMOVE)) {
                     return remove(m, a, p);
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else {
 
@@ -286,12 +278,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             }
         } catch (Throwable throwable) {
             if (remote) {
-                if (throwable instanceof RemoteException)
+                if (throwable instanceof RemoteException) {
                     throw throwable;
+                }
                 throw new RemoteException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage(), getCause(throwable));
             } else {
-                if (throwable instanceof EJBException)
+                if (throwable instanceof EJBException) {
                     throw throwable;
+                }
                 throw new EJBException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage()).initCause(getCause(throwable));
             }
         }
@@ -457,9 +451,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                         final EJBResponse res = request(req);
                         if (res.getResponseCode() != ResponseCodes.EJB_OK) {
                             //TODO how do we notify the user that we fail to configure the value ?
+                            Logger.getLogger(this.getClass().getName()).info("Unexpected response on cancel: " + res);
                         }
                     } catch (Exception e) {
                         //TODO how to handle
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Unexpected error on cancel", e);
                         return false;
                     }
                 }
