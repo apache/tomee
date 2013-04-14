@@ -502,6 +502,8 @@ public class CxfRsHttpListener implements RsHttpListener {
                 providers.addAll(defaultProviders());
             }
             factory.setProviders(providers);
+        } else {
+            LOGGER.info("Using providers " + providers);
         }
     }
 
