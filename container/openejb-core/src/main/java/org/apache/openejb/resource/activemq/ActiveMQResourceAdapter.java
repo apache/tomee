@@ -55,7 +55,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         return Integer.parseInt(this.startupTimeout);
     }
 
-    public void setStartupTimeout(Duration startupTimeout) {
+    public void setStartupTimeout(final Duration startupTimeout) {
         if (startupTimeout.getUnit() == null) {
             startupTimeout.setUnit(TimeUnit.MILLISECONDS);
         }
@@ -121,7 +121,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
     }
 
-    private void createInternalBroker(String brokerXmlConfig, Properties properties) {
+    private void createInternalBroker(final String brokerXmlConfig, final Properties properties) {
         ActiveMQFactory.setThreadProperties(properties);
 
         try {

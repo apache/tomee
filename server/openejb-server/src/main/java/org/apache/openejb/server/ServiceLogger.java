@@ -34,6 +34,7 @@ import java.util.Properties;
 @Managed
 public class ServiceLogger extends ServerServiceFilter {
 
+    private volatile int errors = 0;
     private Logger logger;
     private boolean debug = false;
 
@@ -95,11 +96,12 @@ public class ServiceLogger extends ServerServiceFilter {
                 this.logger.debug("[request] for '" + name + "' by '" + address + "' took " + (System.nanoTime() - start) + "ns");
             }
         } catch (Exception e) {
-            final String msg = "[Request failed] for '" + name + "' by '" + address + "' : " + e.getMessage();
             if (this.debug) {
-                this.logger.error(msg, e);
-            } else {
-                this.logger.error(msg + " - Debug for StackTrace");
+                //Only log on debug else there is a DOS risk
+                this.logger.debug("[Request failed] for '" + name + "' by '" + address + "' : " + e.getMessage(), e);
+            } else if (this.logger.isWarningEnabled() && (errors < Integer.getInteger("openejb.max.log.socket.errors", 10))) {
+                errors++;
+                this.logger.warning("[Request failed] for '" + name + "' by '" + address + "' : " + e.getMessage());
             }
         }
     }

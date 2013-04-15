@@ -521,8 +521,8 @@ class EjbRequestHandler {
     private void replyWithFatalError(final byte version, final ObjectOutputStream out, final Throwable error, final String message) {
 
         //This is fatal for the client, but not the server.
-        if (logger.isWarningEnabled()) {
-            logger.warning(message + " - Debug " + logger + " for stacktrace: " + error);
+        if (logger.isInfoEnabled()) {
+            logger.info(message + " - Enable DEBUG for stacktrace: " + error);
         } else if (logger.isDebugEnabled()) {
             logger.debug(message, error);
         }
@@ -536,8 +536,8 @@ class EjbRequestHandler {
         } catch (Throwable t) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Failed to write EjbResponse", t);
-            } else if (logger.isWarningEnabled()) {
-                logger.warning("Failed to write EjbResponse - Debug for stacktrace: " + t);
+            } else if (logger.isInfoEnabled()) {
+                logger.info("Failed to write EjbResponse - Debug for stacktrace: " + t);
             }
         }
     }

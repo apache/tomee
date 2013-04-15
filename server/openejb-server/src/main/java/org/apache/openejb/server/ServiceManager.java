@@ -55,7 +55,7 @@ public abstract class ServiceManager {
     public ServiceManager() {
     }
 
-    public static ServiceManager getManager() {
+    public static synchronized ServiceManager getManager() {
         if (manager == null) {
             manager = new SimpleServiceManager();
         }
@@ -63,11 +63,11 @@ public abstract class ServiceManager {
         return manager;
     }
 
-    public static ServiceManager get() {
+    public static synchronized ServiceManager get() {
         return manager;
     }
 
-    protected static void setServiceManager(final ServiceManager newManager) {
+    protected static synchronized void setServiceManager(final ServiceManager newManager) {
         manager = newManager;
     }
 
@@ -307,10 +307,19 @@ public abstract class ServiceManager {
 
     abstract public void init() throws Exception;
 
-    public void start() throws ServiceException {
+    public final void start() throws ServiceException {
         start(true);
     }
 
+    /**
+     * Start the services managed by this instance.
+     * <p/>
+     * Services should not be started if {@link #stop()} has already been called,
+     * in which case a ServiceException should be thrown
+     *
+     * @param block A request to block
+     * @throws ServiceException On error or if the manager has been stopped already
+     */
     abstract public void start(boolean block) throws ServiceException;
 
     abstract public void stop() throws ServiceException;
