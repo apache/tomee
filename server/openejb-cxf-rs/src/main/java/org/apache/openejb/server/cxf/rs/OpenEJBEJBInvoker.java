@@ -42,10 +42,10 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
 
     public OpenEJBEJBInvoker(final Collection<BeanContext> restEjbs) {
-        for (BeanContext context : restEjbs) {
+        for (final BeanContext context : restEjbs) {
             final Collection<Class<?>> classes = new HashSet<Class<?>>();
             Contexts.findContextFields(context.getBeanClass(), classes);
-            for (Collection<InterceptorData> list :
+            for (final Collection<InterceptorData> list :
                         Arrays.asList(
                                 context.getInterceptorData(),
                                 context.getInstanceScopedInterceptors(),

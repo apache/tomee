@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -108,41 +109,24 @@ public class WebContext {
 
     public Object newInstance(Class beanClass) throws OpenEJBException {
 
-            final WebBeansContext webBeansContext = getWebBeansContext();
+        final WebBeansContext webBeansContext = getWebBeansContext();
 
-            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass).complete();
+        final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
 
-            final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+        final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
-            // Create bean instance
-            final Object o = beanDefinition.create(creationalContext);
-            final Context unwrap = InjectionProcessor.unwrap(getInitialContext());
-            final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
+        // Create bean instance
+        final Object o = beanDefinition.create(creationalContext);
+        final Context unwrap = InjectionProcessor.unwrap(getInitialContext());
+        final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
 
-            final Object beanInstance = injectionProcessor.createInstance();
+        final Object beanInstance = injectionProcessor.createInstance();
 
-            final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+        InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+        bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
-            try {
-                AbstractInjectable.instanceUnderInjection.set(null);
-
-                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
-
-                bean.injectResources(beanInstance, creationalContext);
-                bean.injectSuperFields(beanInstance, creationalContext);
-                bean.injectSuperMethods(beanInstance, creationalContext);
-                bean.injectFields(beanInstance, creationalContext);
-                bean.injectMethods(beanInstance, creationalContext);
-            } finally {
-                if (oldInstanceUnderInjection != null) {
-                    AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-                } else {
-                    AbstractInjectable.instanceUnderInjection.remove();
-                }
-            }
-
-            creatonalContexts.put(beanInstance, creationalContext);
-            return beanInstance;
+        creatonalContexts.put(beanInstance, creationalContext);
+        return beanInstance;
     }
 
     private WebBeansContext getWebBeansContext() {
@@ -152,12 +136,12 @@ public class WebContext {
         return webbeansContext;
     }
 
-    public Object inject(Object o) throws OpenEJBException {
+    public Object inject(final Object o) throws OpenEJBException {
 
         try {
             final WebBeansContext webBeansContext = getWebBeansContext();
 
-            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean(webBeansContext, o.getClass()).complete();
+            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean(webBeansContext, o.getClass(), webBeansContext.getAnnotatedElementFactory().newAnnotatedType(o.getClass()));
 
             final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
@@ -168,25 +152,8 @@ public class WebContext {
 
             final Object beanInstance = injectionProcessor.createInstance();
 
-            final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
-
-            try {
-                AbstractInjectable.instanceUnderInjection.set(null);
-
-                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
-
-                bean.injectResources(beanInstance, creationalContext);
-                bean.injectSuperFields(beanInstance, creationalContext);
-                bean.injectSuperMethods(beanInstance, creationalContext);
-                bean.injectFields(beanInstance, creationalContext);
-                bean.injectMethods(beanInstance, creationalContext);
-            } finally {
-                if (oldInstanceUnderInjection != null) {
-                    AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-                } else {
-                    AbstractInjectable.instanceUnderInjection.remove();
-                }
-            }
+            InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+            bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
             // if the bean is dependent simply cleanup the creational context once it is created
             final Class<? extends Annotation> scope = beanDefinition.getScope();

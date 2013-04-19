@@ -81,14 +81,6 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <systemPropertyVariables>
-            <!--<org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>-->
-            <!--<org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>-->
-            <!--<org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>-->
-            <!--<org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>-->
-            <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
-            <!--<deleteArtifacts>true</deleteArtifacts>-->
-          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

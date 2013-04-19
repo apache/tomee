@@ -21,7 +21,6 @@ import org.apache.openejb.arquillian.common.enrichment.OpenEJBEnricher;
 import org.apache.openejb.arquillian.common.mockito.MockitoEnricher;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -54,12 +53,7 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
                     final AnnotatedType<?> at = bm.createAnnotatedType(clazz);
                     final InjectionTarget<Object> it = (InjectionTarget<Object>) bm.createInjectionTarget(at);
                     final CreationalContext<Object> cc = bm.createCreationalContext(null);
-                    AbstractInjectable.instanceUnderInjection.set(testInstance);
-                    try {
-                        OWBInjector.inject(bm, testInstance, cc);
-                    } finally {
-                        AbstractInjectable.instanceUnderInjection.remove();
-                    }
+                    OWBInjector.inject(bm, testInstance, cc);
                     cc.release();
                 } catch (Exception e) {
                     // no-op

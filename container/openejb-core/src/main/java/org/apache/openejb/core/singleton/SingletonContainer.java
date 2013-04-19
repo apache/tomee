@@ -22,6 +22,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -161,6 +162,7 @@ public class SingletonContainer implements RpcContainer {
 
         ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
             boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
@@ -183,10 +185,17 @@ public class SingletonContainer implements RpcContainer {
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
 
+            if (currentCreationalContext != null) {
+                currentCreationalContext.set(instance.creationalContext);
+            }
+
             return _invoke(callMethod, runMethod, args, instance, callContext, type);
 
         } finally {
             ThreadContext.exit(oldCallContext);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 

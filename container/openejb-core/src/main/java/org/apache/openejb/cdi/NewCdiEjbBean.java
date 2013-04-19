@@ -18,10 +18,14 @@ package org.apache.openejb.cdi;
 
 import org.apache.webbeans.annotation.NewLiteral;
 import org.apache.webbeans.component.NewBean;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.InjectionTargetFactoryImpl;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionTarget;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
 
@@ -29,19 +33,13 @@ import java.util.Set;
 * @version $Rev$ $Date$
 */
 public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
+    private static final Set<Annotation> QUALIFIERS = Collections.singleton(Annotation.class.cast(new NewLiteral()));
 
-    public NewCdiEjbBean(CdiEjbBean<T> that) {
-        super(that.getBeanContext(), that.getWebBeansContext());
+    private final String id;
 
-        this.addQualifier(new NewLiteral(getReturnType()));
-
-        this.apiTypes.clear();
-        this.apiTypes.addAll(that.getTypes());
-        this.setName(null);
-        this.getInjectedFields().addAll(that.getInjectedFields());
-        this.getInjectedFromSuperFields().addAll(that.getInjectedFromSuperFields());
-        this.getInjectedFromSuperMethods().addAll(that.getInjectedFromSuperMethods());
-        this.getInjectedMethods().addAll(that.getInjectedMethods());
+    public NewCdiEjbBean(final CdiEjbBean<T> that) {
+        super(that.getBeanContext(), that.getWebBeansContext(), that.getBeanContext().getManagedClass(), that.getAnnotatedType(), new NewEjbInjectionTargetFactory<T>(that.getAnnotatedType(), that.getWebBeansContext(), that.getInjectionTarget()));
+        this.id = that.getId() + "NewBean";
     }
 
     @Override
@@ -51,16 +49,35 @@ public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
 
     @Override
     public Set<Class<? extends Annotation>> getStereotypes() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
-    public Set<Method> getObservableMethods() {
-        return Collections.EMPTY_SET;
+    public String getName() {
+        return null;
     }
 
     @Override
     public String getId() {
-        return super.getId()+"@NewBean";
+        return id;
+    }
+
+    @Override
+    public Set<Annotation> getQualifiers() {
+        return QUALIFIERS;
+    }
+
+    private static final class NewEjbInjectionTargetFactory<T> extends InjectionTargetFactoryImpl<T> {
+        private final InjectionTarget<T> injectionTarget;
+
+        public NewEjbInjectionTargetFactory(final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext, final InjectionTarget<T> it) {
+            super(annotatedType, webBeansContext);
+            this.injectionTarget = it;
+        }
+
+        @Override
+        public InjectionTarget<T> createInjectionTarget(final Bean<T> bean) { // avoid to refire it
+            return injectionTarget;
+        }
     }
 }

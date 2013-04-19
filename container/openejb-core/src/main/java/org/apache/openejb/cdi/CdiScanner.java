@@ -18,10 +18,10 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
@@ -56,11 +56,6 @@ public class CdiScanner implements ScannerService {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     @Override
-    public Set<String> getAllAnnotations(String className) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public void init(Object object) {
         if (!(object instanceof StartupObject)) {
             return;
@@ -79,14 +74,6 @@ public class CdiScanner implements ScannerService {
         final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
-
-        final HashSet<String> ejbClasses = new HashSet<String>();
-
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                ejbClasses.add(bean.ejbClass);
-            }
-        }
 
         final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
 
@@ -127,8 +114,8 @@ public class CdiScanner implements ScannerService {
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
                     }
 
-                    if (!interceptorsManager.isInterceptorEnabled(clazz)) {
-                        interceptorsManager.addNewInterceptor(clazz);
+                    if (!interceptorsManager.isInterceptorClassEnabled(clazz)) {
+                        interceptorsManager.addEnabledInterceptorClass(clazz);
                         classes.add(clazz);
                     } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
@@ -143,7 +130,7 @@ public class CdiScanner implements ScannerService {
 
                 if (clazz != null) {
                     if (!decoratorsManager.isDecoratorEnabled(clazz)) {
-                        decoratorsManager.addNewDecorator(clazz);
+                        decoratorsManager.addEnabledDecorator(clazz);
                         classes.add(clazz);
                     } // same than interceptors regarding throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
@@ -178,14 +165,28 @@ public class CdiScanner implements ScannerService {
 
             final Iterator<String> it = beans.managedClasses.iterator();
             while (it.hasNext()) {
-                process(classLoader, ejbClasses, it, startupObject, comparator, scl, filterByClassLoader);
+                process(classLoader, it, startupObject, comparator, scl, filterByClassLoader);
             }
 
             final Collection<String> otherClasses = ADDITIONAL_CLASSES.get();
             if (otherClasses != null) {
                 final Iterator<String> it2 = otherClasses.iterator();
                 while (it2.hasNext()) {
-                    process(classLoader, ejbClasses, it2, startupObject, comparator, scl, filterByClassLoader);
+                    process(classLoader, it2, startupObject, comparator, scl, filterByClassLoader);
+                }
+            }
+
+            if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
+                for (final BeanContext bc : startupObject.getBeanContexts()) {
+                    final String name = bc.getBeanClass().getName();
+                    if (BeanContext.Comp.class.getName().equals(name)) {
+                        continue;
+                    }
+
+                    final Class<?> load = load(name, classLoader);
+                    if (load != null && !classes.contains(name)) {
+                        classes.add(load);
+                    }
                 }
             }
         }
@@ -197,12 +198,8 @@ public class CdiScanner implements ScannerService {
         return appInfo.webAppAlone || appInfo.webApps.size() == 0 || startupObject.isFromWebApp();
     }
 
-    private void process(final ClassLoader classLoader, final Set<String> ejbClasses, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
+    private void process(final ClassLoader classLoader, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
         final String className = it.next();
-        if (ejbClasses.contains(className)) {
-            it.remove();
-            return;
-        }
         final Class clazz = load(className, classLoader);
         if (clazz == null) {
             return;

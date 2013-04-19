@@ -22,6 +22,7 @@ import org.apache.webbeans.component.BuildInOwbBean;
 import org.apache.webbeans.component.ConversationBean;
 import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.portable.events.generics.GenericBeanEvent;
 import org.apache.webbeans.util.WebBeansUtil;
 
@@ -89,7 +90,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public <T> CreationalContext<T> createCreationalContext(Contextual<T> contextual) {
+    public <T> CreationalContextImpl<T> createCreationalContext(Contextual<T> contextual) {
         try {
             return super.createCreationalContext(contextual);
         } catch (RuntimeException e) { // can happen?

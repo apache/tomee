@@ -52,9 +52,9 @@ import org.apache.openejb.cdi.CdiResourceInjectionService;
 import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.CustomELAdapter;
 import org.apache.openejb.cdi.ManagedSecurityService;
+import org.apache.openejb.cdi.OpenEJBJndiService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
-import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
@@ -123,6 +123,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.logger.JULLoggerFactory;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
@@ -1191,6 +1192,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
 
+            services.put(JNDIService.class, new OpenEJBJndiService());
             services.put(AppContext.class, appContext);
             services.put(TransactionService.class, new OpenEJBTransactionService());
             services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
@@ -1198,11 +1200,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(ScannerService.class, new CdiScanner());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
-            services.put(org.apache.webbeans.proxy.ProxyFactory.class, new org.apache.webbeans.proxy.ProxyFactory(ThreadSingletonServiceImpl.owbProxyFactory()));
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
             webBeansContext = new WebBeansContext(services, properties);
             appContext.setCdiEnabled(false);
+            OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
         }
 
         appContext.set(WebBeansContext.class, webBeansContext);

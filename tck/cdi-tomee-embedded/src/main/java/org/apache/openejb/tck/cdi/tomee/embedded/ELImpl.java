@@ -19,8 +19,8 @@ package org.apache.openejb.tck.cdi.tomee.embedded;
 import org.apache.el.ExpressionFactoryImpl;
 import org.apache.el.lang.FunctionMapperImpl;
 import org.apache.el.lang.VariableMapperImpl;
-import org.apache.webbeans.el.WebBeansELResolver;
-import org.apache.webbeans.el.WrappedExpressionFactory;
+import org.apache.webbeans.el22.WebBeansELResolver;
+import org.apache.webbeans.el22.WrappedExpressionFactory;
 
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;

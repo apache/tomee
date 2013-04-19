@@ -78,7 +78,7 @@ public class CdiDecoratorMultipleDelegateCallsTest {
     private Service service;
 
     @Test
-    @Ignore("currently broken")
+    //@Ignore("currently broken")
     public void check() {
         assertTrue(service.touch().startsWith("org.apache.openejb.cdi.CdiDecoratorMultipleDelegateCallsTest$ServiceImpl"));
     }

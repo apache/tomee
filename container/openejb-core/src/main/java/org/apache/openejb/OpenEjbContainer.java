@@ -53,7 +53,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
@@ -221,12 +220,7 @@ public class OpenEjbContainer extends EJBContainer {
             oldContext = ThreadContext.enter(callContext);
         }
         try {
-            AbstractInjectable.instanceUnderInjection.set(object);
-            try {
-                OWBInjector.inject(webBeanContext.getBeanManagerImpl(), object, null);
-            } finally {
-                AbstractInjectable.instanceUnderInjection.remove();
-            }
+            OWBInjector.inject(webBeanContext.getBeanManagerImpl(), object, null);
         } catch (Throwable t) {
             logger.warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
         } finally {

@@ -109,7 +109,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         //Destroy singleton context
         endContext(Singleton.class, destroyObject);
 
+        removeThreadLocals();
+    }
 
+    public void removeThreadLocals() {
         //Remove thread locals
         //for preventing memory leaks
         requestContext.set(null);
@@ -121,7 +124,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             conversationContext.set(null);
             conversationContext.remove();
         }
-
     }
 
     @Override
@@ -254,12 +256,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         //Clear thread locals
-        conversationContext.set(null);
-        conversationContext.remove();
-        sessionContext.set(null);
-        sessionContext.remove();
-        requestContext.set(null);
-        requestContext.remove();
+        removeThreadLocals();
 
         RequestScopedBeanInterceptorHandler.removeThreadLocals();
     }

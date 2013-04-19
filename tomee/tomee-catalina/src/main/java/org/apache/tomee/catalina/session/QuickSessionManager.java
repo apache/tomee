@@ -16,7 +16,9 @@
  */
 package org.apache.tomee.catalina.session;
 
-public class QuickSessionManager extends OWBStandardManager {
+import org.apache.catalina.session.StandardManager;
+
+public class QuickSessionManager extends StandardManager {
     public QuickSessionManager() {
         setSecureRandomClass("org.apache.tomee.catalina.session.FastNonSecureRandom");
     }

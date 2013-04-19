@@ -35,7 +35,7 @@ public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
 
     public boolean isProxy(Object instance) {
         System.out.println("isProxy: " + instance);
-        return instance instanceof IntraVmProxy || instance.getClass().getName().contains("$$");
+        return instance instanceof IntraVmProxy || instance.getClass().getName().contains("$Owb");
     }
 
     @Override

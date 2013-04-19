@@ -27,6 +27,7 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.cdi.CdiEjbBean;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
@@ -615,6 +616,7 @@ public class StatefulContainer implements RpcContainer {
     protected Object businessMethod(final BeanContext beanContext, final Object primKey, final Class callInterface, final Method callMethod, final Object[] args, final InterfaceType interfaceType) throws OpenEJBException {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
             // Security check
             checkAuthorization(callMethod, interfaceType);
@@ -651,6 +653,10 @@ public class StatefulContainer implements RpcContainer {
                 final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
 
+                if (currentCreationalContext != null) {
+                    currentCreationalContext.set(instance.creationalContext);
+                }
+
                 // Initialize interceptor stack
                 final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
@@ -669,6 +675,9 @@ public class StatefulContainer implements RpcContainer {
             return returnValue;
         } finally {
             ThreadContext.exit(oldCallContext);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 

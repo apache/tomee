@@ -23,7 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.webbeans.ee.event.TransactionalEventNotifier;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.TransactionService;
 
 import javax.enterprise.event.TransactionPhase;
@@ -41,6 +41,7 @@ public class OpenEJBTransactionService implements TransactionService {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBTransactionService.class);
 
     private final ContainerSystem containerSystem;
+    private WebBeansContext webBeansContext;
 
     public OpenEJBTransactionService() {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -79,6 +80,14 @@ public class OpenEJBTransactionService implements TransactionService {
 
     @Override
     public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
-        TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
+        webBeansContext.getService(TransactionService.class).registerTransactionSynchronization(phase, observer, event);
+    }
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
+
+    public WebBeansContext getWebBeansContext() {
+        return webBeansContext;
     }
 }

@@ -18,129 +18,115 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
-import org.apache.webbeans.component.InjectionTargetBean;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
-import org.apache.webbeans.decorator.DelegateHandler;
-import org.apache.webbeans.decorator.WebBeansDecoratorConfig;
-import org.apache.webbeans.proxy.ProxyFactory;
+import org.apache.webbeans.intercept.AbstractInvocationContext;
+import org.apache.webbeans.intercept.DecoratorHandler;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 
-import javax.enterprise.context.spi.Context;
+import javax.decorator.Delegate;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Decorator;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.InvocationContext;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
  */
-public class CdiInterceptor implements Serializable {
+public class CdiInterceptor<T> implements Serializable {
     static {
         InterceptorData.cacheScan(CdiInterceptor.class);
     }
 
-    private final CdiEjbBean<Object> bean;
-    private final BeanManagerImpl manager;
-    private final CdiAppContextsService contextService;
+    private final CdiEjbBean<T> bean;
     private final WebBeansContext webBeansContext;
 
-    public CdiInterceptor(CdiEjbBean<Object> bean, BeanManagerImpl manager, CdiAppContextsService contextService) {
+    public CdiInterceptor(final CdiEjbBean<T> bean) {
         this.bean = bean;
-        this.manager = manager;
-        this.contextService = contextService;
         this.webBeansContext = bean.getWebBeansContext();
     }
 
     @AroundTimeout
     @AroundInvoke
     public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
+        final Class<T> proxyClass = Class.class.cast(Reflections.get(bean.getInjectionTarget(), "proxyClass"));
+        if (proxyClass != null) { // means interception
+            final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = bean.getBeanContext().get(InterceptorResolutionService.BeanInterceptorInfo.class);
+            if (interceptorInfo.getDecorators() != null && !interceptorInfo.getDecorators().isEmpty()) {
+                final InterceptorDecoratorProxyFactory pf = webBeansContext.getInterceptorDecoratorProxyFactory();
+                final CreationalContext context = bean.getBeanContext().get(CurrentCreationalContext.class).get();
+                final T instance = (T) ejbContext.getTarget();
 
-        Callable callable = new Callable() {
-            @Override
-            public Object call() throws Exception {
-                return invoke(ejbContext);
-            }
-        };
-
-//        callable = new ScopeActivator(callable, ApplicationScoped.class);
-//        callable = new ScopeActivator(callable, RequestScoped.class);
-        return callable.call();
-    }
-
-    public class ScopeActivator implements Callable {
-        private final Callable callable;
-        private final Class<? extends Annotation> scopeType;
-
-        public ScopeActivator(Callable callable, Class<? extends Annotation> scopeType) {
-            this.callable = callable;
-            this.scopeType = scopeType;
-        }
-
-        @Override
-        public Object call() throws Exception {
-
-            Context ctx = contextService.getCurrentContext(scopeType);
-
-            if (ctx == null) {
-                contextService.startContext(scopeType, null);
-            } else if (!ctx.isActive()) {
-                contextService.activateContext(scopeType);
-            }
-
-            try {
-                return callable.call();
-            } finally {
-                if (ctx == null) {
-                    contextService.endContext(scopeType, null);
+                CreationalContextImpl<T> creationalContextImpl = (CreationalContextImpl<T>) context;
+                if (creationalContextImpl == null) { // shouldn't occur
+                    creationalContextImpl = webBeansContext.getBeanManagerImpl().createCreationalContext(bean);
                 }
+
+                // decorators
+                T delegate = instance;
+                final List<Decorator<?>> decorators = interceptorInfo.getDecorators();
+                final Map<Decorator<?>, Object> instances = new HashMap<Decorator<?>, Object>();
+                for (int i = decorators.size(); i > 0; i--) {
+                    final Decorator<?> decorator = decorators.get(i - 1);
+                    creationalContextImpl.putDelegate(delegate);
+                    final Object decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContextImpl));
+                    instances.put(decorator, decoratorInstance);
+                    delegate = pf.createProxyInstance(proxyClass, instance, new DecoratorHandler(interceptorInfo, instances, i - 1, instance));
+                }
+
+                return new OpenEJBInterceptorInvocationContext<T>(delegate, ejbContext).proceed();
             }
         }
-    }
-
-    private Object invoke(InvocationContext ejbContext) throws Exception {
-        Object instance = ejbContext.getTarget();
-
-        if (bean.getDecoratorStack().size() > 0) {
-            final CreationalContext<?> context = getCreationalContext();
-
-            final ProxyFactory proxyFactory = webBeansContext.getProxyFactory();
-
-            Class<?> proxyClass = proxyFactory.getInterceptorProxyClasses().get((InjectionTargetBean<?>) bean);
-            if (proxyClass == null) {
-                proxyClass = proxyFactory.createProxyClass(bean);
-                proxyFactory.getInterceptorProxyClasses().put((InjectionTargetBean<?>) bean, proxyClass);
-            }
-
-            final DelegateHandler delegateHandler = new DelegateHandler(bean, ejbContext);
-            final Object delegate = proxyFactory.createDecoratorDelegate(bean, delegateHandler);
-
-            // Gets component decorator stack
-            List<Object> decorators = WebBeansDecoratorConfig.getDecoratorStack(bean, instance, delegate, (CreationalContextImpl<?>) context);
-            //Sets decorator stack of delegate
-            delegateHandler.setDecorators(decorators);
-
-            return delegateHandler.invoke(instance, ejbContext.getMethod(), null, ejbContext.getParameters());
-        } else {
-            return ejbContext.proceed();
-        }
-    }
-
-    private CreationalContext<?> getCreationalContext() {
-        // TODO This has the outcome that decorators are created every request
-        // need to instantiate decorators at instance creation time
-        // when and where we create interceptor instances
-        return manager.createCreationalContext(null);
+        return ejbContext.proceed();
     }
 
     protected Object writeReplace() throws ObjectStreamException {
         return new IntraVmArtifact(this, true);
     }
 
+    protected boolean isDelegateInjection(final CreationalContext<?> cc)
+    {
+        if (CreationalContextImpl.class.isInstance(cc))
+        {
+            final InjectionPoint ip = CreationalContextImpl.class.cast(cc).getInjectionPoint();
+            if (ip == null)
+            {
+                return false;
+            }
+
+            final Member member = ip.getMember();
+            if (member != null
+                    && Field.class.isInstance(member) && Field.class.cast(member).getAnnotation(Delegate.class) != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static class OpenEJBInterceptorInvocationContext<T> extends AbstractInvocationContext<T> {
+        protected InvocationContext ejbContext;
+
+        public OpenEJBInterceptorInvocationContext(final T target, final InvocationContext ejbContext) {
+            super(target, ejbContext.getMethod(), ejbContext.getParameters());
+            this.ejbContext = ejbContext;
+        }
+
+        @Override
+        public Object proceed() throws Exception {
+            return ejbContext.proceed(); // todo: use target (delegate in this case)
+        }
+    }
 }
 
