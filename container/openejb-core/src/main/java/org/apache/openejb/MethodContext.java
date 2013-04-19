@@ -17,8 +17,8 @@
 package org.apache.openejb;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
-import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.core.timer.ScheduleData;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
 
 import javax.ejb.LockType;

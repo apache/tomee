@@ -26,7 +26,6 @@ import org.apache.openejb.api.jmx.NotificationInfos;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.proxy.ProxyFactory;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -91,8 +90,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
 
         // javaassist looses annotation so simply unwrap it
         if (wc != null) {
-            final ProxyFactory pf = wc.getProxyFactory();
-            if (pf.isProxyInstance(givenInstance)) {
+            if (givenInstance.getClass().getName().contains("$Owb")) { // isProxy
                 annotatedMBean = annotatedMBean.getSuperclass();
             }
         }

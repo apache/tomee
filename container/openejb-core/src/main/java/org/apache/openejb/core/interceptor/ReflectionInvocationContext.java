@@ -75,9 +75,9 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     public Object[] getParameters() {
         //TODO Need to figure out what is going on with afterCompletion call back here ?
-        if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION) && !operation.equals(Operation.TIMEOUT)) {
-            throw new IllegalStateException(getIllegalParameterAccessMessage());
-        }
+        //if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION) && !operation.equals(Operation.TIMEOUT)) {
+        //    throw new IllegalStateException(getIllegalParameterAccessMessage());
+        //}
         return this.parameters;
     }
 

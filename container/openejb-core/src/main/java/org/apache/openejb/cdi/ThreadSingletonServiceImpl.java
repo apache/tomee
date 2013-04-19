@@ -32,12 +32,10 @@ import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
-import org.apache.webbeans.proxy.Factory;
-import org.apache.webbeans.proxy.ProxyFactory;
-import org.apache.webbeans.proxy.javassist.JavassistFactory;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
+import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
@@ -61,7 +59,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
-    public static final String OPENEJB_OWB_PROXY_FACTORY = "openejb.owb.proxy-factory";
     private static final String SESSION_CONTEXT_CLAZZ = SystemInstance.get().getProperty("openejb.session-context", null);
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
@@ -71,13 +68,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public ThreadSingletonServiceImpl() {
         // no-op
-    }
-
-    public static Factory owbProxyFactory() {
-        if ("asm".equals(SystemInstance.get().getProperty(OPENEJB_OWB_PROXY_FACTORY))) {
-            return new AsmFactory();
-        }
-        return new JavassistFactory();
     }
 
     @Override
@@ -126,6 +116,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.putAll(appContext.getProperties());
 
         services.put(AppContext.class, appContext);
+        services.put(JNDIService.class, new OpenEJBJndiService());
         services.put(TransactionService.class, new OpenEJBTransactionService());
         if (startupObject.getWebContext() == null) {
             services.put(ELAdaptor.class,new CustomELAdapter(appContext));
@@ -135,7 +126,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
-        services.put(org.apache.webbeans.proxy.ProxyFactory.class, new ProxyFactory(owbProxyFactory()));
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
@@ -157,6 +147,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                 webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());
                 startupObject.getWebContext().setWebbeansContext(webBeansContext);
             }
+            OpenEJBTransactionService.class.cast(services.get(TransactionService.class)).setWebBeansContext(webBeansContext);
 
             // do it only here to get the webbeanscontext
             services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));

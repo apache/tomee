@@ -31,6 +31,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class DependentScopedTest extends TestCase {
         }
     }
 
-    public static class Color {
+    public static class Color implements Serializable {
 
         public Class get() {
             return getClass();

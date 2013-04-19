@@ -43,13 +43,14 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
-import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.xbean.recipe.ConstructionException;
 
 import javax.ejb.EJBHome;
@@ -62,19 +63,21 @@ import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.spi.Contextual;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -99,6 +102,52 @@ public class BeanContext extends DeploymentContext {
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
+    }
+
+    public void mergeOWBAndOpenEJBInfo() {
+        final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
+        if (cdiEjbBean == null) {
+            return;
+        }
+
+        final InjectionTargetImpl<?> injectionTarget = InjectionTargetImpl.class.cast(get(CdiEjbBean.class).getInjectionTarget());
+        final InterceptorResolutionService.BeanInterceptorInfo info = injectionTarget.getInterceptorInfo();
+        if (info == null) {
+            return;
+        }
+
+        for (final Map.Entry<Method, InterceptorResolutionService.BusinessMethodInterceptorInfo> entry : info.getBusinessMethodsInfo().entrySet()) {
+            final Interceptor<?>[] interceptors = entry.getValue().getCdiInterceptors();
+            if (interceptors == null) {
+                continue;
+            }
+
+            for (final Interceptor<?> i : interceptors) {
+                addCdiMethodInterceptor(entry.getKey(), InterceptorData.scan(i.getBeanClass()));
+            }
+            entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
+            entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
+        }
+
+        if (info.getSelfInterceptorBean() != null) { // handled by openejb
+            try {
+                final Field field = InterceptorResolutionService.BeanInterceptorInfo.class.getDeclaredField("selfInterceptorBean");
+                field.setAccessible(true);
+                field.set(info, null);
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
+
+        // handled by OpenEJB so clean up from OWB
+        Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")).clear();
+
+        Collection.class.cast(Reflections.get(info, "ejbInterceptors")).clear();
+        Collection.class.cast(Reflections.get(info, "cdiInterceptors")).clear();
     }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
@@ -1355,17 +1404,11 @@ public class BeanContext extends DeploymentContext {
         final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
-        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
 
         if (isDynamicallyImplemented()) {
             if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
                 throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
-        }
-
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
-        if (beanDefinition == null) {
-            beanDefinition = beanConstructor;
         }
 
         try {
@@ -1375,15 +1418,24 @@ public class BeanContext extends DeploymentContext {
             final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
             CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
 
+            final ConstructorInjectionBean<Object> beanDefinition = createConstructorInjectionBean(webBeansContext);
             if (creationalContext == null) {
                 creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+            }
+
+            final Object rootInstance;
+            final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
+            if (cdiEjbBean != null && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
+                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
+            } else {
+                rootInstance = beanDefinition.create(creationalContext);
             }
 
             // Create bean instance
             final Object beanInstance;
             final InjectionProcessor injectionProcessor;
             if (!isDynamicallyImplemented()) {
-                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), getInjections(), InjectionProcessor.unwrap(ctx));
+                injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
                 beanInstance = injectionProcessor.createInstance();
                 inject(beanInstance, creationalContext);
             } else {
@@ -1400,7 +1452,7 @@ public class BeanContext extends DeploymentContext {
                 injections.clear();
                 injections.addAll(newInjections);
 
-                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
+                injectionProcessor = new InjectionProcessor(beanDefinition.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
                 final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
@@ -1422,22 +1474,12 @@ public class BeanContext extends DeploymentContext {
 
                 final Class clazz = interceptorData.getInterceptorClass();
 
-                final ConstructorInjectionBean interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz);
+                final ConstructorInjectionBean interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
                 final InjectionProcessor interceptorInjector = new InjectionProcessor(interceptorConstructor.create(creationalContext), this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
                     try {
-                        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
-                        AbstractInjectable.instanceUnderInjection.set(interceptorInstance);
-                        try {
-                            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
-                        } finally {
-                            if (oldInstanceUnderInjection != null) {
-                                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-                            } else {
-                                AbstractInjectable.instanceUnderInjection.remove();
-                            }
-                        }
+                        OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
                     } catch (Throwable t) {
                         // TODO handle this differently
                         // this is temporary till the injector can be rewritten
@@ -1489,8 +1531,8 @@ public class BeanContext extends DeploymentContext {
         }
     }
 
-    protected <X> X getBean(final Class<X> clazz, final Bean<?> bean) {
-        return clazz.cast(bean);
+    private ConstructorInjectionBean<Object> createConstructorInjectionBean(final WebBeansContext webBeansContext) {
+        return new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass(), webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
     }
 
     @SuppressWarnings("unchecked")
@@ -1498,46 +1540,17 @@ public class BeanContext extends DeploymentContext {
 
         final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
-        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
-
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
+        InjectionTargetBean<T> beanDefinition = get(CdiEjbBean.class);
 
         if (beanDefinition == null) {
-            beanDefinition = beanConstructor;
+            beanDefinition = InjectionTargetBean.class.cast(createConstructorInjectionBean(webBeansContext));
         }
 
         if (!(ctx instanceof CreationalContextImpl)) {
             ctx = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(ctx, beanDefinition);
         }
 
-        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
-        boolean isInjectionToAnotherBean = false;
-        try {
-            if (ctx instanceof CreationalContextImpl) {
-                final Contextual<?> contextual = ((CreationalContextImpl) ctx).getBean();
-                isInjectionToAnotherBean = contextual != getBean(InjectionTargetBean.class, beanDefinition);
-            }
-
-            if (!isInjectionToAnotherBean) {
-                AbstractInjectable.instanceUnderInjection.set(instance);
-            }
-
-            final InjectionTargetBean<T> bean = getBean(InjectionTargetBean.class, beanDefinition);
-
-            bean.injectResources(instance, ctx);
-            bean.injectSuperFields(instance, ctx);
-            bean.injectSuperMethods(instance, ctx);
-            bean.injectFields(instance, ctx);
-            bean.injectMethods(instance, ctx);
-        } finally {
-            if (oldInstanceUnderInjection != null) {
-                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-            } else {
-                AbstractInjectable.instanceUnderInjection.set(null);
-                AbstractInjectable.instanceUnderInjection.remove();
-            }
-        }
-
+        beanDefinition.getInjectionTarget().inject(instance, ctx);
     }
 
     public Set<Class<?>> getAsynchronousClasses() {

@@ -23,126 +23,58 @@ import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.webbeans.config.OWBLogConst;
+import org.apache.webbeans.component.BeanAttributesImpl;
+import org.apache.webbeans.component.InterceptedMarker;
+import org.apache.webbeans.component.creation.BeanAttributesBuilder;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.decorator.WebBeansDecorator;
+import org.apache.webbeans.container.InjectionTargetFactoryImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
-import org.apache.webbeans.exception.WebBeansConfigurationException;
-import org.apache.webbeans.intercept.InterceptorData;
-import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
-import org.apache.webbeans.logger.WebBeansLoggerFacade;
+import org.apache.webbeans.portable.InjectionTargetImpl;
 
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.Remove;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Typed;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.SessionBeanType;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.NoSuchObjectException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class CdiEjbBean<T> extends BaseEjbBean<T> {
+public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
 
     private final BeanContext beanContext;
 
-    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
-        this(beanContext, webBeansContext, beanContext.getManagedClass());
+    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, AnnotatedType<T> at) {
+        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
+        EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
-    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass) {
-        super(beanClass, toSessionType(beanContext.getComponentType()), webBeansContext);
+    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass, AnnotatedType<T> at, InjectionTargetFactoryImpl<T> factory) {
+        super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
+                BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build()), beanClass, factory);
         this.beanContext = beanContext;
         beanContext.set(Bean.class, this);
         passivatingId = beanContext.getDeploymentID() + getReturnType().getName();
-    }
-
-    @Override
-    public void validatePassivationDependencies() {
-        if (!BeanType.STATEFUL.equals(beanContext.getComponentType())) { // always serializable since we redo a lookup
-            return;
-        }
-
-        final Class<? extends Annotation> scope = getScope();
-        if(getWebBeansContext().getBeanManagerImpl().isPassivatingScope(scope)) { // not @Dependent otherwise we either can't inject EJB in serializable beans or the opposite
-            final Set<InjectionPoint> beanInjectionPoints = getInjectionPoints();
-            for(InjectionPoint injectionPoint : beanInjectionPoints) {
-                if(!injectionPoint.isTransient()) {
-                    if(!getWebBeansContext().getWebBeansUtil().isPassivationCapableDependency(injectionPoint)) {
-                        if(injectionPoint.getAnnotated().isAnnotationPresent(Disposes.class)
-                                // here is the hack, this is temporary until OWB manages correctly serializable instances
-                                || EntityManager.class.equals(injectionPoint.getAnnotated().getBaseType())) {
-                            continue;
-                        }
-
-                        throw new WebBeansConfigurationException(
-                                "Passivation capable beans must satisfy passivation capable dependencies. " +
-                                        "Bean : " + toString() + " does not satisfy. Details about the Injection-point: " +
-                                        injectionPoint.toString());
-                    }
-                }
-            }
-        }
-
-        //Check for interceptors and decorators, copied from parent(s)
-        for (Decorator<?> dec : decorators) {
-            WebBeansDecorator<?> decorator = (WebBeansDecorator<?>) dec;
-            if (!decorator.isPassivationCapable()) {
-                throw new WebBeansConfigurationException(MessageFormat.format(
-                        WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0015), toString()));
-            } else {
-                decorator.validatePassivationDependencies();
-            }
-        }
-
-        for (InterceptorData interceptorData : interceptorStack) {
-            if (interceptorData.isDefinedWithWebBeansInterceptor()) {
-                WebBeansInterceptor<?> interceptor = (WebBeansInterceptor<?>) interceptorData.getWebBeansInterceptor();
-                    if (!interceptor.isPassivationCapable()) {
-                        throw new WebBeansConfigurationException(MessageFormat.format(
-                                WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
-                    } else {
-                        interceptor.validatePassivationDependencies();
-                    }
-            } else {
-                if (interceptorData.isDefinedInInterceptorClass()) {
-                    Class<?> interceptorClass = interceptorData.getInterceptorClass();
-                    if (!Serializable.class.isAssignableFrom(interceptorClass)) {
-                        throw new WebBeansConfigurationException(MessageFormat.format(
-                                WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0016), toString()));
-                    } else {
-                        if (!getWebBeansContext().getAnnotationManager().checkInjectionPointForInterceptorPassivation(interceptorClass)) {
-                            throw new WebBeansConfigurationException(MessageFormat.format(
-                                    WebBeansLoggerFacade.getTokenString(OWBLogConst.EXCEPT_0017), toString(), interceptorClass));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void addApiType(final Class<?> apiType) {
-        if (apiType == null) return;
-
-        super.addApiType(apiType);
     }
 
     public BeanContext getBeanContext() {
@@ -155,23 +87,18 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
             return SessionBeanType.SINGLETON;
         case MESSAGE_DRIVEN: // OWB implementation test stateful or not so do we really care?
         case STATELESS:
+        case MANAGED: // can't be stateful since it will prevent every integration using ManagedBean to get injections to work + it is never used
             return SessionBeanType.STATELESS;
         case STATEFUL:
-        case MANAGED:
             return SessionBeanType.STATEFUL;
         default:
             throw new IllegalStateException("Unknown Session BeanType " + beanType);
         }
     }
 
-    @Override
-    protected void afterConstructor(T instance, CreationalContext<T> tCreationalContext) {
-        // no-op
+    public void setEnabled(final boolean enabled) {
+        // no-op: ejb parent are not deployed so no need to deactivate it (will always be the specialization)
     }
-
-//    @Override
-//    public void postConstruct(T instance, CreationalContext<T> cretionalContext) {
-//    }
 
     public String getEjbName() {
         return this.beanContext.getEjbName();
@@ -182,60 +109,26 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Class<?>> getBusinessLocalInterfaces() {
-        final List<Class<?>> clazzes = new ArrayList<Class<?>>();
-
-        if (beanContext.isLocalbean()) {
-            addApiTypes(clazzes, beanContext.getBeanClass());
-        }
-
-        if (beanContext.getProxyClass() != null) {
-            addApiTypes(clazzes, beanContext.getProxyClass());
-        }
-
-        final List<Class> cl = beanContext.getBusinessLocalInterfaces();
-        if (cl != null && !cl.isEmpty()) {
-            for (Class<?> c : cl) {
-                clazzes.add(c);
+        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        for (final Type t : getTypes()) {
+            if (Class.class.isInstance(t)) {
+                classes.add(Class.class.cast(t));
             }
         }
-
-        if (!clazzes.contains(Serializable.class)) {
-            clazzes.add(Serializable.class);
-        }
-
-        return clazzes;
+        return classes;
     }
 
-    private static void addApiTypes(final List<Class<?>> clazzes, final Class<?> beanClass) {
-        final Typed typed = beanClass.getAnnotation(Typed.class);
-        if (typed == null || typed.value().length == 0) {
-            clazzes.add(beanClass);
+    public void destroyComponentInstance(final T instance) {
+        if (getScope() == null || Dependent.class == getScope()) {
+            destroyStatefulSessionBeanInstance(instance, null);
         } else {
-            for (Class<?> clazz : typed.value()) {
-                clazzes.add(clazz);
-            }
+            destroyScopedStateful(instance, null);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected T getInstance(final CreationalContext<T> creationalContext) {
-        return createEjb(creationalContext);
-    }
-
-    @Override
-    protected void destroyComponentInstance(final T instance, final CreationalContext<T> creational) {
-        if (scopeClass == null || Dependent.class == scopeClass) {
-            destroyStatefulSessionBeanInstance(instance, creational);
-        } else {
-            destroyScopedStateful(instance, creational);
-        }
-    }
-
-    @Override
-    protected void destroyStatefulSessionBeanInstance(final T proxyInstance, final Object ejbInstance) {
+    protected void destroyStatefulSessionBeanInstance(final T proxyInstance, final Object unused) {
         if (proxyInstance instanceof BeanContext.Removable) {
             try {
                 ((BeanContext.Removable) proxyInstance).$$remove();
@@ -265,48 +158,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return findRemove(beanContext.getBeanClass(), beanContext.getBusinessLocalInterface());
     }
 
-    public List<InjectionPoint> getInjectionPoint(Member member)
-    {
-        if (member instanceof Method) {
-            Method method = (Method) member;
-            member = beanContext.getMatchingBeanMethod(method);
-        }
-
-        List<InjectionPoint> points = new ArrayList<InjectionPoint>();
-
-        for(InjectionPoint ip : injectionPoints)
-        {
-            if(ip.getMember().equals(member))
-            {
-                points.add(ip);
-            }
-        }
-
-        return points;
-    }
-
-    protected void specialize(CdiEjbBean<?> superBean) {
-        final CdiEjbBean<T> bean = this;
-        bean.setName(superBean.getName());
-        bean.setSerializable(superBean.isSerializable());
-
-        this.scopeClass = superBean.scopeClass;
-        this.implQualifiers.addAll(superBean.getQualifiers());
-        this.stereoTypeClasses.addAll(superBean.stereoTypeClasses);
-        this.stereoTypes.addAll(superBean.stereoTypes);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.webbeans.component.AbstractBean#isPassivationCapable()
-     */
-    @Override
-    public boolean isPassivationCapable() { // dependent means EJB serialization
-        final Class<? extends Annotation> scope = getScope();
-        return Dependent.class.equals(scope) || getWebBeansContext().getBeanManagerImpl().isPassivatingScope(scope);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Method> findRemove(Class beanClass, Class beanInterface) {
+    private List<Method> findRemove(final Class<?> beanClass, final Class<?> beanInterface) {
         List<Method> toReturn = new ArrayList<Method>();
 
         // Get all the public methods of the bean class and super class
@@ -319,9 +171,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
                 // Get the corresponding method into the bean interface
                 Method interfaceMethod;
                 try {
-                    interfaceMethod = beanInterface.getMethod(method.getName(), method
-                            .getParameterTypes());
-
+                    interfaceMethod = beanInterface.getMethod(method.getName(), method.getParameterTypes());
                     toReturn.add(interfaceMethod);
                 } catch (SecurityException e) {
                     e.printStackTrace();
@@ -341,15 +191,22 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         final CreationalContext existing = currentCreationalContext.get();
         currentCreationalContext.set(creationalContext);
         try {
+            final T instance;
             if (classes.size() == 0 && beanContext.isLocalbean()) {
                 final BeanContext.BusinessLocalBeanHome home = beanContext.getBusinessLocalBeanHome();
-                return (T) home.create();
+                instance = (T) home.create();
             } else {
                 final Class<?> mainInterface = classes.get(0);
                 final List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
                 final BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
-                return (T) home.create();
+                instance = (T) home.create();
             }
+
+            if (getScope().equals(Dependent.class) && BeanType.STATEFUL.equals(beanContext.getComponentType())) {
+                CreationalContextImpl.class.cast(creationalContext).addDependent(this, instance);
+            }
+
+            return instance;
         } finally {
             currentCreationalContext.set(existing);
         }
@@ -383,5 +240,112 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     public void storeStatefulInstance(final Object proxy, final T instance) {
         dependentSFSBToBeRemoved.put(System.identityHashCode(proxy), instance);
+    }
+
+    private static class EJBBeanAttributesImpl<T> extends BeanAttributesImpl<T> {
+        private final BeanContext beanContext;
+        private final Set<Type> ejbTypes;
+
+        public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributesImpl<T> beanAttributes) {
+            super(beanAttributes);
+            this.beanContext = bc;
+            this.ejbTypes = new HashSet<Type>();
+            initTypes();
+        }
+
+        @Override
+        public Set<Type> getTypes() {
+            return ejbTypes;
+        }
+
+        public void initTypes() {
+            if (beanContext.isLocalbean()) {
+                addApiTypes(ejbTypes, beanContext.getBeanClass());
+            }
+
+            if (beanContext.getProxyClass() != null) {
+                addApiTypes(ejbTypes, beanContext.getProxyClass());
+            }
+
+            final List<Class> cl = beanContext.getBusinessLocalInterfaces();
+            if (cl != null && !cl.isEmpty()) {
+                for (final Class<?> c : cl) {
+                    ejbTypes.add(c);
+                }
+            }
+
+            if (!ejbTypes.contains(Serializable.class)) {
+                ejbTypes.add(Serializable.class);
+            }
+
+            ejbTypes.add(Object.class);
+        }
+
+        private static void addApiTypes(final Collection<Type> clazzes, final Class<?> beanClass) {
+            final Typed typed = beanClass.getAnnotation(Typed.class);
+            if (typed == null || typed.value().length == 0) {
+                Class<?> current = beanClass;
+                while (current != null && !Object.class.equals(current)) {
+                    clazzes.add(current);
+                    current = current.getSuperclass();
+                }
+            } else {
+                Collections.addAll(clazzes, typed.value());
+            }
+        }
+    }
+
+    public static class EjbInjectionTargetFactory<T> extends InjectionTargetFactoryImpl<T> {
+        public EjbInjectionTargetFactory(final AnnotatedType<T> annotatedType, final WebBeansContext webBeansContext) {
+            super(annotatedType, webBeansContext);
+        }
+
+        public InjectionTarget<T> createInjectionTarget(Bean<T> bean) {
+            final InjectionTarget<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
+            return getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
+        }
+
+        protected Set<InjectionPoint> createInjectionPoints(Bean<T> bean) {
+            final Set<InjectionPoint> injectionPoints = new HashSet<InjectionPoint>();
+            for (InjectionPoint injectionPoint: getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
+                injectionPoints.add(injectionPoint);
+            }
+            return injectionPoints;
+        }
+
+        protected List<AnnotatedMethod<?>> getPostConstructMethods() {
+            return Collections.emptyList();
+        }
+
+        protected List<AnnotatedMethod<?>> getPreDestroyMethods() {
+            return Collections.emptyList();
+        }
+    }
+
+    public static class EjbInjectionTargetImpl<T> extends InjectionTargetImpl<T> {
+        private CdiEjbBean<T> bean;
+
+        public EjbInjectionTargetImpl(AnnotatedType<T> annotatedType, Set<InjectionPoint> points, WebBeansContext webBeansContext) {
+            super(annotatedType, points, webBeansContext,
+                    Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
+        }
+
+        public void setCdiEjbBean(final CdiEjbBean<T> bean) {
+            this.bean = bean;
+        }
+
+        @Override
+        public T produce(final CreationalContext<T> creationalContext) {
+            return bean.createEjb(creationalContext);
+        }
+
+        @Override
+        public void dispose(final T instance) {
+            bean.destroyComponentInstance(instance);
+        }
+
+        public T createNewPojo(final CreationalContext<T> creationalContext) {
+            return super.produce(creationalContext);
+        }
     }
 }

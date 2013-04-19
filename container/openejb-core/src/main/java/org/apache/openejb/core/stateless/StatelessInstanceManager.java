@@ -179,7 +179,7 @@ public class StatelessInstanceManager {
      * @return Object
      * @throws OpenEJBException
      */
-    public Object getInstance(final ThreadContext callContext) throws OpenEJBException {
+    public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final Data data = (Data) beanContext.getContainerData();
 

@@ -52,10 +52,11 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     private final List<BeanContext> compContexts = new ArrayList<BeanContext>();
 
     public CdiResourceInjectionService() {
+        // no-op
     }
 
     public void setAppContext(AppContext appModule) {
-        for (BeanContext beanContext : appModule.getBeanContexts()) {
+        for (final BeanContext beanContext : appModule.getBeanContexts()) {
             if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
                 compContexts.add(beanContext);
             }

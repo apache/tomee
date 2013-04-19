@@ -48,6 +48,7 @@ import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
@@ -111,7 +112,6 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
-import org.apache.tomee.catalina.session.OWBStandardManager;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.TomcatVersion;
@@ -755,7 +755,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
                 } catch (ClassNotFoundException e) {
                     logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
-                    sessionManagerClass = OWBStandardManager.class;
+                    sessionManagerClass = StandardManager.class;
                 }
             }
 
@@ -766,7 +766,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 logger.error("can't instantiate '" + sessionManager + "', StandardManager will be used", e);
             }
         } else if (standardContext.getCluster() == null) { // else let it use the cluster to create the manager
-            standardContext.setManager(new OWBStandardManager());
+            standardContext.setManager(new StandardManager());
         }
 
         if (standardContext.getConfigFile() == null) {

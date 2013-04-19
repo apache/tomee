@@ -23,6 +23,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -150,7 +151,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
-        Object bean = null;
+        Instance bean = null;
+        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
             final boolean authorized = (type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type));
             if (!authorized) {
@@ -174,7 +176,10 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            return _invoke(callMethod, runMethod, args, (Instance) bean, callContext, type);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.set(bean.creationalContext);
+            }
+            return _invoke(callMethod, runMethod, args, bean, callContext, type);
 
         } finally {
             if (bean != null) {
@@ -185,6 +190,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 }
             }
             ThreadContext.exit(oldCallContext);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 

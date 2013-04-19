@@ -163,7 +163,8 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             // remove our internal faces-config.xml
             final Iterator<URL> it = metaInfFacesConfigUrls.iterator();
             while (it.hasNext()) {
-                if (it.next().toExternalForm().replace(File.separator, "/").contains("/openwebbeans-jsf-")) {
+                final String next = it.next().toExternalForm().replace(File.separator, "/");
+                if (next.contains("/openwebbeans-jsf-") || next.contains("/openwebbeans-el22-")) {
                     it.remove();
                 }
             }

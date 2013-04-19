@@ -18,8 +18,8 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.core.WebContext;
-import org.apache.webbeans.el.WebBeansELResolver;
-import org.apache.webbeans.el.WrappedExpressionFactory;
+import org.apache.webbeans.el22.WebBeansELResolver;
+import org.apache.webbeans.el22.WrappedExpressionFactory;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 
 import javax.el.ELResolver;

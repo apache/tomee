@@ -29,14 +29,17 @@ import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.ApplicationException;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.security.Principal;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
@@ -58,8 +61,8 @@ public class StatefulDecoratorInjectionTest {
             orange.someBusinessMethod();
 
             fail("call should not be allowed");
-        } catch (AccessDeniedException e) {
-            // pass
+        } catch (EJBException e) {
+            assertTrue(AccessDeniedException.class.isInstance(e.getCause()));
         }
     }
 
@@ -95,7 +98,7 @@ public class StatefulDecoratorInjectionTest {
     }
 
     @Decorator
-    public static class OrangeSecurity implements OrangeStateful {
+    public static class OrangeSecurity implements OrangeStateful, Serializable {
 
         @Inject
         private SessionContext sessionContext;

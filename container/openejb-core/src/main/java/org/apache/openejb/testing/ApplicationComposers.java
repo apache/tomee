@@ -56,7 +56,6 @@ import org.apache.openejb.util.Join;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.web.LightweightWebAppBuilder;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
@@ -175,7 +174,8 @@ public final class ApplicationComposers {
         for (final Method method : classes) {
             final Class<?> returnType = method.getReturnType();
             if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
-                && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)) {
+                    && !returnType.equals(WebApp.class) && !returnType.equals(EjbJar.class)
+                    && !EnterpriseBean.class.isAssignableFrom(returnType)) {
                 errors.add(new Exception("@Classes can't be used on a method returning " + returnType));
             }
         }
@@ -416,9 +416,19 @@ public final class ApplicationComposers {
                 final EjbJar ejbJar = new EjbJar(method.getName());
                 ejbJar.addEnterpriseBean(bean);
                 final EjbModule ejbModule = new EjbModule(ejbJar);
+                final Beans beans = new Beans();
+                beans.addManagedClass(bean.getEjbClass());
+                ejbModule.setBeans(beans);
                 final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(bean.getEjbClass());
-                ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(clazz)).link());
+                if (classes != null) {
+                    ejbModule.setFinder(finderFromClasses(classes));
+                } else {
+                    ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(clazz)).link());
+                }
                 appModule.getEjbModules().add(ejbModule);
+                if (cdi) {
+                    ejbModule.setBeans(beans(new Beans(), cdiDecorators, cdiInterceptors, cdiAlternatives));
+                }
 
             } else if (obj instanceof Application) {
 
@@ -515,6 +525,20 @@ public final class ApplicationComposers {
             appModule = newModule;
         }
 
+        // copy ejb into beans if cdi is activated
+        for (final EjbModule ejb : appModule.getEjbModules()) {
+            final Beans beans = ejb.getBeans();
+            if (beans != null && ejb.getEjbJar() != null) {
+                for (final EnterpriseBean bean : ejb.getEjbJar().getEnterpriseBeans()) {
+                    if (beans.getManagedClasses().contains(bean.getEjbClass())) {
+                        continue;
+                    }
+
+                    beans.addManagedClass(bean.getEjbClass());
+                }
+            }
+        }
+
         if (webModulesNb > 0 && SystemInstance.get().getComponent(WebAppBuilder.class) == null) {
             SystemInstance.get().setComponent(WebAppBuilder.class, new LightweightWebAppBuilder());
         }
@@ -565,15 +589,12 @@ public final class ApplicationComposers {
             final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
             processor.createInstance();
-            AbstractInjectable.instanceUnderInjection.set(testInstance);
             try {
                 OWBInjector.inject(appContext.getBeanManager(), testInstance, null);
             } catch (Throwable t) {
                 // TODO handle this differently
                 // this is temporary till the injector can be rewritten
                 t.printStackTrace();
-            } finally {
-                AbstractInjectable.instanceUnderInjection.remove();
             }
         } finally {
             ThreadContext.exit(oldContext);
@@ -652,11 +673,8 @@ public final class ApplicationComposers {
     }
 
     public void after() throws Exception {
-
-        final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
-
         if (assembler != null) {
-
+            final ContextsService contextsService = appContext.getWebBeansContext().getContextsService();
             contextsService.endContext(SessionScoped.class, session);
             contextsService.endContext(RequestScoped.class, null);
             contextsService.endContext(ConversationScoped.class, null);
@@ -666,8 +684,6 @@ public final class ApplicationComposers {
             } catch (Exception e) {
                 // no-op
             }
-        }
-        if (servletContext != null || session != null) {
 
             try {
                 ScopeHelper.stopContexts(contextsService, servletContext, session);
@@ -675,6 +691,7 @@ public final class ApplicationComposers {
                 // no-op
             }
         }
+
         if (serviceManager != null) {
 
             try {
@@ -683,6 +700,7 @@ public final class ApplicationComposers {
                 // no-op
             }
         }
+
         OpenEJB.destroy();
     }
 
