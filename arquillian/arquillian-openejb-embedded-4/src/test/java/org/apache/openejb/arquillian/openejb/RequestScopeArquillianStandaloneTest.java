@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -47,8 +46,7 @@ public class RequestScopeArquillianStandaloneTest {
     @Test
     public void checkInjections() {
         assertNotNull(bean);
-        // TODO: there is no "getProxyFactory" or "isProxyInstance" in owb. What to do?
-        // assertTrue(WebBeansContext.currentInstance().getProxyFactory().isProxyInstance(bean));
+        assertTrue(bean.getClass().getName().contains("$Owb"));
     }
 
     @RequestScoped
