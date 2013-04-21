@@ -16,13 +16,6 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
-import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -33,6 +26,14 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
+
 @RunWith(Arquillian.class)
 public class JPAArquillianAdapterTest {
     @Inject
@@ -42,7 +43,7 @@ public class JPAArquillianAdapterTest {
     public static JavaArchive archive() {
         return ShrinkWrap.create(JavaArchive.class, JPAArquillianAdapterTest.class.getSimpleName().concat(".jar"))
                 .addClasses(Person.class, Persister.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("ejb-jar.xml"))
+                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .addAsManifestResource(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                         "<persistence version=\"2.0\"\n" +
                         "             xmlns=\"http://java.sun.com/xml/ns/persistence\"\n" +
