@@ -17,13 +17,18 @@
 package org.apache.openejb.arquillian.openejb;
 
 import org.apache.openejb.util.Enumerator;
+import org.apache.openejb.util.reflection.Reflections;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
+import org.jboss.shrinkwrap.api.asset.UrlAsset;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -68,12 +73,18 @@ public class SWClassLoader extends ClassLoader {
         if (node == null) {
             path = ArchivePaths.create(name);
             node = archive.get(path);
+
+
         }
 
         if (node != null) {
-            return new Enumerator(Arrays.asList(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler())));
+            return enumerator(new URL(null, "archive:" + archive.getName() + "/" + name, new ArchiveStreamHandler()));
         }
         return super.findResources(name);
+    }
+
+    private static Enumeration<URL> enumerator(final URL url) {
+        return new Enumerator(Arrays.asList(url));
     }
 
     @Override
@@ -115,6 +126,30 @@ public class SWClassLoader extends ClassLoader {
 
         @Override
         protected URLConnection openConnection(final URL u) throws IOException {
+            final String arName = key(u);
+            if (!prefixes.containsKey(arName)) {
+                throw new IOException(u.toExternalForm() + " not found");
+            }
+
+            String path = prefixes.get(arName) + path(arName, u);
+            Node node = archives.get(arName).get(path);
+            if (node == null) {
+                path = path(arName, u);
+                node = archives.get(arName).get(path);
+            }
+            if (node == null) {
+                throw new IOException(u.toExternalForm() + " not found");
+            }
+
+            final Asset asset = node.getAsset();
+            if (UrlAsset.class.isInstance(asset)) {
+                return URL.class.cast(Reflections.get(asset, "url")).openConnection();
+            } else if (FileAsset.class.isInstance(asset)) {
+                return File.class.cast(Reflections.get(asset, "file")).toURI().toURL().openConnection();
+            } else if (ClassLoaderAsset.class.isInstance(asset)) {
+                return ClassLoader.class.cast(Reflections.get(asset, "classLoader")).getResource(String.class.cast(Reflections.get(asset, "resourceName"))).openConnection();
+            }
+
             return new URLConnection(u) {
                 @Override
                 public void connect() throws IOException {
@@ -123,21 +158,10 @@ public class SWClassLoader extends ClassLoader {
 
                 @Override
                 public InputStream getInputStream() throws IOException {
-                    final String arName = key(url);
-
-                    String path = prefixes.get(arName) + path(arName, url);
-                    Node node = archives.get(arName).get(path);
-                    if (node == null) {
-                        path = path(arName, url);
-                        node = archives.get(arName).get(path);
-                    }
-
-                    final Asset asset = node.getAsset();
                     final InputStream input = asset.openStream();
                     final Collection<Closeable> c = closeables.get(arName);
                     c.add(input);
                     return input;
-
                 }
             };
         }
