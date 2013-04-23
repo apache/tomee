@@ -97,7 +97,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.12</xbeanVersion>
+    <xbeanVersion>3.13</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -121,7 +121,7 @@
     <tomcat.version>7.0.37</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.4</cxf.version> <!--2.6.4 requires wss4j 1.6.8-->
+    <cxf.version>2.6.7</cxf.version> <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.3</ehcache.version> <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
