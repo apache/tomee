@@ -59,8 +59,12 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
                     if (str.contains("?")) {
                         try {
                             str = str.replaceFirst("\\?", param.value.toString());
-                        } catch (Exception e) {
-                            str = str.replaceFirst("\\?", param.value.getClass().getName());
+                        } catch (final Exception e) {
+                            if (param.value == null) {
+                                str = str.replaceFirst("\\?", "null");
+                            } else {
+                                str = str.replaceFirst("\\?", param.value.getClass().getName());
+                            }
                         }
                         lastBatch = param.batchIndex;
                     } else {
@@ -72,7 +76,11 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
                         try {
                             str += param.value.toString();
                         } catch (Exception e) {
-                            str += param.value.getClass().getName();
+                            if (param.value == null) {
+                                str += "null";
+                            } else {
+                                str += param.value.getClass().getName();
+                            }
                         }
 
                         if (i == parameters.size() - 1 || parameters.get(i + 1).batchIndex != lastBatch) {

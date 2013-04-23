@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -34,6 +35,8 @@ import java.util.Enumeration;
 
 public class ImportSql {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, EntityManagerFactoryCallable.class.getName());
+
+    public static final String OPENEJB_SQL_IMPORT = "openejb.sql.import";
 
     public static final String IMPORT_FILE_PREFIX = "import-";
     public static final String IMPORT_FILE_EXTENSION = ".sql";
@@ -58,7 +61,7 @@ public class ImportSql {
     }
 
     public boolean hasSomethingToImport() {
-        return !done && imports != null && imports.hasMoreElements();
+        return !done && imports != null && imports.hasMoreElements() && SystemInstance.get().getOptions().get(OPENEJB_SQL_IMPORT, true);
     }
 
     public void doImport() {
