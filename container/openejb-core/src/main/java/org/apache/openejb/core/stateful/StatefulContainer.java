@@ -468,9 +468,12 @@ public class StatefulContainer implements RpcContainer {
         if (primKey == null)
             throw new NullPointerException("primKey is null");
 
-        final Class scope = beanContext.get(CdiEjbBean.class).getScope();
-        if (callMethod.getDeclaringClass() != BeanContext.Removable.class && scope != Dependent.class) {
-            throw new UnsupportedOperationException("Can not call EJB Stateful Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
+        final CdiEjbBean cdiEjbBean = beanContext.get(CdiEjbBean.class);
+        if (cdiEjbBean != null) {
+            final Class scope = cdiEjbBean.getScope();
+            if (callMethod.getDeclaringClass() != BeanContext.Removable.class && scope != Dependent.class) {
+                throw new UnsupportedOperationException("Can not call EJB Stateful Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
+            }
         }
 
         final boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();

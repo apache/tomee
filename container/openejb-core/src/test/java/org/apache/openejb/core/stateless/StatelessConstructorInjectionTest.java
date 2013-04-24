@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Stack;
 
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -80,8 +81,7 @@ public class StatelessConstructorInjectionTest extends TestCase {
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
         bean.getEnvEntry().add(new EnvEntry("count", Integer.class.getName(), "10"));
 
-
-        assembler.createApplication(config.configureApplication(ejbJar));
+        assembler.createApplication(config.configureApplication(new EjbModule(ejbJar).withCdi()));
 
     }
 

@@ -38,9 +38,9 @@ public class DynamicProxyImplFactory {
     }
 
     public static Object newProxy(BeanContext context, java.lang.reflect.InvocationHandler invocationHandler) {
-        if (invocationHandler instanceof QueryProxy) {
+        if (QueryProxy.class.isInstance(invocationHandler)) {
             EntityManager em = null;
-            for (Injection injection : context.getInjections()) {
+            for (final Injection injection : context.getInjections()) {
                 if (QueryProxy.class.equals(injection.getTarget())) {
                     try {
                         em = (EntityManager) context.getJndiEnc().lookup(injection.getJndiName());
@@ -52,7 +52,7 @@ public class DynamicProxyImplFactory {
             if (em == null) {
                 throw new OpenEJBRuntimeException("can't find the entity manager to use for the dynamic bean " + context.getEjbName());
             }
-            ((QueryProxy) invocationHandler).setEntityManager(em);
+            QueryProxy.class.cast(invocationHandler).setEntityManager(em);
         }
 
         try {

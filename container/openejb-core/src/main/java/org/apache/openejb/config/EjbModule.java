@@ -186,6 +186,14 @@ public class EjbModule extends Module implements WsModule {
         this.webapp = webapp;
     }
 
+    // just a helper method to activate cdi
+    public EjbModule withCdi() {
+        if (beans == null) {
+            beans = new Beans();
+        }
+        return this;
+    }
+
     @Override
     public String toString() {
         return "EjbModule{" +
