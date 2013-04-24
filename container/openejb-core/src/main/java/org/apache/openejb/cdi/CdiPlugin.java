@@ -282,7 +282,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         bc.set(CdiEjbBean.class, bean);
         bc.set(CurrentCreationalContext.class, new CurrentCreationalContext());
-        bc.addSystemInterceptor(new CdiInterceptor<T>(bean));
 
         validateDisposeMethods(bean);
         validateScope(bean);
