@@ -20,7 +20,6 @@ import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
-import org.apache.openejb.cdi.CdiInterceptor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.util.proxy.BeanContextInvocationHandler;
@@ -52,7 +51,7 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
                                 context.getCallbackInterceptors())) {
                 for (InterceptorData id : list) {
                     final Class<?> interceptorClass = id.getInterceptorClass();
-                    if (!StatsInterceptor.class.equals(interceptorClass) && !CdiInterceptor.class.equals(interceptorClass)) {
+                    if (!StatsInterceptor.class.equals(interceptorClass)) {
                         Contexts.findContextFields(interceptorClass, classes);
                     }
                 }
