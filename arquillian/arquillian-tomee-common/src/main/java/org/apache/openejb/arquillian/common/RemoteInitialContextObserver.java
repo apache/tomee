@@ -32,7 +32,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 public class RemoteInitialContextObserver {
     private static final String REMOTE_INITIAL_CONTEXT_FACTORY = "org.apache.openejb.client.RemoteInitialContextFactory";
@@ -68,7 +70,7 @@ public class RemoteInitialContextObserver {
                 // no-op
             }
 
-            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(new InitialContext(), existing, new InitialContext(props))));
+            context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(props, existing)));
         } catch (ClassNotFoundException e) {
             // no-op
         } catch (NamingException e) {
@@ -77,32 +79,58 @@ public class RemoteInitialContextObserver {
     }
 
     private static class MultipleContextHandler implements InvocationHandler {
-        private final Context[] contexts;
+        private final Context context;
+        private final Properties properties;
 
-        public MultipleContextHandler(final Context... initialContexts) {
-            contexts = initialContexts;
+        public MultipleContextHandler(final Properties props, final Context initialContexts) {
+            properties = props;
+            context = initialContexts;
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Exception err = null;
-            for (Context ctx : contexts) {
-                if (ctx == null) {
-                    continue;
-                }
+            for (final Callable<Context> callable : Arrays.asList( // order is important to avoid to start an embedded container for some cases
+
+                    new Callable<Context>() { // then try to create a remote context
+                        @Override
+                        public Context call() throws Exception {
+                            return new InitialContext(properties);
+                        }
+                    },
+                    new Callable<Context>() { // then existing context
+                        @Override
+                        public Context call() throws Exception {
+                            return context;
+                        }
+                    },
+                    new Callable<Context>() { // then contextual context, this can start an embedded container in some cases
+                        @Override
+                        public Context call() throws Exception {
+                            return new InitialContext();
+                        }
+                    }
+
+            )) {
 
                 try {
+                    final Context ctx = callable.call();
+                    if (ctx == null) {
+                        continue;
+                    }
                     return method.invoke(ctx, args);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     err = e;
                 }
             }
+
             if (err != null) {
                 if (err instanceof InvocationTargetException) {
                     throw err.getCause();
                 }
                 throw err;
             }
+
             return null;
         }
     }
