@@ -132,7 +132,6 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
                 elStore.destroyELContextStore();
             }
 
-
             webBeansContext.getContextsService().endContext(RequestScoped.class, event);
             if (webBeansContext instanceof WebappWebBeansContext) { // end after child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
@@ -172,9 +171,12 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
             logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
         }
 
-        this.webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
-        if (webBeansContext instanceof WebappWebBeansContext) { // end after child
-            ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
+        // ensure session ThreadLocal is set
+        webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
+
+        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
+        if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
+            WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
         ConversationManager conversationManager = webBeansContext.getConversationManager();
