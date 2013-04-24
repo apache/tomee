@@ -32,6 +32,11 @@ public class CompManagedBean extends ManagedBean {
         super(name, compClass);
     }
 
+    @Override // unwrap Comp renaming
+    public String getJndiConsumerName() {
+        return ejbName.substring(0, ejbName.lastIndexOf(".Comp"));
+    }
+
     @Override
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
