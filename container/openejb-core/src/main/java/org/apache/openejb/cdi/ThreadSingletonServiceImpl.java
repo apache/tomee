@@ -123,7 +123,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         } else {
             services.put(ELAdaptor.class,new CustomELAdapter(appContext, startupObject.getWebContext()));
         }
-        services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
 
@@ -151,6 +150,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
             // do it only here to get the webbeanscontext
             services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
+            services.put(ResourceInjectionService.class, new CdiResourceInjectionService(webBeansContext));
 
             old = contextEntered(webBeansContext);
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());

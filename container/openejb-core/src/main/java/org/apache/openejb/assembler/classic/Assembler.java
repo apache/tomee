@@ -1196,7 +1196,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(AppContext.class, appContext);
             services.put(TransactionService.class, new OpenEJBTransactionService());
             services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
-            services.put(ResourceInjectionService.class, new CdiResourceInjectionService());
+            services.put(ResourceInjectionService.class, new CdiResourceInjectionService(webBeansContext));
             services.put(ScannerService.class, new CdiScanner());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
