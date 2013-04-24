@@ -1594,10 +1594,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     if (nonJtaDataSourceId == null) {
                         final ResourceInfo nonJtaResourceInfo = copy(jtaResourceInfo);
-                        configureImplicitDataSource(nonJtaResourceInfo);
                         nonJtaResourceInfo.id = jtaResourceInfo.id + "NonJta";
                         nonJtaResourceInfo.originAppName = jtaResourceInfo.originAppName;
                         suffixAliases(nonJtaResourceInfo, "NonJta");
+                        configureImplicitDataSource(nonJtaResourceInfo);
 
                         final Properties overrides = ConfigurationFactory.getSystemProperties(nonJtaResourceInfo.id, nonJtaResourceInfo.service);
                         nonJtaResourceInfo.properties.putAll(overrides);
@@ -1655,9 +1655,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     if (jtaDataSourceId == null) {
                         final ResourceInfo jtaResourceInfo = copy(nonJtaResourceInfo);
-                        configureImplicitDataSource(jtaResourceInfo);
                         jtaResourceInfo.id = nonJtaResourceInfo.id + "Jta";
                         suffixAliases(jtaResourceInfo, "Jta");
+                        configureImplicitDataSource(jtaResourceInfo);
 
                         final Properties overrides = ConfigurationFactory.getSystemProperties(jtaResourceInfo.id, jtaResourceInfo.service);
                         jtaResourceInfo.properties.putAll(overrides);
