@@ -27,7 +27,6 @@ import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -71,9 +70,7 @@ public class RemoteInitialContextObserver {
             }
 
             context.set((Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ Context.class }, new MultipleContextHandler(props, existing)));
-        } catch (ClassNotFoundException e) {
-            // no-op
-        } catch (NamingException e) {
+        } catch (final ClassNotFoundException e) {
             // no-op
         }
     }
