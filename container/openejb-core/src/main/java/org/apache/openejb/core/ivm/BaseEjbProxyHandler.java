@@ -67,37 +67,25 @@ import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.NONE;
 public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
 
     private static final String OPENEJB_LOCALCOPY = "openejb.localcopy";
-    private IntraVmCopyMonitor.State strategy = NONE;
-
-    private static class ProxyRegistry {
-
-        protected final HashMap liveHandleRegistry = new HashMap();
-    }
-
-    private final ReentrantLock lock = new ReentrantLock();
-
+    private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
     public final Object deploymentID;
-
     public final Object primaryKey;
-
+    protected final InterfaceType interfaceType;
+    private final ReentrantLock lock = new ReentrantLock();
     public boolean inProxyMap = false;
-
-    private transient WeakReference<BeanContext> beanContextRef;
-
     public transient RpcContainer container;
-
     protected boolean isInvalidReference = false;
-
     protected Object clientIdentity;
-
+    private IntraVmCopyMonitor.State strategy = NONE;
+    private transient WeakReference<BeanContext> beanContextRef;
     /*
     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
-    * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and 
+    * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and
     * never passed as references.  However, it is possible for the system administrator to turn off the
     * copy operation so that arguments and return values are passed by reference as performance optimization.
     * Simply setting the org.apache.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause this variable to
     * set to false, and therefor bypass the copy operations in the invoke( ) method of this class; arguments
-    * and return values will be passed by reference not value. 
+    * and return values will be passed by reference not value.
     *
     * This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
     * or a property of the Property argument when invoking OpenEJB.init(props).  This variable is set to that
@@ -105,8 +93,6 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     */
     private boolean doIntraVmCopy;
     private boolean doCrossClassLoaderCopy;
-    private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
-    protected final InterfaceType interfaceType;
     private transient WeakHashMap<Class, Object> interfaces;
     private transient WeakReference<Class> mainInterface;
 
@@ -132,6 +118,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             throw new IllegalArgumentException("No mainInterface: otherwise di: " + beanContext + " InterfaceType: " + interfaceType + " interfaces: " + interfaces);
         }
         this.setDoIntraVmCopy(REMOTE_COPY_ENABLED && !interfaceType.isLocal() && !interfaceType.isLocalBean());
+    }
+
+    private static boolean parseRemoteCopySetting() {
+        return SystemInstance.get().getOptions().get(OPENEJB_LOCALCOPY, true);
     }
 
     protected void setDoIntraVmCopy(final boolean doIntraVmCopy) {
@@ -205,20 +195,31 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         mainInterface = new WeakReference<Class>(referent);
     }
 
+    public List<Class> getInterfaces() {
+        final Set<Class> classes = interfaces.keySet();
+        final List<Class> list = new ArrayList<Class>();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        for (final Class<?> clazz : classes) { // convert interfaces with current classloader -> relevant for remote interfaces
+            if (clazz.isInterface() && getBeanContext().getInterfaceType(clazz) == InterfaceType.BUSINESS_REMOTE) {
+                try {
+                    list.add(contextClassLoader.loadClass(clazz.getName()));
+                } catch (final ClassNotFoundException e) {
+                    list.add(clazz);
+                } catch (final NoClassDefFoundError e) {
+                    list.add(clazz);
+                }
+            } else {
+                list.add(clazz);
+            }
+        }
+        return list;
+    }
+
     private void setInterfaces(final List<Class> interfaces) {
         this.interfaces = new WeakHashMap<Class, Object>(interfaces.size());
         for (final Class clazz : interfaces) {
             this.interfaces.put(clazz, null);
         }
-    }
-
-    public List<Class> getInterfaces() {
-        final Set<Class> classes = interfaces.keySet();
-        return new ArrayList(classes);
-    }
-
-    private static boolean parseRemoteCopySetting() {
-        return SystemInstance.get().getOptions().get(OPENEJB_LOCALCOPY, true);
     }
 
     protected void checkAuthorization(final Method method) throws org.apache.openejb.OpenEJBException {
@@ -269,7 +270,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 securityService.associate(localClientIdentity);
             }
-            if (strategy == CLASSLOADER_COPY) {
+            if (strategy == CLASSLOADER_COPY || getBeanContext().getInterfaceType(interfce) == InterfaceType.BUSINESS_REMOTE) {
 
                 IntraVmCopyMonitor.pre(strategy);
                 final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
@@ -344,9 +345,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (!(Object.class.equals(method.getDeclaringClass())
-              && method.getName().equals("finalize")
-              && method.getExceptionTypes().length == 1
-              && Throwable.class.equals(method.getExceptionTypes()[0]))) {
+                && method.getName().equals("finalize")
+                && method.getExceptionTypes().length == 1
+                && Throwable.class.equals(method.getExceptionTypes()[0]))) {
             getBeanContext(); // will throw an exception if app has been undeployed.
         }
     }
@@ -488,8 +489,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected boolean equalHandler(final BaseEjbProxyHandler other) {
         return (primaryKey == null ? other.primaryKey == null : primaryKey.equals(other.primaryKey))
-               && deploymentID.equals(other.deploymentID)
-               && getMainInterface().equals(other.getMainInterface());
+                && deploymentID.equals(other.deploymentID)
+                && getMainInterface().equals(other.getMainInterface());
     }
 
     protected abstract Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable;
@@ -498,9 +499,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (objects == null) {
             return objects;
         }
-        /* 
+        /*
             while copying the arguments is necessary. Its not necessary to copy the array itself,
-            because they array is created by the Proxy implementation for the sole purpose of 
+            because they array is created by the Proxy implementation for the sole purpose of
             packaging the arguments for the InvocationHandler.invoke( ) method. Its ephemeral
             and their for doesn't need to be copied.
         */
@@ -521,21 +522,21 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
         final Class ooc = object.getClass();
         if ((ooc == int.class) ||
-            (ooc == String.class) ||
-            (ooc == long.class) ||
-            (ooc == boolean.class) ||
-            (ooc == byte.class) ||
-            (ooc == float.class) ||
-            (ooc == double.class) ||
-            (ooc == short.class) ||
-            (ooc == Long.class) ||
-            (ooc == Boolean.class) ||
-            (ooc == Byte.class) ||
-            (ooc == Character.class) ||
-            (ooc == Float.class) ||
-            (ooc == Double.class) ||
-            (ooc == Short.class) ||
-            (ooc == BigDecimal.class)) {
+                (ooc == String.class) ||
+                (ooc == long.class) ||
+                (ooc == boolean.class) ||
+                (ooc == byte.class) ||
+                (ooc == float.class) ||
+                (ooc == double.class) ||
+                (ooc == short.class) ||
+                (ooc == Long.class) ||
+                (ooc == Boolean.class) ||
+                (ooc == Byte.class) ||
+                (ooc == Character.class) ||
+                (ooc == Float.class) ||
+                (ooc == Double.class) ||
+                (ooc == Short.class) ||
+                (ooc == BigDecimal.class)) {
             return object;
         }
 
@@ -546,9 +547,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             out.close();
         } catch (NotSerializableException e) {
             throw (IOException) new NotSerializableException(e.getMessage() +
-                                                             " : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the " +
-                                                             OPENEJB_LOCALCOPY +
-                                                             "=false system property.").initCause(e);
+                    " : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the " +
+                    OPENEJB_LOCALCOPY +
+                    "=false system property.").initCause(e);
         }
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
@@ -647,6 +648,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         setInterfaces((List<Class>) in.readObject());
         setMainInterface((Class) in.readObject());
+    }
+
+    private static class ProxyRegistry {
+
+        protected final HashMap liveHandleRegistry = new HashMap();
     }
 
 }

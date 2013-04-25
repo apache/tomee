@@ -307,6 +307,12 @@ public class BeanContext extends DeploymentContext {
         if (javax.ejb.EJBObject.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_OBJECT;
 
+        for (final Entry<Class, InterfaceType> entry : interfaces.entrySet()) { // for @Remote case where the loaded interface can be different from the stored one
+            if (entry.getKey().getName().equals(clazz.getName())) {
+                return entry.getValue();
+            }
+        }
+
         return null;
     }
 
