@@ -183,7 +183,12 @@ public class TomcatWsRegistry implements WsRegistry {
             if (!root.startsWith("/")) {
                 root = '/' + root;
             }
-            Context webAppContext = (Context) host.findChild(root);
+
+            Context webAppContext = Context.class.cast(host.findChild(root));
+            if (webAppContext == null && "/".equals(root)) {
+                webAppContext = Context.class.cast(host.findChild(root.substring(1)));
+            }
+
             if (webAppContext != null) {
                 // sub context = '/' means the service address is provided by webservices
                 if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
