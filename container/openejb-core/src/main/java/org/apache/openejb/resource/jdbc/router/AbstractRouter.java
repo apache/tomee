@@ -24,18 +24,18 @@ import javax.naming.NamingException;
 
 public abstract class AbstractRouter implements Router {
     private static final String OPENEJB_RESOURCE = "openejb:Resource/";
-    private Context ctx;
+
+    private final Context ctx;
 
     public AbstractRouter() {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        ctx = containerSystem.getJNDIContext();
+        ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
     }
 
-    public Object getJndiResource(String name) throws NamingException {
+    protected Object getJndiResource(String name) throws NamingException {
         return ctx.lookup(name);
     }
 
-    public Object getOpenEJBResource(String name) throws NamingException {
+    protected Object getOpenEJBResource(String name) throws NamingException {
         return getJndiResource(OPENEJB_RESOURCE + name);
     }
 }

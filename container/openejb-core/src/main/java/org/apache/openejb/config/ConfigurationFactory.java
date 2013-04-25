@@ -1552,12 +1552,26 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         public String getReference(final ResourceInfo info) {
             for (Object value : info.properties.values()) {
                 if (String.class.isInstance(value)) {
-                    value = ((String) value).trim();
-                    if (ids.contains(value)) {
+                    final String string = String.class.cast(value).trim();
+                    if (string.isEmpty()) {
+                        continue;
+                    }
+
+                    if (ids.contains(string)) {
                         return (String) value;
                     }
+
+                    if (string.contains(",")) { // multiple references
+                        for (final String s : string.split(",")) {
+                            final String trimmed = s.trim();
+                            if (ids.contains(trimmed)) {
+                                return s;
+                            }
+                        }
+                    }
+
                     for (final String s : ids) {
-                        if (s.endsWith((String) value)) {
+                        if (s.endsWith("/" + string)) { // submodule resources
                             return s;
                         }
                     }
