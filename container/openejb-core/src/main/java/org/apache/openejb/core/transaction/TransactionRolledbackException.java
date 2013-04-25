@@ -16,8 +16,13 @@
  */
 package org.apache.openejb.core.transaction;
 
+import org.apache.openejb.core.ivm.IntraVmArtifact;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Subclass of javax.transaction.TransactionRolledbackException which adds init cause to the exception.
@@ -198,5 +203,11 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
             return null;
         }
         return cause;
+    }
+
+    protected Object writeReplace() throws ObjectStreamException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        printStackTrace(new PrintStream(baos));
+        return new javax.transaction.TransactionRolledbackException(getMessage() + "\n\t" + new String(baos.toByteArray()));
     }
 }
