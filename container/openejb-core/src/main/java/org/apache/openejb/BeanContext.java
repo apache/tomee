@@ -1411,9 +1411,11 @@ public class BeanContext extends DeploymentContext {
         final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         final ThreadContext oldContext = ThreadContext.enter(callContext);
 
+        final boolean dynamicallyImplemented = isDynamicallyImplemented();
+
         final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
-        if (isDynamicallyImplemented()) {
+        if (dynamicallyImplemented) {
             if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
                 throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
@@ -1437,7 +1439,7 @@ public class BeanContext extends DeploymentContext {
             }
 
             Object rootInstance;
-            if (cdiEjbBean != null && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
+            if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
                 rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
             } else { // not a cdi bean
                 rootInstance = getManagedClass().newInstance();
@@ -1447,7 +1449,7 @@ public class BeanContext extends DeploymentContext {
             Object beanInstance;
 
             final InjectionProcessor injectionProcessor;
-            if (!isDynamicallyImplemented()) {
+            if (!dynamicallyImplemented) {
                 injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
                 beanInstance = injectionProcessor.createInstance();
                 inject(beanInstance, creationalContext);
