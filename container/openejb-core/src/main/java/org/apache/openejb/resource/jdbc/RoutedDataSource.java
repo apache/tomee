@@ -17,7 +17,6 @@
 package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.router.ConnectionProvider;
 import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.reflection.Reflections;
@@ -108,17 +107,11 @@ public class RoutedDataSource implements DataSource {
     }
 
     public Connection getConnection() throws SQLException {
-        if (ConnectionProvider.class.isInstance(getDelegate())) {
-            return ConnectionProvider.class.cast(getDelegate()).getConnection();
-        }
         return getTargetDataSource().getConnection();
     }
 
     public Connection getConnection(String username, String password)
             throws SQLException {
-        if (ConnectionProvider.class.isInstance(getDelegate())) {
-            return ConnectionProvider.class.cast(getDelegate()).getConnection(username, password);
-        }
         return getTargetDataSource().getConnection(username, password);
     }
 
