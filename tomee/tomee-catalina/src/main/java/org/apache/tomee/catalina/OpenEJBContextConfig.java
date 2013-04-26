@@ -498,6 +498,12 @@ public class OpenEJBContextConfig extends ContextConfig {
                 return false;
             }
         }
+
+        if (classAsFile != null && classAsFile.getName().endsWith(".jar") && file.getName().endsWith(".jar")) {
+            // different jars
+            return false;
+        }
+
         return !webInf; // not in the file but not in a war too so use it
     }
 }
