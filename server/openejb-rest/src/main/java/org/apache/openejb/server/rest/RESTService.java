@@ -71,7 +71,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
     private List<DeployedService> services = new ArrayList<DeployedService>();
-    private String virtualHost;
+    private String virtualHost = "localhost";
     private boolean enabled = true;
     private String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
@@ -912,7 +912,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     @Override
     public void init(final Properties props) throws Exception {
-        virtualHost = props.getProperty("virtualHost");
+        if (props == null) {
+            return;
+        }
+        virtualHost = props.getProperty("virtualHost", "localhost");
         enabled = ServiceManager.isEnabled(props);
     }
 

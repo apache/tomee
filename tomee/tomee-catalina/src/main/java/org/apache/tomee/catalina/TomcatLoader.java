@@ -266,6 +266,7 @@ public class TomcatLoader implements Loader {
             // WS
             try {
                 ServerService cxfService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.CxfService").newInstance();
+                cxfService.init(properties);
                 cxfService.start();
                 services.add(cxfService);
             } catch (ClassNotFoundException ignored) {
@@ -277,6 +278,7 @@ public class TomcatLoader implements Loader {
             // REST
             try {
                 ServerService restService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
+                restService.init(properties);
                 restService.start();
                 services.add(restService);
             } catch (ClassNotFoundException ignored) {
