@@ -26,16 +26,26 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 public class FailOverRouter extends AbstractRouter {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, FailOverRouter.class);
+
+    public static final String DEFAULT_STRATEGY = "default";
+
     private final AtomicReference<DataSource> facade = new AtomicReference<DataSource>();
     private final Collection<DataSource> dataSources = new CopyOnWriteArrayList<DataSource>();
+
     private String delimiter = ",";
+    private String strategy = DEFAULT_STRATEGY;
     private String datasourceNames = "";
 
     @Override
@@ -51,6 +61,15 @@ public class FailOverRouter extends AbstractRouter {
     public void setDelimiter(final String delimiter) {
         this.delimiter = delimiter;
         initDataSources();
+    }
+
+    public void setStrategy(final String strategy) {
+        if (strategy == null) {
+            this.strategy = DEFAULT_STRATEGY;
+        } else {
+            this.strategy = strategy.toLowerCase(Locale.ENGLISH).trim();
+        }
+        initFacade();
     }
 
     private void initDataSources() {
@@ -84,7 +103,7 @@ public class FailOverRouter extends AbstractRouter {
 
         facade.set(DataSource.class.cast(Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
-                new Class<?>[]{ clazz }, new FacadeHandler(dataSources))));
+                new Class<?>[]{ clazz }, new FacadeHandler(dataSources, strategy))));
     }
 
     public Collection<DataSource> getDataSources() {
@@ -99,9 +118,12 @@ public class FailOverRouter extends AbstractRouter {
 
     private static class FacadeHandler implements InvocationHandler {
         private final Collection<DataSource> delegates;
+        private final String strategy;
+        private final AtomicInteger currentIdx = new AtomicInteger(0); // used by some strategies
 
-        public FacadeHandler(final Collection<DataSource> dataSources) {
+        public FacadeHandler(final Collection<DataSource> dataSources, final String strategy) {
             this.delegates = dataSources;
+            this.strategy = strategy;
         }
 
         @Override
@@ -119,7 +141,8 @@ public class FailOverRouter extends AbstractRouter {
             }
 
             int ex = 0;
-            for (final DataSource ds : delegates) {
+            final Collection<DataSource> sources = sortFollowingStrategy(strategy, delegates, currentIdx);
+            for (final DataSource ds : sources) {
                 try {
                     if (method.getName().startsWith("set")) {
                         method.invoke(ds, args);
@@ -128,7 +151,7 @@ public class FailOverRouter extends AbstractRouter {
                     }
                 } catch (final InvocationTargetException ite) {
                     ex++;
-                    if (ex == delegates.size()) { // all failed so throw the exception
+                    if (ex == sources.size()) { // all failed so throw the exception
                         throw ite.getCause();
                     }
                 }
@@ -136,5 +159,55 @@ public class FailOverRouter extends AbstractRouter {
 
             return null;
         }
+    }
+
+    private static Collection<DataSource> sortFollowingStrategy(final String strategy, final Collection<DataSource> delegates, final AtomicInteger idx) {
+        if (strategy == null) {
+            return delegates;
+        }
+
+        if (DEFAULT_STRATEGY.equals(strategy) || strategy.isEmpty()) {
+            return delegates;
+        }
+
+        //
+        // take care next strategies can break multiple calls on the facade
+        // it is only intended to be used for connection selection
+        //
+
+        if ("random".equals(strategy)) {
+            final List<DataSource> ds = new ArrayList<DataSource>(delegates);
+            Collections.shuffle(ds);
+            return ds;
+        }
+
+        if ("reverse".equals(strategy)) {
+            final List<DataSource> ds = new ArrayList<DataSource>(delegates);
+            final int times = idx.incrementAndGet() % ds.size();
+            for (int i = 0; i < times; i++) {
+                Collections.reverse(ds);
+            }
+            return ds;
+        }
+
+        if (strategy.startsWith("round-robin")) {
+            final int step;
+            if (strategy.contains("%")) {
+                step = Math.max(1, Integer.parseInt(strategy.substring(strategy.lastIndexOf("%") + 1)));
+            } else {
+                step = 1;
+            }
+
+            final List<DataSource> ds = new ArrayList<DataSource>(delegates);
+
+            int currentIdx = 0;
+            for (int i = 0; i < step; i++) {
+                currentIdx = idx.incrementAndGet();
+            }
+            Collections.rotate(ds, 1 + (currentIdx % ds.size()));
+            return ds;
+        }
+
+        return delegates;
     }
 }
