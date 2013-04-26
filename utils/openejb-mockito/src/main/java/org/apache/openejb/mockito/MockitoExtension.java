@@ -22,6 +22,7 @@ import org.apache.webbeans.annotation.NamedLiteral;
 import org.mockito.cglib.proxy.Factory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -94,7 +95,7 @@ public class MockitoExtension implements Extension {
         }
 
         public Class<? extends Annotation> getScope() {
-            return ApplicationScoped.class;
+            return Dependent.class;
         }
 
         public String getName() {
