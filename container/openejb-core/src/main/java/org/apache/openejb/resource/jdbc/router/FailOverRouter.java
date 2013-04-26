@@ -123,7 +123,7 @@ public class FailOverRouter extends AbstractRouter {
                 try {
                     if (method.getName().startsWith("set")) {
                         method.invoke(ds, args);
-                    } else if (method.getName().startsWith("get")) {
+                    } else { // getConnection are here
                         return method.invoke(ds, args); // return the first one succeeding
                     }
                 } catch (final InvocationTargetException ite) {
