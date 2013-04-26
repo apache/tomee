@@ -163,7 +163,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         realmName = props.getProperty("realmName");
         transportGuarantee = props.getProperty("transportGuarantee");
         authMethod = props.getProperty("authMethod");
-        virtualHost = props.getProperty("virtualHost");
+        virtualHost = props.getProperty("virtualHost", "localhost");
     }
 
     @Override
