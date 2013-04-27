@@ -247,7 +247,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         private final Set<Type> ejbTypes;
 
         public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributesImpl<T> beanAttributes) {
-            super(beanAttributes);
+            super(beanAttributes, false);
             this.beanContext = bc;
             this.ejbTypes = new HashSet<Type>();
             initTypes();
