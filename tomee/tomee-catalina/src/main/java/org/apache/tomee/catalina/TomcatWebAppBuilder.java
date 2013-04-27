@@ -1899,7 +1899,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      *
      * @param standardContext tomcat context instance
      */
-    private void    loadWebModule(final AppModule appModule, final StandardContext standardContext) {
+    private void loadWebModule(final AppModule appModule, final StandardContext standardContext) {
         final WebModule webModule = appModule.getWebModules().get(0);
         final WebApp webApp = webModule.getWebApp();
 
