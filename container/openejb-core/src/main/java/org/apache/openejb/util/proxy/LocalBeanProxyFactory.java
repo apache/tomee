@@ -401,7 +401,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             for (int i = 0; i < exceptionTypes.length; i++) {
                 final Class<?> exceptionType = exceptionTypes[i];
 
-                mv.visitLdcInsn(Type.getType("L" + exceptionType.getCanonicalName().replace('.', '/') + ";"));
+                mv.visitLdcInsn(Type.getType("L" + exceptionType.getName().replace('.', '/') + ";"));
                 mv.visitVarInsn(ALOAD, length);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
@@ -415,7 +415,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 mv.visitVarInsn(ALOAD, length);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
-                mv.visitTypeInsn(CHECKCAST, exceptionType.getCanonicalName().replace('.', '/'));
+                mv.visitTypeInsn(CHECKCAST, exceptionType.getName().replace('.', '/'));
                 mv.visitInsn(ATHROW);
                 mv.visitLabel(l6);
 
