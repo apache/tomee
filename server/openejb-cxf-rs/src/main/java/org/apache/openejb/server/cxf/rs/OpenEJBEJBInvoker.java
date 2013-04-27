@@ -18,6 +18,7 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.core.interceptor.InterceptorData;
@@ -99,6 +100,11 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
                     cause = cause.getCause();
                 }
             }
+
+            if (ApplicationException.class.isInstance(cause) && Exception.class.isInstance(cause.getCause())) {
+                throw Exception.class.cast(ApplicationException.class.cast(cause).getCause());
+            }
+
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             }
