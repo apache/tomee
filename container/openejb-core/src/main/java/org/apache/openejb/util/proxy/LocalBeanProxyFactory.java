@@ -147,7 +147,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     }
 
     public static Class createProxy(final Class<?> classToProxy, final ClassLoader cl, final Class... interfaces) {
-        return createProxy(classToProxy, cl, classToProxy.getName() + "$LocalBeanProxy", interfaces);
+        return createProxy(classToProxy, cl, classToProxy.getName() + "$$LocalBeanProxy", interfaces);
     }
 
     public static byte[] generateProxy(final Class<?> classToProxy, final String proxyName, final Class<?>... interfaces) throws ProxyGenerationException {
