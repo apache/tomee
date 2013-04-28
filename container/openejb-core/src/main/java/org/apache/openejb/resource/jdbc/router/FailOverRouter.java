@@ -34,10 +34,10 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -124,7 +124,7 @@ public class FailOverRouter extends AbstractRouter {
     }
 
     private static class FacadeHandler implements InvocationHandler {
-        private final ThreadLocal<Map<Transaction, DataSource>> txDs = new ThreadLocal<Map<Transaction, DataSource>>();
+        private final Map<Transaction, DataSource> txDs = new ConcurrentHashMap<Transaction, DataSource>();
 
         private final Collection<DataSource> delegates;
         private final String strategy;
@@ -152,11 +152,9 @@ public class FailOverRouter extends AbstractRouter {
             final TransactionManager txMgr = OpenEJB.getTransactionManager();
             final Transaction transaction = txMgr.getTransaction();
 
-            final Map<Transaction, DataSource> currentDs = txDs.get();
-            if (currentDs != null && currentDs.containsKey(transaction)) {
-                return method.invoke(currentDs.get(transaction), args);
-            } else {
-                txDs.remove();
+            final DataSource currentDs = txDs.get(transaction);
+            if (currentDs != null) {
+                return method.invoke(currentDs, args);
             }
 
             int ex = 0;
@@ -175,17 +173,7 @@ public class FailOverRouter extends AbstractRouter {
 
                     if (transaction != null) { // if a tx is in progress save the datasource to use for the tx
                         transaction.registerSynchronization(new CleanUpSynchronization(txDs));
-
-                        final Map<Transaction, DataSource> map;
-                        if (currentDs == null) {
-                            map = new HashMap<Transaction, DataSource>();
-                            txDs.set(map);
-                        } else {
-                            map = currentDs;
-                        }
-
-                        map.put(transaction, ds); // save the ds to use for this transaction
-
+                        txDs.put(transaction, ds); // save the ds to use for this transaction
                         break;
                     }
 
@@ -205,10 +193,10 @@ public class FailOverRouter extends AbstractRouter {
     }
 
     private static class CleanUpSynchronization implements Synchronization {
-        private final ThreadLocal<Map<Transaction, DataSource>> tl;
+        private final Map<Transaction, DataSource> toClean;
 
-        private CleanUpSynchronization(final ThreadLocal<Map<Transaction, DataSource>> tl) {
-            this.tl = tl;
+        private CleanUpSynchronization(final Map<Transaction, DataSource> toClean) {
+            this.toClean = toClean;
         }
 
         @Override
@@ -220,11 +208,7 @@ public class FailOverRouter extends AbstractRouter {
         public void afterCompletion(final int status) {
             try {
                 final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
-                final Map<Transaction, DataSource> map = tl.get();
-                map.remove(transaction);
-                if (map.isEmpty()) {
-                    tl.remove();
-                }
+                toClean.remove(transaction);
             } catch (final SystemException e) {
                 // no-op
             }
