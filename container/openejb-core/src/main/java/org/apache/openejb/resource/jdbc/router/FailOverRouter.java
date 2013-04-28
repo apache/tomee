@@ -16,12 +16,17 @@
  */
 package org.apache.openejb.resource.jdbc.router;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,8 +34,10 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -117,6 +124,8 @@ public class FailOverRouter extends AbstractRouter {
     }
 
     private static class FacadeHandler implements InvocationHandler {
+        private final ThreadLocal<Map<Transaction, DataSource>> txDs = new ThreadLocal<Map<Transaction, DataSource>>();
+
         private final Collection<DataSource> delegates;
         private final String strategy;
         private final AtomicInteger currentIdx = new AtomicInteger(0); // used by some strategies
@@ -140,24 +149,85 @@ public class FailOverRouter extends AbstractRouter {
                 }
             }
 
+            final TransactionManager txMgr = OpenEJB.getTransactionManager();
+            final Transaction transaction = txMgr.getTransaction();
+
+            final Map<Transaction, DataSource> currentDs = txDs.get();
+            if (currentDs != null && currentDs.containsKey(transaction)) {
+                return method.invoke(currentDs.get(transaction), args);
+            } else {
+                txDs.remove();
+            }
+
             int ex = 0;
             final Collection<DataSource> sources = sortFollowingStrategy(strategy, delegates, currentIdx);
+            final int size = sources.size();
+
+            Object out = null;
             for (final DataSource ds : sources) {
                 try {
-                    if (method.getName().startsWith("set")) {
+                    final boolean set = method.getName().startsWith("set");
+                    if (set) { // set on all datasources because of failover which can happen
                         method.invoke(ds, args);
-                    } else { // getConnection are here
-                        return method.invoke(ds, args); // return the first one succeeding
+                    } else { // getConnection methods are here
+                        out = method.invoke(ds, args);
+                    }
+
+                    if (transaction != null) { // if a tx is in progress save the datasource to use for the tx
+                        transaction.registerSynchronization(new CleanUpSynchronization(txDs));
+
+                        final Map<Transaction, DataSource> map;
+                        if (currentDs == null) {
+                            map = new HashMap<Transaction, DataSource>();
+                            txDs.set(map);
+                        } else {
+                            map = currentDs;
+                        }
+
+                        map.put(transaction, ds); // save the ds to use for this transaction
+
+                        break;
+                    }
+
+                    if (!set) { // if no exception and not a set all is done so return out
+                        break;
                     }
                 } catch (final InvocationTargetException ite) {
                     ex++;
-                    if (ex == sources.size()) { // all failed so throw the exception
+                    if (ex == size) { // all failed so throw the exception
                         throw ite.getCause();
                     }
                 }
             }
 
-            return null;
+            return out;
+        }
+    }
+
+    private static class CleanUpSynchronization implements Synchronization {
+        private final ThreadLocal<Map<Transaction, DataSource>> tl;
+
+        private CleanUpSynchronization(final ThreadLocal<Map<Transaction, DataSource>> tl) {
+            this.tl = tl;
+        }
+
+        @Override
+        public void beforeCompletion() {
+            // no-op
+        }
+
+        @Override
+        public void afterCompletion(final int status) {
+            try {
+                final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
+                final Map<Transaction, DataSource> map = tl.get();
+                map.remove(transaction);
+                if (map.isEmpty()) {
+                    tl.remove();
+                }
+            } catch (final SystemException e) {
+                // no-op
+            }
         }
     }
 

@@ -29,13 +29,13 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Properties;
 
+import static org.apache.openejb.resource.jdbc.FailOverRouters.datasource;
+import static org.apache.openejb.resource.jdbc.FailOverRouters.url;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -86,21 +86,6 @@ public class FailOverRouterTest {
                 .property("routedDs.router", "router")
 
                 .build();
-    }
-
-    private static String url(final Connection c) throws SQLException {
-        final DatabaseMetaData dmd = c.getMetaData();
-        try {
-            return dmd.getURL();
-        } finally {
-            c.close();
-        }
-    }
-
-    private PropertiesBuilder datasource(final PropertiesBuilder propertiesBuilder, final String name) {
-        return propertiesBuilder
-                .property(name, "new://Resource?type=DataSource")
-                .property(name + ".JdbcUrl", "jdbc:hsqldb:mem:" + name);
     }
 
     @Module

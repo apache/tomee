@@ -21,31 +21,32 @@ import org.apache.openejb.resource.jdbc.router.FailOverRouter;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import static org.apache.openejb.resource.jdbc.FailOverRouters.datasource;
 import static org.apache.openejb.resource.jdbc.FailOverRouters.url;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
-public class ReverseFailOverRouterTest {
-    @Resource(name = "routedDs")
-    private DataSource failover;
+public class JtaFailOverRouterTest {
+    @EJB
+    private JtaWrapper wrapper;
 
     @Test
     public void test() throws SQLException {
         int i = 2;
         for (int it = 0; it < 6; it++) {
-            assertEquals("Iteration #" + i, "jdbc:hsqldb:mem:fo" + i, url(failover.getConnection()));
+            wrapper.inTx("jdbc:hsqldb:mem:fo" + i);
             i = 1 + (i % 2);
         }
     }
@@ -53,19 +54,47 @@ public class ReverseFailOverRouterTest {
     @Configuration
     public Properties configuration() {
         return datasource(datasource(new PropertiesBuilder(), "fo1"), "fo2")
-
+                .property("fo1.JtaManaged", "true")
+                .property("fo2.JtaManaged", "true")
                 .property("router", "new://Resource?class-name=" + FailOverRouter.class.getName())
                 .property("router.datasourceNames", "fo1,fo2")
                 .property("router.strategy", "reverse")
-
                 .property("routedDs", "new://Resource?provider=RoutedDataSource&type=DataSource")
                 .property("routedDs.router", "router")
-
                 .build();
     }
 
     @Module
-    public IAnnotationFinder finder() { // needed to run the test
-        return new AnnotationFinder(new ClassesArchive());
+    public Class<?>[] classes() {
+        return new Class<?>[] { JtaWrapper.class };
+    }
+
+    @Singleton
+    public static class JtaWrapper {
+        @Resource(name = "routedDs")
+        private DataSource ds;
+
+        public void inTx(final String url) {
+            Connection firstConnection = null;
+            try {
+                firstConnection  = ds.getConnection();
+                assertEquals(url, url(firstConnection));
+                for (int i = 0; i < 1; i++) { // 4 is kind of random, > 2 is enough
+                    final Connection anotherConnection = ds.getConnection();
+                    assertEquals(firstConnection, anotherConnection); // in tx so should be the same ds and if the ds is JtaManaged same anotherConnection
+                    assertEquals(url, url(anotherConnection));
+                }
+            } catch (final SQLException e) {
+                fail(e.getMessage());
+            } finally {
+                try {
+                    if (firstConnection != null) {
+                        firstConnection.close();
+                    }
+                } catch (final Exception e) {
+                    // no-op
+                }
+            }
+        }
     }
 }
