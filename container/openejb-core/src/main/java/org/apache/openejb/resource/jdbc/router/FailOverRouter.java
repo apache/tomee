@@ -152,9 +152,12 @@ public class FailOverRouter extends AbstractRouter {
             final TransactionManager txMgr = OpenEJB.getTransactionManager();
             final Transaction transaction = txMgr.getTransaction();
 
-            final DataSource currentDs = txDs.get(transaction);
-            if (currentDs != null) {
-                return method.invoke(currentDs, args);
+            if (transaction != null) {
+                
+                final DataSource currentDs = txDs.get(transaction);
+                if (currentDs != null) {
+                    return method.invoke(currentDs, args);
+                }
             }
 
             int ex = 0;
