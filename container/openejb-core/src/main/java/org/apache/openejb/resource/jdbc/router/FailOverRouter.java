@@ -17,16 +17,16 @@
 package org.apache.openejb.resource.jdbc.router;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,8 +36,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -124,7 +122,8 @@ public class FailOverRouter extends AbstractRouter {
     }
 
     private static class FacadeHandler implements InvocationHandler {
-        private final Map<Transaction, DataSource> txDs = new ConcurrentHashMap<Transaction, DataSource>();
+        private static final TransactionSynchronizationRegistry SYNCHRONIZATION_REGISTRY = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        private static final String DATASOURCE_KEY = "router_datasource_in_use";
 
         private final Collection<DataSource> delegates;
         private final String strategy;
@@ -153,8 +152,8 @@ public class FailOverRouter extends AbstractRouter {
             final Transaction transaction = txMgr.getTransaction();
 
             if (transaction != null) {
-                
-                final DataSource currentDs = txDs.get(transaction);
+
+                final DataSource currentDs = DataSource.class.cast(SYNCHRONIZATION_REGISTRY.getResource(DATASOURCE_KEY));
                 if (currentDs != null) {
                     return method.invoke(currentDs, args);
                 }
@@ -175,8 +174,7 @@ public class FailOverRouter extends AbstractRouter {
                     }
 
                     if (transaction != null) { // if a tx is in progress save the datasource to use for the tx
-                        transaction.registerSynchronization(new CleanUpSynchronization(txDs));
-                        txDs.put(transaction, ds); // save the ds to use for this transaction
+                        SYNCHRONIZATION_REGISTRY.putResource(DATASOURCE_KEY, ds);
                         break;
                     }
 
@@ -192,29 +190,6 @@ public class FailOverRouter extends AbstractRouter {
             }
 
             return out;
-        }
-    }
-
-    private static class CleanUpSynchronization implements Synchronization {
-        private final Map<Transaction, DataSource> toClean;
-
-        private CleanUpSynchronization(final Map<Transaction, DataSource> toClean) {
-            this.toClean = toClean;
-        }
-
-        @Override
-        public void beforeCompletion() {
-            // no-op
-        }
-
-        @Override
-        public void afterCompletion(final int status) {
-            try {
-                final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
-                toClean.remove(transaction);
-            } catch (final SystemException e) {
-                // no-op
-            }
         }
     }
 
