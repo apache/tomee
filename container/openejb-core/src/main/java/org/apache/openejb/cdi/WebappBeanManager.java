@@ -32,7 +32,9 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
+import javax.enterprise.inject.spi.ObserverMethod;
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -55,6 +57,18 @@ public class WebappBeanManager extends BeanManagerImpl {
 
         getNotificationManager().fireEvent(event, metadata);
         getParentBm().getNotificationManager().fireEvent(event, metadata);
+    }
+
+    @Override
+    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T event, EventMetadata metadata) {
+        if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
+            throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + event.getClass());
+        }
+
+        final Set<ObserverMethod<? super T>> set = new HashSet<ObserverMethod<? super T>>();
+        set.addAll(getNotificationManager().resolveObservers(event, metadata));
+        set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata));
+        return set;
     }
 
     @Override
