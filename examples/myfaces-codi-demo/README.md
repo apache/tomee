@@ -16,7 +16,7 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
            specific language governing permissions and limitations
            under the License.
 
-## Steps to run the example
+<h2>Steps to run the example</h2>
 
 Build and start the demo:
 
@@ -26,9 +26,9 @@ Open:
 
     http://localhost:8080/myfaces-codi-1.0-SNAPSHOT/
 
-This example shows how to improve JSF2/CDI applications with features provided by Apache MyFaces CODI and ExtVal.
+This example shows how to improve JSF2/CDI/BV/JPA applications with features provided by Apache MyFaces CODI and ExtVal.
 
-## Intro of MyFaces CODI and ExtVal
+<h2>Intro of MyFaces CODI and ExtVal</h2>
 
 The Apache MyFaces Extensions CDI project (aka CODI) hosts portable extensions for Contexts and Dependency Injection (CDI - JSR 299). CODI is a toolbox for your CDI application. Like CDI itself CODI is focused on type-safety. It is a modularized and extensible framework. So it's easy to choose the needed parts to facilitate the daily work in your project.
 
@@ -36,26 +36,30 @@ MyFaces Extensions Validator (aka ExtVal) is a JSF centric validation framework 
 This example shows how it improves the default integration of Bean-Validation (JSR-303) with JSF2 as well as meta-data based cross-field validation.
 
 
-## Illustrated Features
+<h2>Illustrated Features</h2>
 
-**Apache MyFaces CODI**
+<h3>Apache MyFaces CODI</h3>
 
-- Type-safe view-config
-- Type-safe (custom) view-meta-data
-- Type-safe navigation
-- Type-safe (specialized) config
-- Type-safe custom project-stage
-- @WindowScoped
-- Controlling CODI scopes with WindowContext
-- @ViewAccessScoped
-- Manual conversation handling
-- Secured pages (AccessDecisionVoter)
-- @Transactional
-- I18n (fluent API)
-- Dependency-Injection for JSR303 (BV) constraint-validators
-- Dependency-Injection for JSF phase-listeners
+<ul>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/config/Pages.java" target="_blank">Type-safe view-config</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/InfoPage.java" target="_blank">Type-safe (custom) view-meta-data</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/MenuBean.java" target="_blank">Type-safe navigation</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/CustomJsfModuleConfig.java" target="_blank">Type-safe (specialized) config</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/CustomProjectStage.java" target="_blank">Type-safe custom project-stage</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/UserHolder.java" target="_blank">@WindowScoped</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/MenuBean.java" target="_blank">Controlling CODI scopes with WindowContext</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/FeedbackPage.java" target="_blank">@ViewAccessScoped</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/FeedbackPage.java" target="_blank">Manual conversation handling</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/security/LoginAccessDecisionVoter.java" target="_blank">Secured pages (AccessDecisionVoter)</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/repository/Repository.java" target="_blank">@Transactional</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/RegistrationPage.java" target="_blank">I18n (fluent API)</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/domain/validation/UniqueUserNameValidator.java" target="_blank">Dependency-Injection for JSR303 (BV) constraint-validators</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/DebugPhaseListener.java" target="_blank">Dependency-Injection for JSF phase-listeners</a></li>
+</ul>
 
-**Apache MyFaces ExtVal**
+<h3>Apache MyFaces ExtVal</h3>
 
-- Cross-Field validation (@Equals)
-- Type-safe group-validation (@BeanValidation) for JSF action-methods
+<ul>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/RegistrationPage.java" target="_blank">Cross-Field validation (@Equals)</a></li>
+    <li><a href="./src/main/java/org/superbiz/myfaces/view/RegistrationPage.java" target="_blank">Type-safe group-validation (@BeanValidation) for JSF action-methods</a></li>
+</ul>
