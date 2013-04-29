@@ -20,6 +20,8 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.BuildInOwbBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.event.EventMetadata;
+import org.apache.webbeans.util.ClassUtil;
 
 import javax.el.ELResolver;
 import javax.el.ExpressionFactory;
@@ -43,6 +45,16 @@ public class WebappBeanManager extends BeanManagerImpl {
         webappCtx = ctx;
         deploymentBeans = super.getBeans(); // use the parent one while starting
         Reflections.set(this, "injectionResolver", new WebAppInjectionResolver(ctx));
+    }
+
+    @Override
+    public void fireEvent(final Object event, final EventMetadata metadata) {
+        if (ClassUtil.isDefinitionContainsTypeVariables(event.getClass())) {
+            throw new IllegalArgumentException("Event class : " + event.getClass().getName() + " can not be defined as generic type");
+        }
+
+        getNotificationManager().fireEvent(event, metadata);
+        getParentBm().getNotificationManager().fireEvent(event, metadata);
     }
 
     @Override
