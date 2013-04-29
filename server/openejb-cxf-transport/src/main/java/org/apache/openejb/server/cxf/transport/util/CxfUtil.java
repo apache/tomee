@@ -22,7 +22,6 @@ import org.apache.cxf.binding.BindingFactory;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
-import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.bus.managers.BindingFactoryManagerImpl;
 import org.apache.cxf.configuration.spring.MapProvider;
 import org.apache.cxf.databinding.DataBinding;
@@ -39,6 +38,9 @@ import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertiesHelper;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +59,9 @@ public final class CxfUtil {
     public static final String DEBUG = "debug";
     public static final String BUS_PREFIX = "org.apache.openejb.cxf.bus.";
     public static final String BUS_CONFIGURED_FLAG = "openejb.cxf.bus.configured";
-
-    private static volatile boolean usingBindingFactoryMap = false;
     private static final Map<String, BindingFactory> bindingFactoryMap = new ConcurrentHashMap<String, BindingFactory>(8, 0.75f, 4);
     private static final Bus DEFAULT_BUS = initDefaultBus(); // has to be initializd after bindingFactoryMap
+    private static volatile boolean usingBindingFactoryMap = false;
 
     private CxfUtil() {
         // no-op
@@ -87,7 +88,10 @@ public final class CxfUtil {
                 });
             }
 
-            return bus;
+            // ensure client proxies can use app classes
+            CXFBusFactory.setDefaultBus(Bus.class.cast(Proxy.newProxyInstance(CxfUtil.class.getClassLoader(), new Class<?>[]{ Bus.class }, new ClientAwareBusHandler())));
+
+            return bus; // we keep as internal the real bus and just expose to cxf the client aware bus to be able to cast it easily
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
@@ -249,6 +253,26 @@ public final class CxfUtil {
             configureInterceptors(busImpl, BUS_PREFIX, serviceInfos, configuration.getProperties());
 
             SystemInstance.get().getProperties().setProperty(BUS_CONFIGURED_FLAG, "true");
+        }
+    }
+
+    private static class ClientAwareBusHandler implements InvocationHandler {
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            final Bus bus = getBus();
+
+            // when creating a client it is important to use the application loader to be able to load application classes
+            // it is the default case but using our own CxfClassLoader we make it wrong so simply skip it when calling a client
+            // and no app classloader is registered
+            if ("getExtension".equals(method.getName()) && args != null && args.length == 1 && ClassLoader.class.equals(args[0])) {
+                final ClassLoader extensionLoader = ClassLoader.class.cast(method.invoke(bus, args));
+                if (CxfContainerClassLoader.class.isInstance(extensionLoader) && !CxfContainerClassLoader.class.cast(extensionLoader).hasTccl()) {
+                    return null;
+                }
+                return extensionLoader;
+            }
+
+            return method.invoke(bus, args);
         }
     }
 }
