@@ -35,6 +35,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.persistence.QueryLogEntityManager;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -49,6 +50,7 @@ import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
+import javax.naming.NamingException;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -63,6 +65,9 @@ import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -71,7 +76,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @Internal
-public class ReloadableEntityManagerFactory implements EntityManagerFactory {
+public class ReloadableEntityManagerFactory implements EntityManagerFactory, Serializable {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
 
     public static final String JAVAX_PERSISTENCE_SHARED_CACHE_MODE = "javax.persistence.sharedCache.mode";
@@ -81,7 +86,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL = "openejb.jpa.criteria.log.jpql";
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL = "openejb.jpa.criteria.log.jpql.level";
 
-    private final PersistenceUnitInfoImpl unitInfoImpl;
+    private PersistenceUnitInfoImpl unitInfoImpl;
     private ClassLoader classLoader;
     private EntityManagerFactory delegate;
     private EntityManagerFactoryCallable entityManagerFactoryCallable;
@@ -417,6 +422,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
         return entityManagerFactoryCallable.getUnitInfo().excludeUnlistedClasses();
     }
 
+    Object writeReplace() throws ObjectStreamException {
+        return new SerializableEm("java:" + Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfoImpl.getId());
+    }
+
     @MBean
     @Internal
     @Description("represents a persistence unit managed by OpenEJB")
@@ -685,6 +694,22 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory {
                     default:
                         return "-";
                 }
+            }
+        }
+    }
+
+    private static final class SerializableEm implements Serializable {
+        private String jndiName;
+
+        private SerializableEm(final String jndiName) {
+            this.jndiName = jndiName;
+        }
+
+        Object readResolve() throws ObjectStreamException {
+            try {
+                return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(jndiName);
+            } catch (final NamingException e) {
+                throw new InvalidObjectException(e.getMessage());
             }
         }
     }
