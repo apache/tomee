@@ -76,6 +76,8 @@ public class DeployerEjb implements Deployer {
 
     private final static File uniqueFile;
     private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
+    private final static String OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS = "openejb.deployer.save-deployments";
+    private final static boolean SAVE_DEPLOYMENTS = SystemInstance.get().getOptions().get(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, false);
 
     static {
         final String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
@@ -229,7 +231,10 @@ public class DeployerEjb implements Deployer {
             }
 
             assembler.createApplication(appInfo);
-            saveDeployment(file, true);
+
+            if (SAVE_DEPLOYMENTS || "true".equalsIgnoreCase(properties.getProperty(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, "false"))) {
+                saveDeployment(file, true);
+            }
 
             return appInfo;
 
