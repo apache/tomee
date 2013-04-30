@@ -24,6 +24,7 @@ import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
+import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
 import org.apache.naming.resources.BaseDirContext;
@@ -51,18 +52,22 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.ws.rs.core.Application;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -182,6 +187,44 @@ public class OpenEJBContextConfig extends ContextConfig {
                 }
             }
         }
+    }
+
+    @Override
+    protected void processContextConfig(final Digester digester, final URL contextXml) {
+        try {
+            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml));
+        } catch (final MalformedURLException e) {
+            super.processContextConfig(digester, contextXml);
+        }
+    }
+
+    private URL replaceKnownRealmsByTomEEOnes(final URL contextXml) throws MalformedURLException {
+        return new URL(contextXml.getProtocol(), contextXml.getHost(), contextXml.getPort(), contextXml.getFile(), new URLStreamHandler() {
+            @Override
+            protected URLConnection openConnection(final URL u) throws IOException {
+                final URLConnection c = contextXml.openConnection();
+                return new URLConnection(u) {
+                    @Override
+                    public void connect() throws IOException {
+                        c.connect();
+                    }
+
+                    @Override
+                    public InputStream getInputStream() throws IOException {
+                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IO.copy(c.getInputStream(), baos);
+                        return new ByteArrayInputStream(new String(baos.toByteArray())
+                                        .replace(DataSourceRealm.class.getName(), TomEEDataSourceRealm.class.getName()
+                                    ).getBytes());
+                    }
+
+                    @Override
+                    public String toString() {
+                        return c.toString();
+                    }
+                };
+            }
+        });
     }
 
     @Override
