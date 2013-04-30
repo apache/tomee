@@ -18,19 +18,28 @@ package org.apache.tomee.catalina.realm;
 
 import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.naming.ContextBindings;
+import org.apache.openejb.config.AutoConfig;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Properties;
 
 public class TomEEDataSourceRealm extends DataSourceRealm {
+    private String fullName = null;
+
     @Override
     protected Connection open() {
         try { // parent behavior
             final Context context;
-            if (localDataSource) {
+            if (fullName != null) {
+                context = ContextBindings.getClassLoader();
+            } else if (localDataSource) {
                 context = Context.class.cast(ContextBindings.getClassLoader().lookup("comp/env"));
             } else {
                 context = getServer().getGlobalNamingContext();
@@ -43,20 +52,31 @@ public class TomEEDataSourceRealm extends DataSourceRealm {
                 try { // try globally but with custom subspace
                     return getConnection("java:openejb/Resource/" + dataSourceName);
                 } catch (final Exception e3) {
-                    containerLog.error(sm.getString("dataSourceRealm.exception"), e);
+                    final Collection<String> ids = SystemInstance.get().getComponent(ConfigurationFactory.class).getResourceIds(DataSource.class.getName(), new Properties());
+                    final String id = AutoConfig.findResourceId(ids, dataSourceName);
+
+                    if (id != null) {
+                        try { // try globally but with custom subspace
+                            return getConnection("java:openejb/Resource/" + id);
+                        } catch (final Exception e4) {
+                            containerLog.error(sm.getString("dataSourceRealm.exception"), e);
+                        }
+                    } else {
+                        containerLog.error(sm.getString("dataSourceRealm.exception"), e);
+                    }
                 }
             } catch (final Exception e2) {
-                // Log the problem for posterity
                 containerLog.error(sm.getString("dataSourceRealm.exception"), e);
             }
         } catch (final Exception e) {
-            // Log the problem for posterity
             containerLog.error(sm.getString("dataSourceRealm.exception"), e);
         }
         return null;
     }
 
-    private static Connection getConnection(final String name) throws SQLException, NamingException {
-        return DataSource.class.cast(Context.class.cast(ContextBindings.getClassLoader()).lookup(name)).getConnection();
+    private Connection getConnection(final String name) throws SQLException, NamingException {
+        final Connection c = DataSource.class.cast(Context.class.cast(ContextBindings.getClassLoader()).lookup(name)).getConnection();
+        fullName = name; // if here, the default name needed to be changed to match requested resource so update it for next calls
+        return c;
     }
 }

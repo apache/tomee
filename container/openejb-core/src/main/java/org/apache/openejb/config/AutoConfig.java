@@ -1960,15 +1960,21 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return idd;
     }
 
-    private String findResourceId(String resourceId, final String type, final Properties required, final AppResources appResources) {
+    private String findResourceId(final String resourceId, final String type, final Properties required, final AppResources appResources) {
         if (resourceId == null) {
             return null;
         }
+        return findResourceId(getResourceIds(appResources, type, required), resourceId);
+    }
 
-        resourceId = normalizeResourceId(resourceId);
+    public static String findResourceId(final Collection<String> resourceIds, final String inId) {
+        if (inId == null) {
+            return null;
+        }
+
+        final String resourceId = normalizeResourceId(inId);
 
         // check for existing resource with specified resourceId
-        final List<String> resourceIds = getResourceIds(appResources, type, required);
         for (final String id : resourceIds) {
             if (id.equalsIgnoreCase(resourceId)) {
                 return id;
@@ -2000,12 +2006,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return resourceIds;
     }
 
-    private String toShortName(final String resourceId) {
+    private static String toShortName(final String resourceId) {
         // check for an existing resource using the short name (everything ever the final '/')
         return resourceId.replaceFirst(".*/", "");
     }
 
-    private String normalizeResourceId(String resourceId) {
+    private static String normalizeResourceId(String resourceId) {
         if (resourceId == null) {
             return null;
         }
