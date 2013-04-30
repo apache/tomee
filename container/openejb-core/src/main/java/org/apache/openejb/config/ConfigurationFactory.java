@@ -1347,7 +1347,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return getResourceIds(type, null);
     }
 
-    protected List<String> getResourceIds(final String type, Properties required) {
+    public List<String> getResourceIds(final String type, Properties required) {
         final List<String> resourceIds = new ArrayList<String>();
 
         if (required == null)

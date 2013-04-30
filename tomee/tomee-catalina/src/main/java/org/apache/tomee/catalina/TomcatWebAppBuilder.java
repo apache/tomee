@@ -133,6 +133,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
@@ -150,6 +151,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
@@ -1028,15 +1030,50 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
 
                     if (!found) {
-                        final Resource newResource = new Resource(name, resource.getType(), "org.apache.tomee:ProvidedByTomcat");
-                        newResource.getProperties().setProperty("jndiName", newResource.getId());
-                        newResource.getProperties().setProperty("appName", getId(standardContext));
-                        newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
+                        final Resource newResource;
 
-                        final Reference reference = createReference(resource);
-                        if (reference != null) {
-                            newResource.getProperties().put("reference", reference);
+                        if (DataSource.class.getName().equals(resource.getType())) { // we forward it to TomEE datasources
+                            newResource = new Resource(name, resource.getType());
+
+                            boolean jta = false;
+
+                            final Properties properties = newResource.getProperties();
+                            final Iterator<String> params = resource.listProperties();
+                            while (params.hasNext()) {
+                                final String paramName = params.next();
+                                final String paramValue = (String) resource.getProperty(paramName);
+
+                                // handling some param name conversion to OpenEJB style
+                                if ("driverClassName".equals(paramName)) {
+                                    properties.setProperty("JdbcDriver", paramValue);
+                                } else if ("url".equals(paramName)) {
+                                    properties.setProperty("JdbcUrl", paramValue);
+                                } else {
+                                    properties.setProperty(paramName, paramValue);
+                                }
+
+                                if ("JtaManaged".equalsIgnoreCase(paramName)) {
+                                    jta = Boolean.parseBoolean(paramValue);
+                                }
+                            }
+
+                            if (!jta) {
+                                properties.setProperty("JtaManaged", "false");
+                            }
+                        } else { // custom type, let it be created
+                            newResource = new Resource(name, resource.getType(), "org.apache.tomee:ProvidedByTomcat");
+
+                            final Properties properties = newResource.getProperties();
+                            properties.setProperty("jndiName", newResource.getId());
+                            properties.setProperty("appName", getId(standardContext));
+                            properties.setProperty("factory", (String) resource.getProperty("factory"));
+
+                            final Reference reference = createReference(resource);
+                            if (reference != null) {
+                                properties.put("reference", reference);
+                            }
                         }
+
                         appModule.getResources().add(newResource);
                     }
                 }
