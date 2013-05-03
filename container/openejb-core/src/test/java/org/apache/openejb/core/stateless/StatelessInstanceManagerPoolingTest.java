@@ -125,7 +125,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
 
-        assertTrue(success);
+        assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
         assertEquals(30, CounterBean.discardedInstances.get());
 
