@@ -301,8 +301,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         }
 
         public InjectionTarget<T> createInjectionTarget(Bean<T> bean) {
-            final InjectionTarget<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
-            return getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
+            final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
+            final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
+            if (!EjbInjectionTargetImpl.class.isInstance(it)) {
+                return new EjbInjectionTargetImpl<T>(injectionTarget, it);
+            }
+            return it;
         }
 
         protected Set<InjectionPoint> createInjectionPoints(Bean<T> bean) {
@@ -324,10 +328,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     public static class EjbInjectionTargetImpl<T> extends InjectionTargetImpl<T> {
         private CdiEjbBean<T> bean;
+        private InjectionTarget<T> delegate = null;
 
         public EjbInjectionTargetImpl(AnnotatedType<T> annotatedType, Set<InjectionPoint> points, WebBeansContext webBeansContext) {
             super(annotatedType, points, webBeansContext,
                     Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
+        }
+
+        public EjbInjectionTargetImpl(final EjbInjectionTargetImpl<T> original, final InjectionTarget<T> delegate) {
+            super(original.annotatedType, original.getInjectionPoints(), original.webBeansContext, Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
+            this.delegate = delegate;
         }
 
         public void setCdiEjbBean(final CdiEjbBean<T> bean) {
@@ -336,12 +346,54 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
         @Override
         public T produce(final CreationalContext<T> creationalContext) {
-            return bean.createEjb(creationalContext);
+            if (delegate == null) {
+                return bean.createEjb(creationalContext);
+            }
+            return delegate.produce(creationalContext);
         }
 
         @Override
         public void dispose(final T instance) {
-            bean.destroyComponentInstance(instance);
+            if (delegate == null) {
+                bean.destroyComponentInstance(instance);
+            } else {
+                delegate.dispose(instance);
+            }
+        }
+
+        @Override
+        public Set<InjectionPoint> getInjectionPoints() {
+            if (delegate == null) {
+                return super.getInjectionPoints();
+            }
+            return delegate.getInjectionPoints();
+        }
+
+        @Override
+        public void inject(final T instance, final CreationalContext<T> ctx) {
+            if (delegate == null) {
+                super.inject(instance, ctx);
+            } else {
+                delegate.inject(instance, ctx);
+            }
+        }
+
+        @Override
+        public void postConstruct(final T instance) {
+            if (delegate == null) {
+                super.postConstruct(instance);
+            } else {
+                delegate.postConstruct(instance);
+            }
+        }
+
+        @Override
+        public void preDestroy(final T instance) {
+            if (delegate == null) {
+                super.preDestroy(instance);
+            } else {
+                delegate.preDestroy(instance);
+            }
         }
 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
