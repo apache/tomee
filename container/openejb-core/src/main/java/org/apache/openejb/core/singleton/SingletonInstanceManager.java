@@ -20,6 +20,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -254,6 +255,11 @@ public class SingletonInstanceManager {
             TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try{
                 //Call the chain
+                final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
+                if (bean != null) { // TODO: see if it should be called before or after next call
+                    bean.getInjectionTarget().preDestroy(instance.bean);
+                }
+
                 interceptorStack.invoke();
                 if (instance.creationalContext != null) {
                     instance.creationalContext.release();

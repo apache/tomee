@@ -550,6 +550,11 @@ public class StatefulContainer implements RpcContainer {
                     final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
 
                     // Invoke
+                    final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
+                    if (bean != null) { // TODO: see if it should be called before or after next call
+                        bean.getInjectionTarget().preDestroy(instance.bean);
+                    }
+
                     if (args == null) {
                         returnValue = interceptorStack.invoke();
                     } else {
