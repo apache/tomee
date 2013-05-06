@@ -20,6 +20,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -301,6 +302,10 @@ public class StatelessInstanceManager {
             final List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
+            final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
+            if (bean != null) { // TODO: see if it should be called before or after next call
+                bean.getInjectionTarget().preDestroy(instance.bean);
+            }
             interceptorStack.invoke();
 
             if (instance.creationalContext != null) {

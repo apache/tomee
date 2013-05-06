@@ -1532,6 +1532,9 @@ public class BeanContext extends DeploymentContext {
             final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try {
                 //Call the chain
+                if (cdiEjbBean != null) { // call it, it has no postconstruct but extensions can add stuff here, TODO: see if it should be called before or after effective postconstruct
+                    cdiEjbBean.getInjectionTarget().postConstruct(beanInstance);
+                }
                 postConstruct.invoke();
             } catch (Throwable e) {
                 //RollBack Transaction
