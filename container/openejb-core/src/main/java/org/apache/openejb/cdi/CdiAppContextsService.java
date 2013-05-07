@@ -353,7 +353,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             sessionContext.remove();
 
             //Remove session from manager
-            sessionCtxManager.destroySessionContextWithSessionId(session.getId());
+            sessionCtxManager.removeSessionContextWithSessionId(session.getId());
         }
     }
 
