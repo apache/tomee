@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
+import org.apache.webbeans.exception.WebBeansCreationException;
 
 /**
  * @version $Rev$ $Date$
@@ -55,9 +56,11 @@ public class JavaeeInstanceManager implements InstanceManager {
             final Object object = webContext.newInstance(clazz);
             postConstruct(object, clazz);
             return object;
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
-        } catch (WebBeansConfigurationException e) {
+        } catch (final WebBeansConfigurationException e) {
+            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        } catch (final WebBeansCreationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
         }
     }
