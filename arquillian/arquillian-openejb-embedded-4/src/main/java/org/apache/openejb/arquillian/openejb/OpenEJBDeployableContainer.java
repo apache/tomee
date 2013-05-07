@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.openejb.server.ServiceManagers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
@@ -32,6 +33,10 @@ import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.SimpleServiceManager;
+import org.apache.openejb.util.ServiceManagerProxy;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
@@ -39,7 +44,9 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -204,6 +211,13 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
 
+        // if service manager is started allow @ArquillianResource URL injection
+        if (PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE)) {
+            final ProtocolMetaData metaData = ServiceManagers.protocolMetaData(appInfoProducer.get());
+            if (metaData != null) {
+                return metaData;
+            }
+        }
         return new ProtocolMetaData();
     }
 
