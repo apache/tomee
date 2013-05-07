@@ -60,7 +60,7 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>polling-core</artifactId>
       <version>${project.version}</version>
     </dependency>

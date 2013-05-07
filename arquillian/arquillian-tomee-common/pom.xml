@@ -223,7 +223,7 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-provisionning</artifactId>
       <version>${openejb.version}</version>
     </dependency>

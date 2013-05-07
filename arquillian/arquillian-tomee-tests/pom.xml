@@ -82,17 +82,17 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-webapp-remote</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -368,17 +368,17 @@
 
       <dependencies>
         <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.openejb</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.openejb</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.openejb</groupId>
           <artifactId>arquillian-tomee-webapp-remote</artifactId>
           <version>${project.version}</version>
         </dependency>

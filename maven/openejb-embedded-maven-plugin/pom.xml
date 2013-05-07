@@ -45,7 +45,7 @@
       <artifactId>openejb-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>maven-util</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

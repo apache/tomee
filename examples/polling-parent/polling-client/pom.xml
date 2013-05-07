@@ -48,7 +48,7 @@
       <artifactId>jline</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>polling-domain</artifactId>
       <version>${project.version}</version>
     </dependency>
