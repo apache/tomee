@@ -192,7 +192,7 @@ public class StatelessPoolStatsTest extends TestCase {
     }
 
     public static void assertEquals(final Map<?, ?> expectedMap, final Map<?, ?> actualMap) {
-        Asserts.assertEquals(expectedMap, actualMap);
+        Asserts.assertEquals(expectedMap, actualMap, 1.1);
     }
 
     /**
