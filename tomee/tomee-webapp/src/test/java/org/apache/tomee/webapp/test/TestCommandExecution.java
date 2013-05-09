@@ -65,7 +65,7 @@ public class TestCommandExecution {
     class MyWsOutbound extends WsOutbound {
 
         public MyWsOutbound() {
-            super(null);
+            super(null, null);
         }
 
         @Override
