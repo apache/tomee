@@ -19,6 +19,22 @@ package org.apache.openejb.resolver.maven;
 import java.net.MalformedURLException;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
+/**
+ * This class doesn't seem compliant with the documented Maven Coordinates of
+ *
+ *  - groupId:artifactId:packaging:classifier:version
+ *
+ * http://maven.apache.org/pom.html#Maven_Coordinates
+ *
+ * For example, per the output of `mvn dependency:tree` TomEE is:
+ *
+ *  - org.apache.openejb:apache-tomee:zip:webprofile:1.6.0-SNAPSHOT
+ *
+ * It instead seems to use its own non-maven coordinates of
+ *
+ *  - groupId:artifactId:version:packaging:classifier
+ *
+ */
 public class Parser {
     public static final String VERSION_LATEST = "LATEST";
     private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version]/[type]]";
