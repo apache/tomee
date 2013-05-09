@@ -31,7 +31,9 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
-* @version $Rev$ $Date$
+ * NOTE: think to cache this object to avoid concurrent issues.
+ *
+ * @version $Rev$ $Date$
 */
 public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TODO: see InjectableConstructor
     private static final Field INJECTION_TARGET_FIELD;
