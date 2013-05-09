@@ -19,22 +19,21 @@ package org.apache.openejb.core.interceptor;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.xbean.finder.ClassFinder;
-import serp.bytecode.Annotation;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.AroundTimeout;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.AfterBegin;
+import javax.ejb.AfterCompletion;
+import javax.ejb.BeforeCompletion;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
-import javax.ejb.AfterBegin;
-import javax.ejb.BeforeCompletion;
-import javax.ejb.AfterCompletion;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.AroundTimeout;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +59,8 @@ public class InterceptorData {
     private final Set<Method> afterCompletion = new LinkedHashSet<Method>();
 
     private final Set<Method> aroundTimeout = new LinkedHashSet<Method>();
+
+    private final Map<Class<?>, Object> data = new HashMap<Class<?>, Object>();
 
     public InterceptorData(Class clazz) {
         this.clazz = clazz;
@@ -180,6 +181,14 @@ public class InterceptorData {
             SetAccessible.on(method);
             methods.add(method);
         }
+    }
+
+    public <T> void set(final Class<T> clazz, final T value) {
+        data.put(clazz, value);
+    }
+
+    public <T> T get(final Class<T> clazz) {
+        return clazz.cast(data.get(clazz));
     }
 
     @Override
