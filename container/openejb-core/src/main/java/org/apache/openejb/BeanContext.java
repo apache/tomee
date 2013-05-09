@@ -1490,7 +1490,17 @@ public class BeanContext extends DeploymentContext {
 
                 final Class clazz = interceptorData.getInterceptorClass();
 
-                final ConstructorInjectionBean interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
+                ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                if (interceptorConstructor == null) {
+                    synchronized (this) {
+                        interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                        if (interceptorConstructor == null) {
+                            interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
+                            interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
+                        }
+                    }
+                }
+
                 final InjectionProcessor interceptorInjector = new InjectionProcessor(interceptorConstructor.create(creationalContext), this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
