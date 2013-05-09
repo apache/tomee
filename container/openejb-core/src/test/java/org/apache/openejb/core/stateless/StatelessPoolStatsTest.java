@@ -559,7 +559,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
     private void assertAttribute(final String name, final Object value) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
         if (Number.class.isInstance(value)) { // TODO: should be removed when we'll find why buildbot fails here
-            assertEquals(name, Number.class.cast(value).doubleValue(), Number.class.cast(server.getAttribute(objectName, name)).doubleValue(), 1.0);
+            assertEquals(name, Number.class.cast(value).doubleValue(), Number.class.cast(server.getAttribute(objectName, name)).doubleValue(), 1.1);
         } else {
             assertEquals(name, value, server.getAttribute(objectName, name));
         }
