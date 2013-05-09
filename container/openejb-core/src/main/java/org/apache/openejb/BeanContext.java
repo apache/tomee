@@ -101,6 +101,7 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     private boolean isPassivatingScope = true;
+    private ConstructorInjectionBean<Object> constructorInjectionBean = null;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
@@ -1573,7 +1574,18 @@ public class BeanContext extends DeploymentContext {
     }
 
     private ConstructorInjectionBean<Object> createConstructorInjectionBean(final WebBeansContext webBeansContext) {
-        return new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass(), webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
+        if (constructorInjectionBean != null) {
+            return constructorInjectionBean;
+        }
+
+        synchronized (this) { // concurrentmodificationexception because of annotatedtype internals otherwise
+            if (constructorInjectionBean == null) {
+                constructorInjectionBean = new ConstructorInjectionBean<Object>(
+                                                webBeansContext, getManagedClass(),
+                                                webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
+            }
+        }
+        return constructorInjectionBean;
     }
 
     @SuppressWarnings("unchecked")
