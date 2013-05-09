@@ -16,17 +16,6 @@
  */
 package org.apache.openejb.core;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
@@ -34,7 +23,17 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.AbstractInjectable;
+
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WebContext {
     private String id;
@@ -48,6 +47,7 @@ public class WebContext {
     private String contextRoot;
     private String host;
     private Context initialContext;
+    private final Map<Class<?>, ConstructorInjectionBean<Object>> constructorInjectionBeanCache = new ConcurrentHashMap<Class<?>, ConstructorInjectionBean<Object>>();
 
     public Context getInitialContext() {
         if (initialContext != null) return initialContext;
@@ -110,9 +110,7 @@ public class WebContext {
     public Object newInstance(Class beanClass) throws OpenEJBException {
 
         final WebBeansContext webBeansContext = getWebBeansContext();
-
-        final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
-
+        final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(beanClass, webBeansContext);
         final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
         // Create bean instance
@@ -129,6 +127,20 @@ public class WebContext {
         return beanInstance;
     }
 
+    private ConstructorInjectionBean<Object> getConstructorInjectionBean(final Class beanClass, final WebBeansContext webBeansContext) {
+        ConstructorInjectionBean<Object> beanDefinition = constructorInjectionBeanCache.get(beanClass);
+        if (beanDefinition == null) {
+            synchronized (this) {
+                beanDefinition = constructorInjectionBeanCache.get(beanClass);
+                if (beanDefinition == null) {
+                    beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
+                    constructorInjectionBeanCache.put(beanClass, beanDefinition);
+                }
+            }
+        }
+        return beanDefinition;
+    }
+
     private WebBeansContext getWebBeansContext() {
         if (webbeansContext == null) {
             return getAppContext().getWebBeansContext();
@@ -140,9 +152,7 @@ public class WebContext {
 
         try {
             final WebBeansContext webBeansContext = getWebBeansContext();
-
-            final ConstructorInjectionBean<Object> beanDefinition = new ConstructorInjectionBean(webBeansContext, o.getClass(), webBeansContext.getAnnotatedElementFactory().newAnnotatedType(o.getClass()));
-
+            final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(o.getClass(), webBeansContext);
             final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
             // Create bean instance
