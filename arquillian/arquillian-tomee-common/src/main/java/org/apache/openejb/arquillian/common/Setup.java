@@ -67,6 +67,14 @@ public class Setup {
         final File serverXml = Files.path(tomeeHome, "conf", "server.xml");
         final QuickServerXmlParser ports = QuickServerXmlParser.parse(serverXml);
 
+        /* DMB: TODO - Looks like there's a bug here.  We should add some tests for our server.xml manipulation
+           This will work fine with the default ports, but if someone should update their ports to say
+           http="111", https="1111" and stop="11111", then someone updates just the http port to "444"
+           .. the resulting ports will mistakenly be 444, 4441, and 44411 respectively.
+
+           We really should add some tests for comparing server.xml files before and after, as well as
+           have a few different server.xml files with non-standard settings.
+         */
         final Map<String, String> replacements = new HashMap<String, String>();
         replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
         replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
