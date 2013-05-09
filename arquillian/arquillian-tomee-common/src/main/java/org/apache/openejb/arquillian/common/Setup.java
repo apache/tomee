@@ -67,14 +67,6 @@ public class Setup {
         final File serverXml = Files.path(tomeeHome, "conf", "server.xml");
         final QuickServerXmlParser ports = QuickServerXmlParser.parse(serverXml);
 
-        /* DMB: TODO - Looks like there's a bug here.  We should add some tests for our server.xml manipulation
-           This will work fine with the default ports, but if someone should update their ports to say
-           http="111", https="1111" and stop="11111", then someone updates just the http port to "444"
-           .. the resulting ports will mistakenly be 444, 4441, and 44411 respectively.
-
-           We really should add some tests for comparing server.xml files before and after, as well as
-           have a few different server.xml files with non-standard settings.
-         */
         final Map<String, String> replacements = new HashMap<String, String>();
         replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
         replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));
@@ -86,7 +78,7 @@ public class Setup {
             replacements.put("unpackWARs=\"true\"", "unpackWARs=\"false\"");
         }
 
-        replace(replacements, serverXml);
+        replace(replacements, serverXml, true);
     }
 
     public static File findHome(File directory) {
@@ -172,9 +164,26 @@ public class Setup {
         }
     }
 
-    public static void replace(final Map<String, String> replacements, final File file) throws IOException {
+    public static void replace(final Map<String, String> replacements, final File file, final boolean escape) throws IOException {
 
         InputStream in = IO.read(file);
+
+        if (escape) {
+            final Map<String, String> escaped = new HashMap<String, String>();
+            for (final Map.Entry<String, String> entry : replacements.entrySet()) {
+                final String key = entry.getKey();
+                final String value = entry.getValue();
+                if (key.startsWith("\"") && key.endsWith("\"")) {
+                    escaped.put(key, value);
+                } else {
+                    escaped.put("\"" + key + "\"", "\"" + value + "\"");
+                }
+            }
+
+            replacements.clear();
+            replacements.putAll(escaped);
+        }
+
         in = new ReplaceStringsInputStream(in, replacements);
 
         final String data = IO.slurp(in);
@@ -184,6 +193,11 @@ public class Setup {
         if (LOGGER.isLoggable(Level.FINE)) {
             IO.copy(data.getBytes(), System.out);
         }
+    }
+
+    @Deprecated
+    public static void replace(final Map<String, String> replacements, final File file) throws IOException {
+        replace(replacements, file, false);
     }
 
     public static void removeUselessWebapps(final File tomeeHome) {

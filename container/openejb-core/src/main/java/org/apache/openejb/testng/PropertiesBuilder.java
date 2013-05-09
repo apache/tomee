@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.testng;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesBuilder {
@@ -32,5 +34,13 @@ public class PropertiesBuilder {
 
     public Properties build() {
         return properties;
+    }
+
+    public Map<String, String> asMap() {
+        final Map<String, String> map = new HashMap<String, String>();
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
+            map.put(String.class.cast(entry.getKey()), String.class.cast(entry.getValue()));
+        }
+        return map;
     }
 }
