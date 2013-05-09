@@ -118,7 +118,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.39</tomcat.version>
+    <tomcat.version>7.0.40</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.7</cxf.version> <!--2.6.4 requires wss4j 1.6.8-->
@@ -143,7 +143,7 @@
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <org.apache.openwebbeans.version>1.2.0-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.0</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
@@ -476,6 +476,11 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <!-- Apache snapshots -->
+    <repository>
+      <id>owb-staging</id>
+      <name>OWB staging Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-016/</url>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
