@@ -149,6 +149,93 @@ public class ParserTest {
             Assert.fail("Expected MalformedURLException");
         } catch (MalformedURLException pass) {
         }
+
+        try { //  too long
+            final Parser parser = new Parser(String.format("%s/%s/%s/%s/%s/%s", groupId, artifactId, version, type, classifier, classifier));
+
+            Assert.fail("Expected MalformedURLException");
+        } catch (MalformedURLException pass) {
+        }
+    }
+
+
+
+    @Test
+    public void testMavenCoordinates() throws Exception {
+
+        final String groupId = "orange";
+        final String artifactId = "yellow";
+        final String version = "1.0-SNAPSHOT";
+        final String classifier = "square";
+        final String type = "zip";
+
+        {
+            final Parser parser = new Parser(String.format("%s:%s", groupId, artifactId));
+
+            assertEquals(groupId, parser.getGroup());
+            assertEquals(artifactId, parser.getArtifact());
+            assertEquals("LATEST", parser.getVersion());
+            assertEquals("jar", parser.getType());
+            assertEquals(null, parser.getClassifier());
+        }
+
+        {
+            final Parser parser = new Parser(String.format("%s:%s:%s", groupId, artifactId, version));
+
+            assertEquals(groupId, parser.getGroup());
+            assertEquals(artifactId, parser.getArtifact());
+            assertEquals(version, parser.getVersion());
+            assertEquals("jar", parser.getType());
+            assertEquals(null, parser.getClassifier());
+        }
+
+        {
+            final Parser parser = new Parser(String.format("%s:%s:%s:%s", groupId, artifactId, type, version));
+
+            assertEquals(groupId, parser.getGroup());
+            assertEquals(artifactId, parser.getArtifact());
+            assertEquals(version, parser.getVersion());
+            assertEquals(type, parser.getType());
+            assertEquals(null, parser.getClassifier());
+        }
+
+        {
+            final Parser parser = new Parser(String.format("%s:%s:%s:%s:%s", groupId, artifactId, type, classifier, version));
+
+            assertEquals(groupId, parser.getGroup());
+            assertEquals(artifactId, parser.getArtifact());
+            assertEquals(version, parser.getVersion());
+            assertEquals(type, parser.getType());
+            assertEquals(classifier, parser.getClassifier());
+        }
+
+        try { //  no group
+            new Parser(String.format(":%s:::", artifactId));
+
+            Assert.fail("Expected MalformedURLException");
+        } catch (MalformedURLException pass) {
+        }
+
+        try { //  no artifact
+            new Parser(String.format("%s::::", groupId));
+
+            Assert.fail("Expected MalformedURLException");
+        } catch (MalformedURLException pass) {
+        }
+
+        try { //  no artifact
+            new Parser(String.format("%s::%s", groupId, version));
+
+            Assert.fail("Expected MalformedURLException");
+        } catch (MalformedURLException pass) {
+        }
+
+        try { //  too long
+            final Parser parser = new Parser(String.format("%s:%s:%s:%s:%s:%s", groupId, artifactId, version, type, classifier, classifier));
+
+            Assert.fail("Expected MalformedURLException");
+        } catch (MalformedURLException pass) {
+        }
     }
 
 }
