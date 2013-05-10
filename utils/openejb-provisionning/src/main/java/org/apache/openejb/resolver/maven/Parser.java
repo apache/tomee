@@ -19,30 +19,27 @@ package org.apache.openejb.resolver.maven;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * This class doesn't seem compliant with the documented Maven Coordinates of
+ * This class respects both Maven Coordinates
  *
  *  - groupId:artifactId:packaging:classifier:version
+ *  - http://maven.apache.org/pom.html#Maven_Coordinates
  *
- * http://maven.apache.org/pom.html#Maven_Coordinates
+ * And OPS4j coordinates
  *
- * For example, per the output of `mvn dependency:tree` TomEE is:
- *
- *  - org.apache.openejb:apache-tomee:zip:webprofile:1.6.0-SNAPSHOT
- *
- * It instead seems to use its own non-maven coordinates of
- *
- *  - groupId:artifactId:version:packaging:classifier
+ *  - groupId/artifactId/version/packaging/classifier
+ *  - https://ops4j1.jira.com/wiki/display/paxurl/Mvn+Protocol
  *
  */
 public class Parser {
-    public static final String VERSION_LATEST = "LATEST";
     private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version]/[type]]";
     private static final String REPOSITORY_SEPARATOR = "!";
     private static final String ARTIFACT_SEPARATOR = "/";
     private static final String VERSION_SNAPSHOT = "SNAPSHOT";
-    private static final String TYPE_JAR = "jar";
     private static final String FILE_SEPARATOR = "/";
     private static final String GROUP_SEPARATOR = "\\.";
     private static final String VERSION_SEPARATOR = "-";
@@ -64,6 +61,8 @@ public class Parser {
 
         if (rawPath == null) throw new MalformedURLException("Path cannot be null. Syntax " + SYNTAX);
 
+        final boolean possibleMavenCoordinates = rawPath.contains(":");
+
         final String path = rawPath.replace(":", "/"); // mvn:G:A:V = mvn:G/A/V
 
         if (path.startsWith(REPOSITORY_SEPARATOR) || path.endsWith(REPOSITORY_SEPARATOR)) {
@@ -80,55 +79,42 @@ public class Parser {
             part = path;
         }
 
-        String[] segments = part.split(ARTIFACT_SEPARATOR);
+        final List<String> segments = new ArrayList<String>(Arrays.asList(part.split(ARTIFACT_SEPARATOR)));
 
-        if (segments.length < 2) {
+        if (segments.size() < 2 || segments.size() > 5) {
             throw new MalformedURLException("Invalid path. Syntax " + SYNTAX);
         }
 
-        // we must have a valid group
-        group = segments[0];
+        // If Maven Coordinates were used, rearrange the segments to the OPS4j format
+        if (possibleMavenCoordinates && segments.get(segments.size() - 1).matches("[0-9].*")) {
+            // position the version after the artifactId
+            final String version = segments.remove(segments.size() - 1);
+            segments.add(2, version);
+        }
 
-        if (group.trim().length() == 0) {
+        final String[] coordinates = {null, null, "LATEST", "jar", null};
+
+        for (int i = 0; i < segments.size(); i++) {
+            final String value = segments.get(i).trim();
+            if (value.length() != 0) {
+                coordinates[i] = value;
+            }
+        }
+
+        this.group = coordinates[0];
+        this.artifact = coordinates[1];
+        this.version = coordinates[2];
+        this.type = coordinates[3];
+        this.classifier = coordinates[4];
+        this.fullClassifier = (this.classifier != null) ? CLASSIFIER_SEPARATOR + classifier : null;
+
+        if (group == null) {
             throw new MalformedURLException("Invalid groupId. Syntax " + SYNTAX);
         }
 
-        // valid artifact
-        artifact = segments[1];
-
-        if (artifact.trim().length() == 0) {
+        if (artifact == null) {
             throw new MalformedURLException("Invalid artifactId. Syntax " + SYNTAX);
         }
-
-        // version is optional but we have a default value
-        String version = VERSION_LATEST;
-
-        if (segments.length >= 3 && segments[2].trim().length() > 0) {
-            version = segments[2];
-        }
-
-        // type is optional but we have a default value
-        String type = TYPE_JAR;
-
-        if (segments.length >= 4 && segments[3].trim().length() > 0) {
-            type = segments[3];
-        }
-
-        // classifier is optional (if not pressent or empty we will have a null classsifier
-
-        String fullClassifier = "";
-
-        if (segments.length >= 5 && segments[4].trim().length() > 0) {
-            classifier = segments[4];
-            fullClassifier = CLASSIFIER_SEPARATOR + classifier;
-        } else {
-            classifier = null;
-        }
-
-        this.version = version;
-        this.type = type;
-        this.fullClassifier = fullClassifier;
-
     }
 
     public String getGroup() {
