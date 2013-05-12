@@ -47,6 +47,7 @@ import java.util.TreeSet;
 @Mojo(name = "generate", threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.COMPILE)
 public class JarsTxtMojo extends AbstractMojo {
+    public static final String JAR = "jar";
     @Component
     protected MavenProject project;
 
@@ -94,6 +95,19 @@ public class JarsTxtMojo extends AbstractMojo {
                         .append(a.getGroupId()).append("/")
                         .append(a.getArtifactId()).append("/")
                         .append(version(a));
+
+                final boolean isJar = JAR.equals(a.getType());
+                if (!isJar) {
+                    line.append("/").append(a.getType());
+                }
+
+                if (a.getClassifier() != null) {
+                    if (isJar) {
+                        line.append("/").append(JAR);
+                    }
+                    line.append("/").append(a.getClassifier());
+                }
+
                 if (hashAlgo != null) {
                     final Artifact artifact = factory.createDependencyArtifact(a.getGroupId(), a.getArtifactId(), VersionRange.createFromVersion(a.getVersion()), a.getType(), a.getClassifier(), a.getScope());
                     try {
