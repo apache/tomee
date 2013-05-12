@@ -28,7 +28,7 @@ public final class PropertyPlaceHolderHelper {
     private static final String SUFFIX = "}";
     private static final Properties CACHE = new Properties();
 
-    private static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
+    public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
 
     private PropertyPlaceHolderHelper() {
         // no-op
