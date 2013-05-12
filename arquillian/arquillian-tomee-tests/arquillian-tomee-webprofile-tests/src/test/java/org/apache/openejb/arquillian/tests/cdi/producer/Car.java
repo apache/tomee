@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.arquillian.tests.cdi.producer;
 
+import java.io.Serializable;
+
 /**
  * @version $Rev$ $Date$
  */
-public class Car {
+public class Car implements Serializable {
 
     private final String make;
     private final String model;

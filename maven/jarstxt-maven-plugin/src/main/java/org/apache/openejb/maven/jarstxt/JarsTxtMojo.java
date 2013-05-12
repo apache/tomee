@@ -17,6 +17,8 @@
 package org.apache.openejb.maven.jarstxt;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -34,13 +36,16 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -71,6 +76,12 @@ public class JarsTxtMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     protected List<ArtifactRepository> remoteRepos;
+
+    @Parameter
+    protected List<String> additionals;
+
+    @Parameter
+    protected Map<String, String> placeHolders;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -125,6 +136,23 @@ public class JarsTxtMojo extends AbstractMojo {
                 set.add(line.toString());
             }
 
+            if (additionals != null) {
+                if (placeHolders == null) {
+                    placeHolders = new HashMap<String, String>();
+                }
+
+                final StrSubstitutor lookup = new StrSubstitutor(StrLookup.mapLookup(placeHolders));
+
+                for (final String line : additionals) {
+                    final StringBuilder builder = new StringBuilder(line);
+                    if (hashAlgo != null) {
+                        builder.append("|").append(Files.hash(urls(line, lookup), hashAlgo))
+                                .append("|").append(hashAlgo);
+                    }
+                    set.add(builder.toString());
+                }
+            }
+
             // written after to be sorted, more readable
             for (final String line : set) {
                 writer.write(line);
@@ -143,6 +171,10 @@ public class JarsTxtMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private Set<URL> urls(final String line, final StrSubstitutor lookup) {
+        return Files.listJars(ProvisioningUtil.realLocation(lookup.replace(line)));
     }
 
     private String version(final Artifact a) {
