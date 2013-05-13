@@ -1014,10 +1014,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final AppModule appModule = loadApplication(standardContext);
 
             if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
+                final Collection<String> importedNames = new ArrayList<String>(); // we can get the same resource twice as in tomcat
+
                 // add them to the app as resource
                 final OpenEJBNamingResource nr = (OpenEJBNamingResource) standardContext.getNamingResources();
                 for (ResourceBase resource : nr.getTomcatResources()) {
                     final String name = resource.getName();
+                    if (!importedNames.contains(name)) {
+                        importedNames.add(name);
+                    } else {
+                        continue;
+                    }
 
                     boolean found = false;
                     for (ResourceInfo r : SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources) {

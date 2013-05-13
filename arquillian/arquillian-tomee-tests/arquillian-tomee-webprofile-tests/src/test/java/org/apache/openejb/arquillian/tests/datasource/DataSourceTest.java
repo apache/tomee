@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.contextxml.datasource;
+package org.apache.openejb.arquillian.tests.datasource;
 
 import org.apache.ziplock.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -26,14 +26,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -49,7 +41,7 @@ public class DataSourceTest {
     public static WebArchive createDeployment() {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, DataSourceTest.class.getSimpleName() + ".war")
                 .addClass(PojoServlet.class)
-                .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/contextxml/datasource/context.xml"), "context.xml");
+                .addAsManifestResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/contextxml/datasource/context.xml"), "context.xml");
 
         return archive;
     }
@@ -57,18 +49,5 @@ public class DataSourceTest {
     @Test
     public void lookupEnvEntryInjectionShouldSucceed() throws Exception {
         final String output = IO.readString(new URL(url.toExternalForm() + "test"));
-    }
-
-    @WebServlet("/test")
-    public static class PojoServlet extends HttpServlet {
-
-        @Resource
-        private DataSource dataSource;
-
-        @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-            if (dataSource == null) throw new ServletException();
-        }
     }
 }
