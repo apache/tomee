@@ -22,6 +22,7 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.finder.IAnnotationFinder;
 
@@ -42,6 +43,7 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class AppModule implements DeploymentModule {
+    private static final boolean DELEGATE_FIRST_DEFAULT = SystemInstance.get().getOptions().get("openejb.classloader.delegate-first", true);
 
     private final Properties properties = new SuperProperties().caseInsensitive(true);
     private final Application application;
@@ -61,7 +63,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
-    private boolean delegateFirst = true;
+    private boolean delegateFirst = DELEGATE_FIRST_DEFAULT;
     private final Set<String> additionalLibMbeans = new TreeSet<String>();
     private final Collection<String> jaxRsProviders = new TreeSet<String>();
     private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<String, PojoConfiguration>();

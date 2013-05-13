@@ -220,7 +220,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
                 appModule.setStandloneWebModule();
-                appModule.setDelegateFirst(false);
+                appModule.setDelegateFirst(true); // force it for webapps
                 return appModule;
             }
 

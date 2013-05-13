@@ -62,6 +62,7 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -87,6 +88,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
@@ -738,7 +740,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     for (final String path : paths) {
                         urls.add(new File(path).toURI().normalize().toURL());
                     }
-                    deployments.setClasspath(new URLClassLoader(urls.toArray(new URL[urls.size()])));
+                    deployments.setClasspath(new URLClassLoaderFirst(urls.toArray(new URL[urls.size()]), ParentClassLoaderFinder.Helper.get()));
                 }
             }
 

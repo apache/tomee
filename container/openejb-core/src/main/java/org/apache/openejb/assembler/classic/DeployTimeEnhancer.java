@@ -26,6 +26,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.xbean.finder.filter.Filter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -128,7 +129,7 @@ public class DeployTimeEnhancer {
         // enhancement
 
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader fakeClassLoader = new URLClassLoader(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
+        final ClassLoader fakeClassLoader = new URLClassLoaderFirst(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
 
         Thread.currentThread().setContextClassLoader(fakeClassLoader);
         try {
