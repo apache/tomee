@@ -58,6 +58,7 @@ public class TomcatWsRegistry implements WsRegistry {
     private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
 
     private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = SystemInstance.get().getOptions().get("tomee.jaxws.oldsubcontext", false);
+    private static final String TOMEE_JAXWS_SECURITY_ROLE_PREFIX = "tomee.jaxws.security-role.";
 
     private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();
     private final Map<String, Integer> fakeContextReferences = new TreeMap<String, Integer>();
@@ -261,18 +262,23 @@ public class TomcatWsRegistry implements WsRegistry {
             context.setLoginConfig(loginConfig);
 
             //Setup a default Security Constraint
-            SecurityCollection collection = new SecurityCollection();
-            collection.addMethod("GET");
-            collection.addMethod("POST");
-            collection.addPattern("/*");
-            collection.setName("default");
-            SecurityConstraint sc = new SecurityConstraint();
-            sc.addAuthRole("*");
-            sc.addCollection(collection);
-            sc.setAuthConstraint(true);
-            sc.setUserConstraint(transportGuarantee);
-            context.addConstraint(sc);
-            context.addSecurityRole("default");
+            final String securityRole = SystemInstance.get().getProperty(TOMEE_JAXWS_SECURITY_ROLE_PREFIX + name, "default");
+            for (final String role : securityRole.split(",")) {
+                final SecurityCollection collection = new SecurityCollection();
+                collection.addMethod("GET");
+                collection.addMethod("POST");
+                collection.addPattern("/*");
+                collection.setName(role);
+
+                final SecurityConstraint sc = new SecurityConstraint();
+                sc.addAuthRole("*");
+                sc.addCollection(collection);
+                sc.setAuthConstraint(true);
+                sc.setUserConstraint(transportGuarantee);
+
+                context.addConstraint(sc);
+                context.addSecurityRole(role);
+            }
 
             //Set the proper authenticator
             if ("BASIC".equals(authMethod)) {
@@ -285,8 +291,7 @@ public class TomcatWsRegistry implements WsRegistry {
                 context.addValve(new NonLoginAuthenticator());
             }
 
-            OpenEJBValve openejbValve = new OpenEJBValve();
-            context.getPipeline().addValve(openejbValve);
+            context.getPipeline().addValve(new OpenEJBValve());
 
         } else {
             throw new IllegalArgumentException("Invalid authMethod: " + authMethod);
