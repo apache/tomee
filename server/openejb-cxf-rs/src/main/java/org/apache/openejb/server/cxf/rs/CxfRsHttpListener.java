@@ -37,6 +37,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
@@ -63,8 +64,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
@@ -76,6 +79,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
+
+    private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
 
@@ -485,10 +490,31 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         // providers
-        final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+        Set<String> providersConfig = null;
+
+        {
+            final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+            if (provider != null) {
+                if (providersConfig == null) {
+                    providersConfig = new HashSet<String>();
+                }
+                providersConfig.addAll(Arrays.asList(provider.split(",")));
+            }
+
+            {
+                if (GLOBAL_PROVIDERS != null) {
+                    if (providersConfig == null) {
+                        providersConfig = new HashSet<String>();
+                    }
+                    providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
+                }
+            }
+        }
+
+
         List<Object> providers = null;
-        if (provider != null) {
-            providers = ServiceInfos.resolve(services, provider.split(","));
+        if (providersConfig != null) {
+            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]));
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             }
