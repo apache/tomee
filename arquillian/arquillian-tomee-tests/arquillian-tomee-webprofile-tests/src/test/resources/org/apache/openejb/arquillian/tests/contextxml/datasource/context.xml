@@ -20,7 +20,7 @@
   <Resource name="jdbc/myDB" auth="Container"
             type="javax.sql.DataSource" username="sa" password=""
             driverClassName="org.hsqldb.jdbcDriver"
-            url="jdbc:hsqldb:file:data/hsqldb/hsqldb"
+            url="jdbc:hsqldb:mem:foo:myDB"
             maxActive="8"
       />
 </Context>
