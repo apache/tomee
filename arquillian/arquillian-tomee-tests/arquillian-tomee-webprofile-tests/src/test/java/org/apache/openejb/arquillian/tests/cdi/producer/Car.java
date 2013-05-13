@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.arquillian.tests.cdi.producer;
 
-import java.io.Serializable;
-
 /**
  * @version $Rev$ $Date$
  */
