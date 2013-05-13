@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * @version $Rev$ $Date$
  */
-public class Car implements Serializable {
+public class Car {
 
     private final String make;
     private final String model;
