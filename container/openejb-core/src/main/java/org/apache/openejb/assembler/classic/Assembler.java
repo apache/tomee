@@ -1817,7 +1817,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final URL[] filtered = jars.toArray(new URL[jars.size()]);
 
-        if (appInfo.delegateFirst) {
+        if (!appInfo.delegateFirst) {
             return ClassLoaderUtil.createClassLoader(appInfo.path, filtered, parent);
         }
         return ClassLoaderUtil.createClassLoaderFirst(appInfo.path, filtered, parent);
