@@ -33,7 +33,11 @@ public class WebappWebBeansContext extends WebBeansContext {
     @Override
     public BeanManagerImpl getBeanManagerImpl() {
         if (bm == null) { // should be done in the constructor
-            bm = new WebappBeanManager(this);
+            synchronized (this) {
+                if (bm == null) {
+                    bm = new WebappBeanManager(this);
+                }
+            }
         }
         return bm;
     }
