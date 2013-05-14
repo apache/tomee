@@ -577,14 +577,37 @@ public class DeploymentLoader implements DeploymentFilterable {
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
 
+            final Object pXmls = appModule.getAltDDs().get("persistence.xml");
+
             for (final WebModule webModule : appModule.getWebModules()) {
-                final List<URL> scannableUrls = webModule.getScannableUrls();
                 final List<URL> foundRootUrls = new ArrayList<URL>();
+                final List<URL> scannableUrls = webModule.getScannableUrls();
                 for (final URL url : scannableUrls) {
                     if (!addPersistenceUnits(appModule, url).isEmpty()) {
                         foundRootUrls.add(url);
                     }
                 }
+
+                if (pXmls != null && Collection.class.isInstance(pXmls)) {
+                    final File webapp = webModule.getFile();
+                    if (webapp == null) {
+                        continue;
+                    }
+                    final String webappAbsolutePath = webapp.getAbsolutePath();
+
+                    final Collection<URL> list = Collection.class.cast(pXmls);
+                    for (final URL url : list) {
+                        try {
+                            final File file = URLs.toFile(url);
+                            if (file.getAbsolutePath().startsWith(webappAbsolutePath)) {
+                                foundRootUrls.add(url);
+                            }
+                        } catch (final IllegalArgumentException iae) {
+                            // no-op
+                        }
+                    }
+                }
+
                 webModule.getAltDDs().put(EAR_WEBAPP_PERSISTENCE_XML_JARS, foundRootUrls);
             }
 
