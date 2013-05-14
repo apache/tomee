@@ -62,6 +62,16 @@ public class DeploymentsResolver implements DeploymentFilterable {
         }
     }
 
+    public static boolean isExtractedDir(final File f) {
+        if (new File(f.getParentFile(), f.getName() + ".war").exists()) {
+            return true;
+        }
+        if (new File(f.getParentFile(), f.getName() + ".ear").exists()) {
+            return true;
+        }
+        return false;
+    }
+
     protected static boolean isValidDirectory(final File file) {
 
         if (file.isDirectory() && !file.isHidden() && !file.equals(lib)) {
@@ -146,7 +156,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             @Override
             public boolean accept(final File f) {
                 if (f.isDirectory()) {
-                    return DeploymentsResolver.isValidDirectory(f);
+                    return DeploymentsResolver.isValidDirectory(f) && !DeploymentsResolver.isExtractedDir(f);
                 }
                 return true;
             }

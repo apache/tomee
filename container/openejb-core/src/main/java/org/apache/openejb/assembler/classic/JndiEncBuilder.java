@@ -29,6 +29,7 @@ import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.LazyObjectReference;
 import org.apache.openejb.core.ivm.naming.MapObjectReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
@@ -47,6 +48,7 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.omg.CORBA.ORB;
 
 import javax.annotation.ManagedBean;
@@ -85,6 +87,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names we were linking to are no longer guaranteed to be what we assume them to be.  We need to come up with a
@@ -360,8 +363,12 @@ public class JndiEncBuilder {
 
                 // TODO Bind the BeanManager
             } else if (BeanManager.class.equals(type)) {
-                String jndiName = "java:app/BeanManager";
-                reference = new LinkRef(jndiName);
+                reference = new LazyObjectReference<BeanManager>(new Callable<BeanManager>() {
+                    @Override
+                    public BeanManager call() throws Exception {
+                        return WebBeansContext.currentInstance().getBeanManagerImpl();
+                    }
+                });
 
             } else if (UserTransaction.class.equals(type)) {
                 reference = new IntraVmJndiReference("comp/UserTransaction");
