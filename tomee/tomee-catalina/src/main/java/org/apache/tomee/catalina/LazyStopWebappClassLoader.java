@@ -74,7 +74,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
-            synchronized (system) {
+            synchronized (this) {
                 final ClassLoader old = system;
                 system = NoClassClassLoader.INSTANCE;
                 try {
