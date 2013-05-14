@@ -285,7 +285,7 @@ public class TomcatJndiBuilder {
             comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
             if (webContext != null) {
-                comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
+                comp.rebind("BeanManager", webContext.getWebbeansContext().getBeanManagerImpl());
             } else if (contextInfo != null) {
                 comp.rebind("BeanManager", cs.getAppContext(contextInfo.appInfo.appId).getBeanManager());
             }

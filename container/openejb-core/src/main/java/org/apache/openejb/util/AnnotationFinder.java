@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.xbean.asm.AnnotationVisitor;
 import org.apache.xbean.asm.Attribute;
 import org.apache.xbean.asm.ClassReader;
@@ -208,6 +210,10 @@ public class AnnotationFinder {
         if (files != null) {
             for (final File file : files) {
                 if (file.isDirectory()) {
+                    if (DeploymentsResolver.isExtractedDir(file)) {
+                        continue;
+                    }
+
                     scanDir(file, classNames, packageName + file.getName() + ".");
                 } else if (file.getName().endsWith(".class")) {
                     String name = file.getName();

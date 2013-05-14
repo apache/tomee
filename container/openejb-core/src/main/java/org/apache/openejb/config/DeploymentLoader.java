@@ -1600,6 +1600,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (dirFiles != null) {
             for (final File file : dirFiles) {
                 if (file.isDirectory()) {
+                    if (DeploymentsResolver.isExtractedDir(file)) {
+                        continue;
+                    }
+
                     if (recursive) {
                         scanDir(file, files, path + file.getName() + "/");
                     }

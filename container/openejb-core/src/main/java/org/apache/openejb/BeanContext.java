@@ -102,6 +102,7 @@ public class BeanContext extends DeploymentContext {
 
     private boolean isPassivatingScope = true;
     private ConstructorInjectionBean<Object> constructorInjectionBean = null;
+    private WebBeansContext webBeansContext = null;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
@@ -1414,7 +1415,7 @@ public class BeanContext extends DeploymentContext {
 
         final boolean dynamicallyImplemented = isDynamicallyImplemented();
 
-        final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        final WebBeansContext webBeansContext = getWebBeansContext();
 
         if (dynamicallyImplemented) {
             if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
@@ -1601,7 +1602,7 @@ public class BeanContext extends DeploymentContext {
     @SuppressWarnings("unchecked")
     public <T> void inject(final T instance, CreationalContext<T> ctx) {
 
-        final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        final WebBeansContext webBeansContext = getWebBeansContext();
 
         InjectionTargetBean<T> beanDefinition = get(CdiEjbBean.class);
 
@@ -1614,6 +1615,18 @@ public class BeanContext extends DeploymentContext {
         }
 
         beanDefinition.getInjectionTarget().inject(instance, ctx);
+    }
+
+    public void setWebBeansContext(final WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
+
+    public WebBeansContext getWebBeansContext() {
+        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
+        if (bean != null) {
+            return bean.getWebBeansContext();
+        }
+        return moduleContext.getAppContext().getWebBeansContext();
     }
 
     public Set<Class<?>> getAsynchronousClasses() {
@@ -1696,29 +1709,6 @@ public class BeanContext extends DeploymentContext {
 
     public void setHidden(final boolean hidden) {
         this.hidden = hidden;
-    }
-
-    public void initIsPassivationScope() {
-        // CDI 6.6.4
-        if (BeanType.STATELESS.equals(componentType) || BeanType.SINGLETON.equals(componentType)) {
-            isPassivatingScope = false;
-            return;
-        }
-
-        final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
-        if (!bm.isInUse()) {
-            isPassivatingScope = true;
-            return;
-        }
-
-        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
-        if (bean == null) {
-            isPassivatingScope = true;
-            return;
-        }
-
-        final Class<? extends Annotation> scope = bean.getScope();
-        isPassivatingScope = !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
     }
 
     public boolean isPassivatingScope() {
