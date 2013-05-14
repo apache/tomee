@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -43,7 +44,7 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class AppModule implements DeploymentModule {
-    private static final boolean DELEGATE_FIRST_DEFAULT = SystemInstance.get().getOptions().get("openejb.classloader.delegate-first", true);
+    public static final boolean DELEGATE_FIRST_DEFAULT = SystemInstance.get().getOptions().get("openejb.classloader.delegate-first", ParentClassLoaderFinder.Helper.get() != ClassLoader.getSystemClassLoader());
 
     private final Properties properties = new SuperProperties().caseInsensitive(true);
     private final Application application;
