@@ -79,7 +79,9 @@ OPTIONS="-Dopenejb.home=$OPENEJB_HOME"
 OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar:$OPENEJB_HOME/lib/$(ls $OPENEJB_HOME/lib | grep javaee-api)"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
-## Uncomment for easy debug setup
-# OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+if [ "x$@" = "xdebug" ]; then
+    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+    args="start"
+fi
 
 java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CORE_JAR"  org.apache.openejb.cli.Bootstrap "$@"
