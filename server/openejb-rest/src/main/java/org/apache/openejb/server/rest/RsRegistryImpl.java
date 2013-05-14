@@ -17,6 +17,7 @@
 
 package org.apache.openejb.server.rest;
 
+import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
 import org.apache.openejb.server.httpd.util.HttpUtil;
@@ -27,14 +28,22 @@ import java.util.Map;
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
     private Map<String, String> addresses = new HashMap<String, String>();
 
-    @Override public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
-        String address = HttpUtil.selectSingleAddress(getResolvedAddresses(path));
-        addWrappedHttpListener(listener, classLoader, path);
+    @Override
+    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm) {
+        final String address = HttpUtil.selectSingleAddress(getResolvedAddresses(path));
+
+        if ("BASIC".equals(auth)) { // important to wrap with basic wrapper before classloader wrapping
+            addWrappedHttpListener(new BasicAuthHttpListenerWrapper(listener, realm), classLoader, path);
+        } else {
+            addWrappedHttpListener(listener, classLoader, path);
+        }
+
         addresses.put(address, path);
         return new AddressInfo(address, address);
     }
 
-    @Override public HttpListener removeListener(String context) {
+    @Override
+    public HttpListener removeListener(String context) {
         String regex = addresses.get(context);
         if (regex != null) {
             HttpListener listener = registry.removeHttpListener(regex);
