@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
@@ -55,6 +56,7 @@ import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -219,8 +221,15 @@ public class TomcatLoader implements Loader {
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
         // tomee webapp enricher
-        SystemInstance.get().setComponent(WebAppEnricher.class, new TomEEClassLoaderEnricher());
+        final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();
+        SystemInstance.get().setComponent(WebAppEnricher.class, classLoaderEnricher);
 
+        // add common lib even in ear "lib" part (if the ear provides myfaces for instance)
+        for (final URL url : classLoaderEnricher.enrichment(null)) { // we rely on the fact we know what the impl does with null but that's fine
+            SystemInstance.get().getComponent(ClassLoaderEnricher.class).addUrl(url);
+        }
+
+        // optional services
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
             // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
             SystemInstance.get().setProperty("openejb.rest.wildcard", "*");
