@@ -111,23 +111,42 @@ public class WebContext {
 
         final WebBeansContext webBeansContext = getWebBeansContext();
         final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(beanClass, webBeansContext);
-        final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+        final CreationalContext<Object> creationalContext;
+        final Object o;
+        if (webBeansContext == null) {
+            creationalContext = null;
+            try {
+                o = beanClass.newInstance();
+            } catch (final InstantiationException e) {
+                throw new OpenEJBException(e);
+            } catch (final IllegalAccessException e) {
+                throw new OpenEJBException(e);
+            }
+        } else {
+            creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+            o = beanDefinition.create(creationalContext);
+        }
 
         // Create bean instance
-        final Object o = beanDefinition.create(creationalContext);
         final Context unwrap = InjectionProcessor.unwrap(getInitialContext());
         final InjectionProcessor injectionProcessor = new InjectionProcessor(o, injections, unwrap);
 
         final Object beanInstance = injectionProcessor.createInstance();
 
-        InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
-        bean.getInjectionTarget().inject(beanInstance, creationalContext);
+        if (webBeansContext != null) {
+            InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+            bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
-        creatonalContexts.put(beanInstance, creationalContext);
+            creatonalContexts.put(beanInstance, creationalContext);
+        }
         return beanInstance;
     }
 
     private ConstructorInjectionBean<Object> getConstructorInjectionBean(final Class beanClass, final WebBeansContext webBeansContext) {
+        if (webBeansContext == null) {
+            return null;
+        }
+
         ConstructorInjectionBean<Object> beanDefinition = constructorInjectionBeanCache.get(beanClass);
         if (beanDefinition == null) {
             synchronized (this) {
