@@ -1111,22 +1111,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
 
-                    for (final BeanContext deployment : appContext.getBeanContexts()) {
-                        if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
-                            final List<Class> interfaces = new ArrayList<Class>(2);
-                            interfaces.add(Serializable.class);
-                            interfaces.add(IntraVmProxy.class);
-                            final BeanType type = deployment.getComponentType();
-                            if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
-                                interfaces.add(BeanContext.Removable.class);
-                            }
-                            try {
-                                LocalBeanProxyFactory.createProxy(deployment.getBeanClass(), classLoader, interfaces.toArray(new Class<?>[interfaces.size()]));
-                            } catch (final Exception e) {
-                                // no-op: as before
-                            }
-                        }
-                    }
+                    eagerInitOfLocalBeanProxies(appContext.getBeanContexts(), classLoader);
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext, e);
                     undeploy(standardContext, contextInfo);
@@ -1237,6 +1222,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
                     assembler.startEjbs(true, beanContexts);
                     assembler.bindGlobals(appContext.getBindings());
+                    eagerInitOfLocalBeanProxies(beanContexts, standardContext.getLoader().getClassLoader());
                 }
 
                 // jndi bindings
@@ -1270,6 +1256,25 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setPrefix(standardContext.getName());
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
+        }
+    }
+
+    private static void eagerInitOfLocalBeanProxies(final Collection<BeanContext> beans, final ClassLoader classLoader) {
+        for (final BeanContext deployment : beans) {
+            if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
+                final List<Class> interfaces = new ArrayList<Class>(2);
+                interfaces.add(Serializable.class);
+                interfaces.add(IntraVmProxy.class);
+                final BeanType type = deployment.getComponentType();
+                if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
+                    interfaces.add(BeanContext.Removable.class);
+                }
+                try {
+                    LocalBeanProxyFactory.createProxy(deployment.getBeanClass(), classLoader, interfaces.toArray(new Class<?>[interfaces.size()]));
+                } catch (final Exception e) {
+                    // no-op: as before
+                }
+            }
         }
     }
 
