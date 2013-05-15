@@ -152,8 +152,6 @@ public class WebContext {
 
         try {
             final WebBeansContext webBeansContext = getWebBeansContext();
-            final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(o.getClass(), webBeansContext);
-            final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
             // Create bean instance
             final Context initialContext = (Context) new InitialContext().lookup("java:");
@@ -162,13 +160,18 @@ public class WebContext {
 
             final Object beanInstance = injectionProcessor.createInstance();
 
-            InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
-            bean.getInjectionTarget().inject(beanInstance, creationalContext);
+            if (webBeansContext != null) {
+                final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(o.getClass(), webBeansContext);
+                final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
-            // if the bean is dependent simply cleanup the creational context once it is created
-            final Class<? extends Annotation> scope = beanDefinition.getScope();
-            if (scope == null || Dependent.class.equals(scope)) {
-                creatonalContexts.put(beanInstance, creationalContext);
+                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+                bean.getInjectionTarget().inject(beanInstance, creationalContext);
+
+                // if the bean is dependent simply cleanup the creational context once it is created
+                final Class<? extends Annotation> scope = beanDefinition.getScope();
+                if (scope == null || Dependent.class.equals(scope)) {
+                    creatonalContexts.put(beanInstance, creationalContext);
+                }
             }
 
             return beanInstance;
