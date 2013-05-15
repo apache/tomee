@@ -794,12 +794,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 propagateApplicationExceptions(appInfo, classLoader, allDeployments);
             }
 
-            new CdiBuilder().build(appInfo, appContext, allDeployments);
-
-            ensureWebBeansContext(appContext);
-
-            appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
-            appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
+            if ("true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cdi.activated", "true"))) {
+                new CdiBuilder().build(appInfo, appContext, allDeployments);
+                ensureWebBeansContext(appContext);
+                appJndiContext.bind("app/BeanManager", appContext.getBeanManager());
+                appContext.getBindings().put("app/BeanManager", appContext.getBeanManager());
+            }
 
             startEjbs(start, allDeployments);
 
@@ -1146,9 +1146,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw new OpenEJBRuntimeException(e);
             }
 
-            final BeanManager bm = wc.getBeanManagerImpl();
-            final Set<Bean<?>> beans = bm.getBeans(clazz);
-            final Bean bean = bm.resolve(beans);
+            // cdi can be off so init with null bean in this case
+            final Bean bean;
+            final BeanManager bm;
+            if (wc == null) {
+                bm = null;
+                bean = null;
+            } else {
+                bm = wc.getBeanManagerImpl();
+                final Set<Bean<?>> beans = bm.getBeans(clazz);
+                bean = bm.resolve(beans);
+            }
+
+            // create the MBean instance with cdi if possible or manually otherwise
             final Object instance;
             final CreationalContext creationalContext;
             if (bean == null) {
