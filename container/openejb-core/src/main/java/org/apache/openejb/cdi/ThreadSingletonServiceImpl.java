@@ -90,7 +90,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         final String failoverService = startupObject.getAppInfo().properties.getProperty("org.apache.webbeans.spi.FailOverService",
-                                            SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService", (String) null));
+                SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService", (String) null));
         if (failoverService != null) {
             properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
         }
@@ -291,14 +291,22 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         return context;
     }
 
-    private static WebBeansContext getWebBeansContext(List<AppContext> appContexts) {
+    private static WebBeansContext getWebBeansContext(final List<AppContext> appContexts) {
         Collections.sort(appContexts, new Comparator<AppContext>() {
             @Override
-            public int compare(AppContext appContext, AppContext appContext1) {
-                return appContext1.getWebBeansContext().getBeanManagerImpl().getBeans().size() - appContext.getWebBeansContext().getBeanManagerImpl().getBeans().size();
+            public int compare(final AppContext appContext, final AppContext appContext1) {
+                return cdiSize(appContext1) - cdiSize(appContext);
             }
         });
         return appContexts.get(0).getWebBeansContext();
+    }
+
+    private static int cdiSize(final AppContext ctx) {
+        final WebBeansContext wbc = ctx.getWebBeansContext();
+        if (wbc == null) {
+            return 0;
+        }
+        return wbc.getBeanManagerImpl().getBeans().size();
     }
 
     @Override

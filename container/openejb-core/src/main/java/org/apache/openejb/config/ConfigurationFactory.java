@@ -516,6 +516,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (options.get("openejb.system.apps", false)) {
             try {
                 final AppInfo appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
+                // they doesn't use CDI so no need to activate it
+                // 1) will be faster
+                // 2) will let embedded containers (tomee-embedded mainly) not be noised by it in our singleton service
+                appInfo.properties.put("openejb.cdi.activated", "false");
                 sys.containerSystem.applications.add(appInfo);
             } catch (OpenEJBException e) {
                 logger.error("Unable to load the system applications.", e);
