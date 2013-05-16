@@ -120,6 +120,8 @@ public class DeployTimeEnhancer {
                     } catch (IOException e) {
                         // ignored
                     }
+                } else {
+                    usedUrls.add(url);
                 }
             } else {
                 usedUrls.add(url);
