@@ -153,6 +153,7 @@ public class OpenEJBArchiveProcessor {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
             final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass.getSimpleName(), javaClass.getName(), true));
+            bean.localBean();
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(javaClass.getName());

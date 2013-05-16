@@ -236,6 +236,7 @@ public final class ApplicationComposers {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
             final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(testClass.getSimpleName(), testClass.getName(), true));
+            bean.localBean();
             bean.setTransactionType(TransactionType.BEAN);
             final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
             ejbDeployment.setDeploymentId(testClass.getName());
