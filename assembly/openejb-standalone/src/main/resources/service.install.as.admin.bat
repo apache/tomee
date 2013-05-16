@@ -128,12 +128,15 @@ REM Extensive documentation can be found here - http://commons.apache.org/daemon
 	--StartMode=jvm ^
 	--StartClass=org.apache.openejb.daemon.NTService --StartMethod=start ^
 	--StopMode=jvm ^
+	--JvmMs=512 ^
+	--JvmMx=1024 ^
+	--JvmSs=2048 ^
 	--StopClass=org.apache.openejb.daemon.NTService --StopMethod=stop ^
 	--LogPrefix=service ^
 	--LogPath="%logs%" --StdOutput="%logs%\service.out.log" --StdError="%logs%\service.err.log" --PidFile=service.pid ^
 	--LogLevel=Info ^
 	--LibraryPath="%openejb%\bin" ^
-	++JvmOptions=-Dopenejb.home="%openejb%";-Xms128M;-Xmx512M;-XX:MaxPermSize=256M
+	++JvmOptions=-Dopenejb.home="%openejb%";-XX:MaxPermSize=256M
 	REM ++DependsOn=AnotherServiceName
 	REM Add ^ symbol to end of ++JvmOptions line if ++DependsOn is uncommented 
 

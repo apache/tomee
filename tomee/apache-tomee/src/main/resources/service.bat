@@ -17,6 +17,16 @@ rem limitations under the License.
 rem The following line can be used to define a specific jre or jdk path
 rem set "JAVA_HOME=C:/JDK"
 
+REM Prefer a local JRE if we find one in the current bin directory
+IF EXIST "%~dp0jre" (
+  SET "JRE_HOME=%~dp0jre"
+) 
+
+REM Prefer a local JDK if we find one in the current bin directory
+IF EXIST "%~dp0jdk" (
+  SET "JAVA_HOME=%~dp0jdk"
+)
+
 @IF NOT "%ECHO%" == ""  ECHO %ECHO%
 @IF "%OS%" == "Windows_NT" setlocal
 
@@ -173,6 +183,11 @@ echo Using JVM:              "%PR_JVM%"
     --StartParams start ^
     --StopParams stop ^
     --Startup auto ^
+    --JvmMs=512 ^
+    --JvmMx=1024 ^
+    --JvmSs=2048 ^
+    --StartMode jvm ^
+    --StopMode jvm ^
     --LogLevel Info ^
     --LogPrefix TomEE
     
@@ -193,9 +208,7 @@ set PR_JVM=
 
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\endorsed" ^
-    --StartMode jvm ^
-    --StopMode jvm
+	++JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\endorsed"
 
 rem More extra parameters
 set "PR_LOGPATH=%CATALINA_BASE%\logs"
@@ -205,7 +218,7 @@ set PR_STDERROR=auto
 rem before this option was added: "++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^"
 rem the drawback was it was preventing custom native lib to be loaded even if added to Path
 "%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties;-Djava.awt.headless=true;-XX:+UseParallelGC;-XX:MaxPermSize=256M;-Xss2048k;-Xmx1024m"
+	++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties;-Djava.awt.headless=true;-XX:+UseParallelGC;-XX:MaxPermSize=256M"
 
 echo The service '%SERVICE_NAME%' has been installed.
 
