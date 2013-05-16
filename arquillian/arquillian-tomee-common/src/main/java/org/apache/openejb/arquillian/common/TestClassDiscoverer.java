@@ -40,10 +40,8 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         }
 
         try {
-            final Class<?> clazz = module.getClassLoader().loadClass(name);
-
             // call some reflection methods to make it fail if some dep are missing...
-            Class<?> current = clazz;
+            Class<?> current = module.getClassLoader().loadClass(name);
             while (current != null) {
                 current.getDeclaredFields();
                 current.getDeclaredMethods();
@@ -59,6 +57,7 @@ public class TestClassDiscoverer implements AdditionalBeanDiscoverer {
         final EjbJar ejbJar = new EjbJar();
         final OpenejbJar openejbJar = new OpenejbJar();
         final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, name, true));
+        bean.localBean();
         bean.setTransactionType(TransactionType.BEAN);
         final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
         ejbDeployment.setDeploymentId(name);

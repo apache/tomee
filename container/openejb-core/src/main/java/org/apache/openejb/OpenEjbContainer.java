@@ -363,6 +363,7 @@ public class OpenEjbContainer extends EJBContainer {
                     }
 
                     final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(name, caller, true));
+                    bean.localBean();
 
                     // set it to bean so it can get UserTransaction injection
                     bean.setTransactionType(TransactionType.BEAN);
