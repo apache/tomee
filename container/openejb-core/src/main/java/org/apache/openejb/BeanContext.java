@@ -28,8 +28,8 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
-import org.apache.openejb.core.ivm.naming.ContextWrapper;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
@@ -37,7 +37,6 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
@@ -68,9 +67,6 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -1781,40 +1777,5 @@ public class BeanContext extends DeploymentContext {
         private Class localHomeInterface;
         private Class localInterface;
         private Method createMethod;
-    }
-
-    private static class ContextHandler extends ContextWrapper {
-
-        public ContextHandler(final Context jndiContext) {
-            super(jndiContext);
-        }
-
-        @Override
-        public Object lookup(final Name name) throws NamingException {
-            try {
-                return context.lookup(name);
-            } catch (NameNotFoundException nnfe) {
-                try {
-                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-                } catch (NameNotFoundException nnfe2) {
-                    // ignore, let it be thrown
-                }
-                throw nnfe;
-            }
-        }
-
-        @Override
-        public Object lookup(String name) throws NamingException {
-            try {
-                return context.lookup(name);
-            } catch (NameNotFoundException nnfe) {
-                try {
-                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-                } catch (NameNotFoundException nnfe2) {
-                    // ignore, let it be thrown
-                }
-                throw nnfe;
-            }
-        }
     }
 }
