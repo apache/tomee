@@ -62,6 +62,9 @@ public class NewLoaderLogic {
     public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
     public static final String EXCLUSION_FILE = "exclusions.list";
+
+    private static final boolean UNIX = !System.getProperty("os.name").toLowerCase().contains("win");
+
     private static String[] exclusions = null;
     private static Filter filter;
 
@@ -176,6 +179,14 @@ public class NewLoaderLogic {
             final File file = URLs.toFile(url);
 
             final String name = filter(file).getName();
+
+            if (UNIX) { // skip native
+                if (!name.endsWith(".jar") && !file.isDirectory()
+                        && name.contains(".so") && file.getAbsolutePath().startsWith("/usr/lib")) {
+                    return true;
+                }
+            }
+
             if (includeFilter == null || !includeFilter.accept(name)) {
                 if (filter != null && filter.accept(name)) {
                     return true;
