@@ -22,6 +22,7 @@ import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.webbeans.component.InjectionTargetBean;
+import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.context.Dependent;
@@ -29,6 +30,9 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContextListener;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -152,7 +156,12 @@ public class WebContext {
             synchronized (this) {
                 beanDefinition = constructorInjectionBeanCache.get(beanClass);
                 if (beanDefinition == null) {
-                    beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
+                    if (Servlet.class.isAssignableFrom(beanClass) || Filter.class.isAssignableFrom(beanClass) || ServletContextListener.class.isAssignableFrom(beanClass)) {
+                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass), false);
+                    } else {
+                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
+                    }
+
                     constructorInjectionBeanCache.put(beanClass, beanDefinition);
                 }
             }

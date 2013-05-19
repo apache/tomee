@@ -46,13 +46,29 @@ public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TOD
         INJECTION_TARGET_FIELD.setAccessible(true);
     }
 
+    private final boolean passivationCapable;
+
     public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType, AnnotatedType<T>  at) {
+        this(webBeansContext, returnType, at, null);
+    }
+
+    public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType, AnnotatedType<T>  at, Boolean passivationCapable) {
         super(webBeansContext, WebBeansType.DEPENDENT, at, BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build(), returnType);
         try {
             INJECTION_TARGET_FIELD.set(this, new ConstructorInjectionTarget<T>(getAnnotatedType(), getInjectionPoints(), getWebBeansContext()));
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
+        if (passivationCapable != null) {
+            this.passivationCapable = passivationCapable;
+        } else {
+            this.passivationCapable = isPassivationCapable();
+        }
+    }
+
+    @Override
+    public boolean isPassivationCapable() {
+        return passivationCapable;
     }
 
     private static final class ConstructorInjectionTarget<T> extends InjectionTargetImpl<T> {
