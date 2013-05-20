@@ -722,6 +722,14 @@ public class Installer {
                 systemPropertiesWriter.write("# javax.persistence.transactionType = \n");
                 systemPropertiesWriter.write("# javax.persistence.jtaDataSource = \n");
                 systemPropertiesWriter.write("# javax.persistence.nonJtaDataSource = \n");
+
+                systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
+                systemPropertiesWriter.write("# If you don't use special tricks and sun default implementation, uncommenting these 4 lines forces TomEE to use it without overhead at all = \n");
+                systemPropertiesWriter.write("#\n");
+                systemPropertiesWriter.write("# javax.xml.soap.MessageFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl\n");
+                systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
+                systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
+                systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
             } catch (IOException e) {
                 // ignored, this file is far to be mandatory
             } finally {
