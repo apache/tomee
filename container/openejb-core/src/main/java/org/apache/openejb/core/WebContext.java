@@ -27,12 +27,18 @@ import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletRequestAttributeListener;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionListener;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -156,10 +162,11 @@ public class WebContext {
             synchronized (this) {
                 beanDefinition = constructorInjectionBeanCache.get(beanClass);
                 if (beanDefinition == null) {
-                    if (Servlet.class.isAssignableFrom(beanClass) || Filter.class.isAssignableFrom(beanClass) || ServletContextListener.class.isAssignableFrom(beanClass)) {
-                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass), false);
+                    final AnnotatedType annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass);
+                    if (isWeb(beanClass)) {
+                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, annotatedType, false);
                     } else {
-                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(beanClass));
+                        beanDefinition = new ConstructorInjectionBean<Object>(webBeansContext, beanClass, annotatedType);
                     }
 
                     constructorInjectionBeanCache.put(beanClass, beanDefinition);
@@ -167,6 +174,17 @@ public class WebContext {
             }
         }
         return beanDefinition;
+    }
+
+    private static boolean isWeb(final Class<?> beanClass) {
+        return Servlet.class.isAssignableFrom(beanClass)
+                || Filter.class.isAssignableFrom(beanClass)
+                || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
+                || ServletContextListener.class.isAssignableFrom(beanClass)
+                || HttpSessionAttributeListener.class.isAssignableFrom(beanClass)
+                || ServletRequestListener.class.isAssignableFrom(beanClass)
+                || ServletContextAttributeListener.class.isAssignableFrom(beanClass)
+                || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
     }
 
     private WebBeansContext getWebBeansContext() {
