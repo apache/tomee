@@ -163,56 +163,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             scheduler = systemInstance.getComponent(Scheduler.class);
 
             if (scheduler == null || newInstance) {
-                final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
-                if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
-                    properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
-                }
-                if (!properties.containsKey("org.terracotta.quartz.skipUpdateCheck")) {
-                    properties.put("org.terracotta.quartz.skipUpdateCheck", "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true");
-                }
-                if (!properties.containsKey(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON)) {
-                    properties.put(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON, "true");
-                }
-                if (!properties.containsKey(QUARTZ_JMX) && LocalMBeanServer.isJMXActive()) {
-                    properties.put(QUARTZ_JMX, "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID)) {
-                    if (!newInstance) {
-                        properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "OpenEJB");
-                    } else {
-                        properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
-                    }
-                }
-
-                // adding our custom persister
-                if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
-                    properties.put("org.quartz.jobStore.driverDelegateInitString",
-                                   "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
-                }
-
-                if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
-                    && properties.containsKey("org.quartz.threadPool.threadCount")
-                    && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
-                    log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
-                             + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
-                }
-
-                // to ensure we can shutdown correctly, default doesn't support such a configuration
-                if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
-                    properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
-                }
+                defaultQuartzConfiguration(properties, deployment, newInstance);
 
                 try {
                     // start in container context to avoid thread leaks
@@ -252,6 +203,59 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         return thisScheduler;
+    }
+
+    private static void defaultQuartzConfiguration(final Properties properties, final BeanContext deployment, final boolean newInstance) {
+        final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
+        if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
+            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        }
+        if (!properties.containsKey("org.terracotta.quartz.skipUpdateCheck")) {
+            properties.put("org.terracotta.quartz.skipUpdateCheck", "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true");
+        }
+        if (!properties.containsKey(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON)) {
+            properties.put(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON, "true");
+        }
+        if (!properties.containsKey(QUARTZ_JMX) && LocalMBeanServer.isJMXActive()) {
+            properties.put(QUARTZ_JMX, "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID)) {
+            if (!newInstance) {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "OpenEJB");
+            } else {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
+            }
+        }
+
+        // adding our custom persister
+        if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
+            properties.put("org.quartz.jobStore.driverDelegateInitString",
+                           "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+        }
+
+        if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
+            && properties.containsKey("org.quartz.threadPool.threadCount")
+            && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
+            log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
+                     + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
+        }
+
+        // to ensure we can shutdown correctly, default doesn't support such a configuration
+        if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
+            properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
+        }
     }
 
     private static int putAll(final Properties a, final Properties b) {
