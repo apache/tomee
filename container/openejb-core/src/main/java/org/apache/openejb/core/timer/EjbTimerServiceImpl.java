@@ -147,15 +147,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
 
             final Properties properties = new Properties();
-            putAll(properties, SystemInstance.get().getProperties());
-            putAll(properties, deployment.getModuleContext().getAppContext().getProperties());
-            putAll(properties, deployment.getModuleContext().getProperties());
-            putAll(properties, deployment.getProperties());
+            int quartzProps = 0;
+            quartzProps += putAll(properties, SystemInstance.get().getProperties());
+            quartzProps += putAll(properties, deployment.getModuleContext().getAppContext().getProperties());
+            quartzProps += putAll(properties, deployment.getModuleContext().getProperties());
+            quartzProps += putAll(properties, deployment.getProperties());
 
             // custom config -> don't use default/global scheduler
             // if one day we want to keep a global config for a global scheduler (SystemInstance.get().getProperties()) we'll need to manage resume/pause etc correctly by app
             // since we have a scheduler by ejb today in such a case we don't need
-            final boolean newInstance = properties.size() > 0;
+            final boolean newInstance = quartzProps > 0;
 
             final SystemInstance systemInstance = SystemInstance.get();
 
@@ -216,7 +217,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 try {
                     // start in container context to avoid thread leaks
                     final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-                    if (!"true".equals(deployment.getProperties().getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                    if ("true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                        Thread.currentThread().setContextClassLoader(deployment.getClassLoader());
+                    } else {
                         Thread.currentThread().setContextClassLoader(EjbTimerServiceImpl.class.getClassLoader());
                     }
                     try {
@@ -251,16 +254,23 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         return thisScheduler;
     }
 
-    private static void putAll(final Properties a, final Properties b) {
+    private static int putAll(final Properties a, final Properties b) {
+        int number = 0;
         for (final Map.Entry<Object, Object> entry : b.entrySet()) {
             final String key = entry.getKey().toString();
             if (key.startsWith("org.quartz.")
                 || key.startsWith("openejb.quartz.")
                 || DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE.equals(key)
                 || "org.terracotta.quartz.skipUpdateCheck".equals(key)) {
-                a.put(entry.getKey(), entry.getValue());
+                number++;
+            }
+
+            final Object value = entry.getValue();
+            if (String.class.isInstance(value)) {
+                a.put(entry.getKey(), value);
             }
         }
+        return number;
     }
 
     @Override
