@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.timer.quartz.PatchedStdJDBCDelegate;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -38,6 +39,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.jdbcjobstore.StdJDBCDelegate;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.listeners.SchedulerListenerSupport;
 import org.quartz.simpl.RAMJobStore;
@@ -237,6 +239,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             } else {
                 properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
             }
+        }
+
+        final String driverDelegate = properties.getProperty("org.quartz.jobStore.driverDelegateClass");
+        if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
+            properties.put("org.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
+        } else if (driverDelegate != null) {
+            log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
         }
 
         // adding our custom persister
