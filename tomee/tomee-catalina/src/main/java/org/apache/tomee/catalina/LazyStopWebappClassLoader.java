@@ -86,7 +86,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
 
         // avoid to redefine classes from server in this classloader is it not already loaded
-        if (URLClassLoaderFirst.shouldSkip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name))) {
+        if (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name)) {
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name);
             } catch (ClassNotFoundException e) {
@@ -96,6 +96,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             }
         }
         return super.loadClass(name);
+    }
+
+    @Override
+    protected boolean validate(final String name) {
+        return !URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {
