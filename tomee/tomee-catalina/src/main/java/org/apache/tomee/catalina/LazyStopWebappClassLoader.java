@@ -103,6 +103,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return !URLClassLoaderFirst.shouldSkip(name);
     }
 
+    @Override
+    protected boolean filter(final String name) {
+        return false;
+    }
+
     public void internalStop() throws LifecycleException {
         if (isStarted()) {
             // reset classloader because of tomcat classloaderlogmanager
