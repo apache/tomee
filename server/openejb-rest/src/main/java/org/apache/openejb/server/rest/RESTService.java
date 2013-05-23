@@ -623,6 +623,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
             for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 if (bean.restService) {
                     final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                    if (beanContext == null) { // ear
+                        continue;
+                    }
+
                     if (containsJaxRsConfiguration(beanContext.getProperties())) {
                         appInfo.properties.setProperty(OPENEJB_USE_APPLICATION_PROPERTY, "false");
                         logOldDeploymentUsage(bean.ejbClass);
@@ -653,7 +657,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final Map<String, EJBRestServiceInfo> restEjbs = new HashMap<String, EJBRestServiceInfo>();
         for (final WebAppInfo webApp : appInfo.webApps) {
             for (final String ejb : webApp.ejbRestServices) {
-                restEjbs.put(ejb, new EJBRestServiceInfo(webApp.contextRoot, beanContexts.get(ejb)));
+                if (beanContexts.containsKey(ejb)) {
+                    restEjbs.put(ejb, new EJBRestServiceInfo(webApp.contextRoot, beanContexts.get(ejb)));
+                } // else ear probably
             }
         }
         for (final Map.Entry<String, BeanContext> ejbs : beanContexts.entrySet()) {
