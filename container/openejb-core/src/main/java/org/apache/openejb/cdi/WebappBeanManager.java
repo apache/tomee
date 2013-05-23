@@ -22,6 +22,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadata;
 import org.apache.webbeans.util.ClassUtil;
+import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.el.ELResolver;
 import javax.el.ExpressionFactory;
@@ -30,6 +31,7 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ObserverMethod;
@@ -51,23 +53,31 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void fireEvent(final Object event, final EventMetadata metadata) {
-        if (ClassUtil.isDefinitionContainsTypeVariables(event.getClass())) {
+        final Class<?> eventClass = event.getClass();
+        if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
             throw new IllegalArgumentException("Event class : " + event.getClass().getName() + " can not be defined as generic type");
         }
 
         getNotificationManager().fireEvent(event, metadata);
-        getParentBm().getNotificationManager().fireEvent(event, metadata);
+        if (isEvent(eventClass)) {
+            getParentBm().getNotificationManager().fireEvent(event, metadata);
+        }
     }
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T event, EventMetadata metadata) {
+        final Class<?> eventClass = event.getClass();
         if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
-            throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + event.getClass());
+            throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + eventClass);
         }
 
         final Set<ObserverMethod<? super T>> set = new HashSet<ObserverMethod<? super T>>();
         set.addAll(getNotificationManager().resolveObservers(event, metadata));
-        set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata));
+
+        if (isEvent(eventClass)) {
+            set.addAll(getParentBm().getNotificationManager().resolveObservers(event, metadata));
+        } // else nothing since extensions are loaded by classloader so we already have it
+
         return set;
     }
 
@@ -261,5 +271,9 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     public void beforeStop() {
         // no-op
+    }
+
+    private static boolean isEvent(final Class<?> eventClass) {
+        return !WebBeansUtil.isDefaultExtensionBeanEventType(eventClass) && !WebBeansUtil.isExtensionEventType(eventClass);
     }
 }
