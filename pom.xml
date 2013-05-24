@@ -90,7 +90,7 @@
 
   <properties>
 
-    <openejb.version>${project.version}</openejb.version>
+    <openejb.version>4.6.0-SNAPSHOT</openejb.version>
     <tomee.version>1.6.0-SNAPSHOT</tomee.version>
 
     <!-- Maven module versions -->
