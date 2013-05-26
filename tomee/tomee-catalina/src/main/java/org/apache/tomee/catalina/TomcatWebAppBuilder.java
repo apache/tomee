@@ -83,6 +83,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -1223,6 +1224,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     assembler.startEjbs(true, beanContexts);
                     assembler.bindGlobals(appContext.getBindings());
                     eagerInitOfLocalBeanProxies(beanContexts, standardContext.getLoader().getClassLoader());
+
+                    deployWebServicesIfEjbCreatedHere(contextInfo.appInfo, beanContexts);
                 }
 
                 // jndi bindings
@@ -1257,6 +1260,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
         }
+    }
+
+    private static void deployWebServicesIfEjbCreatedHere(final AppInfo info, final Collection<BeanContext> beanContexts) {
+        if (beanContexts == null || beanContexts.isEmpty()) {
+            return;
+        }
+        SystemInstance.get().fireEvent(new NewEjbAvailableAfterApplicationCreated(info, beanContexts));
     }
 
     private static void eagerInitOfLocalBeanProxies(final Collection<BeanContext> beans, final ClassLoader classLoader) {
