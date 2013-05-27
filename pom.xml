@@ -487,11 +487,6 @@
     <!--</repository>-->
     <!-- Apache snapshots -->
     <repository>
-      <id>owb-staging</id>
-      <name>OWB staging Repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-013/</url>
-    </repository>
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>http://repository.apache.org/content/groups/snapshots-group</url>
