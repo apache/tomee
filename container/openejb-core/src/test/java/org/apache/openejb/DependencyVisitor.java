@@ -45,25 +45,26 @@
  */
 package org.apache.openejb;
 
-import org.apache.xbean.asm.AnnotationVisitor;
-import org.apache.xbean.asm.ClassVisitor;
-import org.apache.xbean.asm.FieldVisitor;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Attribute;
-import org.apache.xbean.asm.Type;
-import org.apache.xbean.asm.Label;
-import org.apache.xbean.asm.signature.SignatureVisitor;
-import org.apache.xbean.asm.signature.SignatureReader;
+import org.apache.xbean.asm4.AnnotationVisitor;
+import org.apache.xbean.asm4.Attribute;
+import org.apache.xbean.asm4.FieldVisitor;
+import org.apache.xbean.asm4.Label;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm4.shade.EmptyVisitor;
+import org.apache.xbean.asm4.signature.SignatureReader;
+import org.apache.xbean.asm4.signature.SignatureVisitor;
 
-import java.util.Set;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
  */
-public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, ClassVisitor, FieldVisitor, MethodVisitor {
+public class DependencyVisitor extends EmptyVisitor {
     Set<String> packages = new HashSet<String>();
 
     Map<String, Map<String, Integer>> groups = new HashMap<String, Map<String, Integer>>();
@@ -112,7 +113,7 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             final String desc,
             final boolean visible) {
         addDesc(desc);
-        return this;
+        return super.visitAnnotation(desc, visible);
     }
 
     public void visitAttribute(final Attribute attr) {
@@ -132,7 +133,7 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
         if (value instanceof Type) {
             addType((Type) value);
         }
-        return this;
+        return super.visitField(access, name, desc, signature, value);
     }
 
     public MethodVisitor visitMethod(
@@ -147,10 +148,7 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             addSignature(signature);
         }
         addNames(exceptions);
-        return this;
-    }
-
-    public void visitSource(final String source, final String debug) {
+        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     public void visitInnerClass(
@@ -177,7 +175,7 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             final String desc,
             final boolean visible) {
         addDesc(desc);
-        return this;
+        return super.visitParameterAnnotation(parameter, desc, visible);
     }
 
     public void visitTypeInsn(final int opcode, final String desc) {
@@ -224,10 +222,6 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             final Label end,
             final int index) {
         addTypeSignature(signature);
-    }
-
-    public AnnotationVisitor visitAnnotationDefault() {
-        return this;
     }
 
     public void visitCode() {
@@ -305,55 +299,16 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             final String name,
             final String desc) {
         addDesc(desc);
-        return this;
-    }
-
-    public AnnotationVisitor visitArray(final String name) {
-        return this;
+        return super.visitAnnotation(name, desc);
     }
 
     // SignatureVisitor
-
-    public void visitFormalTypeParameter(final String name) {
-    }
-
-    public SignatureVisitor visitClassBound() {
-        return this;
-    }
-
-    public SignatureVisitor visitInterfaceBound() {
-        return this;
-    }
-
-    public SignatureVisitor visitSuperclass() {
-        return this;
-    }
-
-    public SignatureVisitor visitInterface() {
-        return this;
-    }
-
-    public SignatureVisitor visitParameterType() {
-        return this;
-    }
-
-    public SignatureVisitor visitReturnType() {
-        return this;
-    }
-
-    public SignatureVisitor visitExceptionType() {
-        return this;
-    }
 
     public void visitBaseType(final char descriptor) {
     }
 
     public void visitTypeVariable(final String name) {
         // TODO verify
-    }
-
-    public SignatureVisitor visitArrayType() {
-        return this;
     }
 
     public void visitClassType(final String name) {
@@ -365,15 +320,6 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
     }
 
     public void visitTypeArgument() {
-    }
-
-    public SignatureVisitor visitTypeArgument(final char wildcard) {
-        return this;
-    }
-
-    // common
-
-    public void visitEnd() {
     }
 
     // ---------------------------------------------
@@ -431,13 +377,102 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
 
     private void addSignature(final String signature) {
         if (signature != null) {
-            new SignatureReader(signature).accept(this);
+            new SignatureReader(signature).accept(new SignatureAdapter(this));
         }
     }
 
     private void addTypeSignature(final String signature) {
         if (signature != null) {
-            new SignatureReader(signature).acceptType(this);
+            new SignatureReader(signature).acceptType(new SignatureAdapter(this));
+        }
+    }
+
+    private class SignatureAdapter extends SignatureVisitor {
+        private final DependencyVisitor delegate;
+
+        public SignatureAdapter(final DependencyVisitor dependencyVisitor) {
+            super(Opcodes.ASM4);
+            delegate = dependencyVisitor;
+        }
+
+        @Override
+        public void visitFormalTypeParameter(String name) {
+            //delegate.visitFormalTypeParameter(name);
+        }
+
+        @Override
+        public SignatureVisitor visitClassBound() {
+            return this; //delegate.visitClassBound();
+        }
+
+        @Override
+        public SignatureVisitor visitInterfaceBound() {
+            return this; //delegate.visitInterfaceBound();
+        }
+
+        @Override
+        public SignatureVisitor visitSuperclass() {
+            return this; //delegate.visitSuperclass();
+        }
+
+        @Override
+        public SignatureVisitor visitInterface() {
+            return this; //delegate.visitInterface();
+        }
+
+        @Override
+        public SignatureVisitor visitParameterType() {
+            return this; //delegate.visitParameterType();
+        }
+
+        @Override
+        public SignatureVisitor visitReturnType() {
+            return this; //delegate.visitReturnType();
+        }
+
+        @Override
+        public SignatureVisitor visitExceptionType() {
+            return this; //delegate.visitExceptionType();
+        }
+
+        @Override
+        public void visitBaseType(char descriptor) {
+            delegate.visitBaseType(descriptor);
+        }
+
+        @Override
+        public void visitTypeVariable(String name) {
+            delegate.visitTypeVariable(name);
+        }
+
+        @Override
+        public SignatureVisitor visitArrayType() {
+            return this; //delegate.visitArrayType();
+        }
+
+        @Override
+        public void visitClassType(String name) {
+            delegate.visitClassType(name);
+        }
+
+        @Override
+        public void visitInnerClassType(String name) {
+            delegate.visitInnerClassType(name);
+        }
+
+        @Override
+        public void visitTypeArgument() {
+            delegate.visitTypeArgument();
+        }
+
+        @Override
+        public SignatureVisitor visitTypeArgument(char wildcard) {
+            return this; //delegate.visitTypeArgument(wildcard);
+        }
+
+        @Override
+        public void visitEnd() {
+            delegate.visitEnd();
         }
     }
 }

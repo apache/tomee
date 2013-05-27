@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.xbean.asm.AnnotationVisitor;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Type;
-import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm4.AnnotationVisitor;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Type;
+import org.apache.xbean.asm4.shade.EmptyVisitor;
 
 import java.util.HashSet;
 
@@ -36,10 +36,10 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean arg1) {
         if (desc.contains("RunWith"))
-            return this;
+            return super.visitAnnotation(desc, arg1);
         if (desc.contains("Keys")) {
             current.methuds.add(currentMethod);
-            return this;
+            return super.visitAnnotation(desc, arg1);
         }
         return null;
     }
@@ -47,7 +47,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         currentMethod = new MethodInfo(name);
-        return this;
+        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     @Override
@@ -72,14 +72,14 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(final String name, final String desc) {
         if (desc.contains("Key")) {
-            return this;
+            return super.visitAnnotation(name, desc);
         }
         return null;
     }
 
     @Override
     public AnnotationVisitor visitArray(final String arg0) {
-        return this;
+        return super.visitArray(arg0);
     }
 
     static class ClassInfo {

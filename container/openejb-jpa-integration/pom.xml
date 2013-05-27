@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm-shaded</artifactId>
+      <artifactId>xbean-asm4-shaded</artifactId>
       <version>${xbeanVersion}</version>
       <scope>provided</scope>
     </dependency>

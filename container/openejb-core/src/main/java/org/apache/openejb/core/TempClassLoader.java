@@ -19,9 +19,9 @@ package org.apache.openejb.core;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

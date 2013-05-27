@@ -18,11 +18,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm.AnnotationVisitor;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.FieldVisitor;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm4.AnnotationVisitor;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.FieldVisitor;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
@@ -35,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class PersistenceContextAnnFactory {
+    public static final AnnotationVisitor EMPTY_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM4) {
+    };
     private static boolean useAsm;
     static {
         boolean isPersistenceContextAnnotationValid = false;
@@ -43,7 +46,8 @@ public class PersistenceContextAnnFactory {
             Class<?> persistenceContextClass = Class.forName("javax.persistence.PersistenceContext");
             persistenceContextClass.getMethod("properties", (Class[]) null);
             isPersistenceContextAnnotationValid = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
+            // no-op
         }
         useAsm = !isPersistenceContextAnnotationValid;
     }
@@ -186,28 +190,36 @@ public class PersistenceContextAnnFactory {
                 PersistenceContextVisitor visitor = new PersistenceContextVisitor(className, currentName);
                 return visitor;
             } else if ("Ljavax/persistence/PersistenceContexts;".equals(desc)) {
-                return this;
+                return new AnnotationVisitor(Opcodes.ASM4) {
+                    @Override
+                    public AnnotationVisitor visitAnnotation(String name, String desc) {
+                        return PersistenceContextReader.this.visitAnnotation(name, desc);
+                    }
+
+                    @Override
+                    public AnnotationVisitor visitArray(String name) {
+                        return PersistenceContextReader.this.visitArray(name);
+                    }
+                };
             }
-            return new EmptyVisitor();
-        }
-
-        public AnnotationVisitor visitParameterAnnotation(int i, String string, boolean b) {
-            return new EmptyVisitor();
-        }
-
-        public AnnotationVisitor visitAnnotationDefault() {
-            return new EmptyVisitor();
+            return EMPTY_ANNOTATION_VISITOR;
         }
 
         public AnnotationVisitor visitArray(String string) {
-            return this;
+            return new AnnotationVisitor(Opcodes.ASM4) {
+                @Override
+                public AnnotationVisitor visitAnnotation(String name, String desc) {
+                    return PersistenceContextReader.this.visitAnnotation(name, desc);
+                }
+            };
         }
     }
 
-    private class PersistenceContextVisitor implements AnnotationVisitor {
+    private class PersistenceContextVisitor extends AnnotationVisitor {
         private AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(String className, String memberName) {
+            super(Opcodes.ASM4);
             persistenceContext.name = className + "/" + memberName;
         }
 
@@ -235,7 +247,7 @@ public class PersistenceContextAnnFactory {
         }
 
         public AnnotationVisitor visitArray(String string) {
-            return new EmptyVisitor() {
+            return new AnnotationVisitor(Opcodes.ASM4) {
                 private String name;
                 private String value;
 

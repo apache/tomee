@@ -20,7 +20,6 @@ import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PassthroughFactory;
@@ -40,11 +39,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class InjectionProcessor<T> {
-
-    static {
-        AsmParameterNameLoader.install();
-    }
-    
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, InjectionProcessor.class);
     private final Class<? extends T> beanClass;
     private final Collection<Injection> injections;

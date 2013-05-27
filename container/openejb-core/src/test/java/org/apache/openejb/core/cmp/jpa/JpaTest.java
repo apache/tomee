@@ -47,13 +47,13 @@ import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
+import org.apache.xbean.asm4.Opcodes;
 import org.apache.xbean.naming.context.ImmutableContext;
-import org.apache.xbean.asm.ClassAdapter;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.ClassVisitor;
-import org.apache.xbean.asm.ClassWriter;
-import static org.apache.xbean.asm.Opcodes.ACC_PRIVATE;
-import static org.apache.xbean.asm.Opcodes.ACC_TRANSIENT;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.ClassVisitor;
+import org.apache.xbean.asm4.ClassWriter;
+import static org.apache.xbean.asm4.Opcodes.ACC_PRIVATE;
+import static org.apache.xbean.asm4.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
 //    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
@@ -349,13 +349,12 @@ public class JpaTest extends TestCase {
         ClassReader classReader = new ClassReader(origBytes);
         classReader.accept(visitor, 0);
 
-        byte[] newBytes = classWriter.toByteArray();
-        return newBytes;
+        return classWriter.toByteArray();
     }
 
-    public static class FieldAdderClassVisitor extends ClassAdapter {
+    public static class FieldAdderClassVisitor extends ClassVisitor {
         public FieldAdderClassVisitor(ClassVisitor classVisitor) {
-            super(classVisitor);
+            super(Opcodes.ASM4, classVisitor);
         }
 
         public void visitEnd() {

@@ -104,7 +104,6 @@ import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.JndiTreeBrowser;
@@ -203,7 +202,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler, JndiConstants {
 
     static {
-        AsmParameterNameLoader.install();
         // avoid linkage error on mac
         // adding just in case others run into in their tests
         JULLoggerFactory.class.getName();

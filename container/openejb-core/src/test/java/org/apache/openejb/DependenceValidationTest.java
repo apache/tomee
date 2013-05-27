@@ -20,8 +20,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.ClassWriter;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.ClassWriter;
 
 import java.io.File;
 import java.io.IOException;
