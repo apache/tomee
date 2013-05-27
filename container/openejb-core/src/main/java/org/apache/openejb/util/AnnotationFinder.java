@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.xbean.asm.AnnotationVisitor;
-import org.apache.xbean.asm.Attribute;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.ClassVisitor;
-import org.apache.xbean.asm.FieldVisitor;
-import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm4.AnnotationVisitor;
+import org.apache.xbean.asm4.Attribute;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.ClassVisitor;
+import org.apache.xbean.asm4.FieldVisitor;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.BufferedInputStream;
@@ -59,10 +59,10 @@ import java.util.jar.JarInputStream;
  * @version $Rev$ $Date$
  */
 public class AnnotationFinder {
+    private static final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
 
     private final ClassLoader classLoader;
     private final List<String> classesNotLoaded = new ArrayList<String>();
-    private final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
     private List<String> classNames;
 
     /**
@@ -318,13 +318,14 @@ public class AnnotationFinder {
 
     }
 
-    public class Visitor implements ClassVisitor {
+    public class Visitor extends ClassVisitor {
 
         private NotFoundException notFoundException;
         private FoundException foundException;
         private final Filter filter;
 
         public Visitor(final Filter filter) {
+            super(Opcodes.ASM4);
             this.filter = filter;
 
             try {

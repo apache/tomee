@@ -17,11 +17,11 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm.ClassWriter;
-import org.apache.xbean.asm.Label;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.Type;
+import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm4.Label;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
