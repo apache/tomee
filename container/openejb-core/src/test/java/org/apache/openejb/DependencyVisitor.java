@@ -52,7 +52,7 @@ import org.apache.xbean.asm4.Label;
 import org.apache.xbean.asm4.MethodVisitor;
 import org.apache.xbean.asm4.Opcodes;
 import org.apache.xbean.asm4.Type;
-import org.apache.xbean.asm4.shade.EmptyVisitor;
+import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
 import org.apache.xbean.asm4.signature.SignatureReader;
 import org.apache.xbean.asm4.signature.SignatureVisitor;
 
