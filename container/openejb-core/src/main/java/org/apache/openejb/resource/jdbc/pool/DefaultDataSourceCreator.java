@@ -37,13 +37,14 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
 
     @Override
     public DataSource poolManaged(final String name, final DataSource ds, final Properties properties) {
-        return new DbcpManagedDataSource(name, ds);
+        return build(DbcpManagedDataSource.class, new DbcpManagedDataSource(name, ds), properties);
     }
 
     @Override
     public DataSource poolManaged(final String name, final String driver, final Properties properties) {
         final BasicManagedDataSource ds = new BasicManagedDataSource(name);
         ds.setDriverClassName(driver);
+        build(BasicManagedDataSource.class, ds, properties);
         return ds;
     }
 
@@ -51,18 +52,20 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     public DataSource poolManagedWithRecovery(final String name, final XAResourceWrapper xaResourceWrapper, final String driver, final Properties properties) {
         final BasicManagedDataSource ds = new ManagedDataSourceWithRecovery(name, xaResourceWrapper);
         ds.setDriverClassName(driver);
+        build(BasicManagedDataSource.class, ds, properties);
         return ds;
     }
 
     @Override
     public DataSource pool(final String name, final DataSource ds, final Properties properties) {
-        return new DbcpDataSource(name, ds);
+        return build(DbcpDataSource.class, new DbcpDataSource(name, ds), properties);
     }
 
     @Override
     public DataSource pool(final String name, final String driver, final Properties properties) {
         final BasicDataSource ds = new BasicDataSource(name);
         ds.setDriverClassName(driver);
+        build(BasicManagedDataSource.class, ds, properties);
         return ds;
     }
 
@@ -74,10 +77,5 @@ public class DefaultDataSourceCreator extends DbcpDataSourceCreator {
     @Override
     protected void doDestroy(final DataSource dataSource) throws Throwable {
         ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
-    }
-
-    @Override
-    public ObjectRecipe clearRecipe(final Object object) {
-        return null; // no recipe here
     }
 }

@@ -116,6 +116,7 @@ import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -2046,19 +2047,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (serviceInfo.properties.containsKey("Definition")) {
             try { // we catch classcast etc..., if it fails it is not important
                 final InputStream is = new ByteArrayInputStream(serviceInfo.properties.getProperty("Definition").getBytes());
-                final Properties p = new Properties();
+                final Properties p = new SuperProperties();
                 IO.readProperties(is, p);
                 for (final Map.Entry<Object, Object> entry : p.entrySet()) {
                     final String key = entry.getKey().toString();
                     if (!props.containsKey(key)
                             // never override from Definition, just use it to complete the properties set
-                            &&
-                            !(key.equalsIgnoreCase("url") &&
-                                    props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
+                            && !(key.equalsIgnoreCase("url") && props.containsKey("JdbcUrl"))) { // with @DataSource we can get both, see org.apache.openejb.config.ConvertDataSourceDefinitions.rawDefinition()
                         props.put(key, entry.getValue());
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignored
             }
         }

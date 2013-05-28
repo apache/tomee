@@ -17,6 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +40,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Note: to make this test work under JavaSE 6 you should add geronimo-annotation_1.1_spec in your endorsed dir.
@@ -54,7 +57,7 @@ public class DataSourceDefinitionTest {
 
     @Module
     public Class<?>[] app() throws Exception {
-        return new Class<?>[]{DatasourceDefinitionBean.class, DatasourceDefinitionsBean.class};
+        return new Class<?>[]{ DatasourceDefinitionBean.class, DatasourceDefinitionsBean.class };
     }
 
     @DataSourceDefinition(
@@ -62,7 +65,8 @@ public class DataSourceDefinitionTest {
             className = "org.hsqldb.jdbc.JDBCDataSource",
             user = "sa",
             password = "",
-            url = "jdbc:hsqldb:mem:superDS"
+            url = "jdbc:hsqldb:mem:superDS",
+            properties = { "poolPreparedStatements = true", "minIdle = 2", "maxOpenPreparedStatements = 20" }
     )
     @Singleton
     public static class DatasourceDefinitionBean {
@@ -71,6 +75,12 @@ public class DataSourceDefinitionTest {
 
         public DataSource getDs() {
             return ds;
+        }
+
+        public void validProperties() {
+            final DbcpManagedDataSource dbcp = DbcpManagedDataSource.class.cast(ds);
+            assertEquals(2, dbcp.getMinIdle());
+            assertTrue(dbcp.isPoolPreparedStatements());
         }
     }
 
@@ -88,6 +98,7 @@ public class DataSourceDefinitionTest {
                     user = "sa",
                     password = "",
                     url = "jdbc:hsqldb:mem:superDS"
+
             )
     })
     @Stateless
@@ -109,6 +120,7 @@ public class DataSourceDefinitionTest {
     @Test
     public void assertDataSourceDefinition() throws Exception {
         assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.JDBCDataSource", "sa", "");
+        uniqueDataSource.validProperties();
     }
 
     @Test
@@ -165,20 +177,23 @@ public class DataSourceDefinitionTest {
         public Movies(DataSource movieDatabase) throws SQLException {
             this.movieDatabase = movieDatabase;
 
-            Connection connection = movieDatabase.getConnection();
-            PreparedStatement stmt = connection.prepareStatement("CREATE TABLE movie ( director VARCHAR(255), title VARCHAR(255), year integer)");
+            final Connection connection = movieDatabase.getConnection();
+            final PreparedStatement stmt = connection.prepareStatement("CREATE TABLE movie ( director VARCHAR(255), title VARCHAR(255), year integer)");
             stmt.execute();
+            stmt.close();
+            connection.close();
 
         }
 
         public void addMovie(Movie movie) throws Exception {
             Connection conn = movieDatabase.getConnection();
             try {
-                PreparedStatement sql = conn.prepareStatement("INSERT into movie (director, title, year) values (?, ?, ?)");
+                final PreparedStatement sql = conn.prepareStatement("INSERT into movie (director, title, year) values (?, ?, ?)");
                 sql.setString(1, movie.getDirector());
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
                 sql.execute();
+                sql.close();
             } finally {
                 conn.close();
             }
@@ -193,6 +208,7 @@ public class DataSourceDefinitionTest {
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
                 sql.execute();
+                sql.close();
             } finally {
                 conn.close();
             }
