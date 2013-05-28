@@ -62,7 +62,7 @@ public class DataSourceDefinitionTest {
         final DbcpManagedDataSource castedDs = (DbcpManagedDataSource) ds;
 
         final String driver = castedDs.getDriverClassName();
-        assertNull(null, driver);
+        assertEquals("org.h2.jdbcx.JdbcDataSource", driver);
 
         final String user = castedDs.getUserName();
         assertEquals("sa", user);
