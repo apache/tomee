@@ -33,6 +33,7 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -71,6 +72,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -615,7 +617,7 @@ public final class ApplicationComposers {
                 field.set(testInstance, appModule);
             } else if (Context.class.isAssignableFrom(type)) {
                 field.setAccessible(true);
-                field.set(testInstance, appContext.getGlobalJndiContext());
+                field.set(testInstance, new InitialContext(new Properties() {{ setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName()); }}));
             } else {
                 throw new IllegalArgumentException("can't find value for type " + type.getName());
             }
