@@ -1371,10 +1371,6 @@
         <version>1.6.10</version>
         <exclusions>
           <exclusion>
-            <artifactId>xmlsec</artifactId>
-            <groupId>org.apache.santuario</groupId>
-          </exclusion>
-          <exclusion>
             <artifactId>commons-logging</artifactId>
             <groupId>commons-logging</groupId>
           </exclusion>
