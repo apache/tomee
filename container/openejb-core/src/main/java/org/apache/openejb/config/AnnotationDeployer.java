@@ -118,6 +118,7 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
@@ -209,7 +210,9 @@ import javax.xml.ws.WebServiceRefs;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -4431,11 +4434,25 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (!d.url().isEmpty()) dataSource.setUrl(d.url());
             if (!d.user().isEmpty()) dataSource.setUser(d.user());
 
-            for (String s : d.properties()) {
-                final String key = s.substring(0, s.indexOf('='));
-                final String value = s.substring(s.indexOf('='));
-
-                dataSource.property(key, value);
+            for (final String s : d.properties()) {
+                final int equal = s.indexOf('=');
+                if (equal < s.length() - 1) {
+                    final SuperProperties props = new SuperProperties();
+                    try {
+                        props.load(new ByteArrayInputStream(s.getBytes()));
+                        for (final String key : props.stringPropertyNames()) {
+                            if (!key.isEmpty()) {
+                                dataSource.property(key, props.getProperty(key));
+                            }
+                        }
+                    } catch (final IOException e) {
+                        final String key = s.substring(0, equal).trim();
+                        final String value = s.substring(equal + 1).trim();
+                        dataSource.property(key, value);
+                    }
+                } else {
+                    dataSource.property(s.trim(), "");
+                }
             }
 
             consumer.getDataSource().add(dataSource);
