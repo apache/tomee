@@ -1,22 +1,15 @@
 // Sample script
-var myImports = new JavaImporter(
-  java.util.Properties,
-  javax.naming.InitialContext
-);
+var p = new java.util.Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put("java.naming.provider.url", "http://localhost:8080/tomee/ejb");
+p.put("java.naming.security.principal", "tomee");
+p.put("java.naming.security.credentials", "tomee");
 
-with (myImports) {
-  var p = new Properties();
-  p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-  p.put("java.naming.provider.url", "{{protocol}}://localhost:{{port}}/tomee/ejb");
-  p.put("java.naming.security.principal", "{{name}}");
-  p.put("java.naming.security.credentials", "{{password}}");
-
-  var ctx = new InitialContext(p);
-  var varList = [];
-  var values = ctx.list("");
-  while(values.hasMore()) {
+var ctx = new javax.naming.InitialContext(p);
+var varList = [];
+var values = ctx.list("");
+while(values.hasMore()) {
     var pair = values.next();
     varList.push(pair.getName());
-  }
-  varList.join(", ");
 }
+varList.join(", ");
