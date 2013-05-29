@@ -320,7 +320,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (sun.startsWith("crypto.")) return true;
             return false;
         }
-        if (name.startsWith("javassist")) return true;
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
