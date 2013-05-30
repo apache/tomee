@@ -32,9 +32,6 @@ public class JULOpenJPALog  implements Log {
 
     public JULOpenJPALog(final LoggerCreator delegate) {
         logger = delegate;
-        if (logger.isInit()) {
-            LoggerCreator.Get.levels(logger, debug, info);
-        }
     }
 
     private Logger logger() {
@@ -43,11 +40,13 @@ public class JULOpenJPALog  implements Log {
 
     @Override
     public boolean isTraceEnabled() {
+        logger(); // ensure level cache is initialized
         return debug.get();
     }
 
     @Override
     public boolean isInfoEnabled() {
+        logger();
         return info.get();
     }
 

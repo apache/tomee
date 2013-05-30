@@ -65,8 +65,6 @@ public class LoggerCreator implements Callable<Logger> {
                             handler.setLevel(level);
                         }
                     }
-
-                    init = true;
                 }
             }
         }
@@ -99,6 +97,10 @@ public class LoggerCreator implements Callable<Logger> {
         }
 
         public static void levels(final LoggerCreator lc, final AtomicBoolean debug, final AtomicBoolean info) {
+            if (lc.init) {
+                return;
+            }
+
             final Logger l;
             try {
                 l = lc.call();
@@ -108,6 +110,7 @@ public class LoggerCreator implements Callable<Logger> {
 
             debug.set(l.isLoggable(Level.FINE));
             info.set(l.isLoggable(Level.INFO));
+            lc.init = true;
         }
     }
 }
