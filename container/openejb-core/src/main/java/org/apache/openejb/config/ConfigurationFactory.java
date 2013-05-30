@@ -432,21 +432,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    /**
-     * Main loop that gets executed when OpenEJB starts up Reads config files and produces the basic "AST" the assembler needs to actually build the contianer system
-     * <p/>
-     * This method is called by the Assembler once at startup.
-     *
-     * @return OpenEjbConfiguration
-     * @throws OpenEJBException
-     */
-    @Override
-    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
+    public OpenEjbConfiguration getOpenEjbConfiguration(final Openejb providedConf) throws OpenEJBException {
         if (sys != null) {
             return sys;
         }
 
-        if (configLocation != null) {
+        if (providedConf != null) {
+            openejb = providedConf;
+        } else if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
             openejb = JaxbOpenejb.createOpenejb();
@@ -567,6 +560,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         openejb = null;
 
         return finished;
+    }
+
+    /**
+     * Main loop that gets executed when OpenEJB starts up Reads config files and produces the basic "AST" the assembler needs to actually build the contianer system
+     * <p/>
+     * This method is called by the Assembler once at startup.
+     *
+     * @return OpenEjbConfiguration
+     * @throws OpenEJBException
+     */
+    @Override
+    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
+        return getOpenEjbConfiguration(null);
     }
 
     private List<File> getDeclaredApps() {
