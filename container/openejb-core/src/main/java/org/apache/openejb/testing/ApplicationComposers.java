@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.ScopeHelper;
 import org.apache.openejb.config.AppModule;
@@ -33,6 +34,8 @@ import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -67,6 +70,7 @@ import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
+import org.xml.sax.InputSource;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
@@ -129,24 +133,29 @@ public final class ApplicationComposers {
         final List<Throwable> errors = new ArrayList<Throwable>();
 
         final List<Method> configs = new ArrayList<Method>();
-        configs.addAll(testClassFinder.findAnnotatedMethods(Configuration.class));
+        final List<Method> annotatedConfigurationMethods = testClassFinder.findAnnotatedMethods(Configuration.class);
+        configs.addAll(annotatedConfigurationMethods);
         configs.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Configuration.class));
-        if (configs.size() > 1) {
-            final String gripe = "Test class should have no more than one @Configuration method";
-            errors.add(new Exception(gripe));
+        {
+            int nbProp = 0;
+            int nbOpenejb = 0;
+            for (final Method m : annotatedConfigurationMethods) {
+                final Class<?> type = m.getReturnType();
+                if (Openejb.class.isAssignableFrom(type) || String.class.equals(type)) {
+                    nbOpenejb++;
+                } else if (Properties.class.isAssignableFrom(type)) {
+                    nbProp++;
+                } // else not supported?
+            }
+            if (nbProp > 1 || nbOpenejb > 1) {
+                final String gripe = "Test class should have no more than one @Configuration method by type (Openejb/String or Properties)";
+                errors.add(new Exception(gripe));
+            }
         }
 
         if (testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.MockInjector.class).size()
             + testClassFinder.findAnnotatedMethods(MockInjector.class).size() > 1) {
             errors.add(new Exception("Test class should have no more than one @MockInjector method"));
-        }
-
-        for (final Method method : configs) {
-            final Class<?> type = method.getReturnType();
-            if (!Properties.class.isAssignableFrom(type)) {
-                final String gripe = "@Configuration method must return " + Properties.class.getName();
-                errors.add(new Exception(gripe));
-            }
         }
 
         final List<Method> components = new ArrayList<Method>();
@@ -270,6 +279,7 @@ public final class ApplicationComposers {
             configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
         }
 
+        Openejb openejb = null;
         final List<Method> configs = new ArrayList<Method>();
         configs.addAll(testClassFinder.findAnnotatedMethods(Configuration.class));
         configs.addAll(testClassFinder.findAnnotatedMethods(org.apache.openejb.junit.Configuration.class));
@@ -278,6 +288,14 @@ public final class ApplicationComposers {
             if (o instanceof Properties) {
                 final Properties properties = (Properties) o;
                 configuration.putAll(properties);
+            } else if (Openejb.class.isInstance(o)) {
+                openejb = Openejb.class.cast(o);
+            } else if (String.class.isInstance(o)) {
+                final URL url = Thread.currentThread().getContextClassLoader().getResource(String.class.cast(o));
+                if (url ==null) {
+                    throw new IllegalArgumentException(o.toString() + " not found");
+                }
+                openejb = JaxbOpenejb.readConfig(new InputSource(url.openStream()));
             }
         }
 
@@ -556,7 +574,13 @@ public final class ApplicationComposers {
         assembler = new Assembler();
         SystemInstance.get().setComponent(Assembler.class, assembler);
 
-        assembler.buildContainerSystem(config.getOpenEjbConfiguration());
+        final OpenEjbConfiguration openEjbConfiguration;
+        if (openejb != null) {
+            openEjbConfiguration = config.getOpenEjbConfiguration(openejb);
+        } else {
+            openEjbConfiguration = config.getOpenEjbConfiguration();
+        }
+        assembler.buildContainerSystem(openEjbConfiguration);
 
         if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
             || (annotation != null || annotationOld != null)) {
