@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.classloader;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -188,7 +189,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.mail.")) return false;
-        if (name.startsWith("javax.")) return true;
+        if (name.startsWith("javax.")) return isInServer(name);
         if (name.startsWith("sun.")) return true;
 
         // can be provided in the webapp
@@ -323,6 +324,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
+    }
+
+    private static boolean isInServer(final String name) {
+        return ParentClassLoaderFinder.Helper.get().getResource(name.replace('.', '/') + ".class") != null;
     }
 
     public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
