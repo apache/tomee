@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.log;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Properties;
@@ -81,10 +82,14 @@ public class LoggerCreator implements Callable<Logger> {
         }
 
         private static Logger exec(final LoggerCreator creator) {
+            final ClassLoader old = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(ParentClassLoaderFinder.Helper.get());
             try {
                 return creator.call();
-            } catch (Exception e) { // shouldn't occur regarding the impl we use
+            } catch (final Exception e) { // shouldn't occur regarding the impl we use
                 return Logger.getLogger("default");
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
             }
         }
 
