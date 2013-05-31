@@ -370,9 +370,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean isFilterableResource(final String name) {
-        // currently bean validation, Slf4j
-        return "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
-                || "org/slf4j/impl/StaticLoggerBinder.class".equals(name);
+        // currently bean validation, Slf4j, myfaces (because of enrichment)
+        return name != null
+                && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+                || name.startsWith("META-INF/services/org.apache.myfaces.spi")
+                || "org/slf4j/impl/StaticLoggerBinder.class".equals(name));
     }
 
     // useful method for SPI
