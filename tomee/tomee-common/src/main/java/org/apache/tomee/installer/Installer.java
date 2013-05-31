@@ -635,60 +635,60 @@ public class Installer {
         // conf/logging.properties
         // now we are using tomcat one of jdk one by default
         //
-        final String openejbLoggingProps = "################################\n\n" +
-                "# OpenEJB/TomEE specific loggers\n\n" +
-                "################################\n\n" +
-                "#\n\n" +
-                "# ACTIVATE LEVEL/HANDLERS YOU WANT\n\n" +
-                "# IF YOU ACTIVATE 5tomee.org.apache.juli.FileHandler\n\n" +
-                "# ADD IT TO handlers LINE LIKE:\n\n" +
-                "#\n\n" +
-                "# handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.FileHandler, 3manager.org.apache.juli.FileHandler, 4host-manager.org.apache.juli.FileHandler, 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "#\n\n" +
-                "# LEVELS:\n\n" +
-                "# =======\n\n" +
-                "#\n\n" +
-                "# OpenEJB.level             = WARNING\n\n" +
-                "# OpenEJB.options.level     = INFO\n\n" +
-                "# OpenEJB.server.level      = INFO\n\n" +
-                "# OpenEJB.startup.level     = INFO\n\n" +
-                "# OpenEJB.startup.service.level = WARNING\n\n" +
-                "# OpenEJB.startup.config.level = INFO\n\n" +
-                "# OpenEJB.hsql.level        = INFO\n\n" +
-                "# CORBA-Adapter.level       = WARNING\n\n" +
-                "# Transaction.level         = WARNING\n\n" +
-                "# org.apache.activemq.level = SEVERE\n\n" +
-                "# org.apache.geronimo.level = SEVERE\n\n" +
-                "# openjpa.level             = WARNING\n\n" +
-                "# OpenEJB.cdi.level         = INFO\n\n" +
-                "# org.apache.webbeans.level = INFO\n\n" +
-                "# org.apache.openejb.level = FINE\n\n" +
-                "#\n\n" +
-                "# HANDLERS:\n\n" +
-                "# =========\n\n" +
-                "#\n\n" +
-                "# OpenEJB.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.options.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.server.handlers      = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.startup.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.startup.service.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.startup.config.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.hsql.handlers        = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# CORBA-Adapter.handlers       = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# Transaction.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# org.apache.activemq.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# org.apache.geronimo.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# openjpa.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# OpenEJB.cdi.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
-                "# org.apache.webbeans.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\n\n" +
+        final String openejbLoggingProps = "################################\r\n" +
+                "# OpenEJB/TomEE specific loggers\r\n" +
+                "################################\r\n" +
+                "#\r\n" +
+                "# ACTIVATE LEVEL/HANDLERS YOU WANT\r\n" +
+                "# IF YOU ACTIVATE 5tomee.org.apache.juli.FileHandler\r\n" +
+                "# ADD IT TO handlers LINE LIKE:\r\n" +
+                "#\r\n" +
+                "# handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.FileHandler, 3manager.org.apache.juli.FileHandler, 4host-manager.org.apache.juli.FileHandler, 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "#\r\n" +
+                "# LEVELS:\r\n" +
+                "# =======\r\n" +
+                "#\r\n" +
+                "# OpenEJB.level             = WARNING\r\n" +
+                "# OpenEJB.options.level     = INFO\r\n" +
+                "# OpenEJB.server.level      = INFO\r\n" +
+                "# OpenEJB.startup.level     = INFO\r\n" +
+                "# OpenEJB.startup.service.level = WARNING\r\n" +
+                "# OpenEJB.startup.config.level = INFO\r\n" +
+                "# OpenEJB.hsql.level        = INFO\r\n" +
+                "# CORBA-Adapter.level       = WARNING\r\n" +
+                "# Transaction.level         = WARNING\r\n" +
+                "# org.apache.activemq.level = SEVERE\r\n" +
+                "# org.apache.geronimo.level = SEVERE\r\n" +
+                "# openjpa.level             = WARNING\r\n" +
+                "# OpenEJB.cdi.level         = INFO\r\n" +
+                "# org.apache.webbeans.level = INFO\r\n" +
+                "# org.apache.openejb.level = FINE\r\n" +
+                "#\r\n" +
+                "# HANDLERS:\r\n" +
+                "# =========\r\n" +
+                "#\r\n" +
+                "# OpenEJB.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.options.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.server.handlers      = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.startup.handlers     = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.startup.service.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.startup.config.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.hsql.handlers        = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# CORBA-Adapter.handlers       = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# Transaction.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# org.apache.activemq.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# org.apache.geronimo.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# openjpa.handlers             = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# OpenEJB.cdi.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
+                "# org.apache.webbeans.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# org.apache.openejb.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "#\r\n" +
                 "# TOMEE HANDLER SAMPLE:\r\n" +
                 "# =====================\r\n" +
-                "#\n\n" +
-                "# 5tomee.org.apache.juli.FileHandler.level = FINEST\n\n" +
-                "# 5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs\n\n" +
-                "# 5tomee.org.apache.juli.FileHandler.prefix = tomee.\n\n";
+                "#\r\n" +
+                "# 5tomee.org.apache.juli.FileHandler.level = FINEST\r\n" +
+                "# 5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs\r\n" +
+                "# 5tomee.org.apache.juli.FileHandler.prefix = tomee.\r\n";
         File loggingPropsFile = new File(confDir, "logging.properties");
         String newLoggingProps = null;
         if (!loggingPropsFile.exists()) {
