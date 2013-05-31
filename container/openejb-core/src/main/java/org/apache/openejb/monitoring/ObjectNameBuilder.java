@@ -70,7 +70,11 @@ public class ObjectNameBuilder {
     }
 
     public ObjectNameBuilder set(String key, String value) {
-        map.put(key, value);
+        if (value == null || value.isEmpty()) {
+            map.put(key, "<empty>");
+        } else {
+            map.put(key, value);
+        }
         return this;
     }
 
