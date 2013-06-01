@@ -566,7 +566,7 @@ public class StatelessPoolStatsTest extends TestCase {
     }
 
     private CounterBean deploy(final String moduleId, final Properties properties) throws Exception {
-        objectName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=" + moduleId + ",StatelessSessionBean=CounterBean,j2eeType=Pool,name=CounterBean");
+        objectName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=" + moduleId + ",StatelessSessionBean=CounterBean,j2eeType=Pool,name=CounterBean");
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, org.apache.openejb.core.LocalInitialContextFactory.class.getName());
 
