@@ -220,7 +220,7 @@ public class PersistenceBootstrap {
             }
 
             public void startPersistenceUnit(String uri, String localName, String qName, Attributes attributes) {
-                String unitName = attributes.getValue(null, "name");
+                String unitName = attributes.getValue("name");
                 unit = new Unit(unitName);
             }
 
