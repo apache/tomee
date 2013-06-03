@@ -459,7 +459,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             out = new File(parent, name);
         }
         delete(out);
-        if (!out.isDirectory()) {
+        if (!warFile.isDirectory() && name.endsWith("." + packaging)) {
             final String dir = name.substring(0, name.lastIndexOf('.'));
             final File unpacked;
             if (war) {
