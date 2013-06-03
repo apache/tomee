@@ -166,7 +166,7 @@ PDFBox
 plexus-
 plugin.jar
 poi-
-quartz-
+quartz-2
 resources.jar
 rmock-
 rt.jar
