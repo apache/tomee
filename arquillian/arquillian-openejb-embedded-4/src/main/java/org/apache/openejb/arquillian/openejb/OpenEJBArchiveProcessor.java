@@ -114,7 +114,10 @@ public class OpenEJBArchiveProcessor {
                         LOGGER.log(Level.SEVERE, "can't add a library to the deployment", e);
                     }
                 } else if (ArchiveAsset.class.isInstance(asset)) {
-                    archive.merge(((ArchiveAsset) asset).getArchive());
+                    final Archive<?> nestedArchive = ArchiveAsset.class.cast(asset).getArchive();
+                    if (!isExcluded(nestedArchive.getName())) {
+                        archive.merge(nestedArchive);
+                    }
                 }
             }
         } else {
@@ -302,8 +305,13 @@ public class OpenEJBArchiveProcessor {
             final String classname = name(node.getKey().get());
             try {
                 classes.add(cl.loadClass(classname));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (final ClassNotFoundException e) {
+                LOGGER.fine("Can't load class " + classname);
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    e.printStackTrace(System.err);
+                }
+            } catch (final NoClassDefFoundError ncdfe) {
+                // no-op
             }
         }
 
@@ -333,6 +341,11 @@ public class OpenEJBArchiveProcessor {
         }
 
         return new SimpleWebappAggregatedArchive(new CompositeArchive(archives), classesByUrl);
+    }
+
+    private static boolean isExcluded(final String archiveName) {
+        return "arquillian-junit.jar".equals(archiveName) || "arquillian-protocol.jar".equals(archiveName)
+                || "arquillian-core.jar".equals(archiveName);
     }
 
     private static String name(final String raw) {
