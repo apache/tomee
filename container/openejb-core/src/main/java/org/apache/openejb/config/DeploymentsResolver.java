@@ -49,7 +49,7 @@ import static org.apache.openejb.util.URLs.toFileUrl;
  */
 public class DeploymentsResolver implements DeploymentFilterable {
 
-    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
+    private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "exclude-include");
     private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
     private static final Logger logger = DeploymentLoader.logger;
     private static File lib = null;
@@ -66,10 +66,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         if (new File(f.getParentFile(), f.getName() + ".war").exists()) {
             return true;
         }
-        if (new File(f.getParentFile(), f.getName() + ".ear").exists()) {
-            return true;
-        }
-        return false;
+        return new File(f.getParentFile(), f.getName() + ".ear").exists();
     }
 
     protected static boolean isValidDirectory(final File file) {
@@ -126,6 +123,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
     }
 
     public static class DeploymentsConfigurationException extends RuntimeException {
+
         public DeploymentsConfigurationException(final String message) {
             super(message);
         }
@@ -170,7 +168,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             // Ignore any unpacked versions
             for (final File file : list) {
-                if (!isArchive(file)) continue;
+                if (!isArchive(file)) {
+                    continue;
+                }
                 final String archive = file.getAbsolutePath();
                 files.remove(archive.substring(0, archive.length() - 4));
             }
@@ -184,8 +184,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
     }
 
     private static boolean isArchive(final File file) {
-        if (!file.isFile()) return false;
-        if (!file.getName().toLowerCase().endsWith("ar")) return false;
+        if (!file.isFile()) {
+            return false;
+        }
+        if (!file.getName().toLowerCase().endsWith("ar")) {
+            return false;
+        }
 
         final String name = file.getName();
         final char c = name.charAt(name.length() - 4);
@@ -276,7 +280,17 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 final boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
 
                 if (size < 50 && willScrape) {
-                    logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                    logger.info("Inspecting classpath for applications: " +
+                                urls.size() +
+                                " urls. Consider adjusting your exclude/include.  Current settings: " +
+                                CLASSPATH_EXCLUDE +
+                                "='" +
+                                exclude +
+                                "', " +
+                                CLASSPATH_INCLUDE +
+                                "='" +
+                                include +
+                                "'");
                 } else if (willScrape) {
                     logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
                     logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
@@ -284,22 +298,23 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
 
             final long begin = System.currentTimeMillis();
-            processUrls(urls, classLoader, requireDescriptors, base, jarList);
+            processUrls("DeploymentsResolver1", urls, classLoader, requireDescriptors, base, jarList);
             final long end = System.currentTimeMillis();
             final long time = end - begin;
 
             UrlSet unchecked = new UrlSet();
+
             if (!filterDescriptors) {
                 unchecked = NewLoaderLogic.applyBuiltinExcludes(prefiltered.exclude(urlSet));
                 if (filterSystemApps) {
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
-                processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
+                processUrls("DeploymentsResolver2", unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
             }
 
             if (logger.isDebugEnabled()) {
                 final int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
-                logger.debug("URLs after filtering: " + urlCount);
+                logger.debug("DeploymentsResolver: URLs after filtering: " + urlCount);
                 for (final URL url : urlSet.getUrls()) {
                     logger.debug("Annotations path: " + url);
                 }
@@ -308,7 +323,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
             }
 
-            if (urls.size() == 0) return;
+            if (urls.size() == 0) {
+                return;
+            }
 
             if (time < 1000) {
                 logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
@@ -316,7 +333,15 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 10000) {
                 logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
-                logger.warning("Consider adjusting your " + CLASSPATH_EXCLUDE + " and " + CLASSPATH_INCLUDE + " settings.  Current settings: exclude='" + exclude + "', include='" + include + "'");
+                logger.warning("Consider adjusting your " +
+                               CLASSPATH_EXCLUDE +
+                               " and " +
+                               CLASSPATH_INCLUDE +
+                               " settings.  Current settings: exclude='" +
+                               exclude +
+                               "', include='" +
+                               include +
+                               "'");
             } else {
                 logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
@@ -336,7 +361,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     }
 
-    public static void processUrls(final List<URL> urls, final ClassLoader classLoader, final Set<RequireDescriptors> requireDescriptors, final FileUtils base, final List<URL> jarList) {
+    public static void processUrls(final String caller,
+                                   final List<URL> urls,
+                                   final ClassLoader classLoader,
+                                   final Set<RequireDescriptors> requireDescriptors,
+                                   final FileUtils base,
+                                   final List<URL> jarList) {
         for (final URL url : urls) {
 
             final String urlProtocol = url.getProtocol();
@@ -347,12 +377,20 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 continue;
             }
 
+            if (logger.isDebugEnabled()) {
+                logger.debug(caller + ".processing: " + url);
+            }
+
             try {
 
                 final DeploymentLoader deploymentLoader = new DeploymentLoader();
 
                 final Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
-                if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
+                if (AppModule.class.isAssignableFrom(moduleType) ||
+                    EjbModule.class.isAssignableFrom(moduleType) ||
+                    PersistenceModule.class.isAssignableFrom(moduleType) ||
+                    ConnectorModule.class.isAssignableFrom(moduleType) ||
+                    ClientModule.class.isAssignableFrom(moduleType)) {
 
                     final URL archive = toFileUrl(url);
 
