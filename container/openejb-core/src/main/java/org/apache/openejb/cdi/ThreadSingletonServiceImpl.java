@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.AppContext;
@@ -71,7 +70,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     @Override
-    public void initialize(StartupObject startupObject) {
+    public void initialize(final StartupObject startupObject) {
         final AppContext appContext = startupObject.getAppContext();
 
         appContext.setCdiEnabled(hasBeans(startupObject.getAppInfo()));
@@ -79,7 +78,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
         final Properties properties = new Properties();
 
-        Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
+        final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
         properties.setProperty(OpenWebBeansConfiguration.USE_EJB_DISCOVERY, "true");
         //from CDI builder
@@ -90,7 +89,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         final String failoverService = startupObject.getAppInfo().properties.getProperty("org.apache.webbeans.spi.FailOverService",
-                SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService", (String) null));
+                                                                                         SystemInstance.get().getProperty("org.apache.webbeans.spi.FailOverService",
+                                                                                                                          null));
         if (failoverService != null) {
             properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, failoverService);
         }
@@ -119,24 +119,24 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         services.put(JNDIService.class, new OpenEJBJndiService());
         services.put(TransactionService.class, new OpenEJBTransactionService());
         if (startupObject.getWebContext() == null) {
-            services.put(ELAdaptor.class,new CustomELAdapter(appContext));
+            services.put(ELAdaptor.class, new CustomELAdapter(appContext));
         } else {
-            services.put(ELAdaptor.class,new CustomELAdapter(appContext, startupObject.getWebContext()));
+            services.put(ELAdaptor.class, new CustomELAdapter(appContext, startupObject.getWebContext()));
         }
         services.put(ScannerService.class, new CdiScanner());
         services.put(LoaderService.class, new OptimizedLoaderService());
 
         optional(services, ConversationService.class, "org.apache.webbeans.jsf.DefaultConversationService");
 
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader cl;
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl;
         if (oldClassLoader != ThreadSingletonServiceImpl.class.getClassLoader() && ThreadSingletonServiceImpl.class.getClassLoader() != oldClassLoader.getParent()) {
             cl = new MultipleClassLoader(oldClassLoader, ThreadSingletonServiceImpl.class.getClassLoader());
         } else {
             cl = oldClassLoader;
         }
         Thread.currentThread().setContextClassLoader(cl);
-        WebBeansContext webBeansContext;
+        final WebBeansContext webBeansContext;
         Object old = null;
         try {
             if (startupObject.getWebContext() == null) {
@@ -165,16 +165,18 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         }
     }
 
-    private boolean hasBeans(AppInfo appInfo) {
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            if (ejbJar.beans != null) return true;
+    private boolean hasBeans(final AppInfo appInfo) {
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            if (ejbJar.beans != null) {
+                return true;
+            }
         }
         return false;
     }
 
-    private <T> void optional(Map<Class<?>, Object> services, Class<T> type, String implementation) {
+    private <T> void optional(final Map<Class<?>, Object> services, final Class<T> type, final String implementation) {
         try {
-            Class clazz = this.getClass().getClassLoader().loadClass(implementation);
+            final Class clazz = this.getClass().getClassLoader().loadClass(implementation);
             services.put(type, type.cast(clazz.newInstance()));
 
             logger.debug(String.format("CDI Service Installed: %s = %s", type.getName(), implementation));
@@ -187,11 +189,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     //not sure what openejb will need
 
-    private void setConfiguration(OpenWebBeansConfiguration configuration) {
+    private void setConfiguration(final OpenWebBeansConfiguration configuration) {
         //from CDI builder
         configuration.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
-//        configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
+        //        configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
 
         configuration.setProperty(OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
@@ -202,30 +204,30 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     @Override
-    public Object contextEntered(WebBeansContext newOWBContext) {
+    public Object contextEntered(final WebBeansContext newOWBContext) {
         return enter(newOWBContext);
     }
 
-    public static WebBeansContext enter(WebBeansContext newOWBContext) {
-        WebBeansContext oldContext = contexts.get();
+    public static WebBeansContext enter(final WebBeansContext newOWBContext) {
+        final WebBeansContext oldContext = contexts.get();
         contexts.set(newOWBContext);
-        contextMessage(newOWBContext, "Enter:");
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Enter:'" + newOWBContext + "'");
+        }
+
         return oldContext;
     }
 
-    private static void contextMessage(WebBeansContext newOWBContext, String prefix) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(prefix + "'" + newOWBContext + "'");
-        }
-    }
-
     @Override
-    public void contextExited(Object oldContext) {
+    public void contextExited(final Object oldContext) {
         exit(oldContext);
     }
 
-    public static void exit(Object oldContext) {
-        if (oldContext != null && !(oldContext instanceof WebBeansContext)) throw new IllegalArgumentException("ThreadSingletonServiceImpl can only be used with WebBeansContext, not " + oldContext.getClass().getName());
+    public static void exit(final Object oldContext) {
+        if (oldContext != null && !(oldContext instanceof WebBeansContext)) {
+            throw new IllegalArgumentException("ThreadSingletonServiceImpl can only be used with WebBeansContext, not " + oldContext.getClass().getName());
+        }
         contexts.set((WebBeansContext) oldContext);
     }
 
@@ -251,12 +253,12 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         }
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        for (AppContext appContext : containerSystem.getAppContexts()) {
+        for (final AppContext appContext : containerSystem.getAppContexts()) {
             if (appContext.getClassLoader().equals(cl)) {
                 context = appContext.getWebBeansContext();
                 break;
             }
-            for (WebContext web : appContext.getWebContexts()) {
+            for (final WebContext web : appContext.getWebContexts()) {
                 if (web.getClassLoader().equals(cl)) {
                     if (web.getWebbeansContext() != null) { // ear
                         context = web.getWebbeansContext();
@@ -310,14 +312,16 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     @Override
-    public WebBeansContext get(Object key) {
+    public WebBeansContext get(final Object key) {
         return getContext((ClassLoader) key);
     }
 
     @Override
-    public void clear(Object key) {
+    public void clear(final Object key) {
         final WebBeansContext ctx = getContext((ClassLoader) key);
-        contextMessage(ctx, "clearing ");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Clearing:'" + ctx + "'");
+        }
         contextByClassLoader.remove(key);
         ctx.clear();
     }
@@ -325,7 +329,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     public static String sessionContextClass() {
         if (SESSION_CONTEXT_CLAZZ != null) {
             if ("http".equals(SESSION_CONTEXT_CLAZZ)) { // easy way to manage this config
-                return  "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
+                return "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
             }
             return SESSION_CONTEXT_CLAZZ;
         }

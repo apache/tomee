@@ -16,14 +16,12 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.config.DeploymentsResolver;
-
 import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 public class PerformanceTimer {
 
     protected Start start;
@@ -33,39 +31,44 @@ public class PerformanceTimer {
         event = start = new Start();
     }
 
-    public void event(String event) {
+    public void event(final String event) {
         this.event = new Event(this.event, event);
     }
 
-    public void stop(PrintStream out) {
-        Event event = new Event(this.event, "stop");
+    public void stop(final PrintStream out) {
+        final Event event = new Event(this.event, "stop");
         this.event.stop(event, out);
         start.stop(event, out);
     }
 
     private class Event {
+
         protected final long start = System.nanoTime();
         private final Event previous;
         private final String description;
 
-        private Event(Event previous, String description) {
+        private Event(final Event previous, final String description) {
             this.previous = previous;
             this.description = description;
         }
 
-        public void stop(Event next, PrintStream out) {
-            if (previous != PerformanceTimer.this.start) previous.stop(this, out);
+        public void stop(final Event next, final PrintStream out) {
+            if (previous != PerformanceTimer.this.start) {
+                previous.stop(this, out);
+            }
             out.printf("%s  %s", TimeUnit.NANOSECONDS.toMillis(next.start - this.start), this.description);
             out.println();
         }
     }
+
     private class Start extends Event {
+
         private Start() {
             super(null, "start");
         }
 
         @Override
-        public void stop(Event next, PrintStream out) {
+        public void stop(final Event next, final PrintStream out) {
             out.printf("%s  %s", TimeUnit.NANOSECONDS.toMillis(next.start - this.start), "total");
             out.println();
         }
