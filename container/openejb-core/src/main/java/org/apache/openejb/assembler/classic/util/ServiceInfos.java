@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic.util;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.config.sys.MapFactory;
 import org.apache.openejb.loader.SystemInstance;
@@ -84,6 +85,9 @@ public final class ServiceInfos {
                 } catch (Exception e) {
                     // ignore
                 }
+            }
+            if (instance == null) {
+                instance = resolve(SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services, id);
             }
 
             if (instance != null) {
