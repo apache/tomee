@@ -86,7 +86,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         }
 
         // avoid to redefine classes from server in this classloader is it not already loaded
-        if (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name)) {
+        if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name);
             } catch (ClassNotFoundException e) {
@@ -99,7 +99,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    protected boolean validate(final String name) {
+    protected boolean validate(final String name) { // static validation, mainly container stuff
         return !URLClassLoaderFirst.shouldSkip(name);
     }
 

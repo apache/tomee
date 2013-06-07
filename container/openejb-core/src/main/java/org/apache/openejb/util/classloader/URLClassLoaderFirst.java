@@ -45,6 +45,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
         reloadConfig();
     }
 
+    public static final String SLF4J_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+
     public static void reloadConfig() {
         list(FORCED_SKIP, "openejb.classloader.forced-skip");
         list(FORCED_LOAD, "openejb.classloader.forced-load");
@@ -102,7 +104,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // look for it in this classloader
-        boolean ok = !(shouldSkip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name)));
+        boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
         if (ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
@@ -124,6 +126,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         throw new ClassNotFoundException(name);
+    }
+
+    public static boolean shouldDelegateToTheContainer(final ClassLoader loader, final String name) {
+        return shouldSkipJsf(loader, name) || shouldSkipSlf4j(loader, name);
     }
 
     private Class<?> loadFromParent(final String name, final boolean resolve) {
@@ -331,10 +337,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
-        ClassLoader parentLoader = loader.getParent();
-        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
-            parentLoader = parentLoader.getParent();
+        if (!name.startsWith("javax.faces.")) {
+            return false;
         }
+
+        final ClassLoader parentLoader = findParent(loader);
         if (parentLoader == null) {
             return true;
         }
@@ -357,6 +364,14 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     }
 
+    private static ClassLoader findParent(final ClassLoader loader) {
+        ClassLoader parentLoader = loader.getParent();
+        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
+            parentLoader = parentLoader.getParent();
+        }
+        return parentLoader;
+    }
+
     // in org.apache.openejb.
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
@@ -374,7 +389,12 @@ public class URLClassLoaderFirst extends URLClassLoader {
         return name != null
                 && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
                 || name.startsWith("META-INF/services/org.apache.myfaces.spi")
-                || "org/slf4j/impl/StaticLoggerBinder.class".equals(name));
+                || SLF4J_BINDER_CLASS.equals(name));
+    }
+
+    public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
+        return name != null && name.startsWith("org.slf4j.")
+                && loader.getResource(SLF4J_BINDER_CLASS).equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
     }
 
     // useful method for SPI
