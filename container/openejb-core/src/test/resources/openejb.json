@@ -10,7 +10,10 @@
     },
     "containers": {
         "stateless": {
-            "AccessTimeout": "10 seconds"
+            "type": "STATELESS",
+            "properties": {
+                "AccessTimeout": "10 seconds"
+            }
         }
     }
 }
