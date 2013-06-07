@@ -22,6 +22,7 @@ import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.testing.AppResource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,6 +32,7 @@ import javax.naming.NamingException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore("needs java 7 ATM")
 @RunWith(ApplicationComposer.class)
 public class JSonConfigTest {
     @Configuration
