@@ -1,0 +1,16 @@
+{
+    "resources": {
+        "json-datasource": {
+            "properties": {
+                "JdbcUrl": "jdbc:hsqldb:mem:json",
+                "MaxActive": "123",
+                "JtaManaged": "false"
+            }
+        }
+    },
+    "containers": {
+        "stateless": {
+            "AccessTimeout": "10 seconds"
+        }
+    }
+}

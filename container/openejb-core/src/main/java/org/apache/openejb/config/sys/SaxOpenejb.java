@@ -58,7 +58,11 @@ class SaxOpenejb extends StackHandler {
         push(new Document());
     }
 
-    private class Root extends DefaultHandler {
+    Openejb getOpenejb() {
+        return openejb;
+    }
+
+    public class Root extends DefaultHandler {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
