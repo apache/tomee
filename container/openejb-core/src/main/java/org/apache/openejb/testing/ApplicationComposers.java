@@ -32,6 +32,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -54,6 +55,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
@@ -79,6 +81,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -291,11 +294,21 @@ public final class ApplicationComposers {
             } else if (Openejb.class.isInstance(o)) {
                 openejb = Openejb.class.cast(o);
             } else if (String.class.isInstance(o)) {
-                final URL url = Thread.currentThread().getContextClassLoader().getResource(String.class.cast(o));
-                if (url ==null) {
+                final String path = String.class.cast(o);
+                final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+                if (url == null) {
                     throw new IllegalArgumentException(o.toString() + " not found");
                 }
-                openejb = JaxbOpenejb.readConfig(new InputSource(url.openStream()));
+                final InputStream in = url.openStream();
+                try {
+                    if (path.endsWith(".json")) {
+                        openejb = JSonConfigReader.read(IO.slurp(in));
+                    } else {
+                        openejb = JaxbOpenejb.readConfig(new InputSource(in));
+                    }
+                } finally {
+                    IO.close(in);
+                }
             }
         }
 
