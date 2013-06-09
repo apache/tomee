@@ -1352,7 +1352,9 @@ public class BeanContext extends DeploymentContext {
     }
 
     public void setRunAsUser(final String runAsUser) { // principal
-        this.runAsUser = runAsUser;
+        if (runAsUser != null) {
+            this.runAsUser = runAsUser;
+        }
     }
 
     public String toString() {
