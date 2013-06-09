@@ -63,8 +63,10 @@ public class RunAs {
 
     @XmlTransient
     protected TextMap description = new TextMap();
+
     @XmlElement(name = "role-name", required = true)
     protected String roleName;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID

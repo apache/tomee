@@ -163,6 +163,7 @@ class EnterpriseBeanBuilder {
         deployment.setEjbName(bean.ejbName);
 
         deployment.setRunAs(bean.runAs);
+        deployment.setRunAsUser(bean.runAsUser);
 
         deployment.getInjections().addAll(injections);
 

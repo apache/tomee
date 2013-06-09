@@ -206,6 +206,7 @@ public class BeanContext extends DeploymentContext {
 
     private String ejbName;
     private String runAs;
+    private String runAsUser;
 
     private final BeanType componentType;
 
@@ -1335,12 +1336,23 @@ public class BeanContext extends DeploymentContext {
         return runAs;
     }
 
+    public String getRunAsUser() {
+        return runAsUser;
+    }
+
     public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
     public void setRunAs(final String runAs) {
         this.runAs = runAs;
+        if (runAsUser == null) { // default user
+            runAsUser = runAs;
+        }
+    }
+
+    public void setRunAsUser(final String runAsUser) { // principal
+        this.runAsUser = runAsUser;
     }
 
     public String toString() {

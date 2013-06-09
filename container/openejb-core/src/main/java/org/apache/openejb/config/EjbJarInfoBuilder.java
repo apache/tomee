@@ -91,6 +91,7 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.ResourceLink;
+import org.apache.openejb.jee.oejb3.RoleMapping;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -181,6 +182,16 @@ public class EjbJarInfoBuilder {
 
             if (bean.getSecurityIdentity() != null) {
                 beanInfo.runAs = bean.getSecurityIdentity().getRunAs();
+
+                final EjbDeployment deployment = ejbds.get(beanInfo.ejbName);
+                if (deployment != null) {
+                    for (final RoleMapping mapping : deployment.getRoleMapping()) {
+                        if (mapping.getRoleName().equals(beanInfo.runAs)) {
+                            beanInfo.runAsUser = mapping.getPrincipalName();
+                            break;
+                        }
+                    }
+                }
             }
 
             initJndiNames(ejbds, bean, beanInfo);
