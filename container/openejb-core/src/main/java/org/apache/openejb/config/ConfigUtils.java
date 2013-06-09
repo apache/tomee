@@ -51,48 +51,50 @@ public class ConfigUtils {
     public static String searchForConfiguration(String path, Properties props) throws OpenEJBException {
         File file = null;
         if (path != null) {
-            /*
-             * [1] Try finding the file relative to the current working
-             * directory
-             */
-            file = new File(path);
-            if (file != null && file.exists() && file.isFile()) {
-                return file.getAbsolutePath();
-            }
-
-            /*
-             * [2] Try finding the file relative to the openejb.base directory
-             */
-            try {
-                file = SystemInstance.get().getBase().getFile(path);
-                if (file != null && file.exists() && file.isFile()) {
+            for (final String p : deducePaths(path)) {
+                /*
+                 * [1] Try finding the file relative to the current working
+                 * directory
+                 */
+                file = new File(path);
+                if (file.exists() && file.isFile()) {
                     return file.getAbsolutePath();
                 }
-            } catch (FileNotFoundException ignored) {
-            } catch (IOException ignored) {
-            }
 
-            /*
-             * [3] Try finding the file relative to the openejb.home directory
-             */
-            try {
-                file = SystemInstance.get().getHome().getFile(path);
-                if (file != null && file.exists() && file.isFile()) {
-                    return file.getAbsolutePath();
+                /*
+                 * [2] Try finding the file relative to the openejb.base directory
+                 */
+                try {
+                    file = SystemInstance.get().getBase().getFile(path);
+                    if (file != null && file.exists() && file.isFile()) {
+                        return file.getAbsolutePath();
+                    }
+                } catch (FileNotFoundException ignored) {
+                } catch (IOException ignored) {
                 }
-            } catch (FileNotFoundException ignored) {
-            } catch (IOException ignored) {
-            }
 
-            /*
-             * [4] Consider path as a URL resource - file: and jar: accepted by JaxbOpenejb.readConfig(String configFile)
-             */
-            try {
-                // verify if it's parseable according to URL rules
-                new URL(path);
-                // it's so return it unchanged
-                return path;
-            } catch (MalformedURLException ignored) {
+                /*
+                 * [3] Try finding the file relative to the openejb.home directory
+                 */
+                try {
+                    file = SystemInstance.get().getHome().getFile(path);
+                    if (file != null && file.exists() && file.isFile()) {
+                        return file.getAbsolutePath();
+                    }
+                } catch (FileNotFoundException ignored) {
+                } catch (IOException ignored) {
+                }
+
+                /*
+                 * [4] Consider path as a URL resource - file: and jar: accepted by JaxbOpenejb.readConfig(String configFile)
+                 */
+                try {
+                    // verify if it's parseable according to URL rules
+                    new URL(path);
+                    // it's so return it unchanged
+                    return path;
+                } catch (MalformedURLException ignored) {
+                }
             }
             
             logger.warning("Cannot find the configuration file [" + path + "], Trying conf/openejb.xml instead.");
@@ -117,6 +119,10 @@ public class ConfigUtils {
                 return file.getAbsolutePath();
             }
 
+            file = SystemInstance.get().getConf("openejb.json");
+            if (file != null && file.exists() && file.isFile()) {
+                return file.getAbsolutePath();
+            }
 
             if (EnvProps.extractConfigurationFiles()) {
 
@@ -142,6 +148,13 @@ public class ConfigUtils {
         }
 
         return (file == null || !file.exists()) ? null : file.getAbsolutePath();
+    }
+
+    public static String[] deducePaths(final String path) {
+        if (path.endsWith(".xml")) { // try json too, this is just a common way matching our defaults
+            return new String[] { path, path.substring(0, path.length() - "xml".length()) + "json" };
+        }
+        return new String[] { path };
     }
 
     public static File createConfig(File config) throws java.io.IOException {

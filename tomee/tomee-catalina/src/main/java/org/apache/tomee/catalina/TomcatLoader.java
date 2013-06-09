@@ -30,6 +30,7 @@ import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.component.ClassLoaderEnricher;
+import org.apache.openejb.config.ConfigUtils;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
@@ -165,10 +166,12 @@ public class TomcatLoader implements Loader {
         }
 
         final File conf = new File(SystemInstance.get().getBase().getDirectory(), "conf");
-        final File tomeeXml = new File(conf, "tomee.xml");
-        if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
-            SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
-            SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
+        for (final String possibleTomeePaths : ConfigUtils.deducePaths("tomee.xml")) {
+            final File tomeeXml = new File(conf, possibleTomeePaths);
+            if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
+                SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+                SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
+            }
         }
 
         // set tomcat pool
