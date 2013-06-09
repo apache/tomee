@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query", "properties"})
+@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query", "roleMapping", "properties"})
 @XmlRootElement(name = "ejb-deployment")
 public class EjbDeployment {
 
@@ -50,6 +50,9 @@ public class EjbDeployment {
 
     @XmlElement(required = true)
     protected List<Query> query;
+
+    @XmlElement(name = "role-mapping")
+    protected List<RoleMapping> roleMapping;
 
     @XmlAttribute(name = "container-id")
     protected String containerId;
@@ -187,5 +190,12 @@ public class EjbDeployment {
     
     public void addProperty(String key, String value) {
         getProperties().setProperty(key, value);
+    }
+
+    public List<RoleMapping> getRoleMapping() {
+        if (roleMapping == null) {
+            roleMapping = new ArrayList<RoleMapping>();
+        }
+        return roleMapping;
     }
 }

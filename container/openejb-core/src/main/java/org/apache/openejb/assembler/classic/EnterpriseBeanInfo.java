@@ -65,6 +65,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public NamedMethodInfo timeoutMethod;
 
     public String runAs;
+    public String runAsUser;
 
     public final List<SecurityRoleReferenceInfo> securityRoleReferences = new ArrayList<SecurityRoleReferenceInfo>();
 
@@ -91,5 +92,4 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
 
     public boolean restService;
-
 }
