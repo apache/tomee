@@ -64,6 +64,14 @@ public class JSonConfigTest {
     }
 
     @Test
+    public void checkSystProps() {
+        assertEquals("b", System.getProperty("a"));
+        assertEquals("d", System.getProperty("c"));
+        assertEquals("g", System.getProperty("e.f"));
+        assertEquals("j", System.getProperty("e.h.i"));
+    }
+
+    @Test
     public void simpleRead() throws IOException, OpenEJBException {
         final Openejb openejb = JSonConfigReader.read(Thread.currentThread().getContextClassLoader().getResource(config()).openStream());
 

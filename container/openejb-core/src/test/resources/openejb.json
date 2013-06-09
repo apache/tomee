@@ -20,5 +20,15 @@
                 "AccessTimeout": "10 seconds"
             }
         }
+    },
+    "system-properties": {
+        "a": "b",
+        "c": "d",
+        "e": {
+            "f": "g",
+            "h": {
+                "i": "j"
+            }
+        }
     }
 }
