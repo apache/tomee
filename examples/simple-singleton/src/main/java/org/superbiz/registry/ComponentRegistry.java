@@ -16,8 +16,6 @@
  */
 package org.superbiz.registry;
 
-//START SNIPPET: code
-
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 import java.util.ArrayList;
@@ -51,6 +49,5 @@ public class ComponentRegistry {
     public <T> T removeComponent(Class<T> type) {
         return (T) components.remove(type);
     }
-
 }
-//END SNIPPET: code
+

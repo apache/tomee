@@ -16,8 +16,6 @@
  */
 package org.superbiz.registry;
 
-//START SNIPPET: code
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
@@ -38,7 +36,7 @@ public class PropertyRegistry {
     // to ensure the PropertyRegistryBean is thread-safe.
     private final Properties properties = new Properties();
 
-    // The @Startup method ensures that this method is
+    // The @Startup annotation ensures that this method is
     // called when the application starts up.
     @PostConstruct
     public void applicationStartup() {
@@ -61,6 +59,4 @@ public class PropertyRegistry {
     public String removeProperty(String key) {
         return (String) properties.remove(key);
     }
-
 }
-//END SNIPPET: code

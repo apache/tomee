@@ -14,8 +14,6 @@ Here we see a bean that uses the Bean-Managed Concurrency option as well as the 
 
     package org.superbiz.registry;
 
-    //START SNIPPET: code
-
     import javax.annotation.PostConstruct;
     import javax.annotation.PreDestroy;
     import javax.ejb.ConcurrencyManagement;
@@ -36,7 +34,7 @@ Here we see a bean that uses the Bean-Managed Concurrency option as well as the 
         // to ensure the PropertyRegistryBean is thread-safe.
         private final Properties properties = new Properties();
 
-        // The @Startup method ensures that this method is
+        // The @Startup annotation ensures that this method is
         // called when the application starts up.
         @PostConstruct
         public void applicationStartup() {
@@ -68,38 +66,57 @@ Here we see a bean that uses the Container-Managed Concurrency option, the defau
 
     package org.superbiz.registry;
 
-    import javax.ejb.Lock;
-    import javax.ejb.Singleton;
-    import java.util.ArrayList;
+    import org.junit.Assert;
+    import org.junit.AfterClass;
+    import org.junit.Test;
+
+    import javax.ejb.embeddable.EJBContainer;
+    import javax.naming.Context;
+    import java.net.URI;
     import java.util.Collection;
-    import java.util.HashMap;
-    import java.util.Map;
+    import java.util.Date;
 
-    import static javax.ejb.LockType.READ;
-    import static javax.ejb.LockType.WRITE;
+    public class ComponentRegistryTest {
 
-    @Singleton
-    @Lock(READ)
-    public class ComponentRegistry {
+        private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 
-        private final Map<Class, Object> components = new HashMap<Class, Object>();
+        @Test
+        public void oneInstancePerMultipleReferences() throws Exception {
 
-        public <T> T getComponent(Class<T> type) {
-            return (T) components.get(type);
+            final Context context = ejbContainer.getContext();
+
+            // Both references below will point to the exact same instance
+            ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+            ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
+
+            URI expectedUri = new URI("foo://bar/baz");
+            one.setComponent(URI.class, expectedUri);
+            URI actualUri = two.getComponent(URI.class);
+            Assert.assertSame(expectedUri, actualUri);
+
+            two.removeComponent(URI.class);
+            URI uri = one.getComponent(URI.class);
+            Assert.assertNull(uri);
+
+            Date expectedDate = new Date();
+            two.setComponent(Date.class, expectedDate);
+            Date actualDate = one.getComponent(Date.class);
+            Assert.assertSame(expectedDate, actualDate);
+
+            one.removeComponent(URI.class);
+            uri = two.getComponent(URI.class);
+            Assert.assertNull(uri);
+
+            Collection<?> collection = one.getComponents();
+            Assert.assertTrue("Reference 'one' - ComponentRegistry is empty",collection.isEmpty());
+
+            collection = two.getComponents();
+            Assert.assertTrue("Reference 'two' - ComponentRegistry is empty",collection.isEmpty());
         }
 
-        public Collection<?> getComponents() {
-            return new ArrayList(components.values());
-        }
-
-        @Lock(WRITE)
-        public <T> T setComponent(Class<T> type, T value) {
-            return (T) components.put(type, value);
-        }
-
-        @Lock(WRITE)
-        public <T> T removeComponent(Class<T> type) {
-            return (T) components.remove(type);
+        @AfterClass
+        public static void closeEjbContainer() {
+            ejbContainer.close();
         }
     }
 
@@ -124,49 +141,57 @@ See the [Singleton Beans](../../singleton-beans.html) page for  more advanced de
 
     package org.superbiz.registry;
 
-    import junit.framework.TestCase;
+    import org.junit.Assert;
+    import org.junit.AfterClass;
+    import org.junit.Test;
 
     import javax.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
     import java.net.URI;
+    import java.util.Collection;
     import java.util.Date;
 
-    //START SNIPPET: code
-    public class ComponentRegistryTest extends TestCase {
+    public class ComponentRegistryTest {
 
-        public void test() throws Exception {
+        private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 
-            final Context context = EJBContainer.createEJBContainer().getContext();
+        @Test
+        public void oneInstancePerMultipleReferences() throws Exception {
+
+            final Context context = ejbContainer.getContext();
 
             // Both references below will point to the exact same instance
             ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
-
             ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
 
-
-            // Let's prove both references point to the same instance
-
-
-            // Set a URL into 'one' and retrieve it from 'two'
-
             URI expectedUri = new URI("foo://bar/baz");
-
             one.setComponent(URI.class, expectedUri);
-
             URI actualUri = two.getComponent(URI.class);
+            Assert.assertSame(expectedUri, actualUri);
 
-            assertSame(expectedUri, actualUri);
-
-
-            // Set a Date into 'two' and retrieve it from 'one'
+            two.removeComponent(URI.class);
+            URI uri = one.getComponent(URI.class);
+            Assert.assertNull(uri);
 
             Date expectedDate = new Date();
-
             two.setComponent(Date.class, expectedDate);
-
             Date actualDate = one.getComponent(Date.class);
+            Assert.assertSame(expectedDate, actualDate);
 
-            assertSame(expectedDate, actualDate);
+            one.removeComponent(URI.class);
+            uri = two.getComponent(URI.class);
+            Assert.assertNull(uri);
+
+            Collection<?> collection = one.getComponents();
+            Assert.assertTrue("Reference 'one' - ComponentRegistry is empty",collection.isEmpty());
+
+            collection = two.getComponents();
+            Assert.assertTrue("Reference 'two' - ComponentRegistry is empty",collection.isEmpty());
+        }
+
+        @AfterClass
+        public static void closeEjbContainer() {
+            ejbContainer.close();
         }
     }
 
@@ -174,34 +199,45 @@ See the [Singleton Beans](../../singleton-beans.html) page for  more advanced de
 
     package org.superbiz.registry;
 
-    import junit.framework.TestCase;
+    import org.junit.Assert;
+    import org.junit.AfterClass;
+    import org.junit.Test;
 
     import javax.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
 
-    public class PropertiesRegistryTest extends TestCase {
+    public class PropertiesRegistryTest {
 
-        public void test() throws Exception {
+        private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 
-            Context context = EJBContainer.createEJBContainer().getContext();
+        @Test
+        public void oneInstancePerMultipleReferences() throws Exception {
+
+            Context context = ejbContainer.getContext();
 
             PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
-
             PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
 
-
             one.setProperty("url", "http://superbiz.org");
-
             String url = two.getProperty("url");
+            Assert.assertSame("http://superbiz.org", url);
 
-            assertEquals("http://superbiz.org", url);
-
+            two.removeProperty("url");
+            url = one.getProperty("url");
+            Assert.assertNull(url);
 
             two.setProperty("version", "1.0.5");
-
             String version = one.getProperty("version");
+            Assert.assertSame("1.0.5", version);
 
-            assertEquals("1.0.5", version);
+            one.removeProperty("version");
+            version = two.getProperty("version");
+            Assert.assertNull(version);
+        }
+
+        @AfterClass
+        public static void closeEjbContainer() {
+            ejbContainer.close();
         }
     }
 
@@ -218,39 +254,107 @@ Which should create output like the following.
      T E S T S
     -------------------------------------------------------
     Running org.superbiz.registry.ComponentRegistryTest
-    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://openejb.apache.org/
-    INFO - openejb.home = /Users/dblevins/examples/simple-singleton
-    INFO - openejb.base = /Users/dblevins/examples/simple-singleton
+    INFO - ********************************************************************************
+    INFO - OpenEJB http://openejb.apache.org/
+    INFO - Startup: Sun Jun 09 03:46:51 IDT 2013
+    INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+    INFO - Version: 4.6.0-SNAPSHOT
+    INFO - Build date: 20130608
+    INFO - Build time: 04:07
+    INFO - ********************************************************************************
+    INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
+    INFO - Succeeded in installing singleton service
     INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
     INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-    INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-singleton/target/classes
-    INFO - Beginning load: /Users/dblevins/examples/simple-singleton/target/classes
-    INFO - Configuring enterprise application: /Users/dblevins/examples/simple-singleton
+    INFO - Creating TransactionManager(id=Default Transaction Manager)
+    INFO - Creating SecurityService(id=Default Security Service)
+    INFO - Found EjbModule in classpath: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
+    INFO - Beginning load: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
+    INFO - Configuring enterprise application: C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Auto-deploying ejb PropertyRegistry: EjbDeployment(deployment-id=PropertyRegistry)
+    INFO - Auto-deploying ejb ComponentRegistry: EjbDeployment(deployment-id=ComponentRegistry)
     INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
     INFO - Auto-creating a container for bean PropertyRegistry: Container(type=SINGLETON, id=Default Singleton Container)
+    INFO - Creating Container(id=Default Singleton Container)
     INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
     INFO - Auto-creating a container for bean org.superbiz.registry.ComponentRegistryTest: Container(type=MANAGED, id=Default Managed Container)
-    INFO - Enterprise application "/Users/dblevins/examples/simple-singleton" loaded.
-    INFO - Assembling app: /Users/dblevins/examples/simple-singleton
+    INFO - Creating Container(id=Default Managed Container)
+    INFO - Using directory C:\Users\Oz\AppData\Local\Temp for stateful session passivation
+    INFO - Enterprise application "C:\Users\Oz\Desktop\ee-examples\simple-singleton" loaded.
+    INFO - Assembling app: C:\Users\Oz\Desktop\ee-examples\simple-singleton
     INFO - Jndi(name="java:global/simple-singleton/PropertyRegistry!org.superbiz.registry.PropertyRegistry")
     INFO - Jndi(name="java:global/simple-singleton/PropertyRegistry")
     INFO - Jndi(name="java:global/simple-singleton/ComponentRegistry!org.superbiz.registry.ComponentRegistry")
     INFO - Jndi(name="java:global/simple-singleton/ComponentRegistry")
-    INFO - Jndi(name="java:global/EjbModule453799164/org.superbiz.registry.ComponentRegistryTest!org.superbiz.registry.ComponentRegistryTest")
-    INFO - Jndi(name="java:global/EjbModule453799164/org.superbiz.registry.ComponentRegistryTest")
-    INFO - Created Ejb(deployment-id=org.superbiz.registry.ComponentRegistryTest, ejb-name=org.superbiz.registry.ComponentRegistryTest, container=Default Managed Container)
+    INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
+    INFO - OpenWebBeans Container is starting...
+    INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+    INFO - All injection points were validated successfully.
+    INFO - OpenWebBeans Container has started, it took 68 ms.
     INFO - Created Ejb(deployment-id=PropertyRegistry, ejb-name=PropertyRegistry, container=Default Singleton Container)
     INFO - Created Ejb(deployment-id=ComponentRegistry, ejb-name=ComponentRegistry, container=Default Singleton Container)
-    INFO - Started Ejb(deployment-id=org.superbiz.registry.ComponentRegistryTest, ejb-name=org.superbiz.registry.ComponentRegistryTest, container=Default Managed Container)
     INFO - Started Ejb(deployment-id=PropertyRegistry, ejb-name=PropertyRegistry, container=Default Singleton Container)
     INFO - Started Ejb(deployment-id=ComponentRegistry, ejb-name=ComponentRegistry, container=Default Singleton Container)
-    INFO - Deployed Application(path=/Users/dblevins/examples/simple-singleton)
-    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.075 sec
+    INFO - Deployed Application(path=C:\Users\Oz\Desktop\ee-examples\simple-singleton)
+    [Sun Jun 09 03:46:52 IDT 2013]
+    INFO - Undeploying app: C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Destroying OpenEJB container
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.431 sec
     Running org.superbiz.registry.PropertiesRegistryTest
-    INFO - EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization
-    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+    INFO - ********************************************************************************
+    INFO - OpenEJB http://openejb.apache.org/
+    INFO - Startup: Sun Jun 09 03:46:52 IDT 2013
+    INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+    INFO - Version: 4.6.0-SNAPSHOT
+    INFO - Build date: 20130608
+    INFO - Build time: 04:07
+    INFO - ********************************************************************************
+    INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
+    INFO - Succeeded in installing singleton service
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Creating TransactionManager(id=Default Transaction Manager)
+    INFO - Creating SecurityService(id=Default Security Service)
+    INFO - Using 'java.security.auth.login.config=jar:file:/C:/Users/Oz/.m2/repository/org/apache/openejb/openejb-core/4.6.0-SNAPSHOT/openejb-core-4.6.0-SNAPSHOT.jar!/login.config'
+    INFO - Found EjbModule in classpath: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
+    INFO - Beginning load: c:\users\oz\desktop\ee-examples\simple-singleton\target\classes
+    INFO - Configuring enterprise application: C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Auto-deploying ejb ComponentRegistry: EjbDeployment(deployment-id=ComponentRegistry)
+    INFO - Auto-deploying ejb PropertyRegistry: EjbDeployment(deployment-id=PropertyRegistry)
+    INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+    INFO - Auto-creating a container for bean ComponentRegistry: Container(type=SINGLETON, id=Default Singleton Container)
+    INFO - Creating Container(id=Default Singleton Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.registry.PropertiesRegistryTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Creating Container(id=Default Managed Container)
+    INFO - Using directory C:\Users\Oz\AppData\Local\Temp for stateful session passivation
+    INFO - Enterprise application "C:\Users\Oz\Desktop\ee-examples\simple-singleton" loaded.
+    INFO - Assembling app: C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Jndi(name="java:global/simple-singleton/ComponentRegistry!org.superbiz.registry.ComponentRegistry")
+    INFO - Jndi(name="java:global/simple-singleton/ComponentRegistry")
+    INFO - Jndi(name="java:global/simple-singleton/PropertyRegistry!org.superbiz.registry.PropertyRegistry")
+    INFO - Jndi(name="java:global/simple-singleton/PropertyRegistry")
+    INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
+    INFO - OpenWebBeans Container is starting...
+    INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+    INFO - All injection points were validated successfully.
+    INFO - OpenWebBeans Container has started, it took 4 ms.
+    INFO - Created Ejb(deployment-id=PropertyRegistry, ejb-name=PropertyRegistry, container=Default Singleton Container)
+    INFO - Created Ejb(deployment-id=ComponentRegistry, ejb-name=ComponentRegistry, container=Default Singleton Container)
+    INFO - Started Ejb(deployment-id=PropertyRegistry, ejb-name=PropertyRegistry, container=Default Singleton Container)
+    INFO - Started Ejb(deployment-id=ComponentRegistry, ejb-name=ComponentRegistry, container=Default Singleton Container)
+    INFO - Deployed Application(path=C:\Users\Oz\Desktop\ee-examples\simple-singleton)
+    INFO - Undeploying app: C:\Users\Oz\Desktop\ee-examples\simple-singleton
+    INFO - Destroying OpenEJB container
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.171 sec
 
     Results :
 
