@@ -17,11 +17,10 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.SimpleJSonParser;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,7 @@ public class JSonConfigReader {
             config.startDocument();
             config.startElement(null, "openejb", null, new AttributesImpl());
 
-            final Map<?, ?> jsConfig = map(SimpleJSonParser.read(is)); // TODO: see how to do so in java 6
+            final Map<?, ?> jsConfig = map(SimpleJSonParser.read(is));
 
             for (final String root :
                     Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
@@ -79,11 +78,41 @@ public class JSonConfigReader {
             }
 
             config.endElement(null, "openejb", null);
+
+            // global config
+            if (jsConfig.containsKey("system-properties")) {
+                final Map<?, ?> sysProps = map(jsConfig.get("system-properties"));
+                setProperties("", sysProps);
+            }
+
+            // same as global but more specific, would be more readable
+            if (jsConfig.containsKey("daemons")) {
+                final Map<String, ?> daemons = map(jsConfig.get("daemons"));
+                for (final Map.Entry<String, ?> entry : daemons.entrySet()) {
+                    setProperties(entry.getKey() + '.', map(entry.getValue()));
+                }
+            }
         } catch (final Exception e) {
             throw new OpenEJBException(e.getMessage(), e);
         }
 
         return config.getOpenejb();
+    }
+
+    private static void setProperties(final String prefix, final Map<?, ?> sysProps) {
+        for (final Map.Entry<?, ?> entry : sysProps.entrySet()) {
+            final String key = prefix + entry.getKey().toString();
+            final Object value = entry.getValue();
+            if (String.class.isInstance(value)) {
+                final String str = String.class.cast(value);
+
+                // set it for openejb AND the JVM since that's probably too late to let it be done automatically
+                SystemInstance.get().setProperty(key, str);
+                System.setProperty(key, str);
+            } else {
+                setProperties(key + '.', map(value));
+            }
+        }
     }
 
     private static String toString(final Map<String, ?> properties) {
