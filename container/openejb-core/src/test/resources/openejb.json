@@ -3,9 +3,14 @@
         "json-datasource": {
             "properties": {
                 "JdbcUrl": "jdbc:hsqldb:mem:json",
-                "MaxActive": "123",
-                "JtaManaged": "false"
+                "MaxActive": 123,
+                "JtaManaged": false
             }
+        }
+    },
+    "deployments": {
+        "apps": {
+            "dir": "apps"
         }
     },
     "containers": {

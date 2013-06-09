@@ -17,12 +17,14 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.SimpleJSonParser;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -32,23 +34,15 @@ public class JSonConfigReader {
         return Map.class.cast(rawMap);
     }
 
-    public static Openejb read(final String json) throws OpenEJBException {
+    public static Openejb read(final InputStream is) throws OpenEJBException {
         final SaxOpenejb config = new SaxOpenejb();
 
-        final ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("rhino");
-        if (engine == null) { // try another engine
-            engine = manager.getEngineByExtension("js");
-        }
-        if (engine == null) {
-            throw new OpenEJBException("rhino not available");
-        }
 
         try {
             config.startDocument();
             config.startElement(null, "openejb", null, new AttributesImpl());
 
-            final Map<?, ?> jsConfig = map(engine.eval("eval(" + json + ")")); // TODO: see how to do so in java 6
+            final Map<?, ?> jsConfig = map(SimpleJSonParser.read(is)); // TODO: see how to do so in java 6
 
             for (final String root :
                     Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
@@ -65,9 +59,11 @@ public class JSonConfigReader {
                 if (resources != null) {
                     for (final Map.Entry<String, Map<String, Map<String, String>>> resource : resources.entrySet()) {
                         final AttributesImpl attributes = toAttributes(map(resource.getValue()), "properties");
-                        attributes.addAttribute(null, "id", "id", null, resource.getKey());
+                        if (!"deployments".equals(currentRoot)) {
+                            attributes.addAttribute(null, "id", "id", null, resource.getKey());
+                        }
 
-                        if ("resources".equals(root) && attributes.getIndex("type") == -1) {
+                        if ("resources".equals(currentRoot) && attributes.getIndex("type") == -1) {
                             attributes.addAttribute(null, "type", "type", null, "DataSource");
                         }
 

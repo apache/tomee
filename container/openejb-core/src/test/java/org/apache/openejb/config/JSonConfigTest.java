@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.config.sys.JSonConfigReader;
+import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
@@ -29,10 +34,12 @@ import org.junit.runner.RunWith;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-@Ignore("needs java 7 ATM")
 @RunWith(ApplicationComposer.class)
 public class JSonConfigTest {
     @Configuration
@@ -54,5 +61,24 @@ public class JSonConfigTest {
         assertNotNull(ds);
         assertEquals(123, ds.getMaxActive());
         assertEquals("jdbc:hsqldb:mem:json", ds.getJdbcUrl());
+    }
+
+    @Test
+    public void simpleRead() throws IOException, OpenEJBException {
+        final Openejb openejb = JSonConfigReader.read(Thread.currentThread().getContextClassLoader().getResource(config()).openStream());
+
+        assertEquals(1, openejb.getResource().size());
+        final Resource resource = openejb.getResource().iterator().next();
+        assertEquals("json-datasource", resource.getId());
+        assertTrue("123".equals(resource.getProperties().getProperty("MaxActive")));
+        assertTrue("jdbc:hsqldb:mem:json".equals(resource.getProperties().getProperty("JdbcUrl")));
+
+        assertEquals(1, openejb.getDeployments().size());
+        assertEquals("apps", openejb.getDeployments().iterator().next().getDir());
+
+        assertEquals(1, openejb.getContainer().size());
+        final Container container = openejb.getContainer().iterator().next();
+        assertEquals("STATELESS", container.getType());
+        assertEquals("10 seconds", container.getProperties().getProperty("AccessTimeout"));
     }
 }
