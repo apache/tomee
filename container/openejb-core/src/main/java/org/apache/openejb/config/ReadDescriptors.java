@@ -275,7 +275,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
             }
         }
-        {
+        { // json
             final Source url = getSource(module.getAltDDs().get("resources.json"));
             if (url != null) {
                 try {

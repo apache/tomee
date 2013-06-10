@@ -1678,7 +1678,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             path = path.substring(0, path.length() - 1);
         }
 
-        if (path.endsWith(".xml")) { // let say it is a resource module
+        if (path.endsWith(".xml") || path.endsWith(".json")) { // let say it is a resource module
             return ResourcesModule.class;
         }
 
