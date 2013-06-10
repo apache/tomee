@@ -140,10 +140,12 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         final String moduleID = newContext.getBeanContext().getModuleID();
         PolicyContext.setContextID(moduleID);
 
-        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
+        Subject runAsSubject = getRunAsSubject(newContext.getBeanContext());
+        if (oldContext != null && runAsSubject == null) {
+            runAsSubject = getRunAsSubject(oldContext.getBeanContext());
+        }
 
-        final BeanContext callingBeanContext = (oldContext != null) ? oldContext.getBeanContext() : null;
-        final Subject runAsSubject = getRunAsSubject(callingBeanContext);
+        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
         if (runAsSubject != null) {
 
             securityContext = new SecurityContext(runAsSubject);
