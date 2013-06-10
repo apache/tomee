@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class JSonConfigReader {
+    private static final String COMMENT_KEY = "__";
+
     private static Map map(final Object rawMap) {
         return Map.class.cast(rawMap);
     }
@@ -42,6 +44,7 @@ public class JSonConfigReader {
             config.startElement(null, "openejb", null, new AttributesImpl());
 
             final Map<?, ?> jsConfig = map(SimpleJSonParser.read(is));
+            jsConfig.remove(COMMENT_KEY);
 
             for (final String root :
                     Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
@@ -56,6 +59,8 @@ public class JSonConfigReader {
 
                 final Map<String, Map<String, Map<String, String>>> resources = map(jsConfig.get(currentRoot));
                 if (resources != null) {
+                    resources.remove(COMMENT_KEY);
+
                     for (final Map.Entry<String, Map<String, Map<String, String>>> resource : resources.entrySet()) {
                         final AttributesImpl attributes = toAttributes(map(resource.getValue()), "properties");
                         if (!"deployments".equals(currentRoot)) {
@@ -82,6 +87,7 @@ public class JSonConfigReader {
             // global config
             if (jsConfig.containsKey("system-properties")) {
                 final Map<?, ?> sysProps = map(jsConfig.get("system-properties"));
+
                 setProperties("", sysProps);
             }
 
@@ -100,6 +106,8 @@ public class JSonConfigReader {
     }
 
     private static void setProperties(final String prefix, final Map<?, ?> sysProps) {
+        sysProps.remove(COMMENT_KEY);
+
         for (final Map.Entry<?, ?> entry : sysProps.entrySet()) {
             final String key = prefix + entry.getKey().toString();
             final Object value = entry.getValue();
@@ -119,6 +127,9 @@ public class JSonConfigReader {
         if (properties == null) {
             return "";
         }
+
+        properties.remove(COMMENT_KEY);
+
         final Properties builder = new Properties();
         for (final Map.Entry<String, ?> entry : properties.entrySet()) {
             builder.put(entry.getKey(), entry.getValue().toString());
@@ -133,6 +144,8 @@ public class JSonConfigReader {
     }
 
     private static AttributesImpl toAttributes(final Map<String, String> map, final String... ignored) {
+        map.remove(COMMENT_KEY);
+
         final AttributesImpl attributes = new AttributesImpl();
         for (final Map.Entry<String, String> entry : map.entrySet()) {
             final String key = entry.getKey();

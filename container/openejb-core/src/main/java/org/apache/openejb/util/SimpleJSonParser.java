@@ -18,6 +18,8 @@ package org.apache.openejb.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import java.util.Map;
 public class SimpleJSonParser {
     public static Object read(final InputStream is) throws IOException {
         Map<String, Object> json = null;
+        Collection<Object> array = null;
 
         int read;
         char current;
@@ -35,6 +38,10 @@ public class SimpleJSonParser {
                 json = new HashMap<String, Object>();
             } else if (current == '}') {
                 return json;
+            } else if (current == '[') {
+                array = new ArrayList<Object>();
+            } else if (current == ']') {
+                return array;
             } else if (current == '"') {
                 final StringBuilder b =  new StringBuilder();
                 do {
@@ -49,7 +56,7 @@ public class SimpleJSonParser {
                 }
 
                 final String value = b.substring(0, b.length() - 1); // remove last "
-                if (valueRead(is, json, value)) {
+                if (valueRead(is, json, array, value)) {
                     return value;
                 }
             } else if (current != ':' && current != ',' && !isWhiteSpace(current)) {
@@ -62,7 +69,7 @@ public class SimpleJSonParser {
                 } while (current != -1 && !isWhiteSpace(current) && current != ',');
 
                 final String value = b.substring(0, b.length() - 1); // remove last character
-                if (valueRead(is, json, value)) {
+                if (valueRead(is, json, array, value)) {
                     return value;
                 }
             }
@@ -72,7 +79,7 @@ public class SimpleJSonParser {
         throw new IllegalArgumentException("Please check input, a } is probably missing");
     }
 
-    private static boolean valueRead(final InputStream is, final Map<String, Object> json, final String value) throws IOException {
+    private static boolean valueRead(final InputStream is, final Map<String, Object> json, final Collection<Object> array, final String value) throws IOException {
         int read;
         do {
             read = is.read();
@@ -80,6 +87,8 @@ public class SimpleJSonParser {
 
         if (json != null) {
             json.put(value, read(is));
+        } else if (array != null) {
+            array.add(value);
         } else {
             return true;
         }
