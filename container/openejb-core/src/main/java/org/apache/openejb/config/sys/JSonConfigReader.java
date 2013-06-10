@@ -20,11 +20,13 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.SimpleJSonParser;
 import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,21 +37,42 @@ public class JSonConfigReader {
         return Map.class.cast(rawMap);
     }
 
-    public static Openejb read(final InputStream is) throws OpenEJBException {
-        final SaxOpenejb config = new SaxOpenejb();
+    public static <T> T read(final Class<T> clazz, final InputStream is) throws OpenEJBException {
+        if (Openejb.class.equals(clazz) || Tomee.class.equals(clazz)) {
+            final SaxOpenejb handler = read(is, "openejb",
+                    Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
+                            "ProxyFactory", "Connector", "Deployments", "Import", "Service", "SecurityService"),
+                    new SaxOpenejb());
 
+            return clazz.cast(handler.getOpenejb());
+        } else if (Resources.class.equals(clazz)) {
+            final Resources resources = new Resources();
 
+            // reuse openejb parser since we use saw logic and not jaxb one
+            final Openejb openejb = read(is, "openejb",
+                    Arrays.asList("Resource", "Container", "JndiProvider", "Connector", "Import", "Service"),
+                    new SaxOpenejb()).getOpenejb();
+
+            resources.getContainer().addAll(openejb.getContainer());
+            resources.getResource().addAll(openejb.getResource());
+            resources.getService().addAll(openejb.getServices());
+            resources.getConnector().addAll(openejb.getConnector());
+            resources.getJndiProvider().addAll(openejb.getJndiProvider());
+
+            return clazz.cast(resources);
+        }
+        throw new IllegalArgumentException(clazz.getName() + " not supported");
+    }
+
+    private static <T extends DefaultHandler> T read(final InputStream is, final String mainRoot, final Collection<String> roots, final T handler) throws OpenEJBException {
         try {
-            config.startDocument();
-            config.startElement(null, "openejb", null, new AttributesImpl());
+            handler.startDocument();
+            handler.startElement(null, mainRoot, null, new AttributesImpl());
 
             final Map<?, ?> jsConfig = map(SimpleJSonParser.read(is));
             jsConfig.remove(COMMENT_KEY);
 
-            for (final String root :
-                    Arrays.asList("Resource", "Container", "JndiProvider", "TransactionManager", "ConnectionManager",
-                            "ProxyFactory", "Connector", "Deployments", "Import", "Service", "SecurityService")) {
-
+            for (final String root : roots) {
                 final String currentRoot;
                 if (root.endsWith("s")) {
                     currentRoot = root.toLowerCase();
@@ -67,22 +90,22 @@ public class JSonConfigReader {
                             attributes.addAttribute(null, "id", "id", null, resource.getKey());
                         }
 
-                        if ("resources".equals(currentRoot) && attributes.getIndex("type") == -1) {
+                        if ("resources".equals(currentRoot) && attributes.getIndex("type") == -1 && attributes.getIndex("class-name") == -1 && attributes.getIndex("provider") == -1) {
                             attributes.addAttribute(null, "type", "type", null, "DataSource");
                         }
 
-                        config.startElement(null, root, root, attributes);
+                        handler.startElement(null, root, root, attributes);
 
                         final String propertiesAsStr = toString(map(resource.getValue().get("properties")));
 
-                        config.characters(propertiesAsStr.toCharArray(), 0, propertiesAsStr.length());
+                        handler.characters(propertiesAsStr.toCharArray(), 0, propertiesAsStr.length());
                         // properties
-                        config.endElement(null, root, root);
+                        handler.endElement(null, root, root);
                     }
                 }
             }
 
-            config.endElement(null, "openejb", null);
+            handler.endElement(null, mainRoot, null);
 
             // global config
             if (jsConfig.containsKey("system-properties")) {
@@ -102,7 +125,7 @@ public class JSonConfigReader {
             throw new OpenEJBException(e.getMessage(), e);
         }
 
-        return config.getOpenejb();
+        return handler;
     }
 
     private static void setProperties(final String prefix, final Map<?, ?> sysProps) {

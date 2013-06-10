@@ -204,7 +204,7 @@ public abstract class JaxbOpenejb {
             }
 
             if (configFile.endsWith(".json")) {
-                return JSonConfigReader.read(in);
+                return JSonConfigReader.read(Openejb.class, in);
             }
 
             return readConfig(new InputSource(in));

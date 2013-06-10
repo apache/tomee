@@ -230,7 +230,7 @@ public class Openejb {
      * Objects of the following type(s) are allowed in the list
      * {@link Connector }
      */
-    private List<Connector> getConnector() {
+    public List<Connector> getConnector() {
         if (connector == null) {
             connector = new ArrayList<Connector>();
         }

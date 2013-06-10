@@ -27,13 +27,11 @@ import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.testing.AppResource;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -73,7 +71,7 @@ public class JSonConfigTest {
 
     @Test
     public void simpleRead() throws IOException, OpenEJBException {
-        final Openejb openejb = JSonConfigReader.read(Thread.currentThread().getContextClassLoader().getResource(config()).openStream());
+        final Openejb openejb = JSonConfigReader.read(Openejb.class, Thread.currentThread().getContextClassLoader().getResource(config()).openStream());
 
         assertEquals(1, openejb.getResource().size());
         final Resource resource = openejb.getResource().iterator().next();

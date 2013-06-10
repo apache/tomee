@@ -302,7 +302,7 @@ public final class ApplicationComposers {
                 final InputStream in = url.openStream();
                 try {
                     if (path.endsWith(".json")) {
-                        openejb = JSonConfigReader.read(in);
+                        openejb = JSonConfigReader.read(Openejb.class, in);
                     } else {
                         openejb = JaxbOpenejb.readConfig(new InputSource(in));
                     }

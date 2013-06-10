@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.webservices.WsdlResolver;
@@ -263,13 +264,26 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static void readResourcesXml(final Module module) {
-        final Source url = getSource(module.getAltDDs().get("resources.xml"));
-        if (url != null) {
-            try {
-                final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
-                module.initResources(openejb);
-            } catch (Exception e) {
-                logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+        { // xml
+            final Source url = getSource(module.getAltDDs().get("resources.xml"));
+            if (url != null) {
+                try {
+                    final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
+                    module.initResources(openejb);
+                } catch (Exception e) {
+                    logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+                }
+            }
+        }
+        {
+            final Source url = getSource(module.getAltDDs().get("resources.json"));
+            if (url != null) {
+                try {
+                    final Resources openejb = JSonConfigReader.read(Resources.class, url.get());
+                    module.initResources(openejb);
+                } catch (Exception e) {
+                    logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+                }
             }
         }
     }
