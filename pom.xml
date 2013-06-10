@@ -118,7 +118,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.40</tomcat.version>
+    <tomcat.version>7.0.41</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.8</cxf.version>
