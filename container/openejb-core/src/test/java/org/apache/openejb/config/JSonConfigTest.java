@@ -42,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 public class JSonConfigTest {
     @Configuration
     public String config() {
+        System.setProperty("JSonConfigTest.foo", "bar");
         return "openejb.json";
     }
 
@@ -67,6 +68,14 @@ public class JSonConfigTest {
         assertEquals("d", System.getProperty("c"));
         assertEquals("g", System.getProperty("e.f"));
         assertEquals("j", System.getProperty("e.h.i"));
+        assertEquals("properties-value", System.getProperty("properties-key"));
+        assertEquals("2", System.getProperty("object.attribute.#1"));
+    }
+
+    @Test
+    public void checkPlaceHolder() {
+        assertEquals("bar", System.getProperty("JSonConfigTest.foo")); // the real one
+        assertEquals("bar", System.getProperty("placeholder")); // the configured one
     }
 
     @Test

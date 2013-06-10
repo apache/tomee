@@ -46,7 +46,7 @@ public class SystemInstance {
     /**
      * Properties that have to be away from System (i.e. {@link System#setProperty(String, String)} must not be called)
      */
-    private final Properties internalProperties = new Properties();
+    private final Properties internalProperties = new Properties(System.getProperties());
 
     private final Options options;
 
@@ -67,6 +67,7 @@ public class SystemInstance {
     private SystemInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
+        /* since defaults are system properties no need to do it
         for (Map.Entry<? extends Object, ? extends Object> e : System.getProperties().entrySet()){
             final String key = e.getKey().toString();
             if (key.startsWith("sun.")) continue;
@@ -87,6 +88,7 @@ public class SystemInstance {
             }
             this.internalProperties.put(e.getKey(), e.getValue());
         }
+        */
 
         this.internalProperties.putAll(properties);
 
@@ -318,7 +320,7 @@ public class SystemInstance {
             return;
         }
 
-        System.getProperties().putAll(systemProperties);
+        // System.getProperties().putAll(systemProperties); // no need since System.getProperties() is the parent of internalProperties
         system.getProperties().putAll(systemProperties);
     }
 
