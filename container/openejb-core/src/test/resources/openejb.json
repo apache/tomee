@@ -1,6 +1,18 @@
 {
+    "__": [
+        "comments are supported through __ key",
+        "so don't hesitate to explain what you are configuring"
+    ],
     "resources": {
+        "__": [
+            "here is",
+            "the resources configuration"
+        ],
         "json-datasource": {
+            "__": [
+                "properties is the magic attribute",
+                "to configure the resource"
+            ],
             "properties": {
                 "JdbcUrl": "jdbc:hsqldb:mem:json",
                 "MaxActive": 123,
