@@ -255,6 +255,7 @@ public class SystemInstance {
         readUserSystemProperties();
         readSystemProperties();
         readSystemProperties(get().currentProfile());
+        System.getProperties().putAll(system.getProperties()); // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
     }
@@ -320,7 +321,6 @@ public class SystemInstance {
             return;
         }
 
-        // System.getProperties().putAll(systemProperties); // no need since System.getProperties() is the parent of internalProperties
         system.getProperties().putAll(systemProperties);
     }
 

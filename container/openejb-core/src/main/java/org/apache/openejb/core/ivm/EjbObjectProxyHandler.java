@@ -240,14 +240,22 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             return asynchronousPool.invoke(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    final ThreadContext oldCtx = ThreadContext.enter(currentCtx); // ensure context is the same as for the caller
+                    final ThreadContext oldCtx; // ensure context is the same as for the caller
+                    if (currentCtx != null) {
+                        oldCtx = ThreadContext.enter(currentCtx);
+                    } else {
+                        oldCtx = null;
+                    }
+
                     final Object threadState = securityService.currentState();
                     securityService.setState(state);
                     try {
                         return synchronizedBusinessMethod(interfce, method, args);
                     } finally {
                         securityService.setState(threadState);
-                        ThreadContext.exit(oldCtx);
+                        if (oldCtx != null) {
+                            ThreadContext.exit(oldCtx);
+                        }
                     }
                 }
             }, method.getReturnType() == Void.TYPE);
