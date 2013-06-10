@@ -29,6 +29,7 @@
         <patternset id="exclusions"> 
           <exclude name="**/.settings/**"/>
           <exclude name="**/.idea/**"/>
+          <exclude name="**/*.json"/>
           <exclude name="**/target/**"/>
           <exclude name="**/*.iml"/>
           <exclude name="**/*.log"/>
