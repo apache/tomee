@@ -1555,7 +1555,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 if (files != null) {
                     for (final File file : files) {
                         final String name = file.getName();
-                        if (RESOURCES_XML.equals(name)) {
+                        if (RESOURCES_XML.equals(name) || "resources.json".equals(name)) {
                             if (!descriptors.containsKey(name)) {
                                 descriptors.put(name, file.toURI().toURL());
                             } else {
