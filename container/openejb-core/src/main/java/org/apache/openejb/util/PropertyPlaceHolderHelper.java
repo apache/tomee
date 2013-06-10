@@ -91,7 +91,17 @@ public final class PropertyPlaceHolderHelper {
 
         @Override
         public String lookup(final String key) {
-            return PROPERTIES.getProperty(key, ENV.get(key));
+            String value = PROPERTIES.getProperty(key);
+            if (value != null) {
+                return value;
+            }
+
+            value = ENV.get(key);
+            if (value != null) {
+                return value;
+            }
+
+            return key;
         }
     }
 }

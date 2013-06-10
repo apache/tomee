@@ -55,11 +55,11 @@ public class SimpleJSonParser {
                     throw new IllegalArgumentException("String should be between \"");
                 }
 
-                final String value = b.substring(0, b.length() - 1); // remove last "
+                final String value = PropertyPlaceHolderHelper.simpleValue(b.substring(0, b.length() - 1)); // remove last "
                 if (valueRead(is, json, array, value)) {
                     return value;
                 }
-            } else if (current != ':' && current != ',' && !isWhiteSpace(current)) {
+            } else if (current != ':' && current != '=' && current != ',' && !isWhiteSpace(current)) {
                 final StringBuilder b =  new StringBuilder().append(current);
                 do {
                     read = is.read();
@@ -68,7 +68,7 @@ public class SimpleJSonParser {
                     b.append(current);
                 } while (current != -1 && !isWhiteSpace(current) && current != ',');
 
-                final String value = b.substring(0, b.length() - 1); // remove last character
+                final String value = PropertyPlaceHolderHelper.simpleValue(b.substring(0, b.length() - 1)); // remove last character
                 if (valueRead(is, json, array, value)) {
                     return value;
                 }
@@ -81,9 +81,11 @@ public class SimpleJSonParser {
 
     private static boolean valueRead(final InputStream is, final Map<String, Object> json, final Collection<Object> array, final String value) throws IOException {
         int read;
+        char c;
         do {
             read = is.read();
-        } while (read != -1 && read != ':' && read == ',');
+            c = (char) read;
+        } while (c != -1 && c != ':' && c != '=' && (c == ',' || c == '\n' || c == '\r'));
 
         if (json != null) {
             json.put(value, read(is));
