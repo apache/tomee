@@ -242,7 +242,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                 public Object call() throws Exception {
                     final ThreadContext oldCtx; // ensure context is the same as for the caller
                     if (currentCtx != null) {
-                        oldCtx = ThreadContext.enter(currentCtx);
+                        oldCtx = ThreadContext.enter(new ThreadContext(currentCtx));
                     } else {
                         oldCtx = null;
                     }
