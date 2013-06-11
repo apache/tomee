@@ -934,8 +934,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void initContextLoader(final StandardContext standardContext) {
         final Loader standardContextLoader = standardContext.getLoader();
         if (standardContextLoader != null
-                && !VirtualWebappLoader.class.equals(standardContextLoader.getClass())
-                && !WebappLoader.class.equals(standardContextLoader.getClass())) {
+                && (
+                       (!VirtualWebappLoader.class.equals(standardContextLoader.getClass()) && !WebappLoader.class.equals(standardContextLoader.getClass()))
+                    || (WebappLoader.class.equals(standardContextLoader.getClass()) && !WebappLoader.class.cast(standardContextLoader).getLoaderClass().startsWith("org.apache.tom")))
+            ) {
             // custom loader, we don't know it
             // and since we don't have a full delegate pattern for our lazy stop loader
             // simply skip lazy stop loader - normally sides effect will be an early shutdown for ears and some particular features
