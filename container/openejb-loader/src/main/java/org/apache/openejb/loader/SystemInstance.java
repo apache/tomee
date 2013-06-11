@@ -67,8 +67,8 @@ public class SystemInstance {
     private SystemInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
-        /* since defaults are system properties no need to do it
-        for (Map.Entry<? extends Object, ? extends Object> e : System.getProperties().entrySet()){
+        // import JVM system property config (if a resource/container/... is set through this way)
+        for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()){
             final String key = e.getKey().toString();
             if (key.startsWith("sun.")) continue;
             if (key.startsWith("os.")) continue;
@@ -88,7 +88,6 @@ public class SystemInstance {
             }
             this.internalProperties.put(e.getKey(), e.getValue());
         }
-        */
 
         this.internalProperties.putAll(properties);
 
