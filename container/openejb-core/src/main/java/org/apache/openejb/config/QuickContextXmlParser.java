@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -57,24 +58,26 @@ public class QuickContextXmlParser extends DefaultHandler {
                 if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)
                         || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
                     virtualClasspath = attributes.getValue("virtualClasspath");
-                } else {
-                    try {
-                        final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
-                        final Class<?> clazz = parent.loadClass(className);
-                        ClassLoader instance = null;
-                        try {
-                            final Constructor<?> constructor = clazz.getConstructor(ClassLoader.class);
-                            instance = ClassLoader.class.cast(constructor.newInstance(parent));
-                        } catch (final NoSuchMethodException nsme) {
-                            instance = ClassLoader.class.cast(clazz.newInstance());
-                        }
+                }
+            }
 
-                        if (instance != null) {
-                            urls = ClassLoaders.findUrls(instance);
-                        }
-                    } catch (final Exception e) {
-                        // no-op
+            final String loaderClass = attributes.getValue("loaderClass");
+            if (loaderClass != null) {
+                try {
+                    final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
+
+                    // create a fake loader
+                    final Object loader = parent.loadClass("org.apache.catalina.loader.WebappLoader").newInstance();
+                    Reflections.set(loader, "loaderClass", loaderClass);
+                    Reflections.set(loader, "parentClassLoader", parent);
+
+                    // get the loader
+                    final ClassLoader instance = ClassLoader.class.cast(Reflections.invokeByReflection(loader, "createClassLoader", new Class<?>[0], null));
+                    if (instance != null) {
+                        urls = ClassLoaders.findUrls(instance);
                     }
+                } catch (final Exception e) {
+                    // no-op
                 }
             }
         }
