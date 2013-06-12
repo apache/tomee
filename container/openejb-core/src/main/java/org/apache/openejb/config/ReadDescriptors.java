@@ -147,7 +147,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     final String extForm = pUrl.toExternalForm();
                     if (extForm.contains("WEB-INF/classes/META-INF/")) {
-                        tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                        tmpRootUrl = extForm.substring(0, extForm.indexOf("/classes/META-INF"));
                     }
                     if (tmpRootUrl.endsWith(".war")) {
                         tmpRootUrl = tmpRootUrl.substring(0, tmpRootUrl.length() - ".war".length());
