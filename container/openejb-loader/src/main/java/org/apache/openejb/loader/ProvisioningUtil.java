@@ -37,13 +37,16 @@ public class ProvisioningUtil {
     public static final String OPENEJB_DEPLOYER_CACHE_FOLDER = "openejb.deployer.cache.folder";
     public static final String HTTP_PREFIX = "http";
     public static final String MVN_PREFIX = "mvn:";
+
     private static final int CONNECT_TIMEOUT = 10000;
 
     private static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
     private static final String REPO1 = "http://repo1.maven.org/maven2/";
+    private static final String APACHE_SNAPSHOT = "repository.apache.org/snapshots/";
     private static final String ZIP_KEY = "zip";
     private static final String DESTINATION_KEY = "destination";
     private static final String JAR_KEY = "jar";
+
     public static final String TEMP_DIR = "temp";
 
     private ProvisioningUtil() {
@@ -80,7 +83,7 @@ public class ProvisioningUtil {
                 final URLConnection urlConnection = url.openConnection(proxy);
                 urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
                 return new BufferedInputStream(urlConnection.getInputStream());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // ignored
             }
         }
@@ -117,37 +120,48 @@ public class ProvisioningUtil {
             final Class<?> clazz = ProvisioningUtil.class.getClassLoader().loadClass("org.apache.openejb.resolver.Resolver");
             final LocationResolver instance = (LocationResolver) clazz.newInstance();
             return instance.resolve(rawLocation);
-        } catch (Exception e) {
-            if (rawLocation.startsWith(MVN_PREFIX)) {
-                try {
-                    final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
-                    return realLocation(repo1Url);
-                } catch (MalformedURLException e1) {
-                    Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
-                }
-            } else { // try url
-                try {
-                    final File file = cacheFile(lastPart(rawLocation));
-                    final URL url = new URL(rawLocation);
-                    InputStream is = null;
-                    try {
-                        is = new BufferedInputStream(url.openStream());
-                        IO.copy(is, file);
-                        return file.getAbsolutePath();
-                    } finally {
-                        IO.close(is);
-                    }
-                } catch (final Exception e1) {
-                    // no-op
-                }
-            }
-
-            // if it was not an url that's just a file path
-            return rawLocation;
+        } catch (final Throwable e) { // NoClassDefFoundError is not an exception
+            return fallback(rawLocation);
         }
     }
 
+    private static String fallback(final String rawLocation) {
+        if (rawLocation.startsWith(MVN_PREFIX)) {
+            try {
+                final String repo1Url = quickMvnUrl(rawLocation.substring(MVN_PREFIX.length()).replace(":", "/"));
+                return realLocation(repo1Url);
+            } catch (MalformedURLException e1) {
+                Logger.getLogger(ProvisioningUtil.class.getName()).severe("Can't find " + rawLocation);
+            }
+        } else { // try url
+            try {
+                final File file = cacheFile(lastPart(rawLocation));
+                final URL url = new URL(rawLocation);
+                InputStream is = null;
+                try {
+                    is = new BufferedInputStream(url.openStream());
+                    IO.copy(is, file);
+                    return file.getAbsolutePath();
+                } finally {
+                    IO.close(is);
+                }
+            } catch (final Exception e1) {
+                // no-op
+            }
+        }
+
+        // if it was not an url that's just a file path
+        return rawLocation;
+    }
+
     private static String quickMvnUrl(final String raw) throws MalformedURLException {
+        final String base;
+        if (raw.contains("-SNAPSHOT") && raw.contains("apache")) {
+            base = APACHE_SNAPSHOT;
+        } else {
+            base = REPO1;
+        }
+
         StringBuilder builder = new StringBuilder();
         final String toParse;
         if (!raw.contains("!")) {
@@ -159,7 +173,7 @@ public class ProvisioningUtil {
 
             // else use repo1
             builder = new StringBuilder();
-            builder.append(REPO1);
+            builder.append(base);
             toParse = raw;
 
             // try first locally
