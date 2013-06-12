@@ -32,6 +32,79 @@ import java.util.Properties;
  */
 @Prefixes({"tomee", "tomee.embedded"})
 public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
+    private int httpsPort = 8443;
+    private boolean ssl = false;
+    private String keystoreFile;
+    private String keystorePass;
+    private String keystoreType = "JKS";
+    private String clientAuth;
+    private String keyAlias;
+    private String sslProtocol;
+
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public void setHttpsPort(final int httpsPort) {
+        this.httpsPort = httpsPort;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public void setSsl(final boolean ssl) {
+        this.ssl = ssl;
+    }
+
+    public String getKeystoreFile() {
+        return keystoreFile;
+    }
+
+    public void setKeystoreFile(final String keystoreFile) {
+        this.keystoreFile = keystoreFile;
+    }
+
+    public String getKeystorePass() {
+        return keystorePass;
+    }
+
+    public void setKeystorePass(final String keystorePass) {
+        this.keystorePass = keystorePass;
+    }
+
+    public String getKeystoreType() {
+        return keystoreType;
+    }
+
+    public void setKeystoreType(final String keystoreType) {
+        this.keystoreType = keystoreType;
+    }
+
+    public String getClientAuth() {
+        return clientAuth;
+    }
+
+    public void setClientAuth(final String clientAuth) {
+        this.clientAuth = clientAuth;
+    }
+
+    public String getKeyAlias() {
+        return keyAlias;
+    }
+
+    public void setKeyAlias(final String keyAlias) {
+        this.keyAlias = keyAlias;
+    }
+
+    public String getSslProtocol() {
+        return sslProtocol;
+    }
+
+    public void setSslProtocol(final String sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
     @Override
     public int[] portsAlreadySet() {
         final List<Integer> value = new ArrayList<Integer>();
@@ -40,6 +113,9 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
         }
         if (getHttpPort() > 0) {
             value.add(getHttpPort());
+        }
+        if (getHttpsPort() > 0) {
+            value.add(getHttpsPort());
         }
         return toInts(value);
     }

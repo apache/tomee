@@ -61,6 +61,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
      */
     private Configuration convertConfiguration(final EmbeddedTomEEConfiguration tomeeConfiguration) {
     	final Configuration configuration = new Configuration();
+
     	configuration.setDir(tomeeConfiguration.getDir());
     	configuration.setHttpPort(tomeeConfiguration.getHttpPort());
     	configuration.setStopPort(tomeeConfiguration.getStopPort());
@@ -68,6 +69,17 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         configuration.setServerXml(tomeeConfiguration.getServerXml());
         configuration.setProperties(tomeeConfiguration.systemPropertiesAsProperties());
         configuration.setQuickSession(tomeeConfiguration.isQuickSession());
+
+        configuration.setSsl(tomeeConfiguration.isSsl());
+        configuration.setHttpsPort(tomeeConfiguration.getHttpsPort());
+        configuration.setKeystoreFile(tomeeConfiguration.getKeystoreFile());
+        configuration.setKeystorePass(tomeeConfiguration.getKeystorePass());
+        configuration.setKeyAlias(tomeeConfiguration.getKeyAlias());
+        configuration.setKeystoreType(tomeeConfiguration.getKeystoreType());
+        configuration.setClientAuth(tomeeConfiguration.getClientAuth());
+        configuration.setKeyAlias(tomeeConfiguration.getKeyAlias());
+        configuration.setSslProtocol(tomeeConfiguration.getSslProtocol());
+
 		return configuration;
 	}
 
