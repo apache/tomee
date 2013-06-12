@@ -1358,7 +1358,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final Container child = host.findChild(standardContext.getName());
 
         // skip undeployment if redeploying (StandardContext.redeploy())
-        if (child instanceof org.apache.catalina.Context && TomcatContextUtil.isReloading((org.apache.catalina.Context) child)) {
+        if (child instanceof org.apache.catalina.Context && org.apache.catalina.Context.class.cast(child).getPaused()) {
             return true;
         }
 
