@@ -43,6 +43,11 @@
       <version>${version.arquillian}</version>
     </dependency>
     <dependency>
+      <groupId>org.jboss.arquillian.config</groupId>
+      <artifactId>arquillian-config-impl-base</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.arquillian.container</groupId>
       <artifactId>arquillian-container-spi</artifactId>
       <version>${version.arquillian}</version>
