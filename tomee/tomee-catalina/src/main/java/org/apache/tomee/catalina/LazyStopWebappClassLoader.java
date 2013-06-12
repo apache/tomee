@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
@@ -40,7 +39,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
     private boolean restarting = false;
-    private volatile Context relatedContext;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer = null;
 
@@ -61,7 +59,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
-        if (forceStopPhase && (restarting || TomcatContextUtil.isReloading(relatedContext))) {
+        if (forceStopPhase && restarting) {
             internalStop();
         }
     }
@@ -183,10 +181,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             // no-op
         }
         return true;
-    }
-
-    public void setRelatedContext(final Context standardContext) {
-        relatedContext = standardContext;
     }
 
     public static boolean isDelegate() {
