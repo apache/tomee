@@ -108,7 +108,7 @@ public class Core {
             // no-op
         }
 
-        final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
+        final int part = (int) Math.round(classes.length * 1. /  Math.max(1, permits));
         for (int i = 0; i < permits; i++) {
             final int current = i;
             final int offset = i * part;
