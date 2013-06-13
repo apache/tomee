@@ -187,7 +187,7 @@ public class Warmup {
         tld.setDaemon(true);
         tld.start();
 
-        final int part = (int) Math.round(classes.length * 1. / Math.max(permits, 1));
+        final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
         for (int i = 0; i < permits; i++) {
             final int offset = i * part;
             final Thread thread = new Thread() {
