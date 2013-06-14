@@ -101,6 +101,7 @@
     <module>resources-declared-in-webapp</module>
     <module>rest-applicationcomposer-mockito</module>
     <module>rest-applicationcomposer</module>
+    <module>rest-jaas</module>
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
