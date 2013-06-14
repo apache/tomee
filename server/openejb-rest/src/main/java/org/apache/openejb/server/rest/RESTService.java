@@ -891,7 +891,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, null));
             }
         }
     }

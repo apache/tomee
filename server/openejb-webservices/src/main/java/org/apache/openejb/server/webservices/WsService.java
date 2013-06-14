@@ -185,7 +185,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, null));
             }
         }
     }
@@ -214,7 +214,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
-    // handle webapp ejbs of ears
+    // handle webapp ejbs of ears - called before afterApplicationCreated for ear so dont add app to deployedApplications here
     public void newEjbToDeploy(final @Observes NewEjbAvailableAfterApplicationCreated event) {
         deployApp(event.getApp(), event.getBeanContexts());
     }
@@ -222,7 +222,7 @@ public abstract class WsService implements ServerService, SelfManaging {
     public void afterApplicationCreated(final @Observes AssemblerAfterApplicationCreated event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
-            deployApp(appInfo, null);
+            deployApp(appInfo, event.getDeployedEjbs());
         }
     }
 
