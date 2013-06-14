@@ -877,7 +877,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             deployedApplications.put(appInfo.path, appInfo);
-            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo));
+            systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, allDeployments));
 
             logger.info("createApplication.success", appInfo.path);
 

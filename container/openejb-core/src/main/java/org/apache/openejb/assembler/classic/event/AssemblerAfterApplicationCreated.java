@@ -16,19 +16,28 @@
  */
 package org.apache.openejb.assembler.classic.event;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.observer.Event;
+
+import java.util.Collection;
 
 @Event
 public class AssemblerAfterApplicationCreated {
     private final AppInfo app;
+    private final Collection<BeanContext> deployedEjbs;
 
-    public AssemblerAfterApplicationCreated(final AppInfo appInfo) {
+    public AssemblerAfterApplicationCreated(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
         app = appInfo;
+        deployedEjbs = ejbs;
     }
 
     public AppInfo getApp() {
         return app;
+    }
+
+    public Collection<BeanContext> getDeployedEjbs() {
+        return deployedEjbs;
     }
 
     @Override
