@@ -17,7 +17,7 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.util.reflection.Reflections;
-import org.apache.webbeans.component.BuildInOwbBean;
+import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadata;
@@ -31,7 +31,6 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ObserverMethod;
@@ -260,7 +259,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     public void afterStart() {
         deploymentBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
         for (final Bean<?> bean : getParentBm().getBeans()) {
-            if (!BuildInOwbBean.class.isInstance(bean)) {
+            if (!BuiltInOwbBean.class.isInstance(bean)) {
                 deploymentBeans.add(bean);
             }
         }
