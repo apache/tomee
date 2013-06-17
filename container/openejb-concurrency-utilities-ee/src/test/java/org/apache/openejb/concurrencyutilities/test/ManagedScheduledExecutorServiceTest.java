@@ -25,14 +25,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.enterprise.concurrent.LastExecution;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import javax.enterprise.concurrent.ManagedTask;
-import javax.enterprise.concurrent.ManagedTaskListener;
 import javax.enterprise.concurrent.Trigger;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -77,22 +72,21 @@ public class ManagedScheduledExecutorServiceTest {
                 }
         );
 
-        assertEquals(1, future.get().intValue());
 
-        assertFalse(callable.future.isDone());
-        assertFalse(callable.future.isCancelled());
+        assertFalse(future.isDone());
+        assertFalse(future.isCancelled());
 
         Thread.sleep(5000);
 
-        assertEquals(6, callable.future.get().intValue());
+        assertEquals(6, future.get().intValue());
 
-        callable.future.cancel(true);
+        future.cancel(true);
         assertEquals(6, counter.get(), 1);
 
-        Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends
+        Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends up
 
-        assertTrue(callable.future.isDone());
-        assertTrue(callable.future.isCancelled());
+        assertTrue(future.isDone());
+        assertTrue(future.isCancelled());
     }
 
     @Test
@@ -101,7 +95,7 @@ public class ManagedScheduledExecutorServiceTest {
         final AtomicInteger counter = new AtomicInteger(0);
         final FutureAwareCallable callable = new FutureAwareCallable(counter);
 
-        es.schedule(Runnable.class.cast(callable),
+        final ScheduledFuture<?> future = es.schedule(Runnable.class.cast(callable),
                 new Trigger() {
                     @Override
                     public Date getNextRunTime(LastExecution lastExecutionInfo, Date taskScheduledTime) {
@@ -118,18 +112,18 @@ public class ManagedScheduledExecutorServiceTest {
                 }
         );
 
-        assertFalse(callable.future.isDone());
-        assertFalse(callable.future.isCancelled());
+        assertFalse(future.isDone());
+        assertFalse(future.isCancelled());
 
         Thread.sleep(5000);
 
-        callable.future.cancel(true);
+        future.cancel(true);
         assertEquals(6, counter.get(), 1);
 
         Thread.sleep(2000); // since get() is not blocking, wait a bit the task ends
 
-        assertTrue(callable.future.isDone());
-        assertTrue(callable.future.isCancelled());
+        assertTrue(future.isDone());
+        assertTrue(future.isCancelled());
     }
 
     @Test
@@ -146,9 +140,8 @@ public class ManagedScheduledExecutorServiceTest {
         assertEquals(6, TimeUnit.MILLISECONDS.toSeconds(future.get() - start), 1);
     }
 
-    protected static class FutureAwareCallable implements Callable<Integer>, ManagedTask, Runnable {
+    protected static class FutureAwareCallable implements Callable<Integer>, Runnable {
         private final AtomicInteger counter;
-        private Future<Integer> future;
 
         public FutureAwareCallable(final AtomicInteger counter) {
             this.counter = counter;
@@ -162,36 +155,6 @@ public class ManagedScheduledExecutorServiceTest {
         @Override
         public void run() {
             counter.incrementAndGet();
-        }
-
-        @Override
-        public ManagedTaskListener getManagedTaskListener() {
-            return new ManagedTaskListener() {
-                @Override
-                public void taskSubmitted(Future<?> future, ManagedExecutorService executor, Object task) {
-                    FutureAwareCallable.this.future = Future.class.cast(future);
-                }
-
-                @Override
-                public void taskAborted(Future<?> future, ManagedExecutorService executor, Object task, Throwable exception) {
-
-                }
-
-                @Override
-                public void taskDone(Future<?> future, ManagedExecutorService executor, Object task, Throwable exception) {
-
-                }
-
-                @Override
-                public void taskStarting(Future<?> future, ManagedExecutorService executor, Object task) {
-
-                }
-            };
-        }
-
-        @Override
-        public Map<String, String> getExecutionProperties() {
-            return Collections.emptyMap();
         }
     }
 }

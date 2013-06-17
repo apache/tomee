@@ -21,16 +21,22 @@ import org.apache.openejb.concurrencyutilities.ee.task.CUCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.CURunnable;
 import org.apache.openejb.concurrencyutilities.ee.task.TriggerCallable;
 import org.apache.openejb.concurrencyutilities.ee.task.TriggerRunnable;
+import org.apache.openejb.concurrencyutilities.ee.task.TriggerTask;
 import org.apache.openejb.util.Duration;
 
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.concurrent.ManagedTask;
 import javax.enterprise.concurrent.Trigger;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceImpl implements ManagedScheduledExecutorService {
     private final ScheduledExecutorService delegate;
@@ -44,34 +50,26 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     @Override
     public ScheduledFuture<?> schedule(final Runnable runnable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
-        final TriggerRunnable wrapper = new TriggerRunnable(this, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable));
-        final ScheduledFuture<?> future = delegate.schedule(new Runnable() {
-            @Override
-            public void run() {
-                wrapper.run();
-                final ScheduledFuture<?> future = schedule(this, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-                wrapper.taskSubmitted(future, ManagedScheduledExecutorServiceImpl.this, runnable);
-            }
-        }, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        wrapper.taskSubmitted(future, this, runnable);
-        return new CUScheduleFuture<Object>(ScheduledFuture.class.cast(future), wrapper);
+        final AtomicReference<Future<?>> futureHandle = new AtomicReference<Future<?>>();
+        final TriggerRunnable wrapper = new TriggerRunnable(this, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
+        final ScheduledFuture<?> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
+        return initTriggerScheduledFuture(runnable, AtomicReference.class.cast(futureHandle), wrapper, ScheduledFuture.class.cast(future));
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(final Callable<V> vCallable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
-        final TriggerCallable<V> wrapper = new TriggerCallable<V>(this, vCallable, new CUCallable<V>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable));
-        final ScheduledFuture<V> future = delegate.schedule(new Callable<V>() {
-            @Override
-            public V call() throws Exception {
-                final V result = wrapper.call();
-                final ScheduledFuture<V> future = schedule(this, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-                wrapper.taskSubmitted(future, ManagedScheduledExecutorServiceImpl.this, vCallable);
-                return result;
-            }
-        }, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        wrapper.taskSubmitted(future, this, vCallable);
-        return new CUScheduleFuture<V>(future, wrapper);
+        final AtomicReference<Future<V>> futureHandle = new AtomicReference<Future<V>>();
+        final TriggerCallable<V> wrapper = new TriggerCallable<V>(this, vCallable, new CUCallable<V>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
+        final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
+        return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
+    }
+
+    private <V> ScheduledFuture<V> initTriggerScheduledFuture(final Object original, final AtomicReference<Future<V>> futureHandle,
+                                                              final TriggerTask<V> wrapper, final ScheduledFuture<V> future) {
+        futureHandle.set(future);
+        wrapper.taskSubmitted(future, this, original);
+        return new CUScheduleFuture<V>(ScheduledFutureFacade.<V>newProxy(futureHandle), wrapper);
     }
 
     @Override
@@ -115,5 +113,22 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
             return ManagedTask.class.cast(runnable).getExecutionProperties().get(ManagedTask.IDENTITY_NAME);
         }
         return null;
+    }
+
+    private static class ScheduledFutureFacade<V> implements InvocationHandler {
+        private final AtomicReference<ScheduledFuture<V>> delegate;
+
+        private ScheduledFutureFacade(final AtomicReference<ScheduledFuture<V>> delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            return method.invoke(delegate.get(), args);
+        }
+
+        private static <V> ScheduledFuture<V> newProxy(final AtomicReference<Future<V>> futureHandle) {
+            return ScheduledFuture.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { ScheduledFuture.class }, new ScheduledFutureFacade(futureHandle)));
+        }
     }
 }

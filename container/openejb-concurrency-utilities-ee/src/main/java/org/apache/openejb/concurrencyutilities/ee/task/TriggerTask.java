@@ -23,13 +23,19 @@ import javax.enterprise.concurrent.SkippedException;
 import javax.enterprise.concurrent.Trigger;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class TriggerTask<T> extends CUTask<T> {
     protected final ManagedScheduledExecutorServiceImpl executorService;
     protected final Trigger trigger;
     protected final Date scheduledTime;
     protected final String id;
+    protected final AtomicReference<Future<T>> futureRef;
+
     protected LastExecution lastExecution;
     protected volatile boolean skipped = false;
 
@@ -39,12 +45,13 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     private volatile T result = null;
 
     protected TriggerTask(final Object original, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
-                          final Date taskScheduledTime, final String id) {
+                          final Date taskScheduledTime, final String id, final AtomicReference<Future<T>> ref) {
         super(original);
         this.executorService = es;
         this.trigger = trigger;
         this.scheduledTime = taskScheduledTime;
         this.id = id;
+        this.futureRef = ref;
     }
 
     public T invoke() throws Exception {
@@ -73,6 +80,11 @@ public abstract class TriggerTask<T> extends CUTask<T> {
                     taskAborted(skippedException);
                     throw skippedException;
                 }
+
+                final ScheduledFuture<T> future = executorService.schedule(this, trigger.getNextRunTime(lastExecution, scheduledTime).getTime() - ManagedScheduledExecutorServiceImpl.nowMs(), TimeUnit.MILLISECONDS);
+                futureRef.set(future);
+                taskSubmitted(future, executorService, delegate);
+
                 return result;
             }
         });
