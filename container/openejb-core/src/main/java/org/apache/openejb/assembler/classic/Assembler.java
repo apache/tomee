@@ -194,6 +194,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1346,11 +1347,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (NamingException ignored) {
                 // no resource adapters were created
             }
-            while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
-                final Binding binding = namingEnumeration.nextElement();
-                final Object object = binding.getObject();
-                destroyResource(binding.getName(), binding.getClassName(), object);
-            }
+            destroyResourceTree(namingEnumeration);
 
             try {
                 containerSystem.getJNDIContext().unbind("java:global");
@@ -1366,6 +1363,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             SystemInstance.reset();
         } finally {
             l.unlock();
+        }
+    }
+
+    private void destroyResourceTree(final NamingEnumeration<Binding> namingEnumeration) {
+        while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
+            final Binding binding = namingEnumeration.nextElement();
+            final Object object = binding.getObject();
+            if (Context.class.isInstance(object)) {
+                try {
+                    destroyResourceTree(Context.class.cast(object).listBindings(""));
+                } catch (final Exception ignored) {
+                    // no-op
+                }
+            } else {
+                destroyResource(binding.getName(), binding.getClassName(), object);
+            }
         }
     }
 
@@ -1403,9 +1416,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (cm != null && cm instanceof AbstractConnectionManager) {
                     ((AbstractConnectionManager) cm).doStop();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
             }
+        } else if (ExecutorService.class.isInstance(object)) {
+            ExecutorService.class.cast(object).shutdown();
         } else if (logger.isDebugEnabled()) {
             logger.debug("Not processing resource on destroy: " + className);
         }
