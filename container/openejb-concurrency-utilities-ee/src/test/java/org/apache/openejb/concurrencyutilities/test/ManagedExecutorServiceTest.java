@@ -27,39 +27,44 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Typed;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class ManagedExecutorServiceTest {
-    @Module
-    public Class<?>[] bean() {
-        return new Class<?>[] { ExecutorFacade.class, CdiExecutorFacade.class };
-    }
-
     @EJB
     private ExecutorFacade facade;
-
     @Inject
     private CdiExecutorFacade cdiFacade;
+
+    @Module
+    public Class<?>[] bean() {
+        return new Class<?>[]{ ExecutorFacade.class, CdiExecutorFacade.class, RequestBean.class, MyCallable.class };
+    }
 
     @Before
     public void cleanUpContext() {
         ThreadContext.exit(null);
+        RequestBean.ID = 0;
     }
 
     @Test
     public void checkEjbContext() throws Exception {
         assertTrue(facade.submit().get());
+        assertEquals(1, RequestBean.ID);
     }
 
     @Test
     public void checkCdiContext() throws Exception {
         assertTrue(cdiFacade.submit().get());
+        assertEquals(1, RequestBean.ID);
     }
 
     @Singleton
@@ -69,26 +74,63 @@ public class ManagedExecutorServiceTest {
         private ManagedExecutorService es;
 
         @Override
-        protected boolean isValid() {
+        public boolean isValid() {
             return ThreadContext.getThreadContext().getBeanContext().getBeanClass() == ExecutorFacade.class;
         }
     }
 
     public static class CdiExecutorFacade {
+        protected static long id = -1;
+        protected static CdiExecutorFacade current = null;
+
         @Resource
         private ManagedExecutorService es;
 
+        @Inject
+        private RequestBean bean;
+
+        @Inject
+        private MyCallable callable;
+
         public Future<Boolean> submit() {
-            return es.submit(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    return isValid();
-                }
-            });
+            setContext();
+            return es.submit(callable);
         }
 
-        protected boolean isValid() {
+        protected void setContext() {
+            id = bean.getId();
+            current = this;
+        }
+
+        public boolean isValid() {
             return ThreadContext.getThreadContext() == null;
+        }
+    }
+
+    @Typed(MyCallable.class)
+    public static class MyCallable implements Callable<Boolean> {
+        @Inject
+        private RequestBean bean;
+
+        @Inject
+        private BeanManager bm;
+
+        @Override
+        public Boolean call() throws Exception {
+            final RequestBean currentRequestBean = RequestBean.class.cast(bm.getReference(bm.resolve(bm.getBeans(RequestBean.class)), RequestBean.class, null));
+            return CdiExecutorFacade.id == bean.getId()
+                    && CdiExecutorFacade.id == currentRequestBean.getId()
+                    && CdiExecutorFacade.current.isValid();
+        }
+    }
+
+    @RequestScoped
+    public static class RequestBean {
+        private static int ID = 0;
+        private int id = ID++;
+
+        public int getId() {
+            return id;
         }
     }
 }
