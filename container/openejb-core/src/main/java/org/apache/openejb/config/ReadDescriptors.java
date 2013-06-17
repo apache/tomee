@@ -47,6 +47,7 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.sxc.ApplicationClientXml;
 import org.apache.openejb.sxc.EjbJarXml;
 import org.apache.openejb.sxc.FacesConfigXml;
@@ -78,7 +79,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ReadDescriptors implements DynamicDeployer {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
+
+    private static final boolean ROOT_URL_FROM_WEBINF = SystemInstance.get().getOptions().get("openejb.jpa.root-url-from-webinf", false);
 
     @SuppressWarnings({"unchecked"})
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
@@ -147,7 +150,11 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     final String extForm = pUrl.toExternalForm();
                     if (extForm.contains("WEB-INF/classes/META-INF/")) {
-                        tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                        if (!ROOT_URL_FROM_WEBINF) {
+                            tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                        } else {
+                            tmpRootUrl = extForm.substring(0, extForm.indexOf("/classes/META-INF"));
+                        }
                     }
                     if (tmpRootUrl.endsWith(".war")) {
                         tmpRootUrl = tmpRootUrl.substring(0, tmpRootUrl.length() - ".war".length());
