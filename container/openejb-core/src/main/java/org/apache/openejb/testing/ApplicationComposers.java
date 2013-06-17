@@ -246,13 +246,14 @@ public final class ApplicationComposers {
         AppModule appModule = new AppModule(loader, testClass.getSimpleName());
 
         // Add the test case as an @ManagedBean
+        final ManagedBean testBean;
         {
             final EjbJar ejbJar = new EjbJar();
             final OpenejbJar openejbJar = new OpenejbJar();
-            final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(testClass.getSimpleName(), testClass.getName(), true));
-            bean.localBean();
-            bean.setTransactionType(TransactionType.BEAN);
-            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+            testBean = ejbJar.addEnterpriseBean(new ManagedBean(testClass.getSimpleName(), testClass.getName(), true));
+            testBean.localBean();
+            testBean.setTransactionType(TransactionType.BEAN);
+            final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(testBean);
             ejbDeployment.setDeploymentId(testClass.getName());
 
             appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
@@ -385,6 +386,8 @@ public final class ApplicationComposers {
                 if (root == null) {
                     root = "/openejb";
                 }
+
+                testBean.getEnvEntry().addAll(webapp.getEnvEntry());
 
                 final WebModule webModule = new WebModule(webapp, root, Thread.currentThread().getContextClassLoader(), "", root);
 
