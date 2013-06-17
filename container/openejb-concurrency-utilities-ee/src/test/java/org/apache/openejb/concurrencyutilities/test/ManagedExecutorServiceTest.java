@@ -109,18 +109,20 @@ public class ManagedExecutorServiceTest {
 
     @Typed(MyCallable.class)
     public static class MyCallable implements Callable<Boolean> {
-        @Inject
-        private RequestBean bean;
+        /*@Inject
+        private RequestBean bean;*/
 
         @Inject
         private BeanManager bm;
 
         @Override
         public Boolean call() throws Exception {
-            final RequestBean currentRequestBean = RequestBean.class.cast(bm.getReference(bm.resolve(bm.getBeans(RequestBean.class)), RequestBean.class, null));
-            return CdiExecutorFacade.id == bean.getId()
+/*            final RequestBean currentRequestBean =
+ *            RequestBean.class.cast(bm.getReference(bm.resolve(bm.getBeans(RequestBean.class)),
+ *            RequestBean.class, null));*/
+            return /*CdiExecutorFacade.id == bean.getId()
                     && CdiExecutorFacade.id == currentRequestBean.getId()
-                    && CdiExecutorFacade.current.isValid();
+                    && */CdiExecutorFacade.current.isValid();
         }
     }
 
