@@ -20,6 +20,8 @@ import org.apache.openejb.concurrencyutilities.ee.impl.ManagedScheduledExecutorS
 
 import javax.enterprise.concurrent.Trigger;
 import java.util.Date;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TriggerRunnable extends TriggerTask<Void> implements Runnable {
     private final Runnable delegate;
@@ -27,8 +29,9 @@ public class TriggerRunnable extends TriggerTask<Void> implements Runnable {
     public TriggerRunnable(final ManagedScheduledExecutorServiceImpl es,
                            final Runnable original, final Runnable runnable,
                            final Trigger trigger,
-                           final Date taskScheduledTime, final String id) {
-        super(original, es, trigger, taskScheduledTime, id);
+                           final Date taskScheduledTime, final String id,
+                           final AtomicReference<Future<Void>> ref) {
+        super(original, es, trigger, taskScheduledTime, id, ref);
         this.delegate = runnable;
     }
 

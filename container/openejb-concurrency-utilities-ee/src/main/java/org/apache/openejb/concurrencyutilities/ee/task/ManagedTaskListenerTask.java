@@ -65,6 +65,10 @@ public abstract class ManagedTaskListenerTask implements ManagedTaskListener {
         taskAborted(future, executor, delegate, skippedException);
     }
 
+    public Object getDelegate() {
+        return delegate;
+    }
+
     private static class NoopManagedTaskListener implements ManagedTaskListener {
         private static final NoopManagedTaskListener INSTANCE = new NoopManagedTaskListener();
 

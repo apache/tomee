@@ -21,14 +21,17 @@ import org.apache.openejb.concurrencyutilities.ee.impl.ManagedScheduledExecutorS
 import javax.enterprise.concurrent.Trigger;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TriggerCallable<V> extends TriggerTask<V> implements Callable<V> {
     private final Callable<V> delegate;
 
     public TriggerCallable(final ManagedScheduledExecutorServiceImpl es,
                            final Callable<V> original, final Callable<V> wrap,
-                           final Trigger trigger, final Date taskScheduledTime, final String id) {
-        super(original, es, trigger, taskScheduledTime, id);
+                           final Trigger trigger, final Date taskScheduledTime, final String id,
+                           final AtomicReference<Future<V>> ref) {
+        super(original, es, trigger, taskScheduledTime, id, ref);
         this.delegate = wrap;
     }
 
