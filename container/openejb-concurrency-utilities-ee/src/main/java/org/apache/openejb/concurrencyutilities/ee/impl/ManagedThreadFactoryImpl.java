@@ -38,6 +38,7 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         final Thread thread = new ManagedThread(r);
         thread.setDaemon(true);
         thread.setName(prefix + ID.incrementAndGet());
+        thread.setContextClassLoader(ManagedThreadFactoryImpl.class.getClassLoader()); // ensure we use container loader as main context classloader to avoid leaks
         return thread;
     }
 
