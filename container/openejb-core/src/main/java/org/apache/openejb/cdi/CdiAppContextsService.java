@@ -504,4 +504,28 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public void updateSessionIdMapping(final String oldId, final String newId) {
         sessionCtxManager.updateSessionIdMapping(oldId, newId);
     }
+
+    public State saveState() {
+        return new State(requestContext.get(), sessionContext.get(), conversationContext.get());
+    }
+
+    public State restoreState(final State state) {
+        final State old = saveState();
+        requestContext.set(state.request);
+        sessionContext.set(state.session);
+        conversationContext.set(state.conversation);
+        return old;
+    }
+
+    public static class State {
+        private final RequestContext request;
+        private final SessionContext session;
+        private final ConversationContext conversation;
+
+        public State(final RequestContext request, final SessionContext session, final ConversationContext conversation) {
+            this.request = request;
+            this.session = session;
+            this.conversation = conversation;
+        }
+    }
 }

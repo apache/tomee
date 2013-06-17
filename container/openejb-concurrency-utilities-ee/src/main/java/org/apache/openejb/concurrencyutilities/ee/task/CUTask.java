@@ -17,10 +17,18 @@
 package org.apache.openejb.concurrencyutilities.ee.task;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask {
@@ -62,9 +70,16 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
     }
 
     private static class Context {
+        private static final Class<?>[] THREAD_SCOPES = new Class<?>[] {
+                RequestScoped.class, SessionScoped.class, ConversationScoped.class
+        };
+
         private final Object securityServiceState;
         private final ThreadContext threadContext;
         private final ClassLoader loader;
+
+        private final CdiAppContextsService contextService;
+        private final CdiAppContextsService.State cdiState;
 
         private Context currentContext = null;
 
@@ -72,6 +87,15 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             this.securityServiceState = initialSecurityServiceState;
             this.threadContext = initialThreadContext;
             this.loader = initialLoader;
+
+            final ContextsService genericContextsService = WebBeansContext.currentInstance().getContextsService();
+            if (CdiAppContextsService.class.isInstance(genericContextsService)) {
+                contextService = CdiAppContextsService.class.cast(genericContextsService);
+                cdiState = contextService.saveState();
+            } else {
+                contextService = null;
+                cdiState = null;
+            }
         }
 
         public void enter() {
@@ -91,13 +115,23 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
             SECURITY_SERVICE.setState(securityServiceState);
 
             currentContext = new Context(threadState, oldCtx, oldCl);
+            if (cdiState != null) {
+                contextService.restoreState(cdiState);
+            }
         }
 
         public void exit() {
             SECURITY_SERVICE.setState(currentContext.securityServiceState);
+
             if (currentContext.threadContext != null) {
                 ThreadContext.exit(currentContext.threadContext);
             }
+
+            if (currentContext.cdiState != null) {
+                contextService.restoreState(currentContext.cdiState);
+                contextService.removeThreadLocals();
+            }
+
             Thread.currentThread().setContextClassLoader(currentContext.loader);
             currentContext = null;
         }
