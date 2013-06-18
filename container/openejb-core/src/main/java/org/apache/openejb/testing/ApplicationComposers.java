@@ -89,6 +89,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +127,7 @@ public final class ApplicationComposers {
     private ThreadContext previous = null;
     private MockHttpSession session = null;
     private MockServletContext servletContext = null;
+    private Collection<String> globalJndiEntries = new ArrayList<String>();
 
     public ApplicationComposers(final Class<?> klass) {
         testClass = klass;
@@ -619,15 +621,17 @@ public final class ApplicationComposers {
         session = new MockHttpSession();
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final Context jndiContext = containerSystem.getJNDIContext();
 
         for (final EnvEntry entry : testBean.getEnvEntry()) { // set it in global jndi context since that's "app" entries and otherwise when we are no more in test bean context lookup fails
             final String name = entry.getName();
+            final String jndi;
             if (name.startsWith("java:") || name.startsWith("comp/env")) {
-                containerSystem.getJNDIContext().bind(name, entry.getEnvEntryValue());
+                jndi = name;
             } else {
-                containerSystem.getJNDIContext().bind("java:comp/env/" + name,
-entry.getEnvEntryValue());
+                jndi = "java:comp/env/" + name;
             }
+            jndiContext.bind(jndi, entry.getEnvEntryValue());
         }
 
         appInfo = config.configureApplication(appModule);
@@ -739,6 +743,12 @@ entry.getEnvEntryValue());
             } catch (Exception e) {
                 // no-op
             }
+
+            final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            for (final String entry : globalJndiEntries) {
+                context.unbind(entry);
+            }
+            globalJndiEntries.clear();
 
             try {
                 ScopeHelper.stopContexts(contextsService, servletContext, session);
