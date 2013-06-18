@@ -42,23 +42,31 @@ public abstract class ManagedTaskListenerTask implements ManagedTaskListener {
         this.future = future;
         this.executor = executor;
 
-        listener.taskSubmitted(future, executor, task);
+        if (listener != null) {
+            listener.taskSubmitted(future, executor, task);
+        }
     }
 
     @Override
     public void taskAborted(final Future<?> future, final ManagedExecutorService executor, final Object task, final Throwable exception) {
-        // use saved values since called with null excepted for the exception
-        listener.taskAborted(this.future, this.executor, this.delegate, exception);
+        if (listener != null) {
+            // use saved values since called with null excepted for the exception
+            listener.taskAborted(this.future, this.executor, this.delegate, exception);
+        }
     }
 
     @Override
     public void taskDone(final Future<?> future, final ManagedExecutorService executor, final Object task, final Throwable exception) {
-        listener.taskDone(future, executor, task, exception);
+        if (listener != null) {
+            listener.taskDone(future, executor, task, exception);
+        }
     }
 
     @Override
     public void taskStarting(final Future<?> future, final ManagedExecutorService executor, final Object task) {
-        listener.taskStarting(future, executor, task);
+        if (listener != null) {
+            listener.taskStarting(future, executor, task);
+        }
     }
 
     public void taskAborted(final Throwable skippedException) {

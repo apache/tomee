@@ -17,18 +17,10 @@
 package org.apache.openejb.concurrencyutilities.ee.task;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.spi.ContextsService;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask {
@@ -70,9 +62,11 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask {
     }
 
     private static class Context {
+        /*
         private static final Class<?>[] THREAD_SCOPES = new Class<?>[] {
                 RequestScoped.class, SessionScoped.class, ConversationScoped.class
         };
+        */
 
         private final Object securityServiceState;
         private final ThreadContext threadContext;
