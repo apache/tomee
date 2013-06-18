@@ -16,9 +16,12 @@
  */
 package org.apache.openejb.concurrencyutilities.ee.impl;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.concurrencyutilities.ee.task.CUTask;
 
 import javax.enterprise.concurrent.ContextService;
+import javax.enterprise.concurrent.ManagedTask;
+import javax.transaction.Transaction;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -58,11 +61,13 @@ public class ContextServiceImpl implements ContextService {
     private static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
+        private final boolean suspendTx;
 
         private CUHandler(final Object instance, final Map<String, String> props) {
             super(instance);
             this.instance = instance;
             this.properties = props;
+            this.suspendTx = ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION));
         }
 
         @Override
@@ -71,12 +76,25 @@ public class ContextServiceImpl implements ContextService {
                 return method.invoke(this, args);
             }
 
-            return invoke(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return method.invoke(instance, args);
+            final Transaction suspendedTx;
+            if (suspendTx) {
+                suspendedTx = OpenEJB.getTransactionManager().suspend();
+            } else {
+                suspendedTx = null;
+            }
+
+            try {
+                return invoke(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        return method.invoke(instance, args);
+                    }
+                });
+            } finally {
+                if (suspendedTx != null) {
+                    OpenEJB.getTransactionManager().resume(suspendedTx);
                 }
-            });
+            }
         }
     }
 }
