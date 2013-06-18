@@ -32,9 +32,9 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.core.LocalInitialContextFactory;
@@ -47,6 +47,7 @@ import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.TransactionType;
@@ -617,13 +618,24 @@ public final class ApplicationComposers {
         servletContext = new MockServletContext();
         session = new MockHttpSession();
 
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        for (final EnvEntry entry : testBean.getEnvEntry()) { // set it in global jndi context since that's "app" entries and otherwise when we are no more in test bean context lookup fails
+            final String name = entry.getName();
+            if (name.startsWith("java:") || name.startsWith("comp/env")) {
+                containerSystem.getJNDIContext().bind(name, entry.getEnvEntryValue());
+            } else {
+                containerSystem.getJNDIContext().bind("java:comp/env/" + name,
+entry.getEnvEntryValue());
+            }
+        }
+
         appInfo = config.configureApplication(appModule);
 
         appContext = assembler.createApplication(appInfo);
 
         ScopeHelper.startContexts(appContext.getWebBeansContext().getContextsService(), servletContext, session);
 
-        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final BeanContext context = containerSystem.getBeanContext(testClass.getName());
 
         final ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
