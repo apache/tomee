@@ -523,6 +523,12 @@
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-pool</groupId>
+          <artifactId>commons-pool</artifactId>
+        </exclusion>
+      </exclusions>	  
     </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
