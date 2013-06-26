@@ -103,7 +103,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     @Override
     protected boolean filter(final String name) {
-        return false;
+        return URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {

@@ -64,6 +64,16 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             return;
         }
 
+        // if mojarra is present skip myfaces startup
+        try {
+            ctx.getClassLoader().loadClass("com.sun.faces.context.SessionMap");
+            return;
+        } catch (final ClassNotFoundException cnfe) {
+            // no-op
+        } catch (final NoClassDefFoundError error) {
+            // no-op
+        }
+
         // some message filtering, not a perf killer since this class don't log a lot
         final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
         abstractInitializerLogger.setFilter(new RemoveLogMessage(
@@ -135,7 +145,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
 
     // that's the reason why we fork: we don't want to consider our internal faces-config.xml
     // see delegate for details
-    private boolean isFacesConfigPresent(ServletContext servletContext) {
+    private boolean isFacesConfigPresent(final ServletContext servletContext) {
         try {
             if (servletContext.getResource("/WEB-INF/faces-config.xml") != null) {
                 return true;
