@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.loader.JarLocation;
@@ -48,13 +47,10 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES = "tomee.webapp.classloader.enrichment.classes";
     public static final String TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES = "tomee.webapp.classloader.enrichment.prefixes";
 
-    private static final String[] DEFAULT_CLASSES_WHICH_CAN_BE_LOADED_FROM_APP_ONLY = new String[] {
-            // openwebbeans-jsf to be able to embedded the jsf impl keeping CDI features
-            "org.apache.webbeans.jsf.OwbApplicationFactory"
-    };
     private static final String[] JAR_TO_ADD_CLASS_HELPERS;
 
-    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] { // always added since only used with loadClass
+    private static final String[] DEFAULT_PREFIXES_TO_ADD = new String[] {
+            "openwebbeans-jsf", // to be able to provide jsf impl
             "tomee-mojarra",
             "tomee-myfaces", // to be able to embedded myfaces in the webapp
             "openejb-jpa-integration" // to be able to embedded hibernate, eclipselinks....
@@ -66,7 +62,6 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         final Collection<String> prefixes = new ArrayList<String>();
         if (!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP, false)) {
             final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES, "");
-            classes.addAll(Arrays.asList(DEFAULT_CLASSES_WHICH_CAN_BE_LOADED_FROM_APP_ONLY));
             if (additionalEnrichments != null && !additionalEnrichments.isEmpty()) {
                 for (String name : additionalEnrichments.split(",")) {
                     classes.add(name.trim());
@@ -92,54 +87,19 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         // from class
         final ClassLoader cl = TomEEClassLoaderEnricher.class.getClassLoader(); // reference classloader = standardclassloader
         if (cl != appCl && appCl != null) {
-            for (String name : JAR_TO_ADD_CLASS_HELPERS) {
-                try {
-                    final Class<?> clazz = cl.loadClass(name);
-                    if (!clazz.getClassLoader().equals(OpenEJB.class.getClassLoader())) { // already provided?
+            for (final String name : JAR_TO_ADD_CLASS_HELPERS) {
+                try { // don't do anything with appCl otherwise in tomcat it will be broken since WebAppClassLoader caches missed resources
+                    final String classFileName = name.replace(".", "/") + ".class";
+                    final URL parentUrl = cl.getResource(classFileName);
+                    final File file = jarLocation(parentUrl, classFileName);
+                    if (file == null) {
                         continue;
                     }
-
-                    // don't create a list here to loop only once to avoid to allocate memory for nothing
-
-                    boolean add = false;
-                    for (Class<?> itf : clazz.getInterfaces()) {
-                        try {
-                            final Class<?> tcclLoaded = appCl.loadClass(itf.getName());
-                            if (!tcclLoaded.getClassLoader().equals(cl)) {
-                                add = true;
-                                break;
-                            }
-                        } catch (Exception e) {
-                            // ignored
-                        }
-                    }
-
-                    Class<?> current = clazz.getSuperclass();
-                    while (current != null && !Object.class.equals(current)) {
-                        try {
-                            final Class<?> tcclLoaded = appCl.loadClass(current.getName());
-                            if (!tcclLoaded.getClassLoader().equals(cl)) {
-                                add = true;
-                                break;
-                            }
-                        } catch (Exception cnfe) {
-                            // ignored
-                        }
-                        current = current.getSuperclass();
-                    }
-
-                    if (!add) {
-                        continue;
-                    }
-
-                    final URL url = JarLocation.jarLocation(clazz).toURI().toURL();
-                    if (url == null) {
-                        continue;
-                    }
-
-                    urls.add(url);
-                } catch (Exception e) {
+                    urls.add(file.toURI().toURL());
+                } catch (final Exception e) {
                     // ignore
+                } catch (final NoClassDefFoundError error) {
+                    // no-op
                 }
             }
         }
@@ -161,6 +121,16 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
         urls.addAll(Arrays.asList(SystemInstance.get().getComponent(ClassLoaderEnricher.class).applicationEnrichment()));
 
         return urls.toArray(new URL[urls.size()]);
+    }
+
+    private static File jarLocation(final URL url, final String classFileName) throws MalformedURLException {
+        if ("jar".equals(url.getProtocol())) {
+            final String spec = url.getFile();
+            return new File(JarLocation.decode(new URL(spec.substring(0, spec.indexOf('!'))).getFile()));
+        } else if ("file".equals(url.getProtocol())) {
+            return JarLocation.toFile(classFileName, url);
+        }
+        return null;
     }
 
     /**

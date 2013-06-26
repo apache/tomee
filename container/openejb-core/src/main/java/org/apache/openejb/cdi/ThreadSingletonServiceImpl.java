@@ -175,14 +175,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     private <T> void optional(final Map<Class<?>, Object> services, final Class<T> type, final String implementation) {
-        try {
-            final Class clazz = this.getClass().getClassLoader().loadClass(implementation);
+        try { // use TCCL since we can use webapp enrichment for services
+            final Class clazz = Thread.currentThread().getContextClassLoader().loadClass(implementation);
             services.put(type, type.cast(clazz.newInstance()));
-
             logger.debug(String.format("CDI Service Installed: %s = %s", type.getName(), implementation));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             logger.debug(String.format("CDI Service not installed: %s", type.getName()));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -193,7 +192,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //from CDI builder
         configuration.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
-        //        configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
+        // configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
 
         configuration.setProperty(OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());

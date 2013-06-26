@@ -71,7 +71,7 @@ public class JarLocation {
         }
     }
 
-    private static File toFile(String classFileName, URL url) {
+    public static File toFile(String classFileName, URL url) {
         String path = url.getFile();
         path = path.substring(0, path.length() - classFileName.length());
         return new File(decode(path));

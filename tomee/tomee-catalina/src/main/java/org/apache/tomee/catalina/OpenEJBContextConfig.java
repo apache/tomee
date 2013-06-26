@@ -339,13 +339,21 @@ public class OpenEJBContextConfig extends ContextConfig {
         // read the real config
         super.webConfig();
 
-        // add myfaces auto-initializer
+        // add myfaces auto-initializer if mojarra is not present
+        try {
+            context.getLoader().getClassLoader().loadClass("com.sun.faces.context.SessionMap");
+            return;
+        } catch (final Throwable ignored) {
+            // no-op
+        }
         try {
             final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, context.getLoader().getClassLoader());
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
             context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
+            // no-op
+        } catch (final NoClassDefFoundError error) {
             // no-op
         }
     }
@@ -458,7 +466,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment, final boolean  handlesTypeOnly) {
-        for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
+        for (final ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
                 if (!isIncludedIn(webAnnotated.name, currentUrlAsFile)) {
                     continue;
@@ -542,11 +550,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        if (classAsFile != null && classAsFile.getName().endsWith(".jar") && file.getName().endsWith(".jar")) {
-            // different jars
-            return false;
-        }
+        return !(classAsFile != null && classAsFile.getName().endsWith(".jar") && file.getName().endsWith(".jar")) && !webInf;
 
-        return !webInf; // not in the file but not in a war too so use it
     }
 }

@@ -359,7 +359,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (thisJSf == null) {
             return true;
         }
-        final URL containerJsf = loader.getResource(classname);
+        final URL containerJsf = parentLoader.getResource(classname);
         return containerJsf != null && thisJSf.equals(containerJsf);
 
     }
