@@ -341,11 +341,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
             return false;
         }
 
-        final ClassLoader parentLoader = findParent(loader);
-        if (parentLoader == null) {
-            return true;
-        }
-
         // using annotation to test to avoid to load more classes with deps
         final String testClass;
         if ("javax.faces.bean.RequestScoped".equals(name)) {
@@ -355,12 +350,16 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         final String classname = testClass.replace('.', '/') + ".class";
-        final URL thisJSf = loader.getResource(classname);
-        if (thisJSf == null) {
+        try {
+            final Enumeration<URL> resources = loader.getResources(classname);
+            final Collection<URL> thisJSf = Collections.list(resources);
+            if (thisJSf == null || thisJSf.isEmpty()) {
+                return true;
+            }
+            return thisJSf.size() <= 1;
+        } catch (final IOException e) {
             return true;
         }
-        final URL containerJsf = parentLoader.getResource(classname);
-        return containerJsf != null && thisJSf.equals(containerJsf);
 
     }
 
