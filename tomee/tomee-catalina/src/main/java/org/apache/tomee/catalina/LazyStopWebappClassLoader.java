@@ -75,10 +75,13 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             synchronized (this) {
                 final ClassLoader old = system;
                 system = NoClassClassLoader.INSTANCE;
+                final boolean delegate = getDelegate();
+                setDelegate(false);
                 try {
                     return super.loadClass(name);
                 } finally {
                     system = old;
+                    setDelegate(delegate);
                 }
             }
         }
@@ -92,6 +95,16 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             } catch (NoClassDefFoundError ncdfe) {
                 return super.loadClass(name);
             }
+        } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
+            final boolean delegate = getDelegate();
+            synchronized (this) {
+                setDelegate(false);
+                try {
+                    return super.loadClass(name);
+                } finally {
+                    setDelegate(delegate);
+                }
+            }
         }
         return super.loadClass(name);
     }
@@ -103,7 +116,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     @Override
     protected boolean filter(final String name) {
-        return URLClassLoaderFirst.shouldSkip(name);
+        return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {
