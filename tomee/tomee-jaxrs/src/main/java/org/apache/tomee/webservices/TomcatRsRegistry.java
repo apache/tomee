@@ -80,6 +80,7 @@ public class TomcatRsRegistry implements RsRegistry {
         final String name = "rest_" + listener.hashCode();
         wrapper.setName(name);
         wrapper.setServletClass(RsServlet.class.getName());
+        wrapper.setAsyncSupported(true);
 
         String mapping = completePath;
         if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)
