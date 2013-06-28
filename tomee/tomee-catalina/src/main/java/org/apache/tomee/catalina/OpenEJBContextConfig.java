@@ -290,6 +290,8 @@ public class OpenEJBContextConfig extends ContextConfig {
                             break;
                         } else if (jndiName.endsWith("/" + id) && mostMatchingId == null) {
                             mostMatchingId = id;
+                        } else if (id.endsWith("/" + jndiName) && mostMatchingId == null) {
+                            mostMatchingId = "openejb/Resource/" + id;
                         }
                     }
 
