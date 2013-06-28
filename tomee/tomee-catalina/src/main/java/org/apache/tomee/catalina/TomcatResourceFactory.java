@@ -76,7 +76,7 @@ public class TomcatResourceFactory {
             } else if (reference != null && DataSource.class.equals(reference.getClassName())) {
 
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("Can't create resource " + jndiName, e);
         } finally {
             Thread.currentThread().setContextClassLoader(loader);
