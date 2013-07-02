@@ -64,6 +64,7 @@ All the examples show code, but some are better documented than others.  Example
  - [schedule-expression](schedule-expression/README.html) *
  - [schedule-methods](schedule-methods/README.html)
  - [interceptors](interceptors/README.html)
+ - [async-postconstruct](async-postconstruct/README.html)
 }
 
 {span-one-third
