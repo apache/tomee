@@ -1,6 +1,13 @@
 Title: @Asynchronous @PostConstruct
 
-Placing `@Asynchronous` on the `@PostConstruct` of an EJB is not a supported part of Java EE, but this example shows a patter which works just as well with little effort.
+Placing `@Asynchronous` on the `@PostConstruct` of an EJB is not a supported part of Java EE, but this example shows a pattern which works just as well with little effort.
+
+The heart of this pattern is to:
+
+ - pass the construction "logic" to an `@Asynchronous` method via a `java.util.concurrent.Callable`
+ - ensure the bean does not process invocations till construction is complete via an `@AroundInvoke` method on the bean and the `java.util.concurrent.Future`
+
+Simple and effective.  The result is a faster starting application that is still thread-safe.
 
     package org.superbiz.asyncpost;
 
