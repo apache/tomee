@@ -36,6 +36,7 @@
     <module>application-composer</module>
     <module>applicationexception</module>
     <module>async-methods</module>
+    <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
