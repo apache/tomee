@@ -38,10 +38,8 @@ import org.apache.tomcat.jdbc.pool.PooledConnection;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -252,7 +250,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
 
             // prevent overriding of the configuration
-            return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            try {
+                return (PoolConfiguration) Proxy.newProxyInstance(TomEEDataSourceCreator.class.getClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            } catch (final Throwable e) {
+                return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            }
         }
 
         private void initJmx(final String name) {
@@ -278,20 +280,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     LOGGER.error("Unable to unregister JDBC pool with JMX", e);
                 }
             }
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            final Connection connection = super.getConnection();
-            return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
-        }
-
-        @Override
-        public Connection getConnection(final String u, final String p) throws SQLException {
-            final Connection connection = super.getConnection(u, p);
-            return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
         }
     }
 
@@ -332,28 +320,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
             }
             return con;
-        }
-    }
-
-    private static class ContantHashCodeHandler implements InvocationHandler { // will be fixed in tomcat-jdbc in next version
-        private final Object delegate;
-        private final int hashCode;
-
-        public ContantHashCodeHandler(final Object object, int hashCode) {
-            this.delegate = object;
-            this.hashCode = hashCode;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if ("hashCode".equals(method.getName())) {
-                return hashCode;
-            }
-            try {
-                return method.invoke(delegate, args);
-            } catch (InvocationTargetException ite) {
-                throw ite.getCause();
-            }
         }
     }
 }

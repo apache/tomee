@@ -55,9 +55,9 @@ public abstract class AbstractObjectFactory implements ObjectFactory {
             if (jndiName.startsWith("java:")) {
                 try {
                     return new InitialContext().lookup(jndiName);
-                } catch (NameNotFoundException ignored) {
+                } catch (final NameNotFoundException ignored) {
                     // no-op
-                } catch (NoInitialContextException nice) {
+                } catch (final NoInitialContextException nice) {
                     final Properties props = new Properties();
                     props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
                     try {
