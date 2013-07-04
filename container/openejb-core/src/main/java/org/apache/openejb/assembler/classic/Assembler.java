@@ -1393,7 +1393,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 resourceAdapter.stop();
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
         } else if (DataSourceFactory.knows(object)) {
@@ -1401,7 +1401,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             try {
                 DataSourceFactory.destroy(object);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 //Ignore
             }
 
@@ -1421,6 +1421,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         } else if (ExecutorService.class.isInstance(object)) {
             ExecutorService.class.cast(object).shutdown();
+        } else if (DataSource.class.isInstance(object)) {
+
         } else if (logger.isDebugEnabled()) {
             logger.debug("Not processing resource on destroy: " + className);
         }
@@ -1436,7 +1438,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.debug("Failed to purge resource on destroy: " + e.getMessage());
         }
     }
@@ -1734,23 +1736,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     } else {
                         globalContext.unbind(name);
                     }
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     logger.warning("can't unbind resource '{0}'", id);
                 }
             }
             for (final String id : appInfo.resourceIds) {
                 final String name = OPENEJB_RESOURCE_JNDI_PREFIX + id;
                 try {
-                    final Object object = globalContext.lookup(name);
-                    final String clazz;
-                    if (object == null) { // should it be possible?
-                        clazz = "?";
-                    } else {
-                        clazz = object.getClass().getName();
-                    }
-                    destroyResource(id, clazz, object);
-                    globalContext.unbind(name);
-                } catch (NamingException e) {
+                    destroyLookedUpResource(globalContext, id, name);
+                } catch (final NamingException e) {
                     logger.warning("can't unbind resource '{0}'", id);
                 }
             }
@@ -1767,6 +1761,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } finally {
             l.unlock();
         }
+    }
+
+    private void destroyLookedUpResource(Context globalContext, String id, String name) throws NamingException {
+        final Object object = globalContext.lookup(name);
+        final String clazz;
+        if (object == null) { // should it be possible?
+            clazz = "?";
+        } else {
+            clazz = object.getClass().getName();
+        }
+        destroyResource(id, clazz, object);
+        globalContext.unbind(name);
     }
 
     private void unbind(final Context context, final String name) {
