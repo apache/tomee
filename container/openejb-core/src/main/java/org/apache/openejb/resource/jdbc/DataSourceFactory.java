@@ -228,6 +228,9 @@ public class DataSourceFactory {
     @SuppressWarnings("SuspiciousMethodCalls")
     public static void destroy(final Object o) throws Throwable {
         final Object instance = realInstance(o);
+        if (instance == null) {
+            return;
+        }
         final DataSourceCreator remove = creatorByDataSource.remove(instance);
         remove.destroy(instance);
     }
