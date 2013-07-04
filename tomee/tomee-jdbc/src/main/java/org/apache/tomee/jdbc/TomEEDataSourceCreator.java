@@ -219,6 +219,16 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         @Override
+        protected void registerJmx() {
+            // no-op
+        }
+
+        @Override
+        protected void unregisterJmx() {
+            // no-op
+        }
+
+        @Override
         public ConnectionPool createPool() throws SQLException {
             if (pool != null) {
                 return pool;
@@ -264,7 +274,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     if (pool.getJmxPool()!=null) {
                         LocalMBeanServer.get().registerMBean(pool.getJmxPool(), internalOn);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error("Unable to register JDBC pool with JMX", e);
                 }
             } catch (Exception ignored) {
@@ -276,7 +286,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             if (internalOn != null) {
                 try {
                     LocalMBeanServer.get().unregisterMBean(internalOn);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error("Unable to unregister JDBC pool with JMX", e);
                 }
             }
