@@ -24,6 +24,7 @@ import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.ProtocolMetaData;
 import org.apache.openejb.client.RequestType;
 import org.apache.openejb.client.ServerMetaData;
+import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.server.context.RequestInfos;
@@ -62,6 +63,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     private ContainerSystem containerSystem;
     private boolean gzip;
+    private EJBDSerializer serializer = null;
 
     private EjbDaemon() {
     }
@@ -84,6 +86,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         authHandler = new AuthRequestHandler(this);
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
+
+        final String serializer = props.getProperty("serializer", null);
+        if (serializer != null) {
+            this.serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance());
+        } else {
+            this.serializer = null;
+        }
 
         final DiscoveryAgent discovery = SystemInstance.get().getComponent(DiscoveryAgent.class);
         if (discovery != null) {
@@ -322,6 +331,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     public boolean isGzip() {
         return gzip;
+    }
+
+    public EJBDSerializer getSerializer() {
+        return serializer;
     }
 }
 

@@ -26,6 +26,7 @@ import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
+import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -312,6 +313,11 @@ class EjbRequestHandler {
             //                    req.getPrimaryKey()
             //            );
 
+            final EJBDSerializer serializer = daemon.getSerializer();
+            if (serializer != null) {
+                req.setSerializer(serializer);
+            }
+
             Object result = c.invoke(
                                         req.getDeploymentId(),
                                         InterfaceType.EJB_OBJECT,
@@ -325,7 +331,13 @@ class EjbRequestHandler {
                 result = ((Future) result).get();
             }
 
-            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, result);
+            final Object realResult;
+            if (serializer != null) {
+                realResult = serializer.serialize(result);
+            } else {
+                realResult = result;
+            }
+            res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, realResult);
         } finally {
             if (asynchronous) {
                 ThreadContext.removeAsynchronousCancelled();

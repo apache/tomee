@@ -47,7 +47,7 @@ public class DeploymentIndexTest {
     @Test
     public void testGetDeploymentEJBRequest() throws RemoteException {
         final EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null, null);
-        final EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null, null);
         final BeanContext info = deploymentIndex.getDeployment(request);
 
         Assert.assertEquals(beanContext, info);
@@ -58,7 +58,7 @@ public class DeploymentIndexTest {
     public void testGetDeploymentEJBRequestRemoteException() throws RemoteException {
         // 0 causes DeploymentIndex to move further
         final EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, InterfaceType.BUSINESS_REMOTE, null, null);
-        final EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null, null);
         deploymentIndex.getDeployment(request);
     }
 

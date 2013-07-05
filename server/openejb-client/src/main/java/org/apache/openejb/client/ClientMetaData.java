@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.serializer.EJBDSerializer;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -24,6 +26,7 @@ import java.io.ObjectOutput;
 public class ClientMetaData implements Externalizable {
 
     transient Object clientIdentity;
+    private transient EJBDSerializer serializer;
 
     public ClientMetaData() {
     }
@@ -40,10 +43,25 @@ public class ClientMetaData implements Externalizable {
         this.clientIdentity = clientIdentity;
     }
 
+    public EJBDSerializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(final EJBDSerializer serializer) {
+        this.serializer = serializer;
+    }
+
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
         this.clientIdentity = in.readObject();
+        if (in.readBoolean()) {
+            try {
+                serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(in.readUTF()).newInstance());
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -51,5 +69,9 @@ public class ClientMetaData implements Externalizable {
         out.writeByte(1);
 
         out.writeObject(clientIdentity);
+        out.writeBoolean(serializer != null);
+        if (serializer != null) {
+            out.writeUTF(serializer.getClass().getName());
+        }
     }
 }

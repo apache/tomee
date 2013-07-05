@@ -17,6 +17,7 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.event.RemoteInitialContextCreated;
+import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
 import javax.naming.*;
@@ -41,6 +42,7 @@ import java.util.Properties;
 public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
+    public static final String SERIALIZER = "openejb.ejbd.serializer";
 
     private String tail = "/";
     private ServerMetaData server;
@@ -90,6 +92,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
+        final String serializer = (String) env.get(SERIALIZER);
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -115,6 +118,14 @@ public class JNDIContext implements InitialContextFactory, Context {
             authenticate(userID, psswrd);
         } else {
             client = new ClientMetaData();
+        }
+
+        if (serializer != null) {
+            try {
+                client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
+            } catch (final Exception e) {
+                // no-op
+            }
         }
 
         return this;

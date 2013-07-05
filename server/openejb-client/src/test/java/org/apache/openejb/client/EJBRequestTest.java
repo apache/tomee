@@ -138,7 +138,7 @@ public class EJBRequestTest extends TestCase {
     }
 
     private void invoke(RequestMethodCode requestMethod, Method method, Object[] args) throws IOException, ClassNotFoundException {
-        EJBRequest expected = new EJBRequest(requestMethod, ejb, method, args, null);
+        EJBRequest expected = new EJBRequest(requestMethod, ejb, method, args, null, null);
 
         EJBRequest actual = new EJBRequest();
 

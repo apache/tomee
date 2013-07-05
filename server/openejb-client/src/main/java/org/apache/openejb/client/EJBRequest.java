@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
 import javax.naming.Context;
@@ -26,6 +27,7 @@ import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.Remote;
 import java.util.Arrays;
@@ -38,6 +40,7 @@ public class EJBRequest implements ClusterableRequest {
     private transient String deploymentId;
     private transient int serverHash;
     private transient Body body;
+    private transient EJBDSerializer serializer;
 
     // Only visible on the client side
     private transient final EJBMetaDataImpl ejbMetaData;
@@ -52,9 +55,10 @@ public class EJBRequest implements ClusterableRequest {
         ejbMetaData = null;
     }
 
-    public EJBRequest(final RequestMethodCode requestMethod, final EJBMetaDataImpl ejb, final Method method, final Object[] args, final Object primaryKey) {
+    public EJBRequest(final RequestMethodCode requestMethod, final EJBMetaDataImpl ejb, final Method method, final Object[] args, final Object primaryKey, final EJBDSerializer serializer) {
         body = new Body(ejb);
 
+        this.serializer = serializer;
         this.ejbMetaData = ejb;
         this.requestMethod = requestMethod;
         setDeploymentCode(ejb.deploymentCode);
@@ -81,7 +85,17 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public Object[] getMethodParameters() {
-        return body.getMethodParameters();
+        final Object[] params = body.getMethodParameters();
+        if (params == null || serializer == null) {
+            return params;
+        }
+
+        final Object[] unserialized = new Object[params.length];
+        int i = 0;
+        for (final Object o : params) {
+            unserialized[i++] = serializer.deserialize(Serializable.class.cast(o));
+        }
+        return unserialized;
     }
 
     public Class[] getMethodParamTypes() {
@@ -97,7 +111,16 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public void setMethodParameters(final Object[] methodParameters) {
-        body.setMethodParameters(methodParameters);
+        if (serializer == null || methodParameters == null) {
+            body.setMethodParameters(methodParameters);
+        } else {
+            final Object[] params = new Object[methodParameters.length];
+            int i = 0;
+            for (final Object o : methodParameters) {
+                params[i++] = serializer.serialize(o);
+            }
+            body.setMethodParameters(params);
+        }
     }
 
     public void setPrimaryKey(final Object primaryKey) {
@@ -114,6 +137,10 @@ public class EJBRequest implements ClusterableRequest {
 
     public byte getVersion() {
         return this.body.getVersion();
+    }
+
+    public void setSerializer(final EJBDSerializer serializer) {
+        this.serializer = serializer;
     }
 
     public static class Body implements java.io.Externalizable {
@@ -583,6 +610,7 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
         serverHash = in.readInt();
+
         if (result != null) {
             throw result;
         }
