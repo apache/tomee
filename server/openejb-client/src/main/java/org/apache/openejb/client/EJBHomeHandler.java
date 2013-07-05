@@ -177,7 +177,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     }
 
     public Object homeMethod(final Method method, final Object[] args, final Object proxy) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null, client.getSerializer());
 
         final EJBResponse res = request(req);
 
@@ -201,7 +201,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     /*-------------------------------------------------*/
 
     protected Object create(final Method method, final Object[] args, final Object proxy) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null, client.getSerializer());
 
         final EJBResponse res = request(req);
 

@@ -21,6 +21,7 @@ import org.apache.openejb.client.util.ClassLoaderUtil;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBObject;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -328,7 +329,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     }
 
     private Object _businessMethod(final Method method, final Object[] args, final Object proxy, final String requestId) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey, client.getSerializer());
 
         //Currently, we only set the requestId while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
@@ -337,7 +338,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     }
 
     private Object _businessMethod(final Method method, final Object[] args, final Object proxy, final String requestId, final EJBResponse response) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey, client.getSerializer());
 
         //Currently, we only set the request while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
@@ -354,6 +355,9 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
             case ResponseCodes.EJB_OK:
+                if (client.getSerializer() != null) {
+                    return client.getSerializer().deserialize(Serializable.class.cast(res.getResult()));
+                }
                 return res.getResult();
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
@@ -445,7 +449,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     if (lastMayInterruptIfRunningValue.getAndSet(mayInterruptIfRunning) == mayInterruptIfRunning) {
                         return false;
                     }
-                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL, ejb, CANCEL, new Object[]{Boolean.valueOf(mayInterruptIfRunning)}, primaryKey);
+                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL, ejb, CANCEL, new Object[]{Boolean.valueOf(mayInterruptIfRunning)}, primaryKey, client.getSerializer());
                     req.getBody().setRequestId(requestId);
                     try {
                         final EJBResponse res = request(req);

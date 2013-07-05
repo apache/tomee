@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import javax.ejb.EJBHome;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.ejb.EJBHome;
 
 public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externalizable {
 	private static final long serialVersionUID = -858340852654709679L;

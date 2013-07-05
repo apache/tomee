@@ -21,10 +21,10 @@ import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.junit.Configuration;
-import org.apache.openejb.junit.EnableServices;
-import org.apache.openejb.junit.Module;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,7 +39,6 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("ejbd")
 @RunWith(ApplicationComposer.class)
 public class ZEjbdTest {
-
     @Configuration
     public Properties configuration() {
         final Properties configuration = new Properties();
