@@ -135,18 +135,18 @@ public class SerializerTest {
         @Override
         public Serializable serialize(final Object o) {
             if (InputNotSerilizable.class.isInstance(o)) {
-                return "i" + InputNotSerilizable.class.cast(o).rename;
+                return InputNotSerilizable.class.cast(o).rename;
             }
-            return "o" + OutputNotSerializable.class.cast(o).name;
+            return OutputNotSerializable.class.cast(o).name;
         }
 
         @Override
-        public Object deserialize(final Serializable o) {
+        public Object deserialize(final Serializable o, final Class<?> clazz) {
             final String cast = String.class.cast(o);
-            if (cast.startsWith("i")) {
-                return new InputNotSerilizable(cast.substring(1));
+            if (InputNotSerilizable.class.equals(clazz)) {
+                return new InputNotSerilizable(cast);
             }
-            return new OutputNotSerializable(cast.substring(1));
+            return new OutputNotSerializable(cast);
         }
     }
 }

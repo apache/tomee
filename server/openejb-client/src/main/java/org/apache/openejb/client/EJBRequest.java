@@ -17,6 +17,7 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.serializer.EJBDSerializer;
+import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.omg.CORBA.ORB;
 
 import javax.naming.Context;
@@ -27,7 +28,6 @@ import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.Remote;
 import java.util.Arrays;
@@ -93,7 +93,17 @@ public class EJBRequest implements ClusterableRequest {
         final Object[] unserialized = new Object[params.length];
         int i = 0;
         for (final Object o : params) {
-            unserialized[i++] = serializer.deserialize(Serializable.class.cast(o));
+            if (SerializationWrapper.class.isInstance(o)) {
+                final SerializationWrapper wrapper = SerializationWrapper.class.cast(o);
+                try {
+                    unserialized[i] = serializer.deserialize(wrapper.getData(), body.getMethodInstance().getDeclaringClass().getClassLoader().loadClass(wrapper.getClassname()));
+                } catch (final ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                unserialized[i] = o;
+            }
+            i++;
         }
         return unserialized;
     }
@@ -117,7 +127,12 @@ public class EJBRequest implements ClusterableRequest {
             final Object[] params = new Object[methodParameters.length];
             int i = 0;
             for (final Object o : methodParameters) {
-                params[i++] = serializer.serialize(o);
+                if (o == null) {
+                    params[i] = null;
+                } else {
+                    params[i] = new SerializationWrapper(serializer.serialize(o), o.getClass().getName());
+                }
+                i++;
             }
             body.setMethodParameters(params);
         }

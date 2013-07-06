@@ -27,6 +27,7 @@ import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.serializer.EJBDSerializer;
+import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -332,8 +333,8 @@ class EjbRequestHandler {
             }
 
             final Object realResult;
-            if (serializer != null) {
-                realResult = serializer.serialize(result);
+            if (serializer != null && result != null) {
+                realResult = new SerializationWrapper(serializer.serialize(result), result.getClass().getName());
             } else {
                 realResult = result;
             }

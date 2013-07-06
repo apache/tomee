@@ -17,11 +17,11 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.proxy.ProxyManager;
+import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.apache.openejb.client.util.ClassLoaderUtil;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBObject;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -355,8 +355,10 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             case ResponseCodes.EJB_APP_EXCEPTION:
                 throw new ApplicationException((ThrowableArtifact) res.getResult());
             case ResponseCodes.EJB_OK:
-                if (client.getSerializer() != null) {
-                    return client.getSerializer().deserialize(Serializable.class.cast(res.getResult()));
+                final Object result = res.getResult();
+                if (client.getSerializer() != null && SerializationWrapper.class.isInstance(result)) {
+                    final SerializationWrapper wrapper = SerializationWrapper.class.cast(result);
+                    return client.getSerializer().deserialize(wrapper.getData(), Thread.currentThread().getContextClassLoader().loadClass(wrapper.getClassname()));
                 }
                 return res.getResult();
             default:
