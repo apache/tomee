@@ -98,7 +98,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             } catch (final NoClassDefFoundError cnfe) { // let's try later with app classloader
                 this.serializer = new ContextualSerializer(serializer);
             }
-        } else {
+        } else if (!"ejbds".equals(props.getProperty("name", "ejbds")) && !"httpejbd".equals(props.getProperty("name", "ejbd"))) {
             this.serializer = null;
         }
 
