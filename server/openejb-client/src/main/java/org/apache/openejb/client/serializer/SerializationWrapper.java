@@ -18,7 +18,28 @@ package org.apache.openejb.client.serializer;
 
 import java.io.Serializable;
 
-public interface EJBDSerializer {
-    Serializable serialize(Object o);
-    Object deserialize(Serializable o, Class<?> clazz);
+public class SerializationWrapper implements Serializable {
+    private String classname;
+    private Serializable data;
+
+    public SerializationWrapper(final Serializable serialize, final String name) {
+        data = serialize;
+        classname = name;
+    }
+
+    public String getClassname() {
+        return classname;
+    }
+
+    public void setClassname(final String classname) {
+        this.classname = classname;
+    }
+
+    public Serializable getData() {
+        return data;
+    }
+
+    public void setData(final Serializable data) {
+        this.data = data;
+    }
 }

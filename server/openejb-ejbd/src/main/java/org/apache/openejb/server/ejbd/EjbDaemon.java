@@ -17,6 +17,7 @@
 package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EjbObjectInputStream;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -89,7 +91,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         final String serializer = props.getProperty("serializer", null);
         if (serializer != null) {
-            this.serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance());
+            try {
+                this.serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance());
+            } catch (final ClassNotFoundException cnfe) { // let's try later with app classloader
+                this.serializer = new ContextualSerializer(serializer);
+            } catch (final NoClassDefFoundError cnfe) { // let's try later with app classloader
+                this.serializer = new ContextualSerializer(serializer);
+            }
         } else {
             this.serializer = null;
         }
@@ -335,6 +343,32 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
     public EJBDSerializer getSerializer() {
         return serializer;
+    }
+
+    private static class ContextualSerializer implements EJBDSerializer {
+        private final String classname;
+
+        public ContextualSerializer(final String serializer) {
+            this.classname = serializer;
+        }
+
+        @Override
+        public Serializable serialize(Object o) {
+            return instance().serialize(o);
+        }
+
+        @Override
+        public Object deserialize(final Serializable o, final Class<?> clazz) {
+            return instance().deserialize(o, clazz);
+        }
+
+        private EJBDSerializer instance() {
+            try {
+                return EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classname));
+            } catch (final ClassNotFoundException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
     }
 }
 
