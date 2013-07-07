@@ -327,7 +327,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public AnnotationDeployer() {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
-        processAnnotatedBeans = new ProcessAnnotatedBeans();
+        processAnnotatedBeans = new ProcessAnnotatedBeans(SystemInstance.get().getOptions().get("openejb.jaxws.add-remote", false));
         builtInEnvironmentEntries = new BuiltInEnvironmentEntries();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
         mBeanDeployer = new MBeanDeployer();
@@ -1768,6 +1768,12 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
+        private final boolean webserviceAsRemote;
+
+        public ProcessAnnotatedBeans(final boolean wsAsRemote) {
+            webserviceAsRemote = wsAsRemote;
+        }
+
         public void deploy(CdiBeanInfo beanInfo) throws OpenEJBException{
 
             AnnotationFinder annotationFinder = createFinder(beanInfo.getBeanClass());
@@ -2852,12 +2858,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @WebService
                  * @WebServiceProvider
                  */
+                Class<?> webServiceItf = null;
                 if (sessionBean.getServiceEndpoint() == null) {
                     Class defaultEndpoint = BeanContext.ServiceEndpoint.class;
 
                     for (Class interfce : clazz.getInterfaces()) {
                         if (interfce.isAnnotationPresent(WebService.class)) {
                             defaultEndpoint = interfce;
+                            webServiceItf = interfce;
                         }
                     }
 
@@ -2929,6 +2937,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 BusinessInterfaces bean = new BusinessInterfaces();
                 if (local != null) bean.local.addAll(asList(local.value()));
                 if (remote != null) bean.remote.addAll(asList(remote.value()));
+                if (webserviceAsRemote
+                        && webServiceItf != null
+                        && bean.remote.isEmpty()) {
+                    bean.remote.add(webServiceItf);
+                }
 
                 if (strict) for (Class interfce : bean.local) {
                     if (bean.remote.contains(interfce)) {
