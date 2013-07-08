@@ -37,26 +37,25 @@ public final class HttpUtil {
         // no-op
     }
 
-    public static String selectSingleAddress(List<String> addresses) {
+    public static String selectSingleAddress(final List<String> addresses) {
         if (addresses == null || addresses.isEmpty()) {
             return null;
         }
 
         // return the first http address
-        for (String address : addresses) {
+        for (final String address : addresses) {
             if (address.startsWith("http:")) {
                 return address;
             }
         }
         // return the first https address
-        for (String address : addresses) {
+        for (final String address : addresses) {
             if (address.startsWith("https:")) {
                 return address;
             }
         }
         // just return the first address
-        String address = addresses.iterator().next();
-        return address;
+        return addresses.iterator().next();
     }
 
     public static boolean addServlet(final String classname, final WebContext wc, final String mapping) {
