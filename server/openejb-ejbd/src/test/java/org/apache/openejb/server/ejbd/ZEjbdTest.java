@@ -22,9 +22,14 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.ServiceManager;
+import org.apache.openejb.server.SimpleServiceManager;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.util.reflection.Reflections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,7 +58,14 @@ public class ZEjbdTest {
 
     @Test
     public void checkZipIsOn() throws Exception {
-        assertTrue(EjbDaemon.getEjbDaemon().isGzip());
+        int checked = 0;
+        for (final ServerService daemon : SimpleServiceManager.class.cast(ServiceManager.get()).getDaemons()) {
+            if (ServiceDaemon.class.isInstance(daemon) && daemon.getName().equals("ejbd")) {
+                assertTrue(EjbDaemon.class.cast(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(daemon, "next"), "service"), "service"), "service"), "service"), "service"), "server")).isGzip());
+                checked++;
+            }
+        }
+        assertEquals(1, checked);
     }
 
     @Test

@@ -42,7 +42,10 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
 
     @Override
     public void init(final Properties props) throws Exception {
-        server = EjbDaemon.getEjbDaemon();
+        server = new EjbDaemon();
+        if (props.getProperty("name") == null) { // to let server be component aware
+            props.setProperty("name", getName());
+        }
         server.init(props);
         keepAlive = new KeepAliveServer(this, server.isGzip());
     }
