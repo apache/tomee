@@ -245,8 +245,14 @@ public class TomcatLoader implements Loader {
         OpenEJB.init(properties, new ServerFederation());
         TomcatJndiBuilder.importOpenEJBResourcesInTomcat(SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources, TomcatHelper.getServer());
 
-        Properties ejbServerProps = new Properties();
+        final Properties ejbServerProps = new Properties();
         ejbServerProps.putAll(properties);
+        for (final String prop : new String[] { "serializer", "gzip" }) { // ensure -Dejbd.xxx are read
+            final String value = SystemInstance.get().getProperty("ejbd." + prop);
+            if (value != null) {
+                ejbServerProps.put(prop, value);
+            }
+        }
         ejbServerProps.setProperty("openejb.ejbd.uri", "http://127.0.0.1:8080/tomee/ejb");
         ejbServer.init(ejbServerProps);
 
