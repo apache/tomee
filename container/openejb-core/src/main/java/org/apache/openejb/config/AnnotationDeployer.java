@@ -2937,11 +2937,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 BusinessInterfaces bean = new BusinessInterfaces();
                 if (local != null) bean.local.addAll(asList(local.value()));
                 if (remote != null) bean.remote.addAll(asList(remote.value()));
-                if (webserviceAsRemote
-                        && webServiceItf != null
-                        && bean.remote.isEmpty()) {
-                    bean.remote.add(webServiceItf);
-                }
 
                 if (strict) for (Class interfce : bean.local) {
                     if (bean.remote.contains(interfce)) {
@@ -3130,6 +3125,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         validation.fail(ejbName, "too.many.interfaces", ejbName, interfaces.toString().replace("interface ", ""));
                         return;
                     }
+                }
+
+                // do it here to not loose the @Local handling (if (interfaces.size() == 1))
+                if (webserviceAsRemote
+                        && webServiceItf != null
+                        && all.remote.isEmpty()) {
+                    all.remote.add(webServiceItf);
                 }
 
                 //alway set Local View for ManagedBean
