@@ -27,8 +27,8 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
     public EntityEJBHomeHandler() {
     }
 
-    public EntityEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public EntityEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
@@ -53,7 +53,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 if (primKey == null) {
                     return null;
                 } else {
-                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                     handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                     registerHandler(ejb.deploymentID + ":" + primKey, handler);
                     return handler.createEJBObjectProxy();
@@ -66,7 +66,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
                     if (primKey != null) {
-                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                         registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();
@@ -80,7 +80,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
                     if (primKey != null) {
-                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                         registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();

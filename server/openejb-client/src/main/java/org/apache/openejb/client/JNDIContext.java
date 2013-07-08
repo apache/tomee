@@ -25,6 +25,7 @@ import javax.naming.Context;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.ConnectException;
 import java.net.URI;
@@ -43,6 +44,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
     public static final String SERIALIZER = "openejb.ejbd.serializer";
+    public static final String AUTHENTICATE_WITH_THE_REQUEST = "openejb.ejbd.authenticate-with-request";
 
     private String tail = "/";
     private ServerMetaData server;
@@ -50,6 +52,8 @@ public class JNDIContext implements InitialContextFactory, Context {
     private Hashtable env;
     private String moduleId;
     private ClientInstance clientIdentity;
+
+    private AuthenticationInfo authenticationInfo = null;
 
     public JNDIContext() {
     }
@@ -93,6 +97,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
         final String serializer = (String) env.get(SERIALIZER);
+        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -115,8 +120,13 @@ public class JNDIContext implements InitialContextFactory, Context {
         //TODO:1: Either aggressively initiate authentication or wait for the
         //        server to send us an authentication challange.
         if (userID != null) {
-            authenticate(userID, psswrd);
-        } else {
+            if (!authWithRequest) {
+                authenticate(userID, psswrd);
+            } else {
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd.toCharArray());
+            }
+        }
+        if (client == null) {
             client = new ClientMetaData();
         }
 
@@ -166,12 +176,9 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public void authenticate(final String userID, final String psswrd) throws AuthenticationException {
 
-        // May be null
-        final String realmName = (String) env.get("openejb.authentication.realmName");
+        final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd);
 
-        final AuthenticationRequest req = new AuthenticationRequest(realmName, userID, psswrd);
         final AuthenticationResponse res;
-
         try {
             res = requestAuthorization(req);
         } catch (RemoteException e) {
@@ -192,7 +199,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
-        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
+        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client, authenticationInfo);
         final EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
 
@@ -204,7 +211,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
         final Object primaryKey = ejb.getPrimaryKey();
 
-        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, authenticationInfo);
         return handler.createEJBObjectProxy();
     }
 
@@ -623,5 +630,28 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
+    public static class AuthenticationInfo implements Serializable {
+        private String realm;
+        private String user;
+        private char[] password;
+
+        public AuthenticationInfo(final String realm, final String user, final char[] password) {
+            this.realm = realm;
+            this.user = user;
+            this.password = password;
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public char[] getPassword() {
+            return password;
+        }
+    }
 }
 

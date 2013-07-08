@@ -85,7 +85,7 @@ public class EJBHomeHandle implements java.io.Externalizable, javax.ejb.HomeHand
 
         server.readExternal(in);
 
-        handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client);
+        handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, null);
         ejbHomeProxy = handler.createEJBHomeProxy();
     }
 

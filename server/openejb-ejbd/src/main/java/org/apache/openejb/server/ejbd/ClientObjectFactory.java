@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.net.URI;
-import java.util.Properties;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.client.ClientMetaData;
@@ -27,8 +24,12 @@ import org.apache.openejb.client.EJBHomeHandler;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBObjectHandle;
 import org.apache.openejb.client.EJBObjectHandler;
-import org.apache.openejb.client.ServerMetaData;
 import org.apache.openejb.client.InterfaceType;
+import org.apache.openejb.client.JNDIContext;
+import org.apache.openejb.client.ServerMetaData;
+
+import java.net.URI;
+import java.util.Properties;
 
 class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
@@ -74,7 +75,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
         Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
+        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return new EJBObjectHandle(handler.createEJBObjectProxy());
     }
@@ -103,7 +104,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
 
-        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData);
+        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, call.get(JNDIContext.AuthenticationInfo.class));
 
         return new EJBHomeHandle(hanlder.createEJBHomeProxy());
     }
@@ -125,7 +126,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
         Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
+        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
@@ -156,7 +157,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         
         Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
+        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return hanlder.createEJBObjectProxy();
     }
@@ -191,7 +192,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
 
-        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData);
+        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, null);
 
         return hanlder.createEJBHomeProxy();
     }

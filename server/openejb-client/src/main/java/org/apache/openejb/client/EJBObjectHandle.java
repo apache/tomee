@@ -87,7 +87,7 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
         server.readExternal(in);
         Object primaryKey = in.readObject();
 
-        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, null);
         ejbObjectProxy = handler.createEJBObjectProxy();
     }
 

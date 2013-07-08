@@ -24,12 +24,12 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
     public EntityEJBObjectHandler() {
     }
 
-    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
         registryId = ejb.deploymentID + ":" + primaryKey;
         registerHandler(registryId, this);
     }

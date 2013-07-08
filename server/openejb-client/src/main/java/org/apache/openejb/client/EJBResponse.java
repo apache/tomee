@@ -152,6 +152,7 @@ public class EJBResponse implements ClusterableResponse {
         out.writeByte(responseCode);
 
         switch (responseCode) {
+            case ResponseCodes.AUTH_DENIED:
             case ResponseCodes.EJB_APP_EXCEPTION:
             case ResponseCodes.EJB_ERROR:
             case ResponseCodes.EJB_SYS_EXCEPTION:

@@ -39,28 +39,28 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     public EJBHomeHandler() {
     }
 
-    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
-        super(ejb, server, client);
+    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
+    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBHomeHandler(ejb, server, client);
+                return new EntityEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBHomeHandler(ejb, server, client);
+                return new StatefulEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBHomeHandler(ejb, server, client);
+                return new StatelessEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBHomeHandler(ejb, server, client);
+                return new SingletonEJBHomeHandler(ejb, server, client, auth);
         }
 
         throw new IllegalStateException("Uknown bean type code '"+ejb.type +"' : "+ejb.toString());
@@ -215,7 +215,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             case ResponseCodes.EJB_OK:
 
                 final Object primKey = res.getResult();
-                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                 handler.setEJBHomeProxy((EJBHomeProxy) proxy);
 
                 return handler.createEJBObjectProxy();

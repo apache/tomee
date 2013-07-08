@@ -26,12 +26,12 @@ public class StatelessEJBObjectHandler extends EJBObjectHandler {
     public StatelessEJBObjectHandler() {
     }
 
-    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, String containerID) {

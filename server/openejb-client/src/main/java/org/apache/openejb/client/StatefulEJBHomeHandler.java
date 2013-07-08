@@ -26,8 +26,8 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
     public StatefulEJBHomeHandler() {
     }
 
-    public StatefulEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatefulEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {

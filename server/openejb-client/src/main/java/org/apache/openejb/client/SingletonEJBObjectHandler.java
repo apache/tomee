@@ -26,12 +26,12 @@ public class SingletonEJBObjectHandler extends EJBObjectHandler {
     public SingletonEJBObjectHandler() {
     }
 
-    public SingletonEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public SingletonEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public SingletonEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public SingletonEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, String containerID) {
