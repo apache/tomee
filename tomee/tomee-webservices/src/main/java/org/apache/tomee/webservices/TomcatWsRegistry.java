@@ -318,7 +318,7 @@ public class TomcatWsRegistry implements WsRegistry {
         webserviceContexts.put(path, context);
 
         // register wsdl locations for service-ref resolution
-        for (Connector connector : connectors) {
+        for (final Connector connector : connectors) {
             final StringBuilder fullContextpath;
             if (!WEBSERVICE_OLDCONTEXT_ACTIVE && !fakeDeployment) {
                 String contextPath = context.getName();

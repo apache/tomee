@@ -45,6 +45,7 @@
     <module>openejb-ssh</module>
     <module>openejb-common-cli</module>
     <module>openejb-bonecp</module>
+    <module>openejb-hessian</module>
   </modules>
 </project>
 

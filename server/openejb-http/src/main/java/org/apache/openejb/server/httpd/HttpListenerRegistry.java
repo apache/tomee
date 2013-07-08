@@ -63,9 +63,9 @@ public class HttpListenerRegistry implements HttpListener {
                 listeners = new HashMap<String, HttpListener>(registry);
             }
 
-            for (Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
-                String pattern = entry.getKey();
-                if (path.matches(pattern)) {
+            for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
+                final String pattern = entry.getKey();
+                if (path.matches(pattern) || path.equals(pattern)) {
                     entry.getValue().onMessage(request, response);
                     break;
                 }
