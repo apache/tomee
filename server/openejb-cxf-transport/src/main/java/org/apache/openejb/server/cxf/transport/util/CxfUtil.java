@@ -180,7 +180,7 @@ public final class CxfUtil {
         }
     }
 
-    private static void configureInterceptors(final AbstractBasicInterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
+    public static void configureInterceptors(final AbstractBasicInterceptorProvider abip, final String prefix, final Collection<ServiceInfo> availableServices, final Properties beanConfig) {
         // interceptors
         final String inInterceptorsIds = beanConfig.getProperty(prefix + IN_INTERCEPTORS);
         if (inInterceptorsIds != null && !inInterceptorsIds.trim().isEmpty()) {
@@ -203,7 +203,7 @@ public final class CxfUtil {
         }
     }
 
-    private static List<AbstractFeature> createFeatures(final Collection<ServiceInfo> availableServices, final String featuresIds) {
+    public static List<AbstractFeature> createFeatures(final Collection<ServiceInfo> availableServices, final String featuresIds) {
         final List<?> features = ServiceInfos.resolve(availableServices, featuresIds.split(","));
         for (Object instance : features) {
             if (!AbstractFeature.class.isInstance(instance)) {
@@ -213,7 +213,7 @@ public final class CxfUtil {
         return (List<AbstractFeature>) features;
     }
 
-    private static List<Interceptor<? extends Message>> createInterceptors(final Collection<ServiceInfo> availableServices, final String ids) {
+    public static List<Interceptor<? extends Message>> createInterceptors(final Collection<ServiceInfo> availableServices, final String ids) {
         final List<?> instances = ServiceInfos.resolve(availableServices, ids.split(","));
         for (Object instance : instances) {
             if (!Interceptor.class.isInstance(instance)) {

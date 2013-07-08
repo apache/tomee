@@ -55,7 +55,7 @@ public class PojoEndpoint extends CxfEndpoint {
         }
         implInfo = new JaxWsImplementorInfoImpl(instance, bindingURI);
 
-        serviceFactory = new JaxWsServiceFactoryBean(implInfo);
+        serviceFactory = configureService(new JaxWsServiceFactoryBean(implInfo), config, CXF_JAXWS_PREFIX);
         serviceFactory.setBus(bus);
         serviceFactory.setServiceClass(instance);
 
