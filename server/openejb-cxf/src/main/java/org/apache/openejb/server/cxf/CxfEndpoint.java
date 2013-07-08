@@ -18,6 +18,7 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
@@ -27,7 +28,10 @@ import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
@@ -38,8 +42,10 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public abstract class CxfEndpoint {
@@ -207,4 +213,33 @@ public abstract class CxfEndpoint {
 			this.server.stop();
 		}
 	}
+
+    protected static JaxWsServiceFactoryBean configureService(final JaxWsServiceFactoryBean serviceFactory, final ServiceConfiguration configuration, final String prefix) {
+        final Properties beanConfig = configuration.getProperties();
+        if (beanConfig == null || beanConfig.isEmpty()) {
+            return serviceFactory;
+        }
+
+        final Collection<ServiceInfo> availableServices = configuration.getAvailableServices();
+
+        // databinding
+        final String databinding = beanConfig.getProperty(prefix + CxfUtil.DATABINDING);
+        if (databinding != null && !databinding.trim().isEmpty()) {
+            Object instance = ServiceInfos.resolve(availableServices, databinding);
+            if (instance == null) {  // maybe id == classname
+                try {
+                    instance = Thread.currentThread().getContextClassLoader().loadClass(databinding).newInstance();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            if (!DataBinding.class.isInstance(instance)) {
+                throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
+                        + ", please check configuration of service [id=" + databinding + "]");
+            }
+            serviceFactory.setDataBinding((DataBinding) instance);
+        }
+
+        return serviceFactory;
+    }
 }
