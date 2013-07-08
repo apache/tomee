@@ -64,6 +64,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected transient Object primaryKey;
 
+    protected transient JNDIContext.AuthenticationInfo authenticationInfo;
+
     /**
      * The EJB spec requires that a different set of exceptions
      * be thrown for the legacy EJBObject and EJBHome interfaces
@@ -75,16 +77,17 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         remote = false;
     }
 
-    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         this.ejb = ejb;
         this.server = server;
         this.client = client;
+        this.authenticationInfo = auth;
         final Class remoteInterface = ejb.getRemoteInterfaceClass();
         remote = remoteInterface != null && (EJBObject.class.isAssignableFrom(remoteInterface) || EJBHome.class.isAssignableFrom(remoteInterface));
     }
 
-    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
-        this(ejb, server, client);
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+        this(ejb, server, client, auth);
         this.primaryKey = primaryKey;
     }
 

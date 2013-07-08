@@ -45,6 +45,7 @@ public class EJBObjectProxyHandle implements Externalizable {
 
         handler.server.writeExternal(out);
         out.writeObject(handler.primaryKey);
+        out.writeObject(handler.authenticationInfo);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -62,7 +63,9 @@ public class EJBObjectProxyHandle implements Externalizable {
 
         Object primaryKey = in.readObject();
 
-        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final JNDIContext.AuthenticationInfo authenticationInfo = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
+
+        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, authenticationInfo);
 
     }
 

@@ -136,37 +136,37 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     public EJBObjectHandler() {
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
-        super(ejb, server, client);
+    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, null, auth);
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
     }
 
     protected void setEJBHomeProxy(final EJBHomeProxy ejbHome) {
         this.ejbHome = ejbHome;
     }
 
-    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
+    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, final JNDIContext.AuthenticationInfo auth) {
 
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBObjectHandler(ejb, server, client, primaryKey);
+                return new EntityEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBObjectHandler(ejb, server, client, primaryKey);
+                return new StatefulEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBObjectHandler(ejb, server, client, primaryKey);
+                return new StatelessEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey);
+                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey, auth);
         }
 
         throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
@@ -294,7 +294,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     protected Object getEJBHome(final Method method, final Object[] args, final Object proxy) throws Throwable {
         if (ejbHome == null) {
-            ejbHome = EJBHomeHandler.createEJBHomeHandler(ejb, server, client).createEJBHomeProxy();
+            ejbHome = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, authenticationInfo).createEJBHomeProxy();
         }
         return ejbHome;
     }
@@ -333,6 +333,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         //Currently, we only set the requestId while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
+        req.setAuthentication(this.authenticationInfo);
         final EJBResponse res = request(req);
         return _handleBusinessMethodResponse(res);
     }
@@ -349,21 +350,25 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     private Object _handleBusinessMethodResponse(final EJBResponse res) throws Throwable {
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
-                throw new SystemError((ThrowableArtifact) res.getResult());
+                throw new SystemError((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_SYS_EXCEPTION:
-                throw new SystemException((ThrowableArtifact) res.getResult());
+                throw new SystemException((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_APP_EXCEPTION:
-                throw new ApplicationException((ThrowableArtifact) res.getResult());
+                throw new ApplicationException((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_OK:
-                final Object result = res.getResult();
-                if (client.getSerializer() != null && SerializationWrapper.class.isInstance(result)) {
-                    final SerializationWrapper wrapper = SerializationWrapper.class.cast(result);
-                    return client.getSerializer().deserialize(wrapper.getData(), Thread.currentThread().getContextClassLoader().loadClass(wrapper.getClassname()));
-                }
-                return res.getResult();
+                return getResult(res);
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }
+    }
+
+    private Object getResult(final EJBResponse res) throws ClassNotFoundException {
+        final Object result = res.getResult();
+        if (client.getSerializer() != null && SerializationWrapper.class.isInstance(result)) {
+            final SerializationWrapper wrapper = SerializationWrapper.class.cast(result);
+            return client.getSerializer().deserialize(wrapper.getData(), Thread.currentThread().getContextClassLoader().loadClass(wrapper.getClassname()));
+        }
+        return res.getResult();
     }
 
     private class AsynchronousCall implements Callable {

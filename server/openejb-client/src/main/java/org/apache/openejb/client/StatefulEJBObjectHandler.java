@@ -24,12 +24,12 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
     public StatefulEJBObjectHandler() {
     }
 
-    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
         registerHandler(primaryKey, this);
     }
 

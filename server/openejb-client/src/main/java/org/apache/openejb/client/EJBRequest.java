@@ -45,6 +45,8 @@ public class EJBRequest implements ClusterableRequest {
     // Only visible on the client side
     private transient final EJBMetaDataImpl ejbMetaData;
 
+    private transient JNDIContext.AuthenticationInfo authentication;
+
     public static final int SESSION_BEAN_STATELESS = 6;
     public static final int SESSION_BEAN_STATEFUL = 7;
     public static final int ENTITY_BM_PERSISTENCE = 8;
@@ -156,6 +158,10 @@ public class EJBRequest implements ClusterableRequest {
 
     public void setSerializer(final EJBDSerializer serializer) {
         this.serializer = serializer;
+    }
+
+    public void setAuthentication(final JNDIContext.AuthenticationInfo authentication) {
+        this.authentication = authentication;
     }
 
     public static class Body implements java.io.Externalizable {
@@ -571,6 +577,10 @@ public class EJBRequest implements ClusterableRequest {
         return serverHash;
     }
 
+    public JNDIContext.AuthenticationInfo getAuthentication() {
+        return authentication;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -625,6 +635,7 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
         serverHash = in.readInt();
+        authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
 
         if (result != null) {
             throw result;
@@ -644,6 +655,7 @@ public class EJBRequest implements ClusterableRequest {
         out.writeShort(deploymentCode);
         out.writeObject(clientIdentity);
         out.writeInt(serverHash);
+        out.writeObject(authentication);
         body.writeExternal(out);
     }
 

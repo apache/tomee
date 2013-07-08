@@ -70,7 +70,7 @@ public class EJBHomeProxyHandle implements Externalizable {
         ejb.deploymentCode = in.readShort();
 
         server.readExternal(in);
-        handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client);
+        handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, /* TODO */ null);
     }
 
     private Object readResolve() throws ObjectStreamException {

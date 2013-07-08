@@ -24,6 +24,7 @@ import org.apache.openejb.client.EJBHomeProxyHandle;
 import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
+import org.apache.openejb.client.JNDIContext;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.serializer.EJBDSerializer;
@@ -153,81 +154,95 @@ class EjbRequestHandler {
         res.start(EJBResponse.Time.CONTAINER);
         boolean respond = true;
 
+        Object securityToken = null;
         try {
-            switch (req.getRequestMethod()) {
-                // Remote interface methods
-                case EJB_OBJECT_BUSINESS_METHOD:
-                    doEjbObject_BUSINESS_METHOD(req, res);
-                    updateServer(req, res);
-                    break;
+            { // login if needed with request
+                final JNDIContext.AuthenticationInfo authentication = req.getAuthentication();
+                if (authentication != null) {
+                    try {
+                        securityToken = securityService.login(authentication.getRealm(), authentication.getUser(), new String(authentication.getPassword()));
+                    } catch (final Throwable t) {
+                        res.setResponse(req.getVersion(), ResponseCodes.AUTH_DENIED, t);
+                    }
+                }
+            }
 
-                // Home interface methods
-                case EJB_HOME_CREATE:
-                    doEjbHome_CREATE(req, res);
-                    updateServer(req, res);
-                    break;
+            if (res.getResponseCode() != ResponseCodes.AUTH_DENIED) {
+                switch (req.getRequestMethod()) {
+                    // Remote interface methods
+                    case EJB_OBJECT_BUSINESS_METHOD:
+                        doEjbObject_BUSINESS_METHOD(req, res);
+                        updateServer(req, res);
+                        break;
 
-                // Home interface methods
-                case EJB_HOME_METHOD:
-                    doEjbHome_METHOD(req, res);
-                    updateServer(req, res);
-                    break;
+                    // Home interface methods
+                    case EJB_HOME_CREATE:
+                        doEjbHome_CREATE(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_HOME_FIND:
-                    doEjbHome_FIND(req, res);
-                    updateServer(req, res);
-                    break;
+                    // Home interface methods
+                    case EJB_HOME_METHOD:
+                        doEjbHome_METHOD(req, res);
+                        updateServer(req, res);
+                        break;
 
-                // javax.ejb.EJBObject methods
-                case EJB_OBJECT_GET_EJB_HOME:
-                    doEjbObject_GET_EJB_HOME(req, res);
-                    updateServer(req, res);
-                    break;
+                    case EJB_HOME_FIND:
+                        doEjbHome_FIND(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_OBJECT_GET_HANDLE:
-                    doEjbObject_GET_HANDLE(req, res);
-                    updateServer(req, res);
-                    break;
+                    // javax.ejb.EJBObject methods
+                    case EJB_OBJECT_GET_EJB_HOME:
+                        doEjbObject_GET_EJB_HOME(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_OBJECT_GET_PRIMARY_KEY:
-                    doEjbObject_GET_PRIMARY_KEY(req, res);
-                    updateServer(req, res);
-                    break;
+                    case EJB_OBJECT_GET_HANDLE:
+                        doEjbObject_GET_HANDLE(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_OBJECT_IS_IDENTICAL:
-                    doEjbObject_IS_IDENTICAL(req, res);
-                    updateServer(req, res);
-                    break;
+                    case EJB_OBJECT_GET_PRIMARY_KEY:
+                        doEjbObject_GET_PRIMARY_KEY(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_OBJECT_REMOVE:
-                    doEjbObject_REMOVE(req, res);
-                    break;
+                    case EJB_OBJECT_IS_IDENTICAL:
+                        doEjbObject_IS_IDENTICAL(req, res);
+                        updateServer(req, res);
+                        break;
 
-                // javax.ejb.EJBHome methods
-                case EJB_HOME_GET_EJB_META_DATA:
-                    doEjbHome_GET_EJB_META_DATA(req, res);
-                    updateServer(req, res);
-                    break;
+                    case EJB_OBJECT_REMOVE:
+                        doEjbObject_REMOVE(req, res);
+                        break;
 
-                case EJB_HOME_GET_HOME_HANDLE:
-                    doEjbHome_GET_HOME_HANDLE(req, res);
-                    updateServer(req, res);
-                    break;
+                    // javax.ejb.EJBHome methods
+                    case EJB_HOME_GET_EJB_META_DATA:
+                        doEjbHome_GET_EJB_META_DATA(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_HOME_REMOVE_BY_HANDLE:
-                    doEjbHome_REMOVE_BY_HANDLE(req, res);
-                    break;
+                    case EJB_HOME_GET_HOME_HANDLE:
+                        doEjbHome_GET_HOME_HANDLE(req, res);
+                        updateServer(req, res);
+                        break;
 
-                case EJB_HOME_REMOVE_BY_PKEY:
-                    doEjbHome_REMOVE_BY_PKEY(req, res);
-                    break;
+                    case EJB_HOME_REMOVE_BY_HANDLE:
+                        doEjbHome_REMOVE_BY_HANDLE(req, res);
+                        break;
 
-                case FUTURE_CANCEL:
-                    doFUTURE_CANCEL_METHOD(req, res);
-                    break;
+                    case EJB_HOME_REMOVE_BY_PKEY:
+                        doEjbHome_REMOVE_BY_PKEY(req, res);
+                        break;
 
-                default:
-                    throw new org.apache.openejb.SystemException("Unexpected request method: " + req.getRequestMethod());
+                    case FUTURE_CANCEL:
+                        doFUTURE_CANCEL_METHOD(req, res);
+                        break;
+
+                    default:
+                        throw new org.apache.openejb.SystemException("Unexpected request method: " + req.getRequestMethod());
+                }
             }
 
         } catch (org.apache.openejb.InvalidateReferenceException e) {
@@ -243,6 +258,13 @@ class EjbRequestHandler {
             respond = false;
 
         } finally {
+            if (securityToken != null) {
+                try {
+                    securityService.logout(securityToken);
+                } catch (final LoginException e) {
+                    // no-op
+                }
+            }
 
             try {
                 res.stop(EJBResponse.Time.CONTAINER);

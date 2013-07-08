@@ -52,8 +52,9 @@ public class AuthTest extends TestCase {
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-            props.put(Context.SECURITY_PRINCIPAL, "jonathan");
-            props.put(Context.SECURITY_CREDENTIALS, "secret");
+            props.put("openejb.authentication.realmName", "LM"); // reusing LoginModule from AuthentWithRequestTest since it is more specific
+            props.put(Context.SECURITY_PRINCIPAL, "foo");
+            props.put(Context.SECURITY_CREDENTIALS, "bar");
             new InitialContext(props);
 
 

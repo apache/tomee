@@ -24,8 +24,8 @@ public class SingletonEJBHomeHandler extends EJBHomeHandler {
     public SingletonEJBHomeHandler() {
     }
 
-    public SingletonEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public SingletonEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
