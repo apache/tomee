@@ -157,7 +157,15 @@ public final class CxfUtil {
         // databinding
         final String databinding = beanConfig.getProperty(prefix + DATABINDING);
         if (databinding != null && !databinding.trim().isEmpty()) {
-            final Object instance = ServiceInfos.resolve(availableServices, databinding);
+            Object instance = ServiceInfos.resolve(availableServices, databinding);
+            if (instance == null) {  // maybe id == classname
+                try {
+                    instance = Thread.currentThread().getContextClassLoader().loadClass(databinding).newInstance();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+
             if (!DataBinding.class.isInstance(instance)) {
                 throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
                         + ", please check configuration of service [id=" + databinding + "]");
