@@ -61,21 +61,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private AuthRequestHandler authHandler;
     private ClusterRequestHandler clusterHandler;
 
-    static EjbDaemon instance;
-
     private ContainerSystem containerSystem;
     private boolean gzip;
     private EJBDSerializer serializer = null;
-
-    private EjbDaemon() {
-    }
-
-    public static EjbDaemon getEjbDaemon() {
-        if (instance == null) {
-            instance = new EjbDaemon();
-        }
-        return instance;
-    }
 
     public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -98,8 +86,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             } catch (final NoClassDefFoundError cnfe) { // let's try later with app classloader
                 this.serializer = new ContextualSerializer(serializer);
             }
-        } else if (!"ejbds".equals(props.getProperty("name", "ejbds")) && !"httpejbd".equals(props.getProperty("name", "ejbd"))) {
-            this.serializer = null;
         }
 
         final DiscoveryAgent discovery = SystemInstance.get().getComponent(DiscoveryAgent.class);
