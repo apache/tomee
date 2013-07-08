@@ -350,8 +350,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         private EJBDSerializer instance() {
             try {
-                return EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classname));
-            } catch (final ClassNotFoundException e) {
+                return EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(classname).newInstance());
+            } catch (final Exception e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }
