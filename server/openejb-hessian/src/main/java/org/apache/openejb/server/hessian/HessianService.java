@@ -70,11 +70,11 @@ public class HessianService implements ServerService, SelfManaging {
                 continue;
             }
 
-            final HessianServer server = new HessianServer(beanContext.getClassLoader())
-                        .debug(debug)
-                        .sendCollectionType(sendCollectionType);
+            final HessianServer server = new HessianServer(beanContext.getClassLoader()).debug(debug);
             if (serializerFactory != null) {
-                server.serializerFactory(serializerFactory);
+                server.serializerFactory(serializerFactory).sendCollectionType(sendCollectionType);
+            } else {
+                server.sendCollectionType(sendCollectionType);
             }
             server.createSkeleton(ProxyEJB.simpleProxy(beanContext, new Class<?>[]{ remoteItf }), remoteItf);
 
@@ -89,7 +89,19 @@ public class HessianService implements ServerService, SelfManaging {
     @Override
     public void start() throws ServiceException {
         SystemInstance.get().addObserver(this);
-        registry = SystemInstance.get().getComponent(HessianRegistry.class);
+        SystemInstance.get().setComponent(HessianService.class, this);
+        registry = setRegistry();
+
+        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        if (assembler != null) {
+            for (final AppInfo appInfo : assembler.getDeployedApplications()) {
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId).getBeanContexts()));
+            }
+        }
+    }
+
+    private HessianRegistry setRegistry() {
+        HessianRegistry registry = SystemInstance.get().getComponent(HessianRegistry.class);
         if (registry == null) {
             try { // if tomcat
                 HessianService.class.getClassLoader().loadClass("org.apache.catalina.Context");
@@ -103,13 +115,11 @@ public class HessianService implements ServerService, SelfManaging {
             }
             SystemInstance.get().setComponent(HessianRegistry.class, registry);
         }
+        return registry;
+    }
 
-        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        if (assembler != null) {
-            for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId).getBeanContexts()));
-            }
-        }
+    public HessianRegistry getRegistry() {
+        return registry;
     }
 
     @Override
@@ -153,7 +163,7 @@ public class HessianService implements ServerService, SelfManaging {
         }
     }
 
-    private static String appName(final AppInfo app, final BeanContext beanContext) {
+    public static String appName(final AppInfo app, final BeanContext beanContext) {
         if (!app.webApps.isEmpty()) {
             for (final EjbJarInfo ejbJar : app.ejbJars) {
                 for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -181,6 +191,62 @@ public class HessianService implements ServerService, SelfManaging {
     @Override
     public int getPort() {
         return -1;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(final boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(final boolean debug) {
+        this.debug = debug;
+    }
+
+    public boolean isSendCollectionType() {
+        return sendCollectionType;
+    }
+
+    public void setSendCollectionType(final boolean sendCollectionType) {
+        this.sendCollectionType = sendCollectionType;
+    }
+
+    public String getRealmName() {
+        return realmName;
+    }
+
+    public void setRealmName(final String realmName) {
+        this.realmName = realmName;
+    }
+
+    public String getVirtualHost() {
+        return virtualHost;
+    }
+
+    public void setVirtualHost(final String virtualHost) {
+        this.virtualHost = virtualHost;
+    }
+
+    public String getTransportGuarantee() {
+        return transportGuarantee;
+    }
+
+    public void setTransportGuarantee(final String transportGuarantee) {
+        this.transportGuarantee = transportGuarantee;
+    }
+
+    public String getAuthMethod() {
+        return authMethod;
+    }
+
+    public void setAuthMethod(final String authMethod) {
+        this.authMethod = authMethod;
     }
 
     @Override

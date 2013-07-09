@@ -187,7 +187,7 @@ public class WebContext {
                 || ServletRequestAttributeListener.class.isAssignableFrom(beanClass);
     }
 
-    private WebBeansContext getWebBeansContext() {
+    public WebBeansContext getWebBeansContext() {
         if (webbeansContext == null) {
             return getAppContext().getWebBeansContext();
         }
