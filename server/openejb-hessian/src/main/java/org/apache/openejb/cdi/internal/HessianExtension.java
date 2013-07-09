@@ -36,6 +36,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
@@ -51,6 +52,15 @@ public class HessianExtension implements Extension {
     private final Collection<Deployment> toDeploy = new ArrayList<Deployment>();
     private final Collection<DeployedEndpoint> deployed = new ArrayList<DeployedEndpoint>();
 
+    private AppInfo appInfo;
+
+    protected void init(final @Observes BeforeBeanDiscovery beforeBeanDiscovery) {
+        appInfo = OpenEJBLifecycle.CURRENT_APP_INFO.get();
+        if (appInfo == null) {
+            throw new IllegalStateException("Without OpenEJBLifecycle this Extension can't work correctly");
+        }
+    }
+
     protected <X> void findHessianWebServices(final @Observes ProcessBean<X> processBean) {
         if (ProcessSessionBean.class.isInstance(processBean)) {
             return;
@@ -60,7 +70,8 @@ public class HessianExtension implements Extension {
         final Class<?> beanClass = bean.getBeanClass();
         for (final Class<?> itf : beanClass.getInterfaces()) {
             final Hessian hessian = itf.getAnnotation(Hessian.class);
-            final String path = SystemInstance.get().getProperty("openejb.hessian." + beanClass.getName() + "_" + itf.getName() + ".path");
+            final String key = "openejb.hessian." + beanClass.getName() + "_" + itf.getName() + ".path";
+            final String path = appInfo.properties.getProperty(key, SystemInstance.get().getProperty(key));
             if (hessian != null || path != null) {
                 toDeploy.add(new Deployment(itf, path, bean));
             }
@@ -109,14 +120,9 @@ public class HessianExtension implements Extension {
         toDeploy.clear();
     }
 
-    private static String findAppName(final BeanManager bm) {
-        final AppInfo currentApp = OpenEJBLifecycle.CURRENT_APP_INFO.get();
-        if (currentApp == null) {
-            throw new IllegalStateException("Without OpenEJBLifecycle this Extension can't work correctly");
-        }
-
-        if (currentApp.webAppAlone) {
-            return currentApp.webApps.iterator().next().contextRoot;
+    private String findAppName(final BeanManager bm) {
+        if (appInfo.webAppAlone) {
+            return appInfo.webApps.iterator().next().contextRoot;
         }
 
         for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
