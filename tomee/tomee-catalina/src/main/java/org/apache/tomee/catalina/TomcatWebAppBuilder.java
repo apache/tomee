@@ -85,6 +85,7 @@ import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -1222,7 +1223,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 if (!contextInfo.appInfo.webAppAlone) {
                     final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
-                    new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
+                    OpenEJBLifecycle.CURRENT_APP_INFO.set(contextInfo.appInfo);
+                    try {
+                        new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
+                    } finally {
+                        OpenEJBLifecycle.CURRENT_APP_INFO.remove();
+                    }
                     assembler.startEjbs(true, beanContexts);
                     assembler.bindGlobals(appContext.getBindings());
                     eagerInitOfLocalBeanProxies(beanContexts, standardContext.getLoader().getClassLoader());

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.cdi.internal;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -50,7 +48,7 @@ import java.util.logging.Logger;
 public class HessianExtension implements Extension {
     private static final Logger LOGGER = Logger.getLogger(HessianExtension.class.getName());
 
-    private final Collection<Pair<Class<?>, Bean<?>>> toDeploy = new ArrayList<Pair<Class<?>, Bean<?>>>();
+    private final Collection<Deployment> toDeploy = new ArrayList<Deployment>();
     private final Collection<DeployedEndpoint> deployed = new ArrayList<DeployedEndpoint>();
 
     protected <X> void findHessianWebServices(final @Observes ProcessBean<X> processBean) {
@@ -59,10 +57,12 @@ public class HessianExtension implements Extension {
         }
 
         final Bean<X> bean = processBean.getBean();
-        for (final Class<?> itf : bean.getBeanClass().getInterfaces()) {
+        final Class<?> beanClass = bean.getBeanClass();
+        for (final Class<?> itf : beanClass.getInterfaces()) {
             final Hessian hessian = itf.getAnnotation(Hessian.class);
-            if (hessian != null) {
-                toDeploy.add(new ImmutablePair<Class<?>, Bean<?>>(itf, bean));
+            final String path = SystemInstance.get().getProperty("openejb.hessian." + beanClass.getName() + "_" + itf.getName() + ".path");
+            if (hessian != null || path != null) {
+                toDeploy.add(new Deployment(itf, path, bean));
             }
         }
     }
@@ -76,28 +76,28 @@ public class HessianExtension implements Extension {
 
         final HessianRegistry registry = service.getRegistry();
 
-        for (final Pair<Class<?>, Bean<?>> pair : toDeploy) {
-            final Class<?> itf = pair.getKey();
-            final Hessian hessian = itf.getAnnotation(Hessian.class);
-            final Bean<?> bean = pair.getValue();
-            final HessianServer server = new HessianServer(bean.getBeanClass().getClassLoader());
+        for (final Deployment deployment : toDeploy) {
+            final Hessian hessian = deployment.itf.getAnnotation(Hessian.class);
+            final HessianServer server = new HessianServer(deployment.bean.getBeanClass().getClassLoader());
             try {
-                if (!hessian.serializerFactory().isInstance(server.getSerializerFactory())) {
+                if (hessian != null && !hessian.serializerFactory().isInstance(server.getSerializerFactory())) {
                     server.serializerFactory(hessian.serializerFactory().newInstance());
                 }
             } catch (final Exception e) {
                 throw new OpenEJBRuntimeException(e);
             }
-            server.sendCollectionType(hessian.sendCollectionType());
-            if (Dependent.class.equals(bean.getScope())) {
+            if (hessian != null) {
+                server.sendCollectionType(hessian.sendCollectionType());
+            }
+            if (Dependent.class.equals(deployment.bean.getScope())) {
                 LOGGER.warning("@Dependent can lead to memory leaks ATM");
             }
-            server.createSkeleton(bm.getReference(bean, itf, null), itf);
+            server.createSkeleton(bm.getReference(deployment.bean, deployment.itf, null), deployment.itf);
 
-            final String name = getName(itf);
+            final String name = getName(deployment.path, deployment.itf);
             final String appName = findAppName(bm);
             try {
-                LOGGER.info("Hessian(url=" + registry.deploy(itf.getClassLoader(), server,
+                LOGGER.info("Hessian(url=" + registry.deploy(deployment.itf.getClassLoader(), server,
                         service.getVirtualHost(), appName,
                         service.getAuthMethod(), service.getTransportGuarantee(),
                         service.getRealmName(), name) + ", interface=" + name + ")");
@@ -158,13 +158,32 @@ public class HessianExtension implements Extension {
         deployed.clear();
     }
 
-    private static String getName(final Class<?> itf) {
-        final Hessian hessian = itf.getAnnotation(Hessian.class);
-        final String name = hessian.path();
-        if (name.isEmpty()) {
-            return itf.getName();
+    private static String getName(final String path, final Class<?> itf) {
+        if (path != null) {
+            return path;
         }
-        return name;
+
+        final Hessian hessian = itf.getAnnotation(Hessian.class);
+        if (hessian != null) {
+            final String name = hessian.path();
+            if (name.isEmpty()) {
+                return itf.getName();
+            }
+            return name;
+        }
+        return itf.getName();
+    }
+
+    protected static class Deployment {
+        private final Class<?> itf;
+        private final String path;
+        private final Bean<?> bean;
+
+        public Deployment(final Class<?> itf, final String path, final Bean<?> bean) {
+            this.itf = itf;
+            this.path = path;
+            this.bean = bean;
+        }
     }
 
     protected static class DeployedEndpoint {
