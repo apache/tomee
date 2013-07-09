@@ -18,26 +18,32 @@ package org.apache.openejb.server.hessian;
 
 import com.caucho.hessian.client.HessianProxyFactory;
 import com.caucho.hessian.io.SerializerFactory;
+import org.apache.openejb.cdi.api.Hessian;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.beans.Beans;
 import java.net.MalformedURLException;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @EnableServices({ "hessian", "httpejbd" })
 @RunWith(ApplicationComposer.class)
-public class HessianServiceTest {
+public class HessianCdiTest {
     @Module
-    public Class<?>[] classes() {
-        return new Class<?>[] { MyHessianWebService.class };
+    @Classes(cdi = true, value = { MyCdiHessianService.class, CdiBean.class })
+    public WebApp webApp() {
+        return new WebApp().contextRoot("web");
     }
 
     @Test
@@ -47,22 +53,26 @@ public class HessianServiceTest {
         final SerializerFactory factory = new SerializerFactory(loader);
         factory.setAllowNonSerializable(true);
         clientFactory.setSerializerFactory(factory);
-        final HessianWebService client = HessianWebService.class.cast(clientFactory.create(HessianWebService.class, "http://127.0.0.1:4204/HessianServiceTest/hessian/" + MyHessianWebService.class.getSimpleName()));
+        final CdiService client = CdiService.class.cast(clientFactory.create(CdiService.class, "http://127.0.0.1:4204/web/hessian/service"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));
         assertEquals("test", out.value);
     }
 
-    @Remote
-    public static interface HessianWebService {
-        Out call(In  in);
+    @Hessian(path = "service")
+    public static interface CdiService {
+        Out call(In in);
     }
 
-    @Singleton
-    public static class MyHessianWebService implements HessianWebService {
+    @ApplicationScoped
+    public static class MyCdiHessianService implements CdiService {
+        @Inject
+        private CdiBean bean;
+
         @Override
         public Out call(final In in) {
+            assertNotNull(bean);
             return new Out(in.value);
         }
     }
@@ -81,5 +91,9 @@ public class HessianServiceTest {
         public Out(String value) {
             this.value = value;
         }
+    }
+
+    public static class CdiBean {
+
     }
 }

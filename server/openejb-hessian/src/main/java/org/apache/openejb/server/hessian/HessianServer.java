@@ -71,6 +71,10 @@ public class HessianServer {
         return this;
     }
 
+    public SerializerFactory getSerializerFactory() {
+        return serializerFactory;
+    }
+
     public void invoke(final InputStream inputStream, final OutputStream outputStream) throws Throwable {
         InputStream isToUse = inputStream;
         OutputStream osToUse = outputStream;

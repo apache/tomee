@@ -16,17 +16,18 @@
  */
 package org.apache.openejb.server.hessian;
 
-import com.caucho.hessian.client.HessianProxyFactory;
-import com.caucho.hessian.io.SerializerFactory;
+import org.apache.openejb.client.hessian.HessianInitialContextFactory;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
-import java.net.MalformedURLException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -34,20 +35,20 @@ import static org.junit.Assert.assertThat;
 
 @EnableServices({ "hessian", "httpejbd" })
 @RunWith(ApplicationComposer.class)
-public class HessianServiceTest {
+public class HessianInitialContextTest {
     @Module
     public Class<?>[] classes() {
-        return new Class<?>[] { MyHessianWebService.class };
+        return new Class<?>[] { Server.class };
     }
 
     @Test
-    public void client() throws MalformedURLException {
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        final HessianProxyFactory clientFactory = new HessianProxyFactory(loader);
-        final SerializerFactory factory = new SerializerFactory(loader);
-        factory.setAllowNonSerializable(true);
-        clientFactory.setSerializerFactory(factory);
-        final HessianWebService client = HessianWebService.class.cast(clientFactory.create(HessianWebService.class, "http://127.0.0.1:4204/HessianServiceTest/hessian/" + MyHessianWebService.class.getSimpleName()));
+    public void client() throws Exception {
+        final MyApi client = MyApi.class.cast(
+                new InitialContext(new PropertiesBuilder()
+                        .p(Context.INITIAL_CONTEXT_FACTORY, HessianInitialContextFactory.class.getName())
+                        .p(Context.PROVIDER_URL, "http://127.0.0.1:4204/HessianInitialContextTest/hessian/")
+                        .build())
+                    .lookup("Server"));
 
         final Out out = client.call(new In("test"));
         assertThat(out, instanceOf(Out.class));
@@ -55,12 +56,12 @@ public class HessianServiceTest {
     }
 
     @Remote
-    public static interface HessianWebService {
-        Out call(In  in);
+    public static interface MyApi {
+        Out call(In in);
     }
 
     @Singleton
-    public static class MyHessianWebService implements HessianWebService {
+    public static class Server implements MyApi {
         @Override
         public Out call(final In in) {
             return new Out(in.value);
@@ -70,7 +71,7 @@ public class HessianServiceTest {
     public static class In {
         private String value;
 
-        public In(String value) {
+        public In(final String value) {
             this.value = value;
         }
     }
@@ -78,7 +79,7 @@ public class HessianServiceTest {
     public static class Out {
         private String value;
 
-        public Out(String value) {
+        public Out(final String value) {
             this.value = value;
         }
     }

@@ -19,6 +19,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -56,6 +57,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev:$ $Date:$
  */
 public class OpenEJBLifecycle implements ContainerLifecycle {
+    public static final ThreadLocal<AppInfo> CURRENT_APP_INFO = new ThreadLocal<AppInfo>();
 
     //Logger instance
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
@@ -178,11 +180,16 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Scan
                 this.scannerService.scan();
 
+                // just to let us write custom CDI Extension using our internals easily
+                CURRENT_APP_INFO.set(StartupObject.class.cast(startupObject).getAppInfo());
+
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
             } catch (Exception e1) {
                 Assembler.logger.error("CDI Beans module deployment failed", e1);
                 throw new OpenEJBRuntimeException(e1);
+            } finally {
+                CURRENT_APP_INFO.remove();
             }
 
             for (final BeanContext bc : stuff.getBeanContexts()) {
