@@ -19,6 +19,9 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 
+import javax.xml.ws.BindingType;
+import javax.xml.ws.soap.SOAPBinding;
+
 /**
  * Override the binding type uri.
  */
@@ -30,11 +33,17 @@ public class JaxWsImplementorInfoImpl extends JaxWsImplementorInfo {
         this.bindingURI = bindingURI;
     }
 
+    @Override
     public String getBindingType() {
+        final BindingType bType = getImplementorClass().getAnnotation(BindingType.class);
+        if (bType != null) {
+            return bType.value();
+        }
+
         if (this.bindingURI != null) {
             return this.bindingURI;
-        } else {
-            return super.getBindingType();
         }
+
+        return SOAPBinding.SOAP11HTTP_BINDING;
     }
 }
