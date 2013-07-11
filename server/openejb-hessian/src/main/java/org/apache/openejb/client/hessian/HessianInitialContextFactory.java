@@ -16,17 +16,18 @@
  */
 package org.apache.openejb.client.hessian;
 
-import com.caucho.hessian.client.HessianProxyFactory;
-import com.caucho.hessian.io.SerializerFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
+import org.apache.openejb.util.reflection.Reflections;
 
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
+import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 
+// all is done by reflection to let the use provide hessian in the app
 public class HessianInitialContextFactory implements InitialContextFactory {
     public static final String API = "openejb.hessian.client.api";
     public static final String FORCE_SERIALIZABLE = "openejb.hessian.client.force-serializable";
@@ -34,6 +35,11 @@ public class HessianInitialContextFactory implements InitialContextFactory {
     public static final String DEBUG = "openejb.hessian.client.debug";
     public static final String READ_TIMEOUT = "openejb.hessian.client.read-timeout";
     public static final String CONNECT_TIMEOUT = "openejb.hessian.client.connect-timeout";
+
+    private static final Class<?>[] BOOLEAN_PARAM = new Class<?>[]{boolean.class};
+    private static final Class<?>[] LONG_PARAM = new Class<?>[]{long.class};
+    private static final Class<?>[] STRING_PARAM = new Class<?>[]{String.class};
+    private static final Class<?>[] CREATE_PARAM = new Class<?>[]{Class.class, String.class, ClassLoader.class};
 
     @Override
     public Context getInitialContext(final Hashtable<?, ?> environment) throws NamingException {
@@ -52,6 +58,8 @@ public class HessianInitialContextFactory implements InitialContextFactory {
         private final boolean debug;
         private final int readTimeout;
         private final int connectTimeout;
+        private final Constructor<?> factoryConstructor;
+        private final Constructor<?> serializerConstructor;
 
         public HessianContext(final Hashtable<?, ?> environment) {
             super(null); // will lead to NPE if used but shouldn't be used in practise
@@ -86,6 +94,13 @@ public class HessianInitialContextFactory implements InitialContextFactory {
             } else {
                 api = null;
             }
+
+            try {
+                factoryConstructor = loader.loadClass("com.caucho.hessian.client.HessianProxyFactory").getConstructor(ClassLoader.class);
+                serializerConstructor = loader.loadClass("com.caucho.hessian.io.SerializerFactory").getConstructor(ClassLoader.class);
+            } catch (final Exception e) {
+                throw new OpenEJBRuntimeException(e);
+            }
         }
 
         @Override
@@ -95,29 +110,40 @@ public class HessianInitialContextFactory implements InitialContextFactory {
 
         @Override
         public Object lookup(final String name) throws NamingException {
-            final HessianProxyFactory clientFactory = new HessianProxyFactory(loader);
-            final SerializerFactory factory = new SerializerFactory(loader);
-            factory.setAllowNonSerializable(allowNonSerializable);
-            clientFactory.setSerializerFactory(factory);
-            if (user != null) {
-                clientFactory.setUser(user);
-                clientFactory.setPassword(password);
-            }
-            clientFactory.setChunkedPost(chunked);
-            clientFactory.setDebug(debug);
-            clientFactory.setReadTimeout(readTimeout);
-            clientFactory.setConnectTimeout(connectTimeout);
-
-            final String completeUrl = url + name;
             try {
-                if (api != null) { // just use it
-                    return clientFactory.create(api, completeUrl, loader);
+                final Object clientFactory = factoryConstructor.newInstance(loader);
+                final Object factory = serializerConstructor.newInstance(loader);
+                Reflections.invokeByReflection(factory, "setAllowNonSerializable", BOOLEAN_PARAM, new Object[] { allowNonSerializable});
+                Reflections.invokeByReflection(clientFactory, "setSerializerFactory", new Class<?>[]{ serializerConstructor.getDeclaringClass() }, new Object[]{factory});
+                if (user != null) {
+                    Reflections.invokeByReflection(clientFactory, "setUser", STRING_PARAM, new Object[]{user});
+                    Reflections.invokeByReflection(clientFactory, "setPassword", STRING_PARAM, new Object[]{password});
                 }
+                Reflections.invokeByReflection(clientFactory, "setChunkedPost", BOOLEAN_PARAM, new Object[]{chunked});
+                Reflections.invokeByReflection(clientFactory, "setDebug", BOOLEAN_PARAM, new Object[]{debug});
+                Reflections.invokeByReflection(clientFactory, "setReadTimeout", LONG_PARAM, new Object[]{readTimeout});
+                Reflections.invokeByReflection(clientFactory, "setConnectTimeout", LONG_PARAM, new Object[]{connectTimeout});
 
-                return clientFactory.create(completeUrl); // will do a remote call to get the api
+                final String completeUrl = url + name;
+                try {
+                    if (api != null) { // just use it
+                        return Reflections.invokeByReflection(clientFactory, "create", CREATE_PARAM, new Object[] { api, completeUrl, loader });
+                    }
+
+                    return Reflections.invokeByReflection(clientFactory, "create", STRING_PARAM, new Object[]{completeUrl});
+                } catch (final Exception e) {
+                    throw new NamingException(e.getMessage());
+                }
             } catch (final Exception e) {
-                throw new NamingException(e.getMessage());
+                throw new OpenEJBRuntimeException(e);
             }
+
+
+        }
+
+        @Override
+        public Hashtable<?, ?> getEnvironment() throws NamingException {
+            return environment;
         }
     }
 }

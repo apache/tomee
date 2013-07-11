@@ -55,6 +55,7 @@ limitations under the License.
       <groupId>com.caucho</groupId>
       <artifactId>hessian</artifactId>
       <version>4.0.7</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TomcatHessianRegistry implements HessianRegistry {
-    private static final String TOMEE_HESSIAN_SECURITY_ROLE_PREFIX = "tomee.jaxws.security-role.";
+    private static final String TOMEE_HESSIAN_SECURITY_ROLE_PREFIX = "tomee.hessian.security-role.";
 
     private final Map<String, Pair<Context, Integer>> fakeContexts = new HashMap<String, Pair<Context, Integer>>();
 

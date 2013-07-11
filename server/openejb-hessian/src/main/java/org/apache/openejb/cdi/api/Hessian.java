@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
 public @interface Hessian {
     String path() default "";
     boolean sendCollectionType() default true;
-    Class<? extends SerializerFactory> serializerFactory() default SerializerFactory.class;
+    Class<?> serializerFactory() default Object.class;
 }
