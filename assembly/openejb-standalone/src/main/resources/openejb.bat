@@ -44,8 +44,8 @@ set "OPENEJB_HOME=%CD%"
 
 REM echo OPENEJB_HOME is: %OPENEJB_HOME%
 
-set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar;$OPENEJB_HOME/lib/javaee-api-*.jar"
-set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
+set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-${project.version}.jar;%OPENEJB_HOME%/lib/javaee-api-${javaee-api.version}.jar"
+set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-${project.version}.jar"
 
 for %%a in (%OPENEJB_CORE_JAR%) do (
   set OPENEJB_CORE_JAR="%%a"
@@ -58,7 +58,7 @@ for %%a in (%OPENEJB_JAVAAGENT_JAR%) do (
 REM echo OPENEJB_CORE_JAR is: %OPENEJB_CORE_JAR%
 REM echo OPENEJB_JAVAAGENT_JAR is: %OPENEJB_JAVAAGENT_JAR%
 
-if exist %OPENEJB_CORE_JAR% goto openejbHomeSet
+if exist "%OPENEJB_HOME%\lib\openejb-core-${project.version}.jar" goto openejbHomeSet
 
 :noOpenEJBHome
 echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located. Please set "%OPENEJB_HOME%".
