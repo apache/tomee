@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.hessian;
 
-import com.caucho.hessian.io.SerializerFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -51,7 +50,7 @@ public class HessianService implements ServerService, SelfManaging {
     private boolean disabled;
     private boolean debug;
     private boolean sendCollectionType;
-    private SerializerFactory serializerFactory;
+    private String serializerFactory;
     private String realmName;
     private String virtualHost;
     private String transportGuarantee;
@@ -70,18 +69,38 @@ public class HessianService implements ServerService, SelfManaging {
                 continue;
             }
 
-            final HessianServer server = new HessianServer(beanContext.getClassLoader()).debug(debug);
-            if (serializerFactory != null) {
-                server.serializerFactory(serializerFactory).sendCollectionType(sendCollectionType);
-            } else {
-                server.sendCollectionType(sendCollectionType);
-            }
-            server.createSkeleton(ProxyEJB.simpleProxy(beanContext, new Class<?>[]{ remoteItf }), remoteItf);
+            final ClassLoader old = Thread.currentThread().getContextClassLoader();
+            final ClassLoader classLoader = beanContext.getClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
 
             try {
-                LOGGER.info("Hessian(url=" + registry.deploy(beanContext.getClassLoader(), server, virtualHost, appName(app, beanContext), authMethod, transportGuarantee, realmName, String.class.cast(beanContext.getDeploymentID())) + ", interface=" + remoteItf.getName() + ")");
-            } catch (final URISyntaxException e) {
-                throw new OpenEJBRuntimeException(e);
+                final HessianServer server;
+                try {
+                    server = new HessianServer(classLoader).debug(debug);
+                } catch (final HessianServer.HessianIsMissingException e) {
+                    LOGGER.info("Hessian is not available so openejb-hessian will not deploy any service");
+                    break;
+                }
+
+                if (serializerFactory != null) {
+                    try {
+                        server.serializerFactory(classLoader.loadClass(serializerFactory).newInstance()).sendCollectionType(sendCollectionType);
+                    } catch (final Exception e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+                } else {
+                    server.sendCollectionType(sendCollectionType);
+                }
+
+                server.createSkeleton(ProxyEJB.simpleProxy(beanContext, new Class<?>[]{ remoteItf }), remoteItf);
+
+                try {
+                    LOGGER.info("Hessian(url=" + registry.deploy(classLoader, server, virtualHost, appName(app, beanContext), authMethod, transportGuarantee, realmName, String.class.cast(beanContext.getDeploymentID())) + ", interface=" + remoteItf.getName() + ")");
+                } catch (final URISyntaxException e) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
             }
         }
     }
@@ -258,10 +277,6 @@ public class HessianService implements ServerService, SelfManaging {
         transportGuarantee = props.getProperty("transportGuarantee", "NONE");
         virtualHost = props.getProperty("virtualHost", "localhost");
         authMethod = props.getProperty("authMethod", "NONE");
-
-        final String serializerFactoryClass = props.getProperty("serializerFactory", null);
-        if (serializerFactoryClass != null) {
-            serializerFactory = SerializerFactory.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializerFactoryClass).newInstance());
-        }
+        serializerFactory = props.getProperty("serializerFactory", null);
     }
 }

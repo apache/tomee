@@ -16,17 +16,8 @@
  */
 package org.apache.openejb.server.hessian;
 
-import com.caucho.hessian.io.AbstractHessianInput;
-import com.caucho.hessian.io.AbstractHessianOutput;
-import com.caucho.hessian.io.Hessian2Input;
-import com.caucho.hessian.io.Hessian2Output;
-import com.caucho.hessian.io.HessianDebugInputStream;
-import com.caucho.hessian.io.HessianDebugOutputStream;
-import com.caucho.hessian.io.HessianFactory;
-import com.caucho.hessian.io.HessianInput;
-import com.caucho.hessian.io.HessianOutput;
-import com.caucho.hessian.io.SerializerFactory;
-import com.caucho.hessian.server.HessianSkeleton;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -35,29 +26,39 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// done by relfection to let hessian be in the app
 public class HessianServer {
     public static final String CONTENT_TYPE_HESSIAN = "application/x-hessian";
 
-    private final ClassLoader loader;
+    private static final Class<?>[] BOOLEAN_PARAM = new Class<?>[]{ boolean.class };
+    private static final Object[] TRUE_PARAM = new Object[]{ true };
 
-    private SerializerFactory serializerFactory;
-    private HessianSkeleton skeleton;
+    private final ClassLoader loader;
+    private final Class<?> serializerFactoryClass;
+
+    private Object serializerFactory;
+    private Object skeleton;
     private Logger debugLogger = null;
 
-    public HessianServer(final ClassLoader classLoader) {
+    public HessianServer(final ClassLoader classLoader) throws HessianIsMissingException {
         this.loader = classLoader;
 
-        serializerFactory = new SerializerFactory(loader);
-        serializerFactory.setAllowNonSerializable(true);
+        try {
+            serializerFactoryClass = classLoader.loadClass("com.caucho.hessian.io.SerializerFactory");
+            serializerFactory = serializerFactoryClass.getConstructor(ClassLoader.class).newInstance(loader);
+        } catch (final Exception e) {
+            throw new HessianIsMissingException(e);
+        }
+        Reflections.invokeByReflection(serializerFactory, "setAllowNonSerializable", BOOLEAN_PARAM, TRUE_PARAM);
     }
 
-    public HessianServer serializerFactory(final SerializerFactory serializerFactory) {
-        this.serializerFactory = (serializerFactory != null ? serializerFactory : new SerializerFactory(loader));
+    public HessianServer serializerFactory(final Object serializerFactory) {
+        this.serializerFactory = serializerFactory;
         return this;
     }
 
     public HessianServer sendCollectionType(final boolean sendCollectionType) {
-        this.serializerFactory.setSendCollectionType(sendCollectionType);
+        Reflections.invokeByReflection(serializerFactory, "setSendCollectionType", BOOLEAN_PARAM, new Object[]{ sendCollectionType });
         return this;
     }
 
@@ -67,11 +68,15 @@ public class HessianServer {
     }
 
     public HessianServer createSkeleton(final Object instance, final Class<?> itf) {
-        skeleton = new HessianSkeleton(instance, itf);
+        try {
+            skeleton = loader.loadClass("com.caucho.hessian.server.HessianSkeleton").getConstructor(Object.class, Class.class).newInstance(instance, itf);
+        } catch (final Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
         return this;
     }
 
-    public SerializerFactory getSerializerFactory() {
+    public Object getSerializerFactory() {
         return serializerFactory;
     }
 
@@ -80,12 +85,11 @@ public class HessianServer {
         OutputStream osToUse = outputStream;
 
         if (debugLogger != null && debugLogger.isLoggable(Level.FINE)) {
-            final HessianDebugInputStream dis = new HessianDebugInputStream(inputStream, debugLogger, Level.FINE);
-            dis.startTop2();
-            final HessianDebugOutputStream dos = new HessianDebugOutputStream(outputStream, debugLogger, Level.FINE);
-            dos.startTop2();
-            isToUse = dis;
-            osToUse = dos;
+            isToUse = InputStream.class.cast(loader.loadClass("com.caucho.hessian.io.HessianDebugInputStream").getConstructor(InputStream.class, Logger.class, Level.class).newInstance(inputStream, debugLogger, Level.FINE));
+            Reflections.invokeByReflection(isToUse, "startTop2", new Class<?>[0], null);
+
+            osToUse = OutputStream.class.cast(loader.loadClass("com.caucho.hessian.io.HessianDebugOutputStream").getConstructor(OutputStream.class, Logger.class, Level.class).newInstance(outputStream, debugLogger, Level.FINE));
+            Reflections.invokeByReflection(osToUse, "startTop2", new Class<?>[0], null);
         }
 
         if (!isToUse.markSupported()) {
@@ -97,56 +101,55 @@ public class HessianServer {
         int major;
         int minor;
 
-        AbstractHessianInput in;
-        AbstractHessianOutput out;
+        Object in;
+        Object out;
 
-        if (code == 'H') { // Hessian 2.0 stream
+        if (code == 'H' || code == 'C') { // Hessian 2.0 stream
             major = isToUse.read();
             minor = isToUse.read();
             if (major != 0x02) {
                 throw new IOException("Version " + major + "." + minor + " is not understood");
             }
-            in = new Hessian2Input(isToUse);
-            out = new Hessian2Output(osToUse);
-            in.readCall();
-        } else if (code == 'C') { // Hessian 2.0 call... for some reason not handled in HessianServlet!
-            isToUse.reset();
-            in = new Hessian2Input(isToUse);
-            out = new Hessian2Output(osToUse);
-            in.readCall();
+            in = loader.loadClass("com.caucho.hessian.io.Hessian2Input").getConstructor(InputStream.class).newInstance(isToUse);
+            out = loader.loadClass("com.caucho.hessian.io.Hessian2Output").getConstructor(OutputStream.class).newInstance(osToUse);
+            Reflections.invokeByReflection(in, "readCall", new Class<?>[0], null);
         } else if (code == 'c') { // Hessian 1.0 call
             major = isToUse.read();
             minor = isToUse.read();
-            in = new HessianInput(isToUse);
+            in = loader.loadClass("com.caucho.hessian.io.HessianInput").getConstructor(InputStream.class).newInstance(isToUse);
             if (major >= 2) {
-                out = new Hessian2Output(osToUse);
+                out = loader.loadClass("com.caucho.hessian.io.Hessian2Output").getConstructor(OutputStream.class).newInstance(osToUse);
             } else {
-                out = new HessianOutput(osToUse);
+                out = loader.loadClass("com.caucho.hessian.io.HessianOutput").getConstructor(OutputStream.class).newInstance(osToUse);
             }
         } else {
             throw new IOException("Expected 'H'/'C' (Hessian 2.0) or 'c' (Hessian 1.0) in hessian input at " + code);
         }
 
-        if (serializerFactory != null) {
-            in.setSerializerFactory(serializerFactory);
-            out.setSerializerFactory(serializerFactory);
-        }
+        Reflections.invokeByReflection(in, "setSerializerFactory", new Class<?>[] { serializerFactoryClass }, new Object[] { serializerFactory });
+        Reflections.invokeByReflection(out, "setSerializerFactory", new Class<?>[] { serializerFactoryClass }, new Object[] { serializerFactory });
 
         try {
-            skeleton.invoke(in, out);
+            Reflections.invokeByReflection(skeleton, "invoke", new Class<?>[] { loader.loadClass("com.caucho.hessian.io.AbstractHessianInput"), loader.loadClass("com.caucho.hessian.io.AbstractHessianOutput") }, new Object[] { in, out });
         } finally {
             try {
-                in.close();
+                Reflections.invokeByReflection(in, "close", new Class<?>[0], null);
                 isToUse.close();
             } catch (final IOException ex) {
                 // ignore
             }
             try {
-                out.close();
+                Reflections.invokeByReflection(out, "close", new Class<?>[0], null);
                 osToUse.close();
             } catch (final IOException ex) {
                 // ignore
             }
+        }
+    }
+
+    public static class HessianIsMissingException extends Exception {
+        public HessianIsMissingException(final Exception e) {
+            super(e);
         }
     }
 }

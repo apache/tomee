@@ -89,9 +89,16 @@ public class HessianExtension implements Extension {
 
         for (final Deployment deployment : toDeploy) {
             final Hessian hessian = deployment.itf.getAnnotation(Hessian.class);
-            final HessianServer server = new HessianServer(deployment.bean.getBeanClass().getClassLoader());
+            final HessianServer server;
             try {
-                if (hessian != null && !hessian.serializerFactory().isInstance(server.getSerializerFactory())) {
+                server = new HessianServer(deployment.bean.getBeanClass().getClassLoader());
+            } catch (final HessianServer.HessianIsMissingException e) {
+                LOGGER.info("Hessian is not available so openejb-hessian will not deploy any service");
+                break;
+            }
+
+            try {
+                if (hessian != null && hessian.serializerFactory() != Object.class && !hessian.serializerFactory().isInstance(server.getSerializerFactory())) {
                     server.serializerFactory(hessian.serializerFactory().newInstance());
                 }
             } catch (final Exception e) {
