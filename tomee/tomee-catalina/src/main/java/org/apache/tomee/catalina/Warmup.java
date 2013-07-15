@@ -44,7 +44,6 @@ public class Warmup {
         final String[] classes = {
                 "java.util.concurrent.TimeUnit",
                 "java.util.concurrent.atomic.AtomicLong",
-                "javassist.util.proxy.ProxyFactory",
                 "javax.el.ExpressionFactory",
                 "javax.faces.component.UIViewRoot",
                 "javax.imageio.ImageIO",
