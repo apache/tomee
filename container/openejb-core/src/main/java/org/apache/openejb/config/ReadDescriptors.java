@@ -20,7 +20,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
-import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -31,8 +30,10 @@ import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebFragment;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -75,6 +76,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -531,7 +533,10 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readWebApp(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
-        if (webModule.getWebApp() != null) return;
+        if (webModule.getWebApp() != null) {
+            mergeWebFragments(webModule);
+            return;
+        }
 
         final Object data = webModule.getAltDDs().get("web.xml");
         if (data instanceof WebApp) {
@@ -543,6 +548,33 @@ public class ReadDescriptors implements DynamicDeployer {
         } else {
             DeploymentLoader.logger.debug("No web.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + webModule.getModuleId());
             webModule.setWebApp(new WebApp());
+        }
+
+        mergeWebFragments(webModule);
+    }
+
+    private void mergeWebFragments(final WebModule webModule) {
+        // web-fragment.xml, to get jndi entries to merge, other stuff is done by tomcat ATM
+        final Collection<URL> urls = Collection.class.cast(webModule.getAltDDs().get("web-fragment.xml"));
+        if (urls != null) {
+            for (final URL rawUrl : urls) {
+                if (rawUrl != null) {
+                    final Source url = getSource(rawUrl);
+                    try {
+                        final WebFragment webFragment = JaxbOpenejb.unmarshal(WebFragment.class, url.get());
+                        webModule.getWebApp().getPersistenceContextRef().addAll(webFragment.getPersistenceContextRef());
+                        webModule.getWebApp().getPersistenceUnitRef().addAll(webFragment.getPersistenceUnitRef());
+                        webModule.getWebApp().getMessageDestinationRef().addAll(webFragment.getMessageDestinationRef());
+                        webModule.getWebApp().getDataSource().addAll(webFragment.getDataSource());
+                        webModule.getWebApp().getEjbLocalRef().addAll(webFragment.getEjbLocalRef());
+                        webModule.getWebApp().getEjbRef().addAll(webFragment.getEjbRef());
+                        webModule.getWebApp().getEnvEntry().addAll(webFragment.getEnvEntry());
+                        webModule.getWebApp().getServiceRef().addAll(webFragment.getServiceRef());
+                    } catch (final Exception e) {
+                        logger.warning("can't read " + url.toString(), e);
+                    }
+                }
+            }
         }
     }
 
@@ -784,12 +816,12 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static Source getSource(final Object o) {
-        if (o instanceof Source) {
-            return (Source) o;
-        }
-
         if (o instanceof URL) {
             return new UrlSource((URL) o);
+        }
+
+        if (o instanceof Source) {
+            return (Source) o;
         }
 
         if (o instanceof String) {
