@@ -111,7 +111,7 @@ public class OptimizedLoaderService implements LoaderService {
             }
 
             try {
-                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{ OpenWebBeansPlugin.class }, new ClassLoaderAwareHandler(clazz.newInstance(), loader)));
+                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{ OpenWebBeansPlugin.class }, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader)));
             } catch (final Exception e) {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
@@ -122,14 +122,20 @@ public class OptimizedLoaderService implements LoaderService {
     private static class ClassLoaderAwareHandler implements InvocationHandler {
         private final Object delegate;
         private final ClassLoader loader;
+        private final String toString;
 
-        private ClassLoaderAwareHandler(final Object delegate, final ClassLoader loader) {
+        private ClassLoaderAwareHandler(final String toString, final Object delegate, final ClassLoader loader) {
             this.delegate = delegate;
             this.loader = loader;
+            this.toString = toString;
         }
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            if (method.getName().equals("toString")) {
+                return toString;
+            }
+
             final ClassLoader old = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(loader);
             try {
