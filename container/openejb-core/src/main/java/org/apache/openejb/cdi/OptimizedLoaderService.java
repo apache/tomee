@@ -101,7 +101,7 @@ public class OptimizedLoaderService implements LoaderService {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
         }
-        for (String name : knownPlugins) {
+        for (final String name : loaderAwareKnownPlugins) {
             final Class<T> clazz;
             try {
                 clazz = (Class<T>) loader.loadClass(name);
