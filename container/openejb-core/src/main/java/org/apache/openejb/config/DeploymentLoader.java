@@ -105,6 +105,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     public static final String URLS_KEY = "urls";
 
     private static final String RESOURCES_XML = "resources.xml";
+    private static final String WEB_FRAGMENT_XML = "web-fragment.xml";
+
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
@@ -219,6 +221,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebPersistenceDD("persistence.xml", otherDD, appModule);
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
+                addWebFragments(webModule, urls);
                 appModule.setStandloneWebModule();
                 appModule.setDelegateFirst(true); // force it for webapps
                 return appModule;
@@ -1350,6 +1353,46 @@ public class DeploymentLoader implements DeploymentFilterable {
         return connectorModule;
     }
 
+    protected static void addWebFragments(final WebModule webModule, final Collection<URL> urls) throws OpenEJBException {
+        if (urls == null) {
+            return;
+        }
+
+        List<URL> webFragmentUrls;
+        try {
+            webFragmentUrls = (List<URL>) webModule.getAltDDs().get(WEB_FRAGMENT_XML);
+        } catch (final ClassCastException e) {
+            final Object value = webModule.getAltDDs().get(WEB_FRAGMENT_XML);
+            webFragmentUrls = new ArrayList<URL>();
+            webFragmentUrls.add(URL.class.cast(value));
+            webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
+        }
+        if (webFragmentUrls == null) {
+            webFragmentUrls = new ArrayList<URL>();
+            webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
+        }
+
+
+        for (final URL url : urls) {
+            final ResourceFinder finder = new ResourceFinder("", webModule.getClassLoader(), url);
+            final Map<String, URL> descriptors = getDescriptors(finder, false);
+
+            if (descriptors.containsKey(WEB_FRAGMENT_XML)) {
+                final URL descriptor = descriptors.get(WEB_FRAGMENT_XML);
+                if (webFragmentUrls.contains(descriptor)) {
+                    continue;
+                }
+
+                final String urlString = descriptor.toExternalForm();
+                if (!urlString.contains("META-INF/" + WEB_FRAGMENT_XML)) {
+                    logger.info("AltDD persistence.xml -> " + urlString);
+                }
+
+                webFragmentUrls.add(descriptor);
+            }
+        }
+    }
+
     @SuppressWarnings({"unchecked"})
     protected static Collection<URL> addPersistenceUnits(final AppModule appModule, final URL... urls) throws OpenEJBException {
         final Collection<URL> added = new ArrayList<URL>();
@@ -1690,7 +1733,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (baseUrl != null) {
             final Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
-            if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey("web-fragment.xml") // descriptor
+            if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey(WEB_FRAGMENT_XML) // descriptor
                     || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
                 return WebModule.class;
             }
