@@ -73,6 +73,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -355,11 +356,11 @@ public class DeploymentLoader implements DeploymentFilterable {
             // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
             //
 
-            final Map<String, URL> ejbModules = new HashMap<String, URL>();
-            final Map<String, URL> clientModules = new HashMap<String, URL>();
-            final Map<String, URL> resouceModules = new HashMap<String, URL>();
-            final Map<String, URL> webModules = new HashMap<String, URL>();
-            final Map<String, String> webContextRoots = new HashMap<String, String>();
+            final Map<String, URL> ejbModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> clientModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> resouceModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> webModules = new LinkedHashMap<String, URL>();
+            final Map<String, String> webContextRoots = new LinkedHashMap<String, String>();
 
             final URL applicationXmlUrl = appDescriptors.get("application.xml");
             final List<URL> extraLibs = new ArrayList<URL>();
