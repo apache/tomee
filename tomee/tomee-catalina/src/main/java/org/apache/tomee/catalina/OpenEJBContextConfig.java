@@ -184,9 +184,11 @@ public class OpenEJBContextConfig extends ContextConfig {
             for (final String clazz : webAppInfo.restApplications) {
                 final Container child = mappedChildren.get(clazz);
                 try { // remove only "fake" servlets to let users use their own stuff
-                    final String servletClass = StandardWrapper.class.cast(child).getServletClass();
-                    if (child != null && ("org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass) || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass)))) {
-                        context.removeChild(child);
+                    if (child != null) {
+                        final String servletClass = StandardWrapper.class.cast(child).getServletClass();
+                        if ("org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass) || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass))) {
+                            context.removeChild(child);
+                        }
                     }
                 } catch (final NoClassDefFoundError e) {
                     context.removeChild(child);
