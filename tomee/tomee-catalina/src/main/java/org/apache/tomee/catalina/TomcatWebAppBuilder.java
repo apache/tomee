@@ -905,6 +905,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return null;
         }
 
+        public ClassLoader loader() {
+            if (standardContext != null && standardContext.getLoader() != null) {
+                return standardContext.getLoader().getClassLoader();
+            }
+            return null;
+        }
+
         @Override
         public String toString() {
             if (standardContext == null) return super.toString();
