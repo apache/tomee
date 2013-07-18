@@ -96,10 +96,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         }
     }
 
-    public void setEnabled(final boolean enabled) {
-        // no-op: ejb parent are not deployed so no need to deactivate it (will always be the specialization)
-    }
-
     public String getEjbName() {
         return this.beanContext.getEjbName();
     }
