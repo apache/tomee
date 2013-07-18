@@ -154,7 +154,7 @@ public class ProvisioningUtil {
         return rawLocation;
     }
 
-    private static String quickMvnUrl(final String raw) throws MalformedURLException {
+    public static String quickMvnUrl(final String raw) throws MalformedURLException {
         final String base;
         if (raw.contains("-SNAPSHOT") && raw.contains("apache")) {
             base = APACHE_SNAPSHOT;
