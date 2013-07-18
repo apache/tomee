@@ -58,6 +58,7 @@ import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
 
 import javax.servlet.ServletContainerInitializer;
+import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -180,9 +181,16 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
 
             // cleanup
-            for (String clazz : webAppInfo.restApplications) {
+            for (final String clazz : webAppInfo.restApplications) {
                 final Container child = mappedChildren.get(clazz);
-                if (child != null) {
+                try { // remove only "fake" servlets to let users use their own stuff
+                    final String servletClass = StandardWrapper.class.cast(child).getServletClass();
+                    if (child != null && ("org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass) || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass)))) {
+                        context.removeChild(child);
+                    }
+                } catch (final NoClassDefFoundError e) {
+                    context.removeChild(child);
+                } catch (final ClassNotFoundException e) {
                     context.removeChild(child);
                 }
             }
