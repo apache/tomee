@@ -254,11 +254,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         copyLibs(libs, new File(catalinaBase, libDir), "jar");
         copyLibs(webapps, new File(catalinaBase, webappDir), "war");
         copyLibs(apps, new File(catalinaBase, appDir), "jar");
-        overrideConf(config);
-        overrideConf(lib);
-        final Collection<File> copied = overrideConf(bin);
+        overrideConf(config, "conf");
+        overrideConf(lib, "lib");
+        final Collection<File> copied = overrideConf(bin, "bin");
 
-        for (File copy : copied) {
+        for (final File copy : copied) {
             if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
                 if (!copy.setExecutable(true)) {
                     getLog().warn("can't make " + copy.getPath() + " executable");
@@ -562,7 +562,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private Collection<File> overrideConf(final File dir) {
+    private Collection<File> overrideConf(final File dir, final String baseDir) {
         if (!dir.exists()) {
             return Collections.emptyList();
         }
@@ -575,7 +575,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     continue;
                 }
 
-                final String file = dir.getName() + "/" + f.getName();
+                final String file = baseDir + "/" + f.getName();
                 final File destination = new File(catalinaBase, file);
                 if (f.isDirectory()) {
                     Files.mkdirs(destination);
