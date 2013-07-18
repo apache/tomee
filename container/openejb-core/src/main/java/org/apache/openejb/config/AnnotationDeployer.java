@@ -1347,9 +1347,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Singleton.class)) {
 
                 if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    managedClasses.remove(beanClass.get().getName());
                     specializingClasses.add(beanClass.get());
-                    continue;
                 }
 
                 Singleton singleton = beanClass.getAnnotation(Singleton.class);
@@ -1379,9 +1377,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateless.class)) {
 
                 if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    managedClasses.remove(beanClass.get().getName());
                     specializingClasses.add(beanClass.get());
-                    continue;
                 }
 
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
@@ -1418,9 +1414,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateful.class)) {
 
                 if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    managedClasses.remove(beanClass.get().getName());
                     specializingClasses.add(beanClass.get());
-                    continue;
                 }
 
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
@@ -1450,9 +1444,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
 
                 if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    managedClasses.remove(beanClass.get().getName());
                     specializingClasses.add(beanClass.get());
-                    continue;
                 }
 
                 ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
@@ -1483,9 +1475,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(MessageDriven.class)) {
 
                 if (beanClass.isAnnotationPresent(Specializes.class)) {
-                    managedClasses.remove(beanClass.get().getName());
                     specializingClasses.add(beanClass.get());
-                    continue;
                 }
 
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
@@ -1504,7 +1494,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 LegacyProcessor.process(beanClass.get(), messageBean);
             }
 
-
+            /*
             for (Class<?> specializingClass : sortClassesParentFirst(new ArrayList<Class<?>>(specializingClasses))) {
 
                 final Class<?> parent = specializingClass.getSuperclass();
@@ -1520,7 +1510,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final String ejbClass = enterpriseBean.getEjbClass();
 
                     if (ejbClass != null && ejbClass.equals(parent.getName())) {
-                        managedClasses.remove(ejbClass);
                         enterpriseBean.setEjbClass(specializingClass.getName());
                         found = true;
                     }
@@ -1530,6 +1519,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     ejbModule.getValidation().fail(specializingClass.getSimpleName(), "specializes.extendsSimpleBean", specializingClass.getName());
                 }
             }
+            */
 
             AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
             if (assemblyDescriptor == null) {
