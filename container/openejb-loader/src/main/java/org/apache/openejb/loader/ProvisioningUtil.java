@@ -42,7 +42,7 @@ public class ProvisioningUtil {
 
     private static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
     private static final String REPO1 = "http://repo1.maven.org/maven2/";
-    private static final String APACHE_SNAPSHOT = "repository.apache.org/snapshots/";
+    private static final String APACHE_SNAPSHOT = "https://repository.apache.org/snapshots/";
     private static final String ZIP_KEY = "zip";
     private static final String DESTINATION_KEY = "destination";
     private static final String JAR_KEY = "jar";
