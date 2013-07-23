@@ -34,6 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -368,8 +369,9 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
     }
 
-    //Hashmap for monitoring children of engine and host
-    public static class MoniterableHashMap extends HashMap<Object, Object> {
+    //Hashmap for monitoring children of engine and host, linked because:
+    // 1) deterministic, 2) avoid to handle the prop in application.xml
+    public static class MoniterableHashMap extends LinkedHashMap<Object, Object> {
 
         private final Object source;
         private final String propertyName;
@@ -377,6 +379,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
         public MoniterableHashMap(Map<Object, Object> m, Object source, String propertyName, PropertyChangeListener listener) {
             super(m);
+
             this.source = source;
             this.propertyName = propertyName;
             this.listener = listener;
