@@ -500,7 +500,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected String destinationName() {
         if (context != null) {
-            if (!context.contains(".")) {
+            if (!context.contains(".") && !warFile.isDirectory()) {
                 return context + "." + packaging;
             }
             return context;
