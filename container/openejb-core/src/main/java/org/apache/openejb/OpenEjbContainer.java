@@ -76,6 +76,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -301,6 +302,10 @@ public class OpenEjbContainer extends EJBContainer {
 
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> map) {
+            if (map == null) { // JBoss EJB API pass null when calling EJBContainer.createEJBContainer()
+                map = new HashMap<Object, Object>();
+            }
+
             if (isOtherProvider(map)) return null;
 
             if (instance != null || OpenEJB.isInitialized()) {
