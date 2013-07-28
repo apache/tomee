@@ -24,8 +24,8 @@ import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.rest.ThreadLocalContextManager;
-import org.apache.openejb.server.httpd.EndWebBeansListener;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
@@ -98,7 +98,7 @@ public final class Contexts {
      */
     public static void bind(Exchange exchange, Collection<Class<?>> types) {
         EXCHANGE.set(exchange); // used in lazy mode by RESTResourceFinder if cdi beans uses @Context, === initThreadLocal
-        EndWebBeansListener.pushRequestReleasable(CleanUpThreadLocal.INSTANCE);
+        CdiAppContextsService.pushRequestReleasable(CleanUpThreadLocal.INSTANCE);
 
         for (Class<?> type : types) {
             if (Request.class.equals(type)) {

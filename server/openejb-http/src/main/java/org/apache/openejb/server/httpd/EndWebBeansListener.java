@@ -49,12 +49,6 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, EndWebBeansListener.class);
-    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
-        @Override
-        protected Collection<Runnable> initialValue() {
-            return new ArrayList<Runnable>();
-        }
-    };
 
     protected FailOverService failoverService;
 
@@ -79,31 +73,11 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
     }
 
     /**
-     * Ensures that all ThreadLocals, which could have been set in this
-     * request's Thread, are removed in order to prevent memory leaks.
-     */
-    private void cleanupRequestThreadLocals() {
-        for (final Runnable r : endRequestRunnables.get()) {
-            try {
-                r.run();
-            } catch (final Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        endRequestRunnables.remove();
-    }
-
-    public static void pushRequestReleasable(final Runnable runnable) {
-        endRequestRunnables.get().add(runnable);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void requestDestroyed(ServletRequestEvent event) {
         if (webBeansContext == null) {
-            cleanupRequestThreadLocals();
             return;
         }
 
@@ -136,7 +110,6 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
             if (webBeansContext instanceof WebappWebBeansContext) { // end after child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
             }
-            cleanupRequestThreadLocals();
         } finally {
             ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
         }

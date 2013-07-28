@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.catalina.cdi;
 
-import org.apache.openejb.server.httpd.EndWebBeansListener;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.webbeans.context.creational.BeanInstanceBag;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
@@ -44,7 +44,7 @@ public class SessionNormalScopeBeanHandler extends NormalScopedBeanInterceptorHa
     private final ThreadLocal<Map<Bean<?>, UpdateInfo>> objects = new ThreadLocal<Map<Bean<?>, UpdateInfo>>() {
         @Override
         protected Map<Bean<?>, UpdateInfo> initialValue() {
-            EndWebBeansListener.pushRequestReleasable(new Runnable() { // update in batch
+            CdiAppContextsService.pushRequestReleasable(new Runnable() { // update in batch
                 @Override
                 public void run() {
                     final Map<Bean<?>, UpdateInfo> values = objects.get();

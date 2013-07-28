@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
@@ -72,6 +74,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private final WebBeansContext webBeansContext;
 
+    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
+        @Override
+        protected Collection<Runnable> initialValue() {
+            return new ArrayList<Runnable>();
+        }
+    };
+
+
     public CdiAppContextsService() {
         this(WebBeansContext.currentInstance(), WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
     }
@@ -91,6 +101,21 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
         applicationContext.setActive(true);
         singletonContext.setActive(true);
+    }
+
+    private void endRequest() {
+        for (final Runnable r : endRequestRunnables.get()) {
+            try {
+                r.run();
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        endRequestRunnables.remove();
+    }
+
+    public static void pushRequestReleasable(final Runnable runnable) {
+        endRequestRunnables.get().add(runnable);
     }
 
     @Override
@@ -237,12 +262,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void destroyRequestContext() {
+        // execute request tasks
+        endRequest();
+
         if (supportsConversation()) { // OWB-595
             cleanupConversation();
         }
 
         //Get context
-        RequestContext context = getRequestContext();
+        final RequestContext context = getRequestContext();
 
         //Destroy context
         if (context != null) {
@@ -250,7 +278,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         // clean up the EL caches after each request
-        ELContextStore elStore = ELContextStore.getInstance(false);
+        final ELContextStore elStore = ELContextStore.getInstance(false);
         if (elStore != null) {
             elStore.destroyELContextStore();
         }
