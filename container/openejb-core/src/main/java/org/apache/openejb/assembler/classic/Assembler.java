@@ -1539,7 +1539,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
 
             final WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
-            if (webAppBuilder != null) {
+            if (webAppBuilder != null && !appInfo.webAppAlone) {
                 try {
                     webAppBuilder.undeployWebApps(appInfo);
                 } catch (Exception e) {
@@ -1596,6 +1596,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 } finally {
                     bean.setDestroyed(true);
+                }
+            }
+
+            if (webAppBuilder != null && appInfo.webAppAlone) { // now that EJB are stopped we can undeploy webapps
+                try {
+                    webAppBuilder.undeployWebApps(appInfo);
+                } catch (Exception e) {
+                    undeployException.getCauses().add(new Exception("App: " + appInfo.path + ": " + e.getMessage(), e));
                 }
             }
 
