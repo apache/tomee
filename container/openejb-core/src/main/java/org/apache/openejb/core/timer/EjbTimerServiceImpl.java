@@ -729,7 +729,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 // call the timeout method
                 try {
                     final RpcContainer container = (RpcContainer) deployment.getContainer();
+                    if (container == null) {
+                        return;
+                    }
+
                     final Method ejbTimeout = timerData.getTimeoutMethod();
+                    if (ejbTimeout == null) {
+                        return;
+                    }
+
                     SetAccessible.on(ejbTimeout);
                     container.invoke(deployment.getDeploymentID(),
                                      InterfaceType.TIMEOUT,
