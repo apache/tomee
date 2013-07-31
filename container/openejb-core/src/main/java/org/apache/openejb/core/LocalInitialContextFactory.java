@@ -22,46 +22,73 @@ import org.apache.openejb.util.OptionsLog;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfObsoleteCollectionType")
 public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
 
-    private static OpenEJBInstance openejb;
+    private static final ReentrantLock lock = new ReentrantLock();
+    private static OpenEJBInstance openejb = null;
 
     private boolean bootedOpenEJB;
 
-    public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
+    @Override
+    public Context getInitialContext(final Hashtable env) throws javax.naming.NamingException {
         init(env);
         return getLocalInitialContext(env);
     }
 
-    protected void init(Hashtable env) throws javax.naming.NamingException {
-        if (openejb != null) {
-            return;
-        }
+    protected void init(final Hashtable env) throws javax.naming.NamingException {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
         try {
-            Properties properties = new Properties();
-            properties.putAll(env);
-            init(properties);
-        } catch (Exception e) {
-            throw (NamingException) new NamingException("Attempted to load OpenEJB. " + e.getMessage()).initCause(e);
+            if (openejb != null && openejb.isInitialized()) {
+                return;
+            }
+            try {
+                final Properties properties = new Properties();
+                properties.putAll(env);
+                init(properties);
+            } catch (Exception e) {
+                throw (NamingException) new NamingException("Attempted to load OpenEJB. " + e.getMessage()).initCause(e);
+            }
+        } finally {
+            l.unlock();
         }
     }
 
     boolean bootedOpenEJB() {
-        return bootedOpenEJB;
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            return bootedOpenEJB;
+        } finally {
+            l.unlock();
+        }
+
     }
 
-    public void init(Properties properties) throws Exception {
-        if (openejb != null) return;
+    private void init(final Properties properties) throws Exception {
+        if (openejb != null && openejb.isInitialized()) {
+            return;
+        }
+
         openejb = new OpenEJBInstance();
-        if (openejb.isInitialized()) return;
+
+        if (openejb.isInitialized()) {
+            return;
+        }
+
         bootedOpenEJB = true;
         SystemInstance.init(properties);
         OptionsLog.install();
@@ -69,32 +96,40 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         openejb.init(properties);
     }
 
-    public void close(){
-        openejb = null;
+    public void close() {
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            openejb = null;
+        } finally {
+            l.unlock();
+        }
     }
 
-    private Context getLocalInitialContext(Hashtable env) throws javax.naming.NamingException {
-        Context context;
+    private Context getLocalInitialContext(final Hashtable env) throws javax.naming.NamingException {
+        final Context context;
         try {
-            ClassLoader cl = SystemInstance.get().getClassLoader();
+            final ClassLoader cl = SystemInstance.get().getClassLoader();
 
-            Class localInitialContext = Class.forName("org.apache.openejb.core.LocalInitialContext", true, cl);
+            final Class localInitialContext = Class.forName("org.apache.openejb.core.LocalInitialContext", true, cl);
 
-            Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
+            //noinspection unchecked
+            final Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
             context = (Context) constructor.newInstance(env, this);
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
-                InvocationTargetException ite = (InvocationTargetException) e;
-                if (ite.getTargetException() != null){
+                final InvocationTargetException ite = (InvocationTargetException) e;
+                if (ite.getTargetException() != null) {
                     e = ite.getTargetException();
                 }
             }
 
-            if (e instanceof NamingException){
+            if (e instanceof NamingException) {
                 throw (NamingException) e;
             }
             throw (NamingException) new javax.naming.NamingException("Cannot instantiate a LocalInitialContext. Exception: "
-                    + e.getClass().getName() + " " + e.getMessage()).initCause(e);
+                                                                     + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
         return context;
