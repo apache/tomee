@@ -23,10 +23,12 @@ import java.io.ObjectOutput;
 public class EJBResponse implements ClusterableResponse {
 
     /**
+     * Version provides the protocol hint for backwards compatibility:
      * 1. Initial
      * 2. Append times.
+     * 3. JNDIContext.AuthenticationInfo.
      */
-    public static final byte VERSION = 2;
+    public static final byte VERSION = 3;
 
     private transient byte version = VERSION;
     private transient int responseCode = -1;
@@ -127,7 +129,7 @@ public class EJBResponse implements ClusterableResponse {
 
         result = in.readObject();
 
-        if (version == 2) {
+        if (version >= 2) {
 
             final byte size = in.readByte();
 
@@ -168,7 +170,7 @@ public class EJBResponse implements ClusterableResponse {
         stop(Time.SERIALIZATION);
         stop(Time.TOTAL);
 
-        if (this.version == 2) {
+        if (this.version >= 2) {
 
             out.writeByte(timesLength);
 

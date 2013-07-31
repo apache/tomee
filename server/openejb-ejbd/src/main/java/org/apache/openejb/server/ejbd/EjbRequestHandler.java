@@ -156,7 +156,7 @@ class EjbRequestHandler {
 
         Object securityToken = null;
         try {
-            { // login if needed with request
+            if (version >= 3) { // login if needed with request
                 final JNDIContext.AuthenticationInfo authentication = req.getAuthentication();
                 if (authentication != null) {
                     try {

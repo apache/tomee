@@ -57,7 +57,12 @@ public class EJBRequest implements ClusterableRequest {
         ejbMetaData = null;
     }
 
-    public EJBRequest(final RequestMethodCode requestMethod, final EJBMetaDataImpl ejb, final Method method, final Object[] args, final Object primaryKey, final EJBDSerializer serializer) {
+    public EJBRequest(final RequestMethodCode requestMethod,
+                      final EJBMetaDataImpl ejb,
+                      final Method method,
+                      final Object[] args,
+                      final Object primaryKey,
+                      final EJBDSerializer serializer) {
         body = new Body(ejb);
 
         this.serializer = serializer;
@@ -635,7 +640,10 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
         serverHash = in.readInt();
-        authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
+
+        if (this.getVersion() >= 3) {
+            authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
+        }
 
         if (result != null) {
             throw result;
@@ -655,7 +663,11 @@ public class EJBRequest implements ClusterableRequest {
         out.writeShort(deploymentCode);
         out.writeObject(clientIdentity);
         out.writeInt(serverHash);
-        out.writeObject(authentication);
+
+        if (this.getVersion() >= 3) {
+            out.writeObject(authentication);
+        }
+
         body.writeExternal(out);
     }
 
