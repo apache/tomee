@@ -25,19 +25,21 @@ import javax.naming.NamingException;
 import java.util.List;
 
 public final class ClientInjections {
+
     private ClientInjections() {
         // no-op
     }
 
+    @SuppressWarnings("unchecked")
     public static InjectionProcessor<?> clientInjector(final Object object) throws OpenEJBException {
         if (object == null) {
             throw new NullPointerException("Object supplied to 'inject' operation is null");
         }
 
-        Context clients;
+        final Context clients;
         try {
             clients = (Context) SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
-                    .lookup("openejb/client/");
+                                              .lookup("openejb/client/");
         } catch (NamingException e) {
             throw new OpenEJBException(object.getClass().getName(), e);
         }
@@ -48,7 +50,7 @@ public final class ClientInjections {
         Class<?> current = object.getClass();
         while (current != null && !current.equals(Object.class)) {
             try {
-                String moduleId = (String) clients.lookup(current.getName());
+                final String moduleId = (String) clients.lookup(current.getName());
                 ctx = (Context) clients.lookup(moduleId);
                 injections = (List<Injection>) ctx.lookup("info/injections");
                 break;
@@ -59,10 +61,10 @@ public final class ClientInjections {
 
         if (injections == null) {
             throw new OpenEJBException("Unable to find injection meta-data for "
-                    + object.getClass().getName()
-                    + ".  Ensure that class was annotated with @"
-                    + LocalClient.class.getName()+" and was successfully discovered and deployed. "
-                    + " See http://openejb.apache.org/3.0/local-client-injection.html");
+                                       + object.getClass().getName()
+                                       + ".  Ensure that class was annotated with @"
+                                       + LocalClient.class.getName() + " and was successfully discovered and deployed. "
+                                       + " See http://openejb.apache.org/3.0/local-client-injection.html");
         }
 
         return new InjectionProcessor(object, injections, ctx);
