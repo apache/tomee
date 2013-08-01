@@ -339,7 +339,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
 
         @Override
-        public Serializable serialize(Object o) {
+        public Serializable serialize(final Object o) {
             return instance().serialize(o);
         }
 
