@@ -140,7 +140,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         super(ejb, server, client, null, auth);
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, final JNDIContext.AuthenticationInfo auth) {
+    public EJBObjectHandler(final EJBMetaDataImpl ejb,
+                            final ServerMetaData server,
+                            final ClientMetaData client,
+                            final Object primaryKey,
+                            final JNDIContext.AuthenticationInfo auth) {
         super(ejb, server, client, primaryKey, auth);
     }
 
@@ -148,7 +152,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         this.ejbHome = ejbHome;
     }
 
-    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, final JNDIContext.AuthenticationInfo auth) {
+    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb,
+                                                          final ServerMetaData server,
+                                                          final ClientMetaData client,
+                                                          final Object primaryKey,
+                                                          final JNDIContext.AuthenticationInfo auth) {
 
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
@@ -332,8 +340,9 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey, client.getSerializer());
 
         //Currently, we only set the requestId while the asynchronous invocation is called
-        req.getBody().setRequestId(requestId);
-        req.setAuthentication(this.authenticationInfo);
+        final EJBRequest.Body body = req.getBody();
+        body.setRequestId(requestId);
+        body.setAuthentication(this.authenticationInfo);
         final EJBResponse res = request(req);
         return _handleBusinessMethodResponse(res);
     }
@@ -456,7 +465,12 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     if (lastMayInterruptIfRunningValue.getAndSet(mayInterruptIfRunning) == mayInterruptIfRunning) {
                         return false;
                     }
-                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL, ejb, CANCEL, new Object[]{Boolean.valueOf(mayInterruptIfRunning)}, primaryKey, client.getSerializer());
+                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL,
+                                                          ejb,
+                                                          CANCEL,
+                                                          new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
+                                                          primaryKey,
+                                                          client.getSerializer());
                     req.getBody().setRequestId(requestId);
                     try {
                         final EJBResponse res = request(req);

@@ -126,6 +126,8 @@ class EjbRequestHandler {
                 res.start(EJBResponse.Time.DESERIALIZATION);
 
                 req.getBody().readExternal(in);
+
+                //Client version retrieved from body
                 version = req.getVersion();
 
                 res.stop(EJBResponse.Time.DESERIALIZATION);
@@ -157,7 +159,7 @@ class EjbRequestHandler {
         Object securityToken = null;
         try {
             if (version >= 3) { // login if needed with request
-                final JNDIContext.AuthenticationInfo authentication = req.getAuthentication();
+                final JNDIContext.AuthenticationInfo authentication = req.getBody().getAuthentication();
                 if (authentication != null) {
                     try {
                         securityToken = securityService.login(authentication.getRealm(), authentication.getUser(), new String(authentication.getPassword()));
