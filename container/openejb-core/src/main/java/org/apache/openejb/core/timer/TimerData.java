@@ -84,6 +84,8 @@ public abstract class TimerData implements Serializable {
      */
     private boolean cancelled = false;
 
+    private boolean stopped = false;
+
     /**
      * Has this timer been registered with the transaction for callbacks?  We remember
      * when we are registered to avoid multiple registrations.
@@ -170,6 +172,7 @@ public abstract class TimerData implements Serializable {
             }
         }
         cancelled = true;
+        stopped = true;
     }
 
     public long getId() {
@@ -211,6 +214,10 @@ public abstract class TimerData implements Serializable {
     }
 
     public void cancel() {
+        if (stopped) {
+            return;
+        }
+
         timerService.cancelled(TimerData.this);
         if (trigger != null) {
             try {
@@ -269,6 +276,10 @@ public abstract class TimerData implements Serializable {
 
         // there either wasn't a transaction or registration failed... call transactionComplete directly
         transactionComplete(true);
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     private class TimerDataSynchronization implements Synchronization {
