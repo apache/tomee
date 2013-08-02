@@ -25,6 +25,7 @@ import org.apache.catalina.util.ServerInfo;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.IOException;
@@ -142,7 +143,9 @@ public class ServerListener implements LifecycleListener {
             acc = field.isAccessible();
             final int slash = value.indexOf('/');
             field.setAccessible(true);
-            field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash));
+            final String version = OpenEjbVersion.get().getVersion();
+            final String tomeeVersion = (Integer.parseInt("" + version.charAt(0)) - 3) + version.substring(1, version.length());
+            field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash) + " (" + tomeeVersion + ")");
         } catch (Exception e) {
             // no-op
         } finally {
