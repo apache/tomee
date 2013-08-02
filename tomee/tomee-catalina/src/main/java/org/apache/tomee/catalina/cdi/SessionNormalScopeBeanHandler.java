@@ -41,18 +41,18 @@ public class SessionNormalScopeBeanHandler extends NormalScopedBeanInterceptorHa
         }
     }
 
-    private final ThreadLocal<Map<Bean<?>, UpdateInfo>> objects = new ThreadLocal<Map<Bean<?>, UpdateInfo>>() {
+    private static final ThreadLocal<Map<Bean<?>, UpdateInfo>> OBJECTS = new ThreadLocal<Map<Bean<?>, UpdateInfo>>() {
         @Override
         protected Map<Bean<?>, UpdateInfo> initialValue() {
             CdiAppContextsService.pushRequestReleasable(new Runnable() { // update in batch
                 @Override
                 public void run() {
-                    final Map<Bean<?>, UpdateInfo> values = objects.get();
+                    final Map<Bean<?>, UpdateInfo> values = OBJECTS.get();
                     for (final UpdateInfo o : values.values()) {
                         o.updateBean();
                     }
                     values.clear();
-                    objects.remove();
+                    OBJECTS.remove();
                 }
             });
             return new HashMap<Bean<?>, UpdateInfo>();
@@ -66,7 +66,7 @@ public class SessionNormalScopeBeanHandler extends NormalScopedBeanInterceptorHa
     @Override
     public Object get() {
         final Object webbeansInstance = getContextualInstance();
-        final Map<Bean<?>, UpdateInfo> beanUpdateInfoMap = objects.get();
+        final Map<Bean<?>, UpdateInfo> beanUpdateInfoMap = OBJECTS.get();
 
         UpdateInfo info = beanUpdateInfoMap.get(this);
         if (info == null) {
