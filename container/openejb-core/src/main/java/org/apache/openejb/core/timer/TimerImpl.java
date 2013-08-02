@@ -97,7 +97,7 @@ public class TimerImpl implements Timer, Serializable {
         final BaseContext context = (BaseContext) beanContext.get(EJBContext.class);
         context.check(BaseContext.Call.timerMethod);
 
-        if (timerData.isCancelled()) {
+        if (timerData.isCancelled() && !timerData.isStopped()) {
             throw new NoSuchObjectLocalException("Timer has been cancelled");
         }
         
