@@ -123,7 +123,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         deployment = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(dId);
         transactionManager = getDefaultTransactionManager();
-        timerStore = new MemoryTimerStore(transactionManager); // TODO: check it should be serialized or not
+        timerStore = deployment.getEjbTimerService().getTimerStore();
         scheduler = (Scheduler) Proxy.newProxyInstance(deployment.getClassLoader(), new Class<?>[]{Scheduler.class}, new LazyScheduler(deployment));
     }
 
@@ -673,6 +673,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
     }
 
+    @Override
     public TimerStore getTimerStore() {
         return timerStore;
     }

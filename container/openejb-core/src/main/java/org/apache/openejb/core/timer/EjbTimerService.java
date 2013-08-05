@@ -45,4 +45,6 @@ public interface EjbTimerService {
     void start() throws OpenEJBException;
 
     void stop();
+
+    TimerStore getTimerStore();
 }
