@@ -208,8 +208,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.deploy-openejb-internal-application", defaultValue = "false")
     protected boolean deployOpenEjbApplication;
 
-    @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "false")
+    @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "true")
     protected boolean removeTomeeWebapp;
+
+    @Parameter(property = "tomee-plugin.ejb-remote", defaultValue = "true")
+    protected boolean ejbRemote;
 
     @Parameter(defaultValue = "${project.packaging}", readonly = true)
     protected String packaging;
@@ -642,6 +645,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         if (quickSession) {
             strings.add("-Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager");
+        }
+        if (removeTomeeWebapp && ejbRemote) { // if we have tomee webapp no need to activate ejb remote support this way
+            strings.add("-Dtomee.remote.support=true");
         }
         if (!deployOpenEjbApplication) { // true is the default so don't need to set the property
             if (args == null || !args.contains("-D" + deployOpenEjbAppKey)) {
