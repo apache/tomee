@@ -54,7 +54,7 @@ public class Client {
     private boolean FINER = logger.isLoggable(Level.FINER);
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("4.6");
     private static final int maxConditionRetry = Integer.parseInt(System.getProperty("openejb.client.retry.condition.max", "20"));
 
     private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();

@@ -239,7 +239,6 @@ public class EJBRequest implements ClusterableRequest {
 
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-
         ClassNotFoundException ex = null;
 
         deploymentId = null;
@@ -407,6 +406,10 @@ public class EJBRequest implements ClusterableRequest {
         @SuppressWarnings("unchecked")
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+            readExternal(in , new ProtocolMetaData("4.6"));
+        }
+
+        public void readExternal(final ObjectInput in, final ProtocolMetaData metaData) throws IOException, ClassNotFoundException {
 
             this.version = in.readByte();
 
@@ -444,8 +447,10 @@ public class EJBRequest implements ClusterableRequest {
             }
 
             //Version 3
-            if (this.version >= 3) {
+            if (metaData.isAtLeast(4, 6)) {
                 authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
+            } else {
+                authentication = null;
             }
 
             if (result != null) {
