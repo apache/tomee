@@ -68,10 +68,8 @@ public class SessionNormalScopeBeanHandler extends NormalScopedBeanInterceptorHa
         final Object webbeansInstance = getContextualInstance();
         final Map<Bean<?>, UpdateInfo> beanUpdateInfoMap = OBJECTS.get();
 
-        UpdateInfo info = beanUpdateInfoMap.get(this);
-        if (info == null) {
-            info = new UpdateInfo(bean, getBeanManager(), webbeansInstance);
-            beanUpdateInfoMap.put(bean, info);
+        if (!beanUpdateInfoMap.containsKey(bean)) {
+            beanUpdateInfoMap.put(bean, new UpdateInfo(bean, getBeanManager(), webbeansInstance));
         }
 
         return webbeansInstance;
