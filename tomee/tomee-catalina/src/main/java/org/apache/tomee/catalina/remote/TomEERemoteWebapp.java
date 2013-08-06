@@ -24,6 +24,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.ServerServlet;
 import org.apache.tomee.catalina.IgnoredStandardContext;
+import org.apache.tomee.catalina.OpenEJBValve;
 
 import java.beans.PropertyChangeListener;
 
@@ -38,6 +39,7 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         setName(CONTEXT_NAME);
         setPath("/" + CONTEXT_NAME);
         setLoader(new ServerClassLoaderLoader(this));
+        addValve(new OpenEJBValve()); // ensure security context is resetted (ThreadLocal) for each request
     }
 
     @Override
