@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.openejb;
 
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
@@ -31,6 +32,7 @@ public class OpenEJBConfiguration implements ContainerConfiguration {
         return properties;
     }
 
+    @Multiline
     public void setProperties(String properties) {
         this.properties = properties;
     }

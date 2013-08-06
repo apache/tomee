@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.common;
 
 
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
@@ -34,10 +35,11 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String stopHost = "localhost"; // generally localhost but host (http) can be different
     protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
     protected String serverXml = null;
-    protected String properties = "";
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
     protected boolean quickSession = true;
     protected boolean unpackWars = true;
+
+    protected String properties = "";
 
     public boolean isUnpackWars() {
         return unpackWars;
@@ -110,6 +112,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
         return properties;
     }
 
+    @Multiline
     public void setProperties(String properties) {
         this.properties = properties;
     }
