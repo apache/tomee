@@ -62,6 +62,10 @@ public class ProtocolMetaData {
         this.minor = Integer.parseInt(new String(chars, 7, 1));
     }
 
+    public boolean isAtLeast(final int major, int minor) {
+        return this.major >= major || (this.major == major && this.minor >= minor);
+    }
+
     public String getId() {
         return id;
     }

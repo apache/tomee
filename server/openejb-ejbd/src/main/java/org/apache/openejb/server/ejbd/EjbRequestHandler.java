@@ -25,6 +25,7 @@ import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.JNDIContext;
+import org.apache.openejb.client.ProtocolMetaData;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.serializer.EJBDSerializer;
@@ -67,7 +68,7 @@ class EjbRequestHandler {
         return new BasicClusterableRequestHandler();
     }
 
-    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out, final ProtocolMetaData metaData) {
 
         // Setup the client proxy replacement to replace
         // the proxies with the IntraVM proxy implementations
@@ -125,7 +126,7 @@ class EjbRequestHandler {
 
                 res.start(EJBResponse.Time.DESERIALIZATION);
 
-                req.getBody().readExternal(in);
+                req.getBody().readExternal(in, metaData);
 
                 //Client version retrieved from body
                 version = req.getVersion();
@@ -158,14 +159,12 @@ class EjbRequestHandler {
 
         Object securityToken = null;
         try {
-            if (version >= 3) { // login if needed with request
-                final JNDIContext.AuthenticationInfo authentication = req.getBody().getAuthentication();
-                if (authentication != null) {
-                    try {
-                        securityToken = securityService.login(authentication.getRealm(), authentication.getUser(), new String(authentication.getPassword()));
-                    } catch (final Throwable t) {
-                        res.setResponse(req.getVersion(), ResponseCodes.AUTH_DENIED, t);
-                    }
+            final JNDIContext.AuthenticationInfo authentication = req.getBody().getAuthentication();
+            if (authentication != null) {
+                try {
+                    securityToken = securityService.login(authentication.getRealm(), authentication.getUser(), new String(authentication.getPassword()));
+                } catch (final Throwable t) {
+                    res.setResponse(req.getVersion(), ResponseCodes.AUTH_DENIED, t);
                 }
             }
 

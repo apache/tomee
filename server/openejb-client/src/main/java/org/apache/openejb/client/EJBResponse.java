@@ -26,9 +26,8 @@ public class EJBResponse implements ClusterableResponse {
      * Version provides the protocol hint for backwards compatibility:
      * 1. Initial
      * 2. Append times.
-     * 3. JNDIContext.AuthenticationInfo.
      */
-    public static final byte VERSION = 3;
+    public static final byte VERSION = 2;
 
     private transient byte version = VERSION;
     private transient int responseCode = -1;

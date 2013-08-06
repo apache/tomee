@@ -50,7 +50,7 @@ import java.util.zip.GZIPInputStream;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("4.6"); // aligned with org.apache.openejb.client.EJBRequest.readExternal(java.io.ObjectInput)() and org.apache.openejb.client.Client.PROTOCOL_VERSION
 
     static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
@@ -205,7 +205,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             // things up with the client accordingly.
             switch (requestType) {
                 case EJB_REQUEST:
-                    processEjbRequest(ois, oos);
+                    processEjbRequest(ois, oos, protocolMetaData);
                     break;
                 case JNDI_REQUEST:
                     processJndiRequest(ois, oos);
@@ -281,8 +281,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         return beanContext;
     }
 
-    public void processEjbRequest(final ObjectInputStream in, final ObjectOutputStream out) {
-        ejbHandler.processRequest(in, out);
+    public void processEjbRequest(final ObjectInputStream in, final ObjectOutputStream out, final ProtocolMetaData metaData) {
+        ejbHandler.processRequest(in, out, metaData);
     }
 
     public void processJndiRequest(final ObjectInputStream in, final ObjectOutputStream out) throws Exception {
