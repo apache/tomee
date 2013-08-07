@@ -41,6 +41,7 @@ public class EJBRequest implements ClusterableRequest {
     private transient int serverHash;
     private transient Body body;
     private transient EJBDSerializer serializer;
+    private transient ProtocolMetaData metaData;
 
     // Only visible on the client side
     private transient final EJBMetaDataImpl ejbMetaData;
@@ -72,6 +73,11 @@ public class EJBRequest implements ClusterableRequest {
         setMethodInstance(method);
         setMethodParameters(args);
         setPrimaryKey(primaryKey);
+    }
+
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+        this.body.setMetaData(this.metaData);
     }
 
     public EJBMetaDataImpl getEjbMetaData() {
@@ -281,6 +287,7 @@ public class EJBRequest implements ClusterableRequest {
      */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
+
         out.writeByte(requestMethod.getCode());
 
         if (deploymentCode > 0) {
@@ -292,6 +299,8 @@ public class EJBRequest implements ClusterableRequest {
         out.writeShort(deploymentCode);
         out.writeObject(clientIdentity);
         out.writeInt(serverHash);
+
+        body.setMetaData(metaData);
         body.writeExternal(out);
     }
 
@@ -311,12 +320,17 @@ public class EJBRequest implements ClusterableRequest {
         private byte version = EJBResponse.VERSION;
 
         private transient JNDIContext.AuthenticationInfo authentication;
+        private transient ProtocolMetaData metaData;
 
         public Body(final EJBMetaDataImpl ejb) {
             this.ejb = ejb;
         }
 
         public Body() {
+        }
+
+        public void setMetaData(final ProtocolMetaData metaData) {
+            this.metaData = metaData;
         }
 
         public byte getVersion() {
@@ -406,10 +420,6 @@ public class EJBRequest implements ClusterableRequest {
         @SuppressWarnings("unchecked")
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-            readExternal(in , new ProtocolMetaData("4.6"));
-        }
-
-        public void readExternal(final ObjectInput in, final ProtocolMetaData metaData) throws IOException, ClassNotFoundException {
 
             this.version = in.readByte();
 
@@ -438,6 +448,7 @@ public class EJBRequest implements ClusterableRequest {
 
             if (interfaceClass != null) {
                 try {
+                    //noinspection unchecked
                     methodInstance = interfaceClass.getMethod(methodName, methodParamTypes);
                 } catch (NoSuchMethodException nsme) {
                     if (result == null) {
@@ -446,8 +457,7 @@ public class EJBRequest implements ClusterableRequest {
                 }
             }
 
-            //Version 3
-            if (metaData.isAtLeast(4, 6)) {
+            if (null == metaData || metaData.isAtLeast(4, 6)) {
                 authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
             } else {
                 authentication = null;
@@ -468,13 +478,14 @@ public class EJBRequest implements ClusterableRequest {
             out.writeObject(primaryKey);
 
             out.writeObject(interfaceClass);
-            //            out.writeObject(methodClass);
+
             out.writeUTF(methodName);
 
             writeMethodParameters(out, methodParamTypes, methodParameters);
 
-            //Version 3
-            out.writeObject(authentication);
+            if (null == metaData || metaData.isAtLeast(4, 6)) {
+                out.writeObject(authentication);
+            }
         }
 
         protected void writeMethodParameters(final ObjectOutput out, final Class[] types, final Object[] args) throws IOException {

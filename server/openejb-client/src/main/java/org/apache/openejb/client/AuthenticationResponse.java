@@ -26,12 +26,27 @@ public class AuthenticationResponse implements Response {
     private transient ClientMetaData identity;
     private transient ServerMetaData server;
     private transient Throwable deniedCause;
+    private transient AuthenticationRequest request;
+    private transient ProtocolMetaData metaData;
 
     public AuthenticationResponse() {
     }
 
-    public AuthenticationResponse(int code) {
-        responseCode = code;
+    public AuthenticationResponse(final int code) {
+        this.responseCode = code;
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public AuthenticationRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(final AuthenticationRequest request) {
+        this.request = request;
     }
 
     public int getResponseCode() {
@@ -46,15 +61,15 @@ public class AuthenticationResponse implements Response {
         return server;
     }
 
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(final int responseCode) {
         this.responseCode = responseCode;
     }
 
-    public void setIdentity(ClientMetaData identity) {
+    public void setIdentity(final ClientMetaData identity) {
         this.identity = identity;
     }
 
-    public void setServer(ServerMetaData server) {
+    public void setServer(final ServerMetaData server) {
         this.server = server;
     }
 
@@ -62,70 +77,82 @@ public class AuthenticationResponse implements Response {
         return deniedCause;
     }
 
-    public void setDeniedCause(Throwable deniedCause) {
+    public void setDeniedCause(final Throwable deniedCause) {
         this.deniedCause = deniedCause;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
         responseCode = in.readByte();
         switch (responseCode) {
             case ResponseCodes.AUTH_GRANTED:
                 identity = new ClientMetaData();
+                identity.setMetaData(metaData);
                 identity.readExternal(in);
                 break;
             case ResponseCodes.AUTH_REDIRECT:
                 identity = new ClientMetaData();
+                identity.setMetaData(metaData);
                 identity.readExternal(in);
+
                 server = new ServerMetaData();
+                server.setMetaData(metaData);
                 server.readExternal(in);
                 break;
             case ResponseCodes.AUTH_DENIED:
-                ThrowableArtifact ta = new ThrowableArtifact();
+                final ThrowableArtifact ta = new ThrowableArtifact();
+                ta.setMetaData(metaData);
                 ta.readExternal(in);
                 deniedCause = ta.getThrowable();
                 break;
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
         out.writeByte((byte) responseCode);
         switch (responseCode) {
             case ResponseCodes.AUTH_GRANTED:
+                identity.setMetaData(metaData);
                 identity.writeExternal(out);
                 break;
             case ResponseCodes.AUTH_REDIRECT:
+                identity.setMetaData(metaData);
                 identity.writeExternal(out);
+
+                server.setMetaData(metaData);
                 server.writeExternal(out);
                 break;
             case ResponseCodes.AUTH_DENIED:
-                ThrowableArtifact ta = new ThrowableArtifact(deniedCause);
+                final ThrowableArtifact ta = new ThrowableArtifact(deniedCause);
+                ta.setMetaData(metaData);
                 ta.writeExternal(out);
                 break;
         }
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(50);
+        final StringBuilder sb = new StringBuilder(50);
 
         switch (responseCode) {
             case ResponseCodes.AUTH_GRANTED: {
                 sb.append("AUTH_GRANTED:");
-                sb.append(identity);
+                sb.append(null != identity ? identity.toString() : "Unknown identity");
                 break;
             }
             case ResponseCodes.AUTH_REDIRECT: {
                 sb.append("AUTH_REDIRECT:");
-                sb.append(server);
+                sb.append(null != server ? server.toString() : "Unknown server");
                 break;
             }
             case ResponseCodes.AUTH_DENIED: {
                 sb.append("AUTH_DENIED:");
-                sb.append(deniedCause.toString());
+                sb.append(null != deniedCause ? deniedCause.toString() : "Unknown denial");
                 break;
             }
         }

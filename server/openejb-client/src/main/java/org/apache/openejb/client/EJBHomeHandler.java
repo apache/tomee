@@ -81,6 +81,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         }
     }
 
+    @Override
     protected Object _invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 
         final String methodName = method.getName();
@@ -95,7 +96,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                     return Boolean.FALSE;
 
                 } else if (method.equals(HASHCODE)) {
-                    return new Integer(this.hashCode());
+                    return this.hashCode();
 
                 } else {
                     throw new UnsupportedOperationException("Unkown method: " + method);
@@ -243,9 +244,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     protected abstract Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
 
+    @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     }
 
+    @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
     }
 

@@ -18,27 +18,34 @@
 package org.apache.openejb.client;
 
 import java.io.Externalizable;
-import java.io.ObjectOutput;
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
  */
+@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class ThrowableArtifact implements Externalizable {
 
-    private Throwable throwable;
+    private transient Throwable throwable;
+    private transient ProtocolMetaData metaData;
 
-    public ThrowableArtifact(Throwable throwable) {
+    public ThrowableArtifact(final Throwable throwable) {
         this.throwable = throwable;
     }
 
     public ThrowableArtifact() {
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
-        Stack<MockThrowable> stack = new Stack<MockThrowable>();
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        final Stack<MockThrowable> stack = new Stack<MockThrowable>();
 
         for (Throwable cause = throwable; cause != null; cause = cause.getCause()) {
             stack.add(new MockThrowable(cause));
@@ -47,12 +54,15 @@ public class ThrowableArtifact implements Externalizable {
         out.writeObject(stack);
         try {
             out.writeObject(throwable);
-        } catch (IOException dontCare) {
+        } catch (IOException e) {
+            //Ignore
         }
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        Stack<MockThrowable> stack = (Stack<MockThrowable>) in.readObject();
+    @SuppressWarnings("unchecked")
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final Stack<MockThrowable> stack = (Stack<MockThrowable>) in.readObject();
         try {
             throwable = (Throwable) in.readObject();
         } catch (Exception e) {
@@ -60,14 +70,14 @@ public class ThrowableArtifact implements Externalizable {
         }
     }
 
-    private Throwable createMockThrowable(Stack<MockThrowable> stack) {
+    private Throwable createMockThrowable(final Stack<MockThrowable> stack) {
         Throwable throwable = stack.pop();
 
-        while (!stack.isEmpty()){
+        while (!stack.isEmpty()) {
             throwable = stack.pop().initCause(throwable);
         }
 
-        return new ClientRuntimeException("The exception sent could not be serialized or deserialized.  This is a mock recreation:\n"+throwable, throwable);
+        return new ClientRuntimeException("The exception sent could not be serialized or deserialized.  This is a mock recreation:\n" + throwable, throwable);
     }
 
     public Throwable getThrowable() {
@@ -79,21 +89,22 @@ public class ThrowableArtifact implements Externalizable {
     }
 
     private static class MockThrowable extends Throwable {
+
         private final String classType;
 
-        public MockThrowable(Throwable t){
-            this(t.getMessage(),t.getClass().getName(), t.getStackTrace());
+        public MockThrowable(final Throwable t) {
+            this(t.getMessage(), t.getClass().getName(), t.getStackTrace());
         }
 
-        public MockThrowable(String message, String classType, StackTraceElement[] stackTrace) {
+        public MockThrowable(final String message, final String classType, final StackTraceElement[] stackTrace) {
             super(message);
             this.classType = classType;
             this.setStackTrace(stackTrace);
         }
 
         public String toString() {
-            String s = classType;
-            String message = getLocalizedMessage();
+            final String s = classType;
+            final String message = getLocalizedMessage();
             return (message != null) ? (s + ": " + message) : s;
         }
     }

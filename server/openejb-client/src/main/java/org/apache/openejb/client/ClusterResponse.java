@@ -16,27 +16,36 @@
  */
 package org.apache.openejb.client;
 
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
  * @version $Rev$ $Date$
  */
 public class ClusterResponse implements Response {
+
     public static enum Code {
-        CURRENT, UPDATE, FAILURE;
+        CURRENT,
+        UPDATE,
+        FAILURE
     }
 
     private Code responseCode;
     private ClusterMetaData updatedMetaData;
     private Throwable failure;
+    private transient ProtocolMetaData metaData;
 
-    public ClusterResponse(Code responseCode) {
+    public ClusterResponse(final Code responseCode) {
         this.responseCode = responseCode;
     }
 
     public ClusterResponse() {
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
     }
 
     public Code getResponseCode() {
@@ -47,7 +56,7 @@ public class ClusterResponse implements Response {
         this.responseCode = Code.CURRENT;
     }
 
-    public void setUpdatedMetaData(ClusterMetaData updatedMetaData) {
+    public void setUpdatedMetaData(final ClusterMetaData updatedMetaData) {
         this.responseCode = Code.UPDATE;
         this.updatedMetaData = updatedMetaData;
     }
@@ -60,37 +69,44 @@ public class ClusterResponse implements Response {
         return failure;
     }
 
-    public void setFailure(Throwable failure) {
+    public void setFailure(final Throwable failure) {
         this.responseCode = Code.FAILURE;
         this.failure = failure;
     }
 
-
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte i = in.readByte();
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte i = in.readByte();
         responseCode = Code.values()[i];
 
-        switch(responseCode){
-            case CURRENT: break;
+        switch (responseCode) {
+            case CURRENT:
+                break;
             case UPDATE: {
                 updatedMetaData = new ClusterMetaData();
+                updatedMetaData.setMetaData(metaData);
                 updatedMetaData.readExternal(in);
-            }; break;
-            case FAILURE:{
+                break;
+            }
+            case FAILURE: {
                 failure = (IOException) in.readObject();
             }
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeByte(responseCode.ordinal());
 
-        switch(responseCode){
-            case CURRENT: break;
+        switch (responseCode) {
+            case CURRENT:
+                break;
             case UPDATE: {
+                updatedMetaData.setMetaData(metaData);
                 updatedMetaData.writeExternal(out);
-            }; break;
-            case FAILURE:{
+                break;
+            }
+            case FAILURE: {
                 out.writeObject(failure);
             }
         }

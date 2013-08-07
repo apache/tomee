@@ -27,19 +27,24 @@ public class ClientMetaData implements Externalizable {
 
     transient Object clientIdentity;
     private transient EJBDSerializer serializer;
+    private transient ProtocolMetaData metaData;
 
     public ClientMetaData() {
     }
 
-    public ClientMetaData(Object identity) {
+    public ClientMetaData(final Object identity) {
         this.clientIdentity = identity;
+    }
+
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
     }
 
     public Object getClientIdentity() {
         return clientIdentity;
     }
 
-    public void setClientIdentity(Object clientIdentity) {
+    public void setClientIdentity(final Object clientIdentity) {
         this.clientIdentity = clientIdentity;
     }
 
@@ -51,27 +56,35 @@ public class ClientMetaData implements Externalizable {
         this.serializer = serializer;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
+        final byte version = in.readByte(); // future use
         this.clientIdentity = in.readObject();
-        if (in.readBoolean()) {
-            try {
-                serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(in.readUTF()).newInstance());
-            } catch (final Exception e) {
-                // no-op
+
+        if (null == metaData || metaData.isAtLeast(4, 6)) {
+            if (in.readBoolean()) {
+                try {
+                    serializer = EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(in.readUTF()).newInstance());
+                } catch (final Exception e) {
+                    // no-op
+                }
             }
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
-
         out.writeObject(clientIdentity);
-        out.writeBoolean(serializer != null);
-        if (serializer != null) {
-            out.writeUTF(serializer.getClass().getName());
+
+        if (null == metaData || metaData.isAtLeast(4, 6)) {
+
+            out.writeBoolean(serializer != null);
+            if (serializer != null) {
+                out.writeUTF(serializer.getClass().getName());
+            }
         }
     }
 }

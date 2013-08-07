@@ -31,7 +31,8 @@ import java.util.Properties;
 import java.util.Set;
 
 public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externalizable {
-	private static final long serialVersionUID = -858340852654709679L;
+
+    private static final long serialVersionUID = -858340852654709679L;
 
     public static final byte STATEFUL = (byte) 6;
 
@@ -69,27 +70,34 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     // only used for business objects;
     protected transient Object primaryKey;
 
+    private transient ProtocolMetaData metaData;
+
     public EJBMetaDataImpl() {
 
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+    public EJBMetaDataImpl(final Class homeInterface,
+                           final Class remoteInterface,
+                           final String typeOfBean,
+                           final InterfaceType interfaceType,
+                           final List<Class> businessInterfaces,
+                           final Set<String> asynchronousMethodSignatures) {
         this.interfaceType = interfaceType;
 
-        if ("STATEFUL".equalsIgnoreCase(typeOfBean)){
+        if ("STATEFUL".equalsIgnoreCase(typeOfBean)) {
             this.type = STATEFUL;
-        } else if ("STATELESS".equalsIgnoreCase(typeOfBean)){
+        } else if ("STATELESS".equalsIgnoreCase(typeOfBean)) {
             this.type = STATELESS;
-        } else if ("SINGLETON".equalsIgnoreCase(typeOfBean)){
+        } else if ("SINGLETON".equalsIgnoreCase(typeOfBean)) {
             this.type = SINGLETON;
-        } else if ("BMP_ENTITY".equalsIgnoreCase(typeOfBean)){
+        } else if ("BMP_ENTITY".equalsIgnoreCase(typeOfBean)) {
             this.type = BMP_ENTITY;
-        } else if ("CMP_ENTITY".equalsIgnoreCase(typeOfBean)){
+        } else if ("CMP_ENTITY".equalsIgnoreCase(typeOfBean)) {
             this.type = CMP_ENTITY;
         }
         this.homeClass = homeInterface;
         this.remoteClass = remoteInterface;
-        if (businessInterfaces != null){
+        if (businessInterfaces != null) {
             this.businessClasses.addAll(businessInterfaces);
         }
         if (asynchronousMethodSignatures != null) {
@@ -97,23 +105,49 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+    public EJBMetaDataImpl(final Class homeInterface,
+                           final Class remoteInterface,
+                           final Class primaryKeyClass,
+                           final String typeOfBean,
+                           final InterfaceType interfaceType,
+                           final List<Class> businessInterfaces,
+                           final Set<String> asynchronousMethodSignatures) {
         this(homeInterface, remoteInterface, typeOfBean, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         if (type == CMP_ENTITY || type == BMP_ENTITY) {
             this.keyClass = primaryKeyClass;
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+    public EJBMetaDataImpl(final Class homeInterface,
+                           final Class remoteInterface,
+                           final Class primaryKeyClass,
+                           final String typeOfBean,
+                           final String deploymentID,
+                           final InterfaceType interfaceType,
+                           final List<Class> businessInterfaces,
+                           final Set<String> asynchronousMethodSignatures) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         this.deploymentID = deploymentID;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+    public EJBMetaDataImpl(final Class homeInterface,
+                           final Class remoteInterface,
+                           final Class primaryKeyClass,
+                           final String typeOfBean,
+                           final String deploymentID,
+                           final int deploymentCode,
+                           final InterfaceType interfaceType,
+                           final List<Class> businessInterfaces,
+                           final Set<String> asynchronousMethodSignatures) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         this.deploymentCode = deploymentCode;
     }
 
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
     public Class getPrimaryKeyClass() {
         if (type != BMP_ENTITY && type != CMP_ENTITY) {
 
@@ -122,14 +156,17 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return keyClass;
     }
 
+    @Override
     public EJBHome getEJBHome() {
         return ejbHomeProxy;
     }
 
+    @Override
     public Class getHomeInterfaceClass() {
         return homeClass;
     }
 
+    @Override
     public boolean isStatelessSession() {
         return type == STATELESS;
     }
@@ -142,26 +179,28 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return type == SINGLETON;
     }
 
+    @Override
     public Class getRemoteInterfaceClass() {
         return remoteClass;
     }
 
+    @Override
     public boolean isSession() {
         return (type == STATEFUL || type == STATELESS || type == SINGLETON);
     }
 
-    public boolean isAsynchronousMethod(Method method) {
-        if(asynchronousMethods.size() == 0) {
+    public boolean isAsynchronousMethod(final Method method) {
+        if (asynchronousMethods.size() == 0) {
             return false;
         }
         return asynchronousMethods.contains(generateMethodSignature(method));
     }
 
-    public void addAsynchronousMethod(Method method) {
+    public void addAsynchronousMethod(final Method method) {
         asynchronousMethods.add(generateMethodSignature(method));
     }
 
-    protected void setEJBHomeProxy(EJBHomeProxy home) {
+    protected void setEJBHomeProxy(final EJBHomeProxy home) {
         ejbHomeProxy = home;
     }
 
@@ -189,11 +228,12 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return primaryKey;
     }
 
-    public void setPrimaryKey(Object primaryKey) {
+    public void setPrimaryKey(final Object primaryKey) {
         this.primaryKey = primaryKey;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(3);
 
@@ -205,10 +245,10 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         out.writeUTF(deploymentID);
         out.writeShort((short) deploymentCode);
         out.writeShort((short) businessClasses.size());
-        for (Class clazz : businessClasses) {
+        for (final Class clazz : businessClasses) {
             out.writeObject(clazz);
         }
-        if (businessClasses.size() >0){
+        if (businessClasses.size() > 0) {
             out.writeObject(primaryKey);
         }
         out.writeObject(mainInterface);
@@ -216,10 +256,10 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         out.writeByte(interfaceType.ordinal());
 
         out.writeInt(asynchronousMethods.size());
-        for (String asynchronousMethod : asynchronousMethods) {
+        for (final String asynchronousMethod : asynchronousMethods) {
             out.writeObject(asynchronousMethod);
         }
- 
+
         if (properties.size() == 0) {
             out.writeBoolean(false);
         } else {
@@ -235,8 +275,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
         homeClass = (Class) in.readObject();
         remoteClass = (Class) in.readObject();
@@ -249,18 +290,18 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         for (int i = in.readShort(); i > 0; i--) {
             businessClasses.add((Class) in.readObject());
         }
-        if (businessClasses.size() > 0){
+        if (businessClasses.size() > 0) {
             primaryKey = in.readObject();
         }
         if (version > 2) {
             mainInterface = (Class) in.readObject();
         }
         if (version > 1) {
-            byte typeIndex = in.readByte();
+            final byte typeIndex = in.readByte();
             interfaceType = InterfaceType.values()[typeIndex];
         }
         for (int i = in.readInt(); i > 0; i--) {
-            asynchronousMethods.add((String)in.readObject());
+            asynchronousMethods.add((String) in.readObject());
         }
 
         final boolean hasProperties = in.readBoolean();
@@ -274,43 +315,53 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(100);
-        switch(type){
-            case STATEFUL: sb.append("STATEFUL:"); break;
-            case STATELESS: sb.append("STATELESS:");break;
-            case SINGLETON: sb.append("SINGLETON:");break;
-            case CMP_ENTITY: sb.append("CMP_ENTITY:");break;
-            case BMP_ENTITY: sb.append("BMP_ENTITY:");break;
+        final StringBuilder sb = new StringBuilder(100);
+        switch (type) {
+            case STATEFUL:
+                sb.append("STATEFUL:");
+                break;
+            case STATELESS:
+                sb.append("STATELESS:");
+                break;
+            case SINGLETON:
+                sb.append("SINGLETON:");
+                break;
+            case CMP_ENTITY:
+                sb.append("CMP_ENTITY:");
+                break;
+            case BMP_ENTITY:
+                sb.append("BMP_ENTITY:");
+                break;
         }
         sb.append(deploymentID).append(":");
-        if (homeClass != null){
+        if (homeClass != null) {
             sb.append(homeClass.getName());
-        } else if (businessClasses.size() != 0){
-            for (Class clazz : businessClasses) {
+        } else if (businessClasses.size() != 0) {
+            for (final Class clazz : businessClasses) {
                 sb.append(clazz.getName()).append(',');
             }
-            sb.deleteCharAt(sb.length()-1);
-            if (type == STATEFUL){
+            sb.deleteCharAt(sb.length() - 1);
+            if (type == STATEFUL) {
                 sb.append(":").append(primaryKey);
             }
         }
         return sb.toString();
     }
 
-    public void loadProperties(Properties properties) {
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+    public void loadProperties(final Properties properties) {
+        for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             if (entry.getKey() instanceof String) {
-                String key = (String) entry.getKey();
-                if (key.startsWith("openejb.client.")){
+                final String key = (String) entry.getKey();
+                if (key.startsWith("openejb.client.")) {
                     this.properties.put(key, entry.getValue());
                 }
             }
         }
     }
 
-    private String generateMethodSignature(Method method) {
-        StringBuilder buffer = new StringBuilder(method.getName());
-        for(Class<?> parameterType : method.getParameterTypes()) {
+    private String generateMethodSignature(final Method method) {
+        final StringBuilder buffer = new StringBuilder(method.getName());
+        for (final Class<?> parameterType : method.getParameterTypes()) {
             buffer.append(parameterType.getName());
         }
         return buffer.toString();

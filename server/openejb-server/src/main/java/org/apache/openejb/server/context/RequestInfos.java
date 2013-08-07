@@ -26,6 +26,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 public final class RequestInfos {
+
     private static final ThreadLocal<RequestInfo> REQUEST_INFO = new ThreadLocal<RequestInfo>();
 
     private RequestInfos() {
@@ -70,6 +71,7 @@ public final class RequestInfos {
     }
 
     public static class RequestInfo {
+
         public String ip;
         public CountingInputStream inputStream;
         public CountingOutputStream outputStream;
@@ -77,10 +79,10 @@ public final class RequestInfos {
         @Override
         public String toString() {
             return "RequestInfo{"
-                    + "ip='" + ip + '\''
-                    + ", request-size=" + inputStream.getCount()
-                    + ", response-size=" + outputStream.getCount()
-                    + '}';
+                   + "ip='" + ip + '\''
+                   + ", request-size=" + (inputStream != null ? inputStream.getCount() : "unknown")
+                   + ", response-size=" + (outputStream != null ? outputStream.getCount() : "unknown")
+                   + '}';
         }
     }
 }

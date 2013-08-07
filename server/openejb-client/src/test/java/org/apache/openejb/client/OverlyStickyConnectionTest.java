@@ -50,28 +50,28 @@ public class OverlyStickyConnectionTest extends TestCase {
         assertEquals(new URI("mock://red:4201"), connection.get().getURI());
     }
 
-    private InitialContext getContext(String uri) throws NamingException {
-        Properties p = new Properties();
+    private InitialContext getContext(final String uri) throws NamingException {
+        final Properties p = new Properties();
         p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         p.put("java.naming.provider.url", uri);
 
         return new InitialContext(p);
     }
 
-    private final ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
+    private static final ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
 
     public class MockConnectionFactory implements ConnectionFactory {
 
         @Override
         public Connection getConnection(final URI uri) throws IOException {
             return new Connection() {
-                private ByteArrayInputStream in;
-                private ByteArrayOutputStream out = new ByteArrayOutputStream();
+                private final ByteArrayInputStream in;
+                private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
                 {
                     connection.set(this);
-                    new ProtocolMetaData("3.1").writeExternal(out);
-                    ObjectOutputStream oos = new ObjectOutputStream(out);
+                    new ProtocolMetaData().writeExternal(out);
+                    final ObjectOutputStream oos = new ObjectOutputStream(out);
                     new ClusterResponse(ClusterResponse.Code.CURRENT).writeExternal(oos);
                     new JNDIResponse(ResponseCodes.JNDI_CONTEXT, null).writeExternal(oos);
                     oos.close();

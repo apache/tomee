@@ -17,8 +17,8 @@
 package org.apache.openejb.client;
 
 import java.io.Externalizable;
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,18 +27,24 @@ import java.net.URISyntaxException;
  * @version $Rev$ $Date$
  */
 public class ClusterMetaData implements Externalizable {
+
     private URI[] locations;
     private long version;
     private String connectionStrategy;
     private volatile URI lastLocation;
     private transient final Context context = new Context();
+    private transient ProtocolMetaData metaData;
 
     public ClusterMetaData() {
     }
 
-    public ClusterMetaData(long version, URI... locations) {
+    public ClusterMetaData(final long version, final URI... locations) {
         this.locations = locations;
         this.version = version;
+    }
+
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
     }
 
     public Context getContext() {
@@ -49,7 +55,7 @@ public class ClusterMetaData implements Externalizable {
         return lastLocation;
     }
 
-    public void setLastLocation(URI lastLocation) {
+    public void setLastLocation(final URI lastLocation) {
         this.lastLocation = lastLocation;
     }
 
@@ -61,7 +67,7 @@ public class ClusterMetaData implements Externalizable {
         return version;
     }
 
-    public void setConnectionStrategy(String connectionStrategy) {
+    public void setConnectionStrategy(final String connectionStrategy) {
         this.connectionStrategy = connectionStrategy;
     }
 
@@ -69,33 +75,35 @@ public class ClusterMetaData implements Externalizable {
         return connectionStrategy;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         in.readByte(); // for future use to identify format of the data.
 
         version = in.readLong();
         connectionStrategy = (String) in.readObject();
 
-        int length = in.readInt();
+        final int length = in.readInt();
         locations = new URI[length];
 
         for (int i = 0; i < locations.length; i++) {
-            Object o = in.readObject();
+            final Object o = in.readObject();
             try {
-                locations[i] = new URI((String)o);
+                locations[i] = new URI((String) o);
             } catch (URISyntaxException e) {
                 throw (IOException) new IOException().initCause(e);
             }
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
         out.writeLong(version);
         out.writeObject(connectionStrategy);
         out.writeInt(locations.length);
-        for (URI uri : locations) {
+        for (final URI uri : locations) {
             out.writeObject(uri.toString());
         }
     }
