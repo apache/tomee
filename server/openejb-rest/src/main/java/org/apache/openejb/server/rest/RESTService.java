@@ -98,7 +98,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             return;
         }
 
-        final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
+        final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo, webApp.moduleId);
 
         final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
         final Collection<Injection> injections = webContext.getInjections();
@@ -544,7 +544,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
 
                 try {
-                    final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo);
+                    final Map<String, EJBRestServiceInfo> restEjbs = getRestEjbs(appInfo, null);
                     if (restEjbs.isEmpty()) {
                         return;
                     }
@@ -639,9 +639,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     protected abstract boolean containsJaxRsConfiguration(final Properties properties);
 
-    protected Map<String, EJBRestServiceInfo> getRestEjbs(final AppInfo appInfo) {
+    protected Map<String, EJBRestServiceInfo> getRestEjbs(final AppInfo appInfo, final String webapp) {
         final Map<String, BeanContext> beanContexts = new HashMap<String, BeanContext>();
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            if (ejbJar.webapp && webapp != null && !ejbJar.moduleId.equals(webapp)) {
+                continue;
+            }
+
             for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 if (bean.restService) {
                     final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
