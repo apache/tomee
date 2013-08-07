@@ -38,7 +38,8 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class MoviesEJBTest {
-	@Deployment public static WebArchive createDeployment() {
+	@Deployment
+    public static WebArchive createDeployment() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(Movie.class, MoviesImpl.class, Movies.class, MoviesRemote.class, MoviesEJBTest.class, Setup.class, Examples.class, ExampleDataProducer.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
@@ -46,14 +47,20 @@ public class MoviesEJBTest {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
-	@EJB private Movies movies;
-	@Inject private Setup setup;
+	@EJB
+    private Movies movies;
 
-    @Before @After public void clean() {
+	@Inject
+    private Setup setup;
+
+    @Before
+    @After
+    public void clean() {
         movies.clean();
     }
 
-	@Test public void shouldBeAbleToAddAMovie() throws Exception {
+	@Test
+    public void shouldBeAbleToAddAMovie() throws Exception {
 		assertNotNull("Verify that the ejb was injected", movies);
 		assertNotNull("Verify that the setup CDI bean was injected", setup);
 		
