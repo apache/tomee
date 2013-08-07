@@ -18,75 +18,88 @@ package org.apache.openejb.client;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 import java.io.Externalizable;
-import java.io.ObjectOutput;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collections;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The product of a javax.naming.Context.list() method
  */
 public class NameClassPairEnumeration<T extends NameClassPair> implements NamingEnumeration<T>, Externalizable {
 
-    private List<NameClassPair> list;
-    private Iterator<NameClassPair> iterator;
+    private transient List<NameClassPair> list;
+    private transient Iterator<NameClassPair> iterator;
+    private transient ProtocolMetaData metaData;
 
-    public NameClassPairEnumeration(List<NameClassPair> list){
+    public NameClassPairEnumeration(final List<NameClassPair> list) {
         this.list = list;
         this.iterator = list.iterator();
     }
 
+    @SuppressWarnings("unchecked")
     public NameClassPairEnumeration() {
         list = Collections.EMPTY_LIST;
         iterator = list.iterator();
     }
 
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
     public void close() {
         iterator = null;
     }
 
+    @Override
     public boolean hasMore() {
         return iterator.hasNext();
     }
 
+    @Override
     public boolean hasMoreElements() {
         return hasMore();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
     public T next() {
         return (T) iterator.next();
     }
 
+    @Override
     public T nextElement() {
         return next();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
         out.writeInt(list.size());
-        for (NameClassPair pair : list) {
+        for (final NameClassPair pair : list) {
             out.writeObject(pair.getName());
             out.writeObject(pair.getClassName());
         }
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
         int size = in.readInt();
 
         list = new ArrayList<NameClassPair>(size);
 
         for (; size > 0; size--) {
-            String name = (String) in.readObject();
-            String className = (String) in.readObject();
+            final String name = (String) in.readObject();
+            final String className = (String) in.readObject();
 
             list.add(new NameClassPair(name, className));
         }

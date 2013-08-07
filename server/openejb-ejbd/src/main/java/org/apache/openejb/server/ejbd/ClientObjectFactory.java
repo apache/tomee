@@ -37,10 +37,10 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     protected ServerMetaData defaultServerMetaData;
 
-    public ClientObjectFactory(EjbDaemon daemon, Properties props) {
+    public ClientObjectFactory(final EjbDaemon daemon, final Properties props) {
 
         try {
-            String uriString = props.getProperty("openejb.ejbd.uri", "foo://127.0.0.1:4201");
+            final String uriString = props.getProperty("openejb.ejbd.uri", "foo://127.0.0.1:4201");
             this.defaultServerMetaData = new ServerMetaData(new URI(uriString));
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,22 +48,21 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBMetaData getEJBMetaData(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
+    public javax.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
 
-        BeanContext beanContext = info.getBeanContext();
-        int idCode = -1;
+        final BeanContext beanContext = info.getBeanContext();
+        final int idCode = -1;
 
-        EJBMetaDataImpl metaData = buildEjbMetaData(info, beanContext, idCode);
-        return metaData;
+        return buildEjbMetaData(info, beanContext, idCode);
     }
 
     @Override
-    public javax.ejb.Handle getHandle(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = info.getBeanContext();
+    public javax.ejb.Handle getHandle(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = info.getBeanContext();
 
-        int idCode = -1;
+        final int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -71,11 +70,11 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         } catch (Exception e) {
 
         }
-        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
-        Object primKey = info.getPrimaryKey();
+        final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        final EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
+        final Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return new EJBObjectHandle(handler.createEJBObjectProxy());
     }
@@ -89,11 +88,11 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.HomeHandle getHomeHandle(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = info.getBeanContext();
+    public javax.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = info.getBeanContext();
 
-        int idCode = -1;
+        final int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -101,20 +100,20 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
+        final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        final EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
 
-        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, call.get(JNDIContext.AuthenticationInfo.class));
+        final EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, call.get(JNDIContext.AuthenticationInfo.class));
 
         return new EJBHomeHandle(hanlder.createEJBHomeProxy());
     }
 
     @Override
-    public javax.ejb.EJBObject getEJBObject(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = info.getBeanContext();
+    public javax.ejb.EJBObject getEJBObject(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = info.getBeanContext();
 
-        int idCode = -1;
+        final int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -122,21 +121,21 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
-        Object primKey = info.getPrimaryKey();
+        final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        final EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
+        final Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
+        final EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
 
     @Override
-    public Object getBusinessObject(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = info.getBeanContext();
+    public Object getBusinessObject(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = info.getBeanContext();
 
-        int idCode = -1;
+        final int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -144,8 +143,8 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
+        final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
                 beanContext.getPrimaryKeyClass(),
                 beanContext.getComponentType().toString(),
                 beanContext.getDeploymentID().toString(),
@@ -155,14 +154,14 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
         
-        Object primKey = info.getPrimaryKey();
+        final Object primKey = info.getPrimaryKey();
 
-        EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
+        final EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
         return hanlder.createEJBObjectProxy();
     }
 
-    public static InterfaceType convert(org.apache.openejb.InterfaceType type) {
+    public static InterfaceType convert(final org.apache.openejb.InterfaceType type) {
         switch (type) {
             case EJB_HOME: return InterfaceType.EJB_HOME;
             case EJB_OBJECT: return InterfaceType.EJB_OBJECT;
@@ -177,11 +176,11 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBHome getEJBHome(ProxyInfo info) {
-        CallContext call = CallContext.getCallContext();
-        BeanContext beanContext = info.getBeanContext();
+    public javax.ejb.EJBHome getEJBHome(final ProxyInfo info) {
+        final CallContext call = CallContext.getCallContext();
+        final BeanContext beanContext = info.getBeanContext();
 
-        int idCode = -1;
+        final int idCode = -1;
 
         Object securityIdentity = null;
         try {
@@ -189,16 +188,16 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
+        final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
+        final EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
 
-        EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, null);
+        final EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData, null);
 
         return hanlder.createEJBHomeProxy();
     }
 
-    private EJBMetaDataImpl buildEjbMetaData(ProxyInfo info, BeanContext beanContext, int idCode) {
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
+    private EJBMetaDataImpl buildEjbMetaData(final ProxyInfo info, final BeanContext beanContext, final int idCode) {
+        final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
                 beanContext.getRemoteInterface(),
                 beanContext.getPrimaryKeyClass(),
                 beanContext.getComponentType().toString(),

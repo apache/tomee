@@ -23,26 +23,27 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 
 public class ClientSecurity {
+
     public static final String IDENTITY_RESOLVER_STRATEGY = "openejb.client.identityResolver";
 
     private static ServerMetaData server;
     private static IdentityResolver identityResolver;
     private static Object staticClientIdentity;
-    private static InheritableThreadLocal<Object> threadClientIdentity = new InheritableThreadLocal<Object>();
+    private static final InheritableThreadLocal<Object> threadClientIdentity = new InheritableThreadLocal<Object>();
 
     static {
         // determine the server uri
-        String serverUri = System.getProperty("openejb.server.uri");
+        final String serverUri = System.getProperty("openejb.server.uri");
 
         if (serverUri != null) {
             // determine the server location
             try {
-                URI location = new URI(serverUri);
+                final URI location = new URI(serverUri);
                 server = new ServerMetaData(location);
             } catch (Exception e) {
-                if (serverUri.indexOf("://") == -1) {
+                if (!serverUri.contains("://")) {
                     try {
-                        URI location =  new URI("oejb://" + serverUri);
+                        final URI location = new URI("oejb://" + serverUri);
                         server = new ServerMetaData(location);
                     } catch (URISyntaxException ignored) {
                     }
@@ -51,12 +52,11 @@ public class ClientSecurity {
         }
     }
 
-
     public static ServerMetaData getServer() {
         return server;
     }
 
-    public static void setServer(ServerMetaData server) {
+    public static void setServer(final ServerMetaData server) {
         ClientSecurity.server = server;
     }
 
@@ -66,12 +66,13 @@ public class ClientSecurity {
      * ClientSecurity.login(username, password, true);
      * </p>
      * This is the equivalent of ClientSecurity.login(username, password, false);
+     *
      * @param username the user to login
      * @param password the password for the user
      * @throws FailedLoginException if the username and password combination are not valid or
-     *      if there is a problem communiating with the server
+     *                              if there is a problem communiating with the server
      */
-    public static void login(String username, String password) throws FailedLoginException {
+    public static void login(final String username, final String password) throws FailedLoginException {
         login(username, password, false);
     }
 
@@ -83,15 +84,15 @@ public class ClientSecurity {
      * when using thread pools.  If a thread is returned to the pool with a login attached to the
      * thread the next user of that thread will inherit the thread scoped login.
      *
-     * @param username the user to login
-     * @param password the password for the user
+     * @param username     the user to login
+     * @param password     the password for the user
      * @param threadScoped if true the login is scoped to the thread; otherwise the login is global
-     * for the entire Java Virtural Machine
+     *                     for the entire Java Virtural Machine
      * @throws FailedLoginException if the username and password combination are not valid or
-     *      if there is a problem communiating with the server
+     *                              if there is a problem communiating with the server
      */
-    public static void login(String username, String password, boolean threadScoped) throws FailedLoginException {
-        Object clientIdentity = directAuthentication(username, password, server);
+    public static void login(final String username, final String password, final boolean threadScoped) throws FailedLoginException {
+        final Object clientIdentity = directAuthentication(username, password, server);
         if (threadScoped) {
             threadClientIdentity.set(clientIdentity);
         } else {
@@ -116,18 +117,18 @@ public class ClientSecurity {
      *
      * @param username the username for authentication
      * @param password the password for authentication
-     * @param server
+     * @param server   ServerMetaData
      * @return the client identity token
      * @throws FailedLoginException if the username password combination is not valid
      */
-    public static Object directAuthentication(String username, String password, ServerMetaData server) throws FailedLoginException {
+    public static Object directAuthentication(final String username, final String password, final ServerMetaData server) throws FailedLoginException {
         return directAuthentication(null, username, password, server);
     }
 
-    public static Object directAuthentication(String securityRealm, String username, String password, ServerMetaData server) throws FailedLoginException {
+    public static Object directAuthentication(final String securityRealm, final String username, final String password, final ServerMetaData server) throws FailedLoginException {
         // authenticate
-        AuthenticationRequest authReq = new AuthenticationRequest(securityRealm, username, password);
-        AuthenticationResponse authRes;
+        final AuthenticationRequest authReq = new AuthenticationRequest(securityRealm, username, password);
+        final AuthenticationResponse authRes;
         try {
             authRes = (AuthenticationResponse) Client.request(authReq, new AuthenticationResponse(), server);
         } catch (RemoteException e) {
@@ -140,8 +141,7 @@ public class ClientSecurity {
         }
 
         // return the response object
-        Object clientIdentity = authRes.getIdentity().getClientIdentity();
-        return clientIdentity;
+        return authRes.getIdentity().getClientIdentity();
     }
 
     public static Object getIdentity() {
@@ -150,13 +150,13 @@ public class ClientSecurity {
 
     public static IdentityResolver getIdentityResolver() {
         if (identityResolver == null) {
-            String strategy = System.getProperty(IDENTITY_RESOLVER_STRATEGY);
+            final String strategy = System.getProperty(IDENTITY_RESOLVER_STRATEGY);
             if (strategy == null) {
                 identityResolver = new JaasIdentityResolver();
             } else {
                 // find the strategy class
-                ResourceFinder finder = new ResourceFinder("META-INF/");
-                Class identityResolverClass;
+                final ResourceFinder finder = new ResourceFinder("META-INF/");
+                final Class identityResolverClass;
                 try {
                     identityResolverClass = finder.findClass(IdentityResolver.class.getName() + "/" + strategy);
                 } catch (Exception e) {
@@ -166,8 +166,8 @@ public class ClientSecurity {
                 // verify the interface
                 if (!IdentityResolver.class.isAssignableFrom(identityResolverClass)) {
                     throw new IllegalArgumentException("Client identity strategy '" + strategy + "' " +
-                            "class '" + identityResolverClass.getName() + "' does not implement the " +
-                            "interface '"  + IdentityResolver.class.getSimpleName() + "'");
+                                                       "class '" + identityResolverClass.getName() + "' does not implement the " +
+                                                       "interface '" + IdentityResolver.class.getSimpleName() + "'");
                 }
 
                 // create the class
@@ -175,7 +175,7 @@ public class ClientSecurity {
                     identityResolver = (IdentityResolver) identityResolverClass.newInstance();
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Unable to create client identity strategy '" + strategy + "' " +
-                            "class '" + identityResolverClass.getName() + "'", e);
+                                                       "class '" + identityResolverClass.getName() + "'", e);
                 }
             }
 
@@ -183,8 +183,7 @@ public class ClientSecurity {
         return identityResolver;
     }
 
-
-    public static void setIdentityResolver(IdentityResolver identityResolver) {
+    public static void setIdentityResolver(final IdentityResolver identityResolver) {
         ClientSecurity.identityResolver = identityResolver;
     }
 
@@ -192,6 +191,8 @@ public class ClientSecurity {
     }
 
     public static class SimpleIdentityResolver implements IdentityResolver {
+
+        @Override
         public Object getIdentity() {
             Object clientIdentity = threadClientIdentity.get();
             if (clientIdentity == null) {

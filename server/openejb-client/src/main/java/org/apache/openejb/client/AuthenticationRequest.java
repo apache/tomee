@@ -25,6 +25,7 @@ public class AuthenticationRequest implements Request {
     private transient String realm;
     private transient String username;
     private transient String credentials;
+    private transient ProtocolMetaData metaData;
 
     public AuthenticationRequest() {
     }
@@ -37,6 +38,10 @@ public class AuthenticationRequest implements Request {
         this.realm = realm;
         this.username = principal;
         this.credentials = credentials;
+    }
+
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
     }
 
     @Override
@@ -77,8 +82,9 @@ public class AuthenticationRequest implements Request {
 
     public String toString() {
         final StringBuilder sb = new StringBuilder(50);
-        sb.append(realm).append(':');
-        sb.append(username);
+        sb.append(null != realm ? realm : "Unknown realm").append(':');
+        sb.append(null != username ? username : "Unknown user").append(':');
+        sb.append(null != credentials ? credentials : "Unknown credentials");
         return sb.toString();
     }
 }

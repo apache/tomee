@@ -151,7 +151,7 @@ public class MultithreadTest {
                 } catch (ConcurrentAccessException ex) {
                     comment("Leap Start");
                     timeouts.countDown();
-                    assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
+                    assertEquals("No instances available in Stateless Session Bean pool.  Waited 100 MILLISECONDS", ex.getMessage());
                 } catch (Throwable t) {
                     error.set(t);
                     fail("Unexpected exception" + t.getClass().getName() + " " + t.getMessage()); // useless in another thread
@@ -293,7 +293,7 @@ public class MultithreadTest {
         public void explode() {
             try {
                 discardedInstances.incrementAndGet();
-                throw new NullPointerException();
+                throw new NullPointerException("Test expected this");
             } finally {
                 invocations.countDown();
             }

@@ -29,6 +29,8 @@ import org.apache.openejb.client.JNDIRequest;
 import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.NameClassPairEnumeration;
 import org.apache.openejb.client.PortRefMetaData;
+import org.apache.openejb.client.ProtocolMetaData;
+import org.apache.openejb.client.Response;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.WsMetaData;
@@ -75,7 +77,7 @@ import java.util.Set;
 
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
-class JndiRequestHandler {
+class JndiRequestHandler extends RequestHandler {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
@@ -89,6 +91,7 @@ class JndiRequestHandler {
     private Context rootContext;
 
     JndiRequestHandler(final EjbDaemon daemon) throws Exception {
+        super(daemon);
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
@@ -107,11 +110,25 @@ class JndiRequestHandler {
         return new BasicClusterableRequestHandler();
     }
 
-    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
+    public String getName() {
+        return "JNDI";
+    }
+
+    @Override
+    public Response processRequest(final ObjectInputStream in, final ProtocolMetaData metaData) {
+
+        final JNDIRequest req = new JNDIRequest();
         final JNDIResponse res = new JNDIResponse();
-        JNDIRequest req = null;
+        res.setRequest(req);
+
         try {
-            req = new JNDIRequest();
+            req.setMetaData(metaData);
             req.readExternal(in);
         } catch (Throwable e) {
             res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
@@ -126,50 +143,66 @@ class JndiRequestHandler {
                     // no-op
                 }
             }
-
-            try {
-                res.writeExternal(out);
-            } catch (java.io.IOException ie) {
-                logger.fatal("Couldn't write JndiResponse to output stream", ie);
-            }
         }
+        return res;
+    }
 
-        try {
-            if (req.getRequestString().startsWith("/")) {
-                req.setRequestString(req.getRequestString().substring(1));
-            }
-            final String prefix = getPrefix(req);
+    @Override
+    public void processResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
 
-            switch (req.getRequestMethod()) {
-                case JNDI_LOOKUP:
-                    doLookup(req, res, prefix);
-                    break;
-                case JNDI_LIST:
-                    doList(req, res, prefix);
-                    break;
-            }
+        if (JNDIResponse.class.isInstance(response)) {
 
-        } catch (Throwable e) {
-            res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-            final NamingException namingException = new NamingException("Unknown error in container");
-            namingException.setRootCause(e);
-            res.setResult(new ThrowableArtifact(namingException));
-        } finally {
+            final JNDIResponse res = JNDIResponse.class.cast(response);
+            final JNDIRequest req = res.getRequest();
 
             try {
-                res.writeExternal(out);
-            } catch (Throwable e) {
-                logger.fatal("Couldn't write JndiResponse to output stream", e);
-            }
 
-            if (logger.isDebugEnabled()) {
+                //Only process if 'processRequest' was ok...
+                final Object result = res.getResult();
+                if (null == result || !ThrowableArtifact.class.isInstance(result)) {
+
+                    if (req.getRequestString().startsWith("/")) {
+                        req.setRequestString(req.getRequestString().substring(1));
+                    }
+
+                    final String prefix = getPrefix(req);
+
+                    switch (req.getRequestMethod()) {
+                        case JNDI_LOOKUP:
+                            doLookup(req, res, prefix);
+                            break;
+                        case JNDI_LIST:
+                            doList(req, res, prefix);
+                            break;
+                    }
+                }
+
+            } catch (Throwable e) {
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
+                final NamingException namingException = new NamingException("Unknown error in container");
+                namingException.setRootCause(e);
+                res.setResult(new ThrowableArtifact(namingException));
+            } finally {
+
                 try {
-                    out.flush(); // force it to as correct as possible response size
-                    logRequestResponse(req, res);
-                } catch (Exception ignore) {
-                    // no-op
+                    res.setMetaData(metaData);
+                    res.writeExternal(out);
+                } catch (Throwable e) {
+                    logger.fatal("Could not write JndiResponse to output stream", e);
+                }
+
+                if (logger.isDebugEnabled()) {
+                    try {
+                        out.flush(); // force it to as correct as possible response size
+                        logRequestResponse(req, res);
+                    } catch (Exception ignore) {
+                        // no-op
+                    }
                 }
             }
+
+        } else {
+            logger.error("JndiRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
 

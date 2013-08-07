@@ -21,6 +21,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
@@ -34,7 +35,9 @@ import java.io.OutputStream;
  * @version $Revision$ $Date$
  */
 @SuppressWarnings("UnusedDeclaration")
-public class ProtocolMetaData {
+public class ProtocolMetaData implements Serializable {
+
+    public static final String VERSION = "4.6";
 
     private static final String OEJB = "OEJP";
     private String id;
@@ -42,10 +45,7 @@ public class ProtocolMetaData {
     private int minor;
 
     public ProtocolMetaData() {
-    }
-
-    public ProtocolMetaData(final String version) {
-        init(OEJB + "/" + version);
+        init(OEJB + "/" + VERSION);
     }
 
     private void init(final String spec) {
@@ -62,8 +62,8 @@ public class ProtocolMetaData {
         this.minor = Integer.parseInt(new String(chars, 7, 1));
     }
 
-    public boolean isAtLeast(final int major, int minor) {
-        return this.major >= major || (this.major == major && this.minor >= minor);
+    public boolean isAtLeast(final int major, final int minor) {
+        return this.major >= major && (this.major != major || this.minor >= minor);
     }
 
     public String getId() {

@@ -35,8 +35,23 @@ public class EJBResponse implements ClusterableResponse {
     private transient ServerMetaData server;
     private transient final long[] times = new long[Time.values().length];
     private transient final int timesLength = times.length;
+    private transient EJBRequest request;
+    private transient ProtocolMetaData metaData;
 
     public EJBResponse() {
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public EJBRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(final EJBRequest request) {
+        this.request = request;
     }
 
     public int getResponseCode() {
@@ -121,6 +136,7 @@ public class EJBResponse implements ClusterableResponse {
         final boolean readServer = in.readBoolean();
         if (readServer) {
             server = new ServerMetaData();
+            server.setMetaData(metaData);
             server.readExternal(in);
         }
 
@@ -145,6 +161,7 @@ public class EJBResponse implements ClusterableResponse {
 
         if (null != server) {
             out.writeBoolean(true);
+            server.setMetaData(metaData);
             server.writeExternal(out);
         } else {
             out.writeBoolean(false);

@@ -16,59 +16,69 @@
  */
 package org.apache.openejb.client;
 
+import javax.ejb.EJBHome;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBHome;
-
 public class EJBHomeHandle implements java.io.Externalizable, javax.ejb.HomeHandle {
 
     protected transient EJBHomeProxy ejbHomeProxy;
     protected transient EJBHomeHandler handler;
+    private transient ProtocolMetaData metaData;
 
     public EJBHomeHandle() {
     }
 
-    public EJBHomeHandle(EJBHomeProxy proxy) {
+    public EJBHomeHandle(final EJBHomeProxy proxy) {
         this.ejbHomeProxy = proxy;
         this.handler = ejbHomeProxy.getEJBHomeHandler();
     }
 
-    protected void setEJBHomeProxy(EJBHomeProxy ejbHomeProxy) {
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    protected void setEJBHomeProxy(final EJBHomeProxy ejbHomeProxy) {
         this.ejbHomeProxy = ejbHomeProxy;
         this.handler = ejbHomeProxy.getEJBHomeHandler();
     }
 
+    @Override
     public EJBHome getEJBHome() throws RemoteException {
         return ejbHomeProxy;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
-
+        handler.client.setMetaData(metaData);
         handler.client.writeExternal(out);
 
-        EJBMetaDataImpl ejb = handler.ejb;
+        final EJBMetaDataImpl ejb = handler.ejb;
         out.writeObject(getClassName(ejb.homeClass));
         out.writeObject(getClassName(ejb.remoteClass));
         out.writeObject(getClassName(ejb.keyClass));
         out.writeByte(ejb.type);
         out.writeUTF(ejb.deploymentID);
         out.writeShort(ejb.deploymentCode);
+
+        handler.server.setMetaData(metaData);
         handler.server.writeExternal(out);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        ClientMetaData client = new ClientMetaData();
-        EJBMetaDataImpl ejb = new EJBMetaDataImpl();
-        ServerMetaData server = new ServerMetaData();
+        final ClientMetaData client = new ClientMetaData();
+        final EJBMetaDataImpl ejb = new EJBMetaDataImpl();
+        final ServerMetaData server = new ServerMetaData();
 
+        client.setMetaData(metaData);
         client.readExternal(in);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -83,17 +93,18 @@ public class EJBHomeHandle implements java.io.Externalizable, javax.ejb.HomeHand
         ejb.deploymentID = in.readUTF();
         ejb.deploymentCode = in.readShort();
 
+        server.setMetaData(metaData);
         server.readExternal(in);
 
         handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, null);
         ejbHomeProxy = handler.createEJBHomeProxy();
     }
 
-    private static String getClassName(Class clazz) {
-        return (clazz == null) ? null: clazz.getName();
+    private static String getClassName(final Class clazz) {
+        return (clazz == null) ? null : clazz.getName();
     }
 
-    private static Class loadClass(ClassLoader classLoader, String homeClassName) throws ClassNotFoundException {
+    private static Class loadClass(final ClassLoader classLoader, final String homeClassName) throws ClassNotFoundException {
         return (homeClassName == null) ? null : Class.forName(homeClassName, true, classLoader);
     }
 }

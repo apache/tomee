@@ -19,11 +19,13 @@ package org.apache.openejb.server.ejbd;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.client.ClusterResponse;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EjbObjectInputStream;
 import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.ProtocolMetaData;
 import org.apache.openejb.client.RequestType;
+import org.apache.openejb.client.Response;
 import org.apache.openejb.client.ServerMetaData;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.loader.SystemInstance;
@@ -32,6 +34,7 @@ import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Exceptions;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -50,15 +53,16 @@ import java.util.zip.GZIPInputStream;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("4.6"); // aligned with org.apache.openejb.client.EJBRequest.readExternal(java.io.ObjectInput)() and org.apache.openejb.client.Client.PROTOCOL_VERSION
+    //This is used to tell the clients which protocol we understand
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData(); // aligned with org.apache.openejb.client.EJBRequest.readExternal(java.io.ObjectInput)() and org.apache.openejb.client.Client.PROTOCOL_VERSION
 
     static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     private ClientObjectFactory clientObjectFactory;
     //    DeploymentIndex deploymentIndex;
-    private EjbRequestHandler ejbHandler;
-    private JndiRequestHandler jndiHandler;
-    private AuthRequestHandler authHandler;
+    private RequestHandler ejbHandler;
+    private RequestHandler jndiHandler;
+    private RequestHandler authHandler;
     private ClusterRequestHandler clusterHandler;
 
     private ContainerSystem containerSystem;
@@ -153,14 +157,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public void service(final InputStream rawIn, final OutputStream rawOut) throws IOException {
-        final ProtocolMetaData protocolMetaData = new ProtocolMetaData();
-
-        final CountingInputStream in = new CountingInputStream(rawIn);
-        final CountingOutputStream out = new CountingOutputStream(rawOut);
-
-        final RequestInfos.RequestInfo info = RequestInfos.info();
-        info.inputStream = in;
-        info.outputStream = out;
+        final ProtocolMetaData clientMetaData = new ProtocolMetaData();
 
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
@@ -169,12 +166,12 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         try {
 
-            // Read Protocol Version
-            protocolMetaData.readExternal(in);
-            PROTOCOL_VERSION.writeExternal(out);
+            final RequestInfos.RequestInfo info = RequestInfos.info();
+            info.inputStream = new CountingInputStream(rawIn);
 
-            ois = new EjbObjectInputStream(in);
-            oos = new ObjectOutputStream(out);
+            // Read client Protocol Version
+            clientMetaData.readExternal(info.inputStream);
+            ois = new EjbObjectInputStream(info.inputStream);
 
             // Read ServerMetaData
             final ServerMetaData serverMetaData = new ServerMetaData();
@@ -182,18 +179,39 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             ClientObjectFactory.serverMetaData.set(serverMetaData);
 
             // Read request type
-            requestTypeByte = (byte) ois.read();
+            requestTypeByte = ois.readByte();
             requestType = RequestType.valueOf(requestTypeByte);
 
             if (requestType == RequestType.NOP_REQUEST) {
                 return;
             }
 
+            ClusterResponse clusterResponse = null;
+
             if (requestType == RequestType.CLUSTER_REQUEST) {
-                processClusterRequest(ois, oos);
+                clusterResponse = clusterHandler.processRequest(ois, clientMetaData);
+
+                //Check for immediate failure
+                final Throwable failure = clusterResponse.getFailure();
+                if (null != clusterResponse && null != failure) {
+
+                    clusterHandler.getLogger().debug("Failed to write to ClusterResponse", failure);
+
+                    try {
+                        oos = new ObjectOutputStream(info.outputStream);
+                        clusterResponse.setMetaData(clientMetaData);
+                        clusterResponse.writeExternal(oos);
+                    } catch (IOException ie) {
+                        final String m = "Failed to write to ClusterResponse";
+                        clusterHandler.getLogger().error(m, ie);
+                        throw Exceptions.newIOException(m, ie);
+                    }
+
+                    throw failure;
+                }
             }
 
-            requestTypeByte = (byte) ois.read();
+            requestTypeByte = ois.readByte();
             requestType = RequestType.valueOf(requestTypeByte);
 
             if (requestType == RequestType.NOP_REQUEST) {
@@ -203,36 +221,59 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             // Exceptions should not be thrown from these methods
             // They should handle their own exceptions and clean
             // things up with the client accordingly.
+            final Response response;
             switch (requestType) {
                 case EJB_REQUEST:
-                    processEjbRequest(ois, oos, protocolMetaData);
+                    response = processEjbRequest(ois, clientMetaData);
                     break;
                 case JNDI_REQUEST:
-                    processJndiRequest(ois, oos);
+                    response = processJndiRequest(ois, clientMetaData);
                     break;
                 case AUTH_REQUEST:
-                    processAuthRequest(ois, oos);
+                    response = processAuthRequest(ois, clientMetaData);
                     break;
                 default:
-                    logger.error("\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
-                    break;
+                    logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
+                    return;
             }
+
+            info.outputStream = new CountingOutputStream(rawOut);
+            PROTOCOL_VERSION.writeExternal(info.outputStream);
+            oos = new ObjectOutputStream(info.outputStream);
+
+            clusterHandler.processResponse(clusterResponse, oos, clientMetaData);
+
+            switch (requestType) {
+                case EJB_REQUEST:
+                    processEjbResponse(response, oos, clientMetaData);
+                    break;
+                case JNDI_REQUEST:
+                    processJndiResponse(response, oos, clientMetaData);
+                    break;
+                case AUTH_REQUEST:
+                    processAuthResponse(response, oos, clientMetaData);
+                    break;
+                default:
+                    //Should never get here...
+                    logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown response type " + requestType);
+            }
+
         } catch (IllegalArgumentException iae) {
-            final String msg = "\"" + protocolMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
+            final String msg = "\"" + clientMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, iae);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (SecurityException e) {
-            final String msg = "\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
+            final String msg = "\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (Throwable e) {
-            final String msg = "\"" + requestType + " " + protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
+            final String msg = "\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
             } else {
@@ -268,10 +309,6 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         }
     }
 
-    private void processClusterRequest(final ObjectInputStream in, final ObjectOutputStream out) throws IOException {
-        clusterHandler.processRequest(in, out);
-    }
-
     protected BeanContext getDeployment(final EJBRequest req) throws RemoteException {
         final String deploymentId = req.getDeploymentId();
         final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
@@ -281,16 +318,28 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         return beanContext;
     }
 
-    public void processEjbRequest(final ObjectInputStream in, final ObjectOutputStream out, final ProtocolMetaData metaData) {
-        ejbHandler.processRequest(in, out, metaData);
+    public Response processEjbRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+        return ejbHandler.processRequest(in, metaData);
     }
 
-    public void processJndiRequest(final ObjectInputStream in, final ObjectOutputStream out) throws Exception {
-        jndiHandler.processRequest(in, out);
+    public Response processJndiRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+        return jndiHandler.processRequest(in, metaData);
     }
 
-    public void processAuthRequest(final ObjectInputStream in, final ObjectOutputStream out) {
-        authHandler.processRequest(in, out);
+    public Response processAuthRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+        return authHandler.processRequest(in, metaData);
+    }
+
+    public void processEjbResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+        ejbHandler.processResponse(response, out, metaData);
+    }
+
+    public void processJndiResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+        jndiHandler.processResponse(response, out, metaData);
+    }
+
+    public void processAuthResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+        authHandler.processResponse(response, out, metaData);
     }
 
     @Override
@@ -332,6 +381,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     private static class ContextualSerializer implements EJBDSerializer {
+
         private final String classname;
 
         public ContextualSerializer(final String serializer) {

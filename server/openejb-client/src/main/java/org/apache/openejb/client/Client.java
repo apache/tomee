@@ -49,12 +49,13 @@ import java.util.logging.Logger;
 import static org.apache.openejb.client.Exceptions.newIOException;
 
 public class Client {
+
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
     private boolean FINEST = logger.isLoggable(Level.FINEST);
     private boolean FINER = logger.isLoggable(Level.FINER);
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("4.6");
+    private static final ProtocolMetaData PROTOCOL_META_DATA = new ProtocolMetaData();
     private static final int maxConditionRetry = Integer.parseInt(System.getProperty("openejb.client.retry.condition.max", "20"));
 
     private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
@@ -72,7 +73,9 @@ public class Client {
     }
 
     public static void addEventObserver(final Object observer) {
-        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+        if (observer == null) {
+            throw new IllegalArgumentException("observer cannot be null");
+        }
 
         if (client.observers.addObserver(observer)) {
             fireEvent(new ObserverAdded(observer));
@@ -80,7 +83,9 @@ public class Client {
     }
 
     public static void removeEventObserver(final Object observer) {
-        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+        if (observer == null) {
+            throw new IllegalArgumentException("observer cannot be null");
+        }
 
         if (client.observers.removeObserver(observer)) {
             fireEvent(new ObserverAdded(observer));
@@ -92,22 +97,32 @@ public class Client {
     }
 
     public static boolean addRetryCondition(final Class<? extends Throwable> throwable) {
-        if (throwable == null) throw new IllegalArgumentException("throwable cannot be null");
+        if (throwable == null) {
+            throw new IllegalArgumentException("throwable cannot be null");
+        }
         final boolean add = client.retryConditions.add(throwable);
-        if (add) fireEvent(new RetryConditionAdded(throwable));
+        if (add) {
+            fireEvent(new RetryConditionAdded(throwable));
+        }
         return add;
     }
 
     public static boolean removeRetryCondition(final Class<? extends Throwable> throwable) {
-        if (throwable == null) throw new IllegalArgumentException("throwable cannot be null");
+        if (throwable == null) {
+            throw new IllegalArgumentException("throwable cannot be null");
+        }
         final boolean remove = client.retryConditions.remove(throwable);
-        if (remove) fireEvent(new RetryConditionRemoved(throwable));
+        if (remove) {
+            fireEvent(new RetryConditionRemoved(throwable));
+        }
         return remove;
     }
 
     // This lame hook point if only of testing
     public static void setClient(final Client client) {
-        if (client == null) throw new IllegalArgumentException("client cannot be null");
+        if (client == null) {
+            throw new IllegalArgumentException("client cannot be null");
+        }
         Client.client = client;
     }
 
@@ -161,7 +176,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
-                PROTOCOL_VERSION.writeExternal(out);
+                PROTOCOL_META_DATA.writeExternal(out);
 
             } catch (IOException e) {
                 throw newIOException("Cannot write the protocol metadata to the server: ", e);
@@ -256,7 +271,7 @@ public class Client {
 
             } catch (IOException e) {
 
-                throw newIOException("Cannot deternmine server protocol version: Received " + protocolMetaData.getSpec(), e);
+                throw newIOException("Cannot determine server protocol version: Received " + protocolMetaData.getSpec() + " : " + e.getMessage(), e);
             }
 
             final ObjectInput objectIn;
@@ -273,6 +288,7 @@ public class Client {
             /*----------------------------------*/
             try {
                 final ClusterResponse clusterResponse = new ClusterResponse();
+                clusterResponse.setMetaData(protocolMetaData);
                 clusterResponse.readExternal(objectIn);
                 switch (clusterResponse.getResponseCode()) {
                     case UPDATE: {
@@ -297,7 +313,7 @@ public class Client {
             /* Read response */
             /*----------------------------------*/
             try {
-
+                res.setMetaData(protocolMetaData);
                 res.readExternal(objectIn);
             } catch (ClassNotFoundException e) {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
@@ -319,13 +335,13 @@ public class Client {
 
                             throw new RetryException(res);
 
-//                            if (? < maxConditionRetry) {
-//                                throw new RetryException(res);
-//                            } else {
-//                                if (FINER) {
-//                                    logger.log(Level.FINER, "Giving up on " + artifact.getThrowable().getClass().getName().toString());
-//                                }
-//                            }
+                            //                            if (? < maxConditionRetry) {
+                            //                                throw new RetryException(res);
+                            //                            } else {
+                            //                                if (FINER) {
+                            //                                    logger.log(Level.FINER, "Giving up on " + artifact.getThrowable().getClass().getName().toString());
+                            //                                }
+                            //                            }
                         }
                     }
                 }
@@ -436,6 +452,7 @@ public class Client {
     }
 
     public static class Context {
+
         private final Properties properties = new Properties();
         private final ServerMetaData serverMetaData;
         private ClusterMetaData clusterMetaData;
@@ -457,7 +474,9 @@ public class Client {
         }
 
         public void setClusterMetaData(final ClusterMetaData updated) {
-            if (updated == null) throw new IllegalArgumentException("clusterMetaData cannot be null");
+            if (updated == null) {
+                throw new IllegalArgumentException("clusterMetaData cannot be null");
+            }
 
             final ClusterMetaData previous = this.clusterMetaData;
             this.clusterMetaData = updated;
@@ -498,7 +517,9 @@ public class Client {
         public Set<URI> diff(final Set<URI> a, final Set<URI> b) {
             final Set<URI> diffs = new HashSet<URI>();
             for (final URI uri : b) {
-                if (!a.contains(uri)) diffs.add(uri);
+                if (!a.contains(uri)) {
+                    diffs.add(uri);
+                }
             }
 
             return diffs;

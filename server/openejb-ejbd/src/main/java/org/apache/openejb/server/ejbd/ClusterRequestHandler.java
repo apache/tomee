@@ -16,22 +16,24 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import org.apache.openejb.client.ClusterMetaData;
 import org.apache.openejb.client.ClusterRequest;
 import org.apache.openejb.client.ClusterResponse;
-import org.apache.openejb.client.ClusterMetaData;
+import org.apache.openejb.client.ProtocolMetaData;
+import org.apache.openejb.client.Response;
 import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Exceptions;
-import org.apache.openejb.util.Join;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URISyntaxException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,37 +41,45 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * @version $Rev$ $Date$
  */
-public class ClusterRequestHandler implements DiscoveryListener {
+public class ClusterRequestHandler extends RequestHandler implements DiscoveryListener {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("cluster"), ClusterRequestHandler.class);
 
     private final Data data = new Data();
 
-    public ClusterRequestHandler(EjbDaemon daemon) {
+    public ClusterRequestHandler(final EjbDaemon daemon) {
+        super(daemon);
     }
 
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
 
-    public void processRequest(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-        ClusterRequest req = new ClusterRequest();
-        ClusterResponse res = new ClusterResponse();
+    @Override
+    public ClusterResponse processRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+
+        final ClusterRequest req = new ClusterRequest();
+        req.setMetaData(metaData);
+
+        final ClusterResponse res = new ClusterResponse();
+        res.setMetaData(metaData);
 
         try {
             req.readExternal(in);
         } catch (IOException e) {
             res.setFailure(e);
-            sendErrorResponse("Cannot read ClusterRequest", e, res, out);
-            throw e;
+            return res;
         } catch (ClassNotFoundException e) {
-            res.setFailure(e);
-            sendErrorResponse("Cannot read ClusterRequest", e, res, out);
-            throw (IOException) new IOException().initCause(e);
+            res.setFailure(new IOException().initCause(e));
+            return res;
         }
 
-        ClusterMetaData currentClusterMetaData = data.current();
+        final ClusterMetaData currentClusterMetaData = data.current();
 
-        if (req.getClusterMetaDataVersion() < currentClusterMetaData.getVersion()){
+        if (req.getClusterMetaDataVersion() < currentClusterMetaData.getVersion()) {
             if (logger.isDebugEnabled()) {
-                URI[] locations = currentClusterMetaData.getLocations();
+                final URI[] locations = currentClusterMetaData.getLocations();
                 if (locations.length < 10) {
                     logger.debug("Sending client updated cluster locations: [" + Join.join(", ", locations) + "]");
                 } else {
@@ -81,32 +91,41 @@ public class ClusterRequestHandler implements DiscoveryListener {
             res.setCurrent();
         }
 
-        try {
-            res.writeExternal(out);
-        } catch (IOException e) {
-            logger.error("Failed to write to ClusterResponse", e);
-            throw e;
+        return res;
+    }
+
+    @Override
+    public String getName() {
+        return "Cluster";
+    }
+
+    @Override
+    public void processResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+        if (null != response) {
+
+            if (ClusterResponse.class.isInstance(response)) {
+
+                final ClusterResponse res = ClusterResponse.class.cast(response);
+
+                try {
+                    res.setMetaData(metaData);
+                    res.writeExternal(out);
+                } catch (IOException e) {
+                    logger.error("Failed to write to ClusterResponse", e);
+                    throw e;
+                }
+            } else {
+                logger.error("ClusterRequestHandler cannot process an instance of: " + response.getClass().getName());
+            }
         }
     }
 
-    private void sendErrorResponse(String message, Throwable t, ClusterResponse res, ObjectOutputStream out) throws IOException {
-        logger.fatal(message, t);
-        t = new IOException("The server has encountered a fatal error: " + message + " " + t).initCause(t);
-        try {
-            res.writeExternal(out);
-        } catch (IOException ie) {
-            String m = "Failed to write to ClusterResponse";
-            logger.error(m, ie);
-            throw Exceptions.newIOException(m, ie);
-        }
-    }
-
+    @Override
     public void serviceAdded(final URI uri) {
         try {
-            URI type = uri;
-            URI service = unwrap(type);
+            final URI service = unwrap(uri);
 
-            if ("ejb".equals(type.getScheme())) {
+            if ("ejb".equals(uri.getScheme())) {
                 logger.info("Peer discovered: " + service.toString());
                 data.add(service);
             }
@@ -115,17 +134,16 @@ public class ClusterRequestHandler implements DiscoveryListener {
         }
     }
 
-    private URI unwrap(URI uri) throws URISyntaxException {
+    private URI unwrap(final URI uri) throws URISyntaxException {
         return new URI(uri.getSchemeSpecificPart());
     }
 
-
+    @Override
     public void serviceRemoved(final URI uri) {
         try {
-            URI type = uri;
-            URI service = unwrap(type);
+            final URI service = unwrap(uri);
 
-            if ("ejb".equals(type.getScheme())) {
+            if ("ejb".equals(uri.getScheme())) {
                 logger.info("Peer removed: " + service.toString());
                 data.remove(service);
             }
@@ -135,59 +153,76 @@ public class ClusterRequestHandler implements DiscoveryListener {
     }
 
     private static class Data {
-        private ClusterMetaData current;
-        private ReadWriteLock sync = new ReentrantReadWriteLock();
+
+        private final AtomicReference<ClusterMetaData> current = new AtomicReference<ClusterMetaData>();
+        private final ReadWriteLock sync = new ReentrantReadWriteLock();
         private final java.util.Set set = new LinkedHashSet();
 
         public Data() {
-            this.current = new ClusterMetaData(0);
+            this.current.set(new ClusterMetaData(0));
         }
 
-        public boolean add(URI o) {
-            Lock lock = sync.writeLock();
+        @SuppressWarnings("unchecked")
+        public boolean add(final URI o) {
+
+            final Lock lock = sync.writeLock();
             lock.lock();
-            ClusterMetaData nextVersion = null;
+
             try {
-                if (set.add(o)) {
-                    nextVersion = newClusterMetaData(set, current);
-                    return true;
-                } else {
-                    return false;
+                ClusterMetaData nextVersion = null;
+                try {
+                    if (set.add(o)) {
+                        nextVersion = newClusterMetaData(set, current.get());
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } finally {
+                    if (nextVersion != null) {
+                        current.set(nextVersion);
+                    }
                 }
             } finally {
-                if (nextVersion != null) current = nextVersion;
+
                 lock.unlock();
             }
         }
 
-        public boolean remove(Object o) {
-            Lock lock = sync.writeLock();
+        public boolean remove(final Object o) {
+            final Lock lock = sync.writeLock();
             lock.lock();
-            ClusterMetaData nextVersion = null;
+
             try {
-                if (set.remove(o)) {
-                    nextVersion = newClusterMetaData(set, current);
-                    return true;
-                } else {
-                    return false;
+                ClusterMetaData nextVersion = null;
+                try {
+                    if (set.remove(o)) {
+                        nextVersion = newClusterMetaData(set, current.get());
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } finally {
+                    if (nextVersion != null) {
+                        current.set(nextVersion);
+                    }
                 }
             } finally {
-                if (nextVersion != null) current = nextVersion;
+
                 lock.unlock();
             }
         }
 
-        private static ClusterMetaData newClusterMetaData(Set set, ClusterMetaData current) {
-            URI[] locations = new URI[set.size()];
+        private static ClusterMetaData newClusterMetaData(final Set set, final ClusterMetaData current) {
+            final URI[] locations = new URI[set.size()];
             set.toArray(locations);
             return new ClusterMetaData(System.currentTimeMillis(), locations);
         }
 
         public ClusterMetaData current() {
-            Lock lock = sync.readLock();
+            final Lock lock = sync.readLock();
             lock.lock();
             try {
-                return current;
+                return current.get();
             } finally {
                 lock.unlock();
             }

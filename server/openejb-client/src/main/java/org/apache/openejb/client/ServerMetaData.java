@@ -25,18 +25,23 @@ import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
-    private URI[] locations;
-    private URI location;
+    private transient URI[] locations;
+    private transient URI location;
+    private transient ProtocolMetaData metaData;
 
     public ServerMetaData() {
     }
 
-    public ServerMetaData(URI ... locations)  {
+    public ServerMetaData(final URI... locations) {
         this.locations = locations;
         location = locations[0];
     }
 
-    public void merge(ServerMetaData toMerge) {
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public void merge(final ServerMetaData toMerge) {
         locations = toMerge.locations;
     }
 
@@ -50,20 +55,22 @@ public class ServerMetaData implements Externalizable {
 
     public int buildHash() {
         int locationsHash = 0;
-        for (URI location : this.locations) {
+        for (final URI location : this.locations) {
             locationsHash += location.hashCode();
         }
         return locationsHash;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte();
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte();
 
         locations = (URI[]) in.readObject();
         location = locations[0];
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
@@ -74,15 +81,18 @@ public class ServerMetaData implements Externalizable {
         return Arrays.toString(locations);
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final ServerMetaData that = (ServerMetaData) o;
 
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        return !(location != null ? !location.equals(that.location) : that.location != null);
 
-        return true;
     }
 
     public int hashCode() {

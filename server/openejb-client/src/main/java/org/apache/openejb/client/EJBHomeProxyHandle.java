@@ -24,42 +24,52 @@ import java.io.ObjectStreamException;
 
 public class EJBHomeProxyHandle implements Externalizable {
 
-    public static ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+    public static final ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
 
-    EJBHomeHandler handler;
+    private transient EJBHomeHandler handler;
+    private transient ProtocolMetaData metaData;
 
     public EJBHomeProxyHandle() {
     }
 
-    public EJBHomeProxyHandle(EJBHomeHandler handler) {
+    public EJBHomeProxyHandle(final EJBHomeHandler handler) {
         this.handler = handler;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
-
+        handler.client.setMetaData(metaData);
         handler.client.writeExternal(out);
 
-        EJBMetaDataImpl ejb = handler.ejb;
+        final EJBMetaDataImpl ejb = handler.ejb;
         out.writeObject(ejb.homeClass);
         out.writeObject(ejb.remoteClass);
         out.writeObject(ejb.keyClass);
         out.writeByte(ejb.type);
         out.writeUTF(ejb.deploymentID);
         out.writeShort(ejb.deploymentCode);
+
+        handler.server.setMetaData(metaData);
         handler.server.writeExternal(out);
-///        out.writeObject( handler.primaryKey );
+        ///        out.writeObject( handler.primaryKey );
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        ClientMetaData client = new ClientMetaData();
-        EJBMetaDataImpl ejb = new EJBMetaDataImpl();
-        ServerMetaData server = new ServerMetaData();
+        final ClientMetaData client = new ClientMetaData();
+        final EJBMetaDataImpl ejb = new EJBMetaDataImpl();
+        final ServerMetaData server = new ServerMetaData();
 
+        client.setMetaData(metaData);
         client.readExternal(in);
 
         ejb.homeClass = (Class) in.readObject();
@@ -69,7 +79,9 @@ public class EJBHomeProxyHandle implements Externalizable {
         ejb.deploymentID = in.readUTF();
         ejb.deploymentCode = in.readShort();
 
+        server.setMetaData(metaData);
         server.readExternal(in);
+
         handler = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, /* TODO */ null);
     }
 
@@ -78,11 +90,14 @@ public class EJBHomeProxyHandle implements Externalizable {
     }
 
     public static interface Resolver {
+
         Object resolve(EJBHomeHandler handler);
     }
 
     public static class ClientSideResovler implements Resolver {
-        public Object resolve(EJBHomeHandler handler) {
+
+        @Override
+        public Object resolve(final EJBHomeHandler handler) {
             handler.ejb.ejbHomeProxy = handler.createEJBHomeProxy();
             return handler.ejb.ejbHomeProxy;
         }
