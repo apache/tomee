@@ -29,8 +29,8 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.Keyable;
 import org.apache.openejb.jee.Listener;
-import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebFragment;
@@ -79,6 +79,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ReadDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
@@ -562,18 +563,29 @@ public class ReadDescriptors implements DynamicDeployer {
                     final Source url = getSource(rawUrl);
                     try {
                         final WebFragment webFragment = JaxbOpenejb.unmarshal(WebFragment.class, url.get());
-                        webModule.getWebApp().getPersistenceContextRef().addAll(webFragment.getPersistenceContextRef());
-                        webModule.getWebApp().getPersistenceUnitRef().addAll(webFragment.getPersistenceUnitRef());
-                        webModule.getWebApp().getMessageDestinationRef().addAll(webFragment.getMessageDestinationRef());
-                        webModule.getWebApp().getDataSource().addAll(webFragment.getDataSource());
-                        webModule.getWebApp().getEjbLocalRef().addAll(webFragment.getEjbLocalRef());
-                        webModule.getWebApp().getEjbRef().addAll(webFragment.getEjbRef());
-                        webModule.getWebApp().getEnvEntry().addAll(webFragment.getEnvEntry());
-                        webModule.getWebApp().getServiceRef().addAll(webFragment.getServiceRef());
+
+                        // in tomcat if the env entry is already don't override it
+                        mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceContextRefMap(), webFragment.getPersistenceContextRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceUnitRefMap(), webFragment.getPersistenceUnitRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getMessageDestinationRefMap(), webFragment.getMessageDestinationRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getDataSourceMap(), webFragment.getDataSource());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEjbLocalRefMap(), webFragment.getEjbLocalRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEjbRefMap(), webFragment.getEjbRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getServiceRefMap(), webFragment.getServiceRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEnvEntryMap(), webFragment.getEnvEntry());
                     } catch (final Exception e) {
                         logger.warning("can't read " + url.toString(), e);
                     }
                 }
+            }
+        }
+    }
+
+    private static <A extends Keyable<String>> void mergeOnlyMissingEntries(final Map<String, A> existing, final Collection<A> news) {
+        for (final A entry : news) {
+            final String key = entry.getKey();
+            if (!existing.containsKey(key)) {
+                existing.put(key, entry);
             }
         }
     }
