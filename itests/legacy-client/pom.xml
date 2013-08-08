@@ -17,16 +17,19 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.6.0-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.openejb.itests</groupId>
-  <artifactId>failover</artifactId>
+  <artifactId>legacy-client</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Failover</name>
+  <name>OpenEJB :: iTests :: Legacy</name>
+
   <build>
     <plugins>
       <plugin>
@@ -40,79 +43,30 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-standalone</artifactId>
+      <groupId>org.apache.openejb.itests</groupId>
+      <artifactId>failover</artifactId>
       <version>${project.version}</version>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>openejb-client</artifactId>
+          <groupId>org.apache.openejb</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${project.version}</version>
+      <version>4.5.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb.itests</groupId>
-      <artifactId>failover-ejb</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>arquillian-tomee-common</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-provisionning</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>wagon-provider-api</artifactId>
-          <groupId>org.apache.maven.wagon</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>plexus-utils</artifactId>
-          <groupId>org.codehaus.plexus</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>plexus-classworlds</artifactId>
-          <groupId>org.codehaus.plexus</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-provider-api</artifactId>
-      <version>2.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>plexus-utils</artifactId>
-          <groupId>org.codehaus.plexus</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.10</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-classworlds</artifactId>
-      <version>2.4.2</version>
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
   </dependencies>
+
 </project>
 

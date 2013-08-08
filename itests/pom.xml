@@ -20,24 +20,29 @@
 <!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.6.0-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>itests</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: iTests</name>
+
   <modules>
-    <module>openejb-itests-client</module>
-    <module>openejb-itests-beans</module>
-    <module>openejb-itests-servlets</module>
-    <module>openejb-itests-interceptor-beans</module>
-    <module>openejb-itests-app</module>
-    <module>openejb-itests-web</module>
     <module>failover</module>
     <module>failover-ejb</module>
+    <module>legacy-client</module>
+    <module>openejb-itests-app</module>
+    <module>openejb-itests-beans</module>
+    <module>openejb-itests-client</module>
+    <module>openejb-itests-interceptor-beans</module>
+    <module>openejb-itests-servlets</module>
+    <module>openejb-itests-web</module>
   </modules>
+
 </project>
 
