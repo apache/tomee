@@ -28,15 +28,16 @@ import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
+@SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
-    protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", (Class) null);
-    protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", (Class) null);
+    protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
+    protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
     @SuppressWarnings("RedundantArrayCreation")
     protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class[]{Object.class});
     @SuppressWarnings("RedundantArrayCreation")
     protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
-    protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", (Class) null);
+    protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
 
     public EJBHomeHandler() {
     }

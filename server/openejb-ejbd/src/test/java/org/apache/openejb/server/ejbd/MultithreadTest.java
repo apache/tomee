@@ -293,7 +293,7 @@ public class MultithreadTest {
         public void explode() {
             try {
                 discardedInstances.incrementAndGet();
-                throw new NullPointerException("Test expected this");
+                throw new NullPointerException("Test expected this null pointer");
             } finally {
                 invocations.countDown();
             }
