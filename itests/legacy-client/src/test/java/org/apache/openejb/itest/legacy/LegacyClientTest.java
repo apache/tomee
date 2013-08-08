@@ -66,8 +66,8 @@ public class LegacyClientTest {
     @Test
     public void test() throws Exception {
 
-//        To run in an IDE, uncomment and update this line
-//        System.setProperty("version", OpenEjbVersion.get().getVersion());
+        //        To run in an IDE, uncomment and update this line
+        //        System.setProperty("version", OpenEjbVersion.get().getVersion());
         System.setProperty("openejb.client.connection.strategy", "roundrobin");
 
         logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.openejb", "openejb-standalone"));
@@ -145,7 +145,6 @@ public class LegacyClientTest {
             server.start(1, TimeUnit.MINUTES);
         }
 
-
         System.setProperty("openejb.client.requestretry", "true");
         System.setProperty("openejb.client.connection.strategy", "random");
 
@@ -186,7 +185,6 @@ public class LegacyClientTest {
             // good
         }
 
-
         for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
             final StandaloneServer server = entry.getValue();
@@ -210,7 +208,6 @@ public class LegacyClientTest {
         final double percent = 0.10;
         final int totalInvocations = size * expectedInvocations;
 
-
         // Verify the work reached all servers
         final Set<Map.Entry<String, AtomicInteger>> entries = invoke(bean, totalInvocations).entrySet();
 
@@ -224,7 +221,6 @@ public class LegacyClientTest {
             Assert.assertTrue(String.format("%s out of %s is too low", actualInvocations, expectedInvocations), actualInvocations > expectedInvocations * percent);
         }
     }
-
 
     private Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
         final Map<String, AtomicInteger> invocations = new HashMap<String, AtomicInteger>();
@@ -246,6 +242,7 @@ public class LegacyClientTest {
     }
 
     public static class Services {
+
         static final Logger logger = Logger.getLogger(Services.class.getName());
 
         private final ReentrantLock lock = new ReentrantLock();
@@ -285,7 +282,9 @@ public class LegacyClientTest {
         public Set<URI> diff(final Set<URI> a, final Set<URI> b) {
             final Set<URI> diffs = new HashSet<URI>();
             for (final URI uri : b) {
-                if (!a.contains(uri)) diffs.add(uri);
+                if (!a.contains(uri)) {
+                    diffs.add(uri);
+                }
             }
 
             return diffs;
@@ -320,6 +319,7 @@ public class LegacyClientTest {
     }
 
     private static class CalculatorCallable implements Callable {
+
         private final Calculator bean;
 
         public CalculatorCallable(final Calculator bean) {
@@ -328,6 +328,7 @@ public class LegacyClientTest {
 
         @Override
         public Object call() throws Exception {
+            Assert.assertEquals(3, bean.sum(1, 2));
             return bean.name();
         }
     }
