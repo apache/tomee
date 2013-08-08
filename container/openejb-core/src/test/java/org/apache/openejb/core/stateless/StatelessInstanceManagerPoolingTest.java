@@ -266,7 +266,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         public void explode(CountDownLatch invocations){
         	try{
         	    discardedInstances.incrementAndGet();
-        	    throw new NullPointerException();
+        	    throw new NullPointerException("Test expected this null pointer");
         	}finally{
         		invocations.countDown();
         	}
