@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-/** 
+/**
  * @version $Rev$ $Date$
  */
 public class RemoteInitialContextFactory extends JNDIContext {

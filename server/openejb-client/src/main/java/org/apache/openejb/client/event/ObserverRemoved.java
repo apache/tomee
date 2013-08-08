@@ -24,7 +24,7 @@ public class ObserverRemoved {
 
     private final Object observer;
 
-    public ObserverRemoved(Object observer) {
+    public ObserverRemoved(final Object observer) {
         this.observer = observer;
     }
 
@@ -35,7 +35,7 @@ public class ObserverRemoved {
     @Override
     public String toString() {
         return "ObserverRemoved{" +
-                "observer=" + observer.getClass().getName() +
-                '}';
+               "observer=" + observer.getClass().getName() +
+               '}';
     }
 }

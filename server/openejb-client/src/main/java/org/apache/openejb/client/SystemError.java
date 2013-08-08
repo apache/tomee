@@ -21,10 +21,12 @@ package org.apache.openejb.client;
  * @version $Revision$ $Date$
  */
 public class SystemError extends Error {
-    public SystemError(ThrowableArtifact cause) {
+
+    public SystemError(final ThrowableArtifact cause) {
         super(cause.getThrowable());
     }
-    public SystemError(Throwable cause) {
+
+    public SystemError(final Throwable cause) {
         super(cause);
     }
 }

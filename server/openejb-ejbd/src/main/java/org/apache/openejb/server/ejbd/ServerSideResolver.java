@@ -17,18 +17,18 @@
 package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.client.EJBHomeProxyHandle;
-import org.apache.openejb.client.EJBHomeHandler;
-import org.apache.openejb.client.EJBMetaDataImpl;
-import org.apache.openejb.client.EJBObjectProxyHandle;
-import org.apache.openejb.client.EJBObjectHandler;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.client.EJBHomeHandler;
+import org.apache.openejb.client.EJBHomeProxyHandle;
+import org.apache.openejb.client.EJBMetaDataImpl;
+import org.apache.openejb.client.EJBObjectHandler;
+import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.util.ArrayList;
 
@@ -37,50 +37,58 @@ import java.util.ArrayList;
  */
 public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjectProxyHandle.Resolver {
 
-    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
-
-    public Object resolve(EJBHomeHandler handler) {
+    @Override
+    public Object resolve(final EJBHomeHandler handler) {
         try {
-            EJBMetaDataImpl ejb = handler.getEjb();
+            final EJBMetaDataImpl ejb = handler.getEjb();
 
-            InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null)? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
+            final InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null) ? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
 
-            ArrayList<Class> interfaces = new ArrayList<Class>();
-            if (interfaceType.isBusiness()){
+            final ArrayList<Class> interfaces = new ArrayList<Class>();
+            if (interfaceType.isBusiness()) {
                 interfaces.addAll(ejb.getBusinessClasses());
             } else {
                 interfaces.add(ejb.getRemoteInterfaceClass());
             }
 
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
 
             return EjbHomeProxyHandler.createHomeProxy(beanContext, interfaceType, interfaces, ejb.getMainInterface());
         } catch (Exception e) {
-            logger.error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: "+e.getClass().getName()+": "+e.getMessage(), e );
+            Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources")
+                  .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
+                         e.getClass().getName() +
+                         ": " +
+                         e.getMessage(), e);
             return new EJBHomeProxyHandle.ClientSideResovler().resolve(handler);
         }
     }
 
-    public Object resolve(EJBObjectHandler handler) {
+    @Override
+    public Object resolve(final EJBObjectHandler handler) {
         try {
-            EJBMetaDataImpl ejb = handler.getEjb();
+            final EJBMetaDataImpl ejb = handler.getEjb();
 
-            InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null)? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
+            final InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null) ? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
 
-            ArrayList<Class> interfaces = new ArrayList<Class>();
-            if (interfaceType.isBusiness()){
+            final ArrayList<Class> interfaces = new ArrayList<Class>();
+            if (interfaceType.isBusiness()) {
                 interfaces.addAll(ejb.getBusinessClasses());
             } else {
                 interfaces.add(ejb.getRemoteInterfaceClass());
             }
 
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final BeanContext beanContext = containerSystem.getBeanContext(ejb.getDeploymentID());
 
             return EjbObjectProxyHandler.createProxy(beanContext, handler.getPrimaryKey(), interfaceType, interfaces, ejb.getMainInterface());
         } catch (Exception e) {
-            logger.error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: "+e.getClass().getName()+": "+e.getMessage(), e );
+            Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources")
+                  .error("ServerSideResolver.resolve() failed, falling back to ClientSideResolver: " +
+                         e.getClass().getName() +
+                         ": " +
+                         e.getMessage(), e);
             return new EJBObjectProxyHandle.ClientSideResovler().resolve(handler);
         }
     }

@@ -29,32 +29,33 @@ public class ServiceLocator {
 
     private final Context context;
 
-    public ServiceLocator(URI serverUri) throws NamingException {
+    public ServiceLocator(final URI serverUri) throws NamingException {
         this(serverUri, null, null, null);
     }
 
-    public ServiceLocator(URI serverUri, String username, String password) throws NamingException {
+    public ServiceLocator(final URI serverUri, final String username, final String password) throws NamingException {
         this(serverUri, username, password, null);
     }
 
-    public ServiceLocator(URI serverUri, String username, String password, String realm) throws NamingException {
-        Properties properties = new Properties();
+    public ServiceLocator(final URI serverUri, final String username, final String password, final String realm) throws NamingException {
+        final Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.put(Context.PROVIDER_URL, serverUri.toString());
         if (username != null && password != null) {
             properties.put(Context.SECURITY_PRINCIPAL, username);
             properties.put(Context.SECURITY_CREDENTIALS, password);
-            if (realm != null) properties.put("openejb.authentication.realmName", realm);
+            if (realm != null) {
+                properties.put("openejb.authentication.realmName", realm);
+            }
         }
         this.context = new InitialContext(properties);
     }
 
-
-    public ServiceLocator(Context context) {
+    public ServiceLocator(final Context context) {
         this.context = context;
     }
 
-    public Object lookup(String name) {
+    public Object lookup(final String name) {
         try {
             return context.lookup(name);
         } catch (NamingException e) {

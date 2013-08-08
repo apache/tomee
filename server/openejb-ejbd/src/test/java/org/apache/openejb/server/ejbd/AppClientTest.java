@@ -50,7 +50,6 @@ import java.util.Properties;
  */
 public class AppClientTest extends TestCase {
 
-
     public void test() throws Exception {
 
         final EjbServer ejbServer = new EjbServer();
@@ -89,7 +88,7 @@ public class AppClientTest extends TestCase {
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
         props.put("openejb.client.moduleId", "orange-client");
-        
+
         Context context = new InitialContext(props);
 
         final Object home = context.lookup("comp/env/home");
@@ -106,8 +105,8 @@ public class AppClientTest extends TestCase {
 
         final Object dataSourceObject = context.lookup("comp/env/datasource");
         assertTrue(dataSourceObject instanceof DataSource);
-//        DataSource dataSource = (DataSource) dataSourceObject;
-//        assertEquals("nap", orangeBusinessRemote.echo("pan"));
+        //        DataSource dataSource = (DataSource) dataSourceObject;
+        //        assertEquals("nap", orangeBusinessRemote.echo("pan"));
 
         props.put("openejb.client.moduleId", "openejb/global");
         context = new InitialContext(props);
@@ -119,14 +118,17 @@ public class AppClientTest extends TestCase {
     }
 
     public static interface OrangeHome extends EJBHome {
+
         OrangeRemote create() throws RemoteException, CreateException;
     }
 
     public static interface OrangeRemote extends EJBObject {
+
         public String echo(String string) throws RemoteException;
     }
 
     public static interface OrangeBusinessRemote {
+
         public String echo(String string);
 
     }
@@ -134,6 +136,7 @@ public class AppClientTest extends TestCase {
     @RemoteHome(OrangeHome.class)
     @Remote(OrangeBusinessRemote.class)
     public static class Orange implements OrangeBusinessRemote {
+
         @Override
         public String echo(String string) {
             return new StringBuilder(string).reverse().toString();

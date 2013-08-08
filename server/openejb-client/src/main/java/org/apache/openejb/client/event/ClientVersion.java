@@ -30,7 +30,7 @@ public class ClientVersion {
     private final String date;
     private final String time;
 
-    public ClientVersion(String version, String date, String time) {
+    public ClientVersion(final String version, final String date, final String time) {
         this.version = version;
         this.date = date;
         this.time = time;
@@ -40,7 +40,7 @@ public class ClientVersion {
         Properties info = new Properties();
 
         try {
-            ResourceFinder finder = new ResourceFinder();
+            final ResourceFinder finder = new ResourceFinder();
             info = finder.findProperties("openejb-client-version.properties");
         } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -66,9 +66,9 @@ public class ClientVersion {
     @Override
     public String toString() {
         return "ClientVersion{" +
-                "version='" + version + '\'' +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                '}';
+               "version='" + version + '\'' +
+               ", date='" + date + '\'' +
+               ", time='" + time + '\'' +
+               '}';
     }
 }

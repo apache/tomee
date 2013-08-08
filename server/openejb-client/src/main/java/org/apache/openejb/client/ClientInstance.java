@@ -17,10 +17,11 @@
  */
 package org.apache.openejb.client;
 
-import java.util.Properties;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class ClientInstance {
+
     /**
      * The time the client instance class was initialized
      */
@@ -36,7 +37,7 @@ public class ClientInstance {
      */
     private final HashMap<Class, Object> components;
 
-    private ClientInstance(Properties properties) throws Exception {
+    private ClientInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
         this.internalProperties.putAll(System.getProperties());
@@ -51,24 +52,23 @@ public class ClientInstance {
         return internalProperties;
     }
 
-    public String getProperty(String key) {
+    public String getProperty(final String key) {
         return internalProperties.getProperty(key);
     }
 
-    public String getProperty(String key, String defaultValue) {
+    public String getProperty(final String key, final String defaultValue) {
         return internalProperties.getProperty(key, defaultValue);
     }
 
-    public Object setProperty(String key, String value) {
+    public Object setProperty(final String key, final String value) {
         return internalProperties.setProperty(key, value);
     }
 
     /**
      * @param propName property name
-     *
      * @return true when property is set; false otherwise
      */
-    public boolean hasProperty(String propName) {
+    public boolean hasProperty(final String propName) {
         return this.internalProperties.get(propName) != null;
     }
 
@@ -80,8 +80,8 @@ public class ClientInstance {
      * @throws IllegalStateException of the component isn't found
      */
     @SuppressWarnings({"unchecked"})
-    public <T> T getComponent(Class<T> type) {
-        return (T)components.get(type);
+    public <T> T getComponent(final Class<T> type) {
+        return (T) components.get(type);
     }
 
     /**
@@ -91,22 +91,22 @@ public class ClientInstance {
      * @return the component instance or null if component type was not registered
      */
     @SuppressWarnings({"unchecked"})
-    public <T> T removeComponent(Class<T> type) {
-        return (T)components.remove(type);
+    public <T> T removeComponent(final Class<T> type) {
+        return (T) components.remove(type);
     }
 
     /**
      * Registers a component instance with the client, so it may be reference globally.
      *
-     * @param type the class type of the component - required
+     * @param type      the class type of the component - required
      * @param component the component instance
      */
     @SuppressWarnings({"unchecked"})
-    public <T> T setComponent(Class<T> type, T component) {
-        return (T)components.put(type, component);
+    public <T> T setComponent(final Class<T> type, final T component) {
+        return (T) components.put(type, component);
     }
 
-    private static ClientInstance client;
+    private static final ClientInstance client;
 
     static {
         try {

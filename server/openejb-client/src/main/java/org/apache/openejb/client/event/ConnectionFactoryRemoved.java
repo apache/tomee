@@ -27,7 +27,7 @@ public class ConnectionFactoryRemoved {
     private final String scheme;
     private final ConnectionFactory factory;
 
-    public ConnectionFactoryRemoved(String scheme, ConnectionFactory factory) {
+    public ConnectionFactoryRemoved(final String scheme, final ConnectionFactory factory) {
         this.scheme = scheme;
         this.factory = factory;
     }
@@ -43,8 +43,8 @@ public class ConnectionFactoryRemoved {
     @Override
     public String toString() {
         return "ConnectionFactoryRemoved{" +
-                "scheme='" + scheme + '\'' +
-                ", factory=" + factory.getClass().getName() +
-                '}';
+               "scheme='" + scheme + '\'' +
+               ", factory=" + factory.getClass().getName() +
+               '}';
     }
 }

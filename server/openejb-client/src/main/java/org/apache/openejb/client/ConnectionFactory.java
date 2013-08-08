@@ -17,7 +17,6 @@
 package org.apache.openejb.client;
 
 import java.net.URI;
-import java.util.Properties;
 
 public interface ConnectionFactory {
 

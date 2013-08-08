@@ -20,14 +20,16 @@ package org.apache.openejb.client;
  * @version $Rev$ $Date$
  */
 public class DefaultedThreadLocal<T> extends ThreadLocal<T> {
+
     private final T defaultValue;
 
-    public DefaultedThreadLocal(T defaultValue) {
+    public DefaultedThreadLocal(final T defaultValue) {
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public T get() {
-        T value = super.get();
-        return (value == null)? defaultValue: value;
+        final T value = super.get();
+        return (value == null) ? defaultValue : value;
     }
 }

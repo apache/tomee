@@ -22,9 +22,10 @@ import java.io.IOException;
  * @version $Rev$ $Date$
  */
 public class RetryException extends IOException {
+
     private final Response response;
 
-    public RetryException(Response response) {
+    public RetryException(final Response response) {
         this.response = response;
     }
 

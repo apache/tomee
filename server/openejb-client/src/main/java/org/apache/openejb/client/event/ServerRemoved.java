@@ -27,7 +27,7 @@ public class ServerRemoved {
     private final ClusterMetaDataUpdated clusterMetaDataUpdated;
     private final URI server;
 
-    public ServerRemoved(ClusterMetaDataUpdated clusterMetaDataUpdated, URI server) {
+    public ServerRemoved(final ClusterMetaDataUpdated clusterMetaDataUpdated, final URI server) {
         this.clusterMetaDataUpdated = clusterMetaDataUpdated;
         this.server = server;
     }
@@ -35,7 +35,7 @@ public class ServerRemoved {
     @Override
     public String toString() {
         return "ServerRemoved{" +
-                "server=" + server +
-                "} " + clusterMetaDataUpdated;
+               "server=" + server +
+               "} " + clusterMetaDataUpdated;
     }
 }

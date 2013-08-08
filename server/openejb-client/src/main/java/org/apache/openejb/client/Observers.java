@@ -33,24 +33,31 @@ import java.util.logging.Logger;
  * @version $Rev$ $Date$
  */
 public class Observers {
+
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
     private final List<Observer> observers = new ArrayList<Observer>();
 
-    public boolean addObserver(Object observer) {
-        if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+    public boolean addObserver(final Object observer) {
+        if (observer == null) {
+            throw new IllegalArgumentException("observer cannot be null");
+        }
         return observers.add(new Observer(observer));
     }
 
-    public boolean removeObserver(Object listener) {
-        if (listener == null) throw new IllegalArgumentException("listener cannot be null");
+    public boolean removeObserver(final Object listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("listener cannot be null");
+        }
         return observers.remove(new Observer(listener));
     }
 
-    public void fireEvent(Object event) {
-        if (event == null) throw new IllegalArgumentException("event cannot be null");
+    public void fireEvent(final Object event) {
+        if (event == null) {
+            throw new IllegalArgumentException("event cannot be null");
+        }
 
-        for (Observer observer : observers) {
+        for (final Observer observer : observers) {
             try {
                 observer.invoke(event);
             } catch (InvocationTargetException e) {
@@ -69,16 +76,21 @@ public class Observers {
      * @version $Rev$ $Date$
      */
     public static class Observer {
+
         private final Map<Class, Method> methods = new HashMap<Class, Method>();
         private final Object observer;
         private final Method defaultMethod;
 
-        public Observer(Object observer) {
-            if (observer == null) throw new IllegalArgumentException("observer cannot be null");
+        public Observer(final Object observer) {
+            if (observer == null) {
+                throw new IllegalArgumentException("observer cannot be null");
+            }
 
             this.observer = observer;
-            for (Method method : observer.getClass().getMethods()) {
-                if (!isObserver(method)) continue;
+            for (final Method method : observer.getClass().getMethods()) {
+                if (!isObserver(method)) {
+                    continue;
+                }
 
                 if (method.getParameterTypes().length > 1) {
                     throw new IllegalArgumentException("@Observes method must have only 1 parameter: " + method.toString());
@@ -124,8 +136,10 @@ public class Observers {
             }
         }
 
-        public void invoke(Object event) throws InvocationTargetException, IllegalAccessException {
-            if (event == null) throw new IllegalArgumentException("event cannot be null");
+        public void invoke(final Object event) throws InvocationTargetException, IllegalAccessException {
+            if (event == null) {
+                throw new IllegalArgumentException("event cannot be null");
+            }
 
             final Class eventType = event.getClass();
             final Method method = methods.get(eventType);
@@ -137,19 +151,25 @@ public class Observers {
             }
         }
 
-        private boolean isObserver(Method method) {
-            for (Annotation[] annotations : method.getParameterAnnotations()) {
-                for (Annotation annotation : annotations) {
-                    if (annotation.annotationType().equals(Observes.class)) return true;
+        private boolean isObserver(final Method method) {
+            for (final Annotation[] annotations : method.getParameterAnnotations()) {
+                for (final Annotation annotation : annotations) {
+                    if (annotation.annotationType().equals(Observes.class)) {
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             final Observer observer1 = (Observer) o;
 

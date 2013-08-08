@@ -23,9 +23,10 @@ import java.net.URI;
  */
 @Log
 public class ConnectionOpened {
+
     private final URI uri;
 
-    public ConnectionOpened(URI uri) {
+    public ConnectionOpened(final URI uri) {
         this.uri = uri;
     }
 
@@ -36,7 +37,7 @@ public class ConnectionOpened {
     @Override
     public String toString() {
         return "ConnectionOpened{" +
-                "uri=" + uri +
-                '}';
+               "uri=" + uri +
+               '}';
     }
 }

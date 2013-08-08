@@ -30,11 +30,11 @@ import java.rmi.RemoteException;
 
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
-    protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
-    protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
-    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class[]{Object.class});
-    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
-    protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
+    protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", (Class) null);
+    protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", (Class) null);
+    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", Object.class);
+    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", Handle.class);
+    protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", (Class) null);
 
     public EJBHomeHandler() {
     }
@@ -43,7 +43,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         super(ejb, server, client, auth);
     }
 
-    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb,
+                                                      final ServerMetaData server,
+                                                      final ClientMetaData client,
+                                                      final JNDIContext.AuthenticationInfo auth) {
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
@@ -63,11 +66,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                 return new SingletonEJBHomeHandler(ejb, server, client, auth);
         }
 
-        throw new IllegalStateException("Uknown bean type code '"+ejb.type +"' : "+ejb.toString());
+        throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
 
     }
 
-//    protected abstract EJBObjectHandler newEJBObjectHandler();
+    //    protected abstract EJBObjectHandler newEJBObjectHandler();
 
     public EJBHomeProxy createEJBHomeProxy() {
         try {
@@ -77,7 +80,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             final Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
-            throw new ClientRuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
+            throw new ClientRuntimeException("Unable to create proxy for " + ejb.homeClass, e);
         }
     }
 

@@ -27,7 +27,7 @@ public class ServerAdded {
     private final ClusterMetaDataUpdated clusterMetaDataUpdated;
     private final URI server;
 
-    public ServerAdded(ClusterMetaDataUpdated clusterMetaDataUpdated, URI server) {
+    public ServerAdded(final ClusterMetaDataUpdated clusterMetaDataUpdated, final URI server) {
         this.clusterMetaDataUpdated = clusterMetaDataUpdated;
         this.server = server;
     }
@@ -35,7 +35,7 @@ public class ServerAdded {
     @Override
     public String toString() {
         return "ServerAdded{" +
-                "server=" + server +
-                "} " + clusterMetaDataUpdated;
+               "server=" + server +
+               "} " + clusterMetaDataUpdated;
     }
 }

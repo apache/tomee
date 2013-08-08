@@ -17,6 +17,7 @@
 package org.apache.openejb.client;
 
 public class ClientRuntimeException extends RuntimeException {
+
     public ClientRuntimeException(final String str) {
         super(str);
     }

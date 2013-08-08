@@ -30,7 +30,7 @@ public class ConnectionPoolCreated {
     private final int size;
     private final URI uri;
 
-    public ConnectionPoolCreated(URI uri, int size, long timeout, TimeUnit timeUnit) {
+    public ConnectionPoolCreated(final URI uri, final int size, final long timeout, final TimeUnit timeUnit) {
         this.uri = uri;
         this.size = size;
         this.timeUnit = timeUnit;
@@ -56,9 +56,9 @@ public class ConnectionPoolCreated {
     @Override
     public String toString() {
         return "ConnectionPoolCreated{" +
-                "uri=" + uri +
-                ", size=" + size +
-                ", timeout='" + timeout + " " + timeUnit + "'" +
-                '}';
+               "uri=" + uri +
+               ", size=" + size +
+               ", timeout='" + timeout + " " + timeUnit + "'" +
+               '}';
     }
 }

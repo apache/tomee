@@ -16,16 +16,14 @@
  */
 package org.apache.openejb.client;
 
+import junit.framework.TestCase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Properties;
 
-import junit.framework.TestCase;
-
-
-public class ConnectionManagerTest extends TestCase{
+public class ConnectionManagerTest extends TestCase {
 
     public void testRegisterFactory() throws Exception {
         MockConnectionFactory connectionFactory = new MockConnectionFactory();
@@ -35,7 +33,7 @@ public class ConnectionManagerTest extends TestCase{
 
         assertTrue(connection instanceof MockConnection);
     }
-    
+
     public static class MockConnectionFactory implements ConnectionFactory {
 
         public Connection getConnection(URI uri) throws IOException {
@@ -45,6 +43,7 @@ public class ConnectionManagerTest extends TestCase{
     }
 
     private static class MockConnection implements Connection {
+
         public void close() throws IOException {
             throw new UnsupportedOperationException();
         }

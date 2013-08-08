@@ -24,6 +24,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class ClientSecurityTest extends TestCase {
+
     protected void setUp() throws Exception {
         super.setUp();
         LoginTestUtil.initialize();
@@ -33,25 +34,25 @@ public class ClientSecurityTest extends TestCase {
     }
 
     public void testDefaultStrategy() {
-        IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
+        final IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
         assertNotNull("identityResolver is null", identityResolver);
         assertTrue("identityResolver should be an instance of JaasIdentityResolver", identityResolver instanceof JaasIdentityResolver);
     }
 
     public void testSimpleStrategy() {
         System.setProperty(ClientSecurity.IDENTITY_RESOLVER_STRATEGY, "simple");
-        IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
+        final IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
         assertNotNull("identityResolver is null", identityResolver);
         assertTrue("identityResolver should be an instance of ClientSecurity.SimpleIdentityResolver", identityResolver instanceof ClientSecurity.SimpleIdentityResolver);
     }
 
     public void testJaasStrategy() {
         System.setProperty(ClientSecurity.IDENTITY_RESOLVER_STRATEGY, "jaas");
-        IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
+        final IdentityResolver identityResolver = ClientSecurity.getIdentityResolver();
         assertNotNull("identityResolver is null", identityResolver);
         assertTrue("identityResolver should be an instance of JaasIdentityResolver", identityResolver instanceof JaasIdentityResolver);
     }
-    
+
     public void testLogin() throws FailedLoginException {
         // setup the server response
         LoginTestUtil.setAuthGranted();
@@ -61,7 +62,7 @@ public class ClientSecurityTest extends TestCase {
 
         // Verify stored server request
         assertTrue("serverRequest should be an instance of AuthenticationRequest", LoginTestUtil.serverRequest instanceof AuthenticationRequest);
-        AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
+        final AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
         assertEquals("jonathan", authenticationRequest.getUsername());
         assertEquals("secret", authenticationRequest.getCredentials());
 
@@ -70,7 +71,7 @@ public class ClientSecurityTest extends TestCase {
 
         // verify we are using the simple client identity strategy
         assertTrue("ClientSecurity.getIdentityResolver() should be an instance of ClientSecurity.SimpleIdentityResolver",
-                ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
+                   ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
 
         // logout
         ClientSecurity.logout();
@@ -88,7 +89,7 @@ public class ClientSecurityTest extends TestCase {
         // Perform a thread scoped login using a new thread
         final CountDownLatch loginLatch = new CountDownLatch(1);
         final CountDownLatch loginVerifiedLatch = new CountDownLatch(1);
-        Thread loginThread = new Thread() {
+        final Thread loginThread = new Thread() {
             public void run() {
                 try {
                     // attempt a login
@@ -96,7 +97,7 @@ public class ClientSecurityTest extends TestCase {
 
                     // Verify stored server request
                     assertTrue("serverRequest should be an instance of AuthenticationRequest", LoginTestUtil.serverRequest instanceof AuthenticationRequest);
-                    AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
+                    final AuthenticationRequest authenticationRequest = (AuthenticationRequest) LoginTestUtil.serverRequest;
                     assertEquals("jonathan", authenticationRequest.getUsername());
                     assertEquals("secret", authenticationRequest.getCredentials());
 
@@ -105,7 +106,7 @@ public class ClientSecurityTest extends TestCase {
 
                     // verify we are using the simple client identity strategy
                     assertTrue("ClientSecurity.getIdentityResolver() should be an instance of ClientSecurity.SimpleIdentityResolver",
-                            ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
+                               ClientSecurity.getIdentityResolver() instanceof ClientSecurity.SimpleIdentityResolver);
 
                     // notify outer thread that we are logged in
                     loginLatch.countDown();
@@ -132,7 +133,6 @@ public class ClientSecurityTest extends TestCase {
         // verify we are not logged in
         assertNull("ClientSecurity.getIdentity() is not null", ClientSecurity.getIdentity());
 
-
         // notify the login thread that we are done with out verifications
         loginVerifiedLatch.countDown();
 
@@ -140,8 +140,12 @@ public class ClientSecurityTest extends TestCase {
         loginThread.join(5000);
 
         if (threadException != null) {
-            if (threadException instanceof Exception) throw (Exception) threadException;
-            if (threadException instanceof Error) throw (Error) threadException;
+            if (threadException instanceof Exception) {
+                throw (Exception) threadException;
+            }
+            if (threadException instanceof Error) {
+                throw (Error) threadException;
+            }
             throw new Error("login thread threw an exception", threadException);
         }
     }

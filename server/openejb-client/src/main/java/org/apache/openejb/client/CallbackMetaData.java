@@ -20,6 +20,7 @@ package org.apache.openejb.client;
 import java.io.Serializable;
 
 public class CallbackMetaData implements Serializable {
+
     private static final long serialVersionUID = -4117738185968143415L;
     private String className;
     private String method;
@@ -28,7 +29,7 @@ public class CallbackMetaData implements Serializable {
         return className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         this.className = className;
     }
 
@@ -36,7 +37,7 @@ public class CallbackMetaData implements Serializable {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(final String method) {
         this.method = method;
     }
 

@@ -22,12 +22,13 @@ import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.HandlerResolver;
-import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WsMetaData implements Serializable {
+
     private static final long serialVersionUID = -895152184216070327L;
     private String serviceClassName;
     private String referenceClassName;
@@ -40,7 +41,7 @@ public class WsMetaData implements Serializable {
         return serviceClassName;
     }
 
-    public void setServiceClassName(String serviceClassName) {
+    public void setServiceClassName(final String serviceClassName) {
         this.serviceClassName = serviceClassName;
     }
 
@@ -48,7 +49,7 @@ public class WsMetaData implements Serializable {
         return referenceClassName;
     }
 
-    public void setReferenceClassName(String referenceClassName) {
+    public void setReferenceClassName(final String referenceClassName) {
         this.referenceClassName = referenceClassName;
     }
 
@@ -56,7 +57,7 @@ public class WsMetaData implements Serializable {
         return wsdlUrl;
     }
 
-    public void setWsdlUrl(String wsdlUrl) {
+    public void setWsdlUrl(final String wsdlUrl) {
         this.wsdlUrl = wsdlUrl;
     }
 
@@ -64,7 +65,7 @@ public class WsMetaData implements Serializable {
         return serviceQName;
     }
 
-    public void setServiceQName(String serviceQName) {
+    public void setServiceQName(final String serviceQName) {
         this.serviceQName = serviceQName;
     }
 
@@ -84,7 +85,7 @@ public class WsMetaData implements Serializable {
         }
 
         // load the reference class which is the ultimate type of the port
-        Class<?> referenceClass = loadClass(referenceClassName);
+        final Class<?> referenceClass = loadClass(referenceClassName);
 
         // if ref class is a subclass of Service, use it for the service class
         if (referenceClass != null && Service.class.isAssignableFrom(referenceClass)) {
@@ -92,10 +93,10 @@ public class WsMetaData implements Serializable {
         }
 
         // Service QName
-        QName serviceQName = QName.valueOf(this.serviceQName);
+        final QName serviceQName = QName.valueOf(this.serviceQName);
 
         // WSDL URL
-        URL wsdlLocation = new URL(this.wsdlUrl);
+        final URL wsdlLocation = new URL(this.wsdlUrl);
 
         JaxWsProviderWrapper.beforeCreate(portRefs);
         Service instance;
@@ -114,14 +115,14 @@ public class WsMetaData implements Serializable {
             JaxWsProviderWrapper.afterCreate();
         }
 
-        if (handlerChains != null && !handlerChains.isEmpty()) {
-            InjectionMetaData injectionMetaData = ClientInstance.get().getComponent(InjectionMetaData.class);
-            List<Injection> injections = injectionMetaData.getInjections();
-            HandlerResolver handlerResolver = new ClientHandlerResolverImpl(handlerChains, injections, new InitialContext());
+        if (!handlerChains.isEmpty()) {
+            final InjectionMetaData injectionMetaData = ClientInstance.get().getComponent(InjectionMetaData.class);
+            final List<Injection> injections = injectionMetaData.getInjections();
+            final HandlerResolver handlerResolver = new ClientHandlerResolverImpl(handlerChains, injections, new InitialContext());
             instance.setHandlerResolver(handlerResolver);
         }
 
-        Object port;
+        final Object port;
         if (referenceClass != null && !Service.class.isAssignableFrom(referenceClass)) {
             // do port lookup
             port = instance.getPort(referenceClass);
@@ -132,15 +133,16 @@ public class WsMetaData implements Serializable {
         return port;
     }
 
-    public static Class<?> loadClass(String className) {
-        if (className == null) return null;
+    public static Class<?> loadClass(final String className) {
+        if (className == null) {
+            return null;
+        }
         try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             if (classLoader != null) {
                 try {
-                    Class clazz = classLoader.loadClass(className);
-                    return clazz;
-                } catch(ClassNotFoundException e) {
+                    return classLoader.loadClass(className);
+                } catch (ClassNotFoundException ignored) {
                 }
             }
             return Class.forName(className);

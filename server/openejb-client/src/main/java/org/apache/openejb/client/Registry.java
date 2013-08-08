@@ -16,50 +16,49 @@
  */
 package org.apache.openejb.client;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Registry<T> {
 
-    private Map<String, T> components = new ConcurrentHashMap<String, T>();
+    private final Map<String, T> components = new ConcurrentHashMap<String, T>();
 
     private Map<String, Class> available;
 
-    private String componentType;
+    private final String componentType;
 
-
-    public static <T> Registry<T> create(Class<T> type){
+    public static <T> Registry<T> create(final Class<T> type) {
         return new Registry<T>(type);
     }
 
-    private Registry(Class<T> type) {
+    private Registry(final Class<T> type) {
         componentType = type.getSimpleName();
 
         try {
-            ResourceFinder resourceFinder = new ResourceFinder("META-INF/");
+            final ResourceFinder resourceFinder = new ResourceFinder("META-INF/");
             available = resourceFinder.mapAvailableImplementations(type);
         } catch (IOException e) {
-            available = new HashMap();
+            available = new HashMap<String, Class>();
         }
     }
 
-    public void register(String scheme, T factory) {
+    public void register(final String scheme, final T factory) {
         components.put(scheme, factory);
     }
 
-    public T unregister(String scheme) {
+    public T unregister(final String scheme) {
         if ("default".equals(scheme)) {
             throw new IllegalArgumentException("Cannot uninstall the default " + componentType);
         }
         return components.remove(scheme);
     }
 
-    public T get(String scheme) {
+    public T get(final String scheme) {
         T factory = components.get(scheme);
 
         if (factory == null) {
@@ -69,14 +68,17 @@ public class Registry<T> {
         return factory;
     }
 
-    private T load(String scheme) {
+    @SuppressWarnings("unchecked")
+    private T load(final String scheme) {
 
-        Class clazz = available.get(scheme);
+        final Class clazz = available.get(scheme);
 
-        if (clazz == null) return null;
+        if (clazz == null) {
+            return null;
+        }
 
         try {
-            T factory = (T) clazz.newInstance();
+            final T factory = (T) clazz.newInstance();
 
             components.put(scheme, factory);
 

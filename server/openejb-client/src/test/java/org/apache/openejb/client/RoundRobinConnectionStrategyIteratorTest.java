@@ -20,9 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -30,14 +28,13 @@ import java.util.NoSuchElementException;
  */
 public class RoundRobinConnectionStrategyIteratorTest {
 
-
     @Test
     public void test() throws Exception {
         final URI[] uris = uris(
-                "one://localhost:1243",
-                "two://localhost:1243",
-                "three://localhost:1243",
-                "four://localhost:1243");
+                                   "one://localhost:1243",
+                                   "two://localhost:1243",
+                                   "three://localhost:1243",
+                                   "four://localhost:1243");
 
         ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
         Iterable<URI> iterable = new RoundRobinConnectionStrategy().createIterable(cluster);
@@ -73,7 +70,6 @@ public class RoundRobinConnectionStrategyIteratorTest {
             Assert.assertEquals(uris[0], iterator.next());
             Assert.assertEquals(uris[1], iterator.next());
         }
-
 
     }
 

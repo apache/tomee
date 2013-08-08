@@ -139,8 +139,9 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         }
 
         public static String stripPrefix(final String value, final String prefix) {
-            if (value.startsWith(prefix))
+            if (value.startsWith(prefix)) {
                 return value.substring(prefix.length());
+            }
             return value;
         }
     }
@@ -162,16 +163,19 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         @Override
         public boolean accept(URI service) {
             try {
-                if (!group.equals(service.getScheme()))
+                if (!group.equals(service.getScheme())) {
                     return false;
+                }
                 service = unwrap(service);
 
-                if (!"ejb".equals(service.getScheme()))
+                if (!"ejb".equals(service.getScheme())) {
                     return false;
+                }
                 service = unwrap(service);
 
-                if (schemes.contains(service.getScheme()))
+                if (schemes.contains(service.getScheme())) {
                     return true;
+                }
             } catch (URISyntaxException e) {
                 // not the uri we're looking for.
             }

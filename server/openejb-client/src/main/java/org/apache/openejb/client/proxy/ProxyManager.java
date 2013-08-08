@@ -22,19 +22,21 @@ import java.util.Properties;
 
 public class ProxyManager {
 
-    private static ProxyFactory defaultFactory;
+    private static final ProxyFactory defaultFactory;
     private static String defaultFactoryName;
 
     static {
-        String version = null;
-        Class factory = null;
+
+        final String version;
+        final Class factory;
+
         try {
             version = System.getProperty("java.vm.version");
         } catch (Exception e) {
 
             throw new ClientRuntimeException("Unable to determine the version of your VM.  No ProxyFactory Can be installed");
         }
-        ClassLoader cl = getContextClassLoader();
+        final ClassLoader cl = getContextClassLoader();
 
         if (version.startsWith("1.1")) {
             throw new ClientRuntimeException("This VM version is not supported: " + version);
@@ -85,45 +87,45 @@ public class ProxyManager {
         return defaultFactoryName;
     }
 
-    public static InvocationHandler getInvocationHandler(Object proxy) {
+    public static InvocationHandler getInvocationHandler(final Object proxy) {
         return defaultFactory.getInvocationHandler(proxy);
     }
 
-    public static Object setInvocationHandler(Object proxy, InvocationHandler handler) {
+    public static Object setInvocationHandler(final Object proxy, final InvocationHandler handler) {
         return defaultFactory.setInvocationHandler(proxy, handler);
     }
 
-    public static Class getProxyClass(Class interfaceType) throws IllegalAccessException {
+    public static Class getProxyClass(final Class interfaceType) throws IllegalAccessException {
         return getProxyClass(new Class[]{interfaceType});
     }
 
-    public static Class getProxyClass(Class[] interfaces) throws IllegalAccessException {
+    public static Class getProxyClass(final Class[] interfaces) throws IllegalAccessException {
         return defaultFactory.getProxyClass(interfaces);
     }
 
-    public static Object newProxyInstance(Class interfaceType, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(final Class interfaceType, final InvocationHandler h) throws IllegalAccessException {
         return newProxyInstance(new Class[]{interfaceType}, h);
     }
 
-    public static Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(final Class[] interfaces, final InvocationHandler h) throws IllegalAccessException {
         return defaultFactory.newProxyInstance(interfaces, h);
     }
 
-    public static boolean isProxyClass(Class cl) {
+    public static boolean isProxyClass(final Class cl) {
         return defaultFactory.isProxyClass(cl);
     }
 
-    public static Object newProxyInstance(Class proxyClass) throws IllegalAccessException {
+    public static Object newProxyInstance(final Class proxyClass) throws IllegalAccessException {
         return defaultFactory.newProxyInstance(proxyClass);
     }
 
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                }
-        );
+        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+            @Override
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        }
+                                                                        );
     }
 }
