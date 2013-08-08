@@ -47,16 +47,16 @@ public final class Repository {
         return new File(path);
     }
 
-    private static String guessVersion(final String groupId, final String artifactId) {
-        String[] keys = { artifactId + ".version", groupId + ".version", "version" };
-        for (String key : keys) {
+    public static String guessVersion(final String groupId, final String artifactId) {
+        final String[] keys = { artifactId + ".version", groupId + ".version", "version" };
+        for (final String key : keys) {
             final String value = System.getProperty(key);
             if (value != null) {
                 return value;
             }
         }
 
-        String message = String.format("Cannot find version for %s:%s. Checked the following system properties: %s", groupId, artifactId, Join.join(", ", keys));
+        final String message = String.format("Cannot find version for %s:%s. Checked the following system properties: %s", groupId, artifactId, Join.join(", ", keys));
         throw new IllegalStateException(message);
     }
 }
