@@ -237,25 +237,27 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     return;
             }
 
-            info.outputStream = new CountingOutputStream(rawOut);
-            PROTOCOL_VERSION.writeExternal(info.outputStream);
-            oos = new ObjectOutputStream(info.outputStream);
+            try {
+                info.outputStream = new CountingOutputStream(rawOut);
+                PROTOCOL_VERSION.writeExternal(info.outputStream);
+                oos = new ObjectOutputStream(info.outputStream);
 
-            clusterHandler.processResponse(clusterResponse, oos, clientMetaData);
-
-            switch (requestType) {
-                case EJB_REQUEST:
-                    processEjbResponse(response, oos, clientMetaData);
-                    break;
-                case JNDI_REQUEST:
-                    processJndiResponse(response, oos, clientMetaData);
-                    break;
-                case AUTH_REQUEST:
-                    processAuthResponse(response, oos, clientMetaData);
-                    break;
-                default:
-                    //Should never get here...
-                    logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown response type " + requestType);
+                clusterHandler.processResponse(clusterResponse, oos, clientMetaData);
+            } finally {
+                switch (requestType) {
+                    case EJB_REQUEST:
+                        processEjbResponse(response, oos, clientMetaData);
+                        break;
+                    case JNDI_REQUEST:
+                        processJndiResponse(response, oos, clientMetaData);
+                        break;
+                    case AUTH_REQUEST:
+                        processAuthResponse(response, oos, clientMetaData);
+                        break;
+                    default:
+                        //Should never get here...
+                        logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown response type " + requestType);
+                }
             }
 
         } catch (IllegalArgumentException iae) {
