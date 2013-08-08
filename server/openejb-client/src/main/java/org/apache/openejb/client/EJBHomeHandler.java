@@ -32,8 +32,10 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", (Class) null);
     protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", (Class) null);
-    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", Object.class);
-    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", Handle.class);
+    @SuppressWarnings("RedundantArrayCreation")
+    protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class[]{Object.class});
+    @SuppressWarnings("RedundantArrayCreation")
+    protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
     protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", (Class) null);
 
     public EJBHomeHandler() {
