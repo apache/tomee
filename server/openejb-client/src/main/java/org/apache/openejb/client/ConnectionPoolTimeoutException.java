@@ -22,6 +22,7 @@ import java.io.IOException;
  * @version $Rev$ $Date$
  */
 public class ConnectionPoolTimeoutException extends IOException {
+
     public ConnectionPoolTimeoutException() {
     }
 

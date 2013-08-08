@@ -16,44 +16,48 @@
  */
 package org.apache.openejb.client;
 
+import javax.ejb.RemoveException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-
-import javax.ejb.RemoveException;
 
 public class StatefulEJBHomeHandler extends EJBHomeHandler {
 
     public StatefulEJBHomeHandler() {
     }
 
-    public StatefulEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, JNDIContext.AuthenticationInfo auth) {
+    public StatefulEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         super(ejb, server, client, auth);
     }
 
-    protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object findX(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new SystemException(new UnsupportedOperationException("Session beans may not have find methods"));
     }
 
-    protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object removeByPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new ApplicationException(new RemoveException("Session objects are private resources and do not have primary keys"));
     }
 
-    protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object removeWithHandle(final Method method, final Object[] args, final Object proxy) throws Throwable {
 
-        EJBObjectHandle handle = (EJBObjectHandle) args[0];
+        final EJBObjectHandle handle = (EJBObjectHandle) args[0];
 
-        if (handle == null) throw new NullPointerException("The handle is null");
+        if (handle == null) {
+            throw new NullPointerException("The handle is null");
+        }
 
-        EJBObjectHandler handler = handle.handler;
-        Object primKey = handler.primaryKey;
+        final EJBObjectHandler handler = handle.handler;
+        final Object primKey = handler.primaryKey;
 
         if (!handler.ejb.deploymentID.equals(this.ejb.deploymentID)) {
             throw new SystemException(new IllegalArgumentException("The handle is not from the same deployment"));
         }
 
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey, client.getSerializer());
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey, client.getSerializer());
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:

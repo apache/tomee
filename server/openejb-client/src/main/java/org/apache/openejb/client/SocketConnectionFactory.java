@@ -131,10 +131,11 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public static long getLong(final Properties p, final String property, final long defaultValue) {
         final String value = p.getProperty(property);
         try {
-            if (value != null)
+            if (value != null) {
                 return Long.parseLong(value);
-            else
+            } else {
                 return defaultValue;
+            }
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -298,10 +299,20 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 throw this.failure("Cannot connect to server: '" + uri.toString() + "'.  Exception: " + e.getClass().getName() + " : " + e.getMessage(), e);
 
             } catch (SecurityException e) {
-                throw this.failure("Cannot access server: '" + uri.toString() + "' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage(), e);
+                throw this.failure("Cannot access server: '" +
+                                   uri.toString() +
+                                   "' due to security restrictions in the current VM: " +
+                                   e.getClass().getName() +
+                                   " : " +
+                                   e.getMessage(), e);
 
             } catch (Throwable e) {
-                throw this.failure("Cannot  connect to server: '" + uri.toString() + "' due to an unknown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage(), e);
+                throw this.failure("Cannot  connect to server: '" +
+                                   uri.toString() +
+                                   "' due to an unknown exception in the OpenEJB client: " +
+                                   e.getClass().getName() +
+                                   " : " +
+                                   e.getMessage(), e);
             }
 
         }
@@ -331,8 +342,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         @Override
         public void close() throws IOException {
-            if (this.discarded)
+            if (this.discarded) {
                 return;
+            }
 
             this.pool.put(this);
             try {
@@ -449,7 +461,11 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 Thread.interrupted();
             }
 
-            final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " + this.size + ").  Waited for " + this.timeout + " milliseconds for a connection.");
+            final ConnectionPoolTimeoutException exception = new ConnectionPoolTimeoutException("No connections available in pool (size " +
+                                                                                                this.size +
+                                                                                                ").  Waited for " +
+                                                                                                this.timeout +
+                                                                                                " milliseconds for a connection.");
             exception.fillInStackTrace();
             Client.fireEvent(new ConnectionPoolTimeout(this.uri, this.size, this.timeout, this.timeUnit, exception));
             throw exception;

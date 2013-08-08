@@ -45,6 +45,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class SerializerTest {
+
     @Test
     public void invoke() throws Exception {
         invokeRemote(new Properties() {{
@@ -104,11 +105,13 @@ public class SerializerTest {
 
     @Remote
     public static interface AnInterfaceRemote {
+
         OutputNotSerializable call(InputNotSerilizable input);
     }
 
     @Stateless
     public static class AnEjbRemote implements AnInterfaceRemote {
+
         @Override
         public OutputNotSerializable call(InputNotSerilizable input) {
             return new OutputNotSerializable(input.rename);
@@ -116,6 +119,7 @@ public class SerializerTest {
     }
 
     public static class InputNotSerilizable {
+
         public String rename;
 
         public InputNotSerilizable(final String cloud) {
@@ -124,6 +128,7 @@ public class SerializerTest {
     }
 
     public static class OutputNotSerializable {
+
         public String name;
 
         public OutputNotSerializable(final String rename) {
@@ -132,6 +137,7 @@ public class SerializerTest {
     }
 
     public static class MySerializer implements EJBDSerializer {
+
         @Override
         public Serializable serialize(final Object o) {
             if (InputNotSerilizable.class.isInstance(o)) {

@@ -25,6 +25,7 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 public class ClientLoginTest extends TestCase {
+
     protected void setUp() throws Exception {
         super.setUp();
         LoginTestUtil.initialize();

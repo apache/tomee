@@ -62,8 +62,9 @@ public class CommandParser {
 
     private Option opt(final Option o) {
         opts.put(o.getName(), o);
-        if (o.getMini() != null)
+        if (o.getMini() != null) {
             opts.put(o.getMini(), o);
+        }
         return o;
     }
 
@@ -82,8 +83,9 @@ public class CommandParser {
         final List<Option> seen = new ArrayList<Option>();
 
         for (final Option option : opts.values()) {
-            if (seen.contains(option))
+            if (seen.contains(option)) {
                 continue;
+            }
             seen.add(option);
 
             if (option instanceof Category) {
@@ -121,8 +123,9 @@ public class CommandParser {
                 }
 
                 if (option.getValue() != null) {
-                    if (option.getDescription() != null)
+                    if (option.getDescription() != null) {
                         s.append(" ");
+                    }
                     s.append("Default is ");
                     s.append(option.getValue());
                 }
@@ -142,8 +145,9 @@ public class CommandParser {
         while (items.hasNext()) {
             String arg = items.next();
 
-            if (!arg.startsWith("-"))
+            if (!arg.startsWith("-")) {
                 break;
+            }
 
             items.remove();
 
@@ -230,8 +234,9 @@ public class CommandParser {
     private void checkValue(final String optString, final String value, final Option option) {
         checkOption(optString, option);
 
-        if (option.getType() == null)
+        if (option.getType() == null) {
             return;
+        }
 
         if (value == null || value.equals("")) {
             System.err.println("Missing param " + optString + " <" + option.getType().getSimpleName() + ">");
@@ -240,8 +245,9 @@ public class CommandParser {
     }
 
     private void checkOption(final String invalid, final Option option) {
-        if (option != null)
+        if (option != null) {
             return;
+        }
 
         System.err.println("Unknown option: " + invalid);
 
@@ -315,8 +321,9 @@ public class CommandParser {
         }
 
         public Option description(String description) {
-            if (!description.endsWith("."))
+            if (!description.endsWith(".")) {
                 description += ".";
+            }
             this.setDescription(description);
             return this;
         }
@@ -328,8 +335,9 @@ public class CommandParser {
 
         public Option value(final Object value) {
             this.setValue(value);
-            if (getType() == null)
+            if (getType() == null) {
                 this.setType(value.getClass());
+            }
             return this;
         }
 

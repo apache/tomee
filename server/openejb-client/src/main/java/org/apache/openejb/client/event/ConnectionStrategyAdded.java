@@ -27,7 +27,7 @@ public class ConnectionStrategyAdded {
     private final String scheme;
     private final ConnectionStrategy strategy;
 
-    public ConnectionStrategyAdded(String scheme, ConnectionStrategy strategy) {
+    public ConnectionStrategyAdded(final String scheme, final ConnectionStrategy strategy) {
         this.scheme = scheme;
         this.strategy = strategy;
     }
@@ -43,8 +43,8 @@ public class ConnectionStrategyAdded {
     @Override
     public String toString() {
         return "ConnectionStrategyAdded{" +
-                "scheme='" + scheme + '\'' +
-                ", strategy=" + strategy.getClass().getName() +
-                '}';
+               "scheme='" + scheme + '\'' +
+               ", strategy=" + strategy.getClass().getName() +
+               '}';
     }
 }

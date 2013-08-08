@@ -19,8 +19,6 @@ package org.apache.openejb.client;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import javax.ejb.EJBObject;
-
 public interface EJBObjectProxy extends Serializable {
 
     public EJBObjectHandler getEJBObjectHandler();

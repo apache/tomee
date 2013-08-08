@@ -29,19 +29,20 @@ import java.util.Set;
 public class RandomConnectionStrategy extends AbstractConnectionStrategy {
 
     @Override
-    protected FailoverSelection createFailureEvent(Set<URI> remaining, Set<URI> failed, URI uri) {
+    protected FailoverSelection createFailureEvent(final Set<URI> remaining, final Set<URI> failed, final URI uri) {
         return new RandomFailoverSelection(remaining, failed, uri);
     }
 
     @Override
-    protected Iterable<URI> createIterable(ClusterMetaData cluster) {
+    protected Iterable<URI> createIterable(final ClusterMetaData cluster) {
         return new RandomIterable(cluster);
     }
 
     public static class RandomIterable implements Iterable<URI> {
+
         private final URI[] locations;
 
-        public RandomIterable(ClusterMetaData clusterMetaData) {
+        public RandomIterable(final ClusterMetaData clusterMetaData) {
             this.locations = clusterMetaData.getLocations();
         }
 
@@ -52,11 +53,12 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy {
     }
 
     public static class RandomIterator<T> implements Iterator<T> {
+
         private final Random random = new Random();
         private final T[] items;
         private int size;
 
-        public RandomIterator(T[] items) {
+        public RandomIterator(final T[] items) {
             this.items = Arrays.copyOf(items, items.length);
             this.size = items.length;
         }
@@ -68,13 +70,15 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy {
 
         @Override
         public T next() {
-            if (!hasNext()) throw new NoSuchElementException();
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
 
             // Random.nextInt is exclusive.
             // So if size=10, result will be between 0-9
             final int selected = random.nextInt(size--);
 
-            T selectedObject = items[selected];
+            final T selectedObject = items[selected];
 
             // Take the object from the end of the list
             // and move it into the place where selected was.

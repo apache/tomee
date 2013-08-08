@@ -22,18 +22,20 @@ import java.security.AccessController;
 import java.util.Set;
 
 public class JaasIdentityResolver implements IdentityResolver {
+
+    @Override
     public Object getIdentity() {
-        Subject subject = Subject.getSubject(AccessController.getContext());
+        final Subject subject = Subject.getSubject(AccessController.getContext());
         if (subject == null) {
             return null;
         }
 
-        Set<ClientIdentityPrincipal> identityPrincipals = subject.getPrincipals(ClientIdentityPrincipal.class);
+        final Set<ClientIdentityPrincipal> identityPrincipals = subject.getPrincipals(ClientIdentityPrincipal.class);
         if (identityPrincipals.isEmpty()) {
             return null;
         }
 
-        ClientIdentityPrincipal principal = identityPrincipals.iterator().next();
+        final ClientIdentityPrincipal principal = identityPrincipals.iterator().next();
         return principal.getClientIdentity();
     }
 }

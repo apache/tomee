@@ -27,10 +27,11 @@ import java.util.zip.GZIPOutputStream;
  * (<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4255743">Bug
  * 4255743</a> and
  * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4813885">Bug
- * 4813885</a>) so the GZIP'd output can be flushed. 
+ * 4813885</a>) so the GZIP'd output can be flushed.
  */
 public class FlushableGZIPOutputStream extends GZIPOutputStream {
-    public FlushableGZIPOutputStream(OutputStream os) throws IOException {
+
+    public FlushableGZIPOutputStream(final OutputStream os) throws IOException {
         super(os);
     }
 
@@ -38,17 +39,17 @@ public class FlushableGZIPOutputStream extends GZIPOutputStream {
      * It is used to reserve one byte of real data so that it can be used when
      * flushing the stream.
      */
-    private byte[] lastByte = new byte[1];
+    private final byte[] lastByte = new byte[1];
     private boolean hasLastByte = false;
 
     @Override
-    public void write(byte[] bytes) throws IOException {
+    public void write(final byte[] bytes) throws IOException {
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public synchronized void write(byte[] bytes, int offset, int length)
-            throws IOException {
+    public synchronized void write(final byte[] bytes, final int offset, final int length)
+        throws IOException {
         if (length > 0) {
             flushLastByte();
             if (length > 1) {
@@ -59,7 +60,7 @@ public class FlushableGZIPOutputStream extends GZIPOutputStream {
     }
 
     @Override
-    public synchronized void write(int i) throws IOException {
+    public synchronized void write(final int i) throws IOException {
         flushLastByte();
         rememberLastByte((byte) i);
     }
@@ -88,7 +89,7 @@ public class FlushableGZIPOutputStream extends GZIPOutputStream {
         super.close();
     }
 
-    private void rememberLastByte(byte b) {
+    private void rememberLastByte(final byte b) {
         lastByte[0] = b;
         hasLastByte = true;
     }

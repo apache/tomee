@@ -16,30 +16,30 @@
  */
 package org.apache.openejb.client;
 
-import java.net.URI;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This factory supports the following URI format
- *
- *  failover:[strategy:]urlList
- *
+ * <p/>
+ * failover:[strategy:]urlList
+ * <p/>
  * Where strategy and urlList are variables
- *
+ * <p/>
  * strategy = the ConnectionStrategy name, such as "sticky", "round-robin",
  * or "random".  This parameter is optional.
- *
+ * <p/>
  * urlList = a comma separated list connection URIs.  There must be a
  * ConnectionFactory installed for the associated URI.
- *
+ * <p/>
  * Some examples might be:
- *
- *  - failover:ejbd://foo:4201,ejbd://bar:4201
- *  - failover:random:ejbd://foo:4201,ejbd://bar:4201
- *  - failover:round-robin:ejbd://foo:4201,ejbds://bar:4201,multicast://239.255.2.3:6142
- *
+ * <p/>
+ * - failover:ejbd://foo:4201,ejbd://bar:4201
+ * - failover:random:ejbd://foo:4201,ejbd://bar:4201
+ * - failover:round-robin:ejbd://foo:4201,ejbds://bar:4201,multicast://239.255.2.3:6142
+ * <p/>
  * The final URI being the most clever in that it will sequentially go
  * through the list, first attempting a couple hard-coded addresses before
  * finally resorting to multicast in an attempt to discover a server.
@@ -48,7 +48,8 @@ import java.util.List;
  */
 public class FailoverConnectionFactory implements ConnectionFactory {
 
-    public Connection getConnection(URI failoverUri) throws IOException {
+    @Override
+    public Connection getConnection(final URI failoverUri) throws IOException {
 
         // URI can be in the following formats:
         //
@@ -56,9 +57,9 @@ public class FailoverConnectionFactory implements ConnectionFactory {
         // failover:sticky:ejbd://foo:4201,ejbd://bar:4202
 
         // trim off the "failover:"
-        String remainder = failoverUri.getSchemeSpecificPart();
+        final String remainder = failoverUri.getSchemeSpecificPart();
 
-        URI uri = URI.create(remainder);
+        final URI uri = URI.create(remainder);
 
         String strategy = uri.getScheme();
         String servers = uri.getSchemeSpecificPart();
@@ -68,25 +69,24 @@ public class FailoverConnectionFactory implements ConnectionFactory {
             servers = remainder;
         }
 
-        List<URI> list = new ArrayList<URI>();
-        
-        for (String server : servers.split(",")) {
+        final List<URI> list = new ArrayList<URI>();
+
+        for (final String server : servers.split(",")) {
             list.add(URI.create(server));
         }
 
-        URI[] uris = list.toArray(new URI[0]);
+        final URI[] uris = list.toArray(new URI[list.size()]);
 
-        ClusterMetaData data = new ClusterMetaData(0, uris);
+        final ClusterMetaData data = new ClusterMetaData(0, uris);
         data.setConnectionStrategy(strategy);
 
         return ConnectionManager.getConnection(data, new ServerMetaData(), null);
     }
 
+    public static void main(final String[] args) throws IOException {
+        final FailoverConnectionFactory factory = new FailoverConnectionFactory();
 
-    public static void main(String[] args) throws IOException {
-        FailoverConnectionFactory factory = new FailoverConnectionFactory();
-
-        URI uri = URI.create("failover:ejbd://foo:4201,ejbd://bar:4202");
-        Connection connection = factory.getConnection(uri);
+        final URI uri = URI.create("failover:ejbd://foo:4201,ejbd://bar:4202");
+        final Connection connection = factory.getConnection(uri);
     }
 }

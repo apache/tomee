@@ -26,14 +26,14 @@ public class BootstrappingConnection {
 
     private final URI provider;
 
-    public BootstrappingConnection(URI provider) {
+    public BootstrappingConnection(final URI provider) {
         this.provider = provider;
     }
 
     @Override
     public String toString() {
         return "BootstrappingConnection{" +
-                "provider=" + provider +
-                '}';
+               "provider=" + provider +
+               '}';
     }
 }

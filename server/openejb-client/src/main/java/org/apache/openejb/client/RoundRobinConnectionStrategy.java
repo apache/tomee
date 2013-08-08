@@ -29,16 +29,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy {
 
     private static class RoundRobinIterable implements Iterable<URI> {
-        private final URI[] locations;
-        private AtomicInteger index = new AtomicInteger(-1);
 
-        private RoundRobinIterable(ClusterMetaData clusterMetaData) {
+        private final URI[] locations;
+        private final AtomicInteger index = new AtomicInteger(-1);
+
+        private RoundRobinIterable(final ClusterMetaData clusterMetaData) {
             this.locations = clusterMetaData.getLocations();
         }
 
         private int index() {
             final int i = index.incrementAndGet();
-            if (i < locations.length) return i;
+            if (i < locations.length) {
+                return i;
+            }
 
             index.compareAndSet(i, -1);
             return index();
@@ -50,6 +53,7 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy {
         }
 
         private class RoundRobinIterator implements Iterator<URI> {
+
             private final Set<URI> seen = new HashSet<URI>();
 
             @Override
@@ -59,7 +63,9 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy {
 
             @Override
             public URI next() {
-                if (!hasNext()) throw new NoSuchElementException();
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
 
                 final URI location = locations[index()];
                 seen.add(location);
@@ -74,12 +80,12 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy {
     }
 
     @Override
-    protected FailoverSelection createFailureEvent(Set<URI> remaining, Set<URI> failed, URI uri) {
+    protected FailoverSelection createFailureEvent(final Set<URI> remaining, final Set<URI> failed, final URI uri) {
         return new RoundRobinFailoverSelection(remaining, failed, uri);
     }
 
     @Override
-    protected Iterable<URI> createIterable(ClusterMetaData cluster) {
+    protected Iterable<URI> createIterable(final ClusterMetaData cluster) {
         return new RoundRobinIterable(cluster);
     }
 

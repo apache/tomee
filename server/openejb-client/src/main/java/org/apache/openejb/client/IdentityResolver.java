@@ -18,5 +18,6 @@
 package org.apache.openejb.client;
 
 public interface IdentityResolver {
+
     Object getIdentity();
 }

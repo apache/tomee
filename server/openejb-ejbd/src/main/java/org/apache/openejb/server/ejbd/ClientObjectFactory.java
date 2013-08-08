@@ -68,7 +68,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         try {
             securityIdentity = call.getEJBRequest().getClientIdentity();
         } catch (Exception e) {
-
+            //Ignore
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         final EJBMetaDataImpl eMetaData = buildEjbMetaData(info, beanContext, idCode);
@@ -81,7 +81,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     private ServerMetaData getServerMetaData() {
         ServerMetaData serverMetaData = ClientObjectFactory.serverMetaData.get();
-        if (serverMetaData == null){
+        if (serverMetaData == null) {
             serverMetaData = defaultServerMetaData;
         }
         return serverMetaData;
@@ -145,15 +145,15 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         }
         final ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(null, null,
-                beanContext.getPrimaryKeyClass(),
-                beanContext.getComponentType().toString(),
-                beanContext.getDeploymentID().toString(),
-                idCode,
-                convert(info.getInterfaceType()),
-                info.getInterfaces(),
-                beanContext.getAsynchronousMethodSignatures());
+                                                              beanContext.getPrimaryKeyClass(),
+                                                              beanContext.getComponentType().toString(),
+                                                              beanContext.getDeploymentID().toString(),
+                                                              idCode,
+                                                              convert(info.getInterfaceType()),
+                                                              info.getInterfaces(),
+                                                              beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
-        
+
         final Object primKey = info.getPrimaryKey();
 
         final EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey, null);
@@ -163,14 +163,22 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     public static InterfaceType convert(final org.apache.openejb.InterfaceType type) {
         switch (type) {
-            case EJB_HOME: return InterfaceType.EJB_HOME;
-            case EJB_OBJECT: return InterfaceType.EJB_OBJECT;
-            case EJB_LOCAL_HOME: return InterfaceType.EJB_LOCAL_HOME;
-            case EJB_LOCAL: return InterfaceType.EJB_LOCAL;
-            case BUSINESS_LOCAL: return InterfaceType.BUSINESS_LOCAL;
-            case BUSINESS_LOCAL_HOME: return InterfaceType.BUSINESS_LOCAL_HOME;
-            case BUSINESS_REMOTE: return InterfaceType.BUSINESS_REMOTE;
-            case BUSINESS_REMOTE_HOME: return InterfaceType.BUSINESS_REMOTE_HOME;
+            case EJB_HOME:
+                return InterfaceType.EJB_HOME;
+            case EJB_OBJECT:
+                return InterfaceType.EJB_OBJECT;
+            case EJB_LOCAL_HOME:
+                return InterfaceType.EJB_LOCAL_HOME;
+            case EJB_LOCAL:
+                return InterfaceType.EJB_LOCAL;
+            case BUSINESS_LOCAL:
+                return InterfaceType.BUSINESS_LOCAL;
+            case BUSINESS_LOCAL_HOME:
+                return InterfaceType.BUSINESS_LOCAL_HOME;
+            case BUSINESS_REMOTE:
+                return InterfaceType.BUSINESS_REMOTE;
+            case BUSINESS_REMOTE_HOME:
+                return InterfaceType.BUSINESS_REMOTE_HOME;
         }
         return null;
     }
@@ -198,14 +206,14 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     private EJBMetaDataImpl buildEjbMetaData(final ProxyInfo info, final BeanContext beanContext, final int idCode) {
         final EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
-                beanContext.getRemoteInterface(),
-                beanContext.getPrimaryKeyClass(),
-                beanContext.getComponentType().toString(),
-                beanContext.getDeploymentID().toString(),
-                idCode,
-                convert(info.getInterfaceType()),
-                info.getInterfaces(),
-                beanContext.getAsynchronousMethodSignatures());
+                                                              beanContext.getRemoteInterface(),
+                                                              beanContext.getPrimaryKeyClass(),
+                                                              beanContext.getComponentType().toString(),
+                                                              beanContext.getDeploymentID().toString(),
+                                                              idCode,
+                                                              convert(info.getInterfaceType()),
+                                                              info.getInterfaces(),
+                                                              beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
         return eMetaData;
     }

@@ -175,8 +175,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static void invalidateAllHandlers(final Object key) {
 
         final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.remove(key);
-        if (set == null)
+        if (set == null) {
             return;
+        }
 
         final ReentrantLock l = lock;
         l.lock();
@@ -201,8 +202,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             set = new HashSet<WeakReference<EJBInvocationHandler>>();
             final Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
             // someone else added the set
-            if (current != null)
+            if (current != null) {
                 set = current;
+            }
         }
 
         final ReentrantLock l = lock;

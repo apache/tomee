@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class ClientLoginModule implements LoginModule {
+
     private static final Logger log = Logger.getLogger("OpenEJB.client");
     private Subject subject;
     private CallbackHandler callbackHandler;
@@ -44,7 +45,8 @@ public class ClientLoginModule implements LoginModule {
     private String realmNameSeparator;
     private String realmName;
 
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+    @Override
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
@@ -59,22 +61,23 @@ public class ClientLoginModule implements LoginModule {
             log.config("Initialized ClientLoginModule: debug=" + debug);
         }
 
-        if (options.containsKey("RealmNameSeparator")){
-            realmNameSeparator = (String)options.get("RealmNameSeparator");
+        if (options.containsKey("RealmNameSeparator")) {
+            realmNameSeparator = (String) options.get("RealmNameSeparator");
         }
 
-        if (options.containsKey("RealmName")){
-            realmName = (String)options.get("RealmName");
+        if (options.containsKey("RealmName")) {
+            realmName = (String) options.get("RealmName");
         }
     }
 
+    @Override
     public boolean login() throws LoginException {
         // determine the server location
         URI location = null;
         try {
             location = new URI(serverUri);
         } catch (Exception e) {
-            if (serverUri.indexOf("://") == -1) {
+            if (!serverUri.contains("://")) {
                 try {
                     location = new URI("foo://" + serverUri);
                 } catch (URISyntaxException giveUp) {
@@ -82,10 +85,10 @@ public class ClientLoginModule implements LoginModule {
                 }
             }
         }
-        ServerMetaData server = new ServerMetaData(location);
+        final ServerMetaData server = new ServerMetaData(location);
 
         // create the callbacks
-        Callback[] callbacks = new Callback[2];
+        final Callback[] callbacks = new Callback[2];
         callbacks[0] = new NameCallback("Username: ");
         callbacks[1] = new PasswordCallback("Password: ", false);
 
@@ -99,11 +102,13 @@ public class ClientLoginModule implements LoginModule {
         }
         user = ((NameCallback) callbacks[0]).getName();
         char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
-        if (tmpPassword == null) tmpPassword = new char[0];
+        if (tmpPassword == null) {
+            tmpPassword = new char[0];
+        }
 
-        if (realmNameSeparator != null){
-            String[] strings = user.split(realmNameSeparator);
-            if (strings.length == 2){
+        if (realmNameSeparator != null) {
+            final String[] strings = user.split(realmNameSeparator);
+            if (strings.length == 2) {
                 realmName = strings[0];
                 user = strings[1];
             }
@@ -121,6 +126,7 @@ public class ClientLoginModule implements LoginModule {
         return true;
     }
 
+    @Override
     public boolean commit() throws LoginException {
         principal = new ClientIdentityPrincipal(user, clientIdentity);
         subject.getPrincipals().add(principal);
@@ -131,6 +137,7 @@ public class ClientLoginModule implements LoginModule {
         return true;
     }
 
+    @Override
     public boolean abort() throws LoginException {
         clear();
 
@@ -140,6 +147,7 @@ public class ClientLoginModule implements LoginModule {
         return true;
     }
 
+    @Override
     public boolean logout() throws LoginException {
         subject.getPrincipals().remove(principal);
 

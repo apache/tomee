@@ -17,19 +17,21 @@
  */
 package org.apache.openejb.client;
 
-import java.security.Principal;
 import java.io.Serializable;
+import java.security.Principal;
 
 public class ClientIdentityPrincipal implements Principal, Serializable {
+
     private static final long serialVersionUID = -4620883427203231384L;
     private final String name;
     private final Object clientIdentity;
 
-    public ClientIdentityPrincipal(String name, Object clientIdentity) {
+    public ClientIdentityPrincipal(final String name, final Object clientIdentity) {
         this.name = name;
         this.clientIdentity = clientIdentity;
     }
 
+    @Override
     public String getName() {
         return name;
     }

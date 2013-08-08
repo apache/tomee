@@ -20,5 +20,7 @@ package org.openejb.client;
  * @version $Revision$ $Date$
  * @deprecated use org.apache.openejb.client.TomcatEjbFactory
  */
+@Deprecated
 public class TomcatEjbFactory extends org.apache.openejb.client.TomcatEjbFactory {
+
 }

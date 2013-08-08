@@ -22,13 +22,14 @@ package javax.xml.ws;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public abstract class EndpointReference {
-    public static EndpointReference readFrom(javax.xml.transform.Source eprInfoset) {
+
+    public static EndpointReference readFrom(final javax.xml.transform.Source eprInfoset) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
     public abstract void writeTo(javax.xml.transform.Result result);
 
-    public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+    public <T> T getPort(final Class<T> serviceEndpointInterface, final WebServiceFeature... features) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 }

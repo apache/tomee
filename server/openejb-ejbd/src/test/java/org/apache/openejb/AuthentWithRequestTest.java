@@ -51,6 +51,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class AuthentWithRequestTest {
+
     @BeforeClass
     public static void initJAAS() {
         System.setProperty("java.security.auth.login.config", AuthentWithRequestTest.class.getResource("/login.config").getFile());
@@ -83,13 +84,13 @@ public class AuthentWithRequestTest {
         try {
 
             final Context context = new InitialContext(new PropertiesBuilder()
-                    .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
-                    .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
-                    .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
-                    .p("java.naming.security.principal", "foo")
-                    .p("java.naming.security.credentials", "bar")
-                    .p("openejb.authentication.realmName", "LM")
-                    .build());
+                                                           .p(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName())
+                                                           .p(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port)
+                                                           .p(JNDIContext.AUTHENTICATE_WITH_THE_REQUEST, "true")
+                                                           .p("java.naming.security.principal", "foo")
+                                                           .p("java.naming.security.credentials", "bar")
+                                                           .p("openejb.authentication.realmName", "LM")
+                                                           .build());
             final AnInterfaceRemote client = AnInterfaceRemote.class.cast(context.lookup("RemoteWithSecurityRemote"));
             assertNotNull(client);
 
@@ -102,11 +103,13 @@ public class AuthentWithRequestTest {
 
     @Remote
     public static interface AnInterfaceRemote {
+
         String call();
     }
 
     @Stateless
     public static class RemoteWithSecurity implements AnInterfaceRemote {
+
         private static ThreadLocal<String> name = new ThreadLocal<String>();
 
         @Override
@@ -116,6 +119,7 @@ public class AuthentWithRequestTest {
     }
 
     public static class MyLoginModule implements LoginModule {
+
         private CallbackHandler callbackHandler;
 
         @Override
@@ -129,7 +133,7 @@ public class AuthentWithRequestTest {
 
             final NameCallback nameCallback = new NameCallback("name?", "dummy");
             try {
-                callbackHandler.handle(new Callback[] { nameCallback });
+                callbackHandler.handle(new Callback[]{nameCallback});
             } catch (final Exception e) {
                 throw new LoginException(e.getMessage());
             }

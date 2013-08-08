@@ -24,11 +24,12 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class FailoverSelection {
+
     protected final Set<URI> remaining;
     protected final Set<URI> failed;
     protected final URI server;
 
-    public FailoverSelection(Set<URI> remaining, Set<URI> failed, URI server) {
+    public FailoverSelection(final Set<URI> remaining, final Set<URI> failed, final URI server) {
         this.remaining = Collections.unmodifiableSet(remaining);
         this.failed = Collections.unmodifiableSet(failed);
         this.server = server;
@@ -49,9 +50,9 @@ public class FailoverSelection {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "remaining=" + remaining.size() +
-                ", failed=" + failed.size() +
-                ", server=" + server +
-                '}';
+               "remaining=" + remaining.size() +
+               ", failed=" + failed.size() +
+               ", server=" + server +
+               '}';
     }
 }

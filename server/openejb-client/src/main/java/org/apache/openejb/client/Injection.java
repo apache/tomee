@@ -22,15 +22,22 @@ import java.io.Serializable;
  * @version $Rev$ $Date$
  */
 public class Injection implements Serializable {
+
     private static final long serialVersionUID = 4009121701163822665L;
     private final String targetClass;
     private final String name;
     private final String jndiName;
 
-    public Injection(String targetClass, String name, String jndiName) {
-        if (targetClass == null) throw new NullPointerException("targetClass is null");
-        if (name == null) throw new NullPointerException("name is null");
-        if (jndiName == null) throw new NullPointerException("jndiName is null");
+    public Injection(final String targetClass, final String name, final String jndiName) {
+        if (targetClass == null) {
+            throw new NullPointerException("targetClass is null");
+        }
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        }
+        if (jndiName == null) {
+            throw new NullPointerException("jndiName is null");
+        }
         this.targetClass = targetClass;
         this.name = name;
         this.jndiName = jndiName;
@@ -48,11 +55,15 @@ public class Injection implements Serializable {
         return targetClass;
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        Injection injection = (Injection) o;
+        final Injection injection = (Injection) o;
 
         return name.equals(injection.name) && targetClass.equals(injection.targetClass);
     }

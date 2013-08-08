@@ -27,18 +27,16 @@ import java.util.ArrayList;
  */
 public class StickyConnectionStrategyIteratorTest {
 
-
     @Test
     public void testRandom() throws Exception {
         final URI[] uris = uris(
-                "one://localhost:1243",
-                "two://localhost:1243",
-                "three://localhost:1243",
-                "four://localhost:1243");
+                                   "one://localhost:1243",
+                                   "two://localhost:1243",
+                                   "three://localhost:1243",
+                                   "four://localhost:1243");
 
         ClusterMetaData cluster = new ClusterMetaData(System.currentTimeMillis(), uris);
         Iterable<URI> iterable = new StickyConnectionStrategy(new RandomConnectionStrategy()).createIterable(cluster);
-
 
         assertIteration(uris, iterable);
 
@@ -68,7 +66,9 @@ public class StickyConnectionStrategyIteratorTest {
         ArrayList<URI> found = new ArrayList<URI>();
 
         for (URI uri : iterable) {
-            if (!found.contains(uri)) found.add(uri);
+            if (!found.contains(uri)) {
+                found.add(uri);
+            }
         }
 
         Assert.assertEquals(uris.length, found.size());
@@ -77,14 +77,13 @@ public class StickyConnectionStrategyIteratorTest {
             Assert.assertTrue(found.contains(uri));
         }
 
-//        Assert.assertTrue("Found: " + found + ", Expected: " + Arrays.asList(uris),
-//                found.get(0).equals(uris[0]) &&
-//                        found.get(1).equals(uris[1]) &&
-//                        found.get(2).equals(uris[2]) &&
-//                        found.get(3).equals(uris[3])
-//        );
+        //        Assert.assertTrue("Found: " + found + ", Expected: " + Arrays.asList(uris),
+        //                found.get(0).equals(uris[0]) &&
+        //                        found.get(1).equals(uris[1]) &&
+        //                        found.get(2).equals(uris[2]) &&
+        //                        found.get(3).equals(uris[3])
+        //        );
     }
-
 
     private URI[] uris(String... strings) {
         final URI[] uris = new URI[strings.length];

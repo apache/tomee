@@ -20,5 +20,7 @@ package org.apache.openejb.client;
  * @version $Rev$ $Date$
  */
 public enum KeepAliveStyle {
-    PING, PING_PONG, PING_PING;
+    PING,
+    PING_PONG,
+    PING_PING
 }

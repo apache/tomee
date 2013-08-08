@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-
 public interface ClusterableResponse extends Response {
+
     void setServer(ServerMetaData server);
 }

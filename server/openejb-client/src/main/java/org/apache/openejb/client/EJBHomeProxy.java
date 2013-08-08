@@ -16,10 +16,9 @@
  */
 package org.apache.openejb.client;
 
+import javax.ejb.EJBHome;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-
-import javax.ejb.EJBHome;
 
 public interface EJBHomeProxy extends Serializable, EJBHome {
 

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class EventLogger {
 
-    public void log(@Observes ClusterMetaDataUpdated event) {
+    public void log(@Observes final ClusterMetaDataUpdated event) {
         final Logger logger = Logger.getLogger(event.getClass().getName());
 
         final ClusterMetaData cluster = event.getClusterMetaData();
@@ -42,17 +42,19 @@ public class EventLogger {
 
         if (logger.isLoggable(Level.FINER)) {
             int i = 0;
-            for (URI uri : cluster.getLocations()) {
+            for (final URI uri : cluster.getLocations()) {
                 final String format = String.format("%s #%s %s", msg, ++i, uri.toASCIIString());
                 logger.log(Level.FINER, format);
             }
         }
     }
 
-    public void log(@Observes Object event) {
+    public void log(@Observes final Object event) {
         final Log log = event.getClass().getAnnotation(Log.class);
 
-        if (log == null) return;
+        if (log == null) {
+            return;
+        }
 
         final Logger logger = Logger.getLogger(event.getClass().getName());
 

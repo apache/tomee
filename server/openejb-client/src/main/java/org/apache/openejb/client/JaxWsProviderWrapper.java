@@ -240,10 +240,10 @@ public class JaxWsProviderWrapper extends Provider {
         @Override
         @SuppressWarnings({"unchecked"})
         public Dispatch<Object> createDispatch(
-                final EndpointReference endpointReference,
-                final JAXBContext context,
-                final Service.Mode mode,
-                final WebServiceFeature... features) {
+                                                  final EndpointReference endpointReference,
+                                                  final JAXBContext context,
+                                                  final Service.Mode mode,
+                                                  final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReferenceJaxB,
                                                        endpointReference,
                                                        context,
@@ -363,8 +363,9 @@ public class JaxWsProviderWrapper extends Provider {
 
     private static Provider findProvider() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null)
+        if (classLoader == null) {
             classLoader = ClassLoader.getSystemClassLoader();
+        }
 
         // 0. System.getProperty("openejb.javax.xml.ws.spi.Provider")
         // This is so those using old axis rules still work as expected

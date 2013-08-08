@@ -26,14 +26,13 @@ import java.util.Set;
 
 public class StickyConnectionStrategy extends AbstractConnectionStrategy {
 
-
     private final AbstractConnectionStrategy secondaryConnectionStrategy;
 
     public StickyConnectionStrategy() {
         this(new RoundRobinConnectionStrategy());
     }
 
-    public StickyConnectionStrategy(AbstractConnectionStrategy secondaryConnectionStrategy) {
+    public StickyConnectionStrategy(final AbstractConnectionStrategy secondaryConnectionStrategy) {
         this.secondaryConnectionStrategy = secondaryConnectionStrategy;
     }
 
@@ -42,12 +41,12 @@ public class StickyConnectionStrategy extends AbstractConnectionStrategy {
     }
 
     @Override
-    protected FailoverSelection createFailureEvent(Set<URI> remaining, Set<URI> failed, URI uri) {
+    protected FailoverSelection createFailureEvent(final Set<URI> remaining, final Set<URI> failed, final URI uri) {
         return new StickyFailoverSelection(remaining, failed, uri);
     }
 
     @Override
-    protected Iterable<URI> createIterable(ClusterMetaData cluster) {
+    protected Iterable<URI> createIterable(final ClusterMetaData cluster) {
         return new StickyIterable(cluster);
     }
 
@@ -56,7 +55,7 @@ public class StickyConnectionStrategy extends AbstractConnectionStrategy {
         private final ClusterMetaData cluster;
         private final Iterable<URI> iterable;
 
-        public StickyIterable(ClusterMetaData cluster) {
+        public StickyIterable(final ClusterMetaData cluster) {
             this.cluster = cluster;
             this.iterable = secondaryConnectionStrategy.createIterable(cluster);
         }
@@ -67,6 +66,7 @@ public class StickyConnectionStrategy extends AbstractConnectionStrategy {
         }
 
         public class StickyIterator implements Iterator<URI> {
+
             private Iterator<URI> iterator;
             private URI last;
             private boolean first = true;
@@ -75,7 +75,7 @@ public class StickyConnectionStrategy extends AbstractConnectionStrategy {
                 setLast(cluster.getLastLocation());
             }
 
-            private void setLast(URI lastLocation) {
+            private void setLast(final URI lastLocation) {
                 last = lastLocation;
             }
 
@@ -87,14 +87,16 @@ public class StickyConnectionStrategy extends AbstractConnectionStrategy {
             @Override
 
             public URI next() {
-                if (!hasNext()) throw new NoSuchElementException();
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
 
                 if (first && last != null) {
                     first = false;
                     return last;
                 }
 
-                Iterator<URI> iterator = getIterator();
+                final Iterator<URI> iterator = getIterator();
 
                 return iterator.next();
             }

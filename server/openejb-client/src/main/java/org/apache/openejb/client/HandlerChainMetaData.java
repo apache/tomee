@@ -18,11 +18,12 @@
 package org.apache.openejb.client;
 
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HandlerChainMetaData implements Serializable {
+
     private static final long serialVersionUID = -2861396042527297097L;
     private QName serviceNamePattern;
     private QName portNamePattern;
@@ -33,7 +34,7 @@ public class HandlerChainMetaData implements Serializable {
         return serviceNamePattern;
     }
 
-    public void setServiceNamePattern(QName serviceNamePattern) {
+    public void setServiceNamePattern(final QName serviceNamePattern) {
         this.serviceNamePattern = serviceNamePattern;
     }
 
@@ -41,7 +42,7 @@ public class HandlerChainMetaData implements Serializable {
         return portNamePattern;
     }
 
-    public void setPortNamePattern(QName portNamePattern) {
+    public void setPortNamePattern(final QName portNamePattern) {
         this.portNamePattern = portNamePattern;
     }
 

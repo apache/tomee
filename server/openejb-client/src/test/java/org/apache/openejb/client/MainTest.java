@@ -19,23 +19,23 @@ package org.apache.openejb.client;
 
 import junit.framework.TestCase;
 
-import javax.naming.spi.InitialContextFactory;
-import javax.naming.spi.NamingManager;
-import javax.naming.spi.InitialContextFactoryBuilder;
+import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.Name;
-import javax.naming.NamingException;
 import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
-import javax.naming.NameParser;
 import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
+import javax.naming.spi.InitialContextFactoryBuilder;
+import javax.naming.spi.NamingManager;
 import javax.security.auth.Subject;
 import javax.security.auth.login.FailedLoginException;
+import java.security.AccessController;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.TreeMap;
-import java.security.AccessController;
 
 public class MainTest extends TestCase {
 
@@ -46,7 +46,7 @@ public class MainTest extends TestCase {
         }
     }
 
-    public static Map<String,Object> jndi = new TreeMap<String,Object>();
+    public static Map<String, Object> jndi = new TreeMap<String, Object>();
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -64,7 +64,7 @@ public class MainTest extends TestCase {
         StaticUsernamePasswordCallbackHandler.setUsername("victoria");
         StaticUsernamePasswordCallbackHandler.setPassword("secret");
         LoginTestUtil.setAuthGranted();
-        
+
         jndi.put("java:info/mainClass", SecureMain.class.getName());
         Main.main(new String[0]);
     }
@@ -85,6 +85,7 @@ public class MainTest extends TestCase {
     }
 
     public static class SecureMain {
+
         public static void main(String[] args) {
             Subject subject = Subject.getSubject(AccessController.getContext());
 
@@ -106,6 +107,7 @@ public class MainTest extends TestCase {
     }
 
     public static class NormalMain {
+
         public static void main(String[] args) {
             Subject subject = Subject.getSubject(AccessController.getContext());
 
@@ -116,23 +118,25 @@ public class MainTest extends TestCase {
         }
     }
 
-
     //
     // Ignore these
     //
     public static class MockContextFactoryBuilder implements InitialContextFactoryBuilder {
+
         public InitialContextFactory createInitialContextFactory(Hashtable<?, ?> environment) throws NamingException {
             return new MockContextFactory();
         }
     }
 
     public static class MockContextFactory implements InitialContextFactory {
+
         public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
             return new MockContext();
         }
     }
 
     public static class MockContext implements Context {
+
         public Object lookup(String name) throws NamingException {
             Object value = jndi.get(name);
             if (value == null) {

@@ -17,6 +17,7 @@
 package org.apache.openejb.client.util;
 
 public class ClassLoaderUtil {
+
     private ClassLoaderUtil() {
         // no-op
     }

@@ -19,6 +19,7 @@ package org.apache.openejb.client.serializer;
 import java.io.Serializable;
 
 public class SerializationWrapper implements Serializable {
+
     private String classname;
     private Serializable data;
 

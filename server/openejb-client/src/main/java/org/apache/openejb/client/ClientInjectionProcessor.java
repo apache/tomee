@@ -19,24 +19,25 @@ package org.apache.openejb.client;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.AccessibleObject;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientInjectionProcessor<T> {
+
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
     private final Class<? extends T> beanClass;
@@ -48,7 +49,11 @@ public class ClientInjectionProcessor<T> {
     private T instance;
     private boolean allowStatic;
 
-    public ClientInjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, List<CallbackMetaData> postConstructMethods, List<CallbackMetaData> preDestroyMethods, Context context) {
+    public ClientInjectionProcessor(final Class<? extends T> beanClass,
+                                    final List<Injection> injections,
+                                    final List<CallbackMetaData> postConstructMethods,
+                                    final List<CallbackMetaData> preDestroyMethods,
+                                    final Context context) {
         this.beanClass = beanClass;
         classLoader = beanClass.getClassLoader();
         this.injections = injections;
@@ -73,19 +78,28 @@ public class ClientInjectionProcessor<T> {
     }
 
     private void construct() {
-        Map<Injection,Object> values = new HashMap<Injection,Object>();
-        for (Injection injection : injections) {
+        final Map<Injection, Object> values = new HashMap<Injection, Object>();
+        for (final Injection injection : injections) {
             // only process injections for this class
-            Class<?> targetClass = loadClass(injection.getTargetClass());
-            if (targetClass == null) continue;
-            if (!targetClass.isAssignableFrom(beanClass)) continue;
+            final Class<?> targetClass = loadClass(injection.getTargetClass());
+            if (targetClass == null) {
+                continue;
+            }
+            if (!targetClass.isAssignableFrom(beanClass)) {
+                continue;
+            }
 
             try {
-                String jndiName = injection.getJndiName();
-                Object object = context.lookup("java:comp/env/" + jndiName);
+                final String jndiName = injection.getJndiName();
+                final Object object = context.lookup("java:comp/env/" + jndiName);
                 values.put(injection, object);
             } catch (NamingException e) {
-                logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTargetClass() + "/" + injection.getName());
+                logger.warning("Injection data not found in JNDI context: jndiName='" +
+                               injection.getJndiName() +
+                               "', target=" +
+                               injection.getTargetClass() +
+                               "/" +
+                               injection.getName());
             }
         }
 
@@ -95,13 +109,15 @@ public class ClientInjectionProcessor<T> {
             throw new IllegalStateException("Error while creating bean " + beanClass.getName(), e);
         }
 
-        List<String> unsetProperties = new ArrayList<String>();
-        for (Map.Entry<Injection, Object> entry : values.entrySet()) {
-            Injection injection = entry.getKey();
-            Object value = entry.getValue();
+        final List<String> unsetProperties = new ArrayList<String>();
+        for (final Map.Entry<Injection, Object> entry : values.entrySet()) {
+            final Injection injection = entry.getKey();
+            final Object value = entry.getValue();
 
-            Class<?> targetClass = loadClass(injection.getTargetClass());
-            if (targetClass == null || !targetClass.isAssignableFrom(beanClass)) continue;
+            final Class<?> targetClass = loadClass(injection.getTargetClass());
+            if (targetClass == null || !targetClass.isAssignableFrom(beanClass)) {
+                continue;
+            }
 
             if (!setProperty(targetClass, injection.getName(), value)) {
                 unsetProperties.add(injection.getName());
@@ -109,17 +125,21 @@ public class ClientInjectionProcessor<T> {
         }
 
         if (unsetProperties.size() > 0) {
-            for (Object property : unsetProperties) {
+            for (final Object property : unsetProperties) {
                 logger.warning("Injection: Unable to set property '" + property + "' in class " + beanClass.getName());
             }
         }
     }
 
     public void postConstruct() throws Exception {
-        if (instance == null) throw new IllegalStateException("Instance has not been constructed");
-        if (postConstructCallbacks == null) return;
+        if (instance == null) {
+            throw new IllegalStateException("Instance has not been constructed");
+        }
+        if (postConstructCallbacks == null) {
+            return;
+        }
 
-        for (Method postConstruct : toMethod(postConstructCallbacks)) {
+        for (final Method postConstruct : toMethod(postConstructCallbacks)) {
             try {
                 postConstruct.invoke(instance);
             } catch (Exception e) {
@@ -130,9 +150,13 @@ public class ClientInjectionProcessor<T> {
     }
 
     public void preDestroy() {
-        if (instance == null) return;
-        if (preDestroyCallbacks == null) return;
-        for (Method preDestroy : toMethod(preDestroyCallbacks)) {
+        if (instance == null) {
+            return;
+        }
+        if (preDestroyCallbacks == null) {
+            return;
+        }
+        for (final Method preDestroy : toMethod(preDestroyCallbacks)) {
             try {
                 preDestroy.invoke(instance);
             } catch (Exception e) {
@@ -142,11 +166,11 @@ public class ClientInjectionProcessor<T> {
         }
     }
 
-    private List<Method> toMethod(List<CallbackMetaData> callbacks) {
-        List<String> methodsNotFound = new ArrayList<String>(1);
-        List<Method> methods = new ArrayList<Method>(callbacks.size());
-        for (CallbackMetaData callback : callbacks) {
-            Method method = toMethod(callback);
+    private List<Method> toMethod(final List<CallbackMetaData> callbacks) {
+        final List<String> methodsNotFound = new ArrayList<String>(1);
+        final List<Method> methods = new ArrayList<Method>(callbacks.size());
+        for (final CallbackMetaData callback : callbacks) {
+            final Method method = toMethod(callback);
             if (method != null) {
                 methods.add(method);
             } else {
@@ -159,19 +183,18 @@ public class ClientInjectionProcessor<T> {
         return methods;
     }
 
-    private Method toMethod(CallbackMetaData callback) {
+    private Method toMethod(final CallbackMetaData callback) {
         try {
-            String className = callback.getClassName();
-            Class<?> clazz = classLoader.loadClass(className);
-            Method method = clazz.getDeclaredMethod(callback.getMethod());
-            return method;
+            final String className = callback.getClassName();
+            final Class<?> clazz = classLoader.loadClass(className);
+            return clazz.getDeclaredMethod(callback.getMethod());
         } catch (Exception e) {
             return null;
         }
     }
 
-    private boolean setProperty(Class clazz, String name, Object propertyValue) {
-        Method method= findSetter(clazz, name, propertyValue);
+    private boolean setProperty(final Class clazz, final String name, Object propertyValue) {
+        final Method method = findSetter(clazz, name, propertyValue);
         if (method != null) {
             try {
                 propertyValue = convert(method.getParameterTypes()[0], propertyValue);
@@ -182,7 +205,7 @@ public class ClientInjectionProcessor<T> {
             }
         }
 
-        Field field = findField(clazz, name, propertyValue);
+        final Field field = findField(clazz, name, propertyValue);
         if (field != null) {
             try {
                 propertyValue = convert(field.getType(), propertyValue);
@@ -196,18 +219,22 @@ public class ClientInjectionProcessor<T> {
         return false;
     }
 
-    public Method findSetter(Class typeClass, String propertyName, Object propertyValue) {
-        if (propertyName == null) throw new NullPointerException("name is null");
-        if (propertyName.length() == 0) throw new IllegalArgumentException("name is an empty string");
+    public Method findSetter(final Class typeClass, final String propertyName, final Object propertyValue) {
+        if (propertyName == null) {
+            throw new NullPointerException("name is null");
+        }
+        if (propertyName.length() == 0) {
+            throw new IllegalArgumentException("name is an empty string");
+        }
 
         String setterName = "set" + Character.toUpperCase(propertyName.charAt(0));
         if (propertyName.length() > 0) {
             setterName += propertyName.substring(1);
         }
 
-        List<Method> methods = new ArrayList<Method>(Arrays.asList(typeClass.getMethods()));
+        final List<Method> methods = new ArrayList<Method>(Arrays.asList(typeClass.getMethods()));
         methods.addAll(Arrays.asList(typeClass.getDeclaredMethods()));
-        for (Method method : methods) {
+        for (final Method method : methods) {
             if (method.getName().equals(setterName)) {
                 if (method.getParameterTypes().length == 0) {
                     continue;
@@ -229,11 +256,10 @@ public class ClientInjectionProcessor<T> {
                     continue;
                 }
 
-                Class methodParameterType = method.getParameterTypes()[0];
+                final Class methodParameterType = method.getParameterTypes()[0];
                 if (methodParameterType.isPrimitive() && propertyValue == null) {
                     continue;
                 }
-
 
                 if (!isInstance(methodParameterType, propertyValue) && !isConvertable(methodParameterType, propertyValue)) {
                     continue;
@@ -250,25 +276,29 @@ public class ClientInjectionProcessor<T> {
         return null;
     }
 
-    public Field findField(Class typeClass, String propertyName, Object propertyValue) {
-        if (propertyName == null) throw new NullPointerException("name is null");
-        if (propertyName.length() == 0) throw new IllegalArgumentException("name is an empty string");
+    public Field findField(final Class typeClass, final String propertyName, final Object propertyValue) {
+        if (propertyName == null) {
+            throw new NullPointerException("name is null");
+        }
+        if (propertyName.length() == 0) {
+            throw new IllegalArgumentException("name is an empty string");
+        }
 
-        List<Field> fields = new ArrayList<Field>(Arrays.asList(typeClass.getDeclaredFields()));
+        final List<Field> fields = new ArrayList<Field>(Arrays.asList(typeClass.getDeclaredFields()));
         Class parent = typeClass.getSuperclass();
-        while (parent != null){
+        while (parent != null) {
             fields.addAll(Arrays.asList(parent.getDeclaredFields()));
             parent = parent.getSuperclass();
         }
 
-        for (Field field : fields) {
+        for (final Field field : fields) {
             if (field.getName().equals(propertyName)) {
 
                 if (!allowStatic && Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
 
-                Class fieldType = field.getType();
+                final Class fieldType = field.getType();
                 if (fieldType.isPrimitive() && propertyValue == null) {
                     continue;
                 }
@@ -290,6 +320,7 @@ public class ClientInjectionProcessor<T> {
 
     private static void setAccessible(final AccessibleObject accessibleObject) {
         AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
             public Object run() {
                 accessibleObject.setAccessible(true);
                 return null;
@@ -297,7 +328,7 @@ public class ClientInjectionProcessor<T> {
         });
     }
 
-    private static boolean isInstance(Class type, Object instance) {
+    private static boolean isInstance(final Class type, final Object instance) {
         if (type.isPrimitive()) {
             // for primitives the insance can't be null
             if (instance == null) {
@@ -329,17 +360,17 @@ public class ClientInjectionProcessor<T> {
         return instance == null || type.isInstance(instance);
     }
 
-    private static boolean isConvertable(Class type, Object propertyValue) {
+    private static boolean isConvertable(final Class type, final Object propertyValue) {
         return (propertyValue instanceof String && findEditor(type) != null);
     }
 
-    private Object convert(Class type, Object value) {
+    private Object convert(final Class type, Object value) {
         if (type == Object.class || !(value instanceof String)) {
             return value;
         }
 
-        String stringValue = (String) value;
-        PropertyEditor editor = findEditor(type);
+        final String stringValue = (String) value;
+        final PropertyEditor editor = findEditor(type);
         if (editor != null) {
             editor.setAsText(stringValue);
             value = editor.getValue();
@@ -354,11 +385,13 @@ public class ClientInjectionProcessor<T> {
      * @return The resolved editor, if any.  Returns null if a suitable editor
      *         could not be located.
      */
-    private static PropertyEditor findEditor(Class type) {
-        if (type == null) throw new NullPointerException("type is null");
+    private static PropertyEditor findEditor(final Class type) {
+        if (type == null) {
+            throw new NullPointerException("type is null");
+        }
 
         // try to locate this directly from the editor manager first.
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
+        final PropertyEditor editor = PropertyEditorManager.findEditor(type);
 
         // we're outta here if we got one.
         if (editor != null) {
@@ -369,8 +402,7 @@ public class ClientInjectionProcessor<T> {
         return null;
     }
 
-
-    private Class<?> loadClass(String targetClass) {
+    private Class<?> loadClass(final String targetClass) {
         try {
             return classLoader.loadClass(targetClass);
         } catch (ClassNotFoundException e) {

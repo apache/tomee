@@ -42,7 +42,8 @@ import java.util.jar.JarFile;
  * be make to the xbean-finder source first and then copied to this class.  Also, this class
  * should be kept in sync with the xbean-finder code.
  */
-@SuppressWarnings("unchecked") public class ResourceFinder {
+@SuppressWarnings("unchecked")
+public class ResourceFinder {
 
     private final URL[] urls;
     private final String path;
@@ -953,6 +954,7 @@ import java.util.jar.JarFile;
         if (urls == null) {
             return classLoader.getResources(fulluri);
         }
+        //noinspection UseOfObsoleteCollectionType
         final Vector<URL> resources = new Vector();
         for (final URL url : urls) {
             final URL resource = findResource(fulluri, url);
@@ -1038,6 +1040,7 @@ import java.util.jar.JarFile;
                     try {
                         file2 = new File(URLDecoder.decode(filename, "UTF-8"));
                     } catch (Exception e) {
+                        //noinspection deprecation
                         file2 = new File(URLDecoder.decode(filename));
                     }
 

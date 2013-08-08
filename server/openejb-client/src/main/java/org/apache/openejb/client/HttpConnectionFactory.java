@@ -22,8 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -31,7 +31,8 @@ import java.util.Map;
  */
 public class HttpConnectionFactory implements ConnectionFactory {
 
-    public Connection getConnection(URI uri) throws IOException {
+    @Override
+    public Connection getConnection(final URI uri) throws IOException {
         return new HttpConnection(uri);
     }
 
@@ -40,20 +41,20 @@ public class HttpConnectionFactory implements ConnectionFactory {
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
         private OutputStream outputStream;
-        private URI uri;
+        private final URI uri;
 
-        public HttpConnection(URI uri) throws IOException {
+        public HttpConnection(final URI uri) throws IOException {
             this.uri = uri;
-            URL url = uri.toURL();
+            final URL url = uri.toURL();
 
-            Map<String, String> params;
+            final Map<String, String> params;
             try {
                 params = MulticastConnectionFactory.URIs.parseParamters(uri);
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
-            httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setDoOutput(true);
 
             if (params.containsKey("connectTimeout")) {
@@ -67,17 +68,21 @@ public class HttpConnectionFactory implements ConnectionFactory {
             httpURLConnection.connect();
         }
 
+        @Override
         public void discard() {
             try {
                 close();
-            } catch (IOException e) {
+            } catch (Exception e) {
+                //Ignore
             }
         }
 
+        @Override
         public URI getURI() {
             return uri;
         }
 
+        @Override
         public void close() throws IOException {
             IOException exception = null;
             if (inputStream != null) {
@@ -106,6 +111,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
         }
 
+        @Override
         public OutputStream getOutputStream() throws IOException {
             if (outputStream == null) {
                 outputStream = httpURLConnection.getOutputStream();
@@ -113,6 +119,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             return outputStream;
         }
 
+        @Override
         public InputStream getInputStream() throws IOException {
             if (inputStream == null) {
                 inputStream = httpURLConnection.getInputStream();

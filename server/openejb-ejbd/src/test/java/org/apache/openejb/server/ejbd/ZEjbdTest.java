@@ -44,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("ejbd")
 @RunWith(ApplicationComposer.class)
 public class ZEjbdTest {
+
     @Configuration
     public Properties configuration() {
         final Properties configuration = new Properties();
@@ -61,7 +62,9 @@ public class ZEjbdTest {
         int checked = 0;
         for (final ServerService daemon : SimpleServiceManager.class.cast(ServiceManager.get()).getDaemons()) {
             if (ServiceDaemon.class.isInstance(daemon) && daemon.getName().equals("ejbd")) {
-                assertTrue(EjbDaemon.class.cast(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(daemon, "next"), "service"), "service"), "service"), "service"), "service"), "server")).isGzip());
+                assertTrue(EjbDaemon.class.cast(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(Reflections.get(daemon, "next"),
+                                                                                                                                                "service"), "service"), "service"),
+                                                                                                "service"), "service"), "server")).isGzip());
                 checked++;
             }
         }

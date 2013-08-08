@@ -18,27 +18,28 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.InitialContext;
-import javax.naming.Context;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.jws.WebService;
-import static java.util.Arrays.asList;
-import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.io.Serializable;
+import java.util.Properties;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$
@@ -109,21 +110,23 @@ public class UberInterfaceTest extends TestCase {
         }
     }
 
-
     @Local
     @Remote
     @WebService
     public static interface Everything {
+
         public Object echo(Object o);
     }
 
     public static class SuperBean implements Everything {
+
         public Object echo(Object o) {
             return o;
         }
     }
 
     public static class Reference implements Serializable {
+
         private final String value;
 
         public Reference(String value) {
@@ -132,12 +135,18 @@ public class UberInterfaceTest extends TestCase {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             Reference value1 = (Reference) o;
 
-            if (!value.equals(value1.value)) return false;
+            if (!value.equals(value1.value)) {
+                return false;
+            }
 
             return true;
         }

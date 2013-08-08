@@ -23,10 +23,11 @@ import java.net.URI;
  */
 @Log(Log.Level.WARNING)
 public class ConnectionFailed {
+
     private final URI uri;
     private final Throwable cause;
 
-    public ConnectionFailed(URI uri, Throwable cause) {
+    public ConnectionFailed(final URI uri, final Throwable cause) {
         this.uri = uri;
         this.cause = cause;
     }
@@ -34,7 +35,7 @@ public class ConnectionFailed {
     @Override
     public String toString() {
         return "ConnectionFailed{" +
-                "uri=" + uri +
-                " cause=" + this.cause + "}";
+               "uri=" + uri +
+               " cause=" + this.cause + "}";
     }
 }

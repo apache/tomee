@@ -19,6 +19,8 @@ package org.apache.openejb.client.serializer;
 import java.io.Serializable;
 
 public interface EJBDSerializer {
+
     Serializable serialize(Object o);
+
     Object deserialize(Serializable o, Class<?> clazz);
 }

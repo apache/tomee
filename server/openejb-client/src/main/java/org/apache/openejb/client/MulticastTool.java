@@ -40,20 +40,20 @@ public class MulticastTool {
         protected void init() {
             category("Options");
             opt('h', "host").type(String.class).value("239.255.3.2")
-                    .description("Address of the multicast channel");
+                .description("Address of the multicast channel");
 
             opt('p', "port").type(int.class).value(6142)
-                    .description("Port of the multicast channel");
+                .description("Port of the multicast channel");
 
             opt("date-format").type(String.class).value("HH:mm:ss")
-                    .description("Date format to use for log lines");
+                .description("Date format to use for log lines");
 
             category("Sending");
 
             opt('s', "send").type(String.class)
-                    .description("Optional message to broadcast to the channel");
+                .description("Optional message to broadcast to the channel");
             opt('r', "rate").type(long.class).value(1000)
-                    .description("Resend every N milliseconds. Zero sends just once");
+                .description("Resend every N milliseconds. Zero sends just once");
 
             category("Advanced");
 
@@ -107,22 +107,30 @@ public class MulticastTool {
         final MulticastSocket multicast = new MulticastSocket(port);
         multicast.joinGroup(inetAddress);
 
-        if (options.has("reuse-address"))
+        if (options.has("reuse-address")) {
             multicast.setReuseAddress(options.get("reuse-address", false));
-        if (options.has("broadcast"))
+        }
+        if (options.has("broadcast")) {
             multicast.setBroadcast(options.get("broadcast", false));
-        if (options.has("loopback-mode"))
+        }
+        if (options.has("loopback-mode")) {
             multicast.setLoopbackMode(options.get("loopback-mode", false));
-        if (options.has("send-buffer-size"))
+        }
+        if (options.has("send-buffer-size")) {
             multicast.setSendBufferSize(options.get("send-buffer-size", 0));
-        if (options.has("receive-buffer-size"))
+        }
+        if (options.has("receive-buffer-size")) {
             multicast.setReceiveBufferSize(options.get("receive-buffer-size", 0));
-        if (options.has("so-timeout"))
+        }
+        if (options.has("so-timeout")) {
             multicast.setSoTimeout(options.get("so-timeout", 0));
-        if (options.has("time-to-live"))
+        }
+        if (options.has("time-to-live")) {
             multicast.setTimeToLive(options.get("time-to-live", 0));
-        if (options.has("traffic-class"))
+        }
+        if (options.has("traffic-class")) {
             multicast.setTrafficClass(options.get("traffic-class", 0));
+        }
 
         System.out.println("Connected");
         print("host", host);
@@ -165,6 +173,7 @@ public class MulticastTool {
         final byte[] buf = new byte[BUFF_SIZE];
         final DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
 
+        //noinspection InfiniteLoopStatement
         while (true) {
             try {
                 multicast.receive(packet);

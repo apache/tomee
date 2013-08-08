@@ -20,8 +20,21 @@ import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
-import javax.naming.*;
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
 import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
@@ -105,7 +118,12 @@ public class JNDIContext implements InitialContextFactory, Context {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
         } catch (URISyntaxException e) {
-            throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage()).initCause(e);
+            throw (ConfigurationException) new ConfigurationException("Property value for " +
+                                                                      Context.PROVIDER_URL +
+                                                                      " invalid: " +
+                                                                      providerUrl +
+                                                                      " - " +
+                                                                      e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
 
@@ -218,14 +236,15 @@ public class JNDIContext implements InitialContextFactory, Context {
     @Override
     public Object lookup(String name) throws NamingException {
 
-        if (name == null)
+        if (name == null) {
             throw new InvalidNameException("The name cannot be null");
-        else if (name.equals(""))
+        } else if (name.equals("")) {
             return new JNDIContext(this);
-        else if (name.startsWith("java:"))
+        } else if (name.startsWith("java:")) {
             name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/"))
+        } else if (!name.startsWith("/")) {
             name = tail + name;
+        }
 
         final String prop = name.replaceFirst("comp/env/", "");
         String value = System.getProperty(prop);
@@ -268,8 +287,9 @@ public class JNDIContext implements InitialContextFactory, Context {
 
             case ResponseCodes.JNDI_CONTEXT:
                 final JNDIContext subCtx = new JNDIContext(this);
-                if (!name.endsWith("/"))
+                if (!name.endsWith("/")) {
                     name += '/';
+                }
                 subCtx.tail = name;
                 return subCtx;
 
@@ -354,10 +374,12 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String driver = uri.getScheme();
         final String url = uri.getSchemeSpecificPart();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null)
+        if (classLoader == null) {
             getClass().getClassLoader();
-        if (classLoader == null)
+        }
+        if (classLoader == null) {
             ClassLoader.getSystemClassLoader();
+        }
         try {
             final Class<?> clazz = Class.forName(driver, true, classLoader);
             final Constructor<?> constructor = clazz.getConstructor(String.class);
@@ -391,12 +413,13 @@ public class JNDIContext implements InitialContextFactory, Context {
     @SuppressWarnings("unchecked")
     @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-        if (name == null)
+        if (name == null) {
             throw new InvalidNameException("The name cannot be null");
-        else if (name.startsWith("java:"))
+        } else if (name.startsWith("java:")) {
             name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/"))
+        } else if (!name.startsWith("/")) {
             name = tail + name;
+        }
 
         final JNDIRequest req = new JNDIRequest(RequestMethodCode.JNDI_LIST, name);
         req.setModuleId(moduleId);
@@ -480,8 +503,9 @@ public class JNDIContext implements InitialContextFactory, Context {
         @Override
         public synchronized Object getObject() {
             if (super.getObject() == null) {
-                if (failed != null)
+                if (failed != null) {
                     throw failed;
+                }
                 try {
                     super.setObject(context.lookup(getName()));
                 } catch (NamingException e) {
@@ -631,6 +655,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     public static class AuthenticationInfo implements Serializable {
+
         private String realm;
         private String user;
         private char[] password;
