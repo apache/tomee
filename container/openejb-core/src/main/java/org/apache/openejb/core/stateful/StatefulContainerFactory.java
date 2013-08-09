@@ -130,8 +130,14 @@ public class StatefulContainerFactory {
         serviceRecipe.setAllProperties(properties);
 
         // invoke recipe
+        /* the cache should be created with container loader to avoid memory leaks
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) getClass().getClassLoader();
+        */
+        ClassLoader classLoader = StatefulContainerFactory.class.getClassLoader();
+        if (!((String) cache).startsWith("org.apache.openejb")) { // user impl?
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
         cache = serviceRecipe.create(classLoader);
 
         // assign value

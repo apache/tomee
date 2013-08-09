@@ -249,6 +249,9 @@ public class Container {
         if (configuration.getProperties() != null) {
             properties.putAll(configuration.getProperties());
         }
+        if (properties.getProperty("openejb.system.apps") == null)  { // will make startup faster and it is rarely useful for embedded case
+            properties.setProperty("openejb.system.apps", "false");
+        }
 
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
