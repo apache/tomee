@@ -1313,6 +1313,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //                unit.setNonJtaDataSource(unit.getJtaDataSource()+"NonJta");
             //            }
 
+            if ("org.apache.openjpa.persistence.PersistenceProviderImpl".equals(unit.getProvider())) {
+                if (unit.getJtaDataSource() == null) {
+                    unit.setJtaDataSource(unit.getProperty("openjpa.ConnectionFactoryName"));
+                }
+                if (unit.getNonJtaDataSource() == null) {
+                    unit.setNonJtaDataSource(unit.getProperty("openjpa.ConnectionFactory2Name"));
+                }
+            }
+
             logger.debug("raw <jta-data-source>" + unit.getJtaDataSource() + "</jta-datasource>");
             logger.debug("raw <non-jta-data-source>" + unit.getNonJtaDataSource() + "</non-jta-datasource>");
 
