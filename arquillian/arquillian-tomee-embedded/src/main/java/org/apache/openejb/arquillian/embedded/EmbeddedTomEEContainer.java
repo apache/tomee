@@ -24,6 +24,8 @@ import org.apache.openejb.config.AdditionalBeanDiscoverer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
@@ -33,6 +35,10 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +46,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
     private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
+
+    private static final Map<String, MockHttpSession> SESSIONS = new ConcurrentHashMap<String, MockHttpSession>();
 
     private Container container;
 
@@ -128,6 +136,8 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
             this.addServlets(httpContext, info);
 
+            startCdiContexts(name); // ensure tests can use request/session scopes even if we don't have a request
+
             return new ProtocolMetaData().addContext(httpContext);
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,10 +147,11 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     @Override
     public void undeploy(final Archive<?> archive) throws DeploymentException {
-    	try {
-            final String name = archive.getName();
+        final String name = archive.getName();
+        stopCdiContexts(name);
+        try {
             this.container.undeploy(name);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to undeploy", e);
         }
@@ -150,5 +161,33 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             Files.delete(folder);
         }
         Files.delete(file);
+    }
+
+    private void startCdiContexts(final String name) {
+        final WebBeansContext wbc = this.container.getAppContexts(name).getWebBeansContext();
+        if (wbc.getBeanManagerImpl().isInUse()) {
+            final MockHttpSession session = new MockHttpSession();
+            wbc.getContextsService().startContext(RequestScoped.class, null);
+            wbc.getContextsService().startContext(SessionScoped.class, session);
+            wbc.getContextsService().startContext(ConversationScoped.class, null);
+
+            SESSIONS.put(name, session);
+        }
+    }
+
+    private void stopCdiContexts(final String name) {
+        try {
+            final HttpSession session = SESSIONS.remove(name);
+            if (session != null) {
+                final WebBeansContext wbc = container.getAppContexts(container.getInfo(name).appId).getWebBeansContext();
+                if (wbc.getBeanManagerImpl().isInUse()) {
+                    wbc.getContextsService().startContext(RequestScoped.class, null);
+                    wbc.getContextsService().startContext(SessionScoped.class, session);
+                    wbc.getContextsService().startContext(ConversationScoped.class, null);
+                }
+            }
+        } catch (final Exception e) {
+            // no-op
+        }
     }
 }
