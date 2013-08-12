@@ -25,6 +25,7 @@ import java.io.ObjectStreamException;
 public class EJBObjectProxyHandle implements Externalizable {
 
     public static final ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+    private static final long serialVersionUID = -5290534267672475715L;
 
     private transient EJBObjectHandler handler;
     private transient ProtocolMetaData metaData;

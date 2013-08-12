@@ -313,6 +313,7 @@ public class FailoverTest extends TestCase {
 
     public static class Wrapper implements Serializable {
 
+        private static final long serialVersionUID = 4604591462681914507L;
         transient Socket socket;
         private final Host host;
 

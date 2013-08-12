@@ -21,7 +21,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
@@ -35,14 +34,14 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 @SuppressWarnings("UnusedDeclaration")
-public class ProtocolMetaData implements Serializable {
+public class ProtocolMetaData {
 
     public static final String VERSION = "4.6";
 
     private static final String OEJB = "OEJP";
-    private String id;
-    private int major;
-    private int minor;
+    private transient String id;
+    private transient int major;
+    private transient int minor;
 
     public ProtocolMetaData() {
         init(OEJB + "/" + VERSION);

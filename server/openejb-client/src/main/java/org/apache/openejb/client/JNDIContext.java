@@ -656,6 +656,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public static class AuthenticationInfo implements Serializable {
 
+        private static final long serialVersionUID = -8898613532355280735L;
         private String realm;
         private String user;
         private char[] password;

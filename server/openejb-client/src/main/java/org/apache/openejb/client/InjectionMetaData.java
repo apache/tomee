@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class InjectionMetaData implements Externalizable {
 
+    private static final long serialVersionUID = 808826768745812984L;
     private final List<Injection> injections = new ArrayList<Injection>();
     private transient ProtocolMetaData metaData;
 

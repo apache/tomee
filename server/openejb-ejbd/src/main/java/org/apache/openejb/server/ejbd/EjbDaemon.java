@@ -167,11 +167,12 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         try {
 
             final RequestInfos.RequestInfo info = RequestInfos.info();
-            info.inputStream = new CountingInputStream(rawIn);
+            info.setInputStream(new CountingInputStream(rawIn));
 
             // Read client Protocol Version
-            clientMetaData.readExternal(info.inputStream);
-            ois = new EjbObjectInputStream(info.inputStream);
+            final CountingInputStream cis = info.getInputStream();
+            clientMetaData.readExternal(cis);
+            ois = new EjbObjectInputStream(cis);
 
             // Read ServerMetaData
             final ServerMetaData serverMetaData = new ServerMetaData();
@@ -198,11 +199,13 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     clusterHandler.getLogger().debug("Failed to write to ClusterResponse", failure);
 
                     try {
-                        oos = new ObjectOutputStream(info.outputStream);
+                        info.setOutputStream(new CountingOutputStream(rawOut));
+                        oos = new ObjectOutputStream(info.getOutputStream());
                         clusterResponse.setMetaData(clientMetaData);
                         clusterResponse.writeExternal(oos);
+                        oos.flush();
                     } catch (IOException ie) {
-                        final String m = "Failed to write to ClusterResponse";
+                        final String m = "Failed to write to ClusterResponse: " + ie.getMessage();
                         clusterHandler.getLogger().error(m, ie);
                         throw Exceptions.newIOException(m, ie);
                     }
@@ -238,11 +241,16 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             }
 
             try {
-                info.outputStream = new CountingOutputStream(rawOut);
-                PROTOCOL_VERSION.writeExternal(info.outputStream);
-                oos = new ObjectOutputStream(info.outputStream);
+                info.setOutputStream(new CountingOutputStream(rawOut));
 
+                final CountingOutputStream cos = info.getOutputStream();
+                PROTOCOL_VERSION.writeExternal(cos);
+                cos.flush();
+
+                oos = new ObjectOutputStream(cos);
                 clusterHandler.processResponse(clusterResponse, oos, clientMetaData);
+                oos.flush();
+
             } finally {
                 switch (requestType) {
                     case EJB_REQUEST:

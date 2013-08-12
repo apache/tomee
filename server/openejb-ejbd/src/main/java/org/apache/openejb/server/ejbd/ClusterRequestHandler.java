@@ -105,7 +105,7 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
 
             if (ClusterResponse.class.isInstance(response)) {
 
-                final ClusterResponse res = ClusterResponse.class.cast(response);
+                final ClusterResponse res = (ClusterResponse) response;
 
                 try {
                     res.setMetaData(metaData);

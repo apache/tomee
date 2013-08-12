@@ -29,6 +29,7 @@ import java.util.Stack;
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class ThrowableArtifact implements Externalizable {
 
+    private static final long serialVersionUID = 8465895155478377443L;
     private transient Throwable throwable;
     private transient ProtocolMetaData metaData;
 

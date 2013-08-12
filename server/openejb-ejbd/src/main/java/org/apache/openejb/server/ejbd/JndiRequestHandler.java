@@ -45,6 +45,8 @@ import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.server.context.RequestInfos;
+import org.apache.openejb.server.stream.CountingInputStream;
+import org.apache.openejb.server.stream.CountingOutputStream;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -152,7 +154,7 @@ class JndiRequestHandler extends RequestHandler {
 
         if (JNDIResponse.class.isInstance(response)) {
 
-            final JNDIResponse res = JNDIResponse.class.cast(response);
+            final JNDIResponse res = (JNDIResponse) response;
             final JNDIRequest req = res.getRequest();
 
             try {
@@ -208,9 +210,12 @@ class JndiRequestHandler extends RequestHandler {
 
     private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
         final RequestInfos.RequestInfo info = RequestInfos.info();
-        logger.debug("JNDI REQUEST: " + req + " (size = " + info.inputStream.getCount()
+        final CountingInputStream cis = info.getInputStream();
+        final CountingOutputStream cos = info.getOutputStream();
+
+        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? cis.getCount() : 0)
                      + "b, remote-ip =" + info.ip
-                     + ") -- RESPONSE: " + res + " (size = " + info.outputStream.getCount() + "b)");
+                     + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
     }
 
     private String getPrefix(final JNDIRequest req) throws NamingException {

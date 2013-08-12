@@ -49,12 +49,12 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     public static final String OPENEJB_CLIENT_INVOKER_THREADS = "openejb.client.invoker.threads";
     public static final String OPENEJB_CLIENT_INVOKER_QUEUE = "openejb.client.invoker.queue";
 
-    protected static final Method GETEJBHOME = getMethod(EJBObject.class, "getEJBHome",  null);
+    protected static final Method GETEJBHOME = getMethod(EJBObject.class, "getEJBHome", null);
     protected static final Method GETHANDLE = getMethod(EJBObject.class, "getHandle", null);
-    protected static final Method GETPRIMARYKEY = getMethod(EJBObject.class, "getPrimaryKey",  null);
+    protected static final Method GETPRIMARYKEY = getMethod(EJBObject.class, "getPrimaryKey", null);
     protected static final Method ISIDENTICAL = getMethod(EJBObject.class, "isIdentical", EJBObject.class);
     protected static final Method REMOVE = getMethod(EJBObject.class, "remove", null);
-    protected static final Method GETHANDLER = getMethod(EJBObjectProxy.class, "getEJBObjectHandler",  null);
+    protected static final Method GETHANDLER = getMethod(EJBObjectProxy.class, "getEJBObjectHandler", null);
     protected static final Method CANCEL = getMethod(Future.class, "cancel", boolean.class);
 
     //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
