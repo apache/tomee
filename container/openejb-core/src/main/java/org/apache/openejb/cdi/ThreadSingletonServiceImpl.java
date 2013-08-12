@@ -58,7 +58,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
-    private static final String SESSION_CONTEXT_CLAZZ = SystemInstance.get().getProperty("openejb.session-context", null);
+    private final String sessionContextClass;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
@@ -66,7 +66,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
     public ThreadSingletonServiceImpl() {
-        // no-op
+        sessionContextClass = SystemInstance.get().getProperty("openejb.session-context", "").trim();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped", NormalScopedBeanInterceptorHandler.class.getName());
         }
 
-        if (SESSION_CONTEXT_CLAZZ != null && tomee) {
+        if (sessionContextClass() != null && tomee) {
             properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.SessionScoped", "org.apache.tomee.catalina.cdi.SessionNormalScopeBeanHandler");
         }
 
@@ -325,12 +325,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         ctx.clear();
     }
 
-    public static String sessionContextClass() {
-        if (SESSION_CONTEXT_CLAZZ != null) {
-            if ("http".equals(SESSION_CONTEXT_CLAZZ)) { // easy way to manage this config
+    @Override
+    public String sessionContextClass() {
+        if (!sessionContextClass.isEmpty()) {
+            if ("http".equals(sessionContextClass)) { // easy way to manage this config
                 return "org.apache.tomee.catalina.cdi.SessionContextBackedByHttpSession";
             }
-            return SESSION_CONTEXT_CLAZZ;
+            return sessionContextClass;
         }
         return null;
     }

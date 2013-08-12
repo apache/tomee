@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
@@ -342,7 +343,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
-        final String classname = ThreadSingletonServiceImpl.sessionContextClass();
+        final String classname = SystemInstance.get().getComponent(ThreadSingletonService.class).sessionContextClass();
         if (classname != null) {
             try {
                 final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
