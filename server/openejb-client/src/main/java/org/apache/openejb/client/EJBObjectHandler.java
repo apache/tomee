@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     public static final String OPENEJB_CLIENT_INVOKER_THREADS = "openejb.client.invoker.threads";

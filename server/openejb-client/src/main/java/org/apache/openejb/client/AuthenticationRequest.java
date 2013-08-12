@@ -40,6 +40,7 @@ public class AuthenticationRequest implements Request {
         this.credentials = credentials;
     }
 
+    @Override
     public void setMetaData(final ProtocolMetaData metaData) {
         this.metaData = metaData;
     }
@@ -61,6 +62,9 @@ public class AuthenticationRequest implements Request {
         return credentials;
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final byte version = in.readByte(); // future use
@@ -70,6 +74,9 @@ public class AuthenticationRequest implements Request {
         credentials = (String) in.readObject();
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use

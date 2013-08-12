@@ -75,6 +75,7 @@ public class EJBRequest implements ClusterableRequest {
         setPrimaryKey(primaryKey);
     }
 
+    @Override
     public void setMetaData(final ProtocolMetaData metaData) {
         this.metaData = metaData;
         this.body.setMetaData(this.metaData);
@@ -235,14 +236,14 @@ public class EJBRequest implements ClusterableRequest {
         return sb.toString();
     }
 
-    /*
-    When the Request externalizes itself, it will reset
-    the appropriate values so that this instance can be used
-    again.
-
-    There will be one request instance for each handler
-    */
-
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     * <p/>
+     * When the Request externalizes itself, it will reset
+     * the appropriate values so that this instance can be used again.
+     * <p/>
+     * There will be one request instance for each handler
+     */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         ClassNotFoundException ex = null;
@@ -417,6 +418,9 @@ public class EJBRequest implements ClusterableRequest {
             this.requestId = requestId;
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         @SuppressWarnings("unchecked")
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
@@ -468,6 +472,9 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         @Override
         public void writeExternal(final ObjectOutput out) throws IOException {
 
@@ -488,6 +495,9 @@ public class EJBRequest implements ClusterableRequest {
             }
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         protected void writeMethodParameters(final ObjectOutput out, final Class[] types, final Object[] args) throws IOException {
 
             out.writeByte(types.length);
@@ -585,6 +595,9 @@ public class EJBRequest implements ClusterableRequest {
             return orb;
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         protected void readMethodParameters(final ObjectInput in) throws IOException, ClassNotFoundException {
             final int length = in.read();
 

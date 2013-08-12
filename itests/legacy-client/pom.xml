@@ -28,7 +28,7 @@
   <groupId>org.apache.openejb.itests</groupId>
   <artifactId>legacy-client</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Legacy</name>
+  <name>OpenEJB :: iTests :: Legacy Client</name>
 
   <build>
     <plugins>

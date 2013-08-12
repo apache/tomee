@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,7 +87,11 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         remote = remoteInterface != null && (EJBObject.class.isAssignableFrom(remoteInterface) || EJBHome.class.isAssignableFrom(remoteInterface));
     }
 
-    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey, JNDIContext.AuthenticationInfo auth) {
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb,
+                                final ServerMetaData server,
+                                final ClientMetaData client,
+                                final Object primaryKey,
+                                final JNDIContext.AuthenticationInfo auth) {
         this(ejb, server, client, auth);
         this.primaryKey = primaryKey;
     }
@@ -113,7 +118,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             return c.getMethod(method, params);
         } catch (NoSuchMethodException nse) {
             throw new IllegalStateException("Cannot find method: " + c.getName() + "." + method, nse);
-
+        } catch (java.lang.ExceptionInInitializerError eiie) {
+            throw new IllegalStateException("Invalid parameters for method: " + c.getName() + "." + method + " : " + Arrays.toString(params), eiie);
         }
     }
 

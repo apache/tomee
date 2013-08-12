@@ -50,16 +50,26 @@ import static org.apache.openejb.client.Exceptions.newIOException;
 
 public class Client {
 
+    public static final String OPENEJB_CLIENT_RETRY_CONDITION_MAX = "openejb.client.retry.condition.max";
+    private static final String OPENEJB_CLIENT_COMPATIBILITY_VERSION = "openejb.client.protocol.version";
+
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
     private boolean FINEST = logger.isLoggable(Level.FINEST);
     private boolean FINER = logger.isLoggable(Level.FINER);
 
     public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
     private static final ProtocolMetaData PROTOCOL_META_DATA = new ProtocolMetaData();
-    private static final int maxConditionRetry = Integer.parseInt(System.getProperty("openejb.client.retry.condition.max", "20"));
+
+    private static final int maxConditionRetry = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_RETRY_CONDITION_MAX, "20"));
+    private static Client client = new Client();
+    private static final ProtocolMetaData COMPATIBLE_META_DATA;
+
+    static {
+        final String version = System.getProperty(OPENEJB_CLIENT_COMPATIBILITY_VERSION);
+        COMPATIBLE_META_DATA = (null != version ? new ProtocolMetaData(version) : null);
+    }
 
     private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList<Class<? extends Throwable>>();
-    private static Client client = new Client();
     private boolean retry = false;
 
     private final Observers observers = new Observers();
@@ -234,6 +244,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
+                req.setMetaData(COMPATIBLE_META_DATA);
                 req.writeExternal(objectOut);
                 objectOut.flush();
                 out.flush();

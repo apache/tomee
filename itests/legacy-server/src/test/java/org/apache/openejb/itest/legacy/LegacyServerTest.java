@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 
 import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
 
-public class LegacyClientTest {
+public class LegacyServerTest {
 
     static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 

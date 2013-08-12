@@ -25,6 +25,13 @@ public interface Request extends Externalizable {
 
     public RequestType getRequestType();
 
+    /**
+     * Set the protocol metadata that can be used for versioned requests
+     *
+     * @param metaData ProtocolMetaData
+     */
+    public void setMetaData(final ProtocolMetaData metaData);
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 
