@@ -35,6 +35,7 @@ public class ClusterRequest implements Request {
         clusterMetaDataVersion = clusterMetaData.getVersion();
     }
 
+    @Override
     public void setMetaData(final ProtocolMetaData metaData) {
         this.metaData = metaData;
     }
@@ -48,11 +49,17 @@ public class ClusterRequest implements Request {
         return clusterMetaDataVersion;
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         clusterMetaDataVersion = in.readLong();
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeLong(clusterMetaDataVersion);

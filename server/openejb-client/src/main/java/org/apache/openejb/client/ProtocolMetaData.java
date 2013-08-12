@@ -48,6 +48,10 @@ public class ProtocolMetaData implements Serializable {
         init(OEJB + "/" + VERSION);
     }
 
+    public ProtocolMetaData(final String version) {
+        init(OEJB + "/" + version);
+    }
+
     private void init(final String spec) {
 
         if (!spec.matches("^OEJP/[0-9]\\.[0-9]$")) {

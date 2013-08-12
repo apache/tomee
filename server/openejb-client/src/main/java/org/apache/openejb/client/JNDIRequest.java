@@ -36,6 +36,7 @@ public class JNDIRequest implements ClusterableRequest {
         this.requestString = requestString;
     }
 
+    @Override
     public void setMetaData(final ProtocolMetaData metaData) {
         this.metaData = metaData;
     }
@@ -79,6 +80,9 @@ public class JNDIRequest implements ClusterableRequest {
         return serverHash;
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final byte version = in.readByte(); // future use
@@ -94,6 +98,9 @@ public class JNDIRequest implements ClusterableRequest {
         serverHash = in.readInt();
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
