@@ -20,12 +20,25 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 
 import java.io.File;
 
 public class Contexts {
+    public static String getHostname(final StandardContext ctx) {
+        String hostName = null;
+        final Container parentHost = ctx.getParent();
+        if (parentHost != null) {
+            hostName = parentHost.getName();
+        }
+        if ((hostName == null) || (hostName.length() < 1)) {
+            hostName = "_";
+        }
+        return hostName;
+    }
+
     public static File warPath(final Context standardContext) {
         final File file = realWarPath(standardContext);
         if (file == null) {
