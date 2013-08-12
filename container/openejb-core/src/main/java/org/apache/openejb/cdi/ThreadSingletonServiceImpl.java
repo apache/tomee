@@ -58,7 +58,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
 
-    private final String sessionContextClass;
+    private String sessionContextClass = null;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
@@ -66,11 +66,15 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
     public ThreadSingletonServiceImpl() {
-        sessionContextClass = SystemInstance.get().getProperty("openejb.session-context", "").trim();
+        // no-op
     }
 
     @Override
     public void initialize(final StartupObject startupObject) {
+        if (sessionContextClass == null) { // done here cause Cdibuilder trigger this class loading and that's from Warmup so we can't init too early config
+            sessionContextClass = SystemInstance.get().getProperty("openejb.session-context", "").trim();
+        }
+
         final AppContext appContext = startupObject.getAppContext();
 
         appContext.setCdiEnabled(hasBeans(startupObject.getAppInfo()));
