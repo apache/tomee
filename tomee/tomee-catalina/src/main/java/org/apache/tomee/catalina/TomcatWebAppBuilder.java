@@ -1980,7 +1980,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         // create the web module
         final String path = standardContext.getPath();
         logger.debug("context path = " + path);
-        webModule.setHost(standardContext.getHostname());
+        webModule.setHost(Contexts.getHostname(standardContext));
         // Add all Tomcat env entries to context so they can be overriden by the env.properties file
         final NamingResources naming = standardContext.getNamingResources();
         for (final ContextEnvironment environment : naming.findEnvironments()) {
@@ -2012,7 +2012,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webApp.getEnvEntryMap().remove(environment.getName());
             }
         }
-
     }
 
     /**
