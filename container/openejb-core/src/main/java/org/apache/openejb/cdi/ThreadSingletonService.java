@@ -28,5 +28,5 @@ public interface ThreadSingletonService extends SingletonService<WebBeansContext
     void initialize(StartupObject startupObject);
     Object contextEntered(WebBeansContext newOWBContext);
     void contextExited(Object oldOWBContext);
-    
+    String sessionContextClass();
 }
