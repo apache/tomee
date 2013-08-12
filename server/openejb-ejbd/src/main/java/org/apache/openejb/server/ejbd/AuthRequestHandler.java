@@ -97,7 +97,7 @@ class AuthRequestHandler extends RequestHandler {
 
         if (AuthenticationResponse.class.isInstance(response)) {
 
-            final AuthenticationResponse res = AuthenticationResponse.class.cast(response);
+            final AuthenticationResponse res = (AuthenticationResponse) response;
             res.setMetaData(metaData);
 
             try {

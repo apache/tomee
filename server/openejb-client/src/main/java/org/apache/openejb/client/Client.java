@@ -185,9 +185,8 @@ public class Client {
             /* Write the protocol magic         */
             /*----------------------------------*/
             try {
-
                 PROTOCOL_META_DATA.writeExternal(out);
-
+                out.flush();
             } catch (IOException e) {
                 throw newIOException("Cannot write the protocol metadata to the server: ", e);
             }
@@ -197,9 +196,7 @@ public class Client {
             /*----------------------------------*/
             final ObjectOutput objectOut;
             try {
-
                 objectOut = new ObjectOutputStream(out);
-
             } catch (IOException e) {
                 throw newIOException("Cannot open object output stream to server: ", e);
             }
@@ -208,9 +205,7 @@ public class Client {
             /* Write ServerMetaData */
             /*----------------------------------*/
             try {
-
                 server.writeExternal(objectOut);
-
             } catch (IOException e) {
                 throw newIOException("Cannot write the ServerMetaData to the server: ", e);
             }
@@ -223,7 +218,6 @@ public class Client {
                 final ClusterRequest clusterRequest = new ClusterRequest(cluster);
                 objectOut.write(clusterRequest.getRequestType().getCode());
                 clusterRequest.writeExternal(objectOut);
-
             } catch (Throwable e) {
                 throw newIOException("Cannot write the ClusterMetaData to the server: ", e);
             }
@@ -232,9 +226,7 @@ public class Client {
             /* Write request type */
             /*----------------------------------*/
             try {
-
                 objectOut.write(req.getRequestType().getCode());
-
             } catch (IOException e) {
                 throw newIOException("Cannot write the request type to the server: ", e);
             }
@@ -255,7 +247,7 @@ public class Client {
 
             } catch (IOException e) {
 
-                throw newIOException("Cannot write the request to the server: ", e);
+                throw newIOException("Cannot write the request to the server: " + e.getMessage(), e);
             }
 
             /*----------------------------------*/
@@ -278,7 +270,7 @@ public class Client {
 
             } catch (EOFException e) {
 
-                throw newIOException("Prematurely reached the end of the stream.  " + protocolMetaData.getSpec(), e);
+                throw newIOException("Prematurely reached the end of the stream.  " + protocolMetaData.getSpec() + " : " + e.getMessage(), e);
 
             } catch (IOException e) {
 
@@ -295,7 +287,7 @@ public class Client {
             }
 
             /*----------------------------------*/
-            /* Read response */
+            /* Read cluster response */
             /*----------------------------------*/
             try {
                 final ClusterResponse clusterResponse = new ClusterResponse();
@@ -311,13 +303,13 @@ public class Client {
                     }
                 }
             } catch (ClassNotFoundException e) {
-                throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
+                throw new RemoteException("Cannot read the cluster response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
-                throw newIOException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot read the cluster response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
 
             } catch (Throwable e) {
-                throw new RemoteException("Error reading response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw new RemoteException("Error reading cluster response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
             }
 
             /*----------------------------------*/

@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
+    private static final long serialVersionUID = -5561826098789699923L;
     private transient URI[] locations;
     private transient URI location;
     private transient ProtocolMetaData metaData;

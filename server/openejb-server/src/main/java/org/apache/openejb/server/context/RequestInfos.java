@@ -73,8 +73,34 @@ public final class RequestInfos {
     public static class RequestInfo {
 
         public String ip;
-        public CountingInputStream inputStream;
-        public CountingOutputStream outputStream;
+        private CountingInputStream inputStream;
+        private CountingOutputStream outputStream;
+
+        public CountingInputStream getInputStream() {
+
+            if (null == inputStream) {
+                throw new RuntimeException("InputStream has not been set");
+            }
+
+            return inputStream;
+        }
+
+        public CountingOutputStream getOutputStream() {
+
+            if (null == outputStream) {
+                throw new RuntimeException("OutputStream has not been set");
+            }
+
+            return outputStream;
+        }
+
+        public void setInputStream(final CountingInputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        public void setOutputStream(final CountingOutputStream outputStream) {
+            this.outputStream = outputStream;
+        }
 
         @Override
         public String toString() {

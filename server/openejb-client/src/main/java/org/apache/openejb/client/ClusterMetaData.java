@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
  */
 public class ClusterMetaData implements Externalizable {
 
+    private static final long serialVersionUID = 8437242645853639397L;
     private URI[] locations;
     private long version;
     private String connectionStrategy;

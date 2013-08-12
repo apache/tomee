@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 public class SerializationWrapper implements Serializable {
 
+    private static final long serialVersionUID = -9108946890164480879L;
     private String classname;
     private Serializable data;
 

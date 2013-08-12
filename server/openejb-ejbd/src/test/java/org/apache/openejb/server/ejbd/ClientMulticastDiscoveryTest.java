@@ -242,6 +242,7 @@ public class ClientMulticastDiscoveryTest extends TestCase {
 
     public static class Wrapper implements Serializable {
 
+        private static final long serialVersionUID = 5812936504765768722L;
         transient Socket socket;
         private final Host host;
 
