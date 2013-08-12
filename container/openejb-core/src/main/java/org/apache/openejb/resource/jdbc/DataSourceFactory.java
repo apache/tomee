@@ -87,56 +87,68 @@ public class DataSourceFactory {
                                                                      "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
-        DataSource ds;
-        if (createDataSourceFromClass(impl)) { // opposed to "by driver"
-            trimNotSupportedDataSourceProperties(properties);
-
-            final ObjectRecipe recipe = new ObjectRecipe(impl);
-            recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
-            recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-            recipe.allow(Option.NAMED_PARAMETERS);
-            recipe.setAllProperties(properties);
-            if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
-                recipe.setProperty("url", properties.getProperty("JdbcUrl"));
-            }
-
-            final DataSource dataSource = (DataSource) recipe.create();
-
-            if (managed) {
-                if (usePool(properties)) {
-                    ds = creator.poolManaged(name, dataSource, properties);
-                } else {
-                    ds = creator.managed(name, dataSource);
-                }
-            } else {
-                if (usePool(properties)) {
-                    ds = creator.pool(name, dataSource, properties);
-                } else {
-                    ds = dataSource;
-                }
-            }
-        } else { // by driver
-            if (managed) {
-                final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
-                if (xaResourceWrapper != null) {
-                    ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
-                } else {
-                    ds = creator.poolManaged(name, impl.getName(), properties);
-                }
-            } else {
-                ds = creator.pool(name, impl.getName(), properties);
-            }
+        final boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        if (useContainerLoader) {
+            Thread.currentThread().setContextClassLoader(DataSourceFactory.class.getClassLoader());
         }
 
-        // ds and creator are associated here, not after the proxying of the next if if active
-        creatorByDataSource.put(ds, creator);
+        try {
+            DataSource ds;
+            if (createDataSourceFromClass(impl)) { // opposed to "by driver"
+                trimNotSupportedDataSourceProperties(properties);
 
-        if (logSql) {
-            ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                                                     new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+                final ObjectRecipe recipe = new ObjectRecipe(impl);
+                recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                recipe.allow(Option.NAMED_PARAMETERS);
+                recipe.setAllProperties(properties);
+                if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
+                    recipe.setProperty("url", properties.getProperty("JdbcUrl"));
+                }
+
+                final DataSource dataSource = (DataSource) recipe.create();
+
+                if (managed) {
+                    if (usePool(properties)) {
+                        ds = creator.poolManaged(name, dataSource, properties);
+                    } else {
+                        ds = creator.managed(name, dataSource);
+                    }
+                } else {
+                    if (usePool(properties)) {
+                        ds = creator.pool(name, dataSource, properties);
+                    } else {
+                        ds = dataSource;
+                    }
+                }
+            } else { // by driver
+                if (managed) {
+                    final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
+                    if (xaResourceWrapper != null) {
+                        ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
+                    } else {
+                        ds = creator.poolManaged(name, impl.getName(), properties);
+                    }
+                } else {
+                    ds = creator.pool(name, impl.getName(), properties);
+                }
+            }
+
+            // ds and creator are associated here, not after the proxying of the next if if active
+            creatorByDataSource.put(ds, creator);
+
+            if (logSql) {
+                ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                                                         new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+            }
+
+            return ds;
+        } finally {
+            if (useContainerLoader) {
+                Thread.currentThread().setContextClassLoader(oldLoader);
+            }
         }
-
-        return ds;
     }
 
     private static void convert(final Properties properties, final Duration duration, final String key, final String oldKey) {

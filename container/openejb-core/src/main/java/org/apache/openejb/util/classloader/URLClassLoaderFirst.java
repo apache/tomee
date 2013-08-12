@@ -34,6 +34,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // log4j is optional, moreover it will likely not work if not skipped and loaded by a temp classloader
     private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) && skipLib("org.apache.log4j.Logger");
     private static final boolean SKIP_MYFACES = "true".equals(SystemInstance.get().getProperty("openejb.skip.myfaces", "true")) && skipLib("org.apache.myfaces.spi.FactoryFinderProvider");
+    private static final boolean SKIP_HSQLDB = skipLib("org.hsqldb.lib.HsqlTimer");
     // commons-net is only in tomee-plus
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
 
@@ -309,6 +310,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
             }
 
             // other org packages
+            if (org.startsWith("hsqldb.") && SKIP_HSQLDB) return true;
             if (org.startsWith("codehaus.swizzle")) return true;
             if (org.startsWith("w3c.dom")) return true;
             if (org.startsWith("quartz")) return true;
@@ -353,10 +355,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         try {
             final Enumeration<URL> resources = loader.getResources(classname);
             final Collection<URL> thisJSf = Collections.list(resources);
-            if (thisJSf == null || thisJSf.isEmpty()) {
-                return true;
-            }
-            return thisJSf.size() <= 1;
+            return thisJSf.isEmpty() || thisJSf.size() <= 1;
         } catch (final IOException e) {
             return true;
         }
@@ -392,8 +391,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
-        return name != null && name.startsWith("org.slf4j.")
-                && loader.getResource(SLF4J_BINDER_CLASS).equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
+        final URL resource = loader.getResource(SLF4J_BINDER_CLASS);
+        return name != null && name.startsWith("org.slf4j.") && resource != null
+                && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
     }
 
     // useful method for SPI
