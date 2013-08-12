@@ -217,7 +217,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
 
-    private static final boolean SKIP_APP_LOADER_IF_POSSIBLE = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
+    private final boolean skipLoaderIfPossible;
 
     Messages messages = new Messages(Assembler.class.getPackage().getName());
     private final CoreContainerSystem containerSystem;
@@ -281,6 +281,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public Assembler(final JndiFactory jndiFactory) {
+        skipLoaderIfPossible = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.classloader.skip-app-loader-if-possible", "true"));
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
         installNaming();
@@ -1862,7 +1863,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // some lib (DS for instance) rely on AppClassLoader for CDI bean manager usage (common for tests cases where you
         // try to get the app BM from the AppClassLoader having stored it in a map).
         // since we don't really need to create a classloader here when starting from classpath just let skip this step
-        if (SKIP_APP_LOADER_IF_POSSIBLE) { // TODO: maybe use a boolean to know if all urls comes from the classpath to avoid this validation
+        if (skipLoaderIfPossible) { // TODO: maybe use a boolean to know if all urls comes from the classpath to avoid this validation
             final Collection<File> urls = new ArrayList<File>();
             for (final URL url : ClassLoaders.findUrls(parent)) { // need to convert it to file since urls can be file:/xxx or jar:file:///xxx
                 try {
