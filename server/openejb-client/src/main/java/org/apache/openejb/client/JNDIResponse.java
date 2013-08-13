@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 
 public class JNDIResponse implements ClusterableResponse {
 
+    private static final long serialVersionUID = 6741338056648918607L;
     private transient int responseCode = -1;
     private transient Object result;
     private transient ServerMetaData server;

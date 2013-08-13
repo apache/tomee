@@ -24,6 +24,7 @@ import java.rmi.RemoteException;
 
 public class EJBHomeHandle implements java.io.Externalizable, javax.ejb.HomeHandle {
 
+    private static final long serialVersionUID = -5221661986423761808L;
     protected transient EJBHomeProxy ejbHomeProxy;
     protected transient EJBHomeHandler handler;
     private transient ProtocolMetaData metaData;

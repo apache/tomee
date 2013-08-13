@@ -25,6 +25,7 @@ import java.io.ObjectOutput;
  */
 public class ClusterRequest implements Request {
 
+    private static final long serialVersionUID = 2188352573904048149L;
     private transient long clusterMetaDataVersion;
     private transient ProtocolMetaData metaData;
 

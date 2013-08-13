@@ -34,6 +34,7 @@ import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
 
+    private static final long serialVersionUID = -2075915633178128028L;
     private transient RequestMethodCode requestMethod;
     private transient int deploymentCode = 0;
     private transient Object clientIdentity;
@@ -300,6 +301,7 @@ public class EJBRequest implements ClusterableRequest {
         out.writeShort(deploymentCode);
         out.writeObject(clientIdentity);
         out.writeInt(serverHash);
+        out.flush();
 
         body.setMetaData(metaData);
         body.writeExternal(out);
@@ -307,6 +309,7 @@ public class EJBRequest implements ClusterableRequest {
 
     public static class Body implements java.io.Externalizable {
 
+        private static final long serialVersionUID = -5364100745236348268L;
         private transient volatile String toString = null;
         private transient EJBMetaDataImpl ejb;
         private transient ORB orb;
@@ -493,6 +496,8 @@ public class EJBRequest implements ClusterableRequest {
             if (null == metaData || metaData.isAtLeast(4, 6)) {
                 out.writeObject(authentication);
             }
+
+            out.flush();
         }
 
         /**

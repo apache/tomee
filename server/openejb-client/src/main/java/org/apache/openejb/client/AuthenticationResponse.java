@@ -22,6 +22,7 @@ import java.io.ObjectOutput;
 
 public class AuthenticationResponse implements Response {
 
+    private static final long serialVersionUID = 7293643855614467349L;
     private transient int responseCode = -1;
     private transient ClientMetaData identity;
     private transient ServerMetaData server;

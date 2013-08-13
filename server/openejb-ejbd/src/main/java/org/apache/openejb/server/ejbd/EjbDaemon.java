@@ -53,9 +53,6 @@ import java.util.zip.GZIPInputStream;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    //This is used to tell the clients which protocol we understand
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData(); // aligned with org.apache.openejb.client.EJBRequest.readExternal(java.io.ObjectInput)() and org.apache.openejb.client.Client.PROTOCOL_VERSION
-
     static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     private ClientObjectFactory clientObjectFactory;
@@ -69,6 +66,9 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private boolean gzip;
     private EJBDSerializer serializer = null;
 
+    //Four hours
+    private int timeout = 14400000;
+
     public void init(final Properties props) throws Exception {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         //        deploymentIndex = new DeploymentIndex(containerSystem.deployments());
@@ -80,6 +80,12 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         authHandler = new AuthRequestHandler(this);
         clusterHandler = new ClusterRequestHandler(this);
         gzip = "true".equalsIgnoreCase(props.getProperty("gzip", "false"));
+
+        try {
+            this.timeout = Integer.parseInt(props.getProperty("timeout", "14400000"));
+        } catch (Exception e) {
+            //Ignore
+        }
 
         final String serializer = props.getProperty("serializer", null);
         if (serializer != null) {
@@ -109,11 +115,14 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 return;
             }
 
-            in = new BufferedInputStream(socket.getInputStream());
-            out = new BufferedOutputStream(socket.getOutputStream());
+            socket.setSoTimeout(this.timeout);
+
             if (gzip) {
                 in = new GZIPInputStream(new BufferedInputStream(socket.getInputStream()));
                 out = new BufferedOutputStream(new FlushableGZIPOutputStream(socket.getOutputStream()));
+            } else {
+                in = new BufferedInputStream(socket.getInputStream());
+                out = new BufferedOutputStream(socket.getOutputStream());
             }
 
             RequestInfos.initRequestInfo(socket);
@@ -157,7 +166,8 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public void service(final InputStream rawIn, final OutputStream rawOut) throws IOException {
-        final ProtocolMetaData clientMetaData = new ProtocolMetaData();
+
+        final ProtocolMetaData clientProtocol = new ProtocolMetaData();
 
         ObjectInputStream ois = null;
         ObjectOutputStream oos = null;
@@ -171,7 +181,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
             // Read client Protocol Version
             final CountingInputStream cis = info.getInputStream();
-            clientMetaData.readExternal(cis);
+            clientProtocol.readExternal(cis);
             ois = new EjbObjectInputStream(cis);
 
             // Read ServerMetaData
@@ -190,7 +200,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             ClusterResponse clusterResponse = null;
 
             if (requestType == RequestType.CLUSTER_REQUEST) {
-                clusterResponse = clusterHandler.processRequest(ois, clientMetaData);
+                clusterResponse = clusterHandler.processRequest(ois, clientProtocol);
 
                 //Check for immediate failure
                 final Throwable failure = clusterResponse.getFailure();
@@ -201,7 +211,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     try {
                         info.setOutputStream(new CountingOutputStream(rawOut));
                         oos = new ObjectOutputStream(info.getOutputStream());
-                        clusterResponse.setMetaData(clientMetaData);
+                        clusterResponse.setMetaData(clientProtocol);
                         clusterResponse.writeExternal(oos);
                         oos.flush();
                     } catch (IOException ie) {
@@ -227,16 +237,16 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             final Response response;
             switch (requestType) {
                 case EJB_REQUEST:
-                    response = processEjbRequest(ois, clientMetaData);
+                    response = processEjbRequest(ois, clientProtocol);
                     break;
                 case JNDI_REQUEST:
-                    response = processJndiRequest(ois, clientMetaData);
+                    response = processJndiRequest(ois, clientProtocol);
                     break;
                 case AUTH_REQUEST:
-                    response = processAuthRequest(ois, clientMetaData);
+                    response = processAuthRequest(ois, clientProtocol);
                     break;
                 default:
-                    logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestType);
+                    logger.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestType);
                     return;
             }
 
@@ -244,46 +254,48 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 info.setOutputStream(new CountingOutputStream(rawOut));
 
                 final CountingOutputStream cos = info.getOutputStream();
-                PROTOCOL_VERSION.writeExternal(cos);
+
+                //Let client know we are using the requested protocol to respond
+                clientProtocol.writeExternal(cos);
                 cos.flush();
 
                 oos = new ObjectOutputStream(cos);
-                clusterHandler.processResponse(clusterResponse, oos, clientMetaData);
+                clusterHandler.processResponse(clusterResponse, oos, clientProtocol);
                 oos.flush();
 
             } finally {
                 switch (requestType) {
                     case EJB_REQUEST:
-                        processEjbResponse(response, oos, clientMetaData);
+                        processEjbResponse(response, oos, clientProtocol);
                         break;
                     case JNDI_REQUEST:
-                        processJndiResponse(response, oos, clientMetaData);
+                        processJndiResponse(response, oos, clientProtocol);
                         break;
                     case AUTH_REQUEST:
-                        processAuthResponse(response, oos, clientMetaData);
+                        processAuthResponse(response, oos, clientProtocol);
                         break;
                     default:
                         //Should never get here...
-                        logger.error("\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unknown response type " + requestType);
+                        logger.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown response type " + requestType);
                 }
             }
 
         } catch (IllegalArgumentException iae) {
-            final String msg = "\"" + clientMetaData.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
+            final String msg = "\"" + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, iae);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (SecurityException e) {
-            final String msg = "\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
+            final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
             } else {
                 logger.warning(msg + " - Debug for StackTrace");
             }
         } catch (Throwable e) {
-            final String msg = "\"" + requestType + " " + clientMetaData.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
+            final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
             if (logger.isDebugEnabled()) {
                 logger.debug(msg, e);
             } else {

@@ -296,7 +296,7 @@ class EjbRequestHandler extends RequestHandler {
     public void processResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
         if (EJBResponse.class.isInstance(response)) {
 
-            final EJBResponse res = (EJBResponse)response;
+            final EJBResponse res = (EJBResponse) response;
 
             try {
                 res.setMetaData(metaData);

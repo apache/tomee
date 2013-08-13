@@ -22,6 +22,7 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
+    private static final long serialVersionUID = 7009531340198948330L;
     private transient String realm;
     private transient String username;
     private transient String credentials;
