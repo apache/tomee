@@ -65,7 +65,7 @@ public class EmbeddedJarScanner implements JarScanner {
     public void scan(ServletContext context, ClassLoader classloader, JarScannerCallback callback, Set<String> jarsToSkip) {
 
         try {
-            final org.apache.xbean.finder.UrlSet scan = NewLoaderLogic.applyBuiltinExcludes(new org.apache.xbean.finder.UrlSet(classloader), null);
+            final org.apache.xbean.finder.UrlSet scan = NewLoaderLogic.applyBuiltinExcludes(new org.apache.xbean.finder.UrlSet(classloader).excludeJvm(), null);
 
             // scan = scan.exclude(".*/WEB-INF/lib/.*"); // doing it simply prevent ServletContainerInitializer to de discovered
 
