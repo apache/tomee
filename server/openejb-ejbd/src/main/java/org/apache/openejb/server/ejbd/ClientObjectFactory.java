@@ -39,11 +39,12 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
     public ClientObjectFactory(final EjbDaemon daemon, final Properties props) {
 
+        String uriString = "foo://127.0.0.1:4201";
         try {
-            final String uriString = props.getProperty("openejb.ejbd.uri", "foo://127.0.0.1:4201");
+            uriString = (props.getProperty("openejb.ejbd.uri", uriString));
             this.defaultServerMetaData = new ServerMetaData(new URI(uriString));
         } catch (Exception e) {
-            e.printStackTrace();
+            EjbDaemon.logger.error("Failed to read 'openejb.ejbd.uri': " + uriString, e);
         }
     }
 

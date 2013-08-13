@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -89,8 +88,8 @@ public class ClusterMetaData implements Externalizable {
         for (int i = 0; i < locations.length; i++) {
             final Object o = in.readObject();
             try {
-                locations[i] = new URI((String) o);
-            } catch (URISyntaxException e) {
+                locations[i] = URI.create((String) o);
+            } catch (IllegalArgumentException e) {
                 throw (IOException) new IOException().initCause(e);
             }
         }

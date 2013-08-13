@@ -32,6 +32,7 @@ import java.util.List;
  */
 public class NameClassPairEnumeration<T extends NameClassPair> implements NamingEnumeration<T>, Externalizable {
 
+    private static final long serialVersionUID = 5678570940990836625L;
     private transient List<NameClassPair> list;
     private transient Iterator<NameClassPair> iterator;
     private transient ProtocolMetaData metaData;

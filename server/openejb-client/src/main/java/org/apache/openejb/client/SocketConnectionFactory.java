@@ -47,6 +47,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
 
     public static final String PROPERTY_SOCKET_TIMEOUT = "openejb.client.connection.socket.timeout";
+    public static final String PROPERTY_SOCKET_READ = "openejb.client.connection.socket.read";
     public static final String PROPERTY_POOL_TIMEOUT = "openejb.client.connection.pool.timeout";
     private static final String PROPERTY_POOL_TIMEOUT2 = "openejb.client.connectionpool.timeout";
     public static final String PROPERTY_POOL_SIZE = "openejb.client.connection.pool.size";
@@ -57,7 +58,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private static final Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
     private long timeoutPool = 1000;
-    private int timeoutSocket = 500;
+    private int timeoutConnect = 1000;
+    private int timeoutRead = 14400000;
     private int timeoutLinger;
     private String[] enabledCipherSuites;
 
@@ -65,9 +67,11 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         this.size = this.getSize();
         this.timeoutPool = this.getTimeoutPool();
-        this.timeoutSocket = this.getTimeoutSocket();
+        this.timeoutConnect = this.getTimeoutSocket();
         this.timeoutLinger = this.getTimeoutLinger();
+        this.timeoutRead = this.getTimeoutRead();
         this.enabledCipherSuites = this.getEnabledCipherSuites();
+
         try {
             String property = System.getProperty(PROPERTY_KEEPALIVE);
             if (property != null) {
@@ -106,7 +110,12 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private int getTimeoutSocket() {
         final Properties p = System.getProperties();
-        return getInt(p, SocketConnectionFactory.PROPERTY_SOCKET_TIMEOUT, this.timeoutSocket);
+        return getInt(p, SocketConnectionFactory.PROPERTY_SOCKET_TIMEOUT, this.timeoutConnect);
+    }
+
+    private int getTimeoutRead() {
+        final Properties p = System.getProperties();
+        return getInt(p, SocketConnectionFactory.PROPERTY_SOCKET_READ, this.timeoutRead);
     }
 
     private int getSize() {
@@ -288,7 +297,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 this.socket.setTcpNoDelay(true);
                 this.socket.setSoLinger(true, SocketConnectionFactory.this.timeoutLinger);
-                this.socket.connect(address, SocketConnectionFactory.this.timeoutSocket);
+                this.socket.connect(address, SocketConnectionFactory.this.timeoutConnect);
+
+                //Four hours default
+                this.socket.setSoTimeout(SocketConnectionFactory.this.timeoutRead);
 
                 Client.fireEvent(new ConnectionOpened(uri));
 

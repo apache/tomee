@@ -22,6 +22,7 @@ import java.io.ObjectOutput;
 
 public class JNDIRequest implements ClusterableRequest {
 
+    private static final long serialVersionUID = -568798775203142850L;
     private transient RequestMethodCode requestMethod;
     private transient String requestString;
     private transient String moduleId;

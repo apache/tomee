@@ -145,13 +145,16 @@ public class Client {
     }
 
     protected Response processRequest(final Request req, final Response res, final ServerMetaData server) throws RemoteException {
+
         if (server == null) {
             throw new IllegalArgumentException("Server instance cannot be null");
         }
 
         final long start = System.nanoTime();
-
         final ClusterMetaData cluster = getClusterMetaData(server);
+
+        //Determine which protocol to use for request writes
+        final ProtocolMetaData protocolRequest = (null != COMPATIBLE_META_DATA ? COMPATIBLE_META_DATA : PROTOCOL_META_DATA);
 
         /*----------------------------*/
         /* Get a connection to server */
@@ -185,7 +188,7 @@ public class Client {
             /* Write the protocol magic         */
             /*----------------------------------*/
             try {
-                PROTOCOL_META_DATA.writeExternal(out);
+                protocolRequest.writeExternal(out);
                 out.flush();
             } catch (IOException e) {
                 throw newIOException("Cannot write the protocol metadata to the server: ", e);
@@ -205,6 +208,7 @@ public class Client {
             /* Write ServerMetaData */
             /*----------------------------------*/
             try {
+                server.setMetaData(protocolRequest);
                 server.writeExternal(objectOut);
             } catch (IOException e) {
                 throw newIOException("Cannot write the ServerMetaData to the server: ", e);
@@ -216,6 +220,7 @@ public class Client {
             try {
 
                 final ClusterRequest clusterRequest = new ClusterRequest(cluster);
+                clusterRequest.setMetaData(protocolRequest);
                 objectOut.write(clusterRequest.getRequestType().getCode());
                 clusterRequest.writeExternal(objectOut);
             } catch (Throwable e) {
@@ -236,7 +241,7 @@ public class Client {
             /*----------------------------------*/
             try {
 
-                req.setMetaData(COMPATIBLE_META_DATA);
+                req.setMetaData(protocolRequest);
                 req.writeExternal(objectOut);
                 objectOut.flush();
                 out.flush();
@@ -262,19 +267,20 @@ public class Client {
                 throw newIOException("Cannot open input stream to server: ", e);
             }
 
-            ProtocolMetaData protocolMetaData = null;
+            //Determine the server response protocol for reading
+            ProtocolMetaData protocolResponse = null;
             try {
 
-                protocolMetaData = new ProtocolMetaData();
-                protocolMetaData.readExternal(in);
+                protocolResponse = new ProtocolMetaData();
+                protocolResponse.readExternal(in);
 
             } catch (EOFException e) {
 
-                throw newIOException("Prematurely reached the end of the stream.  " + protocolMetaData.getSpec() + " : " + e.getMessage(), e);
+                throw newIOException("Prematurely reached the end of the stream.  " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
 
             } catch (IOException e) {
 
-                throw newIOException("Cannot determine server protocol version: Received " + protocolMetaData.getSpec() + " : " + e.getMessage(), e);
+                throw newIOException("Cannot determine server protocol version: Received " + protocolResponse.getSpec() + " : " + e.getMessage(), e);
             }
 
             final ObjectInput objectIn;
@@ -283,7 +289,7 @@ public class Client {
                 objectIn = new EjbObjectInputStream(in);
 
             } catch (IOException e) {
-                throw newIOException("Cannot open object input stream to server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot open object input stream to server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
             /*----------------------------------*/
@@ -291,7 +297,7 @@ public class Client {
             /*----------------------------------*/
             try {
                 final ClusterResponse clusterResponse = new ClusterResponse();
-                clusterResponse.setMetaData(protocolMetaData);
+                clusterResponse.setMetaData(protocolResponse);
                 clusterResponse.readExternal(objectIn);
                 switch (clusterResponse.getResponseCode()) {
                     case UPDATE: {
@@ -306,26 +312,26 @@ public class Client {
                 throw new RemoteException("Cannot read the cluster response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
-                throw newIOException("Cannot read the cluster response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot read the cluster response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
 
             } catch (Throwable e) {
-                throw new RemoteException("Error reading cluster response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw new RemoteException("Error reading cluster response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
             /*----------------------------------*/
             /* Read response */
             /*----------------------------------*/
             try {
-                res.setMetaData(protocolMetaData);
+                res.setMetaData(protocolResponse);
                 res.readExternal(objectIn);
             } catch (ClassNotFoundException e) {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
-                throw newIOException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot read the response from the server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
 
             } catch (Throwable e) {
-                throw new RemoteException("Error reading response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw new RemoteException("Error reading response from server (" + protocolResponse.getSpec() + ") : " + e.getMessage(), e);
             }
 
             if (retryConditions.size() > 0) {

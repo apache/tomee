@@ -28,6 +28,7 @@ public class EJBResponse implements ClusterableResponse {
      * 2. Append times.
      */
     public static final byte VERSION = 2;
+    private static final long serialVersionUID = 611943612548626399L;
 
     private transient byte version = VERSION;
     private transient int responseCode = -1;
