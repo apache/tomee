@@ -290,7 +290,7 @@ public class TomcatJndiBuilder {
             } else if (contextInfo != null) {
                 comp.rebind("BeanManager", new InjectableBeanManager(cs.getAppContext(contextInfo.appInfo.appId).getWebBeansContext().getBeanManagerImpl()));
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             ignored.printStackTrace();
             // no-op
         }

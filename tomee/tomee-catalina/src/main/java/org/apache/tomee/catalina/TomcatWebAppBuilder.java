@@ -46,7 +46,6 @@ import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
-import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
@@ -478,8 +477,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             // /!\ take care, StandardContext default host = "_" and not null or localhost
-            if (standardContext.getHostname() != null && !"_".equals(standardContext.getHostname())) {
-                webApp.host = standardContext.getHostname();
+            final String hostname = Contexts.getHostname(standardContext);
+            if (hostname != null && !"_".equals(hostname)) {
+                webApp.host = hostname;
             }
 
             final ApplicationParameter appParam = new ApplicationParameter();
@@ -723,7 +723,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // just adding a carriage return to get logs more readable
         logger.info("------------------------- "
-                + standardContext.getHostname().replace("_", defaultHost) + " -> "
+                + Contexts.getHostname(standardContext).replace("_", defaultHost) + " -> "
                 + finalName(standardContext.getPath()));
 
         if (FORCE_RELOADABLE && getContextInfo(standardContext) == null) { // don't do it for ears
@@ -1099,7 +1099,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             if (appModule != null) {
                 try {
-                    contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
+                    contextInfo = addContextInfo(Contexts.getHostname(standardContext), standardContext);
                     contextInfo.standardContext = standardContext; // ensure to do it before an exception can be thrown
 
                     contextInfo.appInfo = configurationFactory.configureApplication(appModule);
@@ -1148,7 +1148,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 if (id.equals(getId(w.host, w.contextRoot)) || id.equals(getId(w.host, w.moduleId))) {
                     if (webAppInfo == null) {
                         webAppInfo = w;
-                    } else if (w.host != null && w.host.equals(standardContext.getHostname())) {
+                    } else if (w.host != null && w.host.equals(Contexts.getHostname(standardContext))) {
                         webAppInfo = w;
                     }
 
@@ -1168,7 +1168,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             // ensure matching (see getId() usage)
-            webAppInfo.host = standardContext.getHostname();
+            webAppInfo.host = Contexts.getHostname(standardContext);
             webAppInfo.contextRoot = standardContext.getName();
 
             // save jsf stuff
@@ -1450,30 +1450,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
+        final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+
         final NamingContextListener ncl = getNamingContextListener(standardContext);
         final String listenerName = ncl.getName();
         ContextAccessController.setWritable(listenerName, standardContext);
         try {
-
-            Context openejbContext = getContainerSystem().getJNDIContext();
-            openejbContext = (Context) openejbContext.lookup("openejb");
-
-            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            // normal case = startup case use standardclassloader
-            // so simply reproduce it even is a method is called from another context.
-            // that said this code (try) shouldn't be useful anymore for tomcat 7
-            if (tccl instanceof WebappClassLoader) {
-                Thread.currentThread().setContextClassLoader(tccl.getParent());
-            }
-
-            final Context root;
-            final Context comp;
-            try {
-                root = (Context) ContextBindings.getClassLoader().lookup("");
-                comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
-            } finally {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            final Context openejbContext = (Context) getContainerSystem().getJNDIContext().lookup("openejb");
+            final Context root = (Context) ContextBindings.getClassLoader().lookup("");
+            final Context comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
 
             // Context root = ncl.getNamingContext();
             // Context comp = (Context) root.lookup("comp");
@@ -1502,12 +1488,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
             safeBind(comp, "TransactionSynchronizationRegistry", synchronizationRegistry);
 
-            safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
-            safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
-        } catch (NamingException e) {
+            if (SystemInstance.get().getComponent(ORB.class) != null) {
+                safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
+            }
+            if (SystemInstance.get().getComponent(HandleDelegate.class) != null) {
+                safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+            }
+        } catch (final NamingException e) {
             // no-op
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalLoader);
+            ContextAccessController.setReadOnly(listenerName);
         }
-        ContextAccessController.setReadOnly(listenerName);
 
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
@@ -1643,7 +1635,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final String name = removeFirstSlashAndWar(web.getContextRoot());
             if (stdName.equals(name)) {
                 webBeansContext = web.getWebbeansContext();
-                if (contextInfo.standardContext.getHostname().equals(web.getHost())) {
+                if (Contexts.getHostname(contextInfo.standardContext).equals(web.getHost())) {
                     break;
                 } // else loop hoping to find a better matching
             }
@@ -2084,7 +2076,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @return id of the context
      */
     private String getId(final StandardContext standardContext) {
-        return getId(standardContext.getHostname(), standardContext.getName());
+        return getId(Contexts.getHostname(standardContext), standardContext.getName());
     }
 
     private String getId(final String host, final String context) {

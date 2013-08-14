@@ -29,7 +29,7 @@ import org.apache.tomee.catalina.OpenEJBValve;
 import java.beans.PropertyChangeListener;
 
 public class TomEERemoteWebapp extends IgnoredStandardContext {
-    private static final String CONTEXT_NAME = SystemInstance.get().getProperty("tomee.remote.support.context", "tomee");
+    private static final String CONTEXT_NAME = SystemInstance.get().getProperty("tomee.remote.support.context", "/tomee");
     private static final String MAPPING = SystemInstance.get().getProperty("tomee.remote.support.mapping", "/ejb");
 
     public TomEERemoteWebapp() {
@@ -37,7 +37,7 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         setParentClassLoader(OpenEJB.class.getClassLoader());
         setDelegate(true);
         setName(CONTEXT_NAME);
-        setPath("/" + CONTEXT_NAME);
+        setPath(CONTEXT_NAME);
         setLoader(new ServerClassLoaderLoader(this));
         addValve(new OpenEJBValve()); // ensure security context is resetted (ThreadLocal) for each request
     }
