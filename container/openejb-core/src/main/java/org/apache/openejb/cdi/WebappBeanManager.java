@@ -256,6 +256,15 @@ public class WebappBeanManager extends BeanManagerImpl {
         return deploymentBeans;
     }
 
+    @Override
+    public Bean<?> getPassivationCapableBean(final String id) {
+        final Bean<?> bean = super.getPassivationCapableBean(id);
+        if (bean == null) {
+            return getParentBm().getPassivationCapableBean(id);
+        }
+        return bean;
+    }
+
     public void afterStart() {
         deploymentBeans = new CopyOnWriteArraySet<Bean<?>>(); // override parent one with a "webapp" bean list
         for (final Bean<?> bean : getParentBm().getBeans()) {
