@@ -123,7 +123,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             if (configuration.isRemoveUnusedWebapps()) {
-                Setup.removeUselessWebapps(openejbHome);
+                Setup.removeUselessWebapps(openejbHome, "tomee");
             }
 
             if (logger.isLoggable(Level.FINE)) {

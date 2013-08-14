@@ -25,6 +25,8 @@ import org.apache.catalina.core.StandardContext;
 
 public class IgnoredStandardContext extends StandardContext {
     public IgnoredStandardContext() {
+        setProcessTlds(false);
+
         // Tomcat has a stupid rule where a life cycle listener must set
         // configured true, or it will treat it as a failed deployment
         addLifecycleListener(new LifecycleListener() {

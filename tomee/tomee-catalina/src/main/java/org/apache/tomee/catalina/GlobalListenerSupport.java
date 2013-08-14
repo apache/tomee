@@ -132,7 +132,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             if (Lifecycle.PERIODIC_EVENT.equals(type)) {
                 contextListener.checkHost(standardHost);
             } else if (Lifecycle.AFTER_START_EVENT.equals(type) && REMOTE_SUPPORT) {
-                standardHost.addChild(new TomEERemoteWebapp());
+                final TomEERemoteWebapp child = new TomEERemoteWebapp();
+                if (!hasChild(standardHost, child.getName())) {
+                    standardHost.addChild(child);
+                } // else old tomee webapp surely
             }
         } else if (StandardServer.class.isInstance(source)) {
             StandardServer standardServer = (StandardServer) source;
@@ -151,6 +154,17 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.afterStop(standardServer);
             }
         }
+    }
+
+    private static boolean hasChild(final StandardHost host, final String name) {
+        for (final Container child : host.findChildren()) {
+            // the TomEERemoteWebapp path = "/" + name
+            if (name.equals(child.getName())
+                || (StandardContext.class.isInstance(child) && ("/" + name).equals(StandardContext.class.cast(child).getPath()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

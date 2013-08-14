@@ -195,19 +195,22 @@ public class Setup {
         }
     }
 
-    @Deprecated
-    public static void replace(final Map<String, String> replacements, final File file) throws IOException {
-        replace(replacements, file, false);
-    }
-
-    public static void removeUselessWebapps(final File tomeeHome) {
+    public static void removeUselessWebapps(final File tomeeHome, final String... exceptions) {
         final File webapps = new File(tomeeHome, "webapps");
         if (webapps.isDirectory()) {
             final File[] files = webapps.listFiles();
             if (files != null) {
                 for (final File webapp : files) {
-                    final String name = webapp.getName();
-                    if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                    boolean delete = true;
+                    if (exceptions != null) {
+                        for (final String ignore : exceptions) {
+                            if (webapp.getName().equals(ignore)) {
+                                delete = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (delete) {
                         JarExtractor.delete(webapp);
                     }
                 }
