@@ -22,6 +22,7 @@ import java.util.Date;
 
 @MappedSuperclass
 public abstract class DatedModel extends Model {
+
     private Date created;
 
     @PrePersist

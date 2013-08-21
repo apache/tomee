@@ -22,6 +22,7 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public interface ThirdSLSBeanLocal {
+
     List<String> businessMethod();
 
     List<String> anotherBusinessMethod();

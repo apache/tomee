@@ -16,17 +16,19 @@
  */
 package org.superbiz.dao;
 
-import java.util.List;
+import org.superbiz.domain.Person;
+
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.superbiz.domain.Person;
+import java.util.List;
 
 @Singleton
 @Lock(LockType.READ)
 public class PersonDAO {
+
     @PersistenceContext
     private EntityManager em;
 

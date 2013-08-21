@@ -25,6 +25,7 @@ import javax.interceptor.Interceptors;
 @Proxy(SocialHandler.class)
 @Interceptors(SocialInterceptor.class)
 public interface SocialBean {
+
     public String facebookStatus();
 
     public String twitterStatus();

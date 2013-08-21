@@ -25,6 +25,7 @@ import javax.persistence.Id;
 
 @Entity
 public class JpaBean {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -44,7 +45,6 @@ public class JpaBean {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public String toString() {
         return "[JpaBean id=" + id + ", name=" + name + "]";

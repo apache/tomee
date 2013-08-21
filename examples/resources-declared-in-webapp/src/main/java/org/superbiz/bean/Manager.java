@@ -23,6 +23,7 @@ import javax.ejb.Singleton;
 
 @Singleton
 public class Manager {
+
     @Resource(name = "My Manager Team", type = ManagerResource.class)
     private ManagerResource resource;
 

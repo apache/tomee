@@ -10,7 +10,7 @@
   OF ANY KIND, either express or implied. See the License for the specific 
   language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>arquillian</artifactId>
@@ -43,6 +43,19 @@
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
       <version>2.0.0-alpha-5</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.2.4</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -54,7 +67,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -188,7 +200,6 @@
                 // -> set to webprofile use all distributions
                 // -> set to jaxrs just jaxrs and plus should be used
                 // -> set to plus use only plus
-
                 def props = project.properties
 
                 def skip = props['maven.test.skip']

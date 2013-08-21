@@ -23,4 +23,5 @@ package org.superbiz.injection.enventry;
  * @version $Revision$ $Date$
  */
 public class Widget {
+
 }

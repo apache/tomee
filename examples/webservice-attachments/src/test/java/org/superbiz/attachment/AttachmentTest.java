@@ -53,8 +53,8 @@ public class AttachmentTest extends TestCase {
     //START SNIPPET: webservice
     public void testAttachmentViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/webservice-attachments/AttachmentImpl?wsdl"),
-                new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
+                                            new URL("http://127.0.0.1:4204/webservice-attachments/AttachmentImpl?wsdl"),
+                                            new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
         assertNotNull(service);
 
         AttachmentWs ws = service.getPort(AttachmentWs.class);
@@ -73,8 +73,8 @@ public class AttachmentTest extends TestCase {
         DataSource source = new ByteArrayDataSource(request.getBytes(), "text/plain; charset=UTF-8");
 
         // not yet supported !
-//        response = ws.stringFromDataSource(source);
-//        assertEquals(request, response);
+        //        response = ws.stringFromDataSource(source);
+        //        assertEquals(request, response);
 
         // Data Handler
         response = ws.stringFromDataHandler(new DataHandler(source));

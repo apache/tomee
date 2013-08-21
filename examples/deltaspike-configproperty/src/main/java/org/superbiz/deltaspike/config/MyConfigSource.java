@@ -16,16 +16,18 @@
  */
 package org.superbiz.deltaspike.config;
 
+import org.apache.deltaspike.core.impl.config.BaseConfigSource;
+import org.apache.deltaspike.core.util.PropertyFileUtils;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
-import org.apache.deltaspike.core.impl.config.BaseConfigSource;
-import org.apache.deltaspike.core.util.PropertyFileUtils;
 
 public class MyConfigSource extends BaseConfigSource {
+
     private static final Logger LOGGER = Logger.getLogger(MyConfigSource.class.getName());
     private static final String MY_CONF_FILE_NAME = "my-app-config.properties";
 

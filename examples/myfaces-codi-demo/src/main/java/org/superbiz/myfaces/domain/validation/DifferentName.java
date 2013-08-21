@@ -29,8 +29,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = DifferentNameValidator.class)
 @Target(TYPE)
 @Retention(RUNTIME)
-public @interface DifferentName
-{
+public @interface DifferentName {
+
     String message() default "invalid name";
 
     Class<?>[] groups() default {};

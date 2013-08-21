@@ -21,6 +21,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
 public class SocialInterceptor {
+
     @AroundInvoke
     public Object around(InvocationContext context) throws Exception {
         String mtd = context.getMethod().getName();

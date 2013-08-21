@@ -25,6 +25,7 @@ import javax.ejb.embeddable.EJBContainer;
 import java.util.List;
 
 public class BookShowInterceptorBindingInheritanceTest extends TestCase {
+
     @EJB
     private BookShowInterceptorBindingInheritanceExplored bookForAShowBean;
     EJBContainer ejbContainer;

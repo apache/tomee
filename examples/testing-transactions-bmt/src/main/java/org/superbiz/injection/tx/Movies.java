@@ -48,7 +48,6 @@ public class Movies {
                 userTransaction.commit();
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
             userTransaction.rollback();

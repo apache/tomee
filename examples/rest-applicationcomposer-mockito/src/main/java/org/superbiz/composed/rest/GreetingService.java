@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 @Singleton
 @Path("/greeting")
 public class GreetingService {
+
     @Inject
     private Messager messager;
 

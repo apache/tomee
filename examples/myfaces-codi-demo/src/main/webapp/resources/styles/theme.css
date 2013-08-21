@@ -25,7 +25,7 @@
 
 body {
     text-align: center; /*font-size: 75%;*/
-/*=12pixels*/
+    /*=12pixels*/
     font-size: 12px;
     font-family: verdana, tahoma, sans-serif;
     font-weight: normal;
@@ -194,7 +194,7 @@ img {
 }
 
 #powered_by {
-/*float: right;*/
+    /*float: right;*/
     text-align: center;
 }
 

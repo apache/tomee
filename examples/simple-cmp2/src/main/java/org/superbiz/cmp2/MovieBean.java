@@ -46,5 +46,4 @@ public abstract class MovieBean implements EntityBean {
 
     public abstract void setYear(int year);
 
-
 }

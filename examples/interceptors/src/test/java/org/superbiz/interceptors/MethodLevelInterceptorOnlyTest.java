@@ -30,6 +30,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class MethodLevelInterceptorOnlyTest extends TestCase {
+
     private InitialContext initCtx;
 
     @Before

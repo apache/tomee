@@ -42,23 +42,24 @@ import static org.junit.Assert.assertTrue;
 @RunAsClient
 @RunWith(Arquillian.class)
 public class SubjectServiceTomEETest {
+
     @ArquillianResource
     private URL url;
 
     @Deployment
     public static WebArchive archive() {
         return new WebModule(SubjectServiceTomEETest.class).getArchive()
-                .addClass(VoteCounter.class)
-                .addPackage(Subject.class.getPackage()) // domain
-                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
-                .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
-                .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addPackage(PollingRouter.class.getPackage()) // core
-                .addPackage(SubjectDao.class.getPackage()) // core
-                .addPackage(SubjectService.class.getPackage()) // front
-                .addAsLibrary(JarLocation.jarLocation(IOUtils.class)) // helper for client test
-                .addAsLibrary(JarLocation.jarLocation(Test.class)); // junit
+                                                           .addClass(VoteCounter.class)
+                   .addPackage(Subject.class.getPackage()) // domain
+                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
+                   .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
+                   .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                   .addPackage(PollingRouter.class.getPackage()) // core
+                   .addPackage(SubjectDao.class.getPackage()) // core
+                   .addPackage(SubjectService.class.getPackage()) // front
+                   .addAsLibrary(JarLocation.jarLocation(IOUtils.class)) // helper for client test
+                   .addAsLibrary(JarLocation.jarLocation(Test.class)); // junit
     }
 
     @Test

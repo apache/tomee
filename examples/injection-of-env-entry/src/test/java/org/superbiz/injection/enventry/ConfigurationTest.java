@@ -25,7 +25,6 @@ import java.util.Date;
 //START SNIPPET: code
 public class ConfigurationTest extends TestCase {
 
-
     public void test() throws Exception {
         final Context context = EJBContainer.createEJBContainer().getContext();
 

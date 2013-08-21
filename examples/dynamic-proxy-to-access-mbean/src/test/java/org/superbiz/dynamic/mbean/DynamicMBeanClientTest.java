@@ -33,6 +33,7 @@ import java.lang.management.ManagementFactory;
 import static junit.framework.Assert.assertEquals;
 
 public class DynamicMBeanClientTest {
+
     private static ObjectName objectName;
     private static EJBContainer container;
 

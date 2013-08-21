@@ -23,8 +23,8 @@ import org.superbiz.myfaces.domain.AbstractDomainObject;
 import java.io.Serializable;
 import java.util.List;
 
-public interface GenericRepository<T extends AbstractDomainObject> extends Serializable
-{
+public interface GenericRepository<T extends AbstractDomainObject> extends Serializable {
+
     void save(T entity);
 
     void remove(T entity);

@@ -16,5 +16,5 @@
     limitations under the License.
 -->
 <Context>
-  <Realm cdi="true" className="org.apache.tomee.catalina.realm.LazyRealm" realmClass="org.superbiz.AuthBean" />
+  <Realm cdi="true" className="org.apache.tomee.catalina.realm.LazyRealm" realmClass="org.superbiz.AuthBean"/>
 </Context>

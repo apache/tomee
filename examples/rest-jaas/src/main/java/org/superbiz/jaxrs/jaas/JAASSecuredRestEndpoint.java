@@ -26,8 +26,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Path("rest")
-@Singleton @Lock(LockType.READ)
+@Singleton
+@Lock(LockType.READ)
 public class JAASSecuredRestEndpoint {
+
     @Resource
     private SessionContext ctx;
 

@@ -19,7 +19,6 @@ package jug.domain;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,12 +29,13 @@ import java.util.Collection;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = Subject.FIND_ALL, query = "select s from Subject s"),
-        @NamedQuery(name = Subject.FIND_BY_NAME_QUERY, query = "select s from Subject s where s.name = :name"),
-        @NamedQuery(name = Subject.COUNT_VOTE, query = "select count(s) from Subject s left join s.votes v where v.value = :value and :name = s.name")
-})
+                  @NamedQuery(name = Subject.FIND_ALL, query = "select s from Subject s"),
+                  @NamedQuery(name = Subject.FIND_BY_NAME_QUERY, query = "select s from Subject s where s.name = :name"),
+                  @NamedQuery(name = Subject.COUNT_VOTE, query = "select count(s) from Subject s left join s.votes v where v.value = :value and :name = s.name")
+              })
 @XmlRootElement
 public class Subject {
+
     public static final String FIND_BY_NAME_QUERY = "Subject.findByName";
     public static final String COUNT_VOTE = "Subject.countVoteNumber";
     public static final String FIND_ALL = "Subject.findAll";

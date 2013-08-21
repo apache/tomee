@@ -20,6 +20,7 @@ package org.superbiz.injection;
  * @version $Revision$ $Date$
  */
 public class Movie {
+
     private String director;
     private String title;
     private int year;
@@ -56,6 +57,5 @@ public class Movie {
     public void setYear(int year) {
         this.year = year;
     }
-
 
 }

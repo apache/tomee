@@ -34,6 +34,7 @@ import java.util.List;
 @Path("/api/comment")
 @Produces({"text/xml", "application/json"})
 public class CommentService {
+
     @EJB
     private CommentDAO commentDao;
 

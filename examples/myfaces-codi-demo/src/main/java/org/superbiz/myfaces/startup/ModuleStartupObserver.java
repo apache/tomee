@@ -26,15 +26,13 @@ import java.util.logging.Logger;
 
 @Singleton
 @Startup
-public class ModuleStartupObserver
-{
+public class ModuleStartupObserver {
+
     private Logger logger = Logger.getLogger(ModuleStartupObserver.class.getName());
 
     @PostConstruct
-    public void logStartup()
-    {
-        if (logger.isLoggable(Level.INFO))
-        {
+    public void logStartup() {
+        if (logger.isLoggable(Level.INFO)) {
             logger.info("starting application module");
         }
     }

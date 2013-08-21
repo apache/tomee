@@ -26,9 +26,9 @@ import javax.validation.constraints.Size;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Size(min = 2, max = 20)
@@ -39,8 +39,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-public @interface Name
-{
+public @interface Name {
+
     public abstract String message() default "invalid name";
 
     public abstract Class<?>[] groups() default {};

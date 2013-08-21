@@ -28,4 +28,5 @@ import java.lang.annotation.Target;
 
 @AccessTimeout(1)
 public @interface AwaitNever {
+
 }

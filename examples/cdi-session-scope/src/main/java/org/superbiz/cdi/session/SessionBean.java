@@ -16,11 +16,12 @@
  */
 package org.superbiz.cdi.session;
 
-import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
+import java.io.Serializable;
 
 @SessionScoped
 public class SessionBean implements Serializable {
+
     private String name;
 
     public String getName() {

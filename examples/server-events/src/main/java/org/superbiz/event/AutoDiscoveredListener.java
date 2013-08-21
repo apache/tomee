@@ -20,6 +20,7 @@ import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreat
 import org.apache.openejb.observer.Observes;
 
 public class AutoDiscoveredListener {
+
     private static String appName;
 
     public void appCreated(@Observes final AssemblerAfterApplicationCreated appCreatedEvent) {

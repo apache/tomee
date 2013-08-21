@@ -27,6 +27,7 @@ import java.util.List;
 @Singleton
 @Lock(LockType.READ)
 public class UserDAO {
+
     @Inject
     private DAO dao;
 

@@ -32,6 +32,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 
 @ViewMetaData
-public @interface InfoPage
-{
+public @interface InfoPage {
+
 }

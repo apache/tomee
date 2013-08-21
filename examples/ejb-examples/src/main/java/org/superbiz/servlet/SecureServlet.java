@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.security.Principal;
 
 public class SecureServlet extends HttpServlet {
+
     @EJB
     private SecureEJBLocal secureEJBLocal;
 

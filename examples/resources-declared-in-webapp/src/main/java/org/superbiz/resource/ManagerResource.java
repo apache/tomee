@@ -17,6 +17,7 @@
 package org.superbiz.resource;
 
 public class ManagerResource {
+
     public String resourceType() {
         return "team";
     }

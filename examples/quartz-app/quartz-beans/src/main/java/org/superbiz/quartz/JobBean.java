@@ -46,12 +46,12 @@ public class JobBean implements JobScheduler {
 
         //Schedule my 'test' job to run now
         final SimpleTrigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity("trigger1", "group1")
-                .forJob(jd)
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withRepeatCount(0)
-                        .withIntervalInSeconds(0))
-                .build();
+                                                    .withIdentity("trigger1", "group1")
+                                                    .forJob(jd)
+                                                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                                                                                       .withRepeatCount(0)
+                                                                                       .withIntervalInSeconds(0))
+                                                    .build();
         return s.scheduleJob(jd, trigger);
     }
 

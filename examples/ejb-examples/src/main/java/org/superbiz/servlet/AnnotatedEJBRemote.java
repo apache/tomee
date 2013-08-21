@@ -21,6 +21,7 @@ import javax.ejb.Remote;
 
 @Remote
 public interface AnnotatedEJBRemote {
+
     String getName();
 
     void setName(String name);

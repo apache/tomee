@@ -70,7 +70,6 @@ public class FriendlyPersonTest extends TestCase {
     }
     //END SNIPPET: remotehome
 
-
     /**
      * Here we lookup and test the FriendlyPerson bean via its EJB 2.1 EJBLocalHome and EJBLocalObject interfaces
      *
@@ -177,6 +176,5 @@ public class FriendlyPersonTest extends TestCase {
 
         assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
     }
-
 
 }

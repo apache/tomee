@@ -18,6 +18,6 @@
  */
 package org.superbiz.myfaces.domain.validation;
 
-public interface UniqueUserName
-{
+public interface UniqueUserName {
+
 }

@@ -23,7 +23,7 @@ import org.superbiz.myfaces.repository.FeedbackRepository;
 import org.superbiz.myfaces.repository.Repository;
 
 @Repository
-public class JpaFeedbackRepository extends AbstractGenericJpaRepository<Feedback> implements FeedbackRepository
-{
+public class JpaFeedbackRepository extends AbstractGenericJpaRepository<Feedback> implements FeedbackRepository {
+
     private static final long serialVersionUID = -4140472572607337575L;
 }

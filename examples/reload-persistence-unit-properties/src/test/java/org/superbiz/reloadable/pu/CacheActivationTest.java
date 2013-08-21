@@ -41,6 +41,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
 public class CacheActivationTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheActivationTest.class);
 
     private static EJBContainer container;

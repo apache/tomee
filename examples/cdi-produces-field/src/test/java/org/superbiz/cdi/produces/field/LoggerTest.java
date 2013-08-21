@@ -19,10 +19,6 @@ package org.superbiz.cdi.produces.field;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.superbiz.cdi.produces.field.ConsoleHandler;
-import org.superbiz.cdi.produces.field.DatabaseHandler;
-import org.superbiz.cdi.produces.field.FileHandler;
-import org.superbiz.cdi.produces.field.Logger;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
@@ -67,6 +63,5 @@ public class LoggerTest {
         logger.log("##### Testing write\n");
         logger = null;
     }
-
 
 }

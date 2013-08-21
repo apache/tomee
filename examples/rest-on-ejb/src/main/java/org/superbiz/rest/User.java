@@ -26,10 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "user.list", query = "select u from User u")
-})
+                  @NamedQuery(name = "user.list", query = "select u from User u")
+              })
 @XmlRootElement(name = "user")
 public class User implements Cloneable {
+
     @Id
     @GeneratedValue
     private long id;

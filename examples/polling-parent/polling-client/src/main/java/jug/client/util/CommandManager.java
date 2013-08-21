@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CommandManager {
+
     private static final Logger LOGGER = Logger.getLogger(CommandManager.class.getName());
     private static final Map<String, Class<?>> COMMANDS = new TreeMap<String, Class<?>>();
 

@@ -30,11 +30,12 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class ListenerTest {
+
     @Deployment
     public static JavaArchive jar() {
         return ShrinkWrap.create(JavaArchive.class, "listener-test.jar")
-                .addClasses(MyListener.class, AutoDiscoveredListener.class)
-                .addAsManifestResource(new StringAsset(AutoDiscoveredListener.class.getName()), ArchivePaths.create("org.apache.openejb.extension"));
+                         .addClasses(MyListener.class, AutoDiscoveredListener.class)
+                         .addAsManifestResource(new StringAsset(AutoDiscoveredListener.class.getName()), ArchivePaths.create("org.apache.openejb.extension"));
     }
 
     @Test

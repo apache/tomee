@@ -27,6 +27,7 @@ import java.util.Date;
 @Lock(LockType.READ)
 @Path("/ejb")
 public class SimpleRESTEJB {
+
     @GET
     public String ejb() {
         return "ejb ok @ " + new Date().toString();

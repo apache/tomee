@@ -18,6 +18,7 @@
 package org.superbiz.dynamic.mbean.simple;
 
 public class Simple implements SimpleMBean {
+
     private int counter = 0;
 
     @Override

@@ -21,6 +21,7 @@ import javax.ejb.Remote;
 //START SNIPPET: code
 @Remote
 public interface FriendlyPersonRemote {
+
     String greet(String friend);
 
     String greet(String language, String friend);

@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 @Local
 public interface AnnotatedEJBLocal {
+
     String getName();
 
     void setName(String name);

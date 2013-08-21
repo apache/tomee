@@ -20,6 +20,6 @@ package org.superbiz.myfaces.repository;
 
 import org.superbiz.myfaces.domain.Feedback;
 
-public interface FeedbackRepository extends GenericRepository<Feedback>
-{
+public interface FeedbackRepository extends GenericRepository<Feedback> {
+
 }

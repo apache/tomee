@@ -20,4 +20,5 @@ import javax.persistence.Entity;
 
 @Entity
 public class Wakeboard extends Wearable {
+
 }

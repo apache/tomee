@@ -25,6 +25,7 @@ import static jug.client.command.impl.ShowPollCommand.SHOW_POLL_CMD;
 
 @Command(name = SHOW_POLL_CMD, usage = SHOW_POLL_CMD + " <name>", description = "show a poll")
 public class ShowPollCommand extends AbstractCommand {
+
     public static final String SHOW_POLL_CMD = "show-poll";
 
     @Override

@@ -22,16 +22,16 @@
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
               version="2.0">
 
-    <application>
-        <locale-config>
-            <default-locale>en</default-locale>
-            <supported-locale>en</supported-locale>
-        </locale-config>
-        <message-bundle>org.superbiz.myfaces.i18n.messages</message-bundle>
-        <resource-bundle>
-            <base-name>org.superbiz.myfaces.i18n.messages</base-name>
-            <var>i18n</var>
-        </resource-bundle>
-    </application>
+  <application>
+    <locale-config>
+      <default-locale>en</default-locale>
+      <supported-locale>en</supported-locale>
+    </locale-config>
+    <message-bundle>org.superbiz.myfaces.i18n.messages</message-bundle>
+    <resource-bundle>
+      <base-name>org.superbiz.myfaces.i18n.messages</base-name>
+      <var>i18n</var>
+    </resource-bundle>
+  </application>
 
 </faces-config>

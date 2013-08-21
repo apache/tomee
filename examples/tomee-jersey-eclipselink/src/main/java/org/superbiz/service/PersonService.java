@@ -16,18 +16,20 @@
  */
 package org.superbiz.service;
 
-import java.util.List;
+import org.superbiz.dao.PersonDAO;
+import org.superbiz.domain.Person;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import org.superbiz.dao.PersonDAO;
-import org.superbiz.domain.Person;
+import java.util.List;
 
 @Path("/person")
 @RequestScoped
 public class PersonService {
+
     @Inject
     private PersonDAO dao;
 

@@ -25,6 +25,7 @@ import java.util.Map;
 
 @Command(name = "client", usage = "client <name>", description = "change client")
 public class SwitchClientCommand extends AbstractCommand {
+
     private Map<String, Class<?>> commands;
 
     @Override

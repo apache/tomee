@@ -21,14 +21,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
-
 public class AddUser {
 
     private int id;
     private String firstName;
     private String lastName;
     private String errorMessage;
-
 
     public String getFirstName() {
         return firstName;
@@ -68,7 +66,7 @@ public class AddUser {
             UserService service = null;
             Properties props = new Properties();
             props.put(Context.INITIAL_CONTEXT_FACTORY,
-                    "org.apache.openejb.core.LocalInitialContextFactory");
+                      "org.apache.openejb.core.LocalInitialContextFactory");
             Context ctx = new InitialContext(props);
             service = (UserService) ctx.lookup("UserServiceImplLocal");
             service.add(new User(id, firstName, lastName));

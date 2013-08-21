@@ -48,7 +48,6 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
         return list;
     }
 
-
     @AroundInvoke
     protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());

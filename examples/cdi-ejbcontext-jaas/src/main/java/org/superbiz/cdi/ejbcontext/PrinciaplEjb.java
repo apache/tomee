@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 
 @Stateless
 public class PrinciaplEjb {
+
     @Resource
     private EJBContext context;
 

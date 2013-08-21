@@ -28,6 +28,7 @@ import java.io.OutputStreamWriter;
 import java.util.Map;
 
 public class Client {
+
     private static final String PROMPT = System.getProperty("user.name") + " @ jug > ";
     private static final String EXIT_CMD = "exit";
 

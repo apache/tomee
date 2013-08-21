@@ -16,8 +16,8 @@
  */
 package org.superbiz.registry;
 
-import org.junit.Assert;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -59,10 +59,10 @@ public class ComponentRegistryTest {
 
         Collection<?> collection = one.getComponents();
         System.out.println(collection);
-        Assert.assertEquals("Reference 'one' - ComponentRegistry contains one record",collection.size(),1);
+        Assert.assertEquals("Reference 'one' - ComponentRegistry contains one record", collection.size(), 1);
 
         collection = two.getComponents();
-        Assert.assertEquals("Reference 'two' - ComponentRegistry contains one record",collection.size(),1);
+        Assert.assertEquals("Reference 'two' - ComponentRegistry contains one record", collection.size(), 1);
     }
 
     @AfterClass

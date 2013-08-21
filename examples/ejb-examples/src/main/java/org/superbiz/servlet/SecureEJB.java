@@ -28,6 +28,7 @@ import java.security.Principal;
 @Stateless
 @DeclareRoles({"user", "manager", "fake"})
 public class SecureEJB implements SecureEJBLocal {
+
     @Resource
     private SessionContext context;
 

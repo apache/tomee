@@ -30,8 +30,8 @@ import javax.interceptor.InvocationContext;
 import java.util.Set;
 
 @ApplicationScoped
-public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter
-{
+public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter {
+
     private static final long serialVersionUID = -6332617547592896599L;
 
     @Inject
@@ -42,10 +42,8 @@ public class LoginAccessDecisionVoter extends AbstractAccessDecisionVoter
     private MessageContext messageContext;
 
     @Override
-    protected void checkPermission(InvocationContext invocationContext, Set<SecurityViolation> violations)
-    {
-        if (!this.userHolder.isLoggedIn())
-        {
+    protected void checkPermission(InvocationContext invocationContext, Set<SecurityViolation> violations) {
+        if (!this.userHolder.isLoggedIn()) {
             violations.add(newSecurityViolation(this.messageContext.message().text("{msgAccessDenied}").toText()));
         }
     }

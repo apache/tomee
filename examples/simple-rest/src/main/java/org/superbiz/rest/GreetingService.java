@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 
 @Path("/greeting")
 public class GreetingService {
+
     @GET
     public String message() {
         return "Hi REST!";

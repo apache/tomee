@@ -27,6 +27,7 @@ import javax.persistence.PersistenceContext;
 // for hibernate it works without this hack
 @ApplicationScoped
 public class DataSourceInitializer {
+
     @PersistenceContext(unitName = "client1")
     private EntityManager client1;
 

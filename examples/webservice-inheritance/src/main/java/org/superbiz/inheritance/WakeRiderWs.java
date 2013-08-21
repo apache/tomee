@@ -26,6 +26,7 @@ import java.util.List;
 @WebService(targetNamespace = "http://superbiz.org/wsdl")
 @XmlSeeAlso({Wakeboard.class, WakeboardBinding.class, Tower.class})
 public interface WakeRiderWs {
+
     public void addItem(Item item) throws Exception;
 
     public void deleteMovie(Item item) throws Exception;

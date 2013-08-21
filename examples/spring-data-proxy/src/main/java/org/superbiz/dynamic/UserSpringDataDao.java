@@ -16,7 +16,6 @@
  */
 package org.superbiz.dynamic;
 
-
 import org.apache.openejb.api.Proxy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -28,5 +27,6 @@ import javax.persistence.PersistenceContext;
 @Proxy(SpringDataProxy.class)
 @PersistenceContext(name = "dynamic")
 public interface UserSpringDataDao extends JpaRepository<User, Long> {
+
     User findByName(@Param("name") final String name);
 }

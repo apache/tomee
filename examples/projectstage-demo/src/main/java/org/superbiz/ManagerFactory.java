@@ -22,6 +22,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 public final class ManagerFactory {
+
     @Inject
     private ProjectStage projectStage;
 

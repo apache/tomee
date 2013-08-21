@@ -38,7 +38,6 @@ public class Messages {
     @Resource
     private Queue chatQueue;
 
-
     public void sendMessage(String text) throws JMSException {
 
         Connection connection = null;
@@ -62,8 +61,12 @@ public class Messages {
             producer.send(message);
         } finally {
             // Clean up
-            if (session != null) session.close();
-            if (connection != null) connection.close();
+            if (session != null) {
+                session.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
@@ -87,9 +90,15 @@ public class Messages {
 
             return message.getText();
         } finally {
-            if (consumer != null) consumer.close();
-            if (session != null) session.close();
-            if (connection != null) connection.close();
+            if (consumer != null) {
+                consumer.close();
+            }
+            if (session != null) {
+                session.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
 
     }

@@ -23,6 +23,7 @@ import javax.ejb.EJBHome;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbHome extends EJBHome {
+
     FriendlyPersonEjbObject create() throws CreateException, RemoteException;
 }
 //END SNIPPET: code

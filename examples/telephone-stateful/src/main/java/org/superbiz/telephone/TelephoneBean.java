@@ -27,15 +27,15 @@ import java.util.List;
 public class TelephoneBean implements Telephone {
 
     private static final String[] answers = {
-            "How nice.",
-            "Oh, of course.",
-            "Interesting.",
-            "Really?",
-            "No.",
-            "Definitely.",
-            "I wondered about that.",
-            "Good idea.",
-            "You don't say!",
+                                                "How nice.",
+                                                "Oh, of course.",
+                                                "Interesting.",
+                                                "Really?",
+                                                "No.",
+                                                "Definitely.",
+                                                "I wondered about that.",
+                                                "Good idea.",
+                                                "You don't say!",
     };
 
     private final List<String> conversation = new ArrayList<String>();

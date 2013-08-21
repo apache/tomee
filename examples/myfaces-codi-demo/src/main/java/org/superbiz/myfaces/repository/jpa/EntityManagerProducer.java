@@ -28,23 +28,20 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 @ApplicationScoped
-public class EntityManagerProducer
-{
+public class EntityManagerProducer {
+
     @PersistenceUnit(unitName = "demoApplicationPU")
     private EntityManagerFactory entityManagerFactory;
 
     @Produces
     @Default
     @RequestScoped
-    public EntityManager create()
-    {
+    public EntityManager create() {
         return this.entityManagerFactory.createEntityManager();
     }
 
-    public void dispose(@Disposes @Default EntityManager entityManager)
-    {
-        if (entityManager.isOpen())
-        {
+    public void dispose(@Disposes @Default EntityManager entityManager) {
+        if (entityManager.isOpen()) {
             entityManager.close();
         }
     }

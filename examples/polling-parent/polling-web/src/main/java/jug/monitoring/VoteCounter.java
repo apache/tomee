@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 @Description("count the number of vote by subject")
 public class VoteCounter {
+
     private final Map<String, Subject> subjects = new ConcurrentHashMap<String, Subject>();
 
     @ManagedAttribute

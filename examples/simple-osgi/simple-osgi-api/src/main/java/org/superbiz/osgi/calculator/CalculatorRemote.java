@@ -20,6 +20,7 @@ import javax.ejb.Remote;
 
 @Remote
 public interface CalculatorRemote {
+
     int add(int a, int b);
 
     int subtract(int a, int b);

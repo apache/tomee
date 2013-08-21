@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A helper class for the test. 
+ * A helper class for the test.
  * Keeps track of methods intercepted during one testXXX run
  * Keeps track of interceptors applied during one textXXX run
  */
 public class InterceptionOrderTracker {
+
     /*
      * Contains method names that were intercepted by the interceptors
      */

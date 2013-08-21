@@ -18,5 +18,5 @@
 -->
 <%@ page session="false" %>
 <%
-    response.sendRedirect("calculator.jsf");
+  response.sendRedirect("calculator.jsf");
 %>

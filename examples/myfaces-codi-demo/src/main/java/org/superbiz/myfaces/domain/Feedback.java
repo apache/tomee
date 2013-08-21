@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Feedback extends AbstractDomainObject
-{
+public class Feedback extends AbstractDomainObject {
+
     private static final long serialVersionUID = -431924785266663236L;
 
     @Column(nullable = false, length = 32)
@@ -39,8 +39,7 @@ public class Feedback extends AbstractDomainObject
     @OneToMany(mappedBy = "feedback", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<Comment>();
 
-    public void addComment(Comment comment)
-    {
+    public void addComment(Comment comment) {
         comment.setFeedback(this);
         this.comments.add(comment);
     }
@@ -49,28 +48,23 @@ public class Feedback extends AbstractDomainObject
      * generated
      */
 
-    public List<Comment> getComments()
-    {
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public String getTopic()
-    {
+    public String getTopic() {
         return topic;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setTopic(String topic)
-    {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 }

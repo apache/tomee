@@ -23,6 +23,7 @@ import javax.faces.bean.ManagedBean;
 
 @ManagedBean
 public class CalculatorBean {
+
     @EJB
     Calculator calculator;
     private double x;

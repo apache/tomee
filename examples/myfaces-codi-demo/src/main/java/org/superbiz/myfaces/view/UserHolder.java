@@ -30,8 +30,8 @@ import java.io.Serializable;
 
 //due to the enhanced entities it isn't possible to use them directly (due to final methods)
 @WindowScoped
-public class UserHolder implements Serializable
-{
+public class UserHolder implements Serializable {
+
     private static final long serialVersionUID = -7687528373042288584L;
 
     @Inject
@@ -41,18 +41,15 @@ public class UserHolder implements Serializable
     @Produces
     @Dependent
     @Named("currentUser")
-    protected User createCurrentUser()
-    {
+    protected User createCurrentUser() {
         return this.user;
     }
 
-    public void setCurrentUser(User user)
-    {
+    public void setCurrentUser(User user) {
         this.user = user;
     }
 
-    public boolean isLoggedIn()
-    {
+    public boolean isLoggedIn() {
         return this.user.getId() != null;
     }
 }

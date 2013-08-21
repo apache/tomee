@@ -21,5 +21,6 @@ import javax.jws.WebService;
 
 @WebService(targetNamespace = "http://examples.org/wsdl")
 public interface HelloEjb {
+
     String hello(String name);
 }

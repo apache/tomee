@@ -125,6 +125,7 @@ public class MovieTest extends TestCase {
     }
 
     public interface Caller {
+
         public <V> V call(Callable<V> callable) throws Exception;
     }
 

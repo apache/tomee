@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
 public final class StandardEjbdServer {
+
     private StandardEjbdServer() {
         // no-op
     }

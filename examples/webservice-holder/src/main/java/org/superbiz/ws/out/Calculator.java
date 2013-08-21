@@ -23,10 +23,10 @@ import javax.xml.ws.Holder;
 
 @Stateless
 @WebService(
-        portName = "CalculatorPort",
-        serviceName = "CalculatorService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.ws.out.CalculatorWs")
+               portName = "CalculatorPort",
+               serviceName = "CalculatorService",
+               targetNamespace = "http://superbiz.org/wsdl",
+               endpointInterface = "org.superbiz.ws.out.CalculatorWs")
 public class Calculator implements CalculatorWs {
 
     public void sumAndMultiply(int a, int b,

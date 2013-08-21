@@ -29,8 +29,9 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-@WebFilter(displayName = "routing-filter", urlPatterns = { "/*" })
+@WebFilter(displayName = "routing-filter", urlPatterns = {"/*"})
 public class RoutingFilter implements Filter {
+
     private static final Logger LOGGER = Logger.getLogger(RoutingFilter.class.getName());
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
@@ -61,7 +62,7 @@ public class RoutingFilter implements Filter {
     }
 
     private String getRandomClient() {
-        return "client" +  (1 + COUNTER.getAndIncrement() % 2); // 2 clients
+        return "client" + (1 + COUNTER.getAndIncrement() % 2); // 2 clients
     }
 
     @Override
