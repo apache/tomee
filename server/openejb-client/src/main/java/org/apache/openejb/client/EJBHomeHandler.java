@@ -31,7 +31,7 @@ import java.rmi.RemoteException;
 @SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
-    private static final long serialVersionUID = -9217145176099242745L;
+    private static final long serialVersionUID = 4212515330775330214L;
     protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
     protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
     @SuppressWarnings("RedundantArrayCreation")

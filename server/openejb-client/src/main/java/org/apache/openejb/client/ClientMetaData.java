@@ -25,7 +25,7 @@ import java.io.ObjectOutput;
 
 public class ClientMetaData implements Externalizable {
 
-    private static final long serialVersionUID = 8963006076572980814L;
+    private static final long serialVersionUID = -8769170505291957783L;
     transient Object clientIdentity;
     private transient EJBDSerializer serializer;
     private transient ProtocolMetaData metaData;
