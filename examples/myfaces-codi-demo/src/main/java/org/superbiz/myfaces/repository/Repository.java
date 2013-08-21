@@ -37,6 +37,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @RequestScoped
 @Transactional
-public @interface Repository
-{
+public @interface Repository {
+
 }

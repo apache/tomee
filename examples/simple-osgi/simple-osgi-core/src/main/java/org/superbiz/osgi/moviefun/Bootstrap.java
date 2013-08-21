@@ -25,6 +25,7 @@ import javax.ejb.Startup;
 @Singleton
 @Startup
 public class Bootstrap {
+
     @EJB
     private Movies movies;
 

@@ -37,8 +37,8 @@ import static org.apache.myfaces.extensions.cdi.message.api.payload.MessageSever
 
 @Named
 @ViewAccessScoped
-public class RegistrationPage implements Serializable
-{
+public class RegistrationPage implements Serializable {
+
     private static final long serialVersionUID = 3844502441069448490L;
 
     @Inject
@@ -48,7 +48,9 @@ public class RegistrationPage implements Serializable
     private Conversation conversation;
 
     @Inject
-    private @Jsf MessageContext messageContext;
+    private
+    @Jsf
+    MessageContext messageContext;
 
     private User user = new User();
 
@@ -59,13 +61,12 @@ public class RegistrationPage implements Serializable
     private String repeatedPassword;
 
     @BeanValidation(useGroups = Full.class) //triggers UniqueUserNameValidator
-    public Class<? extends Pages> register()
-    {
+    public Class<? extends Pages> register() {
         this.userRepository.save(this.user);
         this.messageContext.message()
-                .text("{msgUserRegistered}")
-                .namedArgument("userName", this.user.getUserName())
-                .add();
+                           .text("{msgUserRegistered}")
+                           .namedArgument("userName", this.user.getUserName())
+                           .add();
 
         //in order to re-use the page-bean for the login-page
         this.conversation.close();
@@ -73,11 +74,9 @@ public class RegistrationPage implements Serializable
         return Pages.Login.class;
     }
 
-    public Class<? extends Pages> login()
-    {
+    public Class<? extends Pages> login() {
         User user = this.userRepository.loadUser(this.user.getUserName());
-        if (user != null && user.getPassword().equals(this.user.getPassword()))
-        {
+        if (user != null && user.getPassword().equals(this.user.getPassword())) {
             this.messageContext.message().text("{msgLoginSuccessful}").add();
             this.userHolder.setCurrentUser(user);
             return Pages.About.class;
@@ -88,18 +87,15 @@ public class RegistrationPage implements Serializable
         return null;
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
-    public String getRepeatedPassword()
-    {
+    public String getRepeatedPassword() {
         return repeatedPassword;
     }
 
-    public void setRepeatedPassword(String repeatedPassword)
-    {
+    public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
     }
 }

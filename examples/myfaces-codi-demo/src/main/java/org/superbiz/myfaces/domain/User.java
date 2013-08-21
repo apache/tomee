@@ -18,7 +18,11 @@
  */
 package org.superbiz.myfaces.domain;
 
-import org.superbiz.myfaces.domain.validation.*;
+import org.superbiz.myfaces.domain.validation.DifferentName;
+import org.superbiz.myfaces.domain.validation.Name;
+import org.superbiz.myfaces.domain.validation.Partial;
+import org.superbiz.myfaces.domain.validation.UniqueUserName;
+import org.superbiz.myfaces.domain.validation.UserName;
 
 import javax.enterprise.inject.Typed;
 import javax.persistence.Column;
@@ -33,8 +37,8 @@ import javax.validation.constraints.Size;
 @NamedQuery(name = "findUserByName", query = "select u from User u where u.userName = :currentUser")
 @DifferentName(groups = Partial.class)
 @Typed()
-public class User extends AbstractDomainObject
-{
+public class User extends AbstractDomainObject {
+
     private static final long serialVersionUID = 3810638653455000233L;
 
     @UserName(groups = UniqueUserName.class)
@@ -57,54 +61,44 @@ public class User extends AbstractDomainObject
      * generated
      */
 
-    public User()
-    {
+    public User() {
     }
 
-    public User(String userName, String firstName, String lastName)
-    {
+    public User(String userName, String firstName, String lastName) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public String getUserName()
-    {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName)
-    {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public String getFirstName()
-    {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName)
-    {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName()
-    {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName)
-    {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password)
-    {
+    public void setPassword(String password) {
         this.password = password;
     }
 }

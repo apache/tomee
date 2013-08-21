@@ -20,5 +20,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface MethodLevelInterceptorOnlyIntf<T extends Serializable> {
+
     public List<T> makePersistent(T entity);
 }

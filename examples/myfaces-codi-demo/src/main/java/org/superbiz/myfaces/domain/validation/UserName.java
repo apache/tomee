@@ -35,8 +35,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = UniqueUserNameValidator.class)
 @Target(FIELD)
 @Retention(RUNTIME)
-public @interface UserName
-{
+public @interface UserName {
+
     String message() default "user-name exists already";
 
     Class<?>[] groups() default {};

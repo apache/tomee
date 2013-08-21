@@ -29,6 +29,7 @@ import java.util.List;
 @Singleton
 @Lock(LockType.READ)
 public class CommentDAO {
+
     @Inject
     private DAO dao;
 

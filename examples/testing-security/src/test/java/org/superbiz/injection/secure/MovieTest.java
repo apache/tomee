@@ -123,8 +123,8 @@ public class MovieTest extends TestCase {
 
     }
 
-
     public static interface Caller {
+
         public <V> V call(Callable<V> callable) throws Exception;
     }
 

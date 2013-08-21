@@ -20,7 +20,7 @@ package org.superbiz.myfaces.repository;
 
 import org.superbiz.myfaces.domain.User;
 
-public interface UserRepository extends GenericRepository<User>
-{
+public interface UserRepository extends GenericRepository<User> {
+
     User loadUser(String userName);
 }

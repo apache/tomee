@@ -40,12 +40,32 @@
       <groupId>org.jboss.arquillian.container</groupId>
       <artifactId>arquillian-container-spi</artifactId>
       <version>${version.arquillian}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>shrinkwrap-descriptors-api-base</artifactId>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>shrinkwrap-descriptors-spi</artifactId>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet</artifactId>
       <version>${version.arquillian}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>shrinkwrap-descriptors-api-base</artifactId>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>shrinkwrap-descriptors-spi</artifactId>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -53,6 +73,12 @@
       <artifactId>arquillian-junit-container</artifactId>
       <version>${version.arquillian}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>shrinkwrap-descriptors-spi</artifactId>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

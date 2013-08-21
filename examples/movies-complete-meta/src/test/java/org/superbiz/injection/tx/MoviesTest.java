@@ -32,7 +32,7 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * See the transaction-rollback example as it does the same thing
- * via UserTransaction and shows more techniques for rollback 
+ * via UserTransaction and shows more techniques for rollback
  */
 //START SNIPPET: code
 public class MoviesTest extends TestCase {
@@ -94,8 +94,8 @@ public class MoviesTest extends TestCase {
         }
     }
 
-
     public static interface Caller {
+
         public <V> V call(Callable<V> callable) throws Exception;
     }
 

@@ -21,33 +21,30 @@ import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.junit.Arquillian
 import org.jboss.shrinkwrap.api.ArchivePaths
 import org.jboss.shrinkwrap.api.ShrinkWrap
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Test
 import org.junit.runner.RunWith
 
+import javax.persistence.EntityManager
+import javax.persistence.EntityManagerFactory
+import javax.persistence.PersistenceUnit
+
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
-import static org.junit.Assert.assertThat
-import static org.hamcrest.CoreMatchers.is
-import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset
-import javax.persistence.PersistenceUnit
-import javax.persistence.EntityManagerFactory
-
-import static org.junit.Assert.assertNotNull
-import javax.persistence.EntityManager
-
 @RunWith(Arquillian.class)
 class GroovyJPATest {
+
     @PersistenceUnit
     private EntityManagerFactory emf
 
     @Deployment
     static WebArchive war() {
         ShrinkWrap.create(WebArchive.class)
-            .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
-            .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"))
-            .addClasses(Person.class)
+                  .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
+                  .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"))
+                  .addClasses(Person.class)
     }
 
     @Test

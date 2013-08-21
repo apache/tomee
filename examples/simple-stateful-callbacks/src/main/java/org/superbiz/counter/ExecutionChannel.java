@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutionChannel {
+
     private static final ExecutionChannel INSTANCE = new ExecutionChannel();
 
     private final List<ExecutionObserver> observers = new ArrayList<ExecutionObserver>();

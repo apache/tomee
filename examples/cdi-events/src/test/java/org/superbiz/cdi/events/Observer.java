@@ -27,6 +27,7 @@ import java.util.List;
 
 @Singleton
 public class Observer {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Observer.class);
 
     private List<Date> dates = new ArrayList<Date>();

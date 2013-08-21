@@ -23,6 +23,7 @@ import javax.inject.Inject;
 // just to take care to refresh it, otherwise using postcontruct you can see kind of cache effect on session bean
 @RequestScoped
 public class AnswerBean {
+
     @Inject
     private SessionBean bean;
 

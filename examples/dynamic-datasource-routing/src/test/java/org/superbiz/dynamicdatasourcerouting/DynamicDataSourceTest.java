@@ -32,41 +32,42 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * If you are using openejb.xml the test properties are:
- *
- *
-  <!-- Router and datasource -->
-  <Resource id="My Router" type="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter" provider="org.routertest:DeterminedRouter">
-    DatasourceNames = database1 database2 database3
-    DefaultDataSourceName = database1
-  </Resource>
-  <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="org.router:RoutedDataSource">
-    Router = My Router
-  </Resource>
-
-  <!-- real datasources -->
-  <Resource id="database1" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db1
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
-  <Resource id="database2" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db2
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
-  <Resource id="database3" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db3
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
+ * <p/>
+ * <p/>
+ * <!-- Router and datasource -->
+ * <Resource id="My Router" type="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter" provider="org.routertest:DeterminedRouter">
+ * DatasourceNames = database1 database2 database3
+ * DefaultDataSourceName = database1
+ * </Resource>
+ * <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="org.router:RoutedDataSource">
+ * Router = My Router
+ * </Resource>
+ * <p/>
+ * <!-- real datasources -->
+ * <Resource id="database1" type="DataSource">
+ * JdbcDriver = org.hsqldb.jdbcDriver
+ * JdbcUrl = jdbc:hsqldb:mem:db1
+ * UserName = sa
+ * Password
+ * JtaManaged = true
+ * </Resource>
+ * <Resource id="database2" type="DataSource">
+ * JdbcDriver = org.hsqldb.jdbcDriver
+ * JdbcUrl = jdbc:hsqldb:mem:db2
+ * UserName = sa
+ * Password
+ * JtaManaged = true
+ * </Resource>
+ * <Resource id="database3" type="DataSource">
+ * JdbcDriver = org.hsqldb.jdbcDriver
+ * JdbcUrl = jdbc:hsqldb:mem:db3
+ * UserName = sa
+ * Password
+ * JtaManaged = true
+ * </Resource>
  */
 public class DynamicDataSourceTest {
+
     @Test
     public void route() throws Exception {
         String[] databases = new String[]{"database1", "database2", "database3"};

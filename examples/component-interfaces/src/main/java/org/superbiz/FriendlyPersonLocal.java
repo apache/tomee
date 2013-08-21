@@ -22,6 +22,7 @@ import javax.ejb.Local;
 
 @Local
 public interface FriendlyPersonLocal {
+
     String greet(String friend);
 
     String greet(String language, String friend);

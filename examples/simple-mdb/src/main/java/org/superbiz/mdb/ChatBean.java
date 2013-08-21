@@ -86,8 +86,12 @@ public class ChatBean implements MessageListener {
             producer.send(message);
         } finally {
             // Clean up
-            if (session != null) session.close();
-            if (connection != null) connection.close();
+            if (session != null) {
+                session.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 }

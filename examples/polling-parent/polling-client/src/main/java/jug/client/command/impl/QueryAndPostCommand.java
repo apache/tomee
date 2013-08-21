@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class QueryAndPostCommand extends AbstractCommand {
+
     private static final Pattern PATTERN = Pattern.compile(" \\[(.*),(.*)\\]");
 
     @Override

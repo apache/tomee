@@ -33,6 +33,7 @@ import java.util.Properties;
 import static junit.framework.Assert.assertNotNull;
 
 public class DataSourceCipheredExampleTest {
+
     private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName().toUpperCase();
     private static final String PASSWORD = "YouLLN3v3rFindM3";
     private static final String DATASOURCE_URL = "jdbc:hsqldb:mem:protected";
@@ -103,6 +104,7 @@ public class DataSourceCipheredExampleTest {
     }
 
     public static class ReverseEncryption implements PasswordCipher {
+
         @Override
         public char[] encrypt(String plainPassword) {
             return StringUtils.reverse(plainPassword).toCharArray();

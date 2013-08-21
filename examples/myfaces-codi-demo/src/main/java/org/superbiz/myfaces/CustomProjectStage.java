@@ -21,10 +21,10 @@ package org.superbiz.myfaces;
 import org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStage;
 import org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStageHolder;
 
-public class CustomProjectStage implements ProjectStageHolder
-{
-    public static final class Debugging extends ProjectStage
-    {
+public class CustomProjectStage implements ProjectStageHolder {
+
+    public static final class Debugging extends ProjectStage {
+
         private static final long serialVersionUID = -8626602281649294170L;
     }
 

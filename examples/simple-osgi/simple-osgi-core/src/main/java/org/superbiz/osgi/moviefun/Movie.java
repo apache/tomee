@@ -22,6 +22,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Movie {
+
     @Id
     @GeneratedValue
     private long id;
@@ -65,6 +66,5 @@ public class Movie {
     public void setYear(int year) {
         this.year = year;
     }
-
 
 }

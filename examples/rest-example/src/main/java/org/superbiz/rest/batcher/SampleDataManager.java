@@ -35,10 +35,11 @@ import javax.persistence.PersistenceContext;
 import java.util.logging.Logger;
 
 @Startup
-@DependsOn({ "CommentDAO", "PostDAO", "UserDAO" })
+@DependsOn({"CommentDAO", "PostDAO", "UserDAO"})
 @Singleton
 @Lock(LockType.READ)
 public class SampleDataManager {
+
     private static final Logger LOGGER = Logger.getLogger(SampleDataManager.class.getName());
 
     @PersistenceContext(unitName = "blog")

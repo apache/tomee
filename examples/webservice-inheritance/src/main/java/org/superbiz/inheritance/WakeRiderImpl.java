@@ -31,10 +31,10 @@ import java.util.List;
  */
 @Stateless
 @WebService(
-        portName = "InheritancePort",
-        serviceName = "InheritanceWsService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.inheritance.WakeRiderWs")
+               portName = "InheritancePort",
+               serviceName = "InheritanceWsService",
+               targetNamespace = "http://superbiz.org/wsdl",
+               endpointInterface = "org.superbiz.inheritance.WakeRiderWs")
 public class WakeRiderImpl implements WakeRiderWs {
 
     @PersistenceContext(unitName = "wakeboard-unit", type = PersistenceContextType.TRANSACTION)

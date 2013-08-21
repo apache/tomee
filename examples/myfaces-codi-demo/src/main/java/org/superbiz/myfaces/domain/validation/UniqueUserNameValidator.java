@@ -28,17 +28,15 @@ import javax.validation.ConstraintValidatorContext;
 
 @Advanced
 @ApplicationScoped
-public class UniqueUserNameValidator implements ConstraintValidator<UserName, String>
-{
+public class UniqueUserNameValidator implements ConstraintValidator<UserName, String> {
+
     @Inject
     private UserRepository userRepository;
 
-    public void initialize(UserName differentName)
-    {
+    public void initialize(UserName differentName) {
     }
 
-    public boolean isValid(String userName, ConstraintValidatorContext constraintValidatorContext)
-    {
+    public boolean isValid(String userName, ConstraintValidatorContext constraintValidatorContext) {
         return this.userRepository.loadUser(userName) == null;
     }
 }

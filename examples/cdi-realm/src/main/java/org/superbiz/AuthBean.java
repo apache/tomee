@@ -23,12 +23,13 @@ import java.security.Principal;
 public class AuthBean {
 
     public Principal authenticate(final String username, String password) {
-        if (("userA".equals(username)||"userB".equals(username)) && "test".equals(password)) {
+        if (("userA".equals(username) || "userB".equals(username)) && "test".equals(password)) {
             return new Principal() {
                 @Override
                 public String getName() {
                     return username;
                 }
+
                 @Override
                 public String toString() {
                     return username;
@@ -38,15 +39,14 @@ public class AuthBean {
         return null;
     }
 
-
     public boolean hasRole(Principal principal, String role) {
         if (principal == null) {
             return false;
         }
-        if(principal.getName().equals("userA") && (role.equals("admin")||role.equals("user"))) {
+        if (principal.getName().equals("userA") && (role.equals("admin") || role.equals("user"))) {
             return true;
         }
-        if(principal.getName().equals("userB") && (role.equals("user"))) {
+        if (principal.getName().equals("userB") && (role.equals("user"))) {
             return true;
         }
         return false;

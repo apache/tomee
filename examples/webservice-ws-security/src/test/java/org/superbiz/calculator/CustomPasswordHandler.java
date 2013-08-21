@@ -24,6 +24,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
 public class CustomPasswordHandler implements CallbackHandler {
+
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];

@@ -31,6 +31,7 @@ import java.util.Properties;
 @Singleton
 @Startup
 public class SingletonCalculatorClient {
+
     @EJB
     private CalculatorLocal calculator;
 

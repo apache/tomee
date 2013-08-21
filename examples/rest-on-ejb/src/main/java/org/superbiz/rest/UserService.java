@@ -37,13 +37,13 @@ import java.util.List;
 
 /**
  * Outputs are copied because of the enhancement of OpenJPA.
- *
  */
 @Singleton
 @Lock(LockType.WRITE)
 @Path("/user")
 @Produces(MediaType.APPLICATION_XML)
 public class UserService {
+
     @PersistenceContext
     private EntityManager em;
 

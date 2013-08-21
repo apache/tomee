@@ -37,7 +37,6 @@ public class Movie implements Serializable {
     private String genre;
     private int rating;
 
-
     public Movie() {
     }
 

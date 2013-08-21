@@ -30,33 +30,26 @@ import java.util.List;
 /**
  * Abstract repository class which provides default implementations for common repository methods.
  */
-public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObject> implements GenericRepository<T>
-{
+public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObject> implements GenericRepository<T> {
+
     protected final Class<? extends AbstractDomainObject> entityClass;
 
     @Inject
     protected EntityManager entityManager;
 
-    public AbstractGenericJpaRepository()
-    {
+    public AbstractGenericJpaRepository() {
         Class currentClass = getClass();
 
-        if (currentClass.getName().contains("$$"))
-        { //we are in a proxy
+        if (currentClass.getName().contains("$$")) { //we are in a proxy
             currentClass = currentClass.getSuperclass();
         }
 
-        for (Type interfaceClass : currentClass.getGenericInterfaces())
-        {
-            for (Type genericInterfaceClass : ((Class) interfaceClass).getGenericInterfaces())
-            {
+        for (Type interfaceClass : currentClass.getGenericInterfaces()) {
+            for (Type genericInterfaceClass : ((Class) interfaceClass).getGenericInterfaces()) {
                 if (genericInterfaceClass instanceof ParameterizedType &&
-                        GenericRepository.class.isAssignableFrom((Class) ((ParameterizedType) genericInterfaceClass).getRawType()))
-                {
-                    for (Type parameterizedType : ((ParameterizedType) genericInterfaceClass).getActualTypeArguments())
-                    {
-                        if (AbstractDomainObject.class.isAssignableFrom((Class) parameterizedType))
-                        {
+                    GenericRepository.class.isAssignableFrom((Class) ((ParameterizedType) genericInterfaceClass).getRawType())) {
+                    for (Type parameterizedType : ((ParameterizedType) genericInterfaceClass).getActualTypeArguments()) {
+                        if (AbstractDomainObject.class.isAssignableFrom((Class) parameterizedType)) {
                             this.entityClass = (Class<? extends AbstractDomainObject>) parameterizedType;
                             return;
                         }
@@ -69,48 +62,36 @@ public abstract class AbstractGenericJpaRepository<T extends AbstractDomainObjec
     }
 
     @Override
-    public T createNewEntity()
-    {
-        try
-        {
-            return (T)this.entityClass.newInstance();
-        }
-        catch (Exception e)
-        {
+    public T createNewEntity() {
+        try {
+            return (T) this.entityClass.newInstance();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void save(T entity)
-    {
-        if (entity.isTransient())
-        {
+    public void save(T entity) {
+        if (entity.isTransient()) {
             this.entityManager.persist(entity);
-        }
-        else
-        {
+        } else {
             this.entityManager.merge(entity);
         }
     }
 
-    public void remove(T entity)
-    {
-        if (entity.isTransient())
-        {
+    public void remove(T entity) {
+        if (entity.isTransient()) {
             throw new IllegalStateException("entity is not persistent");
         }
 
         this.entityManager.remove(loadById(entity.getId()));
     }
 
-    public List<T> loadAll()
-    {
+    public List<T> loadAll() {
         return (List<T>) this.entityManager.createQuery("select entity from " + this.entityClass.getSimpleName() + " entity")
-                .getResultList();
+                                           .getResultList();
     }
 
-    public T loadById(Long id)
-    {
+    public T loadById(Long id) {
         return (T) this.entityManager.find(this.entityClass, id);
     }
 }

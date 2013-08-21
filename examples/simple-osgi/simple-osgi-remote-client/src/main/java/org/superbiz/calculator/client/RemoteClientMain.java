@@ -18,6 +18,7 @@
 package org.superbiz.calculator.client;
 
 public final class RemoteClientMain {
+
     private RemoteClientMain() {
         // no-op
     }

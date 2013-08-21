@@ -58,7 +58,6 @@ public class StratocasterTest extends TestCase {
         File file = new File("/tmp/strat-certificate.txt");
         assertEquals("Strat.getCertificateOfAuthenticity()", file, strat.getCertificateOfAuthenticity());
 
-
     }
 }
 //END SNIPPET: code

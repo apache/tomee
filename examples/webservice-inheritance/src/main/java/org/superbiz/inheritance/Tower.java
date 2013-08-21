@@ -20,11 +20,14 @@ import javax.persistence.Entity;
 
 @Entity
 public class Tower extends Item {
+
     private Fit fit;
     private String tubing;
 
     public static enum Fit {
-        Custom, Exact, Universal
+        Custom,
+        Exact,
+        Universal
     }
 
     public Fit getFit() {

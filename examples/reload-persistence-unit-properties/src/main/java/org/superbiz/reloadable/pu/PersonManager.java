@@ -25,6 +25,7 @@ import javax.persistence.PersistenceContext;
 
 @Singleton
 public class PersonManager {
+
     private static int ID = 0;
 
     @PersistenceContext

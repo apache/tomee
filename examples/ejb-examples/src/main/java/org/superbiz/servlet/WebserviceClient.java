@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.net.URL;
 
 public class WebserviceClient {
+
     /**
      * Unfortunately, to run this example with CXF you need to have a HUGE class path.  This
      * is just what is required to run CXF:

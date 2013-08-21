@@ -35,13 +35,12 @@ import static org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectSta
 //e.g. via the std. JSF project-stage or CODI project-stage org.apache.myfaces.extensions.cdi.ProjectStage=Development
 @ProjectStageActivated({Development.class, IntegrationTest.class})
 @ApplicationScoped
-public class SampleDataStartupObserver
-{
+public class SampleDataStartupObserver {
+
     @Inject
     private EntityManager entityManager;
 
-    protected void createSampleData(@Observes StartupEvent startupEvent, UserRepository userRepository)
-    {
+    protected void createSampleData(@Observes StartupEvent startupEvent, UserRepository userRepository) {
         initDB(); //ok since we are in project-stage dev. or integration-test
 
         User user = userRepository.createNewEntity();
@@ -52,8 +51,7 @@ public class SampleDataStartupObserver
         userRepository.save(user);
     }
 
-    private void initDB()
-    {
+    private void initDB() {
         entityManager.getTransaction().begin();
         Query query = entityManager.createNativeQuery("TRUNCATE SCHEMA public AND COMMIT");
         query.executeUpdate();

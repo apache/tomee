@@ -28,6 +28,7 @@ import java.io.IOException;
 
 @WebServlet(name = "manager servlet", urlPatterns = "/")
 public class ManagerServlet extends HttpServlet {
+
     @EJB
     private Manager manager;
 

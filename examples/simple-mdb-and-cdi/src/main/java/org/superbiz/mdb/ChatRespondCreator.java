@@ -18,6 +18,7 @@
 package org.superbiz.mdb;
 
 public class ChatRespondCreator {
+
     public String respond(String question) {
         if ("Hello World!".equals(question)) {
             return "Hello, Test Case!";

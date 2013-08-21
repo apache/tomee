@@ -21,10 +21,11 @@ import javax.jws.WebService;
 
 @Stateless
 @WebService(
-        portName = "CalculatorPort",
-        serviceName = "CalculatorWsService",
-        targetNamespace = "http://superbiz.org/wsdl")
+               portName = "CalculatorPort",
+               serviceName = "CalculatorWsService",
+               targetNamespace = "http://superbiz.org/wsdl")
 public class Calculator {
+
     public int sum(int add1, int add2) {
         return add1 + add2;
     }

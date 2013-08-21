@@ -1,6 +1,6 @@
 <!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,27 +23,26 @@
 
 <html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:f="http://java.sun.com/jsf/core"
-   template="/layout/main-template.xhtml">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/layout/main-template.xhtml">
 
-    <ui:define name="content">
-        <h:panelGrid columns="3">
-            <h:outputLabel for="loginName" value="#{i18n.lblLoginName}: "/>
-            <h:inputText id="loginName" label="#{i18n.lblLoginName}" value="#{registrationPage.user.userName}" required="true"/>
-            <h:message for="loginName" showSummary="true" showDetail="false"/>
+  <ui:define name="content">
+    <h:panelGrid columns="3">
+      <h:outputLabel for="loginName" value="#{i18n.lblLoginName}: "/>
+      <h:inputText id="loginName" label="#{i18n.lblLoginName}" value="#{registrationPage.user.userName}" required="true"/>
+      <h:message for="loginName" showSummary="true" showDetail="false"/>
 
-            <h:outputLabel for="password" value="#{i18n.lblPassword}: "/>
-            <h:inputSecret id="password" label="#{i18n.lblPassword}" value="#{registrationPage.user.password}"/>
-            <h:message for="password" showSummary="true" showDetail="false"/>
-        </h:panelGrid>
-        <p/>
-        <h:panelGrid columns="2">
-            <h:commandButton id="login" value="#{i18n.btnLogin}" action="#{registrationPage.login}"/>
-            <h:commandLink id="register" value="#{i18n.btnRegister}" action="#{menuBean.register}" immediate="true"/>
-        </h:panelGrid>
-    </ui:define>
+      <h:outputLabel for="password" value="#{i18n.lblPassword}: "/>
+      <h:inputSecret id="password" label="#{i18n.lblPassword}" value="#{registrationPage.user.password}"/>
+      <h:message for="password" showSummary="true" showDetail="false"/>
+    </h:panelGrid>
+    <p/>
+    <h:panelGrid columns="2">
+      <h:commandButton id="login" value="#{i18n.btnLogin}" action="#{registrationPage.login}"/>
+      <h:commandLink id="register" value="#{i18n.btnRegister}" action="#{menuBean.register}" immediate="true"/>
+    </h:panelGrid>
+  </ui:define>
 
 </ui:composition>
 </html>

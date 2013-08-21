@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 @Path("/rest")
 @Stateless
 public class SomeRest {
+
     @GET
     @Path("/ok")
     public String ok() {

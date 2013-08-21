@@ -23,6 +23,7 @@ import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 
 public class BookShowTest extends TestCase {
+
     @EJB
     private BookShow bookForAShowBean;
     EJBContainer ejbContainer;

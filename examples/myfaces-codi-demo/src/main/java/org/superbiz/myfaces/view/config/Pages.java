@@ -30,22 +30,37 @@ import org.superbiz.myfaces.view.security.LoginAccessDecisionVoter;
 import static org.apache.myfaces.extensions.cdi.jsf.api.config.view.Page.NavigationMode.REDIRECT;
 
 @Page(navigation = REDIRECT)
-public interface Pages extends ViewConfig
-{
-    @Page class Index implements Pages {}
+public interface Pages extends ViewConfig {
 
-    @InfoPage @Page class About implements Pages {}
+    @Page
+    class Index implements Pages {
 
-    @Page class Registration implements Pages {}
+    }
 
-    @Page class Login extends DefaultErrorView implements Pages /*just to benefit from the config*/ {}
+    @InfoPage
+    @Page
+    class About implements Pages {
+
+    }
+
+    @Page
+    class Registration implements Pages {
+
+    }
+
+    @Page
+    class Login extends DefaultErrorView implements Pages /*just to benefit from the config*/ {
+
+    }
 
     @Secured(LoginAccessDecisionVoter.class)
-    //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
-    interface Secure extends Pages
-    {
+        //@Secured(value = LoginAccessDecisionVoter.class, errorView = Login.class)
+    interface Secure extends Pages {
+
         @PageBean(FeedbackPage.class)
         @Page
-        class FeedbackList implements Secure {}
+        class FeedbackList implements Secure {
+
+        }
     }
 }

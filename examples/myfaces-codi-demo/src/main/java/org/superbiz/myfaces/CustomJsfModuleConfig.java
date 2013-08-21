@@ -23,13 +23,12 @@ import org.apache.myfaces.extensions.cdi.jsf.api.config.JsfModuleConfig;
 import javax.enterprise.inject.Specializes;
 
 @Specializes
-public class CustomJsfModuleConfig extends JsfModuleConfig
-{
+public class CustomJsfModuleConfig extends JsfModuleConfig {
+
     private static final long serialVersionUID = 1682809983274206270L;
 
     @Override
-    public boolean isInvalidValueAwareMessageInterpolatorEnabled()
-    {
+    public boolean isInvalidValueAwareMessageInterpolatorEnabled() {
         return false;
     }
 }

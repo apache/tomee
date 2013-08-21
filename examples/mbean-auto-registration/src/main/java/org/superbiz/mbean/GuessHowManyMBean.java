@@ -24,6 +24,7 @@ import javax.management.ManagedOperation;
 @MBean
 @Description("play with me to guess a number")
 public class GuessHowManyMBean {
+
     private int value = 0;
 
     @ManagedAttribute

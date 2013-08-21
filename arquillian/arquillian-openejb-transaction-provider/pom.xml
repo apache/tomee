@@ -39,8 +39,59 @@
     <dependency>
       <groupId>org.jboss.arquillian.extension</groupId>
       <artifactId>arquillian-transaction-impl-base</artifactId>
-      <version>1.0.0.Alpha2</version>
+      <version>1.0.0.Alpha3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.arquillian.core</groupId>
+          <artifactId>arquillian-core-spi</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>arquillian-core-api</artifactId>
+          <groupId>org.jboss.arquillian.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>arquillian-core-spi</artifactId>
+          <groupId>org.jboss.arquillian.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>arquillian-test-spi</artifactId>
+          <groupId>org.jboss.arquillian.test</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-container-spi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-container-test-spi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.core</groupId>
+      <artifactId>arquillian-core-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-spi</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
+
   </dependencies>
 </project>
 

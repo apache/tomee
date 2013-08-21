@@ -16,44 +16,44 @@
  *
  */
 body {
-  margin: 0;
-  padding: 0;
-  background: white;
-  text-align: center;
+    margin: 0;
+    padding: 0;
+    background: white;
+    text-align: center;
 }
 
 div#page {
-  width: 800px;
-  margin: 0 auto;
-  padding: 0;
-  background: white;
-  text-align: center;
+    width: 800px;
+    margin: 0 auto;
+    padding: 0;
+    background: white;
+    text-align: center;
 }
 
 div#header {
-  margin: 0 0 5em 0;
-  padding: 40px 20px;
-  color: white;
-  background: black;
-  text-align: center;
+    margin: 0 0 5em 0;
+    padding: 40px 20px;
+    color: white;
+    background: black;
+    text-align: center;
 }
 
 div#content {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 div#footer {
-  color: white;
-  background-color: black;
+    color: white;
+    background-color: black;
 }
 
 a, a:link, a:visited, a:active {
-  color: white;
-  background-color: black;
+    color: white;
+    background-color: black;
 }
 
 a:hover {
-  text-decoration: underline;
-  font-size: larger;
+    text-decoration: underline;
+    font-size: larger;
 }

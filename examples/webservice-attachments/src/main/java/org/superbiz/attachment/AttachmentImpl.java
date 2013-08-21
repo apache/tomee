@@ -33,10 +33,10 @@ import java.io.InputStream;
  */
 @Stateless
 @WebService(
-        portName = "AttachmentPort",
-        serviceName = "AttachmentWsService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.attachment.AttachmentWs")
+               portName = "AttachmentPort",
+               serviceName = "AttachmentWsService",
+               targetNamespace = "http://superbiz.org/wsdl",
+               endpointInterface = "org.superbiz.attachment.AttachmentWs")
 @BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 public class AttachmentImpl implements AttachmentWs {
 

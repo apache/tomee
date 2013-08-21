@@ -16,7 +16,6 @@
  */
 package org.superbiz.dynamic;
 
-
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
@@ -25,6 +24,7 @@ import java.util.Map;
 @Stateless
 @PersistenceContext(name = "dynamic")
 public interface UserDao {
+
     User findById(long id);
 
     Collection<User> findByName(String name);

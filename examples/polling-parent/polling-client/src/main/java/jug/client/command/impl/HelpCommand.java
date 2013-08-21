@@ -24,6 +24,7 @@ import java.util.Map;
 
 @Command(name = "help", usage = "help", description = "print this help")
 public class HelpCommand extends AbstractCommand {
+
     private Map<String, Class<?>> commands;
 
     @Override

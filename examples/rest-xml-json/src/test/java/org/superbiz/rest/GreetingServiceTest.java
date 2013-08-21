@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 @EnableServices(value = "jaxrs", httpDebug = true)
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
+
     @Module
     @Classes(GreetingService.class)
     public WebApp app() {
@@ -42,32 +43,32 @@ public class GreetingServiceTest {
     @Test
     public void getXml() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .get(Response.class).getValue();
+                                        .accept(MediaType.APPLICATION_XML_TYPE)
+                                        .get(Response.class).getValue();
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postXml() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_XML_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+                                        .accept(MediaType.APPLICATION_XML_TYPE)
+                                        .post(new Request("Hi REST!"), Response.class).getValue();
         assertEquals("hi rest!", message);
     }
 
     @Test
     public void getJson() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .get(Response.class).getValue();
+                                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                                        .get(Response.class).getValue();
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void postJson() throws IOException {
         final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .post(new Request("Hi REST!"), Response.class).getValue();
+                                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                                        .post(new Request("Hi REST!"), Response.class).getValue();
         assertEquals("hi rest!", message);
     }
 }

@@ -32,8 +32,8 @@ import java.util.List;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "post.list", query = "select p from Post p")
-})
+                  @NamedQuery(name = "post.list", query = "select p from Post p")
+              })
 @XmlRootElement(name = "post")
 public class Post extends DatedModel {
 

@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertEquals;
 
 public class HelloStepDef {
+
     @Inject
     private Hello hello;
 

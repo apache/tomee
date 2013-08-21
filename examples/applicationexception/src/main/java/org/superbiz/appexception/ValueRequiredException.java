@@ -20,4 +20,5 @@ package org.superbiz.appexception;
  * @version $Rev$ $Date$
  */
 public class ValueRequiredException extends BusinessException {
+
 }

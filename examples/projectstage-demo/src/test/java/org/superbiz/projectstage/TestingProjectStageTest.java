@@ -24,6 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class TestingProjectStageTest extends BaseTestForProjectStage {
+
     @Deployment
     public static WebArchive war() {
         return BaseTestForProjectStage.war(ProjectStage.UnitTest.toString());

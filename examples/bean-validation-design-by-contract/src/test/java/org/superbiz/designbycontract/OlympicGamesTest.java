@@ -29,10 +29,12 @@ import javax.naming.Context;
 import javax.validation.ConstraintViolationException;
 import java.util.Properties;
 
-import static junit.framework.Assert.*;
-
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 public class OlympicGamesTest {
+
     private static Context context;
 
     @EJB

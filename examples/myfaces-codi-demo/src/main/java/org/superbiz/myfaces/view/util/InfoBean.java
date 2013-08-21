@@ -40,12 +40,14 @@ import java.io.Serializable;
 
 @Named
 @SessionScoped
-public class InfoBean implements Serializable
-{
+public class InfoBean implements Serializable {
+
     private static final long serialVersionUID = -1748909261695527800L;
 
     @Inject
-    private @Jsf MessageContext messageContext;
+    private
+    @Jsf
+    MessageContext messageContext;
 
     @Inject
     private ProjectStage projectStage;
@@ -63,77 +65,64 @@ public class InfoBean implements Serializable
     private String jpaVersion;
 
     @PostConstruct
-    protected void showWelcomeMessage()
-    {
+    protected void showWelcomeMessage() {
         String versionString = ClassUtils.getJarVersion(InfoBean.class);
 
-        if (versionString != null)
-        {
+        if (versionString != null) {
             this.applicationMessageVersionInfo = " (v" + versionString + ")";
         }
 
         this.beanValidationVersion =
-                ClassUtils.getJarVersion(Validation.buildDefaultValidatorFactory().getValidator().getClass());
+            ClassUtils.getJarVersion(Validation.buildDefaultValidatorFactory().getValidator().getClass());
 
         this.jpaVersion =
-                ClassUtils.getJarVersion(Persistence.createEntityManagerFactory("demoApplicationPU").getClass());
+            ClassUtils.getJarVersion(Persistence.createEntityManagerFactory("demoApplicationPU").getClass());
 
-        if (!ProjectStage.IntegrationTest.equals(this.projectStage))
-        {
+        if (!ProjectStage.IntegrationTest.equals(this.projectStage)) {
             this.messageContext.message().text("{msgWelcome}").add();
         }
     }
 
-    public boolean isInfoPage()
-    {
+    public boolean isInfoPage() {
         ViewConfigDescriptor viewConfigDescriptor =
-                this.viewConfigResolver.getViewConfigDescriptor(this.facesContext.getViewRoot().getViewId());
+            this.viewConfigResolver.getViewConfigDescriptor(this.facesContext.getViewRoot().getViewId());
 
-        if (viewConfigDescriptor == null)
-        {
+        if (viewConfigDescriptor == null) {
             return false;
         }
 
         return !viewConfigDescriptor.getMetaData(InfoPage.class).isEmpty();
     }
 
-    public String getProjectStage()
-    {
+    public String getProjectStage() {
         return this.projectStage.toString();
     }
 
-    public String getApplicationVersion()
-    {
+    public String getApplicationVersion() {
         return this.applicationMessageVersionInfo;
     }
 
-    public String getCodiVersion()
-    {
+    public String getCodiVersion() {
         return CodiInformation.VERSION;
     }
 
-    public String getCdiVersion()
-    {
+    public String getCdiVersion() {
         return ClassUtils.getJarVersion(BeanManagerProvider.getInstance().getBeanManager().getClass());
     }
 
-    public String getExtValVersion()
-    {
+    public String getExtValVersion() {
         return ExtValInformation.VERSION;
     }
 
-    public String getJsfVersion()
-    {
+    public String getJsfVersion() {
         return ClassUtils.getJarVersion(FacesContext.class);
     }
 
-    public String getBeanValidationVersion()
-    {
+    public String getBeanValidationVersion() {
         return this.beanValidationVersion;
     }
 
-    public String getJpaVersion()
-    {
+    public String getJpaVersion() {
         return this.jpaVersion;
     }
 }

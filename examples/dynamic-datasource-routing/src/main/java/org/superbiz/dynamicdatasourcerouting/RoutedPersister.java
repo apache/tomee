@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 
 @Stateless
 public class RoutedPersister {
+
     @PersistenceContext(unitName = "router")
     private EntityManager em;
 

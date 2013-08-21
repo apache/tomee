@@ -25,6 +25,7 @@ import javax.jws.WebService;
 @Singleton
 @WebService
 public class Rot13 {
+
     public String rot13(final String in) {
         final StringBuilder builder = new StringBuilder(in.length());
         for (int b : in.toCharArray()) {

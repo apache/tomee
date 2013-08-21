@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DeterminedRouter extends AbstractRouter {
+
     private String dataSourceNames;
     private String defaultDataSourceName;
     private Map<String, DataSource> dataSources = null;
@@ -56,7 +57,7 @@ public class DeterminedRouter extends AbstractRouter {
     /**
      * @return the user selected data source if it is set
      *         or the default one
-     *  @throws IllegalArgumentException if the data source is not found
+     * @throws IllegalArgumentException if the data source is not found
      */
     @Override
     public DataSource getDataSource() {
@@ -80,7 +81,6 @@ public class DeterminedRouter extends AbstractRouter {
     }
 
     /**
-     *
      * @param datasourceName data source name
      */
     public void setDataSource(String datasourceName) {

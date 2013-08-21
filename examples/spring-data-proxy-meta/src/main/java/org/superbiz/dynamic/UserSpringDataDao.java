@@ -16,12 +16,12 @@
  */
 package org.superbiz.dynamic;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.superbiz.dynamic.api.SpringRepository;
 
 @SpringRepository
 public interface UserSpringDataDao extends JpaRepository<User, Long> {
+
     User findByName(@Param("name") final String name);
 }

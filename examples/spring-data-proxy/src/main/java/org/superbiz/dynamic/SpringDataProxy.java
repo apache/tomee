@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SpringDataProxy implements InvocationHandler {
+
     @PersistenceContext
     private EntityManager em;
 

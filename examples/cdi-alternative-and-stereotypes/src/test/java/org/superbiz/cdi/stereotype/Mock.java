@@ -34,4 +34,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 // this stereotype define an alternative
 @Alternative
 public @interface Mock {
+
 }

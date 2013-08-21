@@ -16,28 +16,30 @@
  */
 package org.superbiz.dynamic;
 
-import java.util.Collection;
-import java.util.Properties;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.naming.NamingException;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.Collection;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 
 /**
  * the UserDao can be injected but doesn't manage transaction so we create
  * a TxProvider bean which provides the tx context.
- *
+ * <p/>
  * In this sample it simply delegates but in real life it often aggregates multiple calls.
  */
 public class CdiQueryTest {
+
     private static EJBContainer container;
     private static boolean initialized = false;
 

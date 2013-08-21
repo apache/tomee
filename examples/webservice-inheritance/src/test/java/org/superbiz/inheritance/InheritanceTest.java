@@ -59,8 +59,8 @@ public class InheritanceTest extends TestCase {
     //START SNIPPET: webservice
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/webservice-inheritance/WakeRiderImpl?wsdl"),
-                new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
+                                            new URL("http://127.0.0.1:4204/webservice-inheritance/WakeRiderImpl?wsdl"),
+                                            new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 
         WakeRiderWs ws = service.getPort(WakeRiderWs.class);
@@ -74,7 +74,6 @@ public class InheritanceTest extends TestCase {
         ws.addItem(item);
         ws.addItem(wakeBoard);
         ws.addItem(wakeBoardbinding);
-
 
         List<Item> returnedItems = ws.getItems();
 

@@ -21,11 +21,12 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlType(propOrder = {
-        "likes",
-        "unlikes",
-        "sum"
+                         "likes",
+                         "unlikes",
+                         "sum"
 })
 public class Result {
+
     private int likes;
     private int unlikes;
     private int sum;

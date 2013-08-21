@@ -22,6 +22,6 @@ import javax.validation.GroupSequence;
 import javax.validation.groups.Default;
 
 @GroupSequence({Default.class, UniqueUserName.class})
-public interface Full
-{
+public interface Full {
+
 }

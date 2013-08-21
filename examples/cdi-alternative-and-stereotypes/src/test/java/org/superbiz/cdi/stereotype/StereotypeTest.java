@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 import static org.junit.Assert.assertEquals;
 
 public class StereotypeTest {
+
     private static EJBContainer container;
     private static Journey journey;
 

@@ -21,6 +21,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 public class ProductionProjectStageTest extends BaseTestForProjectStage {
+
     @Deployment
     public static WebArchive war() {
         return BaseTestForProjectStage.war(ProjectStage.Production.toString());

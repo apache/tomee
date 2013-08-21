@@ -17,9 +17,6 @@
 package org.superbiz.jpa.enums;
 
 import junit.framework.TestCase;
-import org.superbiz.jpa.enums.Movie;
-import org.superbiz.jpa.enums.Movies;
-import org.superbiz.jpa.enums.Rating;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;

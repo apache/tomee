@@ -27,11 +27,11 @@ import java.util.List;
 /**
  * Simply maps the entitymanager.
  * It simplifies refactoring (unitName change) and wraps some logic (limited queries).
- *
  */
 @Singleton
 @Lock(LockType.READ)
 public class DAO {
+
     @PersistenceContext(unitName = "blog")
     private EntityManager em;
 

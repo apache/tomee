@@ -64,5 +64,4 @@ public class LoggerTest {
         logger = null;
     }
 
-
 }

@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 @Stateless
 @LocalBean
 public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
+
     @Resource
     private DataSource ds;
 

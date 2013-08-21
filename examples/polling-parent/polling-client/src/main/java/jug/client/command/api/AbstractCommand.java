@@ -31,6 +31,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public abstract class AbstractCommand {
+
     protected String command;
     protected String url;
 

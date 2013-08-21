@@ -16,8 +16,14 @@
  */
 package jug.rest;
 
-import java.util.Collection;
-import java.util.List;
+import jug.dao.SubjectDao;
+import jug.dao.VoteDao;
+import jug.domain.Result;
+import jug.domain.Subject;
+import jug.domain.Value;
+import jug.domain.Vote;
+import jug.monitoring.VoteCounter;
+
 import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -32,20 +38,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import jug.dao.SubjectDao;
-import jug.dao.VoteDao;
-import jug.domain.Result;
-import jug.domain.Subject;
-import jug.domain.Value;
-import jug.domain.Vote;
-import jug.monitoring.VoteCounter;
+import java.util.Collection;
+import java.util.List;
 
 @Path("subject")
 @Singleton // an ejb just to be able to test in standalone
 @Lock(LockType.READ)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Produces({ MediaType.APPLICATION_JSON })
+@Produces({MediaType.APPLICATION_JSON})
 public class SubjectService {
+
     @Inject
     private SubjectDao dao;
 

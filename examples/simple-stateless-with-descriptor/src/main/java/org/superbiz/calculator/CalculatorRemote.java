@@ -16,7 +16,6 @@
  */
 package org.superbiz.calculator;
 
-
 /**
  * This is an EJB 3 remote business interface
  * This interface is specified using the business-local tag in the deployment descriptor

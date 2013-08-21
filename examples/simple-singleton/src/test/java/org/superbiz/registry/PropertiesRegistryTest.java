@@ -16,8 +16,8 @@
  */
 package org.superbiz.registry;
 
-import org.junit.Assert;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;

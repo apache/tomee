@@ -1,6 +1,6 @@
 <!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,35 +23,34 @@
 
 <html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:f="http://java.sun.com/jsf/core"
-   template="/layout/main-template.xhtml">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/layout/main-template.xhtml">
 
-    <ui:define name="content">
-        <h:panelGrid columns="2">
-            <h:outputLabel value="Current Window-ID:" for="wid"/>
-            <h:outputText id="wid" value="#{currentWindowContext.id}"/>
+  <ui:define name="content">
+    <h:panelGrid columns="2">
+      <h:outputLabel value="Current Window-ID:" for="wid"/>
+      <h:outputText id="wid" value="#{currentWindowContext.id}"/>
 
-            <h:outputLabel value="Apache MyFaces-Core:" for="jsfVersion"/>
-            <h:outputText id="jsfVersion" value="#{infoBean.jsfVersion}"/>
+      <h:outputLabel value="Apache MyFaces-Core:" for="jsfVersion"/>
+      <h:outputText id="jsfVersion" value="#{infoBean.jsfVersion}"/>
 
-            <h:outputLabel value="Apache OpenWebBeans:" for="cdiVersion"/>
-            <h:outputText id="cdiVersion" value="#{infoBean.cdiVersion}"/>
+      <h:outputLabel value="Apache OpenWebBeans:" for="cdiVersion"/>
+      <h:outputText id="cdiVersion" value="#{infoBean.cdiVersion}"/>
 
-            <h:outputLabel value="Apache MyFaces CODI:" for="codiVersion"/>
-            <h:outputText id="codiVersion" value="#{infoBean.codiVersion}"/>
+      <h:outputLabel value="Apache MyFaces CODI:" for="codiVersion"/>
+      <h:outputText id="codiVersion" value="#{infoBean.codiVersion}"/>
 
-            <h:outputLabel value="Apache MyFaces ExtVal:" for="extValVersion"/>
-            <h:outputText id="extValVersion" value="#{infoBean.extValVersion}"/>
+      <h:outputLabel value="Apache MyFaces ExtVal:" for="extValVersion"/>
+      <h:outputText id="extValVersion" value="#{infoBean.extValVersion}"/>
 
-            <h:outputLabel value="Apache BVal:" for="bValVersion"/>
-            <h:outputText id="bValVersion" value="#{infoBean.beanValidationVersion}"/>
+      <h:outputLabel value="Apache BVal:" for="bValVersion"/>
+      <h:outputText id="bValVersion" value="#{infoBean.beanValidationVersion}"/>
 
-            <h:outputLabel value="Apache OpenJPA:" for="jpaVersion"/>
-            <h:outputText id="jpaVersion" value="#{infoBean.jpaVersion}"/>
-        </h:panelGrid>
-    </ui:define>
+      <h:outputLabel value="Apache OpenJPA:" for="jpaVersion"/>
+      <h:outputText id="jpaVersion" value="#{infoBean.jpaVersion}"/>
+    </h:panelGrid>
+  </ui:define>
 
 </ui:composition>
 </html>

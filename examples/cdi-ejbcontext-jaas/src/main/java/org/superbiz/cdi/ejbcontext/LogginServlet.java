@@ -26,6 +26,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/ejbcontext")
 public class LogginServlet extends HttpServlet {
+
     @Inject
     private PrinciaplEjb bean;
 

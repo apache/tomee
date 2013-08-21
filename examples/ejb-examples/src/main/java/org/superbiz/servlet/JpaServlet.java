@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JpaServlet extends HttpServlet {
+
     @PersistenceUnit(name = "jpa-example")
     private EntityManagerFactory emf;
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");

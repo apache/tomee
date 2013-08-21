@@ -19,6 +19,7 @@ package org.superbiz;
 import javax.ejb.EJBLocalObject;
 
 public interface FriendlyPersonEjbLocalObject extends EJBLocalObject {
+
     String greet(String friend);
 
     String greet(String language, String friend);

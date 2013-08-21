@@ -31,10 +31,10 @@ import javax.jws.WebService;
 @DeclareRoles(value = {"Administrator"})
 @Stateless
 @WebService(
-        portName = "CalculatorPort",
-        serviceName = "CalculatorWsService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.calculator.CalculatorWs")
+               portName = "CalculatorPort",
+               serviceName = "CalculatorWsService",
+               targetNamespace = "http://superbiz.org/wsdl",
+               endpointInterface = "org.superbiz.calculator.CalculatorWs")
 public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
 
     @RolesAllowed(value = {"Administrator"})

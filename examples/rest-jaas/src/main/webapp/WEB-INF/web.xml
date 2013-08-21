@@ -32,7 +32,8 @@
       <url-pattern>/rest/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
-      <role-name>*</role-name> <!-- we'll use JAAS so don't filter too much here -->
+      <role-name>*</role-name>
+      <!-- we'll use JAAS so don't filter too much here -->
     </auth-constraint>
   </security-constraint>
 

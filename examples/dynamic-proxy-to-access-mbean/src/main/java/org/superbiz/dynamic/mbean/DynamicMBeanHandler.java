@@ -37,9 +37,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Need a @PreDestroy method to disconnect the remote host when used in remote mode.
- *
  */
 public class DynamicMBeanHandler implements InvocationHandler {
+
     private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<Method, ConnectionInfo>();
 
     @Override
@@ -55,7 +55,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
         final ConnectionInfo info = getConnectionInfo(method);
         final MBeanInfo infos = info.getMBeanInfo();
         if (methodName.startsWith("set") && methodName.length() > 3 && args != null && args.length == 1
-                && (Void.TYPE.equals(method.getReturnType()) || Void.class.equals(method.getReturnType()))) {
+            && (Void.TYPE.equals(method.getReturnType()) || Void.class.equals(method.getReturnType()))) {
             final String attributeName = attributeName(infos, methodName, method.getParameterTypes()[0]);
             info.setAttribute(new Attribute(attributeName, args[0]));
             return null;
@@ -97,7 +97,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
                     found = name;
                 }
             } else if (found == null && ((lowerName.equals(name) && !attributeName.equals(name))
-                    || lowerName.equalsIgnoreCase(name))) {
+                                         || lowerName.equalsIgnoreCase(name))) {
                 foundBackUp = name;
                 if (attribute.getType().equals(type.getName())) {
                     found = name;
@@ -154,6 +154,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
     }
 
     private abstract static class ConnectionInfo {
+
         protected ObjectName objectName;
 
         public abstract void setAttribute(Attribute attribute) throws Exception;
@@ -168,6 +169,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
     }
 
     private static class LocalConnectionInfo extends ConnectionInfo {
+
         private MBeanServer server;
 
         @Override
@@ -197,6 +199,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
     }
 
     private static class RemoteConnectionInfo extends ConnectionInfo {
+
         private JMXConnector connector;
         private MBeanServerConnection connection;
 

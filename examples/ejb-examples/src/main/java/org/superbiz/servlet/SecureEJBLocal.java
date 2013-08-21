@@ -22,6 +22,7 @@ import java.security.Principal;
 
 @Local
 public interface SecureEJBLocal {
+
     Principal getCallerPrincipal();
 
     boolean isCallerInRole(String role);

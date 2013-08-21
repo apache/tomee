@@ -17,5 +17,6 @@
 package org.superbiz.composed.rest;
 
 public interface Messager {
+
     String message();
 }

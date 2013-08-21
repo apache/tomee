@@ -34,6 +34,7 @@ import java.util.List;
 @Path("/api/post")
 @Produces({"text/xml", "application/json"})
 public class PostService {
+
     @EJB
     private PostDAO dao;
 

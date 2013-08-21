@@ -16,7 +16,6 @@
  */
 package org.superbiz.deltaspike.exceptionhandling;
 
-import javax.inject.Inject;
 import org.apache.deltaspike.core.impl.config.DefaultConfigSourceProvider;
 import org.apache.deltaspike.core.spi.config.ConfigSourceProvider;
 import org.apache.ziplock.JarLocation;
@@ -29,21 +28,24 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class ExceptionHandlingDemoTest {
+
     @Inject
     private OSValidator validator;
 
     @Deployment
     public static WebArchive jar() {
         return ShrinkWrap.create(WebArchive.class)
-                .addPackage(OSValidator.class.getPackage())
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                // DeltaSpike libs (api and impl)
-                .addAsLibraries(JarLocation.jarLocation(ConfigSourceProvider.class))
-                .addAsLibraries(JarLocation.jarLocation(DefaultConfigSourceProvider.class));
+                         .addPackage(OSValidator.class.getPackage())
+                   .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                        // DeltaSpike libs (api and impl)
+                   .addAsLibraries(JarLocation.jarLocation(ConfigSourceProvider.class))
+                   .addAsLibraries(JarLocation.jarLocation(DefaultConfigSourceProvider.class));
     }
 
     @Test

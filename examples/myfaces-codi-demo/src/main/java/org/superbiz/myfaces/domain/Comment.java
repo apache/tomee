@@ -23,8 +23,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Comment extends AbstractDomainObject
-{
+public class Comment extends AbstractDomainObject {
+
     private static final long serialVersionUID = -5718296682587279635L;
 
     @Column(length = 2048)
@@ -33,8 +33,7 @@ public class Comment extends AbstractDomainObject
     @ManyToOne(optional = false)
     private Feedback feedback;
 
-    void setFeedback(Feedback feedback)
-    {
+    void setFeedback(Feedback feedback) {
         this.feedback = feedback;
     }
 
@@ -42,17 +41,14 @@ public class Comment extends AbstractDomainObject
      * generated
      */
 
-    public Comment()
-    {
+    public Comment() {
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 }

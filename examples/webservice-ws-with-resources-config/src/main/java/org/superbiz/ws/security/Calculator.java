@@ -20,5 +20,6 @@ import javax.jws.WebService;
 
 @WebService
 public interface Calculator {
+
     int add(int op1, int op2);
 }

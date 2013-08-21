@@ -34,8 +34,8 @@ import java.util.List;
 @ViewAccessScoped
 //alternative to @PageBean in the view-config:
 //@View(Pages.Secure.FeedbackList.class)
-public class FeedbackPage implements Serializable
-{
+public class FeedbackPage implements Serializable {
+
     private static final long serialVersionUID = 744025508253889974L;
 
     private List<Feedback> feedbackList;
@@ -49,19 +49,16 @@ public class FeedbackPage implements Serializable
     private Feedback feedback;
 
     @PostConstruct
-    protected void init()
-    {
+    protected void init() {
         this.feedback = this.feedbackRepository.createNewEntity();
     }
 
     @PreRenderView
-    public void reloadFeedbackList()
-    {
+    public void reloadFeedbackList() {
         this.feedbackList = this.feedbackRepository.loadAll();
     }
 
-    public void save()
-    {
+    public void save() {
         this.feedbackRepository.save(this.feedback);
         this.conversation.close();
     }
@@ -70,13 +67,11 @@ public class FeedbackPage implements Serializable
      * generated
      */
 
-    public List<Feedback> getFeedbackList()
-    {
+    public List<Feedback> getFeedbackList() {
         return feedbackList;
     }
 
-    public Feedback getFeedback()
-    {
+    public Feedback getFeedback() {
         return feedback;
     }
 }

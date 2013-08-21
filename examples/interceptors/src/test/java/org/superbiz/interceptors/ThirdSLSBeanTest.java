@@ -30,6 +30,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class ThirdSLSBeanTest extends TestCase {
+
     private InitialContext initCtx;
 
     @Before

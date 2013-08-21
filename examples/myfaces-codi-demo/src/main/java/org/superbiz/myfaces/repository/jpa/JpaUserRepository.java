@@ -26,19 +26,17 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
-public class JpaUserRepository extends AbstractGenericJpaRepository<User> implements UserRepository
-{
+public class JpaUserRepository extends AbstractGenericJpaRepository<User> implements UserRepository {
+
     private static final long serialVersionUID = 672568789774892077L;
 
-    public User loadUser(String userName)
-    {
+    public User loadUser(String userName) {
         Query query = this.entityManager.createNamedQuery("findUserByName");
         query.setParameter("currentUser", userName);
 
         //just for the demo:
         List result = query.getResultList();
-        if (result != null && result.size() == 1)
-        {
+        if (result != null && result.size() == 1) {
             return (User) result.iterator().next();
         }
         return null;

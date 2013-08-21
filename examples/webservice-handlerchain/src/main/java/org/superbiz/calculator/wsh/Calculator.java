@@ -22,10 +22,10 @@ import javax.jws.WebService;
 
 @Singleton
 @WebService(
-        portName = "CalculatorPort",
-        serviceName = "CalculatorService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.calculator.wsh.CalculatorWs")
+               portName = "CalculatorPort",
+               serviceName = "CalculatorService",
+               targetNamespace = "http://superbiz.org/wsdl",
+               endpointInterface = "org.superbiz.calculator.wsh.CalculatorWs")
 @HandlerChain(file = "handlers.xml")
 public class Calculator implements CalculatorWs {
 

@@ -54,8 +54,24 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-4</version>
+      <version>6.0-5</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <version>2.2.1</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>junit</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool</artifactId>
+          <groupId>commons-pool</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -72,6 +88,16 @@
       <artifactId>openejb-core</artifactId>
       <version>4.6.0-SNAPSHOT</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>openjpa</artifactId>
+          <groupId>org.apache.openjpa</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <!--

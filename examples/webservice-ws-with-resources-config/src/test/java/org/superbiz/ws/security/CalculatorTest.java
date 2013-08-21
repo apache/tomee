@@ -41,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class CalculatorTest {
+
     @Test
     public void call() throws MalformedURLException {
         final EJBContainer container = EJBContainer.createEJBContainer(new Properties() {{
@@ -50,23 +51,23 @@ public class CalculatorTest {
         // normal call
 
         final Service service = Service.create(
-                new URL("http://127.0.0.1:4204/webservice-ws-with-resources-config/CalculatorBean?wsdl"),
-                new QName("http://security.ws.superbiz.org/", "CalculatorBeanService"));
+                                                  new URL("http://127.0.0.1:4204/webservice-ws-with-resources-config/CalculatorBean?wsdl"),
+                                                  new QName("http://security.ws.superbiz.org/", "CalculatorBeanService"));
 
         final Calculator calculator = service.getPort(Calculator.class);
         ClientProxy.getClient(calculator).getOutInterceptors().add(
-                new WSS4JOutInterceptor(new HashMap<String, Object>() {{
-                    put("action", "UsernameToken");
-                    put("user", "openejb");
-                    put("passwordType", "PasswordText");
-                    put("passwordCallbackRef", new CallbackHandler() {
-                        @Override
-                        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                            final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
-                            pc.setPassword("tomee");
-                        }
-                    });
-                }}));
+                                                                      new WSS4JOutInterceptor(new HashMap<String, Object>() {{
+                                                                          put("action", "UsernameToken");
+                                                                          put("user", "openejb");
+                                                                          put("passwordType", "PasswordText");
+                                                                          put("passwordCallbackRef", new CallbackHandler() {
+                                                                              @Override
+                                                                              public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                                                                                  final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+                                                                                  pc.setPassword("tomee");
+                                                                              }
+                                                                          });
+                                                                      }}));
 
         assertEquals(5, calculator.add(2, 3));
 
@@ -74,18 +75,18 @@ public class CalculatorTest {
 
         final Calculator calculator2 = service.getPort(Calculator.class);
         ClientProxy.getClient(calculator2).getOutInterceptors().add(
-                new WSS4JOutInterceptor(new HashMap<String, Object>() {{
-                    put("action", "UsernameToken");
-                    put("user", "openejb");
-                    put("passwordType", "PasswordText");
-                    put("passwordCallbackRef", new CallbackHandler() {
-                        @Override
-                        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                            final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
-                            pc.setPassword("wrong");
-                        }
-                    });
-                }}));
+                                                                       new WSS4JOutInterceptor(new HashMap<String, Object>() {{
+                                                                           put("action", "UsernameToken");
+                                                                           put("user", "openejb");
+                                                                           put("passwordType", "PasswordText");
+                                                                           put("passwordCallbackRef", new CallbackHandler() {
+                                                                               @Override
+                                                                               public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                                                                                   final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+                                                                                   pc.setPassword("wrong");
+                                                                               }
+                                                                           });
+                                                                       }}));
 
         try {
             assertEquals(5, calculator2.add(2, 3));

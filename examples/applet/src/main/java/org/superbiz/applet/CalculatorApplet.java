@@ -21,18 +21,14 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 
 public class CalculatorApplet extends JApplet {
+
     JTextArea area;
 
     JTextField field1;
@@ -73,7 +69,7 @@ public class CalculatorApplet extends JApplet {
         add(label3);
         Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.apache.openejb.client.RemoteInitialContextFactory");
+                  "org.apache.openejb.client.RemoteInitialContextFactory");
         props.put(Context.PROVIDER_URL, "http://127.0.0.1:8080/applet/ejb");
         try {
             ctx = new InitialContext(props);
@@ -87,7 +83,7 @@ public class CalculatorApplet extends JApplet {
                 try {
                     final Object ref = ctx.lookup("CalculatorImplRemote");
                     Calculator calc = (Calculator) PortableRemoteObject.narrow(
-                            ref, Calculator.class);
+                                                                                  ref, Calculator.class);
                     String text1 = field1.getText();
                     String text2 = field2.getText();
                     int num1 = Integer.parseInt(text1);

@@ -25,6 +25,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "USER")
 public class User implements Serializable {
+
     private long id;
     private String firstName;
     private String lastName;

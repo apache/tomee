@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 
 public @interface BiAnnually {
+
     public static interface $ {
 
         @BiAnnually

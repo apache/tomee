@@ -39,7 +39,9 @@ public class CalculatorSecurity implements Calculator {
     @Override
     public int subtract(int a, int b) {
         // Caller must pass a security check to call subtract
-        if (!sessionContext.isCallerInRole("Manager")) throw new AccessDeniedException(sessionContext.getCallerPrincipal().getName());
+        if (!sessionContext.isCallerInRole("Manager")) {
+            throw new AccessDeniedException(sessionContext.getCallerPrincipal().getName());
+        }
 
         return calculator.subtract(a, b);
     }

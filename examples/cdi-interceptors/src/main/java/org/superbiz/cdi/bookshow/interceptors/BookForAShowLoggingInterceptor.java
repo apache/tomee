@@ -44,6 +44,7 @@ import java.util.logging.Logger;
 @Interceptor
 @Log
 public class BookForAShowLoggingInterceptor implements Serializable {
+
     private static final long serialVersionUID = 8139854519874743530L;
     private Logger logger = Logger.getLogger("BookForAShowApplicationLogger");
 

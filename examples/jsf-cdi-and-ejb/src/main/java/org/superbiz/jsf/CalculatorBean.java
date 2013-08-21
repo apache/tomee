@@ -25,6 +25,7 @@ import javax.inject.Named;
 @RequestScoped
 @Named
 public class CalculatorBean {
+
     @Inject
     Calculator calculator;
     private double x;

@@ -18,6 +18,7 @@
 package org.superbiz.servlet;
 
 public class ResourceBean {
+
     private String value;
 
     public String getValue() {

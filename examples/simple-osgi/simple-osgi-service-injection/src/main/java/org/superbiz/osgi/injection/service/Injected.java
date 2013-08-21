@@ -27,6 +27,7 @@ import javax.inject.Inject;
 @Singleton
 @Startup
 public class Injected {
+
     @Inject
     private StartLevel sl;
 

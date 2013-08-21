@@ -31,6 +31,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class DynamicUserDaoTest {
+
     private static EJBContainer container;
     private static boolean initialized = false;
 

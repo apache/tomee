@@ -29,6 +29,7 @@ import javax.naming.NamingException;
 import static junit.framework.Assert.assertTrue;
 
 public class EventTest {
+
     private static EJBContainer container;
     private static String initialLogProperty;
 

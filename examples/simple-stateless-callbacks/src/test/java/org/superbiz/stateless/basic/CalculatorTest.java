@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class CalculatorTest implements ExecutionObserver {
+
     private static final String JNDI = "java:global/simple-stateless-callbacks/CalculatorBean";
 
     private List<Object> received = new ArrayList<Object>();

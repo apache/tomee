@@ -33,9 +33,13 @@ public class PickupEditor extends java.beans.PropertyEditorSupport {
     public void setAsText(String text) throws IllegalArgumentException {
         text = text.trim();
 
-        if (text.equalsIgnoreCase("H")) setValue(Pickup.HUMBUCKER);
-        else if (text.equalsIgnoreCase("S")) setValue(Pickup.SINGLE_COIL);
-        else throw new IllegalStateException("H and S are the only supported Pickup aliases");
+        if (text.equalsIgnoreCase("H")) {
+            setValue(Pickup.HUMBUCKER);
+        } else if (text.equalsIgnoreCase("S")) {
+            setValue(Pickup.SINGLE_COIL);
+        } else {
+            throw new IllegalStateException("H and S are the only supported Pickup aliases");
+        }
     }
 }
 //END SNIPPET: code

@@ -1,6 +1,6 @@
 <!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,36 +23,35 @@
 
 <html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:f="http://java.sun.com/jsf/core"
-   template="/layout/main-template.xhtml">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/layout/main-template.xhtml">
 
-    <ui:define name="content">
-        <h:panelGrid columns="3">
-            <h:outputLabel for="firstName" value="#{i18n.lblFirstName}: "/>
-            <h:inputText id="firstName" label="#{i18n.lblFirstName}" value="#{registrationPage.user.firstName}"/>
-            <h:message for="firstName" showSummary="true" showDetail="false"/>
+  <ui:define name="content">
+    <h:panelGrid columns="3">
+      <h:outputLabel for="firstName" value="#{i18n.lblFirstName}: "/>
+      <h:inputText id="firstName" label="#{i18n.lblFirstName}" value="#{registrationPage.user.firstName}"/>
+      <h:message for="firstName" showSummary="true" showDetail="false"/>
 
-            <h:outputLabel for="lastName" value="#{i18n.lblLastName}: "/>
-            <h:inputText id="lastName" label="#{i18n.lblLastName}" value="#{registrationPage.user.lastName}"/>
-            <h:message for="lastName" showSummary="true" showDetail="false"/>
+      <h:outputLabel for="lastName" value="#{i18n.lblLastName}: "/>
+      <h:inputText id="lastName" label="#{i18n.lblLastName}" value="#{registrationPage.user.lastName}"/>
+      <h:message for="lastName" showSummary="true" showDetail="false"/>
 
-            <h:outputLabel for="loginName" value="#{i18n.lblLoginName}: "/>
-            <h:inputText id="loginName" label="#{i18n.lblLoginName}" value="#{registrationPage.user.userName}" required="true"/>
-            <h:message for="loginName" showSummary="true" showDetail="false"/>
+      <h:outputLabel for="loginName" value="#{i18n.lblLoginName}: "/>
+      <h:inputText id="loginName" label="#{i18n.lblLoginName}" value="#{registrationPage.user.userName}" required="true"/>
+      <h:message for="loginName" showSummary="true" showDetail="false"/>
 
-            <h:outputLabel for="password" value="#{i18n.lblPassword}: "/>
-            <h:inputSecret id="password" label="#{i18n.lblPassword}" value="#{registrationPage.user.password}"/>
-            <h:message for="password" showSummary="true" showDetail="false"/>
+      <h:outputLabel for="password" value="#{i18n.lblPassword}: "/>
+      <h:inputSecret id="password" label="#{i18n.lblPassword}" value="#{registrationPage.user.password}"/>
+      <h:message for="password" showSummary="true" showDetail="false"/>
 
-            <h:outputLabel for="repeatedPassword" value="#{i18n.lblRepeatedPassword}: "/>
-            <h:inputSecret id="repeatedPassword" label="#{i18n.lblRepeatedPassword}" value="#{registrationPage.repeatedPassword}"/>
-            <h:message for="repeatedPassword" showSummary="true" showDetail="false"/>
-        </h:panelGrid>
-        <p/>
-        <h:commandButton id="register" value="#{i18n.btnRegister}" action="#{registrationPage.register}"/>
-    </ui:define>
+      <h:outputLabel for="repeatedPassword" value="#{i18n.lblRepeatedPassword}: "/>
+      <h:inputSecret id="repeatedPassword" label="#{i18n.lblRepeatedPassword}" value="#{registrationPage.repeatedPassword}"/>
+      <h:message for="repeatedPassword" showSummary="true" showDetail="false"/>
+    </h:panelGrid>
+    <p/>
+    <h:commandButton id="register" value="#{i18n.btnRegister}" action="#{registrationPage.register}"/>
+  </ui:define>
 
 </ui:composition>
 </html>

@@ -24,6 +24,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
 public class PasswordCallbackHandler implements CallbackHandler {
+
     private static boolean called = false;
 
     @Override

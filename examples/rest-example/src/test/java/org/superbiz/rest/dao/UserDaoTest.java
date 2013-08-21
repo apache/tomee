@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 import static junit.framework.Assert.assertNotNull;
 
 public class UserDaoTest {
+
     private static EJBContainer container;
 
     @BeforeClass

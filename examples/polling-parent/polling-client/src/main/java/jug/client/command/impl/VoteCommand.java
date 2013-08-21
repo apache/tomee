@@ -21,6 +21,7 @@ import jug.domain.Value;
 
 @Command(name = "vote", usage = "vote [<subject name>, +1|-1]", description = "vote for a subject")
 public class VoteCommand extends QueryAndPostCommand {
+
     @Override
     protected String getName() {
         return "subject";
