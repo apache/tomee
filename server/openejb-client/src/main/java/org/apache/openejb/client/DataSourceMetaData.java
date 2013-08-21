@@ -26,7 +26,7 @@ import java.io.ObjectOutput;
  */
 public class DataSourceMetaData implements Externalizable {
 
-    private static final long serialVersionUID = -1117298086418904681L;
+    private static final long serialVersionUID = 5531437575034018602L;
     private transient String jdbcUrl;
     private transient String jdbcDriver;
     private transient String defaultPassword;
