@@ -28,6 +28,7 @@ import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
@@ -38,6 +39,7 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
@@ -59,6 +61,8 @@ import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -107,7 +111,6 @@ public class CxfRsHttpListener implements RsHttpListener {
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
         transportFactory = httpTransportFactory;
         wildcard = star;
-
     }
 
     @Override
@@ -269,13 +272,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
-                final Object instance = ServiceInfos.resolve(services, clazz.getName());
-                if (instance != null) {
-                    instances.add(instance);
+                final Collection<Object> instance = ServiceInfos.resolve(services, new String[] { clazz.getName() }, ProviderFactory.INSTANCE);
+                if (instance != null && !instance.isEmpty()) {
+                    instances.add(instance.iterator().next());
                 } else {
                     try {
-                        instances.add(clazz.newInstance());
-                    } catch (Exception e) {
+                        instances.add(newProvider(clazz));
+                    } catch (final Exception e) {
                         LOGGER.error("can't instantiate " + clazz.getName(), e);
                     }
                 }
@@ -284,6 +287,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         return instances;
+    }
+
+    private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        return clazz.newInstance();
     }
 
     public void undeploy() {
@@ -514,7 +521,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         List<Object> providers = null;
         if (providersConfig != null) {
-            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]));
+            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             }
@@ -544,5 +551,44 @@ public class CxfRsHttpListener implements RsHttpListener {
         // json.setSerializeAsArray(true);
 
         return Arrays.asList((Object) jaxb, json);
+    }
+
+    private static class ProviderFactory implements ServiceInfos.Factory {
+        private static final ServiceInfos.Factory INSTANCE = new ProviderFactory();
+
+        @Override
+        public Object newInstance(final Class<?> clazz) throws Exception {
+            boolean found = false;
+            Object instance = null;
+            for (final Constructor<?> c : clazz.getConstructors()) {
+                int contextAnnotations = 0;
+                for (final Annotation[] annotations : c.getParameterAnnotations()) {
+                    for (final Annotation a : annotations) {
+                        if (javax.ws.rs.core.Context.class.equals(a.annotationType())) {
+                            contextAnnotations++;
+                            break;
+                        }
+                    }
+                }
+                if (contextAnnotations == c.getParameterTypes().length) {
+                    if (found) {
+                        LOGGER.warning("Found multiple matching constructor for " + clazz.getName());
+                        return instance;
+                    }
+
+                    final Object[] params = new Object[c.getParameterTypes().length];
+                    for (int i = 0; i < params.length; i++) {
+                        params[i] = ThreadLocalContextManager.findThreadLocal(c.getParameterTypes()[i]);
+                        // params[i] can be null if not a known type
+                    }
+                    instance = c.newInstance(params);
+                    found = true;
+                }
+            }
+            if (instance != null) {
+                return instance;
+            }
+            return clazz.newInstance();
+        }
     }
 }

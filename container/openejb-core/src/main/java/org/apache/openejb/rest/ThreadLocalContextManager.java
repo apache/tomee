@@ -17,7 +17,17 @@
 
 package org.apache.openejb.rest;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Providers;
 import java.util.Map;
 
 public class ThreadLocalContextManager {
@@ -52,5 +62,30 @@ public class ThreadLocalContextManager {
             map.clear();
         }
         OTHERS.remove();
+    }
+
+    public static Object findThreadLocal(final Class<?> type) {
+        if (Request.class.equals(type)) {
+            return ThreadLocalContextManager.REQUEST;
+        } else if (UriInfo.class.equals(type)) {
+            return ThreadLocalContextManager.URI_INFO;
+        } else if (HttpHeaders.class.equals(type)) {
+            return ThreadLocalContextManager.HTTP_HEADERS;
+        } else if (SecurityContext.class.equals(type)) {
+            return ThreadLocalContextManager.SECURITY_CONTEXT;
+        } else if (ContextResolver.class.equals(type)) {
+            return ThreadLocalContextManager.CONTEXT_RESOLVER;
+        } else if (Providers.class.equals(type)) {
+            return ThreadLocalContextManager.PROVIDERS;
+        } else if (ServletRequest.class.equals(type)) {
+            return ThreadLocalContextManager.SERVLET_REQUEST;
+        } else if (HttpServletRequest.class.equals(type)) {
+            return ThreadLocalContextManager.HTTP_SERVLET_REQUEST;
+        } else if (HttpServletResponse.class.equals(type)) {
+            return ThreadLocalContextManager.HTTP_SERVLET_RESPONSE;
+        } else if (ServletConfig.class.equals(type)) {
+            return ThreadLocalContextManager.SERVLET_CONFIG;
+        }
+        return null;
     }
 }
