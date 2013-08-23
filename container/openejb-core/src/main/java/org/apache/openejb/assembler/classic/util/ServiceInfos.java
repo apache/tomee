@@ -72,6 +72,10 @@ public final class ServiceInfos {
     }
 
     public static List<Object> resolve(final Collection<ServiceInfo> serviceInfos, final String[] ids) {
+        return resolve(serviceInfos, ids, null);
+    }
+
+    public static List<Object> resolve(final Collection<ServiceInfo> serviceInfos, final String[] ids, final Factory factory) {
         if (ids == null || ids.length == 0) {
             return null;
         }
@@ -81,8 +85,13 @@ public final class ServiceInfos {
             Object instance = resolve(serviceInfos, id);
             if (instance == null) {  // maybe id == classname
                 try {
-                    instance = Thread.currentThread().getContextClassLoader().loadClass(id).newInstance();
-                } catch (Exception e) {
+                    final Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(id);
+                    if (factory == null) {
+                        instance = aClass.newInstance();
+                    } else {
+                        instance = factory.newInstance(aClass);
+                    }
+                } catch (final Exception e) {
                     // ignore
                 }
             }
@@ -146,5 +155,9 @@ public final class ServiceInfos {
         Assembler.logUnusedProperties(serviceRecipe, info);
 
         return service;
+    }
+
+    public static interface Factory {
+        Object newInstance(final Class<?> clazz) throws Exception;
     }
 }
