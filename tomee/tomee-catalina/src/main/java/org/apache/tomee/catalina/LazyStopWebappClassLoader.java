@@ -206,6 +206,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
+    public boolean equals(final Object other) {
+        return other != null && ClassLoader.class.isInstance(other) && hashCode() == other.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "LazyStop" + super.toString();
     }
