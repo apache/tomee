@@ -105,7 +105,7 @@ public class FacesConfigFlowDefinition {
     @XmlElement(name = "flow-return")
     protected List<FacesConfigFlowDefinitionFlowReturn> flowReturn;
     @XmlElement(name = "navigation-rule")
-    protected List<FacesConfigNavigationRule> navigationRule;
+    protected List<FacesNavigationRule> navigationRule;
     @XmlElement(name = "flow-call")
     protected List<FacesConfigFlowDefinitionFlowCall> flowCall;
     @XmlElement(name = "method-call")
@@ -340,9 +340,9 @@ public class FacesConfigFlowDefinition {
      * 
      * 
      */
-    public List<FacesConfigNavigationRule> getNavigationRule() {
+    public List<FacesNavigationRule> getNavigationRule() {
         if (navigationRule == null) {
-            navigationRule = new ArrayList<FacesConfigNavigationRule>();
+            navigationRule = new ArrayList<FacesNavigationRule>();
         }
         return this.navigationRule;
     }

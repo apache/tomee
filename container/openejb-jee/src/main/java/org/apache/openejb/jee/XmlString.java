@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "string", propOrder = {
+@XmlType(name = "xml-string", propOrder = {
     "value"
 })
 public class XmlString {

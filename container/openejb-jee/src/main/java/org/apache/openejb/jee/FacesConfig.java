@@ -86,7 +86,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "lifecycle",
     "validator",
     "behavior",
-    "facesConfigExtension"
+    "facesConfigExtension",
+    "flowDefinitions",
+    "protectedViews"
 })
 public class FacesConfig {
 
