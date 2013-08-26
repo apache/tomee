@@ -87,6 +87,11 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <scope>runtime</scope> <!-- transitive from xerces but in test scope in parent so needed here -->
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-rest</artifactId>
       <version>${openejb.version}</version>
