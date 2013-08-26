@@ -233,7 +233,7 @@ public class CdiScanner implements ScannerService {
             return;
         }
 
-        for (final String clazz : CONTAINER_CLASSES.get("bval")) {
+        for (final String clazz : CONTAINER_CLASSES.get(key)) {
             try {
                 classes.add(loader.loadClass(clazz));
             } catch (final Throwable th) { // classnotfoundexception ot noclassdeffounderror
