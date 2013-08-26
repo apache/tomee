@@ -336,6 +336,9 @@ public class FacesConfig$JAXB
                     }
                 }
                 facesConfigExtension.add(facesConfigExtensionItem);
+            } else if (("flow-definition" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO:  read it if we need it (= classes to add to injectable classes, other file to parse to find them etc...)
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application"), new QName("http://java.sun.com/xml/ns/javaee", "ordering"), new QName("http://java.sun.com/xml/ns/javaee", "absolute-ordering"), new QName("http://java.sun.com/xml/ns/javaee", "factory"), new QName("http://java.sun.com/xml/ns/javaee", "component"), new QName("http://java.sun.com/xml/ns/javaee", "converter"), new QName("http://java.sun.com/xml/ns/javaee", "managed-bean"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "navigation-rule"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle"), new QName("http://java.sun.com/xml/ns/javaee", "validator"), new QName("http://java.sun.com/xml/ns/javaee", "behavior"), new QName("http://java.sun.com/xml/ns/javaee", "faces-config-extension"));
             }
