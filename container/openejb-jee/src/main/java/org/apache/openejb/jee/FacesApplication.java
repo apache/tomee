@@ -76,12 +76,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "elResolver",
     "propertyResolver",
     "variableResolver",
-        "resourceHandler",
-        "systemEventListener",
+    "resourceHandler",
+    "systemEventListener",
     "localeConfig",
     "resourceBundle",
     "applicationExtension",
-        "defaultValidators"
+    "defaultValidators"
 })
 public class FacesApplication {
 
