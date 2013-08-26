@@ -37,12 +37,16 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.AnnotationUtil;
 
 import javax.interceptor.Interceptor;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -51,18 +55,33 @@ import java.util.Set;
 public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
     public static final ThreadLocal<Collection<String>> ADDITIONAL_CLASSES = new ThreadLocal<Collection<String>>();
+    private static final Map<String, Collection<String>> CONTAINER_CLASSES = new HashMap<String, Collection<String>>();
+    static { // load container classes lists
+        final Properties props = new Properties();
+        try {
+            props.load(CdiScanner.class.getResourceAsStream("/container-cdi-classes.properties"));
+        } catch (final IOException e) {
+            // no-op
+        }
+        for (final String key : props.stringPropertyNames()) {
+            final Collection<String> set = new HashSet<String>();
+            CONTAINER_CLASSES.put(key, set);
+            Collections.addAll(set, props.getProperty(key).split(","));
+        }
+    }
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     @Override
-    public void init(Object object) {
+    public void init(final Object object) {
         if (!(object instanceof StartupObject)) {
             return;
         }
-        StartupObject startupObject = (StartupObject) object;
-        AppInfo appInfo = startupObject.getAppInfo();
-        ClassLoader classLoader = startupObject.getClassLoader();
+
+        final StartupObject startupObject = (StartupObject) object;
+        final AppInfo appInfo = startupObject.getAppInfo();
+        final ClassLoader classLoader = startupObject.getClassLoader();
         final ClassLoaderComparator comparator;
         if (classLoader instanceof  ClassLoaderComparator) {
             comparator = (ClassLoaderComparator) classLoader;
@@ -77,10 +96,12 @@ public class CdiScanner implements ScannerService {
 
         final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
 
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
-            if (beans == null) continue;
+            if (beans == null) {
+                continue;
+            }
 
             if (startupObject.isFromWebApp()) { // deploy only the related ejbmodule
                 if (!ejbJar.moduleId.equals(startupObject.getWebContext().getId())) {
@@ -104,8 +125,8 @@ public class CdiScanner implements ScannerService {
             beans.duplicatedDecorators.clear();
             beans.duplicatedInterceptors.clear();
 
-            for (String className : beans.interceptors) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.interceptors) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
 
                 if (clazz != null) {
 // TODO: Move check to validation phase
@@ -125,9 +146,8 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            for (String className : beans.decorators) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-
+            for (final String className : beans.decorators) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     if (!decoratorsManager.isDecoratorEnabled(clazz)) {
                         decoratorsManager.addEnabledDecorator(clazz);
@@ -139,8 +159,8 @@ public class CdiScanner implements ScannerService {
             }
 
 
-            for (String className : beans.alternativeStereotypes) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.alternativeStereotypes) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addStereoTypeAlternative(clazz, null, null);
                     classes.add(clazz);
@@ -149,8 +169,8 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            for (String className : beans.alternativeClasses) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.alternativeClasses) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addClazzAlternative(clazz, null, null);
                     classes.add(clazz);
@@ -184,13 +204,42 @@ public class CdiScanner implements ScannerService {
                     }
 
                     final Class<?> load = load(name, classLoader);
-                    if (load != null && !classes.contains(name)) {
+                    if (load != null && !classes.contains(load)) {
                         classes.add(load);
                     }
                 }
             }
+
+            addContainerCdiClasses(classLoader, appInfo, ejbJar);
         }
 
+    }
+
+    private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app, final EjbJarInfo ejbJar) {
+        if (!"true".equalsIgnoreCase(app.properties.getProperty("CdiContainer", "true"))) {
+            return;
+        }
+
+        addContainerClasses(app.properties, loader, "BVal");
+
+        if (ejbJar.webapp && "true".equalsIgnoreCase(app.properties.getProperty("Jsf.MyFaces", "true"))) {
+            addContainerClasses(app.properties, loader, "MyFaces");
+        }
+    }
+
+
+    private void addContainerClasses(final Properties appProps, final ClassLoader loader, final String key) {
+        if (!"true".equalsIgnoreCase(appProps.getProperty("CdiContainer." + key, "true"))) {
+            return;
+        }
+
+        for (final String clazz : CONTAINER_CLASSES.get("bval")) {
+            try {
+                classes.add(loader.loadClass(clazz));
+            } catch (final Throwable th) { // classnotfoundexception ot noclassdeffounderror
+                // no-op
+            }
+        }
     }
 
     private static boolean shouldThrowCouldNotLoadException(final StartupObject startupObject) {
