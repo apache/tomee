@@ -38,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.management.Attribute;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.util.Arrays;
@@ -137,6 +138,12 @@ public class MBeanDeployerTest {
                 assertTrue(cn.startsWith("openejb.user.mbeans"));
                 assertTrue(cn.contains("group=org.apache.openejb.mbeans"));
                 assertTrue(cn.contains("application=mbeans") || cn.contains("application=EjbModule"));
+                final MBeanInfo info = server.getMBeanInfo(on);
+                if ("desc".equals(info.getOperations()[0].getName())) {
+                    assertEquals("param", info.getOperations()[0].getSignature()[0].getDescription());
+                } else {
+                    assertEquals("param", info.getOperations()[1].getSignature()[0].getDescription());
+                }
                 assertTrue(server.isRegistered(on));
                 assertEquals("yes - no", server.invoke(on, "returnValue", null, null));
                 parsed.add(cn);
