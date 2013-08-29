@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.monitoring;
 
-import com.sun.jmx.mbeanserver.Introspector;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
@@ -228,22 +227,24 @@ public class DynamicMBeanWrapper implements DynamicMBean {
     }
 
     private MBeanOperationInfo newMethodDescriptor(final String operationDescr, final Method m) {
+        final MBeanOperationInfo jvmInfo = new MBeanOperationInfo(operationDescr, m);
         return new MBeanOperationInfo(
             m.getName(),
             operationDescr,
-            methodSignature(m),
+            methodSignature(jvmInfo, m),
             m.getReturnType().getName(),
             MBeanOperationInfo.UNKNOWN,
-            Introspector.descriptorForElement(m));
+            jvmInfo.getDescriptor()); // avoid to copy the logic
     }
 
-    private static MBeanParameterInfo[] methodSignature(final Method method) {
+    private static MBeanParameterInfo[] methodSignature(final MBeanOperationInfo jvmInfo, final Method method) {
         final Class<?>[] classes = method.getParameterTypes();
         final Annotation[][] annots = method.getParameterAnnotations();
-        return parameters(classes, annots);
+        return parameters(jvmInfo, classes, annots);
     }
 
-    static MBeanParameterInfo[] parameters(final Class<?>[] classes,
+    static MBeanParameterInfo[] parameters(final MBeanOperationInfo jvmInfo,
+                                           final Class<?>[] classes,
                                            final Annotation[][] annots) {
         final MBeanParameterInfo[] params =
             new MBeanParameterInfo[classes.length];
@@ -251,7 +252,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
 
         String desc = "";
         for (int i = 0; i < classes.length; i++) {
-            final Descriptor d = Introspector.descriptorForAnnotations(annots[i]);
+            final Descriptor d = jvmInfo.getSignature()[i].getDescriptor();
             final String pn = "arg" + i;
             for (final Annotation a : annots[i]) {
                 final Class<? extends Annotation> type = a.annotationType();
