@@ -236,8 +236,6 @@ class AppInfoBuilder {
                 // Get the ejb-jar.xml object
                 final EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
 
-                setApplicationEnvEntries(appModule.getApplication(), enterpriseBean);
-
                 // Build the JNDI info tree for the EJB
                 jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleName, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
 
@@ -305,14 +303,6 @@ class AppInfoBuilder {
 
         return appInfo;
 
-    }
-
-    private void setApplicationEnvEntries(final Application app, final EnterpriseBean enterpriseBean) {
-        if (app == null || enterpriseBean == null) {
-            return;
-        }
-
-        enterpriseBean.getEnvEntry().addAll(app.getEnvEntry());
     }
 
     private void buildPojoConfiguration(final AppModule appModule, final AppInfo appInfo) {
