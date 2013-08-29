@@ -1024,7 +1024,7 @@
   <ServiceProvider
           id="Default Queue"
           service="Resource"
-          types="javax.jms.Queue, Queue"
+          types="javax.jms.Queue, Queue, javax.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
@@ -1036,7 +1036,7 @@
   <ServiceProvider
           id="Default Topic"
           service="Resource"
-          types="javax.jms.Topic, Topic"
+          types="javax.jms.Topic, Topic, javax.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
