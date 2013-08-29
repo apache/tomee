@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
+import com.sun.jmx.mbeanserver.Introspector;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
@@ -30,6 +31,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
+import javax.management.Descriptor;
 import javax.management.DynamicMBean;
 import javax.management.ImmutableDescriptor;
 import javax.management.IntrospectionException;
@@ -39,6 +41,7 @@ import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.ReflectionException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -163,7 +166,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                         operationDescr = getDescription(descr, "-");
                     }
 
-                    operationInfos.add(new MBeanOperationInfo(operationDescr, m));
+                    operationInfos.add(newMethodDescriptor(operationDescr, m));
                 }
             }
 
@@ -224,6 +227,45 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         }
     }
 
+    private MBeanOperationInfo newMethodDescriptor(final String operationDescr, final Method m) {
+        return new MBeanOperationInfo(
+            m.getName(),
+            operationDescr,
+            methodSignature(m),
+            m.getReturnType().getName(),
+            MBeanOperationInfo.UNKNOWN,
+            Introspector.descriptorForElement(m));
+    }
+
+    private static MBeanParameterInfo[] methodSignature(final Method method) {
+        final Class<?>[] classes = method.getParameterTypes();
+        final Annotation[][] annots = method.getParameterAnnotations();
+        return parameters(classes, annots);
+    }
+
+    static MBeanParameterInfo[] parameters(final Class<?>[] classes,
+                                           final Annotation[][] annots) {
+        final MBeanParameterInfo[] params =
+            new MBeanParameterInfo[classes.length];
+        assert(classes.length == annots.length);
+
+        String desc = "";
+        for (int i = 0; i < classes.length; i++) {
+            final Descriptor d = Introspector.descriptorForAnnotations(annots[i]);
+            final String pn = "arg" + i;
+            for (final Annotation a : annots[i]) {
+                final Class<? extends Annotation> type = a.annotationType();
+                if (type.equals(Description.class) || type.equals(OPENEJB_API_TO_JAVAX.get(Description.class))) {
+                    desc = getDescription(annotationProxy(a, Description.class), desc);
+                    break;
+                }
+            }
+            params[i] = new MBeanParameterInfo(pn, classes[i].getName(), desc, d);
+        }
+
+        return params;
+    }
+
     private <T extends Annotation> T findAnnotation(final Method method, final Class<T> searchedAnnotation) {
         final T annotation = method.getAnnotation(searchedAnnotation);
         if (annotation != null) {
@@ -260,14 +302,14 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         return (T) Proxy.newProxyInstance(DynamicMBeanWrapper.class.getClassLoader(), new Class<?>[]{clazz}, new AnnotationHandler(javaxAnnotation));
     }
 
-    private MBeanNotificationInfo getNotificationInfo(NotificationInfo n) {
-        String description = getDescription(n.description(), "-");
+    private static MBeanNotificationInfo getNotificationInfo(final NotificationInfo n) {
+        final String description = getDescription(n.description(), "-");
         return new MBeanNotificationInfo(n.types(),
             n.notificationClass().getName(), description,
             new ImmutableDescriptor(n.descriptorFields()));
     }
 
-    private String getDescription(Description d, String defaultValue) {
+    private static String getDescription(final Description d, final String defaultValue) {
         if (d != null) {
             if (d.bundleBaseName() != null && d.key() != null) {
                 try {

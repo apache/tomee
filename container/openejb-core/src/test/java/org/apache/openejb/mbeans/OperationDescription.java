@@ -23,7 +23,14 @@ import javax.management.ManagedOperation;
 @MBean
 @Description("descr ;)")
 public class OperationDescription {
-	@ManagedOperation @Description("just an op") public String returnValue() {
-		return "yes - no";
-	}
+    @ManagedOperation
+    @Description("just an op")
+    public String returnValue() {
+        return "yes - no";
+    }
+
+    @ManagedOperation
+    public String desc(final @Description("param") String p) {
+        return null;
+    }
 }
