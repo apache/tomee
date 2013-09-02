@@ -59,6 +59,7 @@ public abstract class TimerData implements Serializable {
 
     private Object info;
     private boolean persistent;
+    private boolean autoScheduled;
 
     protected AbstractTrigger<?> trigger;
     
@@ -111,10 +112,11 @@ public abstract class TimerData implements Serializable {
         this.timeoutMethod = timeoutMethod;
     }
 
-    private void writeObject(final ObjectOutputStream out) throws IOException {
+    protected void writeObject(final ObjectOutputStream out) throws IOException {
         out.writeLong(id);
         out.writeUTF(deploymentId);
         out.writeBoolean(persistent);
+        out.writeBoolean(autoScheduled);
         out.writeObject(timer);
         out.writeObject(primaryKey);
         out.writeObject(timerService);
@@ -122,10 +124,11 @@ public abstract class TimerData implements Serializable {
         out.writeUTF(timeoutMethod.getName());
     }
 
-    private void readObject(final ObjectInputStream in) throws IOException {
+    protected void readObject(final ObjectInputStream in) throws IOException {
         id = in.readLong();
         deploymentId = in.readUTF();
         persistent = in.readBoolean();
+        autoScheduled = in.readBoolean();
 
         try {
             timer = (Timer) in.readObject();

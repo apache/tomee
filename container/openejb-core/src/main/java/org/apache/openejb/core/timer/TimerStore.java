@@ -17,12 +17,11 @@
 
 package org.apache.openejb.core.timer;
 
+import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
-
-import javax.ejb.ScheduleExpression;
-import javax.ejb.TimerConfig;
 
 public interface TimerStore {
 
@@ -40,7 +39,7 @@ public interface TimerStore {
     TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig)
             throws TimerStoreException;
 
-    TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig)
+    TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig, boolean auto)
             throws TimerStoreException;
 
     void removeTimer(long timerId);

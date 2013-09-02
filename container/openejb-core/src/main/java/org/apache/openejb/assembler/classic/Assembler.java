@@ -1034,7 +1034,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                                                                null,
                                                                entry.getKey(),
                                                                scheduleData.getExpression(),
-                                                               scheduleData.getConfig());
+                                                               scheduleData.getConfig(),
+                                                                true);
                             }
                         }
                         beanContext.setEjbTimerService(timerService);
