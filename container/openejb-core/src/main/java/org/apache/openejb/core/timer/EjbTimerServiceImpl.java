@@ -548,7 +548,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         final Collection<Timer> timers = new ArrayList<Timer>();
         for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
-            timers.add(timerData.getTimer());
+            if (!CalendarTimerData.class.isInstance(timerData) || !CalendarTimerData.class.cast(timerData).isAutoCreated()) {
+                timers.add(timerData.getTimer());
+            }
         }
         return timers;
     }
@@ -665,7 +667,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         //TODO add more schedule expression validation logic ?
         checkState();
         try {
-            final TimerData timerData = timerStore.createCalendarTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, scheduleExpression, timerConfig);
+            final TimerData timerData = timerStore.createCalendarTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, scheduleExpression, timerConfig, false);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {

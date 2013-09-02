@@ -17,6 +17,17 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,18 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.ejb.ScheduleExpression;
-import javax.ejb.TimerConfig;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public class MemoryTimerStore implements TimerStore {
     private static final long serialVersionUID = 1L;
@@ -90,10 +89,10 @@ public class MemoryTimerStore implements TimerStore {
     }
 
     @Override
-    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig)
+    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig, final boolean auto)
             throws TimerStoreException {
         final long id = counter.incrementAndGet();
-        final TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression);
+        final TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression, auto);
         getTasks().addTimerData(timerData);
         return timerData;
     }
