@@ -92,14 +92,14 @@ public class QuartzPersistenceForEJBTimersTest {
     @Configuration
     public Properties configuration() {
         return new PropertiesBuilder()
-            // see src/main/resources/import-QuartzPersistenceForEJBTimersDB.sql for the init script
+            // see src/test/resources/import-QuartzPersistenceForEJBTimersDB.sql for the init script
             .p("QuartzPersistenceForEJBTimersDB", "new://Resource?type=DataSource")
             .p("QuartzPersistenceForEJBTimersDB.JtaManaged", "true")
             .p("QuartzPersistenceForEJBTimersDB.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDB")
             .p("QuartzPersistenceForEJBTimersDB.UserName", "SA")
             .p("QuartzPersistenceForEJBTimersDB.Password", "")
 
-            // see src/main/resources/import-QuartzPersistenceForEJBTimersDBNoTx.sql for the init script
+            // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx.sql for the init script
             .p("QuartzPersistenceForEJBTimersDBNoTx", "new://Resource?type=DataSource")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JtaManaged", "false")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDBNoTx")
