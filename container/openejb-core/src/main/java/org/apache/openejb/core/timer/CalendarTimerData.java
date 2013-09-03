@@ -65,16 +65,14 @@ public class CalendarTimerData extends TimerData {
         }
     }
 
-    @Override
-    protected void writeObject(final ObjectOutputStream out) throws IOException {
-        super.writeObject(out);
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        super.doWriteObject(out);
         out.writeBoolean(autoCreated);
         out.writeObject(scheduleExpression);
     }
 
-    @Override
-    protected void readObject(final ObjectInputStream in) throws IOException {
-        super.readObject(in);
+    private void readObject(final ObjectInputStream in) throws IOException {
+        super.doReadObject(in);
         autoCreated = in.readBoolean();
         try {
             scheduleExpression = ScheduleExpression.class.cast(in.readObject());
