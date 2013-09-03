@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.timer.quartz;
 
+import org.quartz.impl.jdbcjobstore.NoSuchDelegateException;
 import org.quartz.impl.jdbcjobstore.StdJDBCDelegate;
 import org.quartz.spi.ClassLoadHelper;
 import org.slf4j.Logger;
@@ -29,29 +30,46 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PatchedStdJDBCDelegate extends StdJDBCDelegate {
-    public PatchedStdJDBCDelegate(final Logger logger, final String tablePrefix, final String schedName, final String instanceId, final ClassLoadHelper classLoadHelper) {
-        super(logger, tablePrefix, schedName, instanceId, classLoadHelper);
+
+    public PatchedStdJDBCDelegate(final Logger logger,
+                                  final String tablePrefix,
+                                  final String schedName,
+                                  final String instanceId,
+                                  final ClassLoadHelper classLoadHelper) throws NoSuchDelegateException {
+        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, false, null);
     }
 
-    public PatchedStdJDBCDelegate(final Logger logger, final String tablePrefix, final String schedName, final String instanceId, final ClassLoadHelper classLoadHelper, final Boolean useProperties) {
-        super(logger, tablePrefix, schedName, instanceId, classLoadHelper, useProperties);
+    public PatchedStdJDBCDelegate(final Logger logger,
+                                  final String tablePrefix,
+                                  final String schedName,
+                                  final String instanceId,
+                                  final ClassLoadHelper classLoadHelper,
+                                  final Boolean useProperties) throws NoSuchDelegateException {
+        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, useProperties, null);
+    }
+
+    public PatchedStdJDBCDelegate(final Logger logger,
+                                  final String tablePrefix,
+                                  final String schedName,
+                                  final String instanceId,
+                                  final ClassLoadHelper classLoadHelper,
+                                  final Boolean useProperties,
+                                  final String initString) throws NoSuchDelegateException {
+        initialize(logger, tablePrefix, schedName, instanceId, classLoadHelper, useProperties, initString);
     }
 
     @Override
     protected Object getObjectFromBlob(final ResultSet rs, final String colName)
-            throws ClassNotFoundException, IOException, SQLException {
+        throws ClassNotFoundException, IOException, SQLException {
         Object obj = null;
 
-        Blob blobLocator = rs.getBlob(colName);
+        final Blob blobLocator = rs.getBlob(colName);
         if (blobLocator != null && blobLocator.length() != 0) {
-            InputStream binaryInput = blobLocator.getBinaryStream();
+            final InputStream binaryInput = blobLocator.getBinaryStream();
 
             if (null != binaryInput) {
-                if (binaryInput instanceof ByteArrayInputStream
-                        && ((ByteArrayInputStream) binaryInput).available() == 0 ) {
-                    //do nothing
-                } else {
-                    ObjectInputStream in = new QuartzObjectInputStream(binaryInput, classLoadHelper);
+                if (!(binaryInput instanceof ByteArrayInputStream) || ((ByteArrayInputStream) binaryInput).available() != 0) {
+                    final ObjectInputStream in = new QuartzObjectInputStream(binaryInput, classLoadHelper);
                     try {
                         obj = in.readObject();
                     } finally {
