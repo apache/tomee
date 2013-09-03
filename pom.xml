@@ -1423,14 +1423,13 @@
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
           </exclusion>
-        </exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
-	  <dependency>
+      <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz-jobs</artifactId>
         <version>${quartz.version}</version>
