@@ -112,7 +112,11 @@ public abstract class TimerData implements Serializable {
         this.timeoutMethod = timeoutMethod;
     }
 
-    protected void writeObject(final ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        doWriteObject(out);
+    }
+
+    protected void doWriteObject(final ObjectOutputStream out) throws IOException {
         out.writeLong(id);
         out.writeUTF(deploymentId);
         out.writeBoolean(persistent);
@@ -124,7 +128,11 @@ public abstract class TimerData implements Serializable {
         out.writeUTF(timeoutMethod.getName());
     }
 
-    protected void readObject(final ObjectInputStream in) throws IOException {
+    private void readObject(final ObjectInputStream in) throws IOException {
+        doReadObject(in);
+    }
+
+    protected void doReadObject(final ObjectInputStream in) throws IOException {
         id = in.readLong();
         deploymentId = in.readUTF();
         persistent = in.readBoolean();
@@ -154,7 +162,6 @@ public abstract class TimerData implements Serializable {
                 timeoutMethod = method;
                 break;
             }
-
         }
     }
 
