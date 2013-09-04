@@ -21,6 +21,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
@@ -54,7 +55,7 @@ public class ProtocolMetaData {
     private void init(final String spec) {
 
         if (!spec.matches("^OEJP/[0-9]\\.[0-9]$")) {
-            throw new RuntimeException("Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ]");
+            throw new RuntimeException("Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ] - " + spec);
         }
 
         final char[] chars = new char[8];
@@ -102,6 +103,10 @@ public class ProtocolMetaData {
                 throw new EOFException("Unable to read protocol version.  Reached the end of the stream.");
             }
         }
-        init(new String(spec, "UTF-8"));
+        try {
+            init(new String(spec, "UTF-8"));
+        } catch (Throwable e) {
+            throw new IOException("Failed to read spec: " + Arrays.toString(spec), e);
+        }
     }
 }
