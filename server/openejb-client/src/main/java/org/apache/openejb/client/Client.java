@@ -268,10 +268,9 @@ public class Client {
             }
 
             //Determine the server response protocol for reading
-            ProtocolMetaData protocolResponse = null;
+            final ProtocolMetaData protocolResponse = new ProtocolMetaData();
             try {
 
-                protocolResponse = new ProtocolMetaData();
                 protocolResponse.readExternal(in);
 
             } catch (EOFException e) {
