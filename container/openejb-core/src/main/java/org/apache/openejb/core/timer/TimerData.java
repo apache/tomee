@@ -125,6 +125,7 @@ public abstract class TimerData implements Serializable {
         out.writeObject(primaryKey);
         out.writeObject(timerService);
         out.writeObject(info);
+        out.writeObject(trigger);
         out.writeUTF(timeoutMethod.getName());
     }
 
@@ -143,12 +144,14 @@ public abstract class TimerData implements Serializable {
             primaryKey = in.readObject();
             timerService = (EjbTimerServiceImpl) in.readObject();
             info = in.readObject();
+            trigger = AbstractTrigger.class.cast(in.readObject());
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
         }
 
         final String mtd = in.readUTF();
         final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
+        scheduler = timerService.getScheduler();
         for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
             final MethodContext methodContext = it.next().getValue();
             /* this doesn't work in all cases
