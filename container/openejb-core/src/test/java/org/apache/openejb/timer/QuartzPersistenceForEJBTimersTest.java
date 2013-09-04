@@ -34,16 +34,19 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
+import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(ApplicationComposer.class)
 public class QuartzPersistenceForEJBTimersTest {
@@ -52,9 +55,16 @@ public class QuartzPersistenceForEJBTimersTest {
 
     @Test
     public void doTest() {
-        assertNotNull(bean);
         assertEquals(0, bean.timers().size());
         bean.newTimer();
+        assertEquals(1, bean.timers().size());
+        while (!bean.awaitTimeout()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // no-op
+            }
+        }
         assertEquals(1, bean.timers().size());
     }
 
@@ -99,10 +109,10 @@ public class QuartzPersistenceForEJBTimersTest {
             .p("QuartzPersistenceForEJBTimersDB.UserName", "SA")
             .p("QuartzPersistenceForEJBTimersDB.Password", "")
 
-            // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx.sql for the init script
+            // see src/test/resources/import-QuartzPersistenceForEJBTimersDBNoTx-.sql for the init script
             .p("QuartzPersistenceForEJBTimersDBNoTx", "new://Resource?type=DataSource")
             .p("QuartzPersistenceForEJBTimersDBNoTx.JtaManaged", "false")
-            .p("QuartzPersistenceForEJBTimersDBNoTx.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDBNoTx")
+            .p("QuartzPersistenceForEJBTimersDBNoTx.JdbcUrl", "jdbc:hsqldb:mem:QuartzPersistenceForEJBTimersDB")
             .p("QuartzPersistenceForEJBTimersDBNoTx.UserName", "SA")
             .p("QuartzPersistenceForEJBTimersDBNoTx.Password", "")
             .build();
@@ -111,17 +121,28 @@ public class QuartzPersistenceForEJBTimersTest {
     @Singleton
     public static class MyTimedEjb {
         @Resource
-        private TimerService ts;
+        private TimerService timerService;
 
         private Timer timer = null;
+        private Semaphore sema = new Semaphore(0);
 
         @Timeout
         public void timeout(final Timer timer) {
-            // no-op: not important for that test
+            System.out.println("@Timeout on " + timer.getInfo());
+            sema.release();
+        }
+
+        public boolean awaitTimeout() {
+            try {
+                return sema.tryAcquire(1, TimeUnit.SECONDS);
+            } catch (final InterruptedException e) {
+                // no-op
+            }
+            return false;
         }
 
         public Collection<Timer> timers() {
-            return ts.getTimers();
+            return timerService.getTimers();
         }
 
         @PreDestroy
@@ -137,7 +158,17 @@ public class QuartzPersistenceForEJBTimersTest {
         }
 
         public void newTimer() {
-            timer = ts.createIntervalTimer(3000, 1000, new TimerConfig(System.currentTimeMillis(), false));
+            final TimerConfig tc = new TimerConfig("my-timer", true);
+            final ScheduleExpression se = new ScheduleExpression();
+            final Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.SECOND, 2);
+            se.second(calendar.get(Calendar.SECOND) + "/3");
+            se.minute("*");
+            se.hour("*");
+            se.dayOfMonth("*");
+            se.dayOfWeek("*");
+            se.month("*");
+            timer = timerService.createCalendarTimer(se, tc);
         }
     }
 }

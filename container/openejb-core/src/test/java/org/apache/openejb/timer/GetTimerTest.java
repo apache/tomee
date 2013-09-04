@@ -29,13 +29,16 @@ import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Schedule;
+import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.concurrent.Semaphore;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,6 +57,8 @@ public class GetTimerTest {
         assertEquals(0, bean.timers().size());
         bean.newTimer();
         assertEquals(1, bean.timers().size());
+        bean.awaitTimeout();
+        assertEquals(1, bean.timers().size());
     }
 
     @Singleton
@@ -61,17 +66,27 @@ public class GetTimerTest {
     @Lock(LockType.READ)
     public static class TimerLister {
         @Resource
-        private TimerService ts;
+        private TimerService timerService;
 
         private Timer timer = null;
+        private Semaphore sema = new Semaphore(0);
 
         @Timeout
         public void timeout(final Timer timer) {
-            // no-op: not important for that test
+            System.out.println("@Timeout");
+            sema.release();
+        }
+
+        public void awaitTimeout() {
+            try {
+                sema.acquire();
+            } catch (final InterruptedException e) {
+                // no-op
+            }
         }
 
         public Collection<Timer> timers() {
-            return ts.getTimers();
+            return timerService.getTimers();
         }
 
         @PreDestroy
@@ -87,7 +102,17 @@ public class GetTimerTest {
         }
 
         public void newTimer() {
-            timer = ts.createIntervalTimer(3000, 1000, new TimerConfig(System.currentTimeMillis(), false));
+            final TimerConfig tc = new TimerConfig("my-timer", true);
+            final ScheduleExpression se = new ScheduleExpression();
+            final Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.SECOND, 2);
+            se.second(calendar.get(Calendar.SECOND) + "/3");
+            se.minute("*");
+            se.hour("*");
+            se.dayOfMonth("*");
+            se.dayOfWeek("*");
+            se.month("*");
+            timer = timerService.createCalendarTimer(se, tc);
         }
     }
 }

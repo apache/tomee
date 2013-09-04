@@ -21,6 +21,7 @@ import org.apache.openejb.util.Logger;
 import org.quartz.impl.triggers.CronTriggerImpl;
 
 import javax.ejb.ScheduleExpression;
+import java.io.Serializable;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -576,7 +577,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
 	}
 
-	private abstract static class FieldExpression {
+	private abstract static class FieldExpression implements Serializable {
 
 
 		protected static final Calendar CALENDAR = new GregorianCalendar(Locale.US); // For getting min/max field values
@@ -624,14 +625,8 @@ public class EJBCronTrigger extends CronTriggerImpl {
 		}
 		
 		protected boolean isValidResult(Calendar calendar, Integer result){
-		    
-		    if (result!=null && result>=calendar.getActualMinimum(field) && result <=calendar.getActualMaximum(field)){
-                return true;
-            } 
-		    
-		    return false;
-		    
-		}
+            return result != null && result >= calendar.getActualMinimum(field) && result <= calendar.getActualMaximum(field);
+        }
 
 		/**
 		 * Returns the next allowed value in this calendar for the given
