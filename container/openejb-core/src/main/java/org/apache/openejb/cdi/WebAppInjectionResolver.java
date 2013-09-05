@@ -32,10 +32,10 @@ public class WebAppInjectionResolver extends InjectionResolver {
     }
 
     @Override
-    public Set<Bean<?>> implResolveByType(final Type injectionPointType, final Class<?> injectinPointClass, final Annotation... qualifiers) {
-        final Set<Bean<?>> set = super.implResolveByType(injectionPointType, injectinPointClass, qualifiers);
+    public Set<Bean<?>> implResolveByType(final boolean delegate, final Type injectionPointType, final Class<?> injectinPointClass, final Annotation... qualifiers) {
+        final Set<Bean<?>> set = super.implResolveByType(delegate, injectionPointType, injectinPointClass, qualifiers);
         if (set.isEmpty()) {
-            return context.getParent().getBeanManagerImpl().getInjectionResolver().implResolveByType(injectionPointType, injectinPointClass, qualifiers);
+            return context.getParent().getBeanManagerImpl().getInjectionResolver().implResolveByType(delegate, injectionPointType, injectinPointClass, qualifiers);
         }
         return set;
     }
