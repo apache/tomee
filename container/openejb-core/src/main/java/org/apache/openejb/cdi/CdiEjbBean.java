@@ -296,9 +296,10 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
             super(annotatedType, webBeansContext);
         }
 
+        @Override
         public InjectionTarget<T> createInjectionTarget(Bean<T> bean) {
             final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
-            final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
+            final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getCompleteInjectionTarget();
             if (!EjbInjectionTargetImpl.class.isInstance(it)) {
                 return new EjbInjectionTargetImpl<T>(injectionTarget, it);
             }
