@@ -23,9 +23,10 @@ import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
 
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.LogManager;
+import java.util.logging.*;
+import java.util.logging.Logger;
 
 /**
  * default conf = jre conf
@@ -35,6 +36,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static final String OPENEJB_LOG_COLOR_PROP = "openejb.log.color";
 
     private static String consoleHandlerClazz;
+    private static boolean useOpenEJBHandler = false;
 
     public LogStream createLogStream(LogCategory logCategory) {
         return new JuliLogStream(logCategory);
@@ -56,11 +58,12 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
             try { // check it will not fail later (case when a framework change the JVM classloading)
                 ClassLoader.getSystemClassLoader().loadClass(consoleHandlerClazz);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 consoleHandlerClazz = ConsoleHandler.class.getName();
             }
 
             if (options.get("openejb.jul.forceReload", false)) {
+                useOpenEJBHandler = options.get("openejb.jul.forceReload.use-openejb-handler", true);
                 try {
                     final Field logManager = LogManager.class.getDeclaredField("manager");
                     final boolean acc = logManager.isAccessible();
@@ -72,7 +75,11 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                         logManager.setAccessible(acc);
                     }
                     value.forceReset();
-                } catch (Exception e) {
+
+                    setRootLogger(value);
+
+                    value.readConfiguration(); // re-read the config to ensure we have a parent logger
+                } catch (final Exception e) {
                     // no-op
                 }
             }
@@ -88,6 +95,29 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
 
         System.setProperty("openwebbeans.logging.factory", "org.apache.webbeans.logger.JULLoggerFactory");
+    }
+
+    private static void setRootLogger(final OpenEJBLogManager value) {
+        try { // if we don't do it - which is done in static part of the LogManager - we couldn't log user info when force-reload is to true
+            final Class<?> rootLoggerClass = ClassLoader.getSystemClassLoader().loadClass("java.util.logging.LogManager$RootLogger");
+            final Constructor<?> cons = rootLoggerClass.getDeclaredConstructor(LogManager.class);
+            final boolean acc = cons.isAccessible();
+            if (!acc) {
+                cons.setAccessible(true);
+            }
+            final Logger rootLogger = Logger.class.cast(cons.newInstance(value));
+            try {
+                Reflections.set(value, "rootLogger", rootLogger);
+            } finally {
+                cons.setAccessible(acc);
+            }
+            value.addLogger(rootLogger);
+            Reflections.invokeByReflection(Reflections.get(value, "systemContext"), "addLocalLogger", new Class<?>[] { Logger.class }, new Object[] { rootLogger });
+            Reflections.invokeByReflection(java.util.logging.Logger.global, "setLogManager", new Class<?>[] { LogManager.class }, new Object[] { value });
+            value.addLogger(java.util.logging.Logger.global);
+        } catch (final Throwable e) {
+            // no-op
+        }
     }
 
     public static boolean isNotIDE() {
@@ -152,7 +182,8 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         }
 
         private static boolean isOverridableLogger(String name) {
-            return name.toLowerCase().contains("openejb")
+            return useOpenEJBHandler
+                    || name.toLowerCase().contains("openejb")
                     || name.toLowerCase().contains("transaction")
                     || name.toLowerCase().contains("cxf")
                     || name.toLowerCase().contains("timer")
