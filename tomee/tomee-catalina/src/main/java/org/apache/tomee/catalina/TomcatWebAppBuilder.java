@@ -2033,7 +2033,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void safeBind(final Context comp, final String name, final Object value) {
         try {
             comp.lookup(name);
-            logger.info(name + " already bound, ignoring");
+            logger.debug(name + " already bound, ignoring");
         } catch (Exception e) {
             try {
                 comp.bind(name, value);
