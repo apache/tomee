@@ -359,7 +359,7 @@ public class HttpRequestImpl implements HttpRequest {
         if (log.isDebugEnabled()) {
             final StringBuilder builder = new StringBuilder();
             builder.append("******************* REQUEST ******************\n");
-            builder.append(method + " " + uri).append("\n");
+            builder.append(method).append(" ").append(uri).append("\n");
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 builder.append(entry).append("\n");
             }
