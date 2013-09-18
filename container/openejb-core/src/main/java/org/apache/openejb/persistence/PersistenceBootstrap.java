@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.URLs;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Saxs;
 import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
@@ -40,6 +39,7 @@ import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.sql.Connection;
@@ -57,6 +57,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import static org.apache.openejb.loader.JarLocation.decode;
 
 /**
  * The goal of this class is to support persistence providers that need to do
@@ -92,8 +94,11 @@ public class PersistenceBootstrap {
 
             // create persistence.xml names respecting altdd
             final Collection<String> pXmlNames = new ArrayList<String>();
-            if (DeploymentLoader.ALTDD != null) {
-                for (final String p : DeploymentLoader.ALTDD.split(",")) {
+
+            // altdd logic duplicated to avoid classloading issue in tomee-webapp mode
+            final String altDD = SystemInstance.get().getOptions().get("openejb.altdd.prefix", (String) null);
+            if (altDD != null) {
+                for (final String p : altDD.split(",")) {
                     pXmlNames.add(p + ".persistence.xml");
                     pXmlNames.add(p + "-persistence.xml");
                 }
@@ -107,7 +112,7 @@ public class PersistenceBootstrap {
                 try {
                     final Collection<URL> loaderUrls = ClassLoaders.findUrls(classLoader);
                     for (final URL url : loaderUrls) {
-                        final File file = URLs.toFile(url);
+                        final File file = toFile(url);
                         if ("classes".equals(file.getName()) && "WEB-INF".equals(file.getParentFile().getName())) {
                             final File pXml = new File(file.getParentFile(), pXmlName);
                             if (pXml.exists()) {
@@ -224,8 +229,8 @@ public class PersistenceBootstrap {
         String args = Agent.getAgentArgs();
         if (args != null && args.length() != 0) {
             for (String string : args.split("[ ,:&]")) {
-                String[] strings = string.split("=");
-                if (strings != null && strings.length == 2) {
+                final String[] strings = string.split("=");
+                if (strings.length == 2) {
                     properties.put(strings[0], strings[1]);
                 }
             }
@@ -307,6 +312,32 @@ public class PersistenceBootstrap {
                 unit.classes.add(characters.toString());
             }
         });
+    }
+
+    public static File toFile(final URL url) {
+        if ("jar".equals(url.getProtocol())) {
+            try {
+                final String spec = url.getFile();
+
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                return toFile(new URL(spec.substring(0, separator++)));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if ("file".equals(url.getProtocol())) {
+            String path = decode(url.getFile());
+            if (path.endsWith("!")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            return new File(path);
+        } else {
+            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+        }
     }
 
     private static class Unit {
