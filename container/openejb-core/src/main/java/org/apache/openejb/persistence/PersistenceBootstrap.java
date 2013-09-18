@@ -155,6 +155,7 @@ public class PersistenceBootstrap {
 
                     // Create entity manager factory
                     EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(info, new HashMap());
+                    emf.close();
                     debug("success: " + provider);
                 } catch (Throwable e) {
                     debug("failed: " + provider, e);

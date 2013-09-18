@@ -316,7 +316,13 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
             // other org packages
             if (org.startsWith("hsqldb.") && SKIP_HSQLDB) return true;
-            if (org.startsWith("codehaus.swizzle")) return true;
+            if (org.startsWith("codehaus.swizzle.")) {
+                final String swizzle = org.substring("codehaus.swizzle.".length());
+                if (swizzle.startsWith("stream.")) return true;
+                if (swizzle.startsWith("rss.")) return true;
+                if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) return true;
+                return true;
+            }
             if (org.startsWith("w3c.dom")) return true;
             if (org.startsWith("quartz")) return true;
             if (org.startsWith("eclipse.jdt.")) return true;
