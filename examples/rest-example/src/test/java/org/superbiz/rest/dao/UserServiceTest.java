@@ -18,6 +18,7 @@ package org.superbiz.rest.dao;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.embedded.EmbeddedTomEEContainer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -88,7 +89,7 @@ public class UserServiceTest {
             throw new RuntimeException("can't create " + file.getAbsolutePath());
         }
 
-        FileUtils.copyDirectory(new File("target/classes"), new File(file, "WEB-INF/classes"));
+        FileUtils.copyDirectory(JarLocation.jarLocation(UserDAO.class), new File(file, "WEB-INF/classes"));
 
         return file;
     }
