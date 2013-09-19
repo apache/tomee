@@ -137,7 +137,7 @@ public final class ArquillianUtil {
         @Override
         public void run() {
             try {
-                loader.loadClass(clazz);
+                Class.forName(clazz, true, loader);
             } catch (final Throwable th) {
                 // no-op
             }
