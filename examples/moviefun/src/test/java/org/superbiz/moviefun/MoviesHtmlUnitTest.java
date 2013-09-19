@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomee.embedded.EmbeddedTomEEContainer;
+import org.apache.ziplock.Archive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import java.net.ServerSocket;
 import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
+import static org.superbiz.moviefun.Basedir.basedir;
 
 public class MoviesHtmlUnitTest {
 
@@ -70,16 +72,11 @@ public class MoviesHtmlUnitTest {
     }
 
     private static File createWebApp() throws IOException {
-        File file = new File(System.getProperty("java.io.tmpdir") + "/tomee-" + Math.random());
-        if (!file.mkdirs() && !file.exists()) {
-            throw new RuntimeException("can't create " + file.getAbsolutePath());
-        }
-
-        FileUtils.copyDirectory(new File("target/classes"), new File(file, "WEB-INF/classes"));
-        FileUtils.copyDirectory(new File("target/test-libs"), new File(file, "WEB-INF/lib"));
-        FileUtils.copyDirectory(new File("src/main/webapp"), file);
-
-        return file;
+        return Archive.archive()
+                .copyTo("WEB-INF/classes", basedir("target/classes"))
+                .copyTo("WEB-INF/lib", basedir("target/test-libs"))
+                .copyTo("", basedir("src/main/webapp"))
+                .asDir();
     }
 
     @Test

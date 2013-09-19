@@ -56,7 +56,7 @@ public class MoviesArquillianHtmlUnitTest {
         });
 
         File[] libs = Maven.resolver()
-                           .loadPomFromFile("pom.xml").resolve(dependencies)
+                           .loadPomFromFile(Basedir.basedir("pom.xml")).resolve(dependencies)
                            .withTransitivity().asFile();
 
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
@@ -66,7 +66,7 @@ public class MoviesArquillianHtmlUnitTest {
                                    .addAsLibraries(libs);
 
         war.merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
-                            .importDirectory(WEBAPP_SRC).as(GenericArchive.class),
+                            .importDirectory(Basedir.basedir(WEBAPP_SRC)).as(GenericArchive.class),
                   "/", Filters.includeAll());
 
         return war;
