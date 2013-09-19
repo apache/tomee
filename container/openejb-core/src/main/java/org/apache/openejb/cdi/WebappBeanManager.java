@@ -51,15 +51,15 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public void fireEvent(final Object event, final EventMetadata metadata) {
+    public void fireEvent(final Object event, final EventMetadata metadata, final boolean isLifecycleEvent) {
         final Class<?> eventClass = event.getClass();
         if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
             throw new IllegalArgumentException("Event class : " + event.getClass().getName() + " can not be defined as generic type");
         }
 
-        getNotificationManager().fireEvent(event, metadata);
+        getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         if (isEvent(eventClass)) {
-            getParentBm().getNotificationManager().fireEvent(event, metadata);
+            getParentBm().getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
         }
     }
 
