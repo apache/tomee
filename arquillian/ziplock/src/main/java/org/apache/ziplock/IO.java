@@ -67,21 +67,36 @@ public class IO {
     }
 
     public static String slurp(final File file) throws IOException {
+        final byte[] bytes = readBytes(file);
+        return new String(bytes);
+    }
+
+    public static byte[] readBytes(File file) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
-        return new String(out.toByteArray());
+        return out.toByteArray();
     }
 
     public static String slurp(final InputStream in) throws IOException {
+        final byte[] bytes = readBytes(in);
+        return new String(bytes, "UTF-8");
+    }
+
+    public static byte[] readBytes(InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
-        return new String(out.toByteArray(), "UTF-8");
+        return out.toByteArray();
     }
 
     public static String slurp(final URL url) throws IOException {
+        final byte[] bytes = readBytes(url);
+        return new String(bytes);
+    }
+
+    public static byte[] readBytes(URL url) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(url.openStream(), out);
-        return new String(out.toByteArray());
+        copy(url, out);
+        return out.toByteArray();
     }
 
     public static void writeString(final File file, final String string) throws IOException {
@@ -100,6 +115,15 @@ public class IO {
     }
 
     public static void copy(final File from, final OutputStream to) throws IOException {
+        final InputStream read = read(from);
+        try {
+            copy(read, to);
+        } finally {
+            close(read);
+        }
+    }
+
+    public static void copy(final URL from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
             copy(read, to);
@@ -181,6 +205,10 @@ public class IO {
 
     public static InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
+        return new BufferedInputStream(in, 32768);
+    }
+    public static InputStream read(final URL source) throws IOException {
+        final InputStream in = source.openStream();
         return new BufferedInputStream(in, 32768);
     }
 }
