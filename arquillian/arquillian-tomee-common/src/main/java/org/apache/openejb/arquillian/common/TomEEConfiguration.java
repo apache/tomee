@@ -36,6 +36,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
     protected String serverXml = null;
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
+    protected String preloadClasses = null; // just a client classloader.loadClass(), value is comma separated qualified names. Useful with maven resolver for instance
     protected boolean quickSession = true;
     protected boolean unpackWars = true;
 
@@ -170,5 +171,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setStopCommand(String stopCommand) {
         this.stopCommand = stopCommand;
+    }
+
+    public String getPreloadClasses() {
+        return preloadClasses;
+    }
+
+    public void setPreloadClasses(final String preloadClasses) {
+        this.preloadClasses = preloadClasses;
     }
 }

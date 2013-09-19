@@ -33,10 +33,6 @@ import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.SimpleServiceManager;
-import org.apache.openejb.util.ServiceManagerProxy;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
@@ -44,9 +40,7 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -167,6 +161,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                 properties.setProperty(key, defaultKey.getValue().toString());
             }
         }
+
+        ArquillianUtil.preLoadClassesAsynchronously(openEJBConfiguration.getPreloadClasses());
     }
 
     @Override

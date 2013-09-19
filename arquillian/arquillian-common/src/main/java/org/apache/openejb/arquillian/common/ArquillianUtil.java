@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,6 +28,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -104,6 +107,39 @@ public final class ArquillianUtil {
                 } catch (DeploymentException e) {
                     Logger.getLogger(container.getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
                 }
+            }
+        }
+    }
+
+    public static void preLoadClassesAsynchronously(final String classesToLoad) {
+        if (classesToLoad == null || classesToLoad.isEmpty()) {
+            return;
+        }
+
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        final String[] split = classesToLoad.trim().split(",");
+        final ExecutorService es = Executors.newCachedThreadPool(new DaemonThreadFactory(split));
+        for (final String clazz : split) {
+            es.submit(new PreLoadClassTask(loader, clazz));
+        }
+        es.shutdown();
+    }
+
+    private static class PreLoadClassTask implements Runnable {
+        private final String clazz;
+        private final ClassLoader loader;
+
+        public PreLoadClassTask(final ClassLoader loader, final String name) {
+            this.loader = loader;
+            this.clazz = name;
+        }
+
+        @Override
+        public void run() {
+            try {
+                loader.loadClass(clazz);
+            } catch (final Throwable th) {
+                // no-op
             }
         }
     }

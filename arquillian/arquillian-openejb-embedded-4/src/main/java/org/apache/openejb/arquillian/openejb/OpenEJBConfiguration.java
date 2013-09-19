@@ -22,6 +22,7 @@ import org.jboss.arquillian.container.spi.client.container.ContainerConfiguratio
 
 public class OpenEJBConfiguration implements ContainerConfiguration {
     private String properties = "";
+    private String preloadClasses = null;
 
     @Override
     public void validate() throws ConfigurationException {
@@ -35,5 +36,13 @@ public class OpenEJBConfiguration implements ContainerConfiguration {
     @Multiline
     public void setProperties(String properties) {
         this.properties = properties;
+    }
+
+    public String getPreloadClasses() {
+        return preloadClasses;
+    }
+
+    public void setPreloadClasses(final String preloadClasses) {
+        this.preloadClasses = preloadClasses;
     }
 }

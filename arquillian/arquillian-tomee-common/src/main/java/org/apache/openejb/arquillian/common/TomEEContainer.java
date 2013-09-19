@@ -48,7 +48,6 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.Character;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,6 +104,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+
+        ArquillianUtil.preLoadClassesAsynchronously(configuration.getPreloadClasses());
     }
 
     protected void setPorts() {
