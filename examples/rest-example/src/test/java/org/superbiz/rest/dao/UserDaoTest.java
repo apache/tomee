@@ -44,8 +44,8 @@ public class UserDaoTest {
 
     @Test
     public void create() throws NamingException {
-        UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
-        User user = dao.create("foo", "dummy", "foo@bar.org");
+        final UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
+        final User user = dao.create("foo", "dummy", "foo@bar.org");
         assertNotNull(dao.find(user.getId()));
     }
 }
