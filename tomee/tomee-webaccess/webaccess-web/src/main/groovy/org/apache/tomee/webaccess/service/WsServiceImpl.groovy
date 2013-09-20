@@ -16,22 +16,22 @@
  *  limitations under the License.
  */
 
-package webaccess.service
+package org.apache.tomee.webaccess.service
 
 import org.apache.openejb.server.ServerService
 import org.apache.openejb.server.ServiceManager
 import org.apache.openejb.server.SimpleServiceManager
 import org.apache.openejb.util.LogCategory
 import org.apache.openejb.util.Logger
-import webaccess.data.dto.ApplicationDto
-import webaccess.data.dto.ServiceDto
-import webaccess.data.dto.WsListResultDto
+import org.apache.tomee.webaccess.data.dto.ApplicationDto
+import org.apache.tomee.webaccess.data.dto.ServiceDto
+import org.apache.tomee.webaccess.data.dto.WsListResultDto
 
 import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
 
 @Stateless
-@RolesAllowed('tomee')
+@RolesAllowed('tomee-admin')
 class WsServiceImpl {
     private static def log = Logger.getInstance(LogCategory.OPENEJB_RS, WsServiceImpl)
 

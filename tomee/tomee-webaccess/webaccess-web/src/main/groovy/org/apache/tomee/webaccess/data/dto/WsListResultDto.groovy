@@ -16,14 +16,18 @@
  *  limitations under the License.
  */
 
-package webaccess.rest
+package org.apache.tomee.webaccess.data.dto
 
-import javax.ws.rs.ApplicationPath
-import javax.ws.rs.core.Application
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-@ApplicationPath("/rest")
-class ApplicationConfig extends Application {
-    Set<Class<?>> getClasses() {
-        [KeepAlive, Log, Scripting, WebServices]
-    }
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+class WsListResultDto {
+
+    @XmlElement
+    Set<ApplicationDto> applications = []
+
 }

@@ -16,23 +16,25 @@
  *  limitations under the License.
  */
 
-package webaccess.data.dto
+package org.apache.tomee.webaccess.rest
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
+import org.apache.tomee.webaccess.service.ScriptingServiceImpl
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlRootElement
-class ServiceDto {
+import javax.ejb.EJB
+import javax.ws.rs.FormParam
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
 
-    @XmlElement
-    String name
+@Path("/scripting")
+class Scripting {
+    @EJB
+    private ScriptingServiceImpl service
 
-    @XmlElement
-    String address
-
-    @XmlElement
-    String port
+    @POST
+    @Produces("application/json")
+    ScriptingResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
+        service.execute(engine, script)
+    }
 }

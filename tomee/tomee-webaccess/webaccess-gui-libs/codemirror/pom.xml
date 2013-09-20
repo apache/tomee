@@ -24,7 +24,7 @@
     <artifactId>webaccess-gui-libs</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>webaccess-gui-codemirror</artifactId>
+  <artifactId>owebaccess-gui-codemirror</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>TomEE :: webaccess :: webaccess-gui-libs :: codemirror</name>

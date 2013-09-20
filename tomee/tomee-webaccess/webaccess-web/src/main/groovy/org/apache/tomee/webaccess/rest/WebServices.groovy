@@ -16,21 +16,24 @@
  *  limitations under the License.
  */
 
-package webaccess.data.dto
+package org.apache.tomee.webaccess.rest
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import org.apache.tomee.webaccess.data.dto.WsListResultDto
+import org.apache.tomee.webaccess.service.WsServiceImpl
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlRootElement
-class ApplicationDto {
+import javax.ejb.EJB
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
 
-    @XmlElement
-    String name
+@Path("/ws")
+class WebServices {
+    @EJB
+    private WsServiceImpl service
 
-    @XmlElement
-    List<ServiceDto> services = []
-
+    @GET
+    @Produces("application/json")
+    WsListResultDto list() {
+        service.list()
+    }
 }

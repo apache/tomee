@@ -16,15 +16,23 @@
  *  limitations under the License.
  */
 
-package webaccess.rest
+package org.apache.tomee.webaccess.data.dto
 
-import javax.ws.rs.GET
-import javax.ws.rs.Path
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-@Path("/keep-alive")
-class KeepAlive {
-    @GET
-    void ping() {
-        // no-op
-    }
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+class ServiceDto {
+
+    @XmlElement
+    String name
+
+    @XmlElement
+    String address
+
+    @XmlElement
+    String port
 }

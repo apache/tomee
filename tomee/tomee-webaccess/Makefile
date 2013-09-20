@@ -12,6 +12,8 @@
 #  limitations under the License.
 #
 
+# Note: this is IMO useless since we can use tomee-maven-plugin and it would make win users happier ;)
+
 HOME_DIR=$(shell cd && pwd)
 TOMEE_DIR=$(HOME_DIR)/TOMEE
 PROJECT_NAME=webaccess

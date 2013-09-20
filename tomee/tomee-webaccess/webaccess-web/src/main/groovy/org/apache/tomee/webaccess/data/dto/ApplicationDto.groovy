@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-package webaccess.data.dto
+package org.apache.tomee.webaccess.data.dto
 
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
@@ -25,9 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement
-class LogFileResultDto {
+class ApplicationDto {
 
     @XmlElement
-    String content
+    String name
+
+    @XmlElement
+    List<ServiceDto> services = []
 
 }
