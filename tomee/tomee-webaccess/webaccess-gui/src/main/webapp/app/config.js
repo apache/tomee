@@ -27,7 +27,7 @@ var APP_CONFIG = {
 
         'lib/codemirror': 'app/lib/codemirror/lib/codemirror',
         'lib/show-hint': 'app/lib/codemirror/addon/hint/show-hint',
-        'lib/javascript-hint': 'app/lib/codemirror/addon/hint/javascript-hint',
+        'lib/anyword-hint': 'app/lib/codemirror/addon/hint/anyword-hint',
         'lib/javascript-mode': 'app/lib/codemirror/mode/javascript/javascript',
         'lib/groovy-mode': 'app/lib/codemirror/mode/groovy/groovy',
 
@@ -50,14 +50,14 @@ var APP_CONFIG = {
         'lib/show-hint': {
             deps: ['lib/codemirror']
         },
-        'lib/javascript-hint': {
+        'lib/anyword-hint': {
             deps: ['lib/show-hint']
         },
         'lib/javascript-mode': {
-            deps: ['lib/javascript-hint']
+            deps: ['lib/anyword-hint']
         },
         'lib/groovy-mode': {
-            deps: ['lib/codemirror']
+            deps: ['lib/anyword-hint']
         },
 
         // bootstrap depends on jquery, therefore we need to load jquery first
