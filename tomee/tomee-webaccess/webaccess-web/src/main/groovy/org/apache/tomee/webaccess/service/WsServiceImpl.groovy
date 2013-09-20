@@ -33,7 +33,7 @@ import javax.ejb.Stateless
 @Stateless
 @RolesAllowed('tomee-admin')
 class WsServiceImpl {
-    private static def log = Logger.getInstance(LogCategory.OPENEJB_RS, WsServiceImpl)
+    private static def log = Logger.getInstance(LogCategory.OPENEJB_ADMIN, WsServiceImpl)
 
     private static ApplicationDto getApplicationByName(WsListResultDto queryResult, String name) {
         def dto = queryResult.applications.find {
