@@ -80,7 +80,8 @@
                 var me = this;
                 var contentArea = $(me.$el.find('.panel-body>pre').get(0));
                 contentArea.empty();
-                contentArea.append(content);
+                var formatted = $('<div/>').text(content).html();
+                contentArea.append(formatted);
                 me.$el.find('.ux-refresh-btn').removeClass('disabled');
                 me.$el.find('.ux-choose-file').removeClass('disabled');
             },
