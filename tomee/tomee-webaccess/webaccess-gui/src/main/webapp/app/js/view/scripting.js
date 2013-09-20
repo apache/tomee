@@ -87,8 +87,9 @@
 
             appendOutput: function (output) {
                 var me = this;
+                var formatted = $('<div/>').text(output).html();
                 var pre = $(me.$el.find('.ux-script-output>div.panel-body>pre').get(0));
-                pre.append(output);
+                pre.append(formatted);
                 me.$el.find('.ux-execute-script').removeClass('disabled');
                 var contentArea = $(me.$el.find('.panel-body').get(0));
                 contentArea.animate({
