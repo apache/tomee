@@ -1611,6 +1611,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         final Properties overrides = ConfigurationFactory.getSystemProperties(nonJtaResourceInfo.id, nonJtaResourceInfo.service);
                         nonJtaResourceInfo.properties.putAll(overrides);
                         nonJtaResourceInfo.properties.setProperty("JtaManaged", "false");
+                        nonJtaResourceInfo.properties.remove("Definition"); // if created from annotation we just want live config
 
                         logAutoCreateResource(nonJtaResourceInfo, "DataSource", unit.getName());
                         logger.info("configureService.configuring", nonJtaResourceInfo.id, nonJtaResourceInfo.service, jtaResourceInfo.id);
@@ -1671,6 +1672,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         final Properties overrides = ConfigurationFactory.getSystemProperties(jtaResourceInfo.id, jtaResourceInfo.service);
                         jtaResourceInfo.properties.putAll(overrides);
                         jtaResourceInfo.properties.setProperty("JtaManaged", "true");
+                        jtaResourceInfo.properties.remove("Definition"); // if created from annotation we just want live config
 
                         logAutoCreateResource(jtaResourceInfo, "DataSource", unit.getName());
                         logger.info("configureService.configuring", jtaResourceInfo.id, jtaResourceInfo.service, nonJtaResourceInfo.id);
