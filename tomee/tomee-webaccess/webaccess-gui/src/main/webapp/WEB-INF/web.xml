@@ -27,10 +27,6 @@
     <session-timeout>5</session-timeout>
   </session-config>
 
-  <listener>
-    <listener-class>org.apache.tomee.webaccess.web.SessionListener</listener-class>
-  </listener>
-
   <!-- The trick is to put all your static files under the same directory and map the "default" servlet to it -->
   <servlet-mapping>
     <servlet-name>default</servlet-name>
