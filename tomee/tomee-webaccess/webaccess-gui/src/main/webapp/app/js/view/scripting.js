@@ -22,6 +22,10 @@
     var deps = ['app/js/templates', 'app/js/i18n', 'lib/backbone', 'lib/javascript-mode', 'lib/groovy-mode'];
     define(deps, function (templates, i18n) {
         var codeMirror = CodeMirror; //making lint happy
+        codeMirror.commands.autocomplete = function (cm) {
+            codeMirror.showHint(cm, codeMirror.hint.anyword);
+        };
+
         var codes = {
             javascript: templates.getValue('script-sample-javascript', {}),
             groovy: templates.getValue('script-sample-groovy', {})
@@ -64,9 +68,6 @@
                     codes[me.editor.getOption("mode")] = me.editor.getValue();
                 }
                 me.editor.setOption("mode", name);
-                codeMirror.commands.autocomplete = function (cm) {
-                    codeMirror.showHint(cm, codeMirror.hint[name]);
-                };
                 // swapping sources
                 me.editor.setValue(codes[name]); // setting new code
                 me.$el.find('.ux-source-choice').html(i18n.get(name));
