@@ -16,31 +16,14 @@
  *  limitations under the License.
  */
 
-package webaccess.rest
+package org.apache.tomee.webaccess.rest
 
-import webaccess.data.dto.ListFilesResultDto
-import webaccess.data.dto.LogFileResultDto
-import webaccess.service.LogServiceImpl
+import javax.ws.rs.ApplicationPath
+import javax.ws.rs.core.Application
 
-import javax.ejb.EJB
-import javax.ws.rs.*
-
-@Path("/log")
-class Log {
-    @EJB
-    private LogServiceImpl service
-
-    @GET
-    @Path("/list-files")
-    @Produces("application/json")
-    ListFilesResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.listFiles()
-    }
-
-    @GET
-    @Path("/load/{fileName}")
-    @Produces("application/json")
-    LogFileResultDto load(@PathParam('fileName') String fileName) {
-        service.load(fileName)
+@ApplicationPath("/rest")
+class ApplicationConfig extends Application {
+    Set<Class<?>> getClasses() {
+        [KeepAlive, Log, Scripting, WebServices]
     }
 }

@@ -32,56 +32,56 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-web</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-backbone</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-bootstrap</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-jquery</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-handlebars</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-json2</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-lessjs</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-requirejs</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-underscorejs</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>webaccess-gui-codemirror</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
+
   <build>
-    <finalName>webaccess</finalName>
     <plugins>
       <plugin>
         <groupId>com.github.searls</groupId>
@@ -139,6 +139,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.openejb.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <simpleLog>true</simpleLog>
+          <context>ROOT</context>
+        </configuration>
       </plugin>
     </plugins>
   </build>

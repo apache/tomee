@@ -16,18 +16,24 @@
  *  limitations under the License.
  */
 
-package webaccess.data.dto
+package org.apache.tomee.webaccess.web
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import org.slf4j.LoggerFactory
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlRootElement
-class ScriptingResultDto {
+import javax.servlet.http.HttpSessionEvent
+import javax.servlet.http.HttpSessionListener
 
-    @XmlElement
-    String output
+class SessionListener implements HttpSessionListener {
+    private def log = LoggerFactory.getLogger(SessionListener)
 
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        def session = se.getSession()
+        log.info("TomEE Webaccess sessionCreated -> Id: {} MaxInactiveInterval: {} seconds", session.id, session.maxInactiveInterval)
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        log.info("PhotoDB sessionDestroyed -> Id: {}", se.session.id)
+    }
 }

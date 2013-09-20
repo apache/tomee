@@ -16,16 +16,16 @@
  *  limitations under the License.
  */
 
-package webaccess.service
+package org.apache.tomee.webaccess.service
 
-import webaccess.data.dto.ListFilesResultDto
-import webaccess.data.dto.LogFileResultDto
+import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
+import org.apache.tomee.webaccess.data.dto.LogFileResultDto
 
 import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
 
 @Stateless
-@RolesAllowed('tomee')
+@RolesAllowed('tomee-admin')
 class LogServiceImpl {
 
     static ListFilesResultDto listFiles() {

@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-package webaccess.service
+package org.apache.tomee.webaccess.service
 
-import webaccess.data.dto.ScriptingResultDto
+import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
 
 import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
@@ -26,7 +26,7 @@ import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
 @Stateless
-@RolesAllowed('tomee')
+@RolesAllowed('tomee-admin')
 class ScriptingServiceImpl {
 
     static ScriptingResultDto execute(String engine, String script) {

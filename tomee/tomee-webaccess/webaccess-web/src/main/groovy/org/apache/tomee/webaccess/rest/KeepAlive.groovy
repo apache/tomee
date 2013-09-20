@@ -16,24 +16,15 @@
  *  limitations under the License.
  */
 
-package webaccess.web
+package org.apache.tomee.webaccess.rest
 
-import org.slf4j.LoggerFactory
+import javax.ws.rs.GET
+import javax.ws.rs.Path
 
-import javax.servlet.http.HttpSessionEvent
-import javax.servlet.http.HttpSessionListener
-
-class SessionListener implements HttpSessionListener {
-    private def log = LoggerFactory.getLogger(SessionListener)
-
-    @Override
-    public void sessionCreated(HttpSessionEvent se) {
-        def session = se.getSession()
-        log.info("TomEE Webaccess sessionCreated -> Id: {} MaxInactiveInterval: {} seconds", session.id, session.maxInactiveInterval)
-    }
-
-    @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-        log.info("PhotoDB sessionDestroyed -> Id: {}", se.session.id)
+@Path("/keep-alive")
+class KeepAlive {
+    @GET
+    void ping() {
+        // no-op
     }
 }

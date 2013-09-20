@@ -28,7 +28,7 @@
   </session-config>
 
   <listener>
-    <listener-class>webaccess.web.SessionListener</listener-class>
+    <listener-class>org.apache.tomee.webaccess.web.SessionListener</listener-class>
   </listener>
 
   <!-- The trick is to put all your static files under the same directory and map the "default" servlet to it -->
@@ -54,7 +54,7 @@
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
-      <role-name>tomee</role-name>
+      <role-name>tomee-admin</role-name>
     </auth-constraint>
   </security-constraint>
   <!-- ... -->
@@ -63,7 +63,7 @@
   </login-config>
   <!-- ... -->
   <security-role>
-    <role-name>tomee</role-name>
+    <role-name>tomee-admin</role-name>
   </security-role>
 
 </web-app>
