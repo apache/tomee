@@ -1,0 +1,130 @@
+/*!
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+body {
+  .growl-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5000;
+
+    .growl {
+      display: none;
+      width: 300px;
+    }
+  }
+}
+
+.ux-contentarea {
+  @topOffset: 55px;
+  @offset: 5px;
+
+  .panel-body {
+    padding: 0;
+  }
+
+  .ux-logfile-output {
+    position: absolute;
+    top: @topOffset;
+    bottom: @offset;
+    left: @offset;
+    right: @offset;
+    margin-bottom: 0;
+
+    > div.panel-body {
+      position: absolute;
+      top: (@topOffset + @offset);
+      bottom: @offset;
+      left: @offset;
+      right: @offset;
+      overflow: auto;
+
+      pre {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background-color: white;
+        border: 0;
+        border-radius: 0;
+        overflow: auto;
+        width: 2000px;
+      }
+    }
+  }
+
+  .ux-scripting {
+    @outputWidth: 500px;
+
+    .ux-commands {
+      position: absolute;
+      bottom: ((@offset * 2) + 8);
+      right: ((@offset * 2) + 8);
+    }
+
+    .ux-script {
+      position: absolute;
+      top: @topOffset;
+      bottom: @offset;
+      margin-bottom: 0;
+    }
+
+    .ux-script-output {
+      left: @offset;
+      width: @outputWidth;
+
+      pre {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background-color: white;
+        border: 0;
+        border-radius: 0;
+        overflow: auto;
+        width: 2000px;
+      }
+
+      > div.panel-heading > button {
+        position: absolute;
+        top: 4px;
+        right: @offset;
+      }
+
+      > div.panel-body {
+        position: absolute;
+        top: @topOffset;
+        bottom: @offset;
+        left: @offset;
+        width: (@outputWidth - (@offset * 2));
+        overflow: auto;
+      }
+    }
+
+    .ux-script-source {
+      right: @offset;
+      left: (@outputWidth + (@offset * 2));
+
+      > div.panel-body {
+        position: absolute;
+        top: (@topOffset + @offset);
+        left: (@offset * 2);
+        right: (@offset * 2);
+        overflow: auto;
+      }
+    }
+  }
+
+}
