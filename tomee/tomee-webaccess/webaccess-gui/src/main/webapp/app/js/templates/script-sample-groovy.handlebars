@@ -1,0 +1,13 @@
+def ctx = new javax.naming.InitialContext([
+    "java.naming.factory.initial": "org.apache.openejb.client.RemoteInitialContextFactory",
+    "java.naming.provider.url": "http://localhost:8080/tomee/ejb",
+    "java.naming.security.principal": "tomee",
+    "java.naming.security.credentials": "tomee"
+] as java.util.Properties)
+
+def result = ctx.list("")?.collect({ pair ->
+    pair.name
+}).join(', ')
+
+// print restult
+println("groovy -> $result")

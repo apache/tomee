@@ -38,6 +38,7 @@
     <module>tomee-mojarra</module>
     <module>tomee-jdbc</module>
     <module>tomee-webapp</module>
+    <module>tomee-webaccess</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>

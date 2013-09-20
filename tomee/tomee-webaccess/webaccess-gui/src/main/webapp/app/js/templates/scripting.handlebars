@@ -1,0 +1,29 @@
+<div class="panel panel-default ux-script ux-script-output">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "output"}}</h3>
+        <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash"></span></button>
+    </div>
+    <div class="panel-body">
+        <pre></pre>
+    </div>
+</div>
+<div class="panel panel-default ux-script ux-script-source">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{i18n "source"}}</h3>
+    </div>
+    <div class="panel-body">
+        <textarea></textarea>
+    </div>
+</div>
+<div class="ux-commands">
+    <div class="btn-group dropup">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="ux-source-choice">{{i18n "javascript"}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a class="ux-source-option" name="javascript" href="#">{{i18n "javascript"}}</a></li>
+            <li><a class="ux-source-option" name="groovy" href="#">{{i18n "groovy"}}</a></li>
+        </ul>
+    </div>
+    <a class="btn btn-primary ux-execute-script">{{i18n "execute"}}</a>
+</div>
