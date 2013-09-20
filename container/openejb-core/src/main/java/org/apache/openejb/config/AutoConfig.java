@@ -936,23 +936,24 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 trimNotSupportedDataSourceProperties(properties);
             }
 
+            final boolean shouldGenerateJdbcUrl = DataSource.class.getName().equals(resource.getType())
+                && resource.getProperties().containsKey(ORIGIN_FLAG)
+                && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION);
+
+            if (shouldGenerateJdbcUrl && properties.get("JdbcUrl") == null) {
+                final String url = getVendorUrl(properties);
+                if (url != null) {
+                    properties.put("JdbcUrl", url);
+                }
+            }
+
             final ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
             resourceInfo.originAppName = module.getModuleId();
             final ResourceRef resourceRef = new ResourceRef();
             resourceRef.setResType(chooseType(module.getClassLoader(), resourceInfo.types, resource.getType()));
 
-            if (DataSource.class.getName().equals(resource.getType())
-                && resource.getProperties().containsKey(ORIGIN_FLAG)
-                && resource.getProperties().getProperty(ORIGIN_FLAG).equals(ORIGIN_ANNOTATION)) {
+            if (shouldGenerateJdbcUrl) {
                 properties.remove(ORIGIN_FLAG);
-
-                if (properties.get("JdbcUrl") == null) {
-                    final String url = getVendorUrl(properties);
-                    if (url != null) {
-                        properties.put("JdbcUrl", url);
-                    }
-                }
-
                 resourceRef.setResRefName(dataSourceLookupName(resource));
             } else {
                 resourceRef.setResRefName(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id);
@@ -1058,12 +1059,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
         }
 
-        if (driver.equals("org.apache.derby.jdbc.EmbeddedDriver")) {
-            return String.format("jdbc:derby:%s;create=true", databaseName);
+        if (driver.startsWith("org.apache.derby.jdbc.Embedded")) { // Driver or DataSource
+            return String.format("jdbc:derby:%s%s", databaseName, properties.getProperty("connectionAttributes", ";create=true"));
         }
 
         if (driver.equals("org.apache.derby.jdbc.ClientDriver")) {
-            return String.format("jdbc:derby://%s:%s/%s;create=true", serverName, port, databaseName);
+            return String.format("jdbc:derby://%s:%s/%s%s", serverName, port, databaseName, properties.getProperty("connectionAttributes", ";create=true"));
         }
 
         if (driver.equals("com.mysql.jdbc.Driver")) {
