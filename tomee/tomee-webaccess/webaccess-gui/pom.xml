@@ -147,6 +147,7 @@
         <configuration>
           <simpleLog>true</simpleLog>
           <context>ROOT</context>
+          <tomeeClassifier>jaxrs</tomeeClassifier>
         </configuration>
       </plugin>
     </plugins>
