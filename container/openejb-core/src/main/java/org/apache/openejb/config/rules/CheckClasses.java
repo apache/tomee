@@ -19,6 +19,7 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.Interceptor;
@@ -230,11 +231,17 @@ public class CheckClasses extends ValidationBase {
 
         if (isCmp(b)) return beanClass;
 
-        if (isAbstract(beanClass.getModifiers()) && !isDynamicProxyImpl){
+        if (isAbstract(beanClass.getModifiers()) && !isAbstractAllowed(beanClass)){
             fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
         }
 
         return beanClass;
+    }
+
+    public static boolean isAbstractAllowed(Class clazz) {
+        if (DynamicProxyImplFactory.isKnownDynamicallyImplemented(clazz)) return true;
+        if (DynamicSubclass.isDynamic(clazz)) return true;
+        return false;
     }
 
     private void check_hasInterceptorClass(Interceptor i) {
