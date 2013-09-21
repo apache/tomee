@@ -22,8 +22,10 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationSpec;
 import org.apache.openejb.jee.AdminObject;
@@ -216,6 +218,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -1736,17 +1739,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            // not a dynamic proxy implemented bean
-            if (beanClass.getAnnotation(PersistenceContext.class) == null
-                    && beanClass.getAnnotation(Proxy.class) == null
-                    && beanClass.get().isInterface()) {
-                ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
-                return false;
-            }
-
-            if (!beanClass.get().isInterface() && isAbstract(beanClass.get().getModifiers())) {
-                ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
-                return false;
+            if (beanClass.get().isInterface()) {
+                if (!CheckClasses.isAbstractAllowed(beanClass.get())) {
+                    ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
+                    return false;
+                }
+            } else if (isAbstract(beanClass.get().getModifiers())) {
+                if (!CheckClasses.isAbstractAllowed(beanClass.get())) {
+                    ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
+                    return false;
+                }
             }
 
             return b;
@@ -2890,6 +2892,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 !name.equals("groovy.lang.GroovyObject") &&
                                 !name.equals("java.io.Serializable") &&
                                 !name.equals("java.io.Externalizable") &&
+                                !(name.equals(InvocationHandler.class.getName()) && DynamicSubclass.isDynamic(beanClass)) &&
                                 !name.startsWith("javax.ejb.") &&
                                 !descriptor.contains(interfce.getName()) &&
                                 !interfce.isSynthetic() &&

@@ -241,11 +241,15 @@ public class LocalBeanProxyFactory implements Opcodes {
         return false;
     }
 
-    private static void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
+    public static void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
         if ("<init>".equals(method.getName())) {
             return;
         }
 
+        visit(cw, method, proxyName, handlerName).visitEnd();
+    }
+
+    public static MethodVisitor visit(ClassWriter cw, Method method, String proxyName, String handlerName) throws ProxyGenerationException {
         final Class<?> returnType = method.getReturnType();
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Class<?>[] exceptionTypes = method.getExceptionTypes();
@@ -431,7 +435,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // finish this method
         mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        return mv;
     }
 
     /**
@@ -694,7 +698,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     /**
      * The methods of this class model sun.misc.Unsafe which is used reflectively
      */
-    private static class Unsafe {
+    public static class Unsafe {
 
         // sun.misc.Unsafe
         private static final Object unsafe;
@@ -812,7 +816,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
         }
 
-        private static Class defineClass(final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
+        public static Class defineClass(final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
             return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
         }
     }
