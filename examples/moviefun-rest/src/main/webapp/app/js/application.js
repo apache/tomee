@@ -66,6 +66,7 @@
                         success: function (total) {
                             var count = Math.ceil(total / max);
                             paginator.setCount(count);
+                            applicationView.setPaginator(count);
                         }
                     });
                 }

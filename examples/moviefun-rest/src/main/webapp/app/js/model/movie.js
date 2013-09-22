@@ -28,9 +28,11 @@
                 return {
                     'movie': this.attributes
                 };
+            },
+            defaults: {
+                rating: 5,
+                year: new Date().getFullYear()
             }
         });
     });
 }());
-
-
