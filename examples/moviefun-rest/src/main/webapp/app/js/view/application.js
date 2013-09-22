@@ -76,11 +76,17 @@
                     });
                     tbody.append(row.render().$el);
                 });
+            },
+
+            setPaginator: function (count) {
+                var me = this;
+                paginator.$el.detach();
+                me.loadDataLink.detach();
                 var addButton = $(me.$el.find('.ux-add-btn').get(0));
-                if (underscore.isEmpty(rows)) {
-                    addButton.before(me.loadDataLink);
-                } else {
+                if (count) {
                     addButton.before(paginator.$el);
+                } else {
+                    addButton.before(me.loadDataLink);
                 }
             }
         });
