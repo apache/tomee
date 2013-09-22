@@ -19,7 +19,7 @@
   <artifactId>moviefun-rest</artifactId>
   <packaging>war</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>OpenEJB :: Web Examples :: Moviefun</name>
+  <name>OpenEJB :: Web Examples :: Moviefun Rest</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>1.6.0-SNAPSHOT</tomee.version>
@@ -35,6 +35,31 @@
     <finalName>moviefun</finalName>
     <defaultGoal>install</defaultGoal>
     <plugins>
+      <plugin>
+        <groupId>com.googlecode.jslint4java</groupId>
+        <artifactId>jslint4java-maven-plugin</artifactId>
+        <version>2.0.5</version>
+        <configuration>
+          <failOnError>true</failOnError>
+          <options>
+            <vars>true</vars>
+            <unparam>true</unparam>
+            <predef>define,require,requirejs,window,Backbone,_,$,Handlebars,APP_CONFIG</predef>
+            <indent>4</indent>
+          </options>
+          <sourceFolders>
+            <sourceFolder>${basedir}/src/main/webapp/app/js</sourceFolder>
+          </sourceFolders>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>lint</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -63,7 +88,6 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -100,6 +124,46 @@
       <artifactId>ziplock</artifactId>
       <version>1.6.0-SNAPSHOT</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-backbone</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-bootstrap</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-jquery</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-handlebars</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-json2</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-lessjs</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-requirejs</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>webaccess-gui-underscorejs</artifactId>
+      <version>${tomee.version}</version>
     </dependency>
   </dependencies>
   <!-- This section allows you to configure where to publish libraries for

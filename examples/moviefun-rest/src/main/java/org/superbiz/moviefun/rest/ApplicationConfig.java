@@ -1,4 +1,4 @@
-/*!
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,11 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.superbiz.moviefun.rest;
 
-.movie-input-form {
-    padding: 20px;
-    background-color: #EEE;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+@ApplicationPath("/rest")
+public class ApplicationConfig extends Application {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<Class<?>> getClasses() {
+        return new HashSet<Class<?>>(Arrays.asList(LoadRest.class, MoviesRest.class));
+    }
 }

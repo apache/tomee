@@ -21,14 +21,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 @Entity
 @XmlRootElement(name = "movie")
-public class Movie implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

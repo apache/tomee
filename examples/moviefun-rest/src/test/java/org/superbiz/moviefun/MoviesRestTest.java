@@ -18,26 +18,9 @@ package org.superbiz.moviefun;
 
 import org.apache.tomee.embedded.EmbeddedTomEEContainer;
 import org.apache.ziplock.Archive;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.ejb.embeddable.EJBContainer;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.PathParam;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -66,10 +49,9 @@ public class MoviesRestTest {
         }
     }
 
-//    @Before
+    @Before
     @After
     public void clean() throws Exception {
-        Thread.sleep(100000);
         MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun-rest/MoviesBean");
         movies.clean();
     }
@@ -86,8 +68,8 @@ public class MoviesRestTest {
         movie.setYear(1995);
         movies.addMovie(movie);
 
-        Assert.assertEquals(1, movies.countAll());
-        List<Movie> moviesFound = movies.findRange("title", "Bad Boys", 0, 10);
+        Assert.assertEquals(1, movies.count(null, null));
+        List<Movie> moviesFound = movies.getMovies(0, 10, "title", "Bad Boys");
 
         Assert.assertEquals(1, moviesFound.size());
         Assert.assertEquals("Michael Bay", moviesFound.get(0).getDirector());
@@ -101,43 +83,5 @@ public class MoviesRestTest {
         movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
 
-    }
-
-    public static interface MoviesClient {
-        @GET()
-        @javax.ws.rs.Path("{id}")
-        public Movie find(@PathParam("id") Long id);
-
-        @POST
-        @javax.ws.rs.Path("create")
-        public void addMovie(Movie movie);
-
-        @PUT
-        @javax.ws.rs.Path("edit")
-        public void editMovie(Movie movie);
-
-        @DELETE
-        @javax.ws.rs.Path("delete/{id}")
-        public void deleteMovieId(@PathParam("id") long id);
-
-        @GET
-        @javax.ws.rs.Path("list")
-        public List<Movie> getMovies();
-
-        @GET()
-        @javax.ws.rs.Path("list/{first}/{max}")
-        public List<Movie> findAll(@PathParam("first") int firstResult, @PathParam("max") int maxResults);
-
-        @GET()
-        @javax.ws.rs.Path("count")
-        public int countAll() ;
-
-        @GET()
-        @javax.ws.rs.Path("count/{field}/{searchTerm}")
-        public int count(@PathParam("field") String field, @PathParam("searchTerm") String searchTerm);
-
-        @GET()
-        @javax.ws.rs.Path("list/{field}/{searchTerm}/{first}/{max}")
-        public List<Movie> findRange(String field, String searchTerm, int firstResult, int maxResults) ;
     }
 }
