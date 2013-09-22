@@ -37,7 +37,7 @@ public class PreloadableTestWar {
         es.shutdown();
     }
 
-    public Archive<?> war() {
+    public static Archive<?> war() {
         try {
             return war.get();
         } catch (final Exception e) {

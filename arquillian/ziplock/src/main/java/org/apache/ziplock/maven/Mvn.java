@@ -38,13 +38,139 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Mvn {
+    public static class Builder {
+        private File basedir = null;
+        private File resources = null;
+        private File webapp = null;
+        private File classes = null;
+        private String basePackage = null;
+        private String name = "test.war";
+        private Map<File, String> additionalResources = new HashMap<File, String>();
+        private ScopeType[] scopes = { ScopeType.COMPILE, ScopeType.RUNTIME };
+
+        public Builder scopes(final ScopeType... scopes) {
+            this.scopes = scopes;
+            return this;
+        }
+
+        public Builder basedir(final File path) {
+            this.basedir = path;
+            return this;
+        }
+
+        public Builder resources(final File path) {
+            this.resources = path;
+            return this;
+        }
+
+        public Builder webapp(final File path) {
+            this.webapp = path;
+            return this;
+        }
+
+        public Builder classes(final File path) {
+            this.classes = path;
+            return this;
+        }
+
+        public Builder applicationPackage(final String base) {
+            this.basePackage = base;
+            return this;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder additionalResource(final File folder, final String root) {
+            additionalResources.put(folder, root);
+            return this;
+        }
+
+        public Archive<?> build() {
+            initDefaults();
+
+            final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, name);
+
+            if (basePackage != null) {
+                webArchive.addPackages(true, basePackage);
+            }
+            add(webArchive, classes, "/WEB-INF/classes/")
+            .add(webArchive, resources, "/WEB-INF/classes/")
+            .add(webArchive, webapp, "/");
+            for (final Map.Entry<File, String> additionalResource : additionalResources.entrySet()) {
+                add(webArchive, additionalResource.getKey(), additionalResource.getValue());
+            }
+
+            try {
+                final File[] deps = Maven.resolver().offline().loadPomFromFile(new File(basedir, "pom.xml"))
+                    .importDependencies(scopes).resolve().withTransitivity().asFile();
+                if (deps.length > 0) {
+                    webArchive.addAsLibraries(deps);
+                }
+            } catch (final Exception e) {
+                // no-op: no deps
+            }
+
+            return webArchive;
+        }
+
+        private File basedir() {
+            if (basedir != null) {
+                return basedir;
+            }
+
+            {
+                final File file = new File("pom.xml");
+                if (file.exists()) {
+                    return new File(".");
+                }
+            }
+            {
+                final File file = new File("../pom.xml");
+                if (file.exists()) {
+                    return new File("..");
+                }
+            }
+            throw new IllegalStateException("basedir not found");
+        }
+
+        private void initDefaults() {
+            final File basedir = basedir();
+            if (classes == null && basePackage == null) {
+                classes = new File(basedir, "target/classes");
+            }
+            if (resources == null && basePackage != null) {
+                resources = new File(basedir, "src/main/resources");
+            }
+            if (webapp == null) {
+                webapp = new File(basedir, "src/main/webapp");
+            }
+        }
+
+        private Builder add(final WebArchive webArchive, final File dir, final String root) {
+            if (dir == null || !dir.exists()) {
+                return this;
+            }
+
+            final KnownResourcesFilter filter = new KnownResourcesFilter(dir, root);
+            filter.update(
+                webArchive.merge(
+                    ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
+                        .importDirectory(dir).as(GenericArchive.class), root, filter));
+
+            return this;
+        }
+    }
+
     /**
      * Client war.
      *
      * @return create a war with src/main/resources, src/main/webapp and all compile and runtime dependencies
      */
     public static Archive<?> war() {
-        return war("test.war", null);
+        return new Builder().build();
     }
 
     /**
@@ -53,73 +179,7 @@ public final class Mvn {
      * @return create a war with src/main/resources, src/main/webapp and all compile, runtime and test dependencies
      */
     public static Archive<?> testWar() {
-        return war("test.war", null, ScopeType.COMPILE, ScopeType.RUNTIME, ScopeType.TEST);
-    }
-
-    public static Archive<?> war(final String name, final String basePackage, final ScopeType... scopes) {
-        final File basedir = basedir();
-
-        final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, name);
-
-        if (basePackage == null) {
-            final File classes = new File(basedir, "target/classes/");
-            add(webArchive, classes, "/WEB-INF/classes/");
-        } else {
-            webArchive.addPackages(true, basePackage);
-        }
-
-        final File webapp = new File(basedir, "src/main/webapp");
-        add(webArchive, webapp, "/");
-        if (basePackage != null) {
-            final File resources = new File(basedir, "src/main/resources");
-            add(webArchive, resources, "/WEB-INF/classes/");
-        }
-
-        final ScopeType[] types;
-        if (scopes == null || scopes.length == 0) {
-            types = new ScopeType[]{ ScopeType.COMPILE, ScopeType.RUNTIME };
-        } else {
-            types = scopes;
-        }
-        try {
-            final File[] deps = Maven.resolver().offline().loadPomFromFile(new File(basedir, "pom.xml"))
-                .importDependencies(types).resolve().withTransitivity().asFile();
-            if (deps.length > 0) {
-                webArchive.addAsLibraries(deps);
-            }
-        } catch (final Exception e) {
-            // no-op
-        }
-
-        return webArchive;
-    }
-
-    private static void add(final WebArchive webArchive, final File classes, final String root) {
-        if (!classes.exists()) {
-            return;
-        }
-
-        final KnownResourcesFilter filter = new KnownResourcesFilter(classes, root);
-        filter.update(
-            webArchive.merge(
-                ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
-                    .importDirectory(classes).as(GenericArchive.class), root, filter));
-    }
-
-    private static File basedir() {
-        {
-            final File file = new File("pom.xml");
-            if (file.exists()) {
-                return new File(".");
-            }
-        }
-        {
-            final File file = new File("../pom.xml");
-            if (file.exists()) {
-                return new File("..");
-            }
-        }
-        throw new IllegalStateException("basedir not found");
+        return new Builder().scopes(ScopeType.COMPILE, ScopeType.RUNTIME, ScopeType.TEST).build();
     }
 
     private Mvn() {
