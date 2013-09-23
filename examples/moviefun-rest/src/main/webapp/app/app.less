@@ -19,7 +19,10 @@ body {
   @content-margin-top: 80px;
 
   .ux-movie-window {
-    margin-top: @content-margin-top;
+    .modal-dialog {
+      padding-top: 90px;
+      padding-bottom: 0px;
+    }
   }
 
   .ux-landing {
@@ -37,12 +40,23 @@ body {
       margin-top: 0px;
       margin-bottom: 0px;
     }
+
     th:last-child {
       width: 5px;
     }
 
+    .ux-add-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+    }
+
     a.ux-delete-row:hover, a.ux-edit-row:hover {
       cursor: hand;
+    }
+
+    .panel-body>.input-group {
+      margin-bottom: 15px;
     }
   }
 }

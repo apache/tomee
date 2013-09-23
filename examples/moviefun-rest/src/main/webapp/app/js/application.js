@@ -50,6 +50,7 @@
                 data.field = fieldName;
                 data.searchTerm = fieldValue;
             }
+            applicationView.setFilter(fieldName, fieldValue);
             moviesList.fetch({
                 data: data,
                 success: function (result) {
@@ -150,6 +151,18 @@
 
             applicationView.on('edit', function (data) {
                 showMovieWindow(data.model);
+            });
+
+            applicationView.on('filter', function (data) {
+                router.navigate('application/1/' + data.filterType + '/' + data.filterValue, {
+                    trigger: true
+                });
+            });
+
+            applicationView.on('clear-filter', function (data) {
+                router.navigate('application/1', {
+                    trigger: true
+                });
             });
 
             paginator.on('go-to-page', function (data) {
