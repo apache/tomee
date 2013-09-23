@@ -20,6 +20,7 @@ import org.apache.ziplock.IO;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filter;
+import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
@@ -47,6 +48,7 @@ public final class Mvn {
         private String name = "test.war";
         private Map<File, String> additionalResources = new HashMap<File, String>();
         private ScopeType[] scopes = { ScopeType.COMPILE, ScopeType.RUNTIME };
+        private Filter<ArchivePath> filter = Filters.includeAll();
 
         public Builder scopes(final ScopeType... scopes) {
             this.scopes = scopes;
@@ -83,6 +85,11 @@ public final class Mvn {
             return this;
         }
 
+        public Builder filter(final Filter<ArchivePath> filter) {
+            this.filter = filter;
+            return this;
+        }
+
         public Builder additionalResource(final File folder, final String root) {
             additionalResources.put(folder, root);
             return this;
@@ -94,7 +101,11 @@ public final class Mvn {
             final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, name);
 
             if (basePackage != null) {
-                webArchive.addPackages(true, basePackage);
+                if (filter != null) {
+                    webArchive.addPackages(true, filter, basePackage);
+                } else {
+                    webArchive.addPackages(true, basePackage);
+                }
             }
             add(webArchive, classes, "/WEB-INF/classes/")
             .add(webArchive, resources, "/WEB-INF/classes/")
@@ -154,7 +165,7 @@ public final class Mvn {
                 return this;
             }
 
-            final KnownResourcesFilter filter = new KnownResourcesFilter(dir, root);
+            final KnownResourcesFilter filter = new KnownResourcesFilter(dir, root, this.filter);
             filter.update(
                 webArchive.merge(
                     ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
@@ -190,9 +201,11 @@ public final class Mvn {
         private final File base;
         private final String prefix;
         private final Map<ArchivePath, Asset> paths = new HashMap<ArchivePath, Asset>();
+        private final Filter<ArchivePath> delegate;
 
-        public KnownResourcesFilter(final File base, final String prefix) {
+        public KnownResourcesFilter(final File base, final String prefix, final Filter<ArchivePath> filter) {
             this.base = base;
+            this.delegate = filter;
 
             if (prefix.startsWith("/")) {
                 this.prefix = prefix.substring(1);
@@ -203,6 +216,9 @@ public final class Mvn {
 
         @Override
         public boolean include(final ArchivePath archivePath) {
+            if (!delegate.include(archivePath)) {
+                return false;
+            }
             if (archivePath.get().contains("shiro.ini")) {
                 paths.put(archivePath, addArquillianServletInUrls(archivePath));
                 return false;
