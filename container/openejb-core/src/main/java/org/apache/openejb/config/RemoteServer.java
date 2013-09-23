@@ -122,7 +122,7 @@ public class RemoteServer {
     }
 
     public void start() {
-        start(Collections.EMPTY_LIST, "start", true);
+        start(Collections.<String>emptyList(), "start", true);
     }
 
     public void start(final List<String> additionalArgs, final String cmd, final boolean checkPortAvailable) {
@@ -201,14 +201,10 @@ public class RemoteServer {
                     final File conf = new File(home, "conf");
                     final File loggingProperties = new File(conf, "logging.properties");
 
-                    File endorsed = new File(home, "endorsed");
-                    if (javaVersion != null && javaVersion.startsWith("1.7.")) { // java 7
-                        endorsed = new File(home, "endorsed7"); // doesn't exist but just to ignore it with j7
-                    }
+                    final File endorsed = new File(home, "endorsed");
                     final File temp = new File(home, "temp");
 
-                    final List<String> argsList = new ArrayList<String>() {
-                    };
+                    final List<String> argsList = new ArrayList<String>();
                     argsList.add(java);
                     argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
@@ -228,10 +224,7 @@ public class RemoteServer {
                     }
 
                     if (javaOpts != null) {
-                        final String[] strings = javaOpts.split(" +");
-                        for (final String string : strings) {
-                            argsList.add(string);
-                        }
+                        Collections.addAll(argsList, javaOpts.split(" +"));
                     }
 
                     final Map<String, String> addedArgs = new HashMap<String, String>();
