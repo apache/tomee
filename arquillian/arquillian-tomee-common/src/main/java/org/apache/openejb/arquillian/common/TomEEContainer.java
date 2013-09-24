@@ -49,8 +49,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -79,7 +81,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         if (prefixes == null) return;
 
-        ConfigurationOverrides.apply(configuration, System.getProperties(), prefixes.value());
+        final Properties systemProperties = System.getProperties();
+        ConfigurationOverrides.apply(configuration, systemProperties, prefixes.value());
 
         setPorts();
 
