@@ -582,6 +582,12 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         }
 
         @ManagedAttribute
+        @Description("get exclude unlisted classes")
+        public boolean getExcludeUnlistedClasses() {
+            return reloadableEntityManagerFactory.getExcludeUnlistedClasses();
+        }
+
+        @ManagedAttribute
         @Description("get all properties")
         public TabularData getProperties() {
             return tabularData("properties", "properties type",
