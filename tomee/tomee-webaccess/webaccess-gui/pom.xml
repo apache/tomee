@@ -27,7 +27,7 @@
   <artifactId>webaccess-gui</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>TomEE :: webaccess :: webaccess-gui</name>
+  <name>OpenEJB :: TomEE :: webaccess :: webaccess-gui</name>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -35,48 +35,48 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-backbone</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>backbone</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-bootstrap</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>bootstrap</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-jquery</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>jquery</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-handlebars</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>handlebars</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-json2</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>json2</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-lessjs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>lessjs</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-requirejs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>requirejs</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-underscorejs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>underscorejs</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-codemirror</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>codemirror</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

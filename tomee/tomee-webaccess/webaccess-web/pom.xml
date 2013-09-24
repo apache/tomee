@@ -27,7 +27,7 @@
   <artifactId>webaccess-web</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>TomEE :: webaccess :: webaccess-web</name>
+  <name>OpenEJB :: TomEE :: webaccess :: webaccess-web</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
