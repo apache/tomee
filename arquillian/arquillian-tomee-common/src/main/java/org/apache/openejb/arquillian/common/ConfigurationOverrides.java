@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.common;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,10 @@ public class ConfigurationOverrides {
         }
 
         propertiesFiles.addAll(overridePropFiles);
+
+        // use system properties in all cases
+        apply(configuration, systemProperties, Collections.<URL>emptyList(), true, prefixes);
+
         return propertiesFiles;
     }
 
