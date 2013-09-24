@@ -23,7 +23,7 @@
   <artifactId>tomee-webaccess</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>TomEE :: webaccess</name>
+  <name>OpenEJB :: TomEE :: webaccess</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>1.6.0-SNAPSHOT</tomee.version>
@@ -35,8 +35,6 @@
   <modules>
     <module>webaccess-gui</module>
     <module>webaccess-web</module>
-    <module>webaccess-resources</module>
-    <module>webaccess-gui-libs</module>
   </modules>
   <repositories>
     <repository>

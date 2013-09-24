@@ -126,43 +126,43 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-backbone</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>backbone</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-bootstrap</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>bootstrap</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-jquery</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>jquery</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-handlebars</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>handlebars</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-json2</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>json2</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-lessjs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>lessjs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-requirejs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>requirejs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>webaccess-gui-underscorejs</artifactId>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>underscorejs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
   </dependencies>
