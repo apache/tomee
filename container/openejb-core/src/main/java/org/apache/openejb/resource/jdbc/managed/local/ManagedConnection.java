@@ -82,7 +82,7 @@ public class ManagedConnection implements InvocationHandler {
             // if we have a tx check it is the same this connection is linked to
             if (currentTransaction != null) {
                 if (isUnderTransaction(currentTransaction.getStatus())) {
-                    if (currentTransaction != transaction) {
+                    if (!currentTransaction.equals(transaction)) {
                         throw new SQLException("Connection can not be used while enlisted in another transaction");
                     }
                     return invokeUnderTransaction(delegate, method, args);

@@ -22,6 +22,8 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
@@ -67,7 +69,7 @@ public class XADataSourceTest {
         }
 
         final Properties p = new Properties();
-        p.put("openejb.jdbc.log", "dbcp-alternative");
+        p.put(DataSourceCreator.class.getName(), DbcpDataSourceCreator.class.getName());
 
         p.put("txMgr", "new://TransactionManager?type=TransactionManager");
         p.put("txMgr.txRecovery", "true");
