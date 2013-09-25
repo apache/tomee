@@ -22,8 +22,6 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.Files;
-import org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator;
-import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
@@ -69,14 +67,23 @@ public class XADataSourceTest {
         }
 
         final Properties p = new Properties();
-        p.put(DataSourceCreator.class.getName(), DbcpDataSourceCreator.class.getName());
+        // p.put(DataSourceCreator.class.getName(), DbcpDataSourceCreator.class.getName()); // not xa compatible
 
         p.put("txMgr", "new://TransactionManager?type=TransactionManager");
         p.put("txMgr.txRecovery", "true");
         p.put("txMgr.logFileDir", "target/test/xa/howl");
 
+        /*
+        p.put("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName());
+        p.put("xa.url", "jdbc:hsqldb:mem:xa");
+        p.put("xa.user", "sa");
+        p.put("xa.password", "");
+        p.put("xa.SkipImplicitAttributes", "true"); // conflict with connectionProperties
+        */
+
         p.put("xadb", "new://Resource?type=DataSource");
         p.put("xadb.JdbcDriver", JDBCXADataSource.class.getName());
+        // p.put("xadb.xaDataSource", "xa");// to be xa
         p.put("xadb.JdbcUrl", "jdbc:hsqldb:mem:xa");
         p.put("xadb.UserName", "sa");
         p.put("xadb.Password", "");
