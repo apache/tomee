@@ -185,8 +185,28 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String jarLocation = URLs.toFilePath(baseUrl);
                 final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), null);
 
+                final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
+
+                // let it be able to deploy the same connector several times
+                final String id = connectorModule.getModuleId();
+                if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.connector." + id + ".skip-default", "false"))) {
+                    connectorModules.add(connectorModule);
+                }
+
+                final String aliases = SystemInstance.get().getProperty("openejb.connector." + id + ".aliases");
+                if (aliases != null) {
+                    for (final String alias : aliases.split(",")) {
+                        final ConnectorModule aliasModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), alias);
+                        connectorModules.add(aliasModule);
+                    }
+                }
+
+
+
                 // Wrap the resource module with an Application Module
-                return new AppModule(connectorModule);
+                final AppModule appModule = new AppModule(connectorModules.toArray(new ConnectorModule[connectorModules.size()]));
+
+                return appModule;
             }
 
             if (WebModule.class.equals(moduleClass)) {

@@ -77,28 +77,32 @@ public class AppModule implements DeploymentModule {
         this(classLoader, jarLocation, null, false);
     }
 
-    public <T extends DeploymentModule> AppModule(final T module) {
-        this.standaloneModule = true;
-        this.classLoader = module.getClassLoader();
-        this.application = new Application(module.getModuleId());
+    public <T extends DeploymentModule> AppModule(final T... modules) {
+        final T firstModule = modules[0];
 
-        this.id = new ID(null, application, null, module.getFile(), module.getModuleUri(), this);
+        this.standaloneModule = true;
+        this.classLoader = firstModule.getClassLoader();
+        this.application = new Application(firstModule.getModuleId());
+
+        this.id = new ID(null, application, null, firstModule.getFile(), firstModule.getModuleUri(), this);
         this.validation = new ValidationContext(this);
 
-        final Class<? extends DeploymentModule> type = module.getClass();
+        for (final T module : modules) {
+            final Class<? extends DeploymentModule> type = module.getClass();
 
-        if (type == EjbModule.class) {
-            getEjbModules().add((EjbModule) module);
-        } else if (type == ClientModule.class) {
-            getClientModules().add((ClientModule) module);
-        } else if (type == ConnectorModule.class) {
-            getConnectorModules().add((ConnectorModule) module);
-        } else if (type == WebModule.class) {
-            getWebModules().add((WebModule) module);
-        } else if (type == PersistenceModule.class) {
-            addPersistenceModule((PersistenceModule) module);
-        } else {
-            throw new IllegalArgumentException("Unknown module type: " + type.getName());
+            if (type == EjbModule.class) {
+                getEjbModules().add((EjbModule) module);
+            } else if (type == ClientModule.class) {
+                getClientModules().add((ClientModule) module);
+            } else if (type == ConnectorModule.class) {
+                getConnectorModules().add((ConnectorModule) module);
+            } else if (type == WebModule.class) {
+                getWebModules().add((WebModule) module);
+            } else if (type == PersistenceModule.class) {
+                addPersistenceModule((PersistenceModule) module);
+            } else {
+                throw new IllegalArgumentException("Unknown module type: " + type.getName());
+            }
         }
     }
 

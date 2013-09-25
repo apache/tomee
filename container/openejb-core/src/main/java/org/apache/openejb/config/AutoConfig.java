@@ -1366,9 +1366,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (!resourceLocal) {
                 required.put("JtaManaged", "true");
                 jtaDataSourceId = findResourceId(prefix + replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
+                if (jtaDataSourceId == null) { // test with javax.sql.DataSource before DataSource since RA can register resources without our shortcut
+                    jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "javax.sql.DataSource", required, null);
+                }
+                /* this shouldn't be mandatory anymore since our DataSource has as alias javax.sql.DataSource
                 if (jtaDataSourceId == null) {
                     jtaDataSourceId = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
                 }
+                */
             }
 
             required.put("JtaManaged", "false");
