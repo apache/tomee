@@ -2071,8 +2071,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
         final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
-        serviceRecipe.setProperty("transactionManager", transactionManager);
-        serviceRecipe.setProperty("ServiceId", serviceInfo.id);
+        if ("false".equalsIgnoreCase(serviceInfo.properties.getProperty("SkipImplicitAttributes", "false"))) {
+            serviceRecipe.setProperty("transactionManager", transactionManager);
+            serviceRecipe.setProperty("ServiceId", serviceInfo.id);
+        }
+        serviceInfo.properties.remove("SkipImplicitAttributes");
+
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
 
         final Properties props = PropertyPlaceHolderHelper.holds(serviceInfo.properties);
@@ -2501,6 +2505,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private static void logUnusedProperties(final Map<String, Object> unsetProperties, final ServiceInfo info) {
         for (final String property : unsetProperties.keySet()) {
             //TODO: DMB: Make more robust later
+            if (property.equalsIgnoreCase("Definition")) {
+                return;
+            }
+            if (property.equalsIgnoreCase("SkipImplicitAttributes")) {
+                return;
+            }
             if (property.equalsIgnoreCase("JndiName")) {
                 return;
             }
