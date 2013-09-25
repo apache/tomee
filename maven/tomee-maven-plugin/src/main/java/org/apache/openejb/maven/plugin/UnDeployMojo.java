@@ -22,6 +22,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.classic.AppInfo;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Simply undeploy an application in a running TomEE
@@ -32,8 +36,29 @@ public class UnDeployMojo extends AbstractDeployMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Deployer deployer = (Deployer) lookup("openejb/DeployerBusinessRemote");
         try {
-            deployer.undeploy(path);
-        } catch (OpenEJBException e) {
+            final Collection<AppInfo> apps = deployer.getDeployedApps();
+            final Collection<String> paths = new ArrayList<String>(apps.size());
+            for (final AppInfo info : apps) {
+                paths.add(info.path);
+            }
+
+            if (paths.contains(path)) { // exact matching
+                deployer.undeploy(path);
+            } else {
+                for (final String proposed : paths) { // exact matching + extension
+                    if (path.equals(proposed + ".war") || path.equals(proposed + ".ear") || path.equals(proposed + ".jar")) {
+                        deployer.undeploy(proposed);
+                        return;
+                    }
+                }
+                for (final String proposed : paths) { // just the app/folder name
+                    if (proposed.endsWith("/" + path) || proposed.endsWith("\\" + path)) {
+                        deployer.undeploy(proposed);
+                        return;
+                    }
+                }
+            }
+        } catch (final OpenEJBException e) {
             throw new TomEEException(e.getMessage(), e);
         }
     }
