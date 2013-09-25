@@ -36,46 +36,55 @@
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>backbone</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>bootstrap</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>jquery</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>handlebars</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>json2</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>lessjs</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>requirejs</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>underscorejs</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>codemirror</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>

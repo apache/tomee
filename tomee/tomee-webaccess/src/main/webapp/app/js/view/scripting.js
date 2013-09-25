@@ -77,7 +77,7 @@
             fitCodeField: function () {
                 var me = this;
                 var panelBody = $(me.$el.find('.ux-script-source').get(0));
-                me.editor.setSize(panelBody.width() - 22, panelBody.height() - 120);
+                me.editor.setSize(panelBody.width() - 15, panelBody.height() - 110);
             },
 
             renderCallback: function () {

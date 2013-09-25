@@ -22,9 +22,12 @@ import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
 
 import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
+import javax.ejb.TransactionAttribute
+import javax.ejb.TransactionAttributeType
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Stateless
 @RolesAllowed('tomee-admin')
 class ScriptingServiceImpl {
