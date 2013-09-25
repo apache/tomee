@@ -500,7 +500,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, timerData);
 
         try {
-            if (!scheduler.checkExists(new TriggerKey(atrigger.getName(), atrigger.getGroup()))) {
+            final TriggerKey triggerKey = new TriggerKey(atrigger.getName(), atrigger.getGroup());
+            if (!scheduler.checkExists(triggerKey)) {
+                scheduler.scheduleJob(trigger);
+            } else if (Trigger.TriggerState.PAUSED.equals(scheduler.getTriggerState(triggerKey))) { // redeployment
+                // more consistent in the semantic than a resume but resume would maybe be more relevant here
+                scheduler.unscheduleJob(triggerKey);
                 scheduler.scheduleJob(trigger);
             }
         } catch (Exception e) {
