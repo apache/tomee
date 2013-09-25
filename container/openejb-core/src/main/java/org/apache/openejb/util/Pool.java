@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.monitoring.Managed;
 
 import java.lang.ref.SoftReference;
@@ -1152,16 +1153,25 @@ public class Pool<T> {
 
         @Override
         public Thread newThread(final Runnable r) {
-            final Thread t = new Thread(group, r, "org.apache.openejb.pool.scheduler." + count.getAndIncrement());
-            if (!t.isDaemon()) {
-                t.setDaemon(true);
-            }
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            final ClassLoader containerLoader = ParentClassLoaderFinder.Helper.get();
+            Thread.currentThread().setContextClassLoader(containerLoader);
+            try {
+                final Thread t = new Thread(group, r, "org.apache.openejb.pool.scheduler." + count.getAndIncrement());
+                if (!t.isDaemon()) {
+                    t.setDaemon(true);
+                }
 
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
+                if (t.getPriority() != Thread.NORM_PRIORITY) {
+                    t.setPriority(Thread.NORM_PRIORITY);
+                }
 
-            return t;
+                t.setContextClassLoader(containerLoader);
+
+                return t;
+            } finally {
+                Thread.currentThread().setContextClassLoader(loader);
+            }
         }
     }
 }
