@@ -160,7 +160,11 @@ public class ServiceUtils {
         return null;
     }
 
-    public static boolean implies(Properties required, Properties available){
+    public static boolean implies(Properties required, Properties available) {
+        if (available.containsKey("openejb.connector")) { // created from a connector so our JtaManaged etc can't be used
+            return true;
+        }
+
         for (Map.Entry<Object, Object> entry : required.entrySet()) {
             Object value = available.get(entry.getKey());
 

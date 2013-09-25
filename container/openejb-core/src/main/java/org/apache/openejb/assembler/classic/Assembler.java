@@ -775,6 +775,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     for (final ResourceInfo outbound : connector.outbound) {
                         createResource(outbound);
+                        outbound.properties.setProperty("openejb.connector", "true"); // set it after as a marker but not as an attribute (no getOpenejb().setConnector(...))
                     }
                     for (final MdbContainerInfo inbound : connector.inbound) {
                         createContainer(inbound);
