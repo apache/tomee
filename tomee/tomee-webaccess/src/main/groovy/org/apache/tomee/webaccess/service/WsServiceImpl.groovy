@@ -29,7 +29,10 @@ import org.apache.tomee.webaccess.data.dto.WsListResultDto
 
 import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
+import javax.ejb.TransactionAttribute
+import javax.ejb.TransactionAttributeType
 
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Stateless
 @RolesAllowed('tomee-admin')
 class WsServiceImpl {

@@ -67,13 +67,7 @@ body {
   }
 
   .ux-scripting {
-    @outputWidth: 500px;
-
-    .ux-commands {
-      position: absolute;
-      bottom: ((@offset * 2) + 8);
-      right: ((@offset * 2) + 8);
-    }
+    @sourceWidth: 650px;
 
     .ux-script {
       position: absolute;
@@ -83,8 +77,8 @@ body {
     }
 
     .ux-script-output {
-      left: @offset;
-      width: @outputWidth;
+      right: @offset;
+      left: @sourceWidth + (2 * @offset);
 
       pre {
         padding: 0;
@@ -107,21 +101,28 @@ body {
         position: absolute;
         top: @topOffset;
         bottom: @offset;
-        left: @offset;
-        width: (@outputWidth - (@offset * 2));
+        left: (@offset * 2);
+        right: (@offset * 2);
         overflow: auto;
       }
     }
 
     .ux-script-source {
-      right: @offset;
-      left: (@outputWidth + (@offset * 2));
+      left: @offset;
+      width: @sourceWidth;
+
+      .ux-commands {
+        position: absolute;
+        bottom: (@offset * 2);
+        right: (@offset * 2);
+      }
 
       > div.panel-body {
         position: absolute;
-        top: (@topOffset + @offset);
-        left: (@offset * 2);
-        right: (@offset * 2);
+        top: @topOffset;
+        bottom: @offset;
+        left: @offset;
+        width: (@sourceWidth - (@offset * 2));
         overflow: auto;
       }
     }

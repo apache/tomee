@@ -58,12 +58,10 @@
                 if (this.options.isRendered) {
                     return this;
                 }
-
                 var html = templates.getValue('container', {
                     userName: ''
                 });
                 this.$el.html(html);
-
                 // render it only once
                 this.options.isRendered = true;
                 return this;

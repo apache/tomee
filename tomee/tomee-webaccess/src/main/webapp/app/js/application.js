@@ -38,8 +38,10 @@
                 routes: {
                     '': 'showScripting',
                     'scripting': 'showScripting',
+                    'scripting/': 'showScripting',
                     'scripting/:scriptType': 'showScripting',
-                    'log-files': 'showLogFiles',
+                    'log-files': 'showLogFile',
+                    'log-files/': 'showLogFile',
                     'log-files/:fileName': 'showLogFile'
                 },
 
@@ -50,13 +52,11 @@
                     }
                 },
 
-                showLogFiles: function () {
-                    containerView.showView(logfilesView);
-                },
-
                 showLogFile: function (fileName) {
                     containerView.showView(logfilesView);
-                    logfilesView.triggerFileLoad(fileName);
+                    if (fileName) {
+                        logfilesView.triggerFileLoad(fileName);
+                    }
                 }
             });
             var router = new Router();
@@ -123,12 +123,6 @@
                 pushState: true,
                 root: window.ux.ROOT_URL // This value is set by <c:url>
             });
-
-            return {
-                getRouter: function () {
-                    return router;
-                }
-            };
         }
 
         return {

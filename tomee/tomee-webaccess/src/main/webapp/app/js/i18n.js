@@ -25,7 +25,7 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         'application.name': 'Apache TomEE',
         'visitor': 'visitor',
         'scripting': 'Scripting',
-        'source': 'Source',
+        'source': 'Source Code',
         'output': 'Output',
         'execute': 'Execute',
         'groovy': 'Groovy',
