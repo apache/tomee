@@ -201,8 +201,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public void doDestroy(final DataSource object) throws Throwable {
-        org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) object;
+    protected void doDestroy(CommonDataSource dataSource) throws Throwable {
+        org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
         if (ds instanceof TomEEDataSource) {
             ((TomEEDataSource) ds).internalJMXUnregister();
         }
