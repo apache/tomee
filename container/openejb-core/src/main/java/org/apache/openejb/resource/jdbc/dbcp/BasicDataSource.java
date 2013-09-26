@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.commons.dbcp.DataSourceConnectionFactory;
+import org.apache.commons.dbcp.managed.DataSourceXAConnectionFactory;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
@@ -23,7 +27,9 @@ import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -47,6 +53,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      */
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;
+    private CommonDataSource delegate = null;
 
     public BasicDataSource() {
         // no-op
@@ -54,6 +61,21 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     public BasicDataSource(final String name) {
         setName(name);
+    }
+
+    public void setDelegate(final CommonDataSource delegate) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    protected ConnectionFactory createConnectionFactory() throws SQLException {
+        if (delegate != null) {
+            if (XADataSource.class.isInstance(delegate)) {
+                return new DataSourceXAConnectionFactory(OpenEJB.getTransactionManager(), XADataSource.class.cast(delegate), username, password);
+            }
+            return new DataSourceConnectionFactory(DataSource.class.cast(delegate), username, password);
+        }
+        return super.createConnectionFactory();
     }
 
     private void registerAsMbean(final String name) {

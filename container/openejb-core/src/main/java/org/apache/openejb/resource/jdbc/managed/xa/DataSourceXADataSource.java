@@ -16,25 +16,32 @@
  */
 package org.apache.openejb.resource.jdbc.managed.xa;
 
-import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 
-import javax.sql.DataSource;
+import javax.sql.CommonDataSource;
 import javax.sql.XAConnection;
+import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ManagedXAConnection extends ManagedConnection {
-    private final XAConnection xaConnection;
+public class DataSourceXADataSource extends ManagedDataSource {
+    private final XADataSource xaDataSource;
 
-    public ManagedXAConnection(final DataSource ds, final XAConnection xa, final Connection connection, final TransactionManager txMgr) throws SQLException {
-        super(ds, connection, txMgr);
-        this.xaConnection = xa;
+    public DataSourceXADataSource(final CommonDataSource ds, final TransactionManager txMgr) {
+        super(CommonDataSourceAdapter.wrap(ds), txMgr, ds.hashCode());
+        xaDataSource = XADataSource.class.cast(ds);
     }
 
     @Override
-    public XAResource getXAResource() throws SQLException {
-        return xaConnection.getXAResource();
+    public Connection getConnection() throws SQLException {
+        final XAConnection xaConnection = xaDataSource.getXAConnection();
+        return xaConnection.getConnection();
+    }
+
+    @Override
+    public Connection getConnection(final String username, final String password) throws SQLException {
+        final XAConnection xaConnection = xaDataSource.getXAConnection(username, password);
+        return xaConnection.getConnection();
     }
 }

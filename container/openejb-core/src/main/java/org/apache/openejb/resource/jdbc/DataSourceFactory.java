@@ -30,6 +30,7 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -52,7 +53,7 @@ public class DataSourceFactory {
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
-    private static final Map<DataSource, DataSourceCreator> creatorByDataSource = new HashMap<DataSource, DataSourceCreator>();
+    private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<CommonDataSource, DataSourceCreator>();
     private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
         put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only
@@ -60,7 +61,7 @@ public class DataSourceFactory {
         put("bonecp", "org.apache.openejb.bonecp.BoneCPDataSourceCreator"); // bonecp
     }};
 
-    public static DataSource create(final String name,
+    public static CommonDataSource create(final String name,
                                     final boolean configuredManaged,
                                     final Class impl,
                                     final String definition,
@@ -94,7 +95,7 @@ public class DataSourceFactory {
         }
 
         try {
-            DataSource ds;
+            CommonDataSource ds;
             if (createDataSourceFromClass(impl)) { // opposed to "by driver"
                 trimNotSupportedDataSourceProperties(properties);
 
@@ -219,7 +220,7 @@ public class DataSourceFactory {
     }
 
     public static boolean knows(final Object object) {
-        return object instanceof DataSource && creatorByDataSource.containsKey(object);
+        return object instanceof CommonDataSource && creatorByDataSource.containsKey(object);
     }
 
     // TODO: should we get a get and a clear method instead of a single one?

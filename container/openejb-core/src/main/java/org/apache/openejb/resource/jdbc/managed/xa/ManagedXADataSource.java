@@ -18,7 +18,7 @@ package org.apache.openejb.resource.jdbc.managed.xa;
 
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 
-import javax.sql.DataSource;
+import javax.sql.CommonDataSource;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
@@ -27,26 +27,28 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ManagedXADataSource extends ManagedDataSource {
-    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[] { XAConnection.class };
+    private static final Class<?>[] CONNECTION_CLASS = new Class<?>[] { Connection.class };
 
     private final XADataSource xaDataSource;
 
-    public ManagedXADataSource(final DataSource ds, final TransactionManager txMgr) {
-        super(ds, txMgr);
-        xaDataSource = (XADataSource) ds;
+    public ManagedXADataSource(final CommonDataSource ds, final TransactionManager txMgr) {
+        super(CommonDataSourceAdapter.wrap(ds), txMgr, ds.hashCode());
+        xaDataSource = XADataSource.class.cast(ds);
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return managedXA(xaDataSource.getXAConnection().getConnection());
+        final XAConnection xaConnection = xaDataSource.getXAConnection();
+        return managedXA(xaConnection, xaConnection.getConnection());
     }
 
     @Override
     public Connection getConnection(final String username, final String password) throws SQLException {
-        return managedXA(xaDataSource.getXAConnection(username, password).getConnection());
+        final XAConnection xaConnection = xaDataSource.getXAConnection(username, password);
+        return managedXA(xaConnection, xaConnection.getConnection());
     }
 
-    private Connection managedXA(final Connection connection) throws SQLException {
-        return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedXAConnection(delegate, connection, transactionManager));
+    private Connection managedXA(final XAConnection xaConnection, final Connection connection) throws SQLException {
+        return Connection.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS, new ManagedXAConnection(delegate, xaConnection, connection, transactionManager)));
     }
 }

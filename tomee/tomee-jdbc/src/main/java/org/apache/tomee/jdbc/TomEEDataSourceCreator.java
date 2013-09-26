@@ -24,6 +24,7 @@ import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -36,7 +37,9 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
 
 import javax.management.ObjectName;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -67,7 +70,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final String driver, final Properties properties) {
+    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
         final Properties converted = new Properties();
         converted.setProperty("name", name);
 
@@ -76,7 +79,17 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         updateProperties(prop, converted, driver);
         final PoolConfiguration config = build(PoolProperties.class, converted);
-        return build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
+        final TomEEDataSource ds = build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
+
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            cleanProperty(ds, "xadatasource");
+
+            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+            ds.setDataSource(xaDs);
+        }
+
+        return ds;
     }
 
     private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
@@ -302,8 +315,12 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            if (!(method.getName().startsWith("set") && args != null && args.length == 1 && Void.TYPE.equals(method.getReturnType()))) {
+            final String name = method.getName();
+            if (!(name.startsWith("set") && args != null && args.length == 1 && Void.TYPE.equals(method.getReturnType()))) {
                 return method.invoke(delegate, args);
+            }
+            if (name.equals("setDataSource")) {
+                delegate.setDataSource(args[0]);
             }
             return null;
         }

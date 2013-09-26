@@ -23,18 +23,13 @@ import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.sql.XADataSource;
 import java.io.File;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
@@ -79,26 +74,8 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     }
 
     private void setJndiXaDataSource(final String xaDataSource) {
-        final AtomicReference<XADataSource> ref = new AtomicReference<XADataSource>();
         setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate
-            XADataSource.class.cast(Proxy.newProxyInstance(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] { XADataSource.class },
-            new InvocationHandler() {
-                @Override
-                public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                    XADataSource instance = ref.get();
-                    if (instance == null) {
-                        synchronized (this) {
-                            instance = ref.get();
-                            if (instance == null) {
-                                instance = XADataSource.class.cast(new InitialContext().lookup("openejb:Resource/" + xaDataSource));
-                                ref.set(instance);
-                            }
-                        }
-                    }
-                    return method.invoke(instance, args);
-                }
-            })));
+            XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
 
         if (getTransactionManager() == null) {
             setTransactionManager(OpenEJB.getTransactionManager());
