@@ -258,7 +258,7 @@ public final class Mvn {
 
         public void update(final Archive<?> archive) {
             for (final Map.Entry<ArchivePath, Asset> r : paths.entrySet()) {
-                archive.add(r.getValue(), prefix + r.getKey());
+                archive.add(r.getValue(), prefix + r.getKey().get());
             }
         }
     }
