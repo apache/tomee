@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -67,7 +68,7 @@ public class CustomPoolDataSourceTest {
 
     public static class CustomCreator extends PoolDataSourceCreator {
         @Override
-        protected void doDestroy(final DataSource dataSource) throws Throwable {
+        protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
             throw new UnsupportedOperationException();
         }
 
@@ -77,7 +78,7 @@ public class CustomPoolDataSourceTest {
         }
 
         @Override
-        public DataSource pool(final String name, final String driver, final Properties properties) {
+        public CommonDataSource pool(final String name, final String driver, final Properties properties) {
             return (CustomDataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] { CustomDataSource.class },
                     new InvocationHandler() {

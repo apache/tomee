@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.resource.jdbc.logging;
 
-import javax.sql.DataSource;
+import javax.sql.CommonDataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,9 +26,9 @@ import java.sql.Connection;
 public class LoggingSqlDataSource implements InvocationHandler {
     private static final Class<?>[] INTERFACES = new Class<?>[]{ Connection.class };
 
-    private DataSource delegate;
+    private CommonDataSource delegate;
 
-    public LoggingSqlDataSource(final DataSource ds) {
+    public LoggingSqlDataSource(final CommonDataSource ds) {
         delegate = ds;
     }
 
@@ -48,7 +48,7 @@ public class LoggingSqlDataSource implements InvocationHandler {
         return result;
     }
 
-    public DataSource getDelegate() {
+    public CommonDataSource getDelegate() {
         return delegate;
     }
 }

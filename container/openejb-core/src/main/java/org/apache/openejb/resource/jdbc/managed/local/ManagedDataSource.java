@@ -18,6 +18,7 @@ package org.apache.openejb.resource.jdbc.managed.local;
 
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import java.io.PrintWriter;
@@ -32,11 +33,17 @@ public class ManagedDataSource implements DataSource {
 
     protected final DataSource delegate;
     protected final TransactionManager transactionManager;
+    protected final int hashCode;
 
-    public ManagedDataSource(final DataSource ds, final TransactionManager txMgr) {
+    protected ManagedDataSource(final DataSource ds, final TransactionManager txMgr, final int hc) {
         delegate = ds;
+        hashCode = hc;
         transactionManager = txMgr;
         ManagedConnection.pushDataSource(this);
+    }
+
+    public ManagedDataSource(final DataSource ds, final TransactionManager txMgr) {
+        this(ds, txMgr, ds.hashCode());
     }
 
     @Override
@@ -94,5 +101,15 @@ public class ManagedDataSource implements DataSource {
 
     public void clean() {
         ManagedConnection.cleanDataSource(this);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        return CommonDataSource.class.isInstance(o) && hashCode == o.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 }
