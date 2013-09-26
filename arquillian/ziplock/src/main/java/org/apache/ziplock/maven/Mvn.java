@@ -25,6 +25,9 @@ import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.container.ClassContainer;
+import org.jboss.shrinkwrap.api.container.LibraryContainer;
+import org.jboss.shrinkwrap.api.container.WebContainer;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -96,32 +99,48 @@ public final class Mvn {
         }
 
         public Archive<?> build() {
+            return build(WebArchive.class);
+        }
+        public <T extends Archive<?>> T build(final Class<T> type) {
             initDefaults();
 
-            final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, name);
+            final T webArchive = ShrinkWrap.create(type, name);
 
             if (basePackage != null) {
-                if (filter != null) {
-                    webArchive.addPackages(true, filter, basePackage);
-                } else {
-                    webArchive.addPackages(true, basePackage);
+                if (ClassContainer.class.isInstance(webArchive)) {
+                    final ClassContainer<?> container = ClassContainer.class.cast(webArchive);
+                    if (filter != null) {
+                        container.addPackages(true, filter, basePackage);
+                    } else {
+                        container.addPackages(true, basePackage);
+                    }
                 }
             }
-            add(webArchive, classes, "/WEB-INF/classes/")
-            .add(webArchive, resources, "/WEB-INF/classes/")
+
+            final String root;
+            if (WebContainer.class.isInstance(webArchive)) {
+                root = "/WEB-INF/classes";
+            } else {
+                root = "/";
+            }
+
+            add(webArchive, classes, root)
+            .add(webArchive, resources, root)
             .add(webArchive, webapp, "/");
             for (final Map.Entry<File, String> additionalResource : additionalResources.entrySet()) {
                 add(webArchive, additionalResource.getKey(), additionalResource.getValue());
             }
 
-            try {
-                final File[] deps = Maven.resolver().offline().loadPomFromFile(new File(basedir, "pom.xml"))
-                    .importDependencies(scopes).resolve().withTransitivity().asFile();
-                if (deps.length > 0) {
-                    webArchive.addAsLibraries(deps);
+            if (LibraryContainer.class.isInstance(webArchive)) {
+                try {
+                    final File[] deps = Maven.resolver().offline().loadPomFromFile(new File(basedir, "pom.xml"))
+                        .importDependencies(scopes).resolve().withTransitivity().asFile();
+                    if (deps.length > 0) {
+                        LibraryContainer.class.cast(webArchive).addAsLibraries(deps);
+                    }
+                } catch (final Exception e) {
+                    // no-op: no deps
                 }
-            } catch (final Exception e) {
-                // no-op: no deps
             }
 
             return webArchive;
@@ -160,7 +179,7 @@ public final class Mvn {
             }
         }
 
-        private Builder add(final WebArchive webArchive, final File dir, final String root) {
+        private Builder add(final Archive<?> webArchive, final File dir, final String root) {
             if (dir == null || !dir.exists()) {
                 return this;
             }
