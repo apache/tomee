@@ -633,6 +633,7 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
+            e.printStackTrace();
             throw new OpenEJBException("Cannot unmarshall the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (IOException e) {
             throw new OpenEJBException("Cannot read the beans.xml");// file: " + url.toExternalForm(), e);
