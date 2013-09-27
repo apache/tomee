@@ -51,4 +51,27 @@
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>ServerServlet</web-resource-name>
+      <url-pattern>/ejb/*</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Application</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>tomee-admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+  </login-config>
+  <security-role>
+    <role-name>tomee-admin</role-name>
+  </security-role>
+
 </web-app>
