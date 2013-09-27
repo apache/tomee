@@ -59,6 +59,12 @@
   </security-constraint>
   <security-constraint>
     <web-resource-collection>
+      <web-resource-name>Static Content</web-resource-name>
+      <url-pattern>/app/lib/*</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
       <web-resource-name>Application</web-resource-name>
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
