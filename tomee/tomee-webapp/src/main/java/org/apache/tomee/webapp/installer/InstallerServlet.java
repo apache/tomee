@@ -30,7 +30,7 @@ import java.util.Map;
 public class InstallerServlet extends HttpServlet {
 
     private String escape(String str) {
-        return str.replaceAll("\"", "\\\"").replaceAll("\\\\", "\\\\");
+        return str.replaceAll("\"", "\\\\\"").replaceAll("\\\\", "\\\\\\\\");
     }
 
     private String getJsonList(List<Map<String, String>> list) {
