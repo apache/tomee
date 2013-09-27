@@ -411,13 +411,20 @@ public class HttpRequestImpl implements HttpRequest {
         String token;
         try {
             token = lineParts.nextToken();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IOException("Could not parse the HTTP Request Method :"
                     + e.getClass().getName()
                     + " : "
                     + e.getMessage());
         }
 
+        // in JAXRS you can create your own method
+        try { // to control the case
+            method = Method.valueOf(token.toUpperCase(Locale.ENGLISH)).name();
+        } catch (final Exception e) {
+            method = token;
+        }
+        /*
         if (token.equalsIgnoreCase("GET")) {
             method = Method.GET.name();
         } else if (token.equalsIgnoreCase("POST")) {
@@ -428,10 +435,15 @@ public class HttpRequestImpl implements HttpRequest {
             method = Method.DELETE.name();
         } else if (token.equalsIgnoreCase("HEAD")) {
             method = Method.HEAD.name();
-        }  else {
+        } else if (token.equalsIgnoreCase("OPTIONS")) {
+            method = Method.HEAD.name();
+        } else if (token.equalsIgnoreCase("PATCH")) {
+            method = Method.PATCH.name();
+        } else {
             method = Method.UNSUPPORTED.name();
             throw new IOException("Unsupported HTTP Request Method :" + token);
         }
+        */
     }
 
     /**
