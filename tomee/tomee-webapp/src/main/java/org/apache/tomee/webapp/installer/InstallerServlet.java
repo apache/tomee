@@ -60,23 +60,16 @@ public class InstallerServlet extends HttpServlet {
         final ServletContext ctx = req.getServletContext();
         final String rootPath = ctx.getRealPath("/");
         final Runner installer = new Runner(new File(rootPath));
-
         if (req.getParameter("catalinaBaseDir") != null && "".equals(req.getParameter("catalinaBaseDir").trim())) {
             installer.setCatalinaBaseDir(req.getParameter("catalinaBaseDir").trim());
         }
-
         if (req.getParameter("catalinaHome") != null && "".equals(req.getParameter("catalinaHome").trim())) {
             installer.setCatalinaHome(req.getParameter("catalinaHome").trim());
         }
-
         if (req.getParameter("serverXmlFile") != null && "".equals(req.getParameter("serverXmlFile").trim())) {
             installer.setServerXmlFile(req.getParameter("serverXmlFile").trim());
         }
-
-        installer.execute();
-
-        final Status statusManager = new Status(new File(rootPath));
         resp.setContentType("application/json");
-        resp.getOutputStream().print(getJsonList(statusManager.get()));
+        resp.getOutputStream().print(getJsonList(installer.execute()));
     }
 }

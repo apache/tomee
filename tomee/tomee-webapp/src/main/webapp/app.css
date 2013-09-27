@@ -5,6 +5,14 @@ div.ux-status-panel {
     bottom: 270px;
     right: 5px;
     left: 5px;
+}
+div.ux-status-panel > div.panel-body{
+    margin: 0;
+    position: absolute;
+    top: 45px;
+    right: 5px;
+    left: 5px;
+    bottom: 5px;
     overflow: auto;
 }
 div.ux-installer-panel {

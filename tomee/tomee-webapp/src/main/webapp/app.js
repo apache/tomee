@@ -7,6 +7,7 @@ $(function () {
 
     installBtn.on('click', function (evt) {
         evt.preventDefault();
+        installBtn.addClass('disabled');
         $.ajax({
             url: 'installer',
             data: {
@@ -44,9 +45,6 @@ $(function () {
         if (data && data.length > 0) {
             if (systemStatus.status === 'NONE') {
                 installBtn.removeClass('disabled');
-                catalinaHome.removeClass('disabled');
-                catalinaBase.removeClass('disabled');
-                serverXmlFile.removeClass('disabled');
             }
             catalinaHome.val(systemStatus.catalinaHomeDir);
             catalinaBase.val(systemStatus.catalinaBaseDir);
