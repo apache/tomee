@@ -25,7 +25,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -51,10 +52,19 @@ public class Runner {
         this.serverXmlFile = serverXmlFile;
     }
 
-    public Map<String, Object> execute() {
+    private void setAlerts(String key, List<String> messages, List<Map<String, String>> result) {
+        if (messages == null) {
+            return;
+        }
+        for (String message : messages) {
+            result.add(Common.build(key, message));
+        }
+    }
+
+    public List<Map<String, String>> execute() {
         final Paths paths = new Paths(openejbWarDir);
         final Installer installer = new Installer(paths);
-        final Map<String, Object> result = new HashMap<String, Object>();
+        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         if (Installer.Status.NONE.equals(installer.getStatus())) {
             paths.reset();
             installer.reset();
@@ -65,52 +75,53 @@ public class Runner {
                 installer.installAll();
             }
         }
-        result.put("status", installer.getStatus());
-        result.put("errors", installer.getAlerts().getErrors());
-        result.put("warnings", installer.getAlerts().getWarnings());
-        result.put("infos", installer.getAlerts().getInfos());
-        final Map<String, Object> test = new HashMap<String, Object>();
-        result.put("tests", test);
+        result.add(Common.build("status", String.valueOf(installer.getStatus())));
+        setAlerts("errors", installer.getAlerts().getErrors(), result);
+        setAlerts("warnings", installer.getAlerts().getWarnings(), result);
+        setAlerts("infos", installer.getAlerts().getInfos(), result);
         {
-            test.put("hasHome", false);
-            test.put("doesHomeExist", false);
-            test.put("isHomeDirectory", false);
-            test.put("hasLibDirectory", false);
+            boolean hasHome = false;
+            boolean doesHomeExist = false;
+            boolean isHomeDirectory = false;
+            boolean hasLibDirectory = false;
             final String homePath = System.getProperty("openejb.home");
             if (homePath != null) {
-                test.put("hasHome", true);
+                hasHome = true;
                 final File homeDir = new File(homePath);
-                test.put("doesHomeExist", homeDir.exists());
+                doesHomeExist = homeDir.exists();
                 if (homeDir.exists()) {
-                    test.put("isHomeDirectory", homeDir.isDirectory());
+                    isHomeDirectory = homeDir.isDirectory();
                     final File libDir = new File(homeDir, "lib");
-                    test.put("hasLibDirectory", libDir.exists());
+                    hasLibDirectory = libDir.exists();
                 }
             }
+            result.add(Common.build("hasHome", String.valueOf(hasHome)));
+            result.add(Common.build("doesHomeExist", String.valueOf(doesHomeExist)));
+            result.add(Common.build("isHomeDirectory", String.valueOf(isHomeDirectory)));
+            result.add(Common.build("hasLibDirectory", String.valueOf(hasLibDirectory)));
         }
         {
-            test.put("wereTheOpenEJBClassesInstalled", false);
-            test.put("wereTheEjbClassesInstalled", false);
-            test.put("wasOpenEJBStarted", false);
-            test.put("canILookupAnything", false);
+            boolean wereTheOpenEJBClassesInstalled = false;
+            boolean wereTheEjbClassesInstalled = false;
+            boolean wasOpenEJBStarted = false;
+            boolean canILookupAnything = false;
             try {
                 final ClassLoader myLoader = this.getClass().getClassLoader();
                 Class.forName("org.apache.openejb.OpenEJB", true, myLoader);
-                test.put("wereTheOpenEJBClassesInstalled", true);
+                wereTheOpenEJBClassesInstalled = true;
             } catch (Exception e) {
                 // noop
             }
             try {
                 Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
-                test.put("wereTheEjbClassesInstalled", true);
+                wereTheEjbClassesInstalled = true;
             } catch (Exception e) {
                 // noop
             }
             try {
                 final Class openejb = Class.forName("org.apache.openejb.OpenEJB", true, this.getClass().getClassLoader());
                 final Method isInitialized = openejb.getDeclaredMethod("isInitialized");
-                final Boolean running = (Boolean) isInitialized.invoke(openejb);
-                test.put("wasOpenEJBStarted", running);
+                wasOpenEJBStarted = (Boolean) isInitialized.invoke(openejb);
             } catch (Exception e) {
                 // noop
             }
@@ -121,11 +132,15 @@ public class Runner {
                 final InitialContext ctx = new InitialContext(p);
                 final Object obj = ctx.lookup("");
                 if (obj.getClass().getName().equals("org.apache.openejb.core.ivm.naming.IvmContext")) {
-                    test.put("canILookupAnything", true);
+                    canILookupAnything = true;
                 }
             } catch (Exception e) {
                 // noop
             }
+            result.add(Common.build("wereTheOpenEJBClassesInstalled", String.valueOf(wereTheOpenEJBClassesInstalled)));
+            result.add(Common.build("wereTheEjbClassesInstalled", String.valueOf(wereTheEjbClassesInstalled)));
+            result.add(Common.build("wasOpenEJBStarted", String.valueOf(wasOpenEJBStarted)));
+            result.add(Common.build("canILookupAnything", String.valueOf(canILookupAnything)));
         }
         return result;
     }

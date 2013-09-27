@@ -23,7 +23,6 @@ import org.apache.tomee.installer.Paths;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,34 +41,24 @@ public class Status {
         return file.getPath();
     }
 
-    private Map<String, String> build(String key, String value) {
-        Map<String, String> result = new HashMap<String, String>();
-        result.put("key", key);
-        result.put("value", value);
-        return result;
-    }
-
     public List<Map<String, String>> get() {
         final Paths paths = new Paths(openejbWarDir);
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-        result.add(build("isListenerInstalled", String.valueOf(Installer.isListenerInstalled())));
-        result.add(build("isAgentInstalled", String.valueOf(Installer.isAgentInstalled())));
-
-        result.add(build("catalinaConfDir", getSafePath(paths.getCatalinaConfDir())));
-        result.add(build("catalinaLibDir", getSafePath(paths.getCatalinaLibDir())));
-        result.add(build("catalinaBinDir", getSafePath(paths.getCatalinaBinDir())));
-        result.add(build("catalinaShFile", getSafePath(paths.getCatalinaShFile())));
-        result.add(build("catalinaBatFile", getSafePath(paths.getCatalinaBatFile())));
-        result.add(build("openEJBLibDir", getSafePath(paths.getOpenEJBLibDir())));
-        result.add(build("openEJBTomcatLoaderJar", getSafePath(paths.getOpenEJBTomcatLoaderJar())));
-        result.add(build("openEJBJavaagentJar", getSafePath(paths.getOpenEJBJavaagentJar())));
-
-        result.add(build("catalinaHomeDir", getSafePath(paths.getCatalinaHomeDir())));
-        result.add(build("catalinaBaseDir", getSafePath(paths.getCatalinaBaseDir())));
-        result.add(build("serverXmlFile", getSafePath(paths.getServerXmlFile())));
-
         final Installer installer = new Installer(paths);
-        result.add(build("status", String.valueOf(installer.getStatus())));
+        result.add(Common.build("status", String.valueOf(installer.getStatus())));
+        result.add(Common.build("isListenerInstalled", String.valueOf(Installer.isListenerInstalled())));
+        result.add(Common.build("isAgentInstalled", String.valueOf(Installer.isAgentInstalled())));
+        result.add(Common.build("catalinaConfDir", getSafePath(paths.getCatalinaConfDir())));
+        result.add(Common.build("catalinaLibDir", getSafePath(paths.getCatalinaLibDir())));
+        result.add(Common.build("catalinaBinDir", getSafePath(paths.getCatalinaBinDir())));
+        result.add(Common.build("catalinaShFile", getSafePath(paths.getCatalinaShFile())));
+        result.add(Common.build("catalinaBatFile", getSafePath(paths.getCatalinaBatFile())));
+        result.add(Common.build("openEJBLibDir", getSafePath(paths.getOpenEJBLibDir())));
+        result.add(Common.build("openEJBTomcatLoaderJar", getSafePath(paths.getOpenEJBTomcatLoaderJar())));
+        result.add(Common.build("openEJBJavaagentJar", getSafePath(paths.getOpenEJBJavaagentJar())));
+        result.add(Common.build("catalinaHomeDir", getSafePath(paths.getCatalinaHomeDir())));
+        result.add(Common.build("catalinaBaseDir", getSafePath(paths.getCatalinaBaseDir())));
+        result.add(Common.build("serverXmlFile", getSafePath(paths.getServerXmlFile())));
         return result;
     }
 }
