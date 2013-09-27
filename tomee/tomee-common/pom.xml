@@ -41,6 +41,16 @@
       <artifactId>swizzle-stream</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>jquery</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
     </dependency>
