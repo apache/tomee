@@ -1,0 +1,17 @@
+div.ux-status-panel {
+    margin: 0;
+    position: absolute;
+    top: 5px;
+    bottom: 270px;
+    right: 5px;
+    left: 5px;
+    overflow: auto;
+}
+div.ux-installer-panel {
+    margin: 0;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    left: 5px;
+    height: 260px;
+}

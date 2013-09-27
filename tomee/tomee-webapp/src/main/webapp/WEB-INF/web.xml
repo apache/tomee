@@ -21,92 +21,34 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0" metadata-complete="true">
 
-  <display-name>Tomee Application</display-name>
-
-  <listener>
-    <listener-class>org.apache.tomee.webapp.listeners.ApplicationListener</listener-class>
-  </listener>
+  <display-name>Apache TomEE</display-name>
 
   <servlet>
     <servlet-name>LoaderServlet</servlet-name>
     <servlet-class>org.apache.tomee.loader.LoaderServlet</servlet-class>
-    <load-on-startup>0</load-on-startup>
+    <load-on-startup>1</load-on-startup>
   </servlet>
-  <servlet>
-    <servlet-name>applicationSocketServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.ApplicationSocketServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>sessionServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.SessionServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>commandServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.CommandExecutorServlet</servlet-class>
-  </servlet>
+
   <servlet>
     <servlet-name>ServerServlet</servlet-name>
     <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>InstallerServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.AutoInstallerServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>FileUploadServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.FileUploadServlet</servlet-class>
-    <multipart-config>
-      <max-file-size>20848820</max-file-size>
-      <max-request-size>418018841</max-request-size>
-      <file-size-threshold>1048576</file-size-threshold>
-    </multipart-config>
-  </servlet>
-  <servlet>
-    <servlet-name>ErrorServlet</servlet-name>
-    <servlet-class>org.apache.tomee.webapp.servlet.ErrorServlet</servlet-class>
-  </servlet>
-
-  <!-- ************************************************************************************** -->
-  <servlet-mapping>
-    <servlet-name>applicationSocketServlet</servlet-name>
-    <url-pattern>/socket</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>sessionServlet</servlet-name>
-    <url-pattern>/session</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>commandServlet</servlet-name>
-    <url-pattern>/command</url-pattern>
-  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ServerServlet</servlet-name>
     <url-pattern>/ejb/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>InstallerServlet</servlet-name>
+    <servlet-class>org.apache.tomee.webapp.installer.InstallerServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>InstallerServlet</servlet-name>
     <url-pattern>/installer</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>FileUploadServlet</servlet-name>
-    <url-pattern>/upload/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>ErrorServlet</servlet-name>
-    <url-pattern>/error/*</url-pattern>
-  </servlet-mapping>
 
-  <!-- ************************************************************************************** -->
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 
-  <error-page>
-    <exception-type>
-      org.apache.tomee.webapp.TomeeException
-    </exception-type>
-    <location>
-      /error
-    </location>
-  </error-page>
 </web-app>
