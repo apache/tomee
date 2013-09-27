@@ -31,8 +31,10 @@ public class HttpListenerRegistry implements HttpListener {
     private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<FilterListener>();
 
     public HttpListenerRegistry() {
+        // no-op
     }
 
+    @Override
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
         final String path = request.getURI().getPath();
         final FilterListener currentFL = currentFilterListener.get();
