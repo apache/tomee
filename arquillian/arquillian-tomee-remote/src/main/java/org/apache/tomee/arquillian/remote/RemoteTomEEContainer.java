@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.arquillian.remote;
 
+import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.IO;
@@ -26,6 +27,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.tomee.util.InstallationEnrichers;
 import org.apache.tomee.util.SimpleTomEEFormatter;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
 import javax.naming.NamingException;
@@ -34,7 +36,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,10 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * TODO: delete old embedded adapter, move the tests and set those up
- */
 public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguration> {
-
     private static final Logger logger = Logger.getLogger(RemoteTomEEContainer.class.getName());
+
+    private static final String ARQUILLIAN_FILTER = "-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING;
 
     private RemoteServer container;
     private boolean shutdown = false;
@@ -99,7 +98,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
                     deploy(archive);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.log(Level.SEVERE, "Unable to start remote container", e);
             throw new LifecycleException("Unable to start remote container:" + e.getMessage(), e);
         } finally {
@@ -113,12 +112,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
 
     private List<String> args() {
         String opts = configuration.getCatalina_opts();
-        if (opts == null || (opts = opts.trim()).isEmpty()) {
-            return Arrays.asList("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false");
+        if (opts != null) {
+            opts = opts.trim();
+        }
+        if (opts == null || opts.isEmpty()) {
+            return Arrays.asList("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false", ARQUILLIAN_FILTER);
         }
 
         final List<String> splitOnSpace = new ArrayList<String>();
-        opts = opts.replace("\n", " ").trim();
 
         final Iterator<String> it = new ArgsIterator(opts);
         while (it.hasNext()) {
@@ -128,6 +129,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         if (!splitOnSpace.contains("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true")) {
             splitOnSpace.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false");
         }
+        splitOnSpace.add(ARQUILLIAN_FILTER);
         return splitOnSpace;
     }
 

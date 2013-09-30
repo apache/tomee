@@ -49,10 +49,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -121,7 +119,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
 
         final ObjectMap map = new ObjectMap(configuration);
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) continue;
             try {
                 Object value = entry.getValue();
@@ -271,8 +269,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
-            final Object object = archive;
-            if (object instanceof WebArchive) {
+            if (archive instanceof WebArchive) {
                 arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
             } else {
                 arquillianServlet = "/arquillian-protocol";

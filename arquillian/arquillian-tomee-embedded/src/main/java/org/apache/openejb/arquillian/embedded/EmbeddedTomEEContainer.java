@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
+import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TestClassDiscoverer;
 import org.apache.openejb.arquillian.common.TomEEContainer;
@@ -96,7 +97,9 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
         try {
             this.container.start();
             SystemInstance.get().setComponent(AdditionalBeanDiscoverer.class, new TestClassDiscoverer());
-        } catch (Exception e) {
+            // this property is not mandatory by default but depending the protocol it can be relevant so adding it by default
+            SystemInstance.get().setProperty("org.apache.openejb.servlet.filters", ArquillianFilterRunner.class.getName() + "=/ArquillianServletRunner");
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new LifecycleException("Something went wrong", e);
         }
@@ -106,7 +109,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
     public void stop() throws LifecycleException {
         try {
             this.container.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LifecycleException("Unable to stop server", e);
         }
     }
@@ -139,7 +142,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             startCdiContexts(name); // ensure tests can use request/session scopes even if we don't have a request
 
             return new ProtocolMetaData().addContext(httpContext);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }

@@ -311,7 +311,7 @@ public class Setup {
     public static void installArquillianBeanDiscoverer(final File home) {
         final File destination = new File(home, TOMEE_BEAN_DISCOVERER_JAR);
         ShrinkWrap.create(JavaArchive.class, destination.getName())
-                .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class)
+                .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class, ArquillianFilterRunner.class)
                 .addAsManifestResource(new StringAsset(BeanDicovererInstaller.class.getName()), ArchivePaths.create("org.apache.openejb.extension"))
                 .as(ZipExporter.class).exportTo(destination, false);
     }

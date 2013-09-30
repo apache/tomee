@@ -41,6 +41,8 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
@@ -937,6 +939,26 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
         initContextLoader(standardContext);
+
+        // used to add custom filters first - our arquillian integration uses it for instance
+        // needs to be done now (= before start event) because of addFilterMapBefore() usage
+        final String filters = SystemInstance.get().getProperty("org.apache.openejb.servlet.filters");
+        if (filters != null) {
+            final String[] names = filters.split(",");
+            for (final String name : names) {
+                final String[] clazzMapping = name.split("=");
+
+                final FilterDef filterDef = new FilterDef();
+                filterDef.setFilterClass(clazzMapping[0]);
+                filterDef.setFilterName(clazzMapping[0]);
+                standardContext.addFilterDef(filterDef);
+
+                final FilterMap filterMap = new FilterMap();
+                filterMap.setFilterName(clazzMapping[0]);
+                filterMap.addURLPattern(clazzMapping[1]);
+                standardContext.addFilterMapBefore(filterMap);
+            }
+        }
     }
 
     private void initContextLoader(final StandardContext standardContext) {
@@ -1527,7 +1549,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
 
-
+        // owb integration filters
         final WebBeansContext webBeansContext = getWebBeansContext(contextInfo);
         if (webBeansContext != null) {
             // it is important to have a begin and a end listener
