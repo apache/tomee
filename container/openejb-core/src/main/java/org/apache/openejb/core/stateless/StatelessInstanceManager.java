@@ -34,6 +34,7 @@ import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -66,7 +67,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -99,16 +99,7 @@ public class StatelessInstanceManager {
         }
 
         final int qsize = (callbackThreads > 1 ? callbackThreads - 1 : 1);
-        final ThreadFactory threadFactory = new ThreadFactory() {
-            private final AtomicInteger i = new AtomicInteger(1);
-
-            @Override
-            public Thread newThread(final Runnable runable) {
-                final Thread t = new Thread(runable, "StatelessPool.worker." + i.getAndIncrement());
-                t.setDaemon(true);
-                return t;
-            }
-        };
+        final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
         this.executor = new ThreadPoolExecutor(
                 callbackThreads, callbackThreads * 2,
                 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);

@@ -105,6 +105,7 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Contexts;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.EventHelper;
 import org.apache.openejb.util.JndiTreeBrowser;
 import org.apache.openejb.util.Join;
@@ -196,8 +197,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
@@ -2114,9 +2113,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
             final Executor threadPool;
             if (threadPoolSize <= 0) {
-                threadPool = Executors.newCachedThreadPool(new ResourceAdapterThreadFactory(serviceInfo.id));
+                threadPool = Executors.newCachedThreadPool(new DaemonThreadFactory(serviceInfo.id + "-worker-"));
             } else {
-                threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
+                threadPool = Executors.newFixedThreadPool(threadPoolSize, new DaemonThreadFactory(serviceInfo.id + "-worker-"));
             }
 
             // WorkManager: the resource adapter can use this to dispatch messages or perform tasks
@@ -2637,39 +2636,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         @Override
         public ClassLoader getNewTempClassLoader(final ClassLoader classLoader) {
             return ClassLoaderUtil.createTempClassLoader(classLoader);
-        }
-    }
-
-    // Based on edu.emory.mathcs.backport.java.util.concurrent.Executors.DefaultThreadFactory
-    // Which is freely licensed as follows.
-    // "Use, modify, and redistribute this code in any way without acknowledgement"
-    private static class ResourceAdapterThreadFactory implements ThreadFactory {
-
-        private final ThreadGroup group;
-        private final String namePrefix;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-
-        ResourceAdapterThreadFactory(final String resourceAdapterName) {
-            final SecurityManager securityManager = System.getSecurityManager();
-            if (securityManager != null) {
-                group = securityManager.getThreadGroup();
-            } else {
-                group = Thread.currentThread().getThreadGroup();
-            }
-
-            namePrefix = resourceAdapterName + "-worker-";
-        }
-
-        @Override
-        public Thread newThread(final Runnable runnable) {
-            final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (!thread.isDaemon()) {
-                thread.setDaemon(true);
-            }
-            if (thread.getPriority() != Thread.NORM_PRIORITY) {
-                thread.setPriority(Thread.NORM_PRIORITY);
-            }
-            return thread;
         }
     }
 
