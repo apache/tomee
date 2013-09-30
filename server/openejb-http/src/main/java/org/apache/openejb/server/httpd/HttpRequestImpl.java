@@ -582,7 +582,8 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     private boolean hasBody() {
-        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name()) && !method.equals(Method.HEAD.name());
+        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name())
+            && !method.equals(Method.HEAD.name()) && !method.equals(Method.OPTIONS.name());
     }
     /**
      * reads the body from the data input passed in
@@ -598,7 +599,8 @@ public class HttpRequestImpl implements HttpRequest {
 
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
-        if (hasBody() && FORM_URL_ENCODED.equals(contentType)) {
+        final boolean hasBody = hasBody();
+        if (hasBody && FORM_URL_ENCODED.equals(contentType)) {
             String rawParams;
 
             try {
@@ -634,7 +636,7 @@ public class HttpRequestImpl implements HttpRequest {
                 formParams.put(name, value);
                     //System.out.println(name + ": " + value);
             }
-        } else if (hasBody() && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
+        } else if (hasBody && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -658,7 +660,7 @@ public class HttpRequestImpl implements HttpRequest {
             } catch (Exception e) {
                 throw (IOException)new IOException("Unable to read chunked body").initCause(e);
             }
-        } else if (hasBody()){
+        } else if (hasBody){
             // TODO This really is terrible
             body = readContent(in);
             this.in = new ServletByteArrayIntputStream(body);
