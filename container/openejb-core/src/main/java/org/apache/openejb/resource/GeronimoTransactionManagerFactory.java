@@ -28,6 +28,7 @@ import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
@@ -105,7 +106,9 @@ public class GeronimoTransactionManagerFactory {
         final GeronimoTransactionManager geronimoTransactionManager = new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
                 .set("j2eeType", "TransactionManager");
-        LocalMBeanServer.registerDynamicWrapperSilently(new TransactionManagerMBean(geronimoTransactionManager), jmxName.build());
+        LocalMBeanServer.registerDynamicWrapperSilently(
+                new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
+                jmxName.build());
 
         return geronimoTransactionManager;
     }
@@ -122,9 +125,13 @@ public class GeronimoTransactionManagerFactory {
     public static final class TransactionManagerMBean {
 
         private final GeronimoTransactionManager transactionManager;
+        private final Duration defaultTransactionTimeout;
+        private final TransactionLog txLog;
 
-        public TransactionManagerMBean(final GeronimoTransactionManager transactionManager) {
+        public TransactionManagerMBean(final GeronimoTransactionManager transactionManager, final Duration defaultTransactionTimeout, final TransactionLog txLog) {
             this.transactionManager = transactionManager;
+            this.defaultTransactionTimeout = defaultTransactionTimeout;
+            this.txLog = txLog;
         }
 
         @ManagedAttribute
@@ -132,18 +139,30 @@ public class GeronimoTransactionManagerFactory {
         public long getActive() {
             return transactionManager.getActiveCount();
         }
+
         @ManagedAttribute
         @Description("Number of committed transactions")
         public long getCommits() {
             return transactionManager.getTotalCommits();
         }
+
         @ManagedAttribute
         @Description("Number of rolled back transactions")
         public long getRollbacks() {
             return transactionManager.getTotalRollbacks();
         }
 
+        @ManagedOperation
+        @Description("Reset statistics counters")
+        public void resetStatistics() {
+            transactionManager.resetStatistics();
+        }
 
+        @ManagedAttribute
+        @Description("Display the default transaction timeout")
+        public String getDefaultTransactionTimeout() {
+            return defaultTransactionTimeout.toString();
+        }
 
     }
 

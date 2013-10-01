@@ -98,6 +98,15 @@ public class LocalMBeanServer implements MBeanServer {
         return registerSilently(new DynamicMBeanWrapper(object), name);
     }
 
+    public static void unregisterSilently(final ObjectName name) {
+        try {
+            get().unregisterMBean(name);
+
+        } catch (Exception e) {
+            LOGGER.error("Cannot unregister MBean " + name, e);
+        }
+    }
+
     public static TabularData tabularData(String typeName, String typeDescription, String[] names, Object[] values) {
         if (names.length == 0) {
             return null;
