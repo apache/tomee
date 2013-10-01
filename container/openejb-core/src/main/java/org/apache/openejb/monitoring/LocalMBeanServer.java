@@ -18,6 +18,8 @@
 package org.apache.openejb.monitoring;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -40,11 +42,23 @@ import javax.management.OperationsException;
 import javax.management.QueryExp;
 import javax.management.ReflectionException;
 import javax.management.loading.ClassLoaderRepository;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+import javax.management.openmbean.TabularType;
 import java.io.ObjectInputStream;
 import java.lang.management.ManagementFactory;
+import java.util.Properties;
 import java.util.Set;
 
 public class LocalMBeanServer implements MBeanServer {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LocalMBeanServer.class);
+
     public static final String OPENEJB_JMX_ACTIVE = "openejb.jmx.active";
 
     private static final LocalMBeanServer INSTANCE = new LocalMBeanServer();
@@ -64,6 +78,57 @@ public class LocalMBeanServer implements MBeanServer {
 
     public static boolean isJMXActive() {
         return active;
+    }
+
+    public static ObjectInstance registerSilently(final Object mbean, final ObjectName name) {
+        try {
+            if (get().isRegistered(name)) {
+                get().unregisterMBean(name);
+            }
+
+            return get().registerMBean(mbean, name);
+
+        } catch (Exception e) {
+            LOGGER.error("Cannot register MBean " + name, e);
+        }
+        return null;
+    }
+
+    public static ObjectInstance registerDynamicWrapperSilently(final Object object, final ObjectName name) {
+        return registerSilently(new DynamicMBeanWrapper(object), name);
+    }
+
+    public static TabularData tabularData(String typeName, String typeDescription, String[] names, Object[] values) {
+        if (names.length == 0) {
+            return null;
+        }
+
+        OpenType<?>[] types = new OpenType<?>[names.length];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = SimpleType.STRING;
+        }
+
+        try {
+            CompositeType ct = new CompositeType(typeName, typeDescription, names, names, types);
+            TabularType type = new TabularType(typeName, typeDescription, ct, names);
+            TabularDataSupport data = new TabularDataSupport(type);
+
+            CompositeData line = new CompositeDataSupport(ct, names, values);
+            data.put(line);
+
+            return data;
+        } catch (OpenDataException e) {
+            return null;
+        }
+    }
+
+    public static TabularData tabularData(String typeName, String typeDescription, String description, Properties properties) {
+        String[] names = properties.keySet().toArray(new String[properties.size()]);
+        Object[] values = new Object[names.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = properties.get(names[i]).toString(); // hibernate put objects in properties for instance
+        }
+        return tabularData(typeName, typeDescription, names, values);
     }
 
     private static MBeanServer s() {
@@ -253,9 +318,9 @@ public class LocalMBeanServer implements MBeanServer {
         return s().getClassLoaderRepository();
     }
 
-    private static class NoOpMBeanServer implements MBeanServer{
+    private static class NoOpMBeanServer implements MBeanServer {
         public static final MBeanServer INSTANCE = new NoOpMBeanServer();
-        private static final String[] DEFAULT_DOMAINS = new String[]{ "default-domain" };
+        private static final String[] DEFAULT_DOMAINS = new String[]{"default-domain"};
 
         @Override
         public ObjectInstance createMBean(String className, ObjectName name) throws ReflectionException, InstanceAlreadyExistsException, MBeanRegistrationException, MBeanException, NotCompliantMBeanException {

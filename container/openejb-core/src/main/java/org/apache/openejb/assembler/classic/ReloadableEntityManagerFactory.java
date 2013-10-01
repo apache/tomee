@@ -41,15 +41,7 @@ import org.apache.openejb.util.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.OpenDataException;
-import javax.management.openmbean.OpenType;
-import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
-import javax.management.openmbean.TabularType;
 import javax.naming.NamingException;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
@@ -74,6 +66,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.openejb.monitoring.LocalMBeanServer.tabularData;
 
 @Internal
 public class ReloadableEntityManagerFactory implements EntityManagerFactory, Serializable {
@@ -598,7 +592,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @ManagedAttribute
         @Description("get all mapping files")
         public TabularData getMappingFiles() {
-            return tabularData("mappingfile", "mapping file type",
+            return buildTabularData("mappingfile", "mapping file type",
                     "Mapping file of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getMappingFiles(), Info.FILE);
         }
@@ -606,7 +600,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @ManagedAttribute
         @Description("get all jar files")
         public TabularData getJarFiles() {
-            return tabularData("jarfile", "jar file type",
+            return buildTabularData("jarfile", "jar file type",
                     "Jar file of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getJarFileUrls(), Info.URL);
         }
@@ -614,12 +608,12 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @ManagedAttribute
         @Description("get all managed classes")
         public TabularData getManagedClasses() {
-            return tabularData("managedclass", "managed class type",
+            return buildTabularData("managedclass", "managed class type",
                     "Managed class of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getManagedClasses(), Info.CLASS);
         }
 
-        private TabularData tabularData(String typeName, String typeDescription, String description, List<?> list, Info info) {
+        private TabularData buildTabularData(String typeName, String typeDescription, String description, List<?> list, Info info) {
             String[] names = new String[list.size()];
             Object[] values = new Object[names.length];
             int i = 0;
@@ -628,39 +622,6 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                 values[i++] = info.info(reloadableEntityManagerFactory.classLoader, o);
             }
             return tabularData(typeName, typeDescription, names, values);
-        }
-
-        private static TabularData tabularData(String typeName, String typeDescription, String description, Properties properties) {
-            String[] names = properties.keySet().toArray(new String[properties.size()]);
-            Object[] values = new Object[names.length];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = properties.get(names[i]).toString(); // hibernate put objects in properties for instance
-            }
-            return tabularData(typeName, typeDescription, names, values);
-        }
-
-        private static TabularData tabularData(String typeName, String typeDescription, String[] names, Object[] values) {
-            if (names.length == 0) {
-                return null;
-            }
-
-            OpenType<?>[] types = new OpenType<?>[names.length];
-            for (int i = 0; i < types.length; i++) {
-                types[i] = SimpleType.STRING;
-            }
-
-            try {
-                CompositeType ct = new CompositeType(typeName, typeDescription, names, names, types);
-                TabularType type = new TabularType(typeName, typeDescription, ct, names);
-                TabularDataSupport data = new TabularDataSupport(type);
-
-                CompositeData line = new CompositeDataSupport(ct, names, values);
-                data.put(line);
-
-                return data;
-            } catch (OpenDataException e) {
-                return null;
-            }
         }
 
         private enum Info {
