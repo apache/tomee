@@ -204,12 +204,32 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.7</version>
+          <version>1.8</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.0</version>
+          <version>3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.14.1</version>
+        </plugin>
+        <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
+          <groupId>org.apache.geronimo.buildsupport</groupId>
+          <artifactId>geronimo-property-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.swizzle</groupId>
+          <artifactId>dependency-report-plugin</artifactId>
+          <version>1.0.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -226,7 +246,6 @@
       <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
         <groupId>org.apache.geronimo.buildsupport</groupId>
         <artifactId>geronimo-property-plugin</artifactId>
-        <version>3.0.0</version>
         <configuration>
           <propertyName>openejb.build.endorsed</propertyName>
           <listFiles>false</listFiles>
@@ -251,7 +270,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
         <configuration>
           <forkMode>always</forkMode>
         </configuration>
@@ -294,7 +312,6 @@
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
         <artifactId>dependency-report-plugin</artifactId>
-        <version>1.0.2</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -313,7 +330,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
