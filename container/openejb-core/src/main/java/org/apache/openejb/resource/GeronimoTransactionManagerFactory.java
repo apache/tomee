@@ -24,9 +24,16 @@ import org.apache.geronimo.transaction.manager.TransactionLog;
 import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
 import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
 
+import javax.management.ObjectName;
 import javax.transaction.xa.XAResource;
 import java.util.concurrent.TimeUnit;
 
@@ -95,7 +102,12 @@ public class GeronimoTransactionManagerFactory {
             ((HOWLLog)txLog).doStart();
         }
 
-        return new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+        final GeronimoTransactionManager geronimoTransactionManager = new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
+                .set("j2eeType", "TransactionManager");
+        LocalMBeanServer.registerDynamicWrapperSilently(new TransactionManagerMBean(geronimoTransactionManager), jmxName.build());
+
+        return geronimoTransactionManager;
     }
 
     public static class GeronimoXAResourceWrapper implements XAResourceWrapper {
@@ -103,4 +115,36 @@ public class GeronimoTransactionManagerFactory {
             return new WrapperNamedXAResource(xaResource, name);
         }
     }
+
+    @MBean
+    @Internal
+    @Description("Transaction manager statistics")
+    public static final class TransactionManagerMBean {
+
+        private final GeronimoTransactionManager transactionManager;
+
+        public TransactionManagerMBean(final GeronimoTransactionManager transactionManager) {
+            this.transactionManager = transactionManager;
+        }
+
+        @ManagedAttribute
+        @Description("Number of active transactions")
+        public long getActive() {
+            return transactionManager.getActiveCount();
+        }
+        @ManagedAttribute
+        @Description("Number of committed transactions")
+        public long getCommits() {
+            return transactionManager.getTotalCommits();
+        }
+        @ManagedAttribute
+        @Description("Number of rolled back transactions")
+        public long getRollbacks() {
+            return transactionManager.getTotalRollbacks();
+        }
+
+
+
+    }
+
 }
