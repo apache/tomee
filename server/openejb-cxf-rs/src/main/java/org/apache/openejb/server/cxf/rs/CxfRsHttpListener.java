@@ -35,10 +35,16 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
@@ -51,6 +57,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
 
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 import javax.naming.Context;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -94,6 +102,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private Server server;
     private String context = "";
     private Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
+    private List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<String, String>();
@@ -294,6 +303,12 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     public void undeploy() {
+        // unregister all MBeans
+        for (final ObjectName objectName : jmxNames) {
+            LocalMBeanServer.unregisterSilently(objectName);
+        }
+
+
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
@@ -433,7 +448,23 @@ public class CxfRsHttpListener implements RsHttpListener {
         LOGGER.info("REST Application: " + Logs.forceLength(prefix, addressSize, true) + " -> " + application.getClass().getName());
 
         Collections.sort(resourcesToLog);
+
         for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
+
+            // Init and register MBeans
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
+                    .set("J2EEServer", "openejb")
+                    .set("name", resource.classname)
+                    .set("j2eeType", "REST-" + resource.type);
+
+            ObjectName jmxObjectName = jmxName.build();
+            LocalMBeanServer.registerDynamicWrapperSilently(
+                    new RestServiceMBean(resource),
+                    jmxObjectName);
+
+            jmxNames.add(jmxObjectName);
+            //
+
             LOGGER.info("     Service URI: "
                     + Logs.forceLength(resource.address, addressSize, true) + " -> "
                     + Logs.forceLength(resource.type, 4, false) + " "
@@ -589,6 +620,62 @@ public class CxfRsHttpListener implements RsHttpListener {
                 return instance;
             }
             return clazz.newInstance();
+        }
+    }
+
+    @MBean
+    @Internal
+    @Description("REST service information")
+    public class RestServiceMBean {
+
+        private String type;
+        private String address;
+        private String classname;
+        private TabularData operations;
+
+        public RestServiceMBean(final Logs.LogResourceEndpointInfo jmxName) {
+            this.type = jmxName.type;
+            this.address = jmxName.address;
+            this.classname = jmxName.classname;
+
+            final String[] names = new String[operations.size()];
+            final String[] values = new String[operations.size()];
+            int idx = 0;
+            for (Logs.LogOperationEndpointInfo operation : jmxName.operations) {
+                names[idx] = Logs.forceLength(operation.http, jmxName.methodSize, false) + " "
+                        + Logs.forceLength(operation.address, operation.address.length(), true);
+                values[idx] = Logs.forceLength(operation.method, jmxName.methodStrSize, true);
+                idx++;
+            }
+            LocalMBeanServer.tabularData(
+                    "Operations",
+                    "Operations for this endpoint",
+                    names, values
+            );
+        }
+
+        @ManagedAttribute
+        @Description("The type of the REST service")
+        public String getType() {
+            return type;
+        }
+
+        @ManagedAttribute
+        @Description("The REST service address")
+        public String getAddress() {
+            return address;
+        }
+
+        @ManagedAttribute
+        @Description("The REST service class name")
+        public String getClassname() {
+            return classname;
+        }
+
+        @ManagedAttribute
+        @Description("All available methods")
+        public TabularData getOperations() {
+            return operations;
         }
     }
 }
