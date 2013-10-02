@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
@@ -24,18 +25,29 @@ import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
 import java.util.List;
 
 public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegistry {
-    public List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception {
-        throw new UnsupportedOperationException("OpenEJB http server does not support POJO webservices");
+    public List<String> setWsContainer(HttpListener httpListener,
+                                        ClassLoader classLoader,
+                                        String context, String virtualHost, ServletInfo servletInfo,
+                                        String realmName, String transportGuarantee, String authMethod) throws Exception {
+
+        final String path = servletInfo.mappings.iterator().next();
+        return addWsContainer(httpListener, classLoader, context, virtualHost, path, realmName, transportGuarantee, authMethod);
     }
 
-    public void clearWsContainer(String virtualHost, String contextRoot, String servletName) {
+    public void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo) {
+        final String path = servletInfo.mappings.iterator().next();
+        removeWsContainer(path);
     }
 
-    public List<String> addWsContainer(String context, String path, HttpListener httpListener, String virtualHost, // ignored
-            String realmName, // ignored
-            String transportGuarantee, // ignored
-            String authMethod, // ignored
-            ClassLoader classLoader) throws Exception {
+    public List<String> addWsContainer(HttpListener httpListener,
+                                        ClassLoader classLoader,
+                                        String context,
+                                        String virtualHost, // ignored
+                                        String path,
+                                        String realmName, // ignored
+                                        String transportGuarantee, // ignored
+                                        String authMethod // ignored
+                                        ) throws Exception {
 
         if (path == null) throw new NullPointerException("contextRoot is null");
         if (httpListener == null) throw new NullPointerException("httpListener is null");

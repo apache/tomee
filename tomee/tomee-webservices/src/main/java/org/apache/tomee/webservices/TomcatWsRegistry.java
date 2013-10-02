@@ -33,6 +33,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -87,7 +88,13 @@ public class TomcatWsRegistry implements WsRegistry {
         return property;
     }
 
-    public List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception {
+
+    @Override
+    public List<String> setWsContainer(HttpListener httpListener,
+                                       ClassLoader classLoader,
+                                       String contextRoot, String virtualHost, ServletInfo servletInfo,
+                                       String realmName, String transportGuarantee, String authMethod) throws Exception {
+
         if (virtualHost == null) virtualHost = engine.getDefaultHost();
 
         Container host = engine.findChild(virtualHost);
@@ -96,7 +103,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         if (!contextRoot.startsWith("/")) {
-            contextRoot= "/" + contextRoot;
+            contextRoot = "/" + contextRoot;
         }
 
         Context context = (Context) host.findChild(contextRoot);
@@ -104,9 +111,9 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Could not find web application context " + contextRoot + " in host " + host.getName());
         }
 
-        Wrapper wrapper = (Wrapper) context.findChild(servletName);
+        Wrapper wrapper = (Wrapper) context.findChild(servletInfo.servletName);
         if (wrapper == null) {
-            throw new IllegalArgumentException("Could not find servlet " + servletName + " in web application context " + context.getName());
+            throw new IllegalArgumentException("Could not find servlet " + servletInfo.servletName + " in web application context " + context.getName());
         }
 
         // for Pojo web services, we need to change the servlet class which is the service implementation
@@ -117,7 +124,7 @@ public class TomcatWsRegistry implements WsRegistry {
             wrapper.unload();
         }
 
-        setWsContainer(context, wrapper, wsContainer);
+        setWsContainer(context, wrapper, httpListener);
 
         // add service locations
         List<String> addresses = new ArrayList<String>();
@@ -130,7 +137,9 @@ public class TomcatWsRegistry implements WsRegistry {
         return addresses;
     }
 
-    public void clearWsContainer(String virtualHost, String contextRoot, String servletName) {
+
+    @Override
+    public void clearWsContainer(String contextRoot, String virtualHost, ServletInfo servletInfo) {
         if (virtualHost == null) virtualHost = engine.getDefaultHost();
 
         Container host = engine.findChild(virtualHost);
@@ -143,9 +152,9 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Could not find web application context " + contextRoot + " in host " + host.getName());
         }
 
-        Wrapper wrapper = (Wrapper) context.findChild(servletName);
+        Wrapper wrapper = (Wrapper) context.findChild(servletInfo.servletName);
         if (wrapper == null) {
-            throw new IllegalArgumentException("Could not find servlet " + servletName + " in web application context " + context.getName());
+            throw new IllegalArgumentException("Could not find servlet " + servletInfo.servletName + " in web application context " + context.getName());
         }
 
         // clear the webservice ref in the servlet context
@@ -156,7 +165,14 @@ public class TomcatWsRegistry implements WsRegistry {
         }
     }
 
-    public List<String> addWsContainer(String webContext, String path, HttpListener httpListener, String virtualHost, String realmName, String transportGuarantee, String authMethod, ClassLoader classLoader) throws Exception {
+
+    // String webContext, String path, HttpListener httpListener, String virtualHost, String realmName, String transportGuarantee, String authMethod, ClassLoader classLoader
+
+    @Override
+    public List<String> addWsContainer(HttpListener httpListener,
+                                       ClassLoader classLoader,
+                                       String context, String virtualHost, String path,
+                                       String realmName, String transportGuarantee, String authMethod) throws Exception {
         if (path == null) throw new NullPointerException("contextRoot is null");
         if (httpListener == null) throw new NullPointerException("httpListener is null");
 
@@ -175,12 +191,12 @@ public class TomcatWsRegistry implements WsRegistry {
         // build contexts
         // - old way (/*)
         if (WEBSERVICE_OLDCONTEXT_ACTIVE) {
-            deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, webContext);
+            deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, context);
         }
 
         // - new way (/<webappcontext>/webservices/<name>) if webcontext is specified
-        if (webContext != null) {
-            String root = webContext;
+        if (context != null) {
+            String root = context;
             if (!root.startsWith("/")) {
                 root = '/' + root;
             }
@@ -200,7 +216,7 @@ public class TomcatWsRegistry implements WsRegistry {
                     addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses, false);
                 }
             } else if (!WEBSERVICE_OLDCONTEXT_ACTIVE) { // deploying in a jar
-                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, webContext);
+                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, context);
             }
         }
         return addresses;
