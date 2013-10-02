@@ -20,14 +20,21 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +45,14 @@ public abstract class CxfWsContainer implements HttpListener {
     protected CxfEndpoint endpoint;
     protected final HTTPTransportFactory httpTransportFactory;
     protected final ServiceConfiguration serviceConfiguration;
+    private ObjectName jmxName;
+
 
     public CxfWsContainer(final Bus bus, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
         this.port = port;
         this.serviceConfiguration = config;
-        
+
         final List<String> ids = new ArrayList<String>();
         ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
 
@@ -55,19 +64,25 @@ public abstract class CxfWsContainer implements HttpListener {
         endpoint = createEndpoint();
         endpoint.publish("http://nopath");
         destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
+
+        // register an MBean for this endpoint
+        this.jmxName = registerMBean();
     }
 
     protected abstract CxfEndpoint createEndpoint();
+    protected abstract ObjectName registerMBean();
 
     public void destroy() {
+        unregisterMBean();
+
         if (endpoint != null) {
             endpoint.stop();
             endpoint = null;
         }
-        // if (destination != null) {
-        //    destination.shutdown();
-        //    destination = null;
-        // }
+    }
+
+    private void unregisterMBean() {
+        LocalMBeanServer.unregisterSilently(jmxName);
     }
 
     @Override
@@ -82,4 +97,5 @@ public abstract class CxfWsContainer implements HttpListener {
             }
         }
     }
+
 }
