@@ -19,9 +19,23 @@ package org.apache.openejb.server.cxf.ejb;
 
 import org.apache.cxf.Bus;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.cxf.CxfWsContainer;
+
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EjbWsContainer extends CxfWsContainer {
     private final BeanContext beanContext;
@@ -33,6 +47,105 @@ public class EjbWsContainer extends CxfWsContainer {
     }
 
     protected EjbEndpoint createEndpoint() {
-    	return new EjbEndpoint(bus, port, beanContext, httpTransportFactory, serviceConfiguration);
+        return new EjbEndpoint(bus, port, beanContext, httpTransportFactory, serviceConfiguration);
+    }
+
+    protected ObjectName registerMBean() {
+        final ObjectName name = new ObjectNameBuilder("openejb.management")
+                .set("j2eeType", "JAX-WS")
+                .set("J2EEServer", "openejb")
+                .set("J2EEApplication", null)
+                .set("EndpointType", "EJB")
+                .set("name", beanContext.getEjbName())
+                .build();
+
+        final WsServiceMBean mbean = new WsServiceMBean(beanContext, port);
+        LocalMBeanServer.registerDynamicWrapperSilently(mbean, name);
+        return name;
+    }
+
+    @MBean
+    @Description("JAX-WS Service information")
+    @Internal
+    public class WsServiceMBean {
+
+        private final BeanContext beanContext;
+        private final PortData port;
+
+        public WsServiceMBean(final BeanContext beanContext, final PortData port) {
+            this.beanContext = beanContext;
+            this.port = port;
+        }
+
+        @ManagedAttribute
+        @Description("The service endpoint interface")
+        public String getServiceEndpointInterface() {
+            return beanContext.getServiceEndpointInterface().getName();
+        }
+
+        @ManagedAttribute
+        @Description("The EJB endpoint type")
+        public String getComponentType() {
+            return beanContext.getComponentType().name();
+        }
+
+        @ManagedOperation
+        @Description("")
+        public String getWsdl() {
+            return null;
+        }
+
+        @ManagedAttribute
+        @Description("The service port QName")
+        public String getPort() {
+            return port.getPortName().toString();
+        }
+
+        @ManagedAttribute
+        @Description("The service QName")
+        public String getService() {
+            return port.getServiceName().toString();
+        }
+
+        @ManagedAttribute
+        @Description("The handler list")
+        public TabularData getHandlers() {
+            final List<String> names = new ArrayList<String>();
+            final List<String> values = new ArrayList<String>();
+
+            for (final HandlerChainData handlerChainData : port.getHandlerChains()) {
+                for (final HandlerData handlerData : handlerChainData.getHandlers()) {
+                    names.add(handlerChainData.getServiceNamePattern().toString());
+                    values.add(handlerData.getHandlerClass().getName());
+                }
+            }
+
+            return LocalMBeanServer.tabularData(
+                    "handlers", "The list of handlers",
+                    names.toArray(new String[names.size()]), values.toArray(new String[values.size()]));
+        }
+
+        @ManagedAttribute
+        @Description("Is the service secured?")
+        public boolean getSecured() {
+            return port.isSecure();
+        }
+
+        @ManagedAttribute
+        @Description("Is MTOM enabled?")
+        public boolean getMtomEnabled() {
+            return port.isMtomEnabled();
+        }
+
+        @ManagedAttribute
+        @Description("Service configuration properties")
+        public TabularData getProperties() {
+            return LocalMBeanServer.tabularData(
+                    "properties",
+                    "Service configuration properties",
+                    "Service configuration properties",
+                    port.getProperties()
+            );
+        }
     }
 }
