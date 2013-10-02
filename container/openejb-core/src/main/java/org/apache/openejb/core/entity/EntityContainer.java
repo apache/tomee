@@ -16,15 +16,26 @@
  */
 package org.apache.openejb.core.entity;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.NoSuchObjectException;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ContainerType;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -34,30 +45,20 @@ import javax.ejb.EntityBean;
 import javax.ejb.NoSuchEntityException;
 import javax.ejb.Timer;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.ContainerType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.SystemException;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.ExceptionType;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.EjbTimerServiceImpl;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 /**
  * @org.apache.xbean.XBean element="bmpContainer"
@@ -109,14 +110,13 @@ public class EntityContainer implements RpcContainer {
             beanContext.setContainer(this);
         }
         instanceManager.deploy(beanContext);
+    }
 
-        EjbTimerService timerService = beanContext.getEjbTimerService();
+    public void start(final BeanContext info) throws OpenEJBException {
+        final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
         }
-    }
-
-    public void start(BeanContext info) throws OpenEJBException {
     }
     
     public void stop(BeanContext info) throws OpenEJBException {

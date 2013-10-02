@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -79,7 +80,13 @@ public class MemoryTimerStore implements TimerStore {
     @Override
     public Collection<TimerData> loadTimers(final EjbTimerServiceImpl timerService, final String deploymentId) throws TimerStoreException {
         final TimerDataView tasks = getTasks();
-        return new ArrayList<TimerData>(tasks.getTasks().values());
+        final Collection<TimerData> out = new LinkedList<TimerData>();
+        for (final TimerData data : tasks.getTasks().values()) {
+            if (deploymentId == null || deploymentId.equals(data.getDeploymentId())) {
+                out.add(data);
+            }
+        }
+        return out;
     }
 
     // used to re-register a TimerData, if a cancel() is rolledback...

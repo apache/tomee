@@ -447,6 +447,10 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     @Override
     public void start() throws TimerStoreException {
+        if (isStarted()) {
+            return;
+        }
+
         scheduler = getDefaultScheduler(deployment);
 
         // load saved timers
@@ -683,6 +687,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     @Override
     public TimerStore getTimerStore() {
         return timerStore;
+    }
+
+    @Override
+    public boolean isStarted() {
+        return scheduler != null;
     }
 
     public Scheduler getScheduler() {

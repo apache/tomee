@@ -260,6 +260,7 @@ public class StatefulContainer implements RpcContainer {
 
     @Override
     public void start(final BeanContext beanContext) throws OpenEJBException {
+        // no-op
     }
 
     @Override

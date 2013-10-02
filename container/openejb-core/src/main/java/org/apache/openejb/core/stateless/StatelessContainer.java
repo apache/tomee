@@ -104,8 +104,12 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             final StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
             beanContext.addFirstSystemInterceptor(stats);
         }
+    }
 
-        // do it after the instance deployment
+    @Override
+    public void start(final BeanContext beanContext) throws OpenEJBException {
+        this.instanceManager.deploy(beanContext);
+
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
@@ -113,12 +117,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @Override
-    public void start(BeanContext beanContext) throws OpenEJBException {
-        this.instanceManager.deploy(beanContext);
-    }
-
-    @Override
-    public void stop(BeanContext beanContext) throws OpenEJBException {
+    public void stop(final BeanContext beanContext) throws OpenEJBException {
         beanContext.stop();
     }
 
