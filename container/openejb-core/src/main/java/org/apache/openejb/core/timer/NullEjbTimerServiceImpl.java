@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.core.timer;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Idempotent EjbTimerServiceImplementation. Used if a Bean does not implement a timeout method or no auto-started timer is configured by annotation or deployment plan.
@@ -80,5 +79,10 @@ public class NullEjbTimerServiceImpl implements EjbTimerService {
 
     public TimerStore getTimerStore() {
         return null;
+    }
+
+    @Override
+    public boolean isStarted() {
+        return true;
     }
 }

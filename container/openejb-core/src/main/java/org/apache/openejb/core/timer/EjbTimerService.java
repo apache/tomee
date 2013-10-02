@@ -17,15 +17,14 @@
 
 package org.apache.openejb.core.timer;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
+import org.apache.openejb.OpenEJBException;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-
-import org.apache.openejb.OpenEJBException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
 
 public interface EjbTimerService {
     Timer getTimer(long id);
@@ -47,4 +46,6 @@ public interface EjbTimerService {
     void stop();
 
     TimerStore getTimerStore();
+
+    boolean isStarted();
 }

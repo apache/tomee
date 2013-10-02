@@ -17,6 +17,7 @@
 package org.apache.openejb.core;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
@@ -178,11 +179,19 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public TimerService getTimerService() throws IllegalStateException {
         check(Call.getTimerService);
 
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext beanContext = threadContext.getBeanContext();
-        EjbTimerService timerService = beanContext.getEjbTimerService();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
+        final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
+        }
+
+        if (!timerService.isStarted()) {
+            try {
+                timerService.start();
+            } catch (final OpenEJBException e) {
+                throw new IllegalStateException(e);
+            }
         }
         return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
     }
