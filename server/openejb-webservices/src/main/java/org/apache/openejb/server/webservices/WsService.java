@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
-import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
@@ -303,7 +302,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                             if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                 context = ejbJar.moduleName;
                             }
-                            final List<String> addresses = wsRegistry.addWsContainer(context, location, container, virtualHost, realm, transport, auth, classLoader);
+                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, location, virtualHost, realm, transport, auth);
 
                             // one of the registered addresses to be the canonical address
                             final String address = HttpUtil.selectSingleAddress(addresses);
@@ -324,7 +323,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                 }
             }
         }
-        if (ejbs == null) {
+        if (ejbs == null || appInfo.webAppAlone) {
             for (final WebAppInfo webApp : appInfo.webApps) {
                 afterApplicationCreated(appInfo, webApp);
             }
@@ -384,12 +383,22 @@ public abstract class WsService implements ServerService, SelfManaging {
                 pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
                 final HttpListener container = createPojoWsContainer(classLoader, moduleBaseUrl, port, portInfo.serviceLink,
-                                                                     target, context, webApp.contextRoot, bindings,
-                                                                     new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
+                        target, context, webApp.contextRoot, bindings,
+                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
+                    String auth = authMethod;
+                    String realm = realmName;
+                    String transport = transportGuarantee;
+
+                    if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                        auth = portInfo.authMethod;
+                        realm = portInfo.realmName;
+                        transport = portInfo.transportGuarantee;
+                    }
+
                     // give servlet a reference to the webservice container
-                    final List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
+                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, virtualHost, servlet, realm, transport, auth);
 
                     // one of the registered addresses to be the connonical address
                     final String address = HttpUtil.selectSingleAddress(addresses);
@@ -409,8 +418,8 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public void beforeApplicationDestroyed(
-                                                  @Observes
-                                                  final AssemblerBeforeApplicationDestroyed event) {
+            @Observes
+            final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -483,7 +492,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // clear servlet's reference to the webservice container
                     if (this.wsRegistry != null) {
                         try {
-                            this.wsRegistry.clearWsContainer(virtualHost, webApp.contextRoot, servlet.servletName);
+                            this.wsRegistry.clearWsContainer(webApp.contextRoot, virtualHost, servlet);
                         } catch (IllegalArgumentException ignored) {
                             // no-op
                         }
