@@ -16,16 +16,22 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.server.httpd.HttpListener;
 
 import java.util.List;
 
 public interface WsRegistry {
-    List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception;
+    List<String> setWsContainer(HttpListener httpListener,
+                                    ClassLoader classLoader,
+                                    String context, String virtualHost, ServletInfo servletInfo,
+                                    String realmName, String transportGuarantee, String authMethod) throws Exception;
 
-    void clearWsContainer(String virtualHost, String contextRoot, String servletName);
+    void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo);
 
-    List<String> addWsContainer(String context, String path, HttpListener httpListener, String virtualHost, String realmName, String transportGuarantee, String authMethod, ClassLoader classLoader) throws Exception;
+    List<String> addWsContainer(HttpListener httpListener,
+                                ClassLoader classLoader,
+                                String realmName, String transportGuarantee, String authMethod) throws Exception;
 
     void removeWsContainer(String path);
 }
