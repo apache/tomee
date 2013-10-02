@@ -24,6 +24,7 @@ import java.io.ObjectStreamException;
 
 public class EJBHomeProxyHandle implements Externalizable {
 
+    private static final long serialVersionUID = 1523695567435111622L;
     public static ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
 
     EJBHomeHandler handler;

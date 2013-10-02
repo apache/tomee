@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 
 public class ClientMetaData implements Externalizable {
 
+
     transient Object clientIdentity;
 
     public ClientMetaData() {

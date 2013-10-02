@@ -27,6 +27,8 @@ import java.net.URISyntaxException;
  * @version $Rev$ $Date$
  */
 public class ClusterMetaData implements Externalizable {
+
+
     private URI[] locations;
     private long version;
     private String connectionStrategy;
