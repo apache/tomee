@@ -28,7 +28,6 @@ import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
-import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
@@ -449,13 +448,15 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         Collections.sort(resourcesToLog);
 
-        for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
+        for (final Logs.LogResourceEndpointInfo resource : resourcesToLog) {
 
             // Init and register MBeans
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
+                    .set("j2eeType", "JAX-RS")
                     .set("J2EEServer", "openejb")
-                    .set("name", resource.classname)
-                    .set("j2eeType", "REST-" + resource.type);
+                    .set("J2EEApplication", base)
+                    .set("EndpointType", resource.type)
+                    .set("name", resource.classname);
 
             ObjectName jmxObjectName = jmxName.build();
             LocalMBeanServer.registerDynamicWrapperSilently(
@@ -463,7 +464,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                     jmxObjectName);
 
             jmxNames.add(jmxObjectName);
-            //
 
             LOGGER.info("     Service URI: "
                     + Logs.forceLength(resource.address, addressSize, true) + " -> "
@@ -533,9 +533,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         {
             final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
             if (provider != null) {
-                if (providersConfig == null) {
-                    providersConfig = new HashSet<String>();
-                }
+                providersConfig = new HashSet<String>();
                 providersConfig.addAll(Arrays.asList(provider.split(",")));
             }
 
@@ -638,20 +636,15 @@ public class CxfRsHttpListener implements RsHttpListener {
             this.address = jmxName.address;
             this.classname = jmxName.classname;
 
-            final String[] names = new String[operations.size()];
-            final String[] values = new String[operations.size()];
+            final String[] names = new String[jmxName.operations.size()];
+            final String[] values = new String[jmxName.operations.size()];
             int idx = 0;
-            for (Logs.LogOperationEndpointInfo operation : jmxName.operations) {
-                names[idx] = Logs.forceLength(operation.http, jmxName.methodSize, false) + " "
-                        + Logs.forceLength(operation.address, operation.address.length(), true);
-                values[idx] = Logs.forceLength(operation.method, jmxName.methodStrSize, true);
+            for (final Logs.LogOperationEndpointInfo operation : jmxName.operations) {
+                names[idx] = operation.http + " " + operation.address;
+                values[idx] = operation.method;
                 idx++;
             }
-            LocalMBeanServer.tabularData(
-                    "Operations",
-                    "Operations for this endpoint",
-                    names, values
-            );
+            operations = LocalMBeanServer.tabularData("Operations", "Operations for this endpoint", names, values);
         }
 
         @ManagedAttribute
