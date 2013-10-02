@@ -307,7 +307,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             LocalMBeanServer.unregisterSilently(objectName);
         }
 
-
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
@@ -623,7 +622,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @MBean
     @Internal
-    @Description("REST service information")
+    @Description("JAX-RS service information")
     public class RestServiceMBean {
 
         private String type;
