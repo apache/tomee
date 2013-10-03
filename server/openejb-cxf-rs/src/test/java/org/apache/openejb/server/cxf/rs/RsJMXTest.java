@@ -22,6 +22,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @EnableServices("jax-rs")
@@ -54,6 +56,12 @@ public class RsJMXTest {
     @Test
     public void checkServiceWasDeployed() throws Exception {
         assertTrue(LocalMBeanServer.get().isRegistered(name));
+
+        final String wadlXml = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{null}, new String[0]));
+        assertThat(wadlXml, wadlXml, CoreMatchers.containsString("<resources base=\"http://127.0.0.1:4204/app/foo/"));
+
+        final String wadlJson = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{"json"}, new String[0]));
+        assertThat(wadlJson, wadlJson, CoreMatchers.containsString("{\"application\":{"));
     }
 
     @AfterClass
@@ -61,11 +69,17 @@ public class RsJMXTest {
         assertFalse(LocalMBeanServer.get().isRegistered(name));
     }
 
-    @Path("/foo")
+    @Path("foo")
     public static class AnEndpoint {
         @GET
         public String bar() {
             return "bar";
+        }
+
+        @GET
+        @Path("babar")
+        public String babar() {
+            return "babar";
         }
     }
 }

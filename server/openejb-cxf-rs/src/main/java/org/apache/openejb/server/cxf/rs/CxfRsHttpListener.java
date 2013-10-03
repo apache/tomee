@@ -20,12 +20,15 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
+import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.model.wadl.WadlGenerator;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
@@ -38,9 +41,11 @@ import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
@@ -70,6 +75,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,6 +121,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("ico", "image/ico");
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
+
+        // bug in CXF? it prevents to get the wadl as json otherwise
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "true"))) {
+            for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
+                final RequestHandler provider = rh.getProvider();
+                if (WadlGenerator.class.isInstance(provider)) {
+                    WadlGenerator.class.cast(provider).setIgnoreMessageWriters(false);
+                }
+            }
+        }
     }
 
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
@@ -644,6 +661,41 @@ public class CxfRsHttpListener implements RsHttpListener {
                 idx++;
             }
             operations = LocalMBeanServer.tabularData("Operations", "Operations for this endpoint", names, values);
+        }
+
+        @ManagedAttribute
+        @Description("The type of the REST service")
+        public String getWadlUrl() {
+            if (address.endsWith("?_wadl")) {
+                return address;
+            }
+            return address + "?_wadl";
+        }
+
+        @ManagedOperation
+        @Description("The type of the REST service")
+        public String getWadl(final String format) {
+            if (format != null && format.toLowerCase().contains("json")) {
+                InputStream inputStream = null;
+                try {
+                    final URL url = new URL(getWadlUrl() + "&_type=json");
+                    final HttpURLConnection connection = HttpURLConnection.class.cast(url.openConnection());
+                    connection.setRequestProperty("Accept", "application/json");
+                    connection.setRequestProperty("Content-type", "application/json");
+                    inputStream = connection.getInputStream();
+                    return IO.slurp(inputStream);
+                } catch (final Exception e) {
+                    return e.getMessage();
+                } finally {
+                    IO.close(inputStream);
+                }
+            } else { // xml
+                try {
+                    return IO.slurp(new URL(getWadlUrl()));
+                } catch (final IOException e) {
+                    return e.getMessage();
+                }
+            }
         }
 
         @ManagedAttribute
