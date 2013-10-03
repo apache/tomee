@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
-import java.util.LinkedList;
-
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import java.util.LinkedList;
 
 public class SaajUniverse {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, SaajUniverse.class);
@@ -74,9 +74,8 @@ public class SaajUniverse {
         final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
             return universeList.getLast();
-        } else {
-            return null;
-        }                
+        }
+        return null;
     }
        
 }

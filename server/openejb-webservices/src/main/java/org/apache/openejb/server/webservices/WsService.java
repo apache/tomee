@@ -302,7 +302,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                             if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
                                 context = ejbJar.moduleName;
                             }
-                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, location, virtualHost, realm, transport, auth);
+                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, virtualHost, location, realm, transport, auth);
 
                             // one of the registered addresses to be the canonical address
                             final String address = HttpUtil.selectSingleAddress(addresses);

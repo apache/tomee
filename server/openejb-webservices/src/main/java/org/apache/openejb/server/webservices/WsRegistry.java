@@ -29,9 +29,14 @@ public interface WsRegistry {
 
     void clearWsContainer(String context, String virtualHost, ServletInfo servletInfo);
 
-    List<String> addWsContainer(HttpListener httpListener,
+    List<String> addWsContainer(HttpListener inputListener,
                                 ClassLoader classLoader,
-                                String realmName, String transportGuarantee, String authMethod) throws Exception;
+                                String context,
+                                String virtualHost,
+                                String path,
+                                String realmName,
+                                String transportGuarantee, // ignored
+                                String authMethod) throws Exception;
 
     void removeWsContainer(String path);
 }
