@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 @EnableServices("jax-ws")
 @RunWith(ApplicationComposer.class)
 public class WsJMXTest {
-    private static ObjectName name;
+    private static ObjectName[] names = new ObjectName[2];
 
     @Module
     @Classes({AnEjbEndpoint.class, AnPojoEndpoint.class})
@@ -65,37 +65,35 @@ public class WsJMXTest {
 
     @BeforeClass
     public static void before() throws MalformedObjectNameException {
-        name = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=EJB,name=" + AnEjbEndpoint.class.getName());
+        names[0] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=EJB,name=AnEjbEndpoint");
+        names[1] = new ObjectName("openejb.management:j2eeType=JAX-WS,J2EEServer=openejb,J2EEApplication=<empty>,EndpointType=POJO,name=AnPojoEndpoint");
     }
 
     @Test
     public void checkServiceWasDeployed() throws Exception {
-        Thread.currentThread().sleep(10000000000l);
-        assertTrue(LocalMBeanServer.get().isRegistered(name));
+        assertTrue(LocalMBeanServer.get().isRegistered(names[0]));
+        assertTrue(LocalMBeanServer.get().isRegistered(names[1]));
     }
 
     @AfterClass
     public static void after() {
-        assertFalse(LocalMBeanServer.get().isRegistered(name));
+        assertFalse(LocalMBeanServer.get().isRegistered(names[0]));
+        assertFalse(LocalMBeanServer.get().isRegistered(names[1]));
     }
 
     @Singleton
     @Lock(LockType.READ)
     @WebService
     public static class AnEjbEndpoint {
-
         public String sayHello(final String me) {
             return "Hello " + me;
         }
-
     }
 
     @WebService
     public static class AnPojoEndpoint {
-
         public String sayHi(final String me) {
             return "Hi " + me;
         }
-
     }
 }
