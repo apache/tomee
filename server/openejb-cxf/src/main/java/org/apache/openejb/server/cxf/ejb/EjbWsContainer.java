@@ -28,17 +28,21 @@ import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.cxf.CxfWsContainer;
 
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EjbWsContainer extends CxfWsContainer {
     private final BeanContext beanContext;
+    private WsServiceMBean mbean;
 
     public EjbWsContainer(Bus bus, PortData port, BeanContext beanContext, ServiceConfiguration config) {
         super(bus, port, config);
@@ -59,9 +63,14 @@ public class EjbWsContainer extends CxfWsContainer {
                 .set("name", beanContext.getEjbName())
                 .build();
 
-        final WsServiceMBean mbean = new WsServiceMBean(beanContext, port);
+        mbean = new WsServiceMBean(beanContext, port);
         LocalMBeanServer.registerDynamicWrapperSilently(mbean, name);
         return name;
+    }
+
+    @Override
+    protected void setWsldUrl(String wsdl) {
+        mbean.wsdl(wsdl);
     }
 
     @MBean
@@ -71,6 +80,7 @@ public class EjbWsContainer extends CxfWsContainer {
 
         private final BeanContext beanContext;
         private final PortData port;
+        private String wsdl;
 
         public WsServiceMBean(final BeanContext beanContext, final PortData port) {
             this.beanContext = beanContext;
@@ -90,9 +100,19 @@ public class EjbWsContainer extends CxfWsContainer {
         }
 
         @ManagedOperation
-        @Description("")
+        @Description("Slurp the WSDL")
         public String getWsdl() {
-            return null;
+            try {
+                return IO.slurp(new URL(wsdl));
+            } catch (final IOException e) {
+                return e.getMessage();
+            }
+        }
+
+        @ManagedAttribute
+        @Description("The WSDL url")
+        public String getWsdlUrl() {
+            return wsdl;
         }
 
         @ManagedAttribute
@@ -146,6 +166,14 @@ public class EjbWsContainer extends CxfWsContainer {
                     "Service configuration properties",
                     port.getProperties()
             );
+        }
+
+        public void wsdl(final String wsdl) {
+            if (!wsdl.endsWith("?wsdl")) {
+                this.wsdl = wsdl + "?wsdl";
+            } else {
+                this.wsdl = wsdl;
+            }
         }
     }
 }

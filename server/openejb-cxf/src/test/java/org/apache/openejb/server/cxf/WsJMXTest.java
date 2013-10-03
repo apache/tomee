@@ -24,6 +24,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,6 +38,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @EnableServices("jax-ws")
@@ -73,6 +75,8 @@ public class WsJMXTest {
     public void checkServiceWasDeployed() throws Exception {
         assertTrue(LocalMBeanServer.get().isRegistered(names[0]));
         assertTrue(LocalMBeanServer.get().isRegistered(names[1]));
+        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[0], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:4204/app/AnEjbEndpoint\"/>"));
+        assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[1], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"http://127.0.0.1:4204/app/AnPojoEndpointService\"/>"));
     }
 
     @AfterClass

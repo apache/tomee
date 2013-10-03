@@ -49,6 +49,13 @@ public class CxfService extends WsService {
         SaajInterceptor.registerInterceptors();
     }
 
+    @Override
+    protected void setWsdl(final HttpListener listener, final String wsdl) {
+        if (CxfWsContainer.class.isInstance(listener)) {
+            CxfWsContainer.class.cast(listener).setWsldUrl(wsdl);
+        }
+    }
+
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext, ServiceConfiguration config) {
         final Bus bus = CxfUtil.getBus();
 
