@@ -20,13 +20,9 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.openejb.api.internal.Internal;
-import org.apache.openejb.api.jmx.Description;
-import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
@@ -34,7 +30,6 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +41,6 @@ public abstract class CxfWsContainer implements HttpListener {
     protected final HTTPTransportFactory httpTransportFactory;
     protected final ServiceConfiguration serviceConfiguration;
     private ObjectName jmxName;
-
 
     public CxfWsContainer(final Bus bus, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
@@ -71,6 +65,8 @@ public abstract class CxfWsContainer implements HttpListener {
 
     protected abstract CxfEndpoint createEndpoint();
     protected abstract ObjectName registerMBean();
+
+    protected abstract void setWsldUrl(String wsdl);
 
     public void destroy() {
         unregisterMBean();

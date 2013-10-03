@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.cxf.CxfWsContainer;
@@ -34,6 +35,8 @@ import org.apache.openejb.server.cxf.CxfWsContainer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.Context;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,7 @@ public class PojoWsContainer extends CxfWsContainer {
     private final Class target;
     private final Map<String, Object> bindings;
     private final ClassLoader loader;
+    private WsServiceMBean mbean;
 
     public PojoWsContainer(ClassLoader loader, Bus bus, PortData port, Context context, Class target,
                            Map<String, Object> bdgs, ServiceConfiguration configuration) {
@@ -68,9 +72,14 @@ public class PojoWsContainer extends CxfWsContainer {
                 .set("name", target.getSimpleName())
                 .build();
 
-        final WsServiceMBean mbean = new WsServiceMBean(context, target, port);
+        mbean = new WsServiceMBean(context, target, port);
         LocalMBeanServer.registerDynamicWrapperSilently(mbean, name);
         return name;
+    }
+
+    @Override
+    protected void setWsldUrl(final String wsdl) {
+        mbean.wsdl(wsdl);
     }
 
     @MBean
@@ -81,6 +90,7 @@ public class PojoWsContainer extends CxfWsContainer {
         private final Context context;
         private final Class target;
         private final PortData port;
+        private String wsdl;
 
         public WsServiceMBean(final Context context, final Class target, final PortData port) {
             this.context = context;
@@ -89,9 +99,19 @@ public class PojoWsContainer extends CxfWsContainer {
         }
 
         @ManagedOperation
-        @Description("")
+        @Description("Slurp the WSDL")
         public String getWsdl() {
-            return null;
+            try {
+                return IO.slurp(new URL(wsdl));
+            } catch (final IOException e) {
+                return e.getMessage();
+            }
+        }
+
+        @ManagedAttribute
+        @Description("The WSDL url")
+        public String getWsdlUrl() {
+            return wsdl;
         }
 
         @ManagedAttribute
@@ -145,6 +165,14 @@ public class PojoWsContainer extends CxfWsContainer {
                     "Service configuration properties",
                     port.getProperties()
             );
+        }
+
+        public void wsdl(final String wsdl) {
+            if (!wsdl.endsWith("?wsdl")) {
+                this.wsdl = wsdl + "?wsdl";
+            } else {
+                this.wsdl = wsdl;
+            }
         }
     }
 }

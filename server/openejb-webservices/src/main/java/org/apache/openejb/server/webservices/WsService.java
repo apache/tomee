@@ -310,6 +310,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                             if (address != null) {
                                 // register wsdl location
                                 portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                                setWsdl(container, address);
                                 logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
                                 ejbAddresses.put(bean.ejbDeploymentId, address);
                                 addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
@@ -328,6 +329,10 @@ public abstract class WsService implements ServerService, SelfManaging {
                 afterApplicationCreated(appInfo, webApp);
             }
         } // else called because of ear case where new ejbs are deployed in webapps
+    }
+
+    protected void setWsdl(final HttpListener listener, final String wsdl) {
+        // no-op
     }
 
     private List<EndpointInfo> addressesForApp(final String appId) {
@@ -405,6 +410,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                     // add address to global registry
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                    setWsdl(container, address);
                     logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                     servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                     addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
