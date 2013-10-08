@@ -90,7 +90,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
 
         // prefix server uri with 'broker:' so our broker factory is used
-        if (brokerXmlConfig != null && !brokerXmlConfig.isEmpty()) {
+        if (brokerXmlConfig != null && !brokerXmlConfig.trim().isEmpty()) {
 
             try {
 
