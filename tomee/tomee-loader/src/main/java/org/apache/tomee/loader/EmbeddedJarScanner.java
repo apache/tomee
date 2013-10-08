@@ -16,16 +16,16 @@
  */
 package org.apache.tomee.loader;
 
+import org.apache.catalina.deploy.WebXml;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.scan.Constants;
-import org.apache.xbean.finder.filter.Filter;
-import org.apache.xbean.finder.filter.Filters;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -34,6 +34,7 @@ import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -62,15 +63,15 @@ public class EmbeddedJarScanner implements JarScanner {
      *                      defined by {@link Constants#SKIP_JARS_PROPERTY}
      */
     @Override
-    public void scan(ServletContext context, ClassLoader classloader, JarScannerCallback callback, Set<String> jarsToSkip) {
+    public void scan(final ServletContext context, final ClassLoader classloader, final JarScannerCallback callback, final Set<String> jarsToSkip) {
 
         try {
             final org.apache.xbean.finder.UrlSet scan = NewLoaderLogic.applyBuiltinExcludes(new org.apache.xbean.finder.UrlSet(classloader).excludeJvm(), null);
 
             // scan = scan.exclude(".*/WEB-INF/lib/.*"); // doing it simply prevent ServletContainerInitializer to de discovered
 
-            for (URL url : scan) {
-                if (isWebInfClasses(url)) {
+            for (final URL url : scan) {
+                if (isWebInfClasses(url) && !"org.apache.catalina.startup.ContextConfig$FragmentJarScannerCallback".equals(callback.getClass().getName())) { // we need all fragments to let SCI working
                     continue;
                 }
 
@@ -81,11 +82,11 @@ public class EmbeddedJarScanner implements JarScanner {
 
                 try {
                     process(callback, url);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     log.warn(sm.getString("jarScan.webinflibFail", url), e);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn(sm.getString("jarScan.classloaderFail", new URL[]{}), e);
         }
     }

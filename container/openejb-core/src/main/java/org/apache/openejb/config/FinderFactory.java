@@ -135,14 +135,23 @@ public class FinderFactory {
             annotationFinder.enableMetaAnnotations();
         }
         if (enableFindSubclasses()) {
-            annotationFinder.enableFindSubclasses();
+            annotationFinder.link(); // for @HandleTypes we need interface impl, impl of abstract classes too
         }
 
         return annotationFinder;
     }
 
-    public static boolean enableFindSubclasses() {
-        return isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false);
+    private static boolean enableFindSubclasses() {
+        return isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
+    }
+
+    private static boolean isTomEE() {
+        try {
+            FinderFactory.class.getClassLoader().loadClass("org.apache.tomee.catalina.ServerListener");
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public static boolean isJaxRsInstalled() {
