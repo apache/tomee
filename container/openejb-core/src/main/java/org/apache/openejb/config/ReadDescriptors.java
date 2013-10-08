@@ -562,7 +562,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 if (rawUrl != null) {
                     final Source url = getSource(rawUrl);
                     try {
-                        final WebFragment webFragment = JaxbOpenejb.unmarshal(WebFragment.class, url.get());
+                        final WebFragment webFragment = WebFragment.class.cast(JaxbJavaee.unmarshal(WebFragment.class, url.get(), false));
 
                         // in tomcat if the env entry is already don't override it
                         mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceContextRefMap(), webFragment.getPersistenceContextRef());
