@@ -87,11 +87,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.TldScanner;
-import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.*;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -161,6 +157,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
+import static org.apache.tomee.catalina.Contexts.warPath;
 
 /**
  * Web application builder.
@@ -1141,6 +1138,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         }
                     }
 
+                    OpenEJBContextConfig openEJBContextConfig = null;
+                    for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
+                        if (OpenEJBContextConfig.class.isInstance(listener)) {
+                            openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
+                            break;
+                        }
+                    }
+                    if (openEJBContextConfig != null) {
+                        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+                            if (ejbModule.getFile() != null && warPath(standardContext).equals(rootPath(ejbModule.getFile()))) {
+                                openEJBContextConfig.finder(ejbModule.getFinder(), ejbModule.getClassLoader());
+                                break;
+                            }
+                        }
+                    }
+
+
                     appContext = a.createApplication(contextInfo.appInfo, classLoader);
                     // todo add watched resources to context
 
@@ -1297,6 +1311,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
         }
+    }
+
+    private static File rootPath(final File file) {
+        if (file.isDirectory() && file.getName().equals("classes") && file.getParentFile() != null && file.getParentFile().getName().equals("WEB-INF")) {
+            return file.getParentFile().getParentFile();
+        }
+        return file;
     }
 
     private static void deployWebServicesIfEjbCreatedHere(final AppInfo info, final Collection<BeanContext> beanContexts) {

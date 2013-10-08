@@ -57,6 +57,7 @@ import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.http.HttpServlet;
@@ -66,6 +67,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -88,6 +90,8 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final File BASE = SystemInstance.get().getBase().getDirectory();
 
     private TomcatWebAppBuilder.StandardContextInfo info;
+    private IAnnotationFinder finder = null;
+    private ClassLoader tempLoader = null;
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
@@ -96,6 +100,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
         info = standardContextInfo;
+    }
+
+    public void finder(final IAnnotationFinder finder, final ClassLoader tmpLoader) {
+        this.finder = finder;
+        this.tempLoader = tmpLoader;
     }
 
     @Override
@@ -373,6 +382,10 @@ public class OpenEJBContextConfig extends ContextConfig {
         } catch (final NoClassDefFoundError error) {
             // no-op
         }
+
+        // let it be GC-ed
+        finder = null;
+        tempLoader = null;
     }
 
     private Set<Class<?>> getJsfClasses(final Context context) {
@@ -431,7 +444,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
-        internalProcessAnnotations(file, webAppInfo, fragment, handlesTypesOnly);
+        internalProcessAnnotations(file, webAppInfo, fragment);
     }
 
     @Override
@@ -479,25 +492,65 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment, handlesTypeOnly);
+        internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment);
     }
 
-    private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment, final boolean  handlesTypeOnly) {
+    private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment) {
+        if (typeInitializerMap.size() > 0 && finder != null) {
+            final ClassLoader loader = context.getLoader().getClassLoader();
+            if (handlesTypesNonAnnotations) {
+                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
+                    for (final ServletContainerInitializer sci : entry.getValue()) {
+                        try { // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
+                            final Class<?> reloadedClass = tempLoader.loadClass(entry.getKey().getName());
+                            final List<Class<?>> implementations = List.class.cast(finder.findImplementations(reloadedClass));
+                            addClassesWithRightLoader(loader, sci, implementations);
+                        } catch (final Throwable th) {
+                            // no-op
+                        }
+                    }
+                }
+            }
+
+            if (handlesTypesAnnotations) {
+                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
+                    final Class<?> annotation = entry.getKey();
+                    if (annotation.isAnnotation()) {
+                        for (final ServletContainerInitializer sci : entry.getValue()) {
+                            try {
+                                final Class<? extends Annotation> reloadedAnnotation = Class.class.cast(tempLoader.loadClass(annotation.getName()));
+                                addClassesWithRightLoader(loader, sci, finder.findAnnotatedClasses(reloadedAnnotation));
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         for (final ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
                 if (!isIncludedIn(webAnnotated.name, currentUrlAsFile)) {
                     continue;
                 }
 
-                internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypeOnly);
-            } catch (MalformedURLException e) {
+                internalProcessAnnotationsStream(webAnnotated.list, fragment, false);
+            } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             }
         }
     }
 
+    private void addClassesWithRightLoader(final ClassLoader loader, final ServletContainerInitializer sci, final List<Class<?>> implementations) throws ClassNotFoundException {
+        final Set<Class<?>> classes = initializerClassMap.get(sci);
+        for (final Class<?> c : implementations) {
+            classes.add(loader.loadClass(c.getName()));
+        }
+    }
+
     private void internalProcessAnnotationsStream(final Collection<String> urls, final WebXml fragment, final boolean handlesTypeOnly) {
-        for (String url : urls) {
+        for (final String url : urls) {
             InputStream is = null;
             try {
                 is = new URL(url).openStream();
