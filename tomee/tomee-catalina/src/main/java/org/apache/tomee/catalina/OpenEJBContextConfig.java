@@ -57,6 +57,7 @@ import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
@@ -382,10 +383,6 @@ public class OpenEJBContextConfig extends ContextConfig {
         } catch (final NoClassDefFoundError error) {
             // no-op
         }
-
-        // let it be GC-ed
-        finder = null;
-        tempLoader = null;
     }
 
     private Set<Class<?>> getJsfClasses(final Context context) {
@@ -416,6 +413,43 @@ public class OpenEJBContextConfig extends ContextConfig {
         webInfClassesAnnotationsProcessed = false;
         try {
             super.processServletContainerInitializers(fragments);
+
+            if (typeInitializerMap.size() > 0 && finder != null) {
+                final ClassLoader loader = context.getLoader().getClassLoader();
+                if (handlesTypesNonAnnotations) {
+                    if (AnnotationFinder.class.isInstance(finder)) {
+                        AnnotationFinder.class.cast(finder).link();
+                    }
+                }
+
+                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
+                    final Class<?> annotation = entry.getKey();
+                    for (final ServletContainerInitializer sci : entry.getValue()) {
+                        if (annotation.isAnnotation()) {
+                            try {
+                                final Class<? extends Annotation> reloadedAnnotation = Class.class.cast(tempLoader.loadClass(annotation.getName()));
+                                addClassesWithRightLoader(loader, sci, finder.findAnnotatedClasses(reloadedAnnotation));
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        } else {
+                            try { // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
+                                logger.info("Using @HandlesTypes on a parent class (and not an annotation) is a performance killer. See " + annotation.getName() + " on " + sci.getClass().getName());
+
+                                final Class<?> reloadedClass = tempLoader.loadClass(annotation.getName());
+                                final List<Class<?>> implementations = List.class.cast(finder.findImplementations(reloadedClass));
+                                addClassesWithRightLoader(loader, sci, implementations);
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        }
+                    }
+                }
+
+                // done
+                finder = null;
+                tempLoader = null;
+            }
         } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
             webInfClassesAnnotationsProcessed = false;
             throw e;
@@ -496,39 +530,6 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment) {
-        if (typeInitializerMap.size() > 0 && finder != null) {
-            final ClassLoader loader = context.getLoader().getClassLoader();
-            if (handlesTypesNonAnnotations) {
-                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
-                    for (final ServletContainerInitializer sci : entry.getValue()) {
-                        try { // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
-                            final Class<?> reloadedClass = tempLoader.loadClass(entry.getKey().getName());
-                            final List<Class<?>> implementations = List.class.cast(finder.findImplementations(reloadedClass));
-                            addClassesWithRightLoader(loader, sci, implementations);
-                        } catch (final Throwable th) {
-                            // no-op
-                        }
-                    }
-                }
-            }
-
-            if (handlesTypesAnnotations) {
-                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
-                    final Class<?> annotation = entry.getKey();
-                    if (annotation.isAnnotation()) {
-                        for (final ServletContainerInitializer sci : entry.getValue()) {
-                            try {
-                                final Class<? extends Annotation> reloadedAnnotation = Class.class.cast(tempLoader.loadClass(annotation.getName()));
-                                addClassesWithRightLoader(loader, sci, finder.findAnnotatedClasses(reloadedAnnotation));
-                            } catch (final Throwable th) {
-                                // no-op
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         for (final ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
                 if (!isIncludedIn(webAnnotated.name, currentUrlAsFile)) {

@@ -35,12 +35,12 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(Arquillian.class)
-public class HandleTypesTest {
+public class HandleTypesInterfaceOnlyTest {
     @Deployment(testable = false)
     public static Archive<?> war() {
-        return ShrinkWrap.create(WebArchive.class, "interfaceandannotation.war")
-            .addClasses(API.class, Impl.class, Init.class, AnotherChild.class, Decorated.class, Decoration.class)
-            .addAsServiceProvider(ServletContainerInitializer.class, Init.class);
+        return ShrinkWrap.create(WebArchive.class, "interfaceonly.war")
+            .addClasses(API.class, Impl.class, InitInterfaceOnly.class, AnotherChild.class, Decorated.class, Decoration.class)
+            .addAsServiceProvider(ServletContainerInitializer.class, InitInterfaceOnly.class);
     }
 
     @ArquillianResource
@@ -51,8 +51,8 @@ public class HandleTypesTest {
         final String content = IO.slurp(new URL(url.toExternalForm() + "list"));
         assertThat(content, containsString(Impl.class.getName()));
         assertThat(content, containsString(AnotherChild.class.getName()));
-        assertThat(content, containsString(Decorated.class.getName()));
         assertThat(content, not(containsString(API.class.getName())));
+        assertThat(content, not(containsString(Decorated.class.getName())));
         assertThat(content, not(containsString(Decoration.class.getName())));
     }
 }
