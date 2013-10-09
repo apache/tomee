@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MyConfigSourceProvider implements ConfigSourceProvider {
-
     @Override
     public List<ConfigSource> getConfigSources() {
         return Arrays.asList((ConfigSource) new MyConfigSource());
