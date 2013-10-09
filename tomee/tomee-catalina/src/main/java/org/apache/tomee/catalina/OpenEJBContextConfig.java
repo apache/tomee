@@ -455,11 +455,11 @@ public class OpenEJBContextConfig extends ContextConfig {
                         }
                     }
                 }
-
-                // done
-                finder = null;
-                tempLoader = null;
             }
+
+            // done
+            finder = null;
+            tempLoader = null;
         } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
             webInfClassesAnnotationsProcessed = false;
             throw e;
