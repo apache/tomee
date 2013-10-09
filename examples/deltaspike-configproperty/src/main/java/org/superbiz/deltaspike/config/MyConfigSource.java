@@ -21,6 +21,7 @@ import org.apache.deltaspike.core.util.PropertyFileUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -57,6 +58,11 @@ public class MyConfigSource extends BaseConfigSource {
     }
 
     @Override
+    public Map<String, String> getProperties() {
+        return Collections.emptyMap(); // not scannable
+    }
+
+    @Override
     public String getPropertyValue(String key) {
         return properties.getProperty(key);
     }
@@ -64,5 +70,10 @@ public class MyConfigSource extends BaseConfigSource {
     @Override
     public String getConfigName() {
         return MY_CONF_FILE_NAME;
+    }
+
+    @Override
+    public boolean isScannable() {
+        return false;
     }
 }
