@@ -43,6 +43,7 @@ public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
     public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
+    public static final String SKIP_LINK = "openejb.finder.skip.link";
 
     private static FinderFactory get() {
         FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -142,7 +143,7 @@ public class FinderFactory {
     }
 
     private static boolean enableFindSubclasses() {
-        return isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
+        return !SystemInstance.get().getOptions().get(SKIP_LINK, false) && (isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false)));
     }
 
     private static boolean isTomEE() {
