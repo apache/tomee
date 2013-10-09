@@ -141,7 +141,7 @@ public class MulticastPulseAgentTest {
 
                 //Compare URI hosts
                 int i = compare(u1.getHost(), u2.getHost());
-                if (i == 0) {
+                if (i != 0) {
                     i = uri1.compareTo(uri2);
                 }
 

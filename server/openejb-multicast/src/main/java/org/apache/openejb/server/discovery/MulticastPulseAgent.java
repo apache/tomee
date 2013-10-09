@@ -59,7 +59,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipulse"), MulticastPulseAgent.class);
     private static final NetworkInterface[] interfaces = getNetworkInterfaces();
-    private static final ExecutorService executor = Executors.newFixedThreadPool(interfaces.length + 1);
+    private static final ExecutorService executor = Executors.newFixedThreadPool((interfaces.length + 2) * 2);
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final int TTL = Integer.parseInt(System.getProperty("org.apache.openejb.multipulse.ttl", "32"));
 
@@ -82,9 +82,9 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private boolean loopbackOnly = true;
 
     /**
-     * This agent listens for a client pulse on a defined multicast channel.
+     * This agent listens for client pulses on a defined multicast channel.
      * On receipt of a valid pulse the agent responds with its own pulse for
-     * a defined amount of time. A client can deliver a pulse as often as
+     * a defined amount of time and rate. A client can deliver a pulse as often as
      * required until it is happy of the server response.
      * <p/>
      * Both server and client deliver crafted information payloads.
@@ -112,7 +112,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             log.warning("Invalid ignore parameter. Should be a lowercase single or comma seperated list like: ignore=host1,host2");
         }
 
-        this.multicast = p.getProperty("bind", this.multicast);
+        this.multicast = o.get("bind", this.multicast);
         this.port = o.get("port", this.port);
         this.group = o.get("group", this.group);
 
@@ -225,6 +225,9 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             }
 
             final CountDownLatch latch = new CountDownLatch(this.sockets.length);
+            final String mpg = MulticastPulseAgent.this.group;
+            final boolean isLoopBackOnly = MulticastPulseAgent.this.loopbackOnly;
+            final DatagramPacket mpr = MulticastPulseAgent.this.response;
 
             for (final MulticastSocket socket : this.sockets) {
 
@@ -243,34 +246,67 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                                 if (null != sa) {
 
-                                    String s = new String(request.getData(), 0, request.getLength());
+                                    final String req = new String(request.getData(), 0, request.getLength());
 
-                                    if (s.startsWith(CLIENT)) {
+                                    executor.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                        s = (s.replace(CLIENT, ""));
+                                            String s = req;
 
-                                        final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+                                            if (s.startsWith(CLIENT)) {
 
-                                        if (MulticastPulseAgent.this.group.equals(s) || "*".equals(s)) {
+                                                s = (s.replace(CLIENT, ""));
 
-                                            if (MulticastPulseAgent.this.loopbackOnly) {
-                                                //We only have local services, so make sure the request is from a local source else ignore it
-                                                if (!MulticastPulseAgent.isLocalAddress(client, false)) {
-                                                    log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available", client, s));
-                                                    continue;
+                                                if (mpg.equals(s) || "*".equals(s)) {
+
+                                                    final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+
+                                                    if (isLoopBackOnly) {
+                                                        //We only have local services, so make sure the request is from a local source else ignore it
+                                                        if (!MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                            if (log.isDebugEnabled()) {
+                                                                log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
+                                                                                        client,
+                                                                                        s));
+                                                            }
+                                                            return;
+                                                        }
+                                                    }
+
+                                                    if (log.isDebugEnabled()) {
+                                                        log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
+                                                    }
+
+                                                    //This is a valid client request for the server to respond on the same channel.
+                                                    //Because multicast is not guaranteed we will send 3 responses per valid request at 10ms intervals.
+                                                    for (int i = 0; i < 3; i++) {
+
+                                                        try {
+                                                            socket.send(mpr);
+                                                        } catch (Exception e) {
+                                                            if (log.isDebugEnabled()) {
+                                                                log.debug("MulticastPulseAgent client error: " + e.getMessage(), e);
+                                                            }
+                                                        }
+
+                                                        try {
+                                                            Thread.sleep(10);
+                                                        } catch (InterruptedException e) {
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
-
-                                            log.debug(String.format("Answering client %1$s pulse request for group: %2$s", client, s));
-                                            socket.send(MulticastPulseAgent.this.response);
-                                        } else {
-                                            log.debug(String.format("Ignoring client %1$s pulse request for group: %2$s", client, s));
                                         }
-                                    }
+                                    });
+
                                 }
 
-                            } catch (Throwable e) {
-                                //Ignore
+                            } catch (Exception e) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
+                                }
                             }
                         }
 

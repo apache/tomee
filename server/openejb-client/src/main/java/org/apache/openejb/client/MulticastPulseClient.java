@@ -35,6 +35,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -66,8 +67,24 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
     private static final int TTL = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_TTL, "32"));
     private static final int LIMIT = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT, "50000"));
     private static final Map<URI, Set<URI>> knownUris = new HashMap<URI, Set<URI>>();
-    private static final NetworkInterface[] interfaces = getNetworkInterfaces();
-    private static final ExecutorService executor = Executors.newFixedThreadPool(interfaces.length + 1);
+    private static NetworkInterface[] interfaces = getNetworkInterfaces();
+    private static ExecutorService executor = null;
+
+    private static synchronized NetworkInterface[] getInterfaces() {
+        if (null == interfaces) {
+            interfaces = getNetworkInterfaces();
+        }
+
+        return interfaces;
+    }
+
+    private static synchronized ExecutorService getExecutorService() {
+        if (null == executor) {
+            executor = Executors.newFixedThreadPool(getInterfaces().length + 2);
+        }
+
+        return executor;
+    }
 
     /**
      * @param uri Connection URI
@@ -117,7 +134,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             try {
                 //Strip serverhost and group and try to connect
                 return ConnectionManager.getConnection(URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart()));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 uriSet.remove(serviceURI);
             }
         }
@@ -200,7 +217,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                     //Compare URI hosts
                     int i = compare(u1.getHost(), u2.getHost());
-                    if (i == 0) {
+                    if (i != 0) {
                         i = uri1.compareTo(uri2);
                     }
 
@@ -223,7 +240,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                         } else if (0 != h1.compareTo(h2)) {
                             return -1;
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         //Ignore
                     }
 
@@ -240,7 +257,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             for (final MulticastSocket socket : clientSocketsFinal) {
 
-                futures.add(executor.submit(new Runnable() {
+                futures.add(getExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -258,6 +275,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                                         int len = response.getLength();
                                         if (len > 2048) {
+
+                                            if (log.isLoggable(Level.FINE)) {
+                                                log.log(Level.FINE, "Truncating multipulse length {0} to 2048", new Object[]{len});
+                                            }
                                             len = 2048;
                                         }
 
@@ -288,7 +309,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                                 final URI serviceUri;
                                                 try {
                                                     serviceUri = URI.create(svc);
-                                                } catch (Throwable e) {
+                                                } catch (Exception e) {
                                                     continue;
                                                 }
 
@@ -327,7 +348,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                                             //Just add as is
                                                             set.add(URI.create(svcfull));
                                                         }
-                                                    } catch (Throwable e) {
+                                                    } catch (Exception e) {
                                                         //Ignore
                                                     } finally {
                                                         setLock.unlock();
@@ -337,19 +358,19 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                         }
                                     }
 
-                                } catch (Throwable e) {
+                                } catch (Exception e) {
                                     //Ignore
                                 }
                             }
                         } finally {
                             try {
                                 socket.leaveGroup(ia);
-                            } catch (Throwable e) {
+                            } catch (Exception e) {
                                 //Ignore
                             }
                             try {
                                 socket.close();
-                            } catch (Throwable e) {
+                            } catch (Exception e) {
                                 //Ignore
                             }
                         }
@@ -361,8 +382,9 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                 //Give listener threads a reasonable amount of time to start
                 if (latchListeners.await(5, TimeUnit.SECONDS)) {
 
-                    //Start pulsing request every 20ms - This will ensure we have at least 2 pulses within our minimum timeout
-                    futures.add(0, executor.submit(new Runnable() {
+                    //Start pulsing client request every 10ms - This will ensure we have at least 4 client pulses within our minimum timeout
+                    //This pulse is designed to tell a listening server to wake up and pulse back a response
+                    futures.add(0, getExecutorService().submit(new Runnable() {
                         @Override
                         public void run() {
                             while (running.get()) {
@@ -372,7 +394,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                     if (running.get()) {
                                         try {
                                             socket.send(request);
-                                        } catch (Throwable e) {
+                                        } catch (Exception e) {
                                             //Ignore
                                         }
                                     } else {
@@ -382,7 +404,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                                 if (running.get()) {
                                     try {
-                                        Thread.sleep(20);
+                                        Thread.sleep(10);
                                     } catch (InterruptedException e) {
                                         break;
                                     }
@@ -414,12 +436,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                         try {
                             socket.leaveGroup(ia);
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             //Ignore
                         }
                         try {
                             socket.close();
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             //Ignore
                         }
                     }
@@ -430,7 +452,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             for (final Future future : futures) {
                 try {
                     future.get();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     //Ignore
                 }
             }
@@ -446,12 +468,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 try {
                     socket.leaveGroup(ia);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     //Ignore
                 }
                 try {
                     socket.close();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     //Ignore
                 }
             }
@@ -501,7 +523,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
 
-        for (final NetworkInterface ni : interfaces) {
+        for (final NetworkInterface ni : getInterfaces()) {
 
             MulticastSocket ms = null;
 
@@ -518,12 +540,12 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 list.add(ms);
 
-            } catch (Throwable e) {
+            } catch (Exception e) {
 
                 if (null != ms) {
                     try {
                         ms.close();
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         //Ignore
                     }
                 }
@@ -614,11 +636,14 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     Set<URI> uriSet = null;
                     try {
                         uriSet = MulticastPulseClient.discoverURIs(discover, new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")), mchost, mcport, timeout);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         System.err.println(e.getMessage());
                     }
 
-                    if (uriSet != null && uriSet.size() > 0) {
+                    final int size = uriSet.size();
+                    if (uriSet != null && size > 0) {
+
+                        final int st = (timeout / size);
 
                         for (final URI uri : uriSet) {
 
@@ -636,22 +661,24 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 continue;
                             }
 
+                            System.out.print(server + ":" + group + " - " + uriSub.toASCIIString() + " is reachable: ");
+
                             boolean b = false;
                             final Socket s = new Socket();
                             try {
-                                s.connect(new InetSocketAddress(host, port), 500);
+                                s.connect(new InetSocketAddress(host, port), st);
                                 b = true;
-                            } catch (Throwable e) {
+                            } catch (Exception e) {
                                 //Ignore
                             } finally {
                                 try {
                                     s.close();
-                                } catch (Throwable e) {
+                                } catch (Exception e) {
                                     //Ignore
                                 }
                             }
 
-                            System.out.println(server + ":" + group + " - " + uriSub.toASCIIString() + " is reachable: " + b);
+                            System.out.println(b);
                         }
                     } else {
                         System.out.println("### Failed to discover server: " + discover);
