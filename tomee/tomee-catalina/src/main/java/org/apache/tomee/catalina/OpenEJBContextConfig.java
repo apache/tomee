@@ -416,11 +416,8 @@ public class OpenEJBContextConfig extends ContextConfig {
 
             if (typeInitializerMap.size() > 0 && finder != null) {
                 final ClassLoader loader = context.getLoader().getClassLoader();
-                if (handlesTypesNonAnnotations) {
-                    if (AnnotationFinder.class.isInstance(finder)) {
-                        AnnotationFinder.class.cast(finder).link();
-                    }
-                }
+                boolean foundSubClasses = false;
+                boolean foundImplementations = false;
 
                 for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
                     final Class<?> annotation = entry.getKey();
@@ -435,6 +432,19 @@ public class OpenEJBContextConfig extends ContextConfig {
                         } else {
                             try { // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
                                 logger.info("Using @HandlesTypes on a parent class (and not an annotation) is a performance killer. See " + annotation.getName() + " on " + sci.getClass().getName());
+                                if (AnnotationFinder.class.isInstance(finder)) {
+                                    if (annotation.isInterface()) {
+                                        if (!foundImplementations) {
+                                            AnnotationFinder.class.cast(finder).enableFindImplementations();
+                                            foundImplementations = true;
+                                        }
+                                    } else {
+                                        if (!foundSubClasses) {
+                                            AnnotationFinder.class.cast(finder).enableFindSubclasses();
+                                            foundSubClasses = true;
+                                        }
+                                    }
+                                }
 
                                 final Class<?> reloadedClass = tempLoader.loadClass(annotation.getName());
                                 final List<Class<?>> implementations = List.class.cast(finder.findImplementations(reloadedClass));
