@@ -83,13 +83,13 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>bootstrap</artifactId>
+      <artifactId>tomee-static-bootstrap</artifactId>
       <version>${tomee.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>jquery</artifactId>
+      <artifactId>tomee-static-jquery</artifactId>
       <version>${tomee.version}</version>
       <scope>runtime</scope>
     </dependency>

@@ -127,42 +127,42 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>backbone</artifactId>
+      <artifactId>tomee-static-backbone</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>bootstrap</artifactId>
+      <artifactId>tomee-static-bootstrap</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>jquery</artifactId>
+      <artifactId>tomee-static-jquery</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>handlebars</artifactId>
+      <artifactId>tomee-static-handlebars</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>json2</artifactId>
+      <artifactId>tomee-static-json2</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>lessjs</artifactId>
+      <artifactId>tomee-static-lessjs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>requirejs</artifactId>
+      <artifactId>tomee-static-requirejs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>underscorejs</artifactId>
+      <artifactId>tomee-static-underscorejs</artifactId>
       <version>${tomee.version}</version>
     </dependency>
   </dependencies>
