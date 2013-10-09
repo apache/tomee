@@ -27,8 +27,8 @@ import javax.servlet.annotation.HandlesTypes;
 import java.io.IOException;
 import java.util.Set;
 
-@HandlesTypes({ API.class, Decoration.class })
-public class Init implements ServletContainerInitializer {
+@HandlesTypes(Decoration.class)
+public class InitAnnotationOnly implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext servletContext) throws ServletException {
         servletContext.addServlet("list", new ListServlet(classes)).addMapping("/list");

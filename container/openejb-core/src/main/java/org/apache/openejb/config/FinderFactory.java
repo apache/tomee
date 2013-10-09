@@ -143,7 +143,7 @@ public class FinderFactory {
     }
 
     private static boolean enableFindSubclasses() {
-        return !SystemInstance.get().getOptions().get(SKIP_LINK, false) && (isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false)));
+        return !SystemInstance.get().getOptions().get(SKIP_LINK, false) && (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
     }
 
     private static boolean isTomEE() {
