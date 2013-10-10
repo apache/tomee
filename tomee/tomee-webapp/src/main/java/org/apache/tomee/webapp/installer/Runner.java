@@ -65,7 +65,7 @@ public class Runner {
         final Paths paths = new Paths(openejbWarDir);
         final Installer installer = new Installer(paths);
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-        if (Installer.Status.NONE.equals(installer.getStatus())) {
+        if (org.apache.tomee.installer.Status.NONE.equals(installer.getStatus())) {
             paths.reset();
             installer.reset();
             paths.setCatalinaHomeDir(this.catalinaHome);

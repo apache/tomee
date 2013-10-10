@@ -53,6 +53,7 @@ import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomee.catalina.deployment.TomcatWebappDeployer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
+import org.apache.tomee.installer.Status;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
@@ -153,7 +154,7 @@ public class TomcatLoader implements Loader {
             Paths paths = new Paths(new File(openejbWarDir));
             if (paths.verify()) {
                 Installer installer = new Installer(paths);
-                if (installer.getStatus() != Installer.Status.INSTALLED) {
+                if (installer.getStatus() != Status.INSTALLED) {
                     installer.installConfigFiles();
                 }
             }
