@@ -16,10 +16,21 @@
  */
 package org.apache.openejb.timer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import junit.framework.TestCase;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.Timer;
+import org.apache.openejb.jee.TimerSchedule;
+import org.junit.Assert;
 
 import javax.ejb.Local;
 import javax.ejb.Schedule;
@@ -29,23 +40,10 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timeout;
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.InvocationContext;
-
-import junit.framework.TestCase;
-
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Timer;
-import org.apache.openejb.jee.TimerSchedule;
-import org.junit.Assert;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -58,20 +56,20 @@ public class ScheduleTest extends TestCase {
     public void testSchedule() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
 
         //Configure schedule by deployment plan
-        StatelessBean subBeanA = new StatelessBean(SubBeanA.class);
-        Timer subBeanATimer = new Timer();
+        final StatelessBean subBeanA = new StatelessBean(SubBeanA.class);
+        final Timer subBeanATimer = new Timer();
         subBeanATimer.setTimeoutMethod(new NamedMethod("subBeanA", "javax.ejb.Timer"));
-        TimerSchedule timerScheduleA = new TimerSchedule();
+        final TimerSchedule timerScheduleA = new TimerSchedule();
         timerScheduleA.setSecond("2");
         timerScheduleA.setMinute("*");
         timerScheduleA.setHour("*");
@@ -81,14 +79,14 @@ public class ScheduleTest extends TestCase {
         ejbJar.addEnterpriseBean(subBeanA);
 
         //Configure schedule by annotation
-        StatelessBean subBeanB = new StatelessBean(SubBeanB.class);
+        final StatelessBean subBeanB = new StatelessBean(SubBeanB.class);
         ejbJar.addEnterpriseBean(subBeanB);
 
         //Override aroundTimeout annotation by deployment plan
-        StatelessBean subBeanC = new StatelessBean(SubBeanC.class);
-        Timer subBeanCTimer = new Timer();
+        final StatelessBean subBeanC = new StatelessBean(SubBeanC.class);
+        final Timer subBeanCTimer = new Timer();
         subBeanCTimer.setTimeoutMethod(new NamedMethod("subBeanC", "javax.ejb.Timer"));
-        TimerSchedule timerScheduleC = new TimerSchedule();
+        final TimerSchedule timerScheduleC = new TimerSchedule();
         timerScheduleC.setSecond("2");
         timerScheduleC.setMinute("*");
         timerScheduleC.setHour("*");
@@ -97,9 +95,9 @@ public class ScheduleTest extends TestCase {
         subBeanC.getTimer().add(subBeanCTimer);
         ejbJar.addEnterpriseBean(subBeanC);
 
-        StatefulBean subBeanM = new StatefulBean(SubBeanM.class);
+        final StatefulBean subBeanM = new StatefulBean(SubBeanM.class);
         ejbJar.addEnterpriseBean(subBeanM);
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
         countDownLatch.await(1L, TimeUnit.MINUTES);
@@ -108,13 +106,13 @@ public class ScheduleTest extends TestCase {
         int beforeAroundInvocationCount = 0;
         int afterAroundInvocationCount = 0;
         int timeoutInvocationCount = 0;
-        int size = 0;
+        final int size;
 
         synchronized (result) {
 
             size = result.size();
 
-            for (Call call : result) {
+            for (final Call call : result) {
                 switch (call) {
                     case BEAN_BEFORE_AROUNDTIMEOUT:
                         beforeAroundInvocationCount++;
@@ -142,11 +140,12 @@ public class ScheduleTest extends TestCase {
 
     public static class BaseBean implements BeanInterface {
 
+        @Override
         public void simpleMethod() {
         }
 
         @AroundTimeout
-        public Object beanTimeoutAround(InvocationContext context) throws Exception {
+        public Object beanTimeoutAround(final InvocationContext context) throws Exception {
             synchronized (result) {
                 assertNotNull(context.getTimer());
                 result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
@@ -170,7 +169,7 @@ public class ScheduleTest extends TestCase {
     @Local(BeanInterface.class)
     public static class SubBeanA extends BaseBean implements TimedObject {
 
-        public void subBeanA(javax.ejb.Timer timer) {
+        public void subBeanA(final javax.ejb.Timer timer) {
             synchronized (result) {
                 assertEquals("SubBeanAInfo", timer.getInfo());
                 result.add(Call.TIMEOUT);
@@ -178,7 +177,7 @@ public class ScheduleTest extends TestCase {
         }
 
         @Override
-        public void ejbTimeout(javax.ejb.Timer arg0) {
+        public void ejbTimeout(final javax.ejb.Timer arg0) {
             Assert.fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
     }
@@ -188,7 +187,7 @@ public class ScheduleTest extends TestCase {
     public static class SubBeanM extends BaseBean implements TimedObject {
 
         @Schedule(second = "2", minute = "*", hour = "*", info = "SubBeanBInfo")
-        public void subBeanA(javax.ejb.Timer timer) {
+        public void subBeanA(final javax.ejb.Timer timer) {
             synchronized (result) {
                 assertEquals("SubBeanAInfo", timer.getInfo());
                 result.add(Call.TIMEOUT);
@@ -196,7 +195,7 @@ public class ScheduleTest extends TestCase {
         }
 
         @Override
-        public void ejbTimeout(javax.ejb.Timer arg0) {
+        public void ejbTimeout(final javax.ejb.Timer arg0) {
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
     }
@@ -206,7 +205,7 @@ public class ScheduleTest extends TestCase {
     public static class SubBeanB extends BaseBean {
 
         @Schedule(second = "2", minute = "*", hour = "*", info = "SubBeanBInfo")
-        public void subBeanB(javax.ejb.Timer timer) {
+        public void subBeanB(final javax.ejb.Timer timer) {
             synchronized (result) {
                 assertEquals("SubBeanBInfo", timer.getInfo());
                 result.add(Call.TIMEOUT);
@@ -214,7 +213,7 @@ public class ScheduleTest extends TestCase {
         }
 
         @Timeout
-        public void ejbT(javax.ejb.Timer timer) {
+        public void ejbT(final javax.ejb.Timer timer) {
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
     }
@@ -224,7 +223,7 @@ public class ScheduleTest extends TestCase {
     public static class SubBeanC extends BaseBean {
 
         @Schedule(info = "badValue")
-        public void subBeanC(javax.ejb.Timer timer) {
+        public void subBeanC(final javax.ejb.Timer timer) {
             synchronized (result) {
                 assertEquals("SubBeanCInfo", timer.getInfo());
                 result.add(Call.TIMEOUT);
@@ -239,6 +238,10 @@ public class ScheduleTest extends TestCase {
 
     public static enum Call {
 
-        BEAN_TIMEOUT, BEAN_BEFORE_AROUNDTIMEOUT, BEAN_AFTER_AROUNDTIMEOUT, BAD_VALUE, TIMEOUT
+        BEAN_TIMEOUT,
+        BEAN_BEFORE_AROUNDTIMEOUT,
+        BEAN_AFTER_AROUNDTIMEOUT,
+        BAD_VALUE,
+        TIMEOUT
     }
 }
