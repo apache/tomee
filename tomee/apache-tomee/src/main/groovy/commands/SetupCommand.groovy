@@ -133,8 +133,8 @@ class SetupCommand {
         ant.delete(file: paths.findTomEELibJar("jaxb-impl"))
         ant.delete(file: paths.findTomEELibJar("openejb-javaagent-${openejbVersion}.jar")) // we need the one without version
 
-        ant.delete(file: "${paths.catalinaLibDir}/tomee-static-jquery-${tomeeVersion}.jar")
-        ant.delete(file: "${paths.catalinaLibDir}/tomee-static-bootstrap-${tomeeVersion}.jar")
+        ant.delete(file: "${paths.catalinaLibDir}/static-tomee-jquery-${tomeeVersion}.jar")
+        ant.delete(file: "${paths.catalinaLibDir}/static-tomee-bootstrap-${tomeeVersion}.jar")
 
         ant.delete(file: paths.findOpenEJBWebJar("tomee-loader"))
         ant.delete(file: paths.findOpenEJBWebJar("swizzle-stream"))

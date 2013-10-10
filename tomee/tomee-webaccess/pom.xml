@@ -34,55 +34,55 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-backbone</artifactId>
+      <artifactId>static-tomee-backbone</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-bootstrap</artifactId>
+      <artifactId>static-tomee-bootstrap</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-jquery</artifactId>
+      <artifactId>static-tomee-jquery</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-handlebars</artifactId>
+      <artifactId>static-tomee-handlebars</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-json2</artifactId>
+      <artifactId>static-tomee-json2</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-lessjs</artifactId>
+      <artifactId>static-tomee-lessjs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-requirejs</artifactId>
+      <artifactId>static-tomee-requirejs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-underscorejs</artifactId>
+      <artifactId>static-tomee-underscorejs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-codemirror</artifactId>
+      <artifactId>static-tomee-codemirror</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

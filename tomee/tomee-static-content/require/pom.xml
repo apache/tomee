@@ -24,9 +24,9 @@
     <artifactId>tomee-static-content</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tomee-static-requirejs</artifactId>
+  <artifactId>static-tomee-requirejs</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: tomee-static-content :: require</name>
+  <name>OpenEJB :: TomEE :: static-tomee-content :: require</name>
   <description>Contains RequireJS 2.1.8 and RequireJS text plugin 2.0.10</description>
 </project>

@@ -24,9 +24,9 @@
     <artifactId>tomee-static-content</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tomee-static-underscorejs</artifactId>
+  <artifactId>static-tomee-underscorejs</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: tomee-static-content :: underscorejs</name>
+  <name>OpenEJB :: TomEE :: static-tomee-content :: underscorejs</name>
   <description>Contains Underscore.js 1.5.2</description>
 </project>

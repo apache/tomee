@@ -24,10 +24,10 @@
     <artifactId>tomee-static-content</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tomee-static-json2</artifactId>
+  <artifactId>static-tomee-json2</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: tomee-static-content :: json2</name>
+  <name>OpenEJB :: TomEE :: static-tomee-content :: json2</name>
   <description>
     Contains Douglas Crockford's JSON implementation for JavaScript.
     (version date: 2010-11-18, https://github.com/douglascrockford/JSON-js)
