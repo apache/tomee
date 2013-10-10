@@ -24,9 +24,9 @@
     <artifactId>tomee-static-content</artifactId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tomee-static-codemirror</artifactId>
+  <artifactId>static-tomee-codemirror</artifactId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: tomee-static-content :: codemirror</name>
+  <name>OpenEJB :: TomEE :: static-tomee-content :: codemirror</name>
   <description>Contains CodeMirror 3.16</description>
 </project>

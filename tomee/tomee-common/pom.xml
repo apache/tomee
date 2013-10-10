@@ -42,12 +42,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-bootstrap</artifactId>
+      <artifactId>static-tomee-bootstrap</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>tomee-static-jquery</artifactId>
+      <artifactId>static-tomee-jquery</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
