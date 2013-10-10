@@ -151,6 +151,7 @@
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
     <module>moviefun</module>
+    <module>moviefun-rest</module>
   </modules>
   <profiles>
     <profile>
