@@ -447,6 +447,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     @Override
     public void start() throws TimerStoreException {
+
         if (isStarted()) {
             return;
         }
@@ -470,9 +471,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      *
      * @param timerData the timer to schedule
      */
-    public void schedule(final TimerData timerData) {
+    public void schedule(final TimerData timerData) throws TimerStoreException {
+
+        start();
+
         if (scheduler == null) {
-            throw new IllegalStateException("Scheduler is not configured properly");
+            throw new TimerStoreException("Scheduler is not configured properly");
         }
 
         timerData.setScheduler(scheduler);
@@ -514,7 +518,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
         } catch (Exception e) {
             //TODO Any other actions we could do ?
-            log.warning("Could not schedule timer " + timerData, e);
+            log.error("Could not schedule timer " + timerData, e);
         }
     }
 
@@ -676,7 +680,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         //TODO add more schedule expression validation logic ?
         checkState();
         try {
-            final TimerData timerData = timerStore.createCalendarTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, scheduleExpression, timerConfig, false);
+            final TimerData timerData = timerStore.createCalendarTimer(this,
+                                                                       (String) deployment.getDeploymentID(),
+                                                                       primaryKey,
+                                                                       timeoutMethod,
+                                                                       scheduleExpression,
+                                                                       timerConfig,
+                                                                       false);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
