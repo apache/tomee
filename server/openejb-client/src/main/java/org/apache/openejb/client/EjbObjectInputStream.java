@@ -32,11 +32,13 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     @Override
-    protected Class resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+        final String n = classDesc.getName();
+        final ClassLoader classloader = getClassloader();
         try {
-            return Class.forName(classDesc.getName(), false, getClassloader());
+            return Class.forName(n, false, classloader);
         } catch (ClassNotFoundException e) {
-            final String n = classDesc.getName();
+
             if (n.equals("boolean")) {
                 return boolean.class;
             }
@@ -62,7 +64,8 @@ public class EjbObjectInputStream extends ObjectInputStream {
                 return double.class;
             }
 
-            throw e;
+            //Last try - Let runtime try and find it.
+            return Class.forName(n, false, null);
         }
     }
 
