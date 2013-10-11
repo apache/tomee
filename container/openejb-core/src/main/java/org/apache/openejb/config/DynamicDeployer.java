@@ -23,6 +23,6 @@ import org.apache.openejb.OpenEJBException;
  */
 public interface DynamicDeployer {
 
-    AppModule deploy(AppModule appModule) throws OpenEJBException;
+    public AppModule deploy(AppModule appModule) throws OpenEJBException;
 
 }
