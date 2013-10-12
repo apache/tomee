@@ -53,15 +53,8 @@ import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 import org.apache.xbean.recipe.ConstructionException;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
+import javax.ejb.*;
+import javax.ejb.ApplicationException;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Decorator;
@@ -84,6 +77,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 @SuppressWarnings("unchecked")
@@ -225,7 +219,7 @@ public class BeanContext extends DeploymentContext {
     private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
-    private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
+    private final Map<Class, ExceptionType> exceptions = new ConcurrentHashMap<Class, ExceptionType>();
 
     private final boolean localbean;
     private Duration accessTimeout;
@@ -527,11 +521,17 @@ public class BeanContext extends DeploymentContext {
         }
 
         // Unregistered - runtime exceptions are system exception and the rest are application exceptions
+        final Class<? extends Throwable> eClass = e.getClass();
+        final ApplicationException applicationException = eClass.getAnnotation(ApplicationException.class);
+        if (applicationException != null) {
+            addApplicationException(eClass, applicationException.rollback(), applicationException.inherited());
+            return getExceptionType(e);
+        }
+
         if (e instanceof RuntimeException) {
             return ExceptionType.SYSTEM;
-        } else {
-            return ExceptionType.APPLICATION;
         }
+        return ExceptionType.APPLICATION;
     }
 
     public BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final Class beanClass, final Class mdbInterface, final Map<String, String> activationProperties) throws SystemException {
