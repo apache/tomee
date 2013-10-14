@@ -321,7 +321,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (swizzle.startsWith("stream.")) return true;
                 if (swizzle.startsWith("rss.")) return true;
                 if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) return true;
-                return true;
+                return false;
             }
             if (org.startsWith("w3c.dom")) return true;
             if (org.startsWith("quartz")) return true;
