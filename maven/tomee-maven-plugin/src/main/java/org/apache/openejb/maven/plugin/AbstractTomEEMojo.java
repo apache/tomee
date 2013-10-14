@@ -178,6 +178,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected Map<String, String> systemVariables;
 
+    @Parameter
+    private List<String> classpaths;
+
     @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
     private boolean quickSession;
 
@@ -234,7 +237,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
-    private String additionalCp = null;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -269,8 +271,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             }
         }
 
+        if (classpaths == null) { // NPE protection for activateSimpleLog() and run()
+            classpaths = new ArrayList<String>();
+        }
         if (simpleLog) {
-            additionalCp = activateSimpleLog();
+            activateSimpleLog();
         }
 
         if (!keepServerXmlAsthis) {
@@ -279,7 +284,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (!skipCurrentProject) {
             copyWar();
         }
+
         run();
+    }
+
+    protected String getAdditionalClasspath() {
+        if (!classpaths.isEmpty()) {
+            final StringBuilder cpBuilder = new StringBuilder();
+            for (final String cp : classpaths) {
+                cpBuilder.append(cp);
+                cpBuilder.append(File.pathSeparatorChar);
+            }
+            return cpBuilder.substring(0, cpBuilder.length() - 1); // Dump the final path separator
+        }
+        return null;
     }
 
     private List<String> webappsAlreadyAdded() {
@@ -305,17 +323,18 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (loggingProperties.exists() && !new File(config, "conf/logging.properties").exists()) {
             try {
                 final String content = IO.slurp(loggingProperties)
-                        .replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
+                    .replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
                 final FileWriter writer = new FileWriter(loggingProperties);
                 try {
                     writer.write(content);
                 } finally {
                     IO.close(writer);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 getLog().error("Can't set SimpleTomEEFormatter", e);
                 return null;
             }
+            classpaths.add(cp);
             return cp;
         }
         return null;
@@ -520,9 +539,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         if (tomeeHttpsPort != null && tomeeHttpsPort > 0 && parser.value("HTTPS", null) == null) {
             // ensure connector is not commented
             value = value.replace("<Service name=\"Catalina\">", "<Service name=\"Catalina\">\n"
-                    + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
-                    "                scheme=\"https\" secure=\"true\"\n" +
-                    "                clientAuth=\"false\" sslProtocol=\"TLS\" />\n");
+                + "    <Connector port=\"" + tomeeHttpsPort + "\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\"\n" +
+                "                scheme=\"https\" secure=\"true\"\n" +
+                "                clientAuth=\"false\" sslProtocol=\"TLS\" />\n");
         }
 
         if (tomeeHttpsPort == null) {
@@ -534,12 +553,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         try {
             writer = new FileWriter(serverXml);
             writer.write(value
-                    .replace(parser.http(), Integer.toString(tomeeHttpPort))
-                    .replace(parser.https(), Integer.toString(tomeeHttpsPort))
-                    .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
-                    .replace(parser.stop(), Integer.toString(tomeeShutdownPort))
-                    .replace(parser.host(), tomeeHost)
-                    .replace(parser.appBase(), webappDir));
+                .replace(parser.http(), Integer.toString(tomeeHttpPort))
+                .replace(parser.https(), Integer.toString(tomeeHttpsPort))
+                .replace(parser.ajp(), Integer.toString(tomeeAjpPort))
+                .replace(parser.stop(), Integer.toString(tomeeShutdownPort))
+                .replace(parser.host(), tomeeHost)
+                .replace(parser.appBase(), webappDir));
         } catch (IOException e) {
             throw new TomEEException(e.getMessage(), e);
         } finally {
@@ -671,9 +690,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
 
         server = new RemoteServer(getConnectAttempts(), false);
-        if (additionalCp != null) {
-            server.setAdditionalClasspath(additionalCp);
-        }
+        server.setAdditionalClasspath(getAdditionalClasspath());
+
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
 
         if (!getWaitTomEE()) {
@@ -681,8 +699,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
-                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
-                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
+            + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
+            + " (plugin shutdown port is " + tomeeShutdownPort + ")");
 
         final InputStream originalIn = System.in; // piped when starting resmote server so saving it
 
@@ -777,16 +795,16 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             try {
                 if ("snapshots".equals(apacheRepos) || "true".equals(apacheRepos)) {
                     remoteRepos.add(new DefaultArtifactRepository("apache", "https://repository.apache.org/content/repositories/snapshots/",
-                            new DefaultRepositoryLayout(),
-                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                            new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                        new DefaultRepositoryLayout(),
+                        new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                        new ArtifactRepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
                 } else {
                     try {
                         new URI(apacheRepos); // to check it is a uri
                         remoteRepos.add(new DefaultArtifactRepository("additional-repo-tomee-mvn-plugin", apacheRepos,
-                                new DefaultRepositoryLayout(),
-                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
-                                new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
+                            new DefaultRepositoryLayout(),
+                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_DAILY, CHECKSUM_POLICY_WARN),
+                            new ArtifactRepositoryPolicy(true, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_WARN)));
                     } catch (URISyntaxException e) {
                         // ignored, use classical repos
                     }
@@ -855,9 +873,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
             final FileWriter writer = new FileWriter(new File(catalinaBase, "conf/tomee.xml"));
             writer.write("<?xml version=\"1.0\"?>\n" +
-                    "<tomee>\n" +
-                    "  <Deployments dir=\"apps\" />\n" +
-                    "</tomee>\n");
+                "<tomee>\n" +
+                "  <Deployments dir=\"apps\" />\n" +
+                "</tomee>\n");
             writer.close();
 
             new File(catalinaBase, "apps").mkdirs();
