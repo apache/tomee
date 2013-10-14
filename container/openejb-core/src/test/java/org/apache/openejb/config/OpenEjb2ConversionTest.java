@@ -19,24 +19,21 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.loader.IO;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -44,12 +41,12 @@ import org.custommonkey.xmlunit.XMLUnit;
 public class OpenEjb2ConversionTest extends TestCase {
 
     public void testSimple() throws Exception {
-        String prefix = "convert/oej2/simple/";
+        final String prefix = "convert/oej2/simple/";
 
-        AppModule appModule = deploy(prefix);
+        final AppModule appModule = deploy(prefix);
 
         // compare the results to the expected results
-        EjbModule ejbModule = appModule.getEjbModules().get(0);
+        final EjbModule ejbModule = appModule.getEjbModules().get(0);
 
         assertJaxb(prefix + "openejb-jar-expected.xml", ejbModule.getOpenejbJar(), OpenejbJar.class);
         assertJaxb(prefix + "geronimo-openejb.xml", ejbModule.getAltDDs().get("geronimo-openejb.xml"), GeronimoEjbJarType.class);
@@ -95,15 +92,15 @@ public class OpenEjb2ConversionTest extends TestCase {
         convertCmp("convert/oej2/cmp/manytomany/simplepk/unidirectional-");
     }
 
-    private void convertCmp(String prefix) throws Exception {
-        AppModule appModule = deploy(prefix);
+    private void convertCmp(final String prefix) throws Exception {
+        final AppModule appModule = deploy(prefix);
 
         // compare the results to the expected results
         assertJaxb(prefix + "orm.xml", appModule.getCmpMappings(), EntityMappings.class);
     }
 
-    private void assertJaxb(String expectedFile, Object object, Class<?> type) throws IOException, JAXBException, SAXException {
-        
+    private void assertJaxb(final String expectedFile, final Object object, final Class<?> type) throws IOException, JAXBException, SAXException {
+
         assertSame(type, object.getClass());
 
         final String actual = toString(object, type);
@@ -120,50 +117,50 @@ public class OpenEjb2ConversionTest extends TestCase {
             final org.w3c.dom.Document actualDoc = XMLUnit.buildDocument(XMLUnit.newTestParser(), new StringReader(actual));
             final org.w3c.dom.Document expectedDoc = XMLUnit.buildDocument(XMLUnit.newControlParser(), isr);
 
-            Diff myDiff = new Diff(expectedDoc, actualDoc);
+            final Diff myDiff = new Diff(expectedDoc, actualDoc);
             assertTrue("Files are similar " + myDiff, myDiff.similar());
         } finally {
             XMLUnit.setNormalizeWhitespace(nw);
             XMLUnit.setNormalize(n);
 
-            if(null != isr){
+            if (null != isr) {
                 isr.close();
             }
         }
     }
 
-    private AppModule deploy(String prefix) throws OpenEJBException {
+    private AppModule deploy(final String prefix) throws OpenEJBException {
         return deploy(prefix + "ejb-jar.xml", prefix + "openejb-jar.xml");
     }
 
-    private AppModule deploy(String ejbJarFileName, String openejbJarFileName) throws OpenEJBException {
+    private AppModule deploy(final String ejbJarFileName, final String openejbJarFileName) throws OpenEJBException {
         // create and configure the module
-        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", null, null, null);
-        AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
+        final EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", null, null, null);
+        final AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
         appModule.getEjbModules().add(ejbModule);
 
         // add the altDD
         ejbModule.getAltDDs().put("ejb-jar.xml", getClass().getClassLoader().getResource(ejbJarFileName));
         ejbModule.getAltDDs().put("openejb-jar.xml", getClass().getClassLoader().getResource(openejbJarFileName));
 
-        DynamicDeployer[] deployers = {new ReadDescriptors(), new InitEjbDeployments(), new CmpJpaConversion(), new OpenEjb2Conversion()};
+        final DynamicDeployer[] deployers = {new ReadDescriptors(), new InitEjbDeployments(), new CmpJpaConversion(), new OpenEjb2Conversion()};
 
-        for (DynamicDeployer deployer : deployers) {
+        for (final DynamicDeployer deployer : deployers) {
             deployer.deploy(appModule);
         }
         return appModule;
     }
 
-    private String toString(Object object, Class<?> type) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContextFactory.newInstance(type);
+    private String toString(final Object object, final Class<?> type) throws JAXBException {
+        final JAXBContext jaxbContext = JAXBContextFactory.newInstance(type);
 
-        Marshaller marshaller = jaxbContext.createMarshaller();
+        final Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-        String actual = new String(baos.toByteArray());
+        final String actual = new String(baos.toByteArray());
         return actual.trim();
     }
 }
