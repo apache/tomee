@@ -62,6 +62,15 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>apache-tomee</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <classifier>webprofile</classifier>
+      <type>zip</type>
+    </dependency>
   </dependencies>
 
   <properties>
