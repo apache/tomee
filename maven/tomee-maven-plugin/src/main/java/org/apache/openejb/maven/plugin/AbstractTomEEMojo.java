@@ -1,4 +1,3 @@
-package org.apache.openejb.maven.plugin;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@ package org.apache.openejb.maven.plugin;
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
+package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -119,10 +119,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected String tomeeClassifier;
 
     @Parameter(property = "tomee-plugin.shutdown", defaultValue = "8005")
-    protected int tomeeShutdownPort = 8005;
+    protected int tomeeShutdownPort;
 
     @Parameter(property = "tomee-plugin.ajp", defaultValue = "8009")
-    protected int tomeeAjpPort = 8009;
+    protected int tomeeAjpPort;
 
     @Parameter(property = "tomee-plugin.https")
     protected Integer tomeeHttpsPort;
@@ -182,7 +182,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     private List<String> classpaths;
 
     @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
-    private boolean quickSession;
+    protected boolean quickSession;
 
     @Parameter(property = "tomee-plugin.force-reloadable", defaultValue = "false")
     protected boolean forceReloadable;
@@ -370,7 +370,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             getLog().warn("can't create '" + destParent.getPath() + "'");
         }
 
-        for (String file : files) {
+        for (final String file : files) {
             updateLib(file, destParent, defaultType);
         }
     }
@@ -827,7 +827,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
-    private void unzip(File mvnTomEE, File catalinaBase) {
+    private void unzip(final File mvnTomEE, final File catalinaBase) {
         ZipFile in = null;
         try {
             in = new ZipFile(mvnTomEE);
