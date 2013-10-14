@@ -365,17 +365,21 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 final EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
                 final String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
                 final EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
-                final String leftFieldName = leftRole.getCmrField().getCmrFieldName();
+                final EjbRelationshipRoleType.CmrField cmrField = leftRole.getCmrField();
+
+                final String leftFieldName = (null != cmrField ? cmrField.getCmrFieldName() : null);
 
                 RelationField field;
                 if (leftRole.isForeignKeyColumnOnSource()) {
-                    field = leftEntityData.relations.get(leftFieldName);
+
+                    field = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
+
                     // todo warn field not found
                     if (field == null) {
                         continue;
                     }
                 } else {
-                    final RelationField other = leftEntityData.relations.get(leftFieldName);
+                    final RelationField other = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
                     // todo warn field not found
                     if (other == null) {
                         continue;
