@@ -444,6 +444,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
+            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
+                continue;
+            }
+
             StandardContext standardContext;
             if (contextXml != null) {
                 synchronized (CONTEXT_DIGESTER) {
@@ -458,11 +462,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
             } else {
-                standardContext = new StandardContext();
-            }
-
-            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
-                continue;
+                final Host host = hosts.get(defaultHost);
+                if (StandardHost.class.isInstance(host)) {
+                    try {
+                        standardContext = StandardContext.class.cast(ParentClassLoaderFinder.Helper.get().loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
+                    } catch (final Throwable th) {
+                        logger.warning("Can't use context class specified, using default StandardContext", th);
+                        standardContext = new StandardContext();
+                    }
+                } else {
+                    standardContext = new StandardContext();
+                }
             }
 
             if (standardContext.getPath() != null) {
