@@ -23,40 +23,32 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
 import javax.management.ObjectName;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class CxfWsContainer implements HttpListener {
     protected final Bus bus;
     protected final PortData port;
     protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
-    protected final HTTPTransportFactory httpTransportFactory;
+    protected HTTPTransportFactory httpTransportFactory;
     protected final ServiceConfiguration serviceConfiguration;
     private ObjectName jmxName;
 
-    public CxfWsContainer(final Bus bus, final PortData port, final ServiceConfiguration config) {
+    public CxfWsContainer(final Bus bus, final HTTPTransportFactory httpTransportFactory, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
         this.port = port;
         this.serviceConfiguration = config;
-
-        final List<String> ids = new ArrayList<String>();
-        ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
-
-        httpTransportFactory = new HttpTransportFactory(bus);
-        httpTransportFactory.setTransportIds(ids);
+        this.httpTransportFactory = httpTransportFactory;
     }
 
     public void start() {
         endpoint = createEndpoint();
-        endpoint.publish("http://nopath");
+        endpoint.publish("http://nopath" + endpoint.hashCode()); // needs to be unique
         destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
 
         // register an MBean for this endpoint

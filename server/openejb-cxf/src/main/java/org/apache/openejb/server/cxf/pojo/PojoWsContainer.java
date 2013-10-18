@@ -18,6 +18,7 @@
 package org.apache.openejb.server.cxf.pojo;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
@@ -48,9 +49,11 @@ public class PojoWsContainer extends CxfWsContainer {
     private final ClassLoader loader;
     private WsServiceMBean mbean;
 
-    public PojoWsContainer(ClassLoader loader, Bus bus, PortData port, Context context, Class target,
-                           Map<String, Object> bdgs, ServiceConfiguration configuration) {
-        super(bus, port, configuration);
+    public PojoWsContainer(final ClassLoader loader, final HTTPTransportFactory transportFactory,
+                           final Bus bus, final PortData port, final Context context,
+                           final Class target,
+                           final Map<String, Object> bdgs, final ServiceConfiguration configuration) {
+        super(bus, transportFactory, port, configuration);
         if (target == null) throw new NullPointerException("target is null");
         this.context = context;
         this.target = target;

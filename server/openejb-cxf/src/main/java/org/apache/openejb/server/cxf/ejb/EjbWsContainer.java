@@ -18,6 +18,7 @@
 package org.apache.openejb.server.cxf.ejb;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
@@ -44,8 +45,8 @@ public class EjbWsContainer extends CxfWsContainer {
     private final BeanContext beanContext;
     private WsServiceMBean mbean;
 
-    public EjbWsContainer(Bus bus, PortData port, BeanContext beanContext, ServiceConfiguration config) {
-        super(bus, port, config);
+    public EjbWsContainer(final Bus bus, final HTTPTransportFactory transportFactory, final PortData port, final BeanContext beanContext, final ServiceConfiguration config) {
+        super(bus, transportFactory, port, config);
         if (beanContext == null) throw new NullPointerException("deploymentInfo is null");
         this.beanContext = beanContext;
     }
