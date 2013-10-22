@@ -60,7 +60,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             final Properties properties = getLowerCaseProperties();
             final URI uri = URLs.uri(brokerURI.getRawSchemeSpecificPart());
             broker = BrokerFactory.createBroker(uri);
-            brokers.put(brokerURI, broker);
+            brokers.put(brokerURI, ActiveMQ5Factorybroker);
 
             if (!uri.getScheme().toLowerCase().startsWith("xbean")) {
 
