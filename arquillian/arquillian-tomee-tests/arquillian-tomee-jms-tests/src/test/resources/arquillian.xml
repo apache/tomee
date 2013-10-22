@@ -26,7 +26,7 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
-        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
 
@@ -42,7 +42,7 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
-        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
 
@@ -58,7 +58,7 @@
       <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="properties">
-        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;broker.persistent=false
+        Default\ JMS\ Resource\ Adapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
 
