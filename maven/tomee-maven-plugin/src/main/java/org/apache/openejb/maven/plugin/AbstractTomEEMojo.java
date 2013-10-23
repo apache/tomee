@@ -139,7 +139,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
 
-    @Parameter(defaultValue = "${project.build.directory}/apache-tomee")
+    @Parameter(defaultValue = "${project.build.directory}/apache-tomee", property = "tomee-plugin.catalina-base")
     protected File catalinaBase;
 
     /**
