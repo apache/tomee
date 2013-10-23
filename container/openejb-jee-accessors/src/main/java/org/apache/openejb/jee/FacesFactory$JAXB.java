@@ -330,7 +330,9 @@ public class FacesFactory$JAXB
                 }
                 factoryExtension.add(factoryExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application-factory"), new QName("http://java.sun.com/xml/ns/javaee", "exception-handler-factory"), new QName("http://java.sun.com/xml/ns/javaee", "external-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "faces-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "partial-view-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-factory"), new QName("http://java.sun.com/xml/ns/javaee", "view-declaration-language-factory"), new QName("http://java.sun.com/xml/ns/javaee", "tag-handler-delegate-factory"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-factory"), new QName("http://java.sun.com/xml/ns/javaee", "visit-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "factory-extension"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application-factory"), new QName("http://java.sun.com/xml/ns/javaee", "exception-handler-factory"), new QName("http://java.sun.com/xml/ns/javaee", "external-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "faces-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "partial-view-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-factory"), new QName("http://java.sun.com/xml/ns/javaee", "view-declaration-language-factory"), new QName("http://java.sun.com/xml/ns/javaee", "tag-handler-delegate-factory"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-factory"), new QName("http://java.sun.com/xml/ns/javaee", "visit-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "factory-extension"));
             }
         }
         if (applicationFactory != null) {

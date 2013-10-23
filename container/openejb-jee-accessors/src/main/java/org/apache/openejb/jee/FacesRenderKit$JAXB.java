@@ -199,7 +199,9 @@ public class FacesRenderKit$JAXB
                 }
                 renderKitExtension.add(renderKitExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-id"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-class"), new QName("http://java.sun.com/xml/ns/javaee", "renderer"), new QName("http://java.sun.com/xml/ns/javaee", "client-behavior-renderer"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-extension"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-id"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-class"), new QName("http://java.sun.com/xml/ns/javaee", "renderer"), new QName("http://java.sun.com/xml/ns/javaee", "client-behavior-renderer"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-extension"));
             }
         }
         if (descriptions != null) {
