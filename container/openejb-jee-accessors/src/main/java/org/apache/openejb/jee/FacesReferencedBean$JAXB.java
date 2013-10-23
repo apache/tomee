@@ -153,7 +153,9 @@ public class FacesReferencedBean$JAXB
 
                 facesReferencedBean.referencedBeanClass = referencedBeanClass;
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-name"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-class"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-name"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-class"));
             }
         }
         if (descriptions != null) {

@@ -21,6 +21,15 @@
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                                   http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
+  <application>
+    <el-resolver>UnknownButSuperResolver</el-resolver>
+    <resource-library-contracts>
+      <contract-mapping>
+        <url-pattern>/blue/*</url-pattern>
+        <contracts>dabididabida</contracts>
+      </contract-mapping>
+    </resource-library-contracts>
+  </application>
   <flow-definition id="flow">
     <flow-return id="return">
       <from-outcome>#{bean.out}</from-outcome>

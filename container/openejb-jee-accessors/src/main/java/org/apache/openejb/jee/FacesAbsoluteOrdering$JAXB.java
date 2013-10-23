@@ -116,7 +116,9 @@ public class FacesAbsoluteOrdering$JAXB
                 }
                 nameOrOthers.add(nameOrOthersItem1);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "others"), new QName("http://java.sun.com/xml/ns/javaee", "name"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "others"), new QName("http://java.sun.com/xml/ns/javaee", "name"));
             }
         }
         if (nameOrOthers != null) {

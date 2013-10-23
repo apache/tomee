@@ -132,7 +132,9 @@ public class FacesLifecycle$JAXB
                 }
                 lifecycleExtension.add(lifecycleExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "phase-listener"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-extension"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "phase-listener"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-extension"));
             }
         }
         if (phaseListener != null) {
