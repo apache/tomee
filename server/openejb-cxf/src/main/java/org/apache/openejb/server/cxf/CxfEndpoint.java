@@ -42,6 +42,7 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,21 @@ public abstract class CxfEndpoint {
 		svrFactory.setServiceBean(implementor);
         svrFactory.setDestinationFactory(httpTransportFactory);
         svrFactory.setServiceClass(serviceFactory.getServiceClass());
+
+        final Properties beanConfig = serviceConfiguration.getProperties();
+        final Collection<ServiceInfo> availableServices = serviceConfiguration.getAvailableServices();
+
+        // endpoint properties
+        if (beanConfig != null) {
+            final String schemaLocations = beanConfig.getProperty(CXF_JAXWS_PREFIX + "schema-locations");
+            if (schemaLocations != null) {
+                svrFactory.setSchemaLocations(Arrays.asList(schemaLocations.split(",")));
+            }
+            final String wsdlLocation = beanConfig.getProperty(CXF_JAXWS_PREFIX + "wsdl-location");
+            if (wsdlLocation != null) {
+                svrFactory.setWsdlLocation(wsdlLocation);
+            }
+        }
 
         // look for bean info if exists
         CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX);
