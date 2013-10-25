@@ -247,17 +247,18 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
 
             final AppInfo appInfo;
+            final String archiveName = archive.getName();
             try {
                 appInfo = deployer().deploy(file.getAbsolutePath());
                 if (appInfo != null) {
-                    moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+                    moduleIds.put(archiveName, new DeployedApp(appInfo.path, file.getParentFile()));
                     Files.deleteOnExit(file); // "i" folder
                 } else {
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
             } catch (OpenEJBException re) { // clean up in undeploy needs it
-                moduleIds.put(archive.getName(), new DeployedApp(file.getPath(), file.getParentFile()));
+                moduleIds.put(archiveName, new DeployedApp(file.getPath(), file.getParentFile()));
                 throw re;
             }
 
@@ -269,7 +270,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
-            if (archive instanceof WebArchive) {
+            if (archiveName.endsWith(".war") || (archiveName.endsWith(".ear") && appInfo.webApps.size() == 1)) {
                 arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
             } else {
                 arquillianServlet = "/arquillian-protocol";
