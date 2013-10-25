@@ -17,8 +17,6 @@
  */
 package org.apache.openejb.jee;
 
-import org.apache.openejb.loader.SystemInstance;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.util.Map;
@@ -26,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public final class JAXBContextFactory {
-    private static final boolean USE_FAST_BOOT = "true".equals(SystemInstance.get().getProperty("openejb.jaxb.fastBoot", "true"));
+    private static final boolean USE_FAST_BOOT = "true".equals(System.getProperty("openejb.jaxb.fastBoot", "true"));
     private static final String FAST_BOOT = "com.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot";
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(JAXBContextFactory.class.getName());
