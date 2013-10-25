@@ -27,6 +27,16 @@ public class SaajUniverseTest extends TestCase {
 
     private static final String DEFAULT_MESSAGE_CLASS = SUN_MESSAGE_CLASS;
 
+    @Override
+    public void setUp() {
+        System.setProperty("openejb.soap.override-factory", "true");
+    }
+
+    @Override
+    public void tearDown() {
+        System.clearProperty("openejb.soap.override-factory");
+    }
+
     public void testBasic() throws Exception {
         // case 1, universe not set
         //assertEquals(DEFAULT_MESSAGE_CLASS, MessageFactory.newInstance().createMessage().getClass().getName());
