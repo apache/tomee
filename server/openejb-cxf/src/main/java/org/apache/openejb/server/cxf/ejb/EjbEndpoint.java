@@ -38,6 +38,7 @@ import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -60,7 +61,7 @@ public class EjbEndpoint extends CxfEndpoint {
         CxfServiceConfiguration configuration = new CxfServiceConfiguration(portData);
         serviceFactory.getConfigurations().add(0, configuration);
 
-        service = serviceFactory.create();
+        service = doServiceCreate();
     }
 
     protected Class getImplementorClass() {

@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
@@ -87,10 +89,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
+
+    private static final java.util.logging.Logger SERVER_IMPL_LOGGER = LogUtils.getL7dLogger(ServerImpl.class);
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
@@ -382,7 +387,14 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
-            server = factory.create();
+            final Level level = SERVER_IMPL_LOGGER.getLevel();
+            SERVER_IMPL_LOGGER.setLevel(Level.OFF);
+            try {
+                server = factory.create();
+            } finally {
+                SERVER_IMPL_LOGGER.setLevel(level);
+            }
+
             this.context = webContext;
             if (!webContext.startsWith("/")) {
                 this.context = "/" + webContext;

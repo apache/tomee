@@ -25,6 +25,7 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
+import org.apache.cxf.service.Service;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
@@ -63,7 +64,7 @@ public class PojoEndpoint extends CxfEndpoint {
         CxfServiceConfiguration configuration = new CxfServiceConfiguration(port);
         serviceFactory.getConfigurations().add(0, configuration);
 
-        service = serviceFactory.create();
+        service = doServiceCreate();
 
         // instantiate and inject resources into service using the app classloader to be sure to get the right InitialContext
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
