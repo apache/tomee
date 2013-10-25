@@ -55,6 +55,11 @@ public class EjbWsContainer extends CxfWsContainer {
         return new EjbEndpoint(bus, port, beanContext, httpTransportFactory, serviceConfiguration);
     }
 
+    @Override
+    protected String getFakeUrl() {
+        return beanContext.getEjbName();
+    }
+
     protected ObjectName registerMBean() {
         final ObjectName name = new ObjectNameBuilder("openejb.management")
                 .set("j2eeType", "JAX-WS")

@@ -61,6 +61,11 @@ public class PojoWsContainer extends CxfWsContainer {
         this.loader = loader;
     }
 
+    @Override
+    protected String getFakeUrl() {
+        return target.getClass().getName() + "_" + hashCode(); // pojo are not like ejbName: unique
+    }
+
     protected PojoEndpoint createEndpoint() {
         return new PojoEndpoint(loader, bus, port, context, target, httpTransportFactory, bindings, serviceConfiguration);
     }
