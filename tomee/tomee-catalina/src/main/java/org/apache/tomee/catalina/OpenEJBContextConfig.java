@@ -432,9 +432,9 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                                 final List<Class<?>> implementations;
                                 if (annotation.isInterface()) {
-                                    implementations = finder.findImplementations(reloadedClass);
+                                    implementations = List.class.cast(finder.findImplementations(reloadedClass));
                                 } else {
-                                    implementations = finder.findSubclasses(reloadedClass);
+                                    implementations = List.class.cast(finder.findSubclasses(reloadedClass));
                                 }
 
                                 addClassesWithRightLoader(loader, sci, implementations);
