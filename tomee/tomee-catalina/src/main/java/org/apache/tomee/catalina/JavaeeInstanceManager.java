@@ -44,15 +44,8 @@ public class JavaeeInstanceManager implements InstanceManager {
     }
 
     @Override
-    public Object newInstance(String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
-        final ClassLoader classLoader = webContext.getClassLoader();
-        return newInstance(className, classLoader);
-    }
-
-    @Override
-    public Object newInstance(String className, ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+    public Object newInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
         try {
-            final Class<?> clazz = classLoader.loadClass(className);
             final Object object = webContext.newInstance(clazz);
             postConstruct(object, clazz);
             return object;
@@ -63,6 +56,17 @@ public class JavaeeInstanceManager implements InstanceManager {
         } catch (final WebBeansCreationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
         }
+    }
+
+    @Override
+    public Object newInstance(String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+        final ClassLoader classLoader = webContext.getClassLoader();
+        return newInstance(className, classLoader);
+    }
+
+    @Override
+    public Object newInstance(String className, ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+        return newInstance(classLoader.loadClass(className));
     }
 
     @Override

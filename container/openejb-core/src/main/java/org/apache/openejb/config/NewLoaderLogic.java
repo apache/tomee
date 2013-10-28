@@ -250,7 +250,8 @@ public class NewLoaderLogic {
             exclusions = readDefaultExclusions();
         }
 
-        final List<String> excludes = null != exclusions ? Arrays.asList(exclusions) : new ArrayList<String>();
+        final List<String> excludes = new ArrayList<String>(exclusions.length + 5);
+        excludes.addAll(Arrays.asList(exclusions));
 
         if (ADDITIONAL_EXCLUDES != null) {
             for (final String exclude : ADDITIONAL_EXCLUDES.split(",")) {

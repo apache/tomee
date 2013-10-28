@@ -430,8 +430,10 @@ public class OpenEJBContextConfig extends ContextConfig {
                                 // no-op
                             }
                         } else {
-                            try { // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
-                                logger.info("Using @HandlesTypes on a parent class (and not an annotation) is a performance killer. See " + annotation.getName() + " on " + sci.getClass().getName());
+                            try {
+                                // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
+                                // don't warn since it is in the spec + JavaEE 7 will rely a lot on it so *we* need to improve and not the opposite!
+                                // logger.info("Using @HandlesTypes on a parent class (and not an annotation) is a performance killer. See " + annotation.getName() + " on " + sci.getClass().getName());
                                 if (AnnotationFinder.class.isInstance(finder)) {
                                     if (annotation.isInterface()) {
                                         if (!foundImplementations) {
