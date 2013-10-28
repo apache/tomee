@@ -431,25 +431,15 @@ public class OpenEJBContextConfig extends ContextConfig {
                             }
                         } else {
                             try {
-                                // we need to load the class (entry.getKey()) with the finder classloader = tempClassLoader otherwise isAssignable is false in almost all cases
-                                // don't warn since it is in the spec + JavaEE 7 will rely a lot on it so *we* need to improve and not the opposite!
-                                // logger.info("Using @HandlesTypes on a parent class (and not an annotation) is a performance killer. See " + annotation.getName() + " on " + sci.getClass().getName());
-                                if (AnnotationFinder.class.isInstance(finder)) {
-                                    if (annotation.isInterface()) {
-                                        if (!foundImplementations) {
-                                            AnnotationFinder.class.cast(finder).enableFindImplementations();
-                                            foundImplementations = true;
-                                        }
-                                    } else {
-                                        if (!foundSubClasses) {
-                                            AnnotationFinder.class.cast(finder).enableFindSubclasses();
-                                            foundSubClasses = true;
-                                        }
-                                    }
+                                final Class<?> reloadedClass = tempLoader.loadClass(annotation.getName());
+
+                                final List<Class<?>> implementations;
+                                if (annotation.isInterface()) {
+                                    implementations = finder.findImplementations(reloadedClass);
+                                } else {
+                                    implementations = finder.findSubclasses(reloadedClass);
                                 }
 
-                                final Class<?> reloadedClass = tempLoader.loadClass(annotation.getName());
-                                final List<Class<?>> implementations = List.class.cast(finder.findImplementations(reloadedClass));
                                 addClassesWithRightLoader(loader, sci, implementations);
                             } catch (final Throwable th) {
                                 // no-op
