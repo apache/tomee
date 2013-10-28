@@ -282,9 +282,15 @@ public class AnnotationDeployer implements DynamicDeployer {
     };
 
     private static final String[] WEB_CLASSES = new String[] {
+            // Servlet 3.0
             "javax.servlet.annotation.WebServlet",
             "javax.servlet.annotation.WebFilter",
-            "javax.servlet.annotation.WebListener"
+            "javax.servlet.annotation.WebListener",
+
+            // WebSocket 1.0 (since Tomcat 7.0.47)
+            "javax.websocket.server.ServerEndpoint",
+            "javax.websocket.server.ServerApplicationConfig",
+            "javax.websocket.Endpoint"
     };
 
     private static final Collection<String> API_CLASSES = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
@@ -450,7 +456,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     removeModule();
                 }
             }
-            for (WebModule webModule : appModule.getWebModules()) {
+            for (WebModule webModule : appModule.getWebModules()) { // here we scan by inheritance so great to keep it last
                 webModule.initAppModule(appModule);
                 setModule(webModule);
                 try {
@@ -1176,7 +1182,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             /*
-             * Servlet, Filter, Listener
+             * Servlet, Filter, Listener...
+             * here we can scan by inheritance so do it last
              */
 
             Map<String, String> urlByClasses = null;
@@ -2178,8 +2185,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         continue;
                     }
 
-                    final List<Annotated<Class<?>>> found = finder.findMetaAnnotatedClasses(clazz);
-                    classes.addAll(metaToClass(found));
+                    final List<Annotated<Class<?>>> found;
+                    if (clazz.isAnnotation()) {
+                        classes.addAll(metaToClass(finder.findMetaAnnotatedClasses(clazz)));
+                    } else if (Modifier.isAbstract(clazz.getModifiers())) {
+                        classes.addAll(finder.findSubclasses(clazz));
+                    } else {
+                        classes.addAll(finder.findImplementations(clazz));
+                    }
                 }
 
             }

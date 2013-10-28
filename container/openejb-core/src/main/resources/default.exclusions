@@ -193,7 +193,13 @@ surefire-
 swizzle-
 sxc-
 testng-
-tomcat-
+tomcat-api
+tomcat-coyote
+tomcat-dbcp
+tomcat-i18n
+tomcat-jdbc
+tomcat-juli
+tomcat-util
 tomee-
 tools.jar
 twitter4j-

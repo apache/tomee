@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.AsynchronousInheritanceAnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.Archive;
@@ -43,6 +44,7 @@ public class FinderFactory {
 
     private static final FinderFactory factory = new FinderFactory();
     public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
+    public static final String ASYNC_SCAN = "openejb.scanning.inheritance.asynchronous";
     public static final String SKIP_LINK = "openejb.finder.skip.link";
 
     private static FinderFactory get() {
@@ -55,22 +57,22 @@ public class FinderFactory {
     }
 
     public static AnnotationFinder getFinder(ClassLoader classLoader, URL url) {
-        return new AnnotationFinder(ClasspathArchive.archive(classLoader, url));
+        return newFinder(ClasspathArchive.archive(classLoader, url));
     }
 
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
         IAnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
-            final AnnotationFinder annotationFinder = new AnnotationFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
+            final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
             enableFinderOptions(annotationFinder);
             finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
             ConnectorModule connectorModule = (ConnectorModule) module;
-            finder = new AnnotationFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
+            finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
-            finder = new AnnotationFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
+            finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
         } else if (module.getJarLocation() != null) {
             String location = module.getJarLocation();
             File file = new File(location);
@@ -88,11 +90,12 @@ public class FinderFactory {
             }
 
             if (module instanceof Module) {
-                final AnnotationFinder annotationFinder = new AnnotationFinder(new DebugArchive(new ConfigurableClasspathArchive((Module) module, url)));
+                final DebugArchive archive = new DebugArchive(new ConfigurableClasspathArchive((Module) module, url));
+                final AnnotationFinder annotationFinder = newFinder(archive);
                 enableFinderOptions(annotationFinder);
                 finder = annotationFinder.link();
             } else {
-                final AnnotationFinder annotationFinder = new AnnotationFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
+                final AnnotationFinder annotationFinder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
                 enableFinderOptions(annotationFinder);
                 finder = annotationFinder.link();
             }
@@ -101,6 +104,13 @@ public class FinderFactory {
         }
 
         return new ModuleLimitedFinder(finder);
+    }
+
+    private static AnnotationFinder newFinder(final Archive archive) {
+        if ("true".equals(SystemInstance.get().getProperty(ASYNC_SCAN, "true"))) {
+            return new AsynchronousInheritanceAnnotationFinder(archive);
+        }
+        return new AnnotationFinder(archive);
     }
 
     public static class DebugArchive implements Archive {
@@ -136,19 +146,22 @@ public class FinderFactory {
             annotationFinder.enableMetaAnnotations();
         }
         if (enableFindSubclasses()) {
-            annotationFinder.link(); // for @HandleTypes we need interface impl, impl of abstract classes too
+            // for @HandleTypes we need interface impl, impl of abstract classes too
+            annotationFinder.enableFindSubclasses();
+            annotationFinder.enableFindImplementations();
         }
 
         return annotationFinder;
     }
 
     private static boolean enableFindSubclasses() {
-        return !SystemInstance.get().getOptions().get(SKIP_LINK, false) && (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false));
+        return !SystemInstance.get().getOptions().get(SKIP_LINK, false)
+            && (isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false)));
     }
 
-    private static boolean isTomEE() {
-        try {
-            FinderFactory.class.getClassLoader().loadClass("org.apache.tomee.catalina.ServerListener");
+    public static boolean isTomEE() {
+        try { // since Tomcat 7.0.47
+            FinderFactory.class.getClassLoader().loadClass("javax.websocket.Endpoint");
             return true;
         } catch (Throwable e) {
             return false;

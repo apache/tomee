@@ -100,7 +100,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.14</xbeanVersion>
+    <xbeanVersion>3.15-SNAPSHOT</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -121,7 +121,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.42</tomcat.version>
+    <tomcat.version>7.0.47</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.9</cxf.version>

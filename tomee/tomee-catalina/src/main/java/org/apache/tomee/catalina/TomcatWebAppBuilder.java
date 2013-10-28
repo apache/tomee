@@ -87,7 +87,12 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
-import org.apache.openejb.config.*;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.TldScanner;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -111,6 +116,7 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
+import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.TomcatVersion;
@@ -135,6 +141,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.websocket.server.ServerEndpointConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -261,6 +268,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final StandardServer standardServer = TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
+        // force tomcat to use our custom WebSocket ServerEndpointConfigurator
+        forceEEServerEndpointConfigurator();
+
         // could search mbeans
 
         //Getting host config listeners
@@ -303,6 +313,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
+    }
+
+    private static void forceEEServerEndpointConfigurator() {
+        // by reflection cause
+        // 1- tomcat algorithm uses ServiceLoader.next() so no real way to ensure it is our META-INF/services/...
+        // 2- avoids getResources which can be slow depending the server config
+        try {
+            final Field f = ServerEndpointConfig.Configurator.class.getDeclaredField("defaultImpl");
+            boolean acc = f.isAccessible();
+            f.setAccessible(true);
+            try {
+                f.set(null, new JavaEEDefaultServerEnpointConfigurator());
+            } finally {
+                f.setAccessible(acc);
+            }
+        } catch (final Exception e) {
+            logger.warning("Can't set TomEE ServerEndpointConfig$Configurator", e);
+        }
     }
 
     private void manageCluster(final Cluster cluster) {
@@ -1293,7 +1321,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.getBindings().putAll(appContext.getBindings());
                 webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
 
-                standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
+                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext, standardContext);
+                standardContext.setInstanceManager(instanceManager);
+                JavaEEDefaultServerEnpointConfigurator.registerInstanceManager(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
@@ -1802,6 +1832,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
             }
             ClassLoaderUtil.cleanOpenJPACache(old);
+            JavaEEDefaultServerEnpointConfigurator.unregisterInstanceManager(old);
         }
         if (contextInfo != null && (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone)) {
             removeContextInfo(standardContext);
