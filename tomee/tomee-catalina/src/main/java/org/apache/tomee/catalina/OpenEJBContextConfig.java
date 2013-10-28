@@ -57,7 +57,6 @@ import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
-import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
@@ -416,8 +415,6 @@ public class OpenEJBContextConfig extends ContextConfig {
 
             if (typeInitializerMap.size() > 0 && finder != null) {
                 final ClassLoader loader = context.getLoader().getClassLoader();
-                boolean foundSubClasses = false;
-                boolean foundImplementations = false;
 
                 for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
                     final Class<?> annotation = entry.getKey();
