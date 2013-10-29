@@ -49,6 +49,8 @@ public class EmbeddedJarScanner implements JarScanner {
      */
     private static final StringManager sm = StringManager.getManager(Constants.Package);
 
+    private static final String FRAGMENT_CALLBACK = "org.apache.catalina.startup.ContextConfig$FragmentJarScannerCallback";
+
     /**
      * Scan the provided ServletContext and classloader for JAR files. Each JAR
      * file found will be passed to the callback handler to be processed.
@@ -71,7 +73,7 @@ public class EmbeddedJarScanner implements JarScanner {
             // scan = scan.exclude(".*/WEB-INF/lib/.*"); // doing it simply prevent ServletContainerInitializer to de discovered
 
             for (final URL url : scan) {
-                if (isWebInfClasses(url) && !"org.apache.catalina.startup.ContextConfig$FragmentJarScannerCallback".equals(callback.getClass().getName())) { // we need all fragments to let SCI working
+                if (isWebInfClasses(url) && !FRAGMENT_CALLBACK.equals(callback.getClass().getName())) { // we need all fragments to let SCI working
                     continue;
                 }
 
@@ -127,7 +129,22 @@ public class EmbeddedJarScanner implements JarScanner {
                 if (urlStr.endsWith(Constants.JAR_EXT)) {
 
                     final URL jarURL = new URL("jar:" + urlStr + "!/");
-                    callback.scan((JarURLConnection) jarURL.openConnection());
+
+                    final String fileName = URLs.toFile(jarURL).getName();
+                    // bug in tomcat 7.0.47 so we need to handle it manually
+                    // TODO: remove this hack when upgrading to Tomcat 7.0.48
+                    if (fileName.contains("tomcat7-websocket") && FRAGMENT_CALLBACK.equals(callback.getClass().getName())) {
+                        final WebXml fragment = new WebXml();
+                        fragment.setName("org_apache_tomcat_websocket");
+                        fragment.setDistributable(true);
+                        fragment.setMetadataComplete(true);
+                        fragment.setVersion("3.0");
+                        fragment.setURL(jarURL);
+                        fragment.setJarName(fileName);
+                        Map.class.cast(Reflections.get(callback, "fragments")).put(fragment.getName(), fragment);
+                    } else {
+                        callback.scan(JarURLConnection.class.cast(jarURL.openConnection()));
+                    }
 
                 } else {
 
