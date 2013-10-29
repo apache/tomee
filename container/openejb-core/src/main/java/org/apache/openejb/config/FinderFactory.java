@@ -46,6 +46,7 @@ public class FinderFactory {
     public static final String TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP = "tomee.jaxrs.deploy.undeclared";
     public static final String ASYNC_SCAN = "openejb.scanning.inheritance.asynchronous";
     public static final String SKIP_LINK = "openejb.finder.skip.link";
+    public static final String FORCE_LINK = "openejb.finder.force.link";
 
     private static FinderFactory get() {
         FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
@@ -93,14 +94,14 @@ public class FinderFactory {
                 final DebugArchive archive = new DebugArchive(new ConfigurableClasspathArchive((Module) module, url));
                 final AnnotationFinder annotationFinder = newFinder(archive);
                 enableFinderOptions(annotationFinder);
-                finder = annotationFinder.link();
+                finder = annotationFinder;
             } else {
                 final AnnotationFinder annotationFinder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
                 enableFinderOptions(annotationFinder);
-                finder = annotationFinder.link();
+                finder = annotationFinder;
             }
         } else {
-            finder = new AnnotationFinder(new ClassesArchive()).link();
+            finder = new AnnotationFinder(new ClassesArchive());
         }
 
         return new ModuleLimitedFinder(finder);
@@ -134,7 +135,7 @@ public class FinderFactory {
         public Class<?> loadClass(String s) throws ClassNotFoundException {
             try {
                 return archive.loadClass(s);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 e.printStackTrace();
                 throw e;
             }
@@ -155,8 +156,9 @@ public class FinderFactory {
     }
 
     private static boolean enableFindSubclasses() {
-        return !SystemInstance.get().getOptions().get(SKIP_LINK, false)
-            && (isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false)));
+        return SystemInstance.get().getOptions().get(FORCE_LINK, false)
+            || (!SystemInstance.get().getOptions().get(SKIP_LINK, false)
+                && (isTomEE() || (isJaxRsInstalled() && SystemInstance.get().getOptions().get(TOMEE_JAXRS_DEPLOY_UNDECLARED_PROP, false))));
     }
 
     public static boolean isTomEE() {
