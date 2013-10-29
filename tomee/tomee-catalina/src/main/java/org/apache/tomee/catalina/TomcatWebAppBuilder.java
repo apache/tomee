@@ -49,6 +49,7 @@ import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.realm.RealmBase;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
@@ -141,7 +142,6 @@ import javax.servlet.jsp.JspFactory;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.websocket.server.ServerEndpointConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,6 +160,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -205,6 +206,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             throw new OpenEJBRuntimeException("can't find method getNamingContextName", e);
         }
     }
+
+    private final Map<ClassLoader, InstanceManager> instanceManagers = new ConcurrentHashMap<ClassLoader, InstanceManager>();
 
     /**
      * Context information for web applications
@@ -315,19 +318,22 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         deploymentLoader = new DeploymentLoader();
     }
 
-    private static void forceEEServerEndpointConfigurator() {
+    private void forceEEServerEndpointConfigurator() {
         // by reflection cause
         // 1- tomcat algorithm uses ServiceLoader.next() so no real way to ensure it is our META-INF/services/...
         // 2- avoids getResources which can be slow depending the server config
         try {
-            final Field f = ServerEndpointConfig.Configurator.class.getDeclaredField("defaultImpl");
+            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("javax.websocket.server.ServerEndpointConfig$Configurator");
+            final Field f = clazz.getDeclaredField("defaultImpl");
             boolean acc = f.isAccessible();
             f.setAccessible(true);
             try {
-                f.set(null, new JavaEEDefaultServerEnpointConfigurator());
+                f.set(null, new JavaEEDefaultServerEnpointConfigurator(instanceManagers));
             } finally {
                 f.setAccessible(acc);
             }
+        } catch (final ClassNotFoundException cnfe) {
+            // no-op
         } catch (final Exception e) {
             logger.warning("Can't set TomEE ServerEndpointConfig$Configurator", e);
         }
@@ -372,6 +378,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     protected Realm tomeeRealm(final Realm realm) {
         final TomEERealm trealm = new TomEERealm();
+        if (RealmBase.class.isInstance(realm)) {
+            trealm.setRealmPath("/tomee/" + RealmBase.class.cast(realm).getRealmPath());
+        }
         trealm.addRealm(realm);
         return trealm;
     }
@@ -1323,7 +1332,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext, standardContext);
                 standardContext.setInstanceManager(instanceManager);
-                JavaEEDefaultServerEnpointConfigurator.registerInstanceManager(classLoader, instanceManager);
+                instanceManagers.put(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
@@ -1832,8 +1841,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
             }
             ClassLoaderUtil.cleanOpenJPACache(old);
-            JavaEEDefaultServerEnpointConfigurator.unregisterInstanceManager(old);
+            instanceManagers.remove(old);
+        } else if (standardContext.getLoader() != null && standardContext.getLoader().getClassLoader() != null) {
+            instanceManagers.remove(standardContext.getLoader().getClassLoader());
         }
+
         if (contextInfo != null && (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone)) {
             removeContextInfo(standardContext);
         }

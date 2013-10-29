@@ -20,14 +20,17 @@ import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpointConfigurator {
-    private static final Map<ClassLoader, InstanceManager> INSTANCE_MANAGERS = new ConcurrentHashMap<ClassLoader, InstanceManager>();
+    private final Map<ClassLoader, InstanceManager> instanceManagers;
+
+    public JavaEEDefaultServerEnpointConfigurator(final Map<ClassLoader, InstanceManager> instanceManagers) {
+        this.instanceManagers = instanceManagers;
+    }
 
     @Override
     public <T> T getEndpointInstance(final Class<T> clazz) throws InstantiationException {
-        final InstanceManager instanceManager = INSTANCE_MANAGERS.get(clazz.getClassLoader());
+        final InstanceManager instanceManager = instanceManagers.get(clazz.getClassLoader());
         if (instanceManager == null) {
             return super.getEndpointInstance(clazz);
         }
@@ -40,13 +43,5 @@ public class JavaEEDefaultServerEnpointConfigurator extends DefaultServerEndpoin
             }
             throw new InstantiationException(e.getMessage());
         }
-    }
-
-    public static void registerInstanceManager(final ClassLoader loader, final InstanceManager manager) {
-        INSTANCE_MANAGERS.put(loader, manager);
-    }
-
-    public static void unregisterInstanceManager(final ClassLoader loader) {
-        INSTANCE_MANAGERS.remove(loader);
     }
 }
