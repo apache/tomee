@@ -62,7 +62,7 @@ public class FinderFactory {
     }
 
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
-        IAnnotationFinder finder;
+        final AnnotationFinder finder;
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
@@ -92,13 +92,14 @@ public class FinderFactory {
 
             if (module instanceof Module) {
                 final DebugArchive archive = new DebugArchive(new ConfigurableClasspathArchive((Module) module, url));
-                final AnnotationFinder annotationFinder = newFinder(archive);
-                enableFinderOptions(annotationFinder);
-                finder = annotationFinder;
+                finder = newFinder(archive);
             } else {
-                final AnnotationFinder annotationFinder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
-                enableFinderOptions(annotationFinder);
-                finder = annotationFinder;
+                finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
+            }
+            if ("true".equals(module.getProperties().getProperty(FORCE_LINK, "false"))) {
+                finder.link();
+            } else {
+                enableFinderOptions(finder);
             }
         } else {
             finder = new AnnotationFinder(new ClassesArchive());
