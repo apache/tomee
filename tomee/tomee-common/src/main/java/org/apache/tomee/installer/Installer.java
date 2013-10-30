@@ -658,6 +658,10 @@ public class Installer {
                 systemPropertiesWriter.write("# tomee.jaxws.oldsubcontext = false\n");
 
                 systemPropertiesWriter.write("\n");
+                systemPropertiesWriter.write("# if you want to propagate a deployment on a cluster when a tomcat cluster is defined\n");
+                systemPropertiesWriter.write("# tomee.cluster.deployment = false\n");
+
+                systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write("# openejb.system.apps = true\n");
                 systemPropertiesWriter.write("# openejb.servicemanager.enabled = true\n");
                 systemPropertiesWriter.write("# openejb.jmx.active = false\n");
