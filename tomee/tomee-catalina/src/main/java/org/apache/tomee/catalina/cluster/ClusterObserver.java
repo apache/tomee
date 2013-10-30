@@ -21,12 +21,15 @@ import org.apache.catalina.ha.ClusterMessage;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 
 import java.io.File;
 import java.util.Set;
 
 public class ClusterObserver {
+    private static final boolean ClUSTER_DEPLOYMENT = "true".equals(SystemInstance.get().getProperty("tomee.cluster.deployment", "false"));
+
     private final Set<CatalinaCluster> clusters;
 
     public ClusterObserver(final Set<CatalinaCluster> clusters) {
@@ -34,11 +37,19 @@ public class ClusterObserver {
     }
 
     public void deploy(@Observes final AssemblerAfterApplicationCreated app) {
+        if (!ClUSTER_DEPLOYMENT) {
+            return;
+        }
+
         final AppInfo appInfo = app.getApp();
         send(new DeployMessage(appInfo.path), appInfo);
     }
 
     public void undeploy(@Observes final AssemblerBeforeApplicationDestroyed app) {
+        if (!ClUSTER_DEPLOYMENT) {
+            return;
+        }
+
         final AppInfo appInfo = app.getApp();
         send(new UndeployMessage(appInfo.path), appInfo);
     }
