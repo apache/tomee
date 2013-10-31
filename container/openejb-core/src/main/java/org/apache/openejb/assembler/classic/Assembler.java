@@ -1317,7 +1317,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             logger.debug("Undeploying Applications");
             final Assembler assembler = this;
-            for (final AppInfo appInfo : assembler.getDeployedApplications()) {
+            final List<AppInfo> deployedApps = new ArrayList<AppInfo>(assembler.getDeployedApplications());
+            Collections.reverse(deployedApps); // if an app relies on the previous one it surely relies on it too at undeploy time
+            for (final AppInfo appInfo : deployedApps) {
                 try {
                     assembler.destroyApplication(appInfo.path);
                 } catch (UndeployException e) {
@@ -1756,6 +1758,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     destroyLookedUpResource(globalContext, id, name);
                 } catch (final NamingException e) {
                     logger.warning("can't unbind resource '{0}'", id);
+                }
+            }
+            for (final ConnectorInfo connector : appInfo.connectors) {
+                if (connector.resourceAdapter == null || connector.resourceAdapter.id == null) {
+                    continue;
+                }
+
+                final String name = OPENEJB_RESOURCE_JNDI_PREFIX + connector.resourceAdapter.id;
+                try {
+                    destroyLookedUpResource(globalContext, connector.resourceAdapter.id, name);
+                } catch (final NamingException e) {
+                    logger.warning("can't unbind resource '{0}'", connector);
                 }
             }
 
