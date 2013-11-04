@@ -59,7 +59,6 @@ public class DynamicUserDaoTest {
         p.setProperty("openejb.exclude-include.order", "exclude-include");
 
         p.setProperty("jdbc/DynamicUserDaoTest", "new://Resource?type=DataSource");
-        p.setProperty("jdbc/DynamicUserDaoTest", "new://Resource?type=DataSource");
         p.setProperty("jdbc/DynamicUserDaoTest.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.setProperty("jdbc/DynamicUserDaoTest.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
         p.setProperty("jdbc/DynamicUserDaoTest.UserName", "sa");
