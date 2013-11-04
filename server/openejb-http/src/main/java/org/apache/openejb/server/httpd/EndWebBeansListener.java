@@ -21,10 +21,12 @@ import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.context.ConversationContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.FailOverService;
 
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.servlet.ServletRequestEvent;
@@ -33,8 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -152,8 +153,13 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
             WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
-        ConversationManager conversationManager = webBeansContext.getConversationManager();
-        conversationManager.destroyConversationContextWithSessionId(event.getSession().getId());
+        final ConversationManager conversationManager = webBeansContext.getConversationManager();
+        final Map<Conversation, ConversationContext> cc = conversationManager.getAndRemoveConversationMapWithSessionId(event.getSession().getId());
+        for (final ConversationContext c : cc.values()) {
+            if (c != null) {
+                c.destroy();
+            }
+        }
     }
 
 
