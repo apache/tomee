@@ -87,7 +87,7 @@ public class EndWebBeansListener implements ServletContextListener, ServletReque
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
+            logger.debug("Destroying a request : [{0}]", event == null ? "null" : event.getServletRequest().getRemoteAddr());
         }
 
         final Object oldContext;
