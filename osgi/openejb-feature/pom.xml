@@ -21,7 +21,7 @@
   <parent>
     <artifactId>osgi</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.5.2</version>
+    <version>4.5.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -68,6 +68,24 @@
       </resource>
     </resources>
     <plugins>
+      <!--
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>3.0.1-SNAPSHOT</version>
+        <configuration>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>features-generate-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>

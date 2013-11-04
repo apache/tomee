@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
-
     private URI[] locations;
     private URI location;
 

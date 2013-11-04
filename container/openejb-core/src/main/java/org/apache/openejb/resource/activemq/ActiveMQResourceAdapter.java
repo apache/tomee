@@ -121,11 +121,9 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         ActiveMQFactory.setThreadProperties(properties);
 
         try {
-            if (brokerXmlConfig != null) {
-                //The returned broker should be started, but calling start is harmless.
-                //We do not need to track the instance as the factory takes care of this.
-                ActiveMQFactory.createBroker(URLs.uri(getBrokerXmlConfig())).start();
-            }
+            //The returned broker should be started, but calling start is harmless.
+            //We do not need to track the instance as the factory takes care of this.
+            ActiveMQFactory.createBroker(URLs.uri(getBrokerXmlConfig())).start();
         } catch (Exception e) {
             org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").fatal("Failed to start ActiveMQ", e);
         } finally {
@@ -155,13 +153,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                 try {
                     stopImpl();
                 } catch (Throwable t) {
-                    org.apache
-                        .openejb
-                        .util
-                        .Logger
-                        .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class)
-                        .getChildLogger("service")
-                        .error("ActiveMQ shutdown failed", t);
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").error("ActiveMQ shutdown failed", t);
                 }
             }
         };
@@ -181,13 +173,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             //Block for a maximum of timeout milliseconds waiting for this thread to die.
             stopThread.join(timeout);
         } catch (InterruptedException ex) {
-            org.apache
-                .openejb
-                .util
-                .Logger
-                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class)
-                .getChildLogger("service")
-                .warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
         }
     }
 

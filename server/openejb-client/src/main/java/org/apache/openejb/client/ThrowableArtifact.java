@@ -28,7 +28,6 @@ import java.util.Stack;
  */
 public class ThrowableArtifact implements Externalizable {
 
-
     private Throwable throwable;
 
     public ThrowableArtifact(Throwable throwable) {

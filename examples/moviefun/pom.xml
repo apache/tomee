@@ -18,11 +18,11 @@
 	<groupId>org.superbiz</groupId>
 	<artifactId>moviefun</artifactId>
 	<packaging>war</packaging>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>OpenEJB :: Web Examples :: Moviefun</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tomee.version>1.5.2</tomee.version>
+		<tomee.version>1.5.3-SNAPSHOT</tomee.version>
 		<version.shrinkwrap.resolver>2.0.0-alpha-5</version.shrinkwrap.resolver>
 	</properties>
 	<repositories>
@@ -98,7 +98,7 @@
 			<plugin>
 				<groupId>org.apache.openejb.maven</groupId>
 				<artifactId>tomee-maven-plugin</artifactId>
-				<version>1.5.2</version>
+				<version>1.5.3-SNAPSHOT</version>
 				<configuration>
 					<tomeeClassifier>plus</tomeeClassifier>
 					<args>-Xmx512m -XX:PermSize=256m</args>
@@ -148,7 +148,7 @@
 		<dependency>
 			<groupId>org.apache.openejb</groupId>
 			<artifactId>openejb-core</artifactId>
-			<version>4.5.2</version>
+			<version>4.5.3-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -166,7 +166,7 @@
 		<dependency>
 			<groupId>org.apache.openejb</groupId>
 			<artifactId>tomee-embedded</artifactId>
-			<version>1.5.2</version>
+			<version>1.5.3-SNAPSHOT</version>
 			<!--<classifier>uber</classifier> -->
 			<scope>test</scope>
 		</dependency>

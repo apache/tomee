@@ -25,8 +25,6 @@ import java.io.ObjectOutput;
  * @version $Rev$ $Date$
  */
 public class DataSourceMetaData implements Externalizable {
-
-
     private String jdbcUrl;
     private String jdbcDriver;
     private String defaultPassword;
