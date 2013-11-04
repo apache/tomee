@@ -84,7 +84,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
 
         try {
             if (logger.isDebugEnabled()) {
-                logger.debug("Starting a new request : [{0}]", event.getServletRequest().getRemoteAddr());
+                logger.debug("Starting a new request : [{0}]", event == null ? "null" : event.getServletRequest().getRemoteAddr());
             }
 
             if (webBeansContext instanceof WebappWebBeansContext) { // start before child
@@ -96,7 +96,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
             // the first time. See OWB-457
 
         } catch (Exception e) {
-            logger.error(OWBLogConst.ERROR_0019, event.getServletRequest());
+            logger.error(OWBLogConst.ERROR_0019, event == null ? "null" : event.getServletRequest());
             WebBeansUtil.throwRuntimeExceptions(e);
         }
     }
@@ -125,13 +125,20 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      */
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-        // no-op
+        ensureRequestScope();
+    }
+
+    private void ensureRequestScope() {
+        if (!webBeansContext.getContextsService().getCurrentContext(RequestScoped.class).isActive()) {
+            requestInitialized(null);
+            EndWebBeansListener.FAKE_REQUEST.set(true);
+        }
     }
 
 
     @Override
     public void sessionWillPassivate(HttpSessionEvent event) {
-        // no-op
+        ensureRequestScope();
     }
 
     @Override
@@ -145,13 +152,14 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
             OpenEJBLifecycle.initializeServletContext(servletContextEvent.getServletContext(), webBeansContext);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (final Exception e) {
+            logger.warning(e.getMessage(), e);
         }
+        ensureRequestScope();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        // no-op
+        ensureRequestScope();
     }
 }

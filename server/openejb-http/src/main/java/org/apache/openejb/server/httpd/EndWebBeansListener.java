@@ -29,6 +29,8 @@ import org.apache.webbeans.spi.FailOverService;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +44,9 @@ import java.util.Map;
  *
  * Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
-public class EndWebBeansListener implements ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
+public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
+
+    static final ThreadLocal<Boolean> FAKE_REQUEST = new ThreadLocal<Boolean>();
 
     private final String contextKey;
 
@@ -86,11 +90,17 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
             logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
         }
 
-        final Object oldContext = event.getServletRequest().getAttribute(contextKey);
+        final Object oldContext;
+        if (event != null) {
+            oldContext = event.getServletRequest().getAttribute(contextKey);
+        } else {
+            oldContext = null;
+        }
 
         try {
-            if (failoverService != null &&
-                    failoverService.isSupportFailOver()) {
+            if (event != null
+                && failoverService != null
+                && failoverService.isSupportFailOver()) {
                 Object request = event.getServletRequest();
                 if (request instanceof HttpServletRequest) {
                     HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -160,6 +170,19 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
                 c.destroy();
             }
         }
+
+        destroyFakedRequest();
+    }
+
+    private void destroyFakedRequest() {
+        final Boolean faked = FAKE_REQUEST.get();
+        try {
+            if (faked != null && faked) {
+                requestDestroyed(null);
+            }
+        } finally {
+            FAKE_REQUEST.remove();
+        }
     }
 
 
@@ -172,10 +195,21 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
         if (failoverService != null && failoverService.isSupportPassivation()) {
             failoverService.sessionWillPassivate(event.getSession());
         }
+        destroyFakedRequest();
     }
 
     @Override
     public void sessionDidActivate(HttpSessionEvent event) {
         // no-op
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        destroyFakedRequest();
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        destroyFakedRequest();
     }
 }
