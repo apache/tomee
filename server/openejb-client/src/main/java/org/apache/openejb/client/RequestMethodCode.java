@@ -19,7 +19,6 @@ package org.apache.openejb.client;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  *
  */
@@ -51,10 +50,12 @@ public enum RequestMethodCode {
     private final static Map<Integer, RequestMethodCode> ENUM_MAP = new HashMap<Integer, RequestMethodCode>();
 
     static {
-        for (RequestMethodCode e : RequestMethodCode.values()) ENUM_MAP.put(e.code, e);
+        for (final RequestMethodCode e : RequestMethodCode.values()) {
+            ENUM_MAP.put(e.code, e);
+        }
     }
 
-    private RequestMethodCode(int code) {
+    private RequestMethodCode(final int code) {
         this.code = code;
     }
 
@@ -62,9 +63,11 @@ public enum RequestMethodCode {
         return code;
     }
 
-    public static RequestMethodCode valueOf(int key) {
-        RequestMethodCode result = ENUM_MAP.get(key);
-        if (result == null) throw new IllegalArgumentException();
+    public static RequestMethodCode valueOf(final int key) {
+        final RequestMethodCode result = ENUM_MAP.get(key);
+        if (result == null) {
+            throw new IllegalArgumentException();
+        }
         return result;
     }
 }

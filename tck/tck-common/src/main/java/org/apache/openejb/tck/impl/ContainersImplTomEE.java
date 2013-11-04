@@ -31,6 +31,8 @@ import javax.naming.InitialContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -150,7 +152,7 @@ public class ContainersImplTomEE extends AbstractContainers implements Container
     @Override
     public void setup() throws IOException {
         System.out.println("Setup called");
-        server.start();
+        server.start(Arrays.asList("-Dopenejb.classloader.forced-load=org.apache.openejb.tck"), "start", true);
     }
     @Override
     public void cleanup() throws IOException {

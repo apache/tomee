@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.timer.quartz.PatchedStdJDBCDelegate;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -38,6 +39,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.jdbcjobstore.StdJDBCDelegate;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.listeners.SchedulerListenerSupport;
 import org.quartz.simpl.RAMJobStore;
@@ -121,7 +123,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         deployment = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(dId);
         transactionManager = getDefaultTransactionManager();
-        timerStore = new MemoryTimerStore(transactionManager); // TODO: check it should be serialized or not
+        timerStore = deployment.getEjbTimerService().getTimerStore();
         scheduler = (Scheduler) Proxy.newProxyInstance(deployment.getClassLoader(), new Class<?>[]{Scheduler.class}, new LazyScheduler(deployment));
     }
 
@@ -147,76 +149,30 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
 
             final Properties properties = new Properties();
-            putAll(properties, SystemInstance.get().getProperties());
-            putAll(properties, deployment.getModuleContext().getAppContext().getProperties());
-            putAll(properties, deployment.getModuleContext().getProperties());
-            putAll(properties, deployment.getProperties());
+            int quartzProps = 0;
+            quartzProps += putAll(properties, SystemInstance.get().getProperties());
+            quartzProps += putAll(properties, deployment.getModuleContext().getAppContext().getProperties());
+            quartzProps += putAll(properties, deployment.getModuleContext().getProperties());
+            quartzProps += putAll(properties, deployment.getProperties());
 
             // custom config -> don't use default/global scheduler
             // if one day we want to keep a global config for a global scheduler (SystemInstance.get().getProperties()) we'll need to manage resume/pause etc correctly by app
             // since we have a scheduler by ejb today in such a case we don't need
-            final boolean newInstance = properties.size() > 0;
+            final boolean newInstance = quartzProps > 0;
 
             final SystemInstance systemInstance = SystemInstance.get();
 
             scheduler = systemInstance.getComponent(Scheduler.class);
 
             if (scheduler == null || newInstance) {
-                final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
-                if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
-                    properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
-                }
-                if (!properties.containsKey("org.terracotta.quartz.skipUpdateCheck")) {
-                    properties.put("org.terracotta.quartz.skipUpdateCheck", "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT)) {
-                    properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true");
-                }
-                if (!properties.containsKey(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON)) {
-                    properties.put(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON, "true");
-                }
-                if (!properties.containsKey(QUARTZ_JMX) && LocalMBeanServer.isJMXActive()) {
-                    properties.put(QUARTZ_JMX, "true");
-                }
-                if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID)) {
-                    if (!newInstance) {
-                        properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "OpenEJB");
-                    } else {
-                        properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
-                    }
-                }
-
-                // adding our custom persister
-                if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
-                    properties.put("org.quartz.jobStore.driverDelegateInitString",
-                                   "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
-                }
-
-                if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
-                    && properties.containsKey("org.quartz.threadPool.threadCount")
-                    && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
-                    log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
-                             + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
-                }
-
-                // to ensure we can shutdown correctly, default doesn't support such a configuration
-                if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
-                    properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
-                }
+                defaultQuartzConfiguration(properties, deployment, newInstance);
 
                 try {
                     // start in container context to avoid thread leaks
                     final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-                    if (!"true".equals(deployment.getProperties().getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                    if ("true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                        Thread.currentThread().setContextClassLoader(deployment.getClassLoader());
+                    } else {
                         Thread.currentThread().setContextClassLoader(EjbTimerServiceImpl.class.getClassLoader());
                     }
                     try {
@@ -251,16 +207,83 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         return thisScheduler;
     }
 
-    private static void putAll(final Properties a, final Properties b) {
+    private static void defaultQuartzConfiguration(final Properties properties, final BeanContext deployment, final boolean newInstance) {
+        final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
+        if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
+            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        }
+        if (!properties.containsKey("org.terracotta.quartz.skipUpdateCheck")) {
+            properties.put("org.terracotta.quartz.skipUpdateCheck", "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT)) {
+            properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true");
+        }
+        if (!properties.containsKey(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON)) {
+            properties.put(QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON, "true");
+        }
+        if (!properties.containsKey(QUARTZ_JMX) && LocalMBeanServer.isJMXActive()) {
+            properties.put(QUARTZ_JMX, "true");
+        }
+        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID)) {
+            if (!newInstance) {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "OpenEJB");
+            } else {
+                properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, deployment.getDeploymentID().toString());
+            }
+        }
+
+        final String driverDelegate = properties.getProperty("org.quartz.jobStore.driverDelegateClass");
+        if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
+            properties.put("org.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
+        } else if (driverDelegate != null) {
+            log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
+        }
+
+        // adding our custom persister
+        if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
+            properties.put("org.quartz.jobStore.driverDelegateInitString",
+                           "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+        }
+
+        if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
+            && properties.containsKey("org.quartz.threadPool.threadCount")
+            && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
+            log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
+                     + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
+        }
+
+        // to ensure we can shutdown correctly, default doesn't support such a configuration
+        if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
+            properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
+        }
+    }
+
+    private static int putAll(final Properties a, final Properties b) {
+        int number = 0;
         for (final Map.Entry<Object, Object> entry : b.entrySet()) {
             final String key = entry.getKey().toString();
             if (key.startsWith("org.quartz.")
                 || key.startsWith("openejb.quartz.")
                 || DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE.equals(key)
                 || "org.terracotta.quartz.skipUpdateCheck".equals(key)) {
-                a.put(entry.getKey(), entry.getValue());
+                number++;
+            }
+
+            final Object value = entry.getValue();
+            if (String.class.isInstance(value)) {
+                a.put(entry.getKey(), value);
             }
         }
+        return number;
     }
 
     @Override
@@ -424,6 +447,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     @Override
     public void start() throws TimerStoreException {
+
+        if (isStarted()) {
+            return;
+        }
+
         scheduler = getDefaultScheduler(deployment);
 
         // load saved timers
@@ -443,9 +471,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
      *
      * @param timerData the timer to schedule
      */
-    public void schedule(final TimerData timerData) {
+    public void schedule(final TimerData timerData) throws TimerStoreException {
+
+        start();
+
         if (scheduler == null) {
-            throw new IllegalStateException("Scheduler is not configured properly");
+            throw new TimerStoreException("Scheduler is not configured properly");
         }
 
         timerData.setScheduler(scheduler);
@@ -477,12 +508,17 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         triggerDataMap.put(EjbTimeoutJob.TIMER_DATA, timerData);
 
         try {
-            if (!scheduler.checkExists(new TriggerKey(atrigger.getName(), atrigger.getGroup()))) {
+            final TriggerKey triggerKey = new TriggerKey(atrigger.getName(), atrigger.getGroup());
+            if (!scheduler.checkExists(triggerKey)) {
+                scheduler.scheduleJob(trigger);
+            } else if (Trigger.TriggerState.PAUSED.equals(scheduler.getTriggerState(triggerKey))) { // redeployment
+                // more consistent in the semantic than a resume but resume would maybe be more relevant here
+                scheduler.unscheduleJob(triggerKey);
                 scheduler.scheduleJob(trigger);
             }
         } catch (Exception e) {
             //TODO Any other actions we could do ?
-            log.warning("Could not schedule timer " + timerData, e);
+            log.error("Could not schedule timer " + timerData, e);
         }
     }
 
@@ -525,7 +561,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         final Collection<Timer> timers = new ArrayList<Timer>();
         for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
-            timers.add(timerData.getTimer());
+            if (!CalendarTimerData.class.isInstance(timerData) || !CalendarTimerData.class.cast(timerData).isAutoCreated()) {
+                timers.add(timerData.getTimer());
+            }
         }
         return timers;
     }
@@ -642,7 +680,13 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         //TODO add more schedule expression validation logic ?
         checkState();
         try {
-            final TimerData timerData = timerStore.createCalendarTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, scheduleExpression, timerConfig);
+            final TimerData timerData = timerStore.createCalendarTimer(this,
+                                                                       (String) deployment.getDeploymentID(),
+                                                                       primaryKey,
+                                                                       timeoutMethod,
+                                                                       scheduleExpression,
+                                                                       timerConfig,
+                                                                       false);
             initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
@@ -650,8 +694,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
     }
 
+    @Override
     public TimerStore getTimerStore() {
         return timerStore;
+    }
+
+    @Override
+    public boolean isStarted() {
+        return scheduler != null;
     }
 
     public Scheduler getScheduler() {
@@ -706,7 +756,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 // call the timeout method
                 try {
                     final RpcContainer container = (RpcContainer) deployment.getContainer();
+                    if (container == null) {
+                        return;
+                    }
+
                     final Method ejbTimeout = timerData.getTimeoutMethod();
+                    if (ejbTimeout == null) {
+                        return;
+                    }
+
                     SetAccessible.on(ejbTimeout);
                     container.invoke(deployment.getDeploymentID(),
                                      InterfaceType.TIMEOUT,

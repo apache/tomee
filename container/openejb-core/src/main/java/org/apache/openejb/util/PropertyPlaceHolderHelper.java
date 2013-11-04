@@ -28,7 +28,7 @@ public final class PropertyPlaceHolderHelper {
     private static final String SUFFIX = "}";
     private static final Properties CACHE = new Properties();
 
-    private static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
+    public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(new PropertiesLookup());
 
     private PropertyPlaceHolderHelper() {
         // no-op
@@ -91,7 +91,17 @@ public final class PropertyPlaceHolderHelper {
 
         @Override
         public String lookup(final String key) {
-            return PROPERTIES.getProperty(key, ENV.get(key));
+            String value = PROPERTIES.getProperty(key);
+            if (value != null) {
+                return value;
+            }
+
+            value = ENV.get(key);
+            if (value != null) {
+                return value;
+            }
+
+            return key;
         }
     }
 }

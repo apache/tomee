@@ -17,6 +17,8 @@
 package org.apache.openejb.maven.jarstxt;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -34,19 +36,23 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.loader.ProvisioningUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Mojo(name = "generate", threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.COMPILE)
 public class JarsTxtMojo extends AbstractMojo {
+    public static final String JAR = "jar";
     @Component
     protected MavenProject project;
 
@@ -71,6 +77,12 @@ public class JarsTxtMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     protected List<ArtifactRepository> remoteRepos;
 
+    @Parameter
+    protected List<String> additionals;
+
+    @Parameter
+    protected Map<String, String> placeHolders;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!outputFile.getParentFile().exists()) {
@@ -94,6 +106,19 @@ public class JarsTxtMojo extends AbstractMojo {
                         .append(a.getGroupId()).append("/")
                         .append(a.getArtifactId()).append("/")
                         .append(version(a));
+
+                final boolean isJar = JAR.equals(a.getType());
+                if (!isJar) {
+                    line.append("/").append(a.getType());
+                }
+
+                if (a.getClassifier() != null) {
+                    if (isJar) {
+                        line.append("/").append(JAR);
+                    }
+                    line.append("/").append(a.getClassifier());
+                }
+
                 if (hashAlgo != null) {
                     final Artifact artifact = factory.createDependencyArtifact(a.getGroupId(), a.getArtifactId(), VersionRange.createFromVersion(a.getVersion()), a.getType(), a.getClassifier(), a.getScope());
                     try {
@@ -109,6 +134,23 @@ public class JarsTxtMojo extends AbstractMojo {
                 }
 
                 set.add(line.toString());
+            }
+
+            if (additionals != null) {
+                if (placeHolders == null) {
+                    placeHolders = new HashMap<String, String>();
+                }
+
+                final StrSubstitutor lookup = new StrSubstitutor(StrLookup.mapLookup(placeHolders));
+
+                for (final String line : additionals) {
+                    final StringBuilder builder = new StringBuilder(line);
+                    if (hashAlgo != null) {
+                        builder.append("|").append(Files.hash(urls(line, lookup), hashAlgo))
+                                .append("|").append(hashAlgo);
+                    }
+                    set.add(builder.toString());
+                }
             }
 
             // written after to be sorted, more readable
@@ -129,6 +171,10 @@ public class JarsTxtMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private Set<URL> urls(final String line, final StrSubstitutor lookup) {
+        return Files.listJars(ProvisioningUtil.realLocation(lookup.replace(line)));
     }
 
     private String version(final Artifact a) {

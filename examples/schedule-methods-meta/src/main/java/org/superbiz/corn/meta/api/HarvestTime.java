@@ -28,13 +28,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 
 public @interface HarvestTime {
+
     public static interface $ {
 
         @HarvestTime
         @Schedules({
-                @Schedule(month = "9", dayOfMonth = "20-Last", minute = "0", hour = "8"),
-                @Schedule(month = "10", dayOfMonth = "1-10", minute = "0", hour = "8")
-        })
+                       @Schedule(month = "9", dayOfMonth = "20-Last", minute = "0", hour = "8"),
+                       @Schedule(month = "10", dayOfMonth = "1-10", minute = "0", hour = "8")
+                   })
         public void method();
     }
 }

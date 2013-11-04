@@ -42,6 +42,7 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
@@ -67,17 +68,16 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class Container {
-
     static {
         // org.apache.naming
         Assembler.installNaming("org.apache.naming", true);
     }
 
-    protected Configuration configuration;
-    private File base;
     private final Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
     private final Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage multimap
     private final Map<String, AppInfo> infos = new HashMap<String, AppInfo>(); // TODO: manage multimap
+    protected Configuration configuration;
+    private File base;
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private Tomcat tomcat;
@@ -86,6 +86,25 @@ public class Container {
         configuration = new Configuration();
         configuration.setHttpPort(23880);
         configuration.setStopPort(23881);
+    }
+
+    private static boolean sameApplication(final File file, final WebAppInfo webApp) {
+        String filename = file.getName();
+        if (filename.endsWith(".war")) {
+            filename = filename.substring(0, filename.length() - 4);
+        }
+        return filename.equals(webApp.moduleId);
+    }
+
+    private static String lastPart(final String name, final String defaultValue) {
+        final int idx = name.lastIndexOf("/");
+        final int space = name.lastIndexOf(" ");
+        if (idx >= 0 && space < idx) {
+            return name.substring(idx);
+        } else if (idx < 0 && space < 0) {
+            return name;
+        }
+        return defaultValue;
     }
 
     public void setup(final Configuration configuration) {
@@ -169,18 +188,46 @@ public class Container {
         // Trigger loading of catalina.properties
         CatalinaProperties.getProperty("foo");
 
-        final Connector connector = new Connector(Http11Protocol.class.getName());
-        connector.setPort(configuration.getHttpPort());
-        connector.setAttribute("connectionTimeout", "3000");
-        tomcat.getService().addConnector(connector);
-        tomcat.setConnector(connector);
         tomcat.setBaseDir(base.getAbsolutePath());
         tomcat.getHost().setAppBase(webapps.getAbsolutePath());
         tomcat.setHostname(configuration.getHost());
         tomcat.getEngine().setDefaultHost(configuration.getHost());
 
+        if (!configuration.isSkipHttp()) {
+            final Connector connector = new Connector(Http11Protocol.class.getName());
+            connector.setPort(configuration.getHttpPort());
+            connector.setAttribute("connectionTimeout", "3000");
+            tomcat.getService().addConnector(connector);
+            tomcat.setConnector(connector);
+        }
+
+        // create https connector
+        if (configuration.isSsl()) {
+            Connector httpsConnector = new Connector(Http11Protocol.class.getName());
+            httpsConnector.setPort(configuration.getHttpsPort());
+            httpsConnector.setSecure(true);
+            httpsConnector.setProperty("SSLEnabled", "true");
+            httpsConnector.setProperty("sslProtocol", configuration.getSslProtocol());
+
+            if (configuration.getKeystoreFile() != null) {
+                httpsConnector.setAttribute("keystoreFile", configuration.getKeystoreFile());
+            }
+            if (configuration.getKeystorePass() != null) {
+                httpsConnector.setAttribute("keystorePass", configuration.getKeystorePass());
+            }
+            httpsConnector.setAttribute("keystoreType", configuration.getKeystoreType());
+            httpsConnector.setAttribute("clientAuth", configuration.getClientAuth());
+            httpsConnector.setAttribute("keyAlias", configuration.getKeyAlias());
+
+            tomcat.getService().addConnector(httpsConnector);
+
+            if (configuration.isSkipHttp()) {
+                tomcat.setConnector(httpsConnector);
+            }
+        }
+
         // Bootstrap Tomcat
-        System.out.println("Starting TomEE from: " + base.getAbsolutePath());
+        Logger.getInstance(LogCategory.OPENEJB_STARTUP, Container.class).info("Starting TomEE from: " + base.getAbsolutePath()); // create it after Logger is configured
 
         final String catalinaBase = base.getAbsolutePath();
         System.setProperty("openejb.deployments.classpath", "false");
@@ -192,10 +239,6 @@ public class Container {
 
         tomcat.start();
 
-
-//        bootstrap = new Bootstrap();
-//        bootstrap.start();
-
         // Bootstrap OpenEJB
         final Properties properties = new Properties();
         properties.setProperty("openejb.deployments.classpath", "false");
@@ -205,6 +248,9 @@ public class Container {
         properties.setProperty("openejb.servicemanager.enabled", "false");
         if (configuration.getProperties() != null) {
             properties.putAll(configuration.getProperties());
+        }
+        if (properties.getProperty("openejb.system.apps") == null)  { // will make startup faster and it is rarely useful for embedded case
+            properties.setProperty("openejb.system.apps", "false");
         }
 
         try {
@@ -349,25 +395,6 @@ public class Container {
         appContexts.put(name, context);
 
         return context;
-    }
-
-    private static boolean sameApplication(final File file, final WebAppInfo webApp) {
-        String filename = file.getName();
-        if (filename.endsWith(".war")) {
-            filename = filename.substring(0, filename.length() - 4);
-        }
-        return filename.equals(webApp.moduleId);
-    }
-
-    private static String lastPart(final String name, final String defaultValue) {
-        final int idx = name.lastIndexOf("/");
-        final int space = name.lastIndexOf(" ");
-        if (idx >= 0 && space < idx) {
-            return name.substring(idx);
-        } else if (idx < 0 && space < 0) {
-            return name;
-        }
-        return defaultValue;
     }
 
     @SuppressWarnings("UnusedDeclaration")

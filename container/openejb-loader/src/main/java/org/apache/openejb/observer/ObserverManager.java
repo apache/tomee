@@ -71,7 +71,11 @@ public class ObserverManager {
                 if (!(event instanceof ObserverFailed)) {
                     fireEvent(new ObserverFailed(observer, event, t));
                 }
-                Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t);
+                if (t instanceof InvocationTargetException && t.getCause() != null) {
+                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t.getCause());
+                } else {
+                    Logger.getLogger(ObserverManager.class.getName()).log(Level.SEVERE, "error invoking " + observer, t);
+                }
             }
         }
     }
@@ -172,6 +176,12 @@ public class ObserverManager {
             return observer.hashCode();
         }
 
+        @Override
+        public String toString() {
+            return "Observer{" +
+                    "class=" + observer.getClass().getName() +
+                    '}';
+        }
     }
 
     private static class NotAnObserverException extends RuntimeException {

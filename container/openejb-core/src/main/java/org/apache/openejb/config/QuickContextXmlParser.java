@@ -16,7 +16,10 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.Files;
+import org.apache.openejb.util.reflection.Reflections;
+import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -24,8 +27,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,30 +47,61 @@ public class QuickContextXmlParser extends DefaultHandler {
     }
 
     private String virtualClasspath = "";
+    private Collection<URL> urls = null;
 
     @Override
     public void startElement(final String uri, final String localName,
                              final String qName, final Attributes attributes) throws SAXException {
         if ("Loader".equalsIgnoreCase(localName)) {
             final String className = attributes.getValue("className");
-            if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)
-                    || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
-                virtualClasspath = attributes.getValue("virtualClasspath");
-            } // else ?
+            if (className != null) {
+                if ("org.apache.catalina.loader.VirtualWebappLoader".equals(className)
+                        || "org.apache.tomee.catalina.ProvisioningWebappLoader".equals(className)) {
+                    virtualClasspath = attributes.getValue("virtualClasspath");
+                }
+            }
+
+            final String loaderClass = attributes.getValue("loaderClass");
+            if (loaderClass != null) {
+                try {
+                    final ClassLoader parent = ParentClassLoaderFinder.Helper.get();
+
+                    // create a fake loader
+                    final Object loader = parent.loadClass("org.apache.catalina.loader.WebappLoader").newInstance();
+                    Reflections.set(loader, "loaderClass", loaderClass);
+                    Reflections.set(loader, "parentClassLoader", parent);
+
+                    // get the loader
+                    final ClassLoader instance = ClassLoader.class.cast(Reflections.invokeByReflection(loader, "createClassLoader", new Class<?>[0], null));
+                    if (instance != null) {
+                        urls = ClassLoaders.findUrls(instance);
+                    }
+                } catch (final Exception e) {
+                    // no-op
+                }
+            }
         }
     }
 
     public Collection<URL> getAdditionalURLs() {
-        final StringTokenizer tkn = new StringTokenizer(virtualClasspath, ";");
         final Set<URL> set = new LinkedHashSet<URL>();
-        while (tkn.hasMoreTokens()) {
-            String token = tkn.nextToken().trim();
-            if (token.isEmpty()) {
-                continue;
-            }
 
-            set.addAll(Files.listJars(token));
+        if (virtualClasspath != null) {
+            final StringTokenizer tkn = new StringTokenizer(virtualClasspath, ";");
+            while (tkn.hasMoreTokens()) {
+                String token = tkn.nextToken().trim();
+                if (token.isEmpty()) {
+                    continue;
+                }
+
+                set.addAll(Files.listJars(token));
+            }
         }
+
+        if (urls != null) {
+            set.addAll(urls);
+        }
+
         return set;
     }
 

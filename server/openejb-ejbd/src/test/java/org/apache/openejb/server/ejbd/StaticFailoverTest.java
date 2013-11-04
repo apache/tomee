@@ -127,7 +127,9 @@ public class StaticFailoverTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        for (ServiceDaemon daemon : daemons) daemon.stop();
+        for (ServiceDaemon daemon : daemons) {
+            daemon.stop();
+        }
 
         OpenEJB.destroy();
     }
@@ -143,10 +145,10 @@ public class StaticFailoverTest extends TestCase {
         return daemon;
     }
 
-
     public static ThreadLocal<URI> host = new ThreadLocal<URI>();
 
     public static class ServiceIdentifier extends ServerServiceFilter {
+
         private final URI me;
 
         public ServiceIdentifier(ServerService service, URI me) {
@@ -156,7 +158,7 @@ public class StaticFailoverTest extends TestCase {
 
         @Override
         public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-            synchronized (hits){
+            synchronized (hits) {
                 hits.add(me);
             }
             host.set(me);
@@ -171,13 +173,14 @@ public class StaticFailoverTest extends TestCase {
     public static Object lock = new Object[]{};
 
     private static void comment(String x) {
-//        synchronized(lock){
-//            System.out.println(x);
-//            System.out.flush();
-//        }
+        //        synchronized(lock){
+        //            System.out.println(x);
+        //            System.out.flush();
+        //        }
     }
 
     public static interface Counter {
+
         int count();
 
         URI hit();

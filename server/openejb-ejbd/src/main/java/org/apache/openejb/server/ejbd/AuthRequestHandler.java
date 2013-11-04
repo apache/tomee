@@ -19,6 +19,8 @@ package org.apache.openejb.server.ejbd;
 import org.apache.openejb.client.AuthenticationRequest;
 import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.ClientMetaData;
+import org.apache.openejb.client.ProtocolMetaData;
+import org.apache.openejb.client.Response;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -29,17 +31,34 @@ import org.apache.openejb.util.Messages;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-class AuthRequestHandler {
+class AuthRequestHandler extends RequestHandler {
 
     Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
+    private static final boolean debug = logger.isDebugEnabled();
 
-    AuthRequestHandler(final EjbDaemon daemon) {
+    protected AuthRequestHandler(final EjbDaemon daemon) {
+        super(daemon);
     }
 
-    public void processRequest(final ObjectInputStream in, final ObjectOutputStream out) {
+    @Override
+    public String getName() {
+        return "Authentication";
+    }
+
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
+    public Response processRequest(final ObjectInputStream in, final ProtocolMetaData metaData) throws Exception {
+
         final AuthenticationRequest req = new AuthenticationRequest();
+        req.setMetaData(metaData);
+
         final AuthenticationResponse res = new AuthenticationResponse();
+        res.setMetaData(metaData);
 
         try {
             req.readExternal(in);
@@ -52,6 +71,7 @@ class AuthRequestHandler {
             final Object token = securityService.login(securityRealm, username, password);
 
             final ClientMetaData client = new ClientMetaData();
+            client.setMetaData(metaData);
             client.setClientIdentity(token);
 
             res.setIdentity(client);
@@ -60,19 +80,33 @@ class AuthRequestHandler {
             res.setResponseCode(ResponseCodes.AUTH_DENIED);
             res.setDeniedCause(t);
         } finally {
-            if (logger.isDebugEnabled()) {
+            if (debug) {
                 try {
                     logger.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
-                } catch (Exception justInCase) {
+                } catch (Exception e) {
+                    //Ignore
                 }
             }
+        }
+
+        return res;
+    }
+
+    @Override
+    public void processResponse(final Response response, final ObjectOutputStream out, final ProtocolMetaData metaData) throws Exception {
+
+        if (AuthenticationResponse.class.isInstance(response)) {
+
+            final AuthenticationResponse res = (AuthenticationResponse) response;
+            res.setMetaData(metaData);
 
             try {
                 res.writeExternal(out);
-            } catch (java.io.IOException ie) {
-                logger.fatal("Couldn't write AuthenticationResponse to output stream", ie);
+            } catch (Exception e) {
+                logger.fatal("Could not write AuthenticationResponse to output stream", e);
             }
+        } else {
+            logger.error("AuthRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
-
 }

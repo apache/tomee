@@ -116,8 +116,14 @@ public class Embedder {
 
         try {
             return classLoader.loadClass(className);
+        } catch (final LinkageError le) {
+            try {
+                return classLoader.loadClass(className);
+            } catch (final Exception rethrow) {
+                throw new Exception("Could not load class '" + className + "' after embedding libraries. Exception: " + le.getClass().getName() + " " + le.getMessage());
+            }
         } catch (Exception e2) {
-            throw new Exception("Could not load class '"+className+"' after embedding libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
+            throw new Exception("Could not load class '" + className + "' after embedding libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
         }
     }
 

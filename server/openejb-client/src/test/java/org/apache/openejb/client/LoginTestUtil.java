@@ -22,6 +22,7 @@ import java.net.URLDecoder;
 import java.rmi.RemoteException;
 
 public class LoginTestUtil {
+
     public static Request serverRequest;
     public static AuthenticationResponse serverResponse;
 

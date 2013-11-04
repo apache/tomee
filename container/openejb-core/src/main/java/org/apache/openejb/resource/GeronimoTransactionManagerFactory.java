@@ -24,9 +24,17 @@ import org.apache.geronimo.transaction.manager.TransactionLog;
 import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
 import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
 
+import javax.management.ObjectName;
 import javax.transaction.xa.XAResource;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +85,7 @@ public class GeronimoTransactionManagerFactory {
             SystemInstance.get().setComponent(XAResourceWrapper.class, new GeronimoXAResourceWrapper());
             
             xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID: tmId);
-            txLog = new HOWLLog(bufferClassName == null ? "org.apache.howl.log.BlockLogBuffer" : bufferClassName,
+            txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
                     bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
                     checksumEnabled,
                     adler32Checksum,
@@ -95,7 +103,14 @@ public class GeronimoTransactionManagerFactory {
             ((HOWLLog)txLog).doStart();
         }
 
-        return new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+        final GeronimoTransactionManager geronimoTransactionManager = new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
+                .set("j2eeType", "TransactionManager");
+        LocalMBeanServer.registerDynamicWrapperSilently(
+                new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
+                jmxName.build());
+
+        return geronimoTransactionManager;
     }
 
     public static class GeronimoXAResourceWrapper implements XAResourceWrapper {
@@ -103,4 +118,52 @@ public class GeronimoTransactionManagerFactory {
             return new WrapperNamedXAResource(xaResource, name);
         }
     }
+
+    @MBean
+    @Internal
+    @Description("Transaction manager statistics")
+    public static final class TransactionManagerMBean {
+
+        private final GeronimoTransactionManager transactionManager;
+        private final Duration defaultTransactionTimeout;
+        private final TransactionLog txLog;
+
+        public TransactionManagerMBean(final GeronimoTransactionManager transactionManager, final Duration defaultTransactionTimeout, final TransactionLog txLog) {
+            this.transactionManager = transactionManager;
+            this.defaultTransactionTimeout = defaultTransactionTimeout;
+            this.txLog = txLog;
+        }
+
+        @ManagedAttribute
+        @Description("Number of active transactions")
+        public long getActive() {
+            return transactionManager.getActiveCount();
+        }
+
+        @ManagedAttribute
+        @Description("Number of committed transactions")
+        public long getCommits() {
+            return transactionManager.getTotalCommits();
+        }
+
+        @ManagedAttribute
+        @Description("Number of rolled back transactions")
+        public long getRollbacks() {
+            return transactionManager.getTotalRollbacks();
+        }
+
+        @ManagedOperation
+        @Description("Reset statistics counters")
+        public void resetStatistics() {
+            transactionManager.resetStatistics();
+        }
+
+        @ManagedAttribute
+        @Description("Display the default transaction timeout")
+        public String getDefaultTransactionTimeout() {
+            return defaultTransactionTimeout.toString();
+        }
+
+    }
+
 }

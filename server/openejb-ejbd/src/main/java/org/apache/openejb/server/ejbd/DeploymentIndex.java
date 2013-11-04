@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.util.Messages;
+
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DeploymentIndex {
 
@@ -32,24 +32,24 @@ public class DeploymentIndex {
 
     Map index = null;
 
-    public DeploymentIndex(BeanContext[] beanContexts) {
-        BeanContext[] ds = beanContexts;
+    @SuppressWarnings("unchecked")
+    public DeploymentIndex(final BeanContext[] beanContexts) {
 
-        deployments = new BeanContext[ ds.length + 1 ];
+        deployments = new BeanContext[beanContexts.length + 1];
 
-        System.arraycopy(ds, 0, deployments, 1, ds.length);
+        System.arraycopy(beanContexts, 0, deployments, 1, beanContexts.length);
 
         index = new HashMap(deployments.length);
         for (int i = 1; i < deployments.length; i++) {
-            index.put(deployments[i].getDeploymentID(), new Integer(i));
+            index.put(deployments[i].getDeploymentID(), i);
         }
     }
 
-    public BeanContext getDeployment(EJBRequest req) throws RemoteException {
+    public BeanContext getDeployment(final EJBRequest req) throws RemoteException {
 
-        BeanContext info = null;
+        final BeanContext info;
 
-        int deploymentCode = req.getDeploymentCode();
+        final int deploymentCode = req.getDeploymentCode();
         if (deploymentCode > 0 && deploymentCode < deployments.length) {
             info = deployments[deploymentCode];
             req.setDeploymentId((String) info.getDeploymentID());
@@ -60,7 +60,7 @@ public class DeploymentIndex {
             throw new RemoteException(messages.format("invalidDeploymentIdAndCode", req.getDeploymentId(), req.getDeploymentCode()));
         }
 
-        int idCode = getDeploymentIndex(req.getDeploymentId());
+        final int idCode = getDeploymentIndex(req.getDeploymentId());
         if (idCode == -1) {
             throw new RemoteException(messages.format("noSuchDeploymentIdAndCode", req.getDeploymentId(), req.getDeploymentCode()));
         }
@@ -73,25 +73,25 @@ public class DeploymentIndex {
         return deployments[req.getDeploymentCode()];
     }
 
-    public int getDeploymentIndex(BeanContext deployment) {
+    public int getDeploymentIndex(final BeanContext deployment) {
         return getDeploymentIndex((String) deployment.getDeploymentID());
     }
 
-    public int getDeploymentIndex(String deploymentID) {
-        Integer idCode = (Integer) index.get(deploymentID);
+    public int getDeploymentIndex(final String deploymentID) {
+        final Integer idCode = (Integer) index.get(deploymentID);
 
-        return (idCode == null) ? -1 : idCode.intValue();
+        return (idCode == null) ? -1 : idCode;
     }
 
-    public BeanContext getDeployment(String deploymentID) {
+    public BeanContext getDeployment(final String deploymentID) {
         return getDeployment(getDeploymentIndex(deploymentID));
     }
 
-    public BeanContext getDeployment(Integer index) {
+    public BeanContext getDeployment(final Integer index) {
         return (index == null) ? null : getDeployment(index.intValue());
     }
 
-    public BeanContext getDeployment(int index) {
+    public BeanContext getDeployment(final int index) {
         return deployments[index];
     }
 }

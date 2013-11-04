@@ -19,6 +19,7 @@ package org.apache.openejb.resource.jdbc.pool;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.xbean.recipe.ObjectRecipe;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -28,12 +29,12 @@ import java.util.Properties;
 // to be able to use DBCP "as before"
 // in fact all managed method are done through the previous abstraction
 public interface DataSourceCreator {
-    DataSource managed(String name, DataSource ds);
+    DataSource managed(String name, CommonDataSource ds);
     DataSource poolManaged(String name, DataSource ds, Properties properties);
     DataSource pool(String name, DataSource ds, Properties properties);
     DataSource poolManagedWithRecovery(String name, XAResourceWrapper xaResourceWrapper, String driver, Properties properties);
     DataSource poolManaged(String name, String driver, Properties properties);
-    DataSource pool(String name, String driver, Properties properties);
+    CommonDataSource pool(String name, String driver, Properties properties);
 
     void destroy(Object object) throws Throwable;
     ObjectRecipe clearRecipe(Object object);

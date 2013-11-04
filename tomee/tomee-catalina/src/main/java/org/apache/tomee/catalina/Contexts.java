@@ -20,16 +20,30 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.util.ContextName;
 
 import java.io.File;
 
 public class Contexts {
+    public static String getHostname(final StandardContext ctx) {
+        String hostName = null;
+        final Container parentHost = ctx.getParent();
+        if (parentHost != null) {
+            hostName = parentHost.getName();
+        }
+        if ((hostName == null) || (hostName.length() < 1)) {
+            hostName = "_";
+        }
+        return hostName;
+    }
+
     public static File warPath(final Context standardContext) {
         final File file = realWarPath(standardContext);
         if (file == null) {
-            return file;
+            return null;
         }
 
         final String name = file.getName();
@@ -56,20 +70,29 @@ public class Contexts {
             container = container.getParent();
         }
 
-        File file = new File(standardContext.getDocBase());
-        if (!file.isAbsolute()) {
-            if (container == null) {
-                docBase = new File(engineBase(standardContext), standardContext.getDocBase());
-            } else {
-                final String appBase = ((Host) container).getAppBase();
-                file = new File(appBase);
-                if (!file.isAbsolute()) {
-                    file = new File(engineBase(standardContext), appBase);
+        if (standardContext.getDocBase() != null) {
+            File file = new File(standardContext.getDocBase());
+            if (!file.isAbsolute()) {
+                if (container == null) {
+                    docBase = new File(engineBase(standardContext), standardContext.getDocBase());
+                } else {
+                    final String appBase = ((Host) container).getAppBase();
+                    file = new File(appBase);
+                    if (!file.isAbsolute()) {
+                        file = new File(engineBase(standardContext), appBase);
+                    }
+                    docBase = new File(file, standardContext.getDocBase());
                 }
-                docBase = new File(file, standardContext.getDocBase());
+            } else {
+                docBase = file;
             }
         } else {
-            docBase = file;
+            final String path = standardContext.getPath();
+            if (path == null) {
+                throw new IllegalStateException("Can't find docBase");
+            } else {
+                docBase = new File(new ContextName(path, standardContext.getWebappVersion()).getBaseName());
+            }
         }
 
         if (!docBase.exists()) { // for old compatibility, will be removed soon

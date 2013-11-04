@@ -17,18 +17,20 @@
 
 package org.apache.openejb.rest;
 
-import java.net.URI;
-import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
+import java.net.URI;
+import java.util.List;
 
-public class ThreadLocalUriInfo extends AbstractThreadLocalProxy<UriInfo>
+public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
                                     implements UriInfo {
 
-    
+    protected ThreadLocalUriInfo() {
+        super(UriInfo.class);
+    }
+
     public URI getAbsolutePath() {
         return get().getAbsolutePath();
     }

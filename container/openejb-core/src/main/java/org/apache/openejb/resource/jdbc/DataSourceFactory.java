@@ -30,6 +30,7 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -44,6 +45,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, DataSourceFactory.class);
 
     public static final String LOG_SQL_PROPERTY = "LogSql";
@@ -51,15 +53,21 @@ public class DataSourceFactory {
     public static final String POOL_PROPERTY = "openejb.datasource.pool";
     public static final String DATA_SOURCE_CREATOR_PROP = "DataSourceCreator";
 
-    private static final Map<DataSource, DataSourceCreator> creatorByDataSource = new HashMap<DataSource, DataSourceCreator>();
-    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER){{
+    private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<CommonDataSource, DataSourceCreator>();
+    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
         put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only
         put("tomcat", "org.apache.tomee.jdbc.TomEEDataSourceCreator"); // tomee
         put("bonecp", "org.apache.openejb.bonecp.BoneCPDataSourceCreator"); // bonecp
     }};
 
-    public static DataSource create(final String name, final boolean configuredManaged, final Class impl, final String definition, Duration maxWaitTime, Duration timeBetweenEvictionRuns, Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
+    public static CommonDataSource create(final String name,
+                                    final boolean configuredManaged,
+                                    final Class impl,
+                                    final String definition,
+                                    final Duration maxWaitTime,
+                                    final Duration timeBetweenEvictionRuns,
+                                    final Duration minEvictableIdleTime) throws IllegalAccessException, InstantiationException, IOException {
         final Properties properties = asProperties(definition);
 
         convert(properties, maxWaitTime, "maxWaitTime", "maxWait");
@@ -76,71 +84,86 @@ public class DataSourceFactory {
             managed = Boolean.parseBoolean((String) properties.remove("transactional")) || managed;
         }
 
-        boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
-                "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
+        final boolean logSql = SystemInstance.get().getOptions().get(GLOBAL_LOG_SQL_PROPERTY,
+                                                                     "true".equalsIgnoreCase((String) properties.remove(LOG_SQL_PROPERTY)));
         final DataSourceCreator creator = creator(properties.remove(DATA_SOURCE_CREATOR_PROP), logSql);
 
-
-        DataSource ds;
-        if (createDataSourceFromClass(impl)) { // opposed to "by driver"
-            trimNotSupportedDataSourceProperties(properties);
-
-            final ObjectRecipe recipe = new ObjectRecipe(impl);
-            recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
-            recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-            recipe.allow(Option.NAMED_PARAMETERS);
-            recipe.setAllProperties(properties);
-            if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
-                recipe.setProperty("url", properties.getProperty("JdbcUrl"));
-            }
-
-            final DataSource dataSource = (DataSource) recipe.create();
-
-            if (managed) {
-                if (usePool(properties)) {
-                    ds = creator.poolManaged(name, dataSource, properties);
-                } else {
-                    ds = creator.managed(name, dataSource);
-                }
-            } else {
-                if (usePool(properties)) {
-                    ds = creator.pool(name, dataSource, properties);
-                } else {
-                    ds = dataSource;
-                }
-            }
-        } else { // by driver
-            if (managed) {
-                final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
-                if (xaResourceWrapper != null) {
-                    ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
-                } else {
-                    ds = creator.poolManaged(name, impl.getName(), properties);
-                }
-            } else {
-                ds = creator.pool(name, impl.getName(), properties);
-            }
+        final boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && (impl == null || impl.getClassLoader() == DataSourceFactory.class.getClassLoader());
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        if (useContainerLoader) {
+            Thread.currentThread().setContextClassLoader(DataSourceFactory.class.getClassLoader());
         }
 
-        // ds and creator are associated here, not after the proxying of the next if if active
-        creatorByDataSource.put(ds, creator);
+        try {
+            CommonDataSource ds;
+            if (createDataSourceFromClass(impl)) { // opposed to "by driver"
+                trimNotSupportedDataSourceProperties(properties);
 
-        if (logSql) {
-            ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { DataSource.class }, new LoggingSqlDataSource(ds));
+                final ObjectRecipe recipe = new ObjectRecipe(impl);
+                recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                recipe.allow(Option.NAMED_PARAMETERS);
+                recipe.setAllProperties(properties);
+                if (!properties.containsKey("url") && properties.containsKey("JdbcUrl")) { // depend on the datasource class so add all well known keys
+                    recipe.setProperty("url", properties.getProperty("JdbcUrl"));
+                }
+
+                final DataSource dataSource = (DataSource) recipe.create();
+
+                if (managed) {
+                    if (usePool(properties)) {
+                        ds = creator.poolManaged(name, dataSource, properties);
+                    } else {
+                        ds = creator.managed(name, dataSource);
+                    }
+                } else {
+                    if (usePool(properties)) {
+                        ds = creator.pool(name, dataSource, properties);
+                    } else {
+                        ds = dataSource;
+                    }
+                }
+            } else { // by driver
+                if (managed) {
+                    final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
+                    if (xaResourceWrapper != null) {
+                        ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
+                    } else {
+                        ds = creator.poolManaged(name, impl.getName(), properties);
+                    }
+                } else {
+                    ds = creator.pool(name, impl.getName(), properties);
+                }
+            }
+
+            // ds and creator are associated here, not after the proxying of the next if if active
+            creatorByDataSource.put(ds, creator);
+
+            if (logSql) {
+                ds = (DataSource) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                                                         new Class<?>[]{DataSource.class}, new LoggingSqlDataSource(ds));
+            }
+
+            return ds;
+        } finally {
+            if (useContainerLoader) {
+                Thread.currentThread().setContextClassLoader(oldLoader);
+            }
         }
-
-        return ds;
     }
 
-    private static void convert(Properties properties, Duration duration, String key, String oldKey) {
+    private static void convert(final Properties properties, final Duration duration, final String key, final String oldKey) {
         properties.remove(key);
 
         // If someone is using the legacy property, use it
-        if (properties.contains(oldKey)) return;
+        if (properties.contains(oldKey)) {
+            return;
+        }
         properties.remove(oldKey);
 
-        if (duration == null) return;
+        if (duration == null) {
+            return;
+        }
         if (duration.getUnit() == null) {
             duration.setUnit(TimeUnit.MILLISECONDS);
         }
@@ -149,11 +172,11 @@ public class DataSourceFactory {
         properties.put(oldKey, milliseconds + "");
     }
 
-    public static DataSourceCreator creator(final Object creatorName, boolean willBeProxied) {
+    public static DataSourceCreator creator(final Object creatorName, final boolean willBeProxied) {
         final DataSourceCreator defaultCreator = SystemInstance.get().getComponent(DataSourceCreator.class);
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (creatorName != null && creatorName instanceof String
-                && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
+            && (defaultCreator == null || !creatorName.equals(defaultCreator.getClass().getName()))) {
             String clazz = KNOWN_CREATORS.get(creatorName);
             if (clazz == null) {
                 clazz = (String) creatorName;
@@ -192,15 +215,16 @@ public class DataSourceFactory {
         return properties;
     }
 
-    public static void trimNotSupportedDataSourceProperties(Properties properties) {
+    public static void trimNotSupportedDataSourceProperties(final Properties properties) {
         properties.remove("LoginTimeout");
     }
 
     public static boolean knows(final Object object) {
-        return object instanceof DataSource && creatorByDataSource.containsKey(object);
+        return object instanceof CommonDataSource && creatorByDataSource.containsKey(object);
     }
 
     // TODO: should we get a get and a clear method instead of a single one?
+    @SuppressWarnings("SuspiciousMethodCalls")
     public static ObjectRecipe forgetRecipe(final Object rawObject, final ObjectRecipe defaultValue) {
         final Object object = realInstance(rawObject);
         final DataSourceCreator creator = creatorByDataSource.get(object);
@@ -214,8 +238,12 @@ public class DataSourceFactory {
         return recipe;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     public static void destroy(final Object o) throws Throwable {
         final Object instance = realInstance(o);
+        if (instance == null) {
+            return;
+        }
         final DataSourceCreator remove = creatorByDataSource.remove(instance);
         remove.destroy(instance);
     }

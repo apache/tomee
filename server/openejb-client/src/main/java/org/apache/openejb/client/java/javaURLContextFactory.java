@@ -30,13 +30,13 @@ import java.util.Properties;
 public class javaURLContextFactory implements ObjectFactory {
 
     @Override
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
-        RemoteInitialContextFactory context = new RemoteInitialContextFactory();
+    public Object getObjectInstance(final Object obj, final Name name, final Context nameCtx, final Hashtable<?, ?> environment) throws Exception {
+        final RemoteInitialContextFactory context = new RemoteInitialContextFactory();
 
-        String serverUri = System.getProperty("openejb.server.uri");
-        String moduleId = System.getProperty("openejb.client.moduleId");
+        final String serverUri = System.getProperty("openejb.server.uri");
+        final String moduleId = System.getProperty("openejb.client.moduleId");
 
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty(Context.PROVIDER_URL, serverUri);
         props.setProperty("openejb.client.moduleId", moduleId);
 

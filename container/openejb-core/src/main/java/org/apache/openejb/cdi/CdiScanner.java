@@ -18,10 +18,10 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.classloader.ClassLoaderComparator;
@@ -37,12 +37,16 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.AnnotationUtil;
 
 import javax.interceptor.Interceptor;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -51,23 +55,33 @@ import java.util.Set;
 public class CdiScanner implements ScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
     public static final ThreadLocal<Collection<String>> ADDITIONAL_CLASSES = new ThreadLocal<Collection<String>>();
+    private static final Map<String, Collection<String>> CONTAINER_CLASSES = new HashMap<String, Collection<String>>();
+    static { // load container classes lists
+        final Properties props = new Properties();
+        try {
+            props.load(CdiScanner.class.getResourceAsStream("/container-cdi-classes.properties"));
+        } catch (final IOException e) {
+            // no-op
+        }
+        for (final String key : props.stringPropertyNames()) {
+            final Collection<String> set = new HashSet<String>();
+            CONTAINER_CLASSES.put(key, set);
+            Collections.addAll(set, props.getProperty(key).split(","));
+        }
+    }
 
     // TODO add all annotated class
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     @Override
-    public Set<String> getAllAnnotations(String className) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void init(Object object) {
+    public void init(final Object object) {
         if (!(object instanceof StartupObject)) {
             return;
         }
-        StartupObject startupObject = (StartupObject) object;
-        AppInfo appInfo = startupObject.getAppInfo();
-        ClassLoader classLoader = startupObject.getClassLoader();
+
+        final StartupObject startupObject = (StartupObject) object;
+        final AppInfo appInfo = startupObject.getAppInfo();
+        final ClassLoader classLoader = startupObject.getClassLoader();
         final ClassLoaderComparator comparator;
         if (classLoader instanceof  ClassLoaderComparator) {
             comparator = (ClassLoaderComparator) classLoader;
@@ -80,20 +94,14 @@ public class CdiScanner implements ScannerService {
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
-        final HashSet<String> ejbClasses = new HashSet<String>();
-
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                ejbClasses.add(bean.ejbClass);
-            }
-        }
-
         final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
 
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
-            if (beans == null) continue;
+            if (beans == null) {
+                continue;
+            }
 
             if (startupObject.isFromWebApp()) { // deploy only the related ejbmodule
                 if (!ejbJar.moduleId.equals(startupObject.getWebContext().getId())) {
@@ -117,8 +125,8 @@ public class CdiScanner implements ScannerService {
             beans.duplicatedDecorators.clear();
             beans.duplicatedInterceptors.clear();
 
-            for (String className : beans.interceptors) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.interceptors) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
 
                 if (clazz != null) {
 // TODO: Move check to validation phase
@@ -127,8 +135,8 @@ public class CdiScanner implements ScannerService {
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
                     }
 
-                    if (!interceptorsManager.isInterceptorEnabled(clazz)) {
-                        interceptorsManager.addNewInterceptor(clazz);
+                    if (!interceptorsManager.isInterceptorClassEnabled(clazz)) {
+                        interceptorsManager.addEnabledInterceptorClass(clazz);
                         classes.add(clazz);
                     } /* else { don't do it, check is done when we know the beans.xml path --> org.apache.openejb.config.DeploymentLoader.addBeansXmls
                         throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
@@ -138,12 +146,11 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            for (String className : beans.decorators) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
-
+            for (final String className : beans.decorators) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     if (!decoratorsManager.isDecoratorEnabled(clazz)) {
-                        decoratorsManager.addNewDecorator(clazz);
+                        decoratorsManager.addEnabledDecorator(clazz);
                         classes.add(clazz);
                     } // same than interceptors regarding throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
                 } else if (shouldThrowCouldNotLoadException(startupObject)) {
@@ -152,8 +159,8 @@ public class CdiScanner implements ScannerService {
             }
 
 
-            for (String className : beans.alternativeStereotypes) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.alternativeStereotypes) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addStereoTypeAlternative(clazz, null, null);
                     classes.add(clazz);
@@ -162,8 +169,8 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            for (String className : beans.alternativeClasses) {
-                Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
+            for (final String className : beans.alternativeClasses) {
+                final Class<?> clazz = load(PropertyPlaceHolderHelper.simpleValue(className), classLoader);
                 if (clazz != null) {
                     alternativesManager.addClazzAlternative(clazz, null, null);
                     classes.add(clazz);
@@ -178,18 +185,61 @@ public class CdiScanner implements ScannerService {
 
             final Iterator<String> it = beans.managedClasses.iterator();
             while (it.hasNext()) {
-                process(classLoader, ejbClasses, it, startupObject, comparator, scl, filterByClassLoader);
+                process(classLoader, it, startupObject, comparator, scl, filterByClassLoader);
             }
 
             final Collection<String> otherClasses = ADDITIONAL_CLASSES.get();
             if (otherClasses != null) {
                 final Iterator<String> it2 = otherClasses.iterator();
                 while (it2.hasNext()) {
-                    process(classLoader, ejbClasses, it2, startupObject, comparator, scl, filterByClassLoader);
+                    process(classLoader, it2, startupObject, comparator, scl, filterByClassLoader);
                 }
             }
+
+            if (startupObject.getBeanContexts() != null) { // ensure ejbs are in managed beans otherwise they will not be deployed in CDI
+                for (final BeanContext bc : startupObject.getBeanContexts()) {
+                    final String name = bc.getBeanClass().getName();
+                    if (BeanContext.Comp.class.getName().equals(name)) {
+                        continue;
+                    }
+
+                    final Class<?> load = load(name, classLoader);
+                    if (load != null && !classes.contains(load)) {
+                        classes.add(load);
+                    }
+                }
+            }
+
+            addContainerCdiClasses(classLoader, appInfo, ejbJar);
         }
 
+    }
+
+    private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app, final EjbJarInfo ejbJar) {
+        if (!"true".equalsIgnoreCase(app.properties.getProperty("CdiContainer", "true"))) {
+            return;
+        }
+
+        addContainerClasses(app.properties, loader, "BVal");
+
+        if (ejbJar.webapp && "true".equalsIgnoreCase(app.properties.getProperty("Jsf.MyFaces", "true"))) {
+            addContainerClasses(app.properties, loader, "MyFaces");
+        }
+    }
+
+
+    private void addContainerClasses(final Properties appProps, final ClassLoader loader, final String key) {
+        if (!"true".equalsIgnoreCase(appProps.getProperty("CdiContainer." + key, "true"))) {
+            return;
+        }
+
+        for (final String clazz : CONTAINER_CLASSES.get(key)) {
+            try {
+                classes.add(loader.loadClass(clazz));
+            } catch (final Throwable th) { // classnotfoundexception ot noclassdeffounderror
+                // no-op
+            }
+        }
     }
 
     private static boolean shouldThrowCouldNotLoadException(final StartupObject startupObject) {
@@ -197,12 +247,8 @@ public class CdiScanner implements ScannerService {
         return appInfo.webAppAlone || appInfo.webApps.size() == 0 || startupObject.isFromWebApp();
     }
 
-    private void process(final ClassLoader classLoader, final Set<String> ejbClasses, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
+    private void process(final ClassLoader classLoader, final Iterator<String> it, final StartupObject startupObject, final ClassLoaderComparator comparator, final ClassLoader scl, final boolean filterByClassLoader) {
         final String className = it.next();
-        if (ejbClasses.contains(className)) {
-            it.remove();
-            return;
-        }
         final Class clazz = load(className, classLoader);
         if (clazz == null) {
             return;

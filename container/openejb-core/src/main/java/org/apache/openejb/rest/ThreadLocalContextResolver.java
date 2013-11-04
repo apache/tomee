@@ -18,10 +18,13 @@
 package org.apache.openejb.rest;
 
 import javax.ws.rs.ext.ContextResolver;
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
 
-public class ThreadLocalContextResolver extends AbstractThreadLocalProxy<ContextResolver>
+public class ThreadLocalContextResolver extends AbstractRestThreadLocalProxy<ContextResolver>
     implements ContextResolver {
+
+    protected ThreadLocalContextResolver() {
+        super(ContextResolver.class);
+    }
 
     @SuppressWarnings("unchecked")
     public Object getContext(Class type) {

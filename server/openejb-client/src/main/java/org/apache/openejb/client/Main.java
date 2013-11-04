@@ -23,8 +23,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -38,6 +38,8 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class Main {
+
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         args = siftArgs(args);
 
@@ -45,12 +47,12 @@ public class Main {
 
         // the new initial context is automatically hooked up to the server side
         // java:openejb/client/${clientModuleId} tree
-        InitialContext initialContext = new InitialContext();
+        final InitialContext initialContext = new InitialContext();
 
         // path to the client jar file
-        String path = (String) initialContext.lookup("java:info/path");
+        final String path = (String) initialContext.lookup("java:info/path");
         // TODO: Download the file
-        File file = new File(path);
+        final File file = new File(path);
 
         // Create a child class loader containing the application jar
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -63,51 +65,52 @@ public class Main {
 
         // load the main class and get the main method
         // do this first so we fail fast on a bad class path
-        String mainClassName = (String) initialContext.lookup("java:info/mainClass");
-        Class mainClass = classLoader.loadClass(mainClassName);
+        final String mainClassName = (String) initialContext.lookup("java:info/mainClass");
+        final Class mainClass = classLoader.loadClass(mainClassName);
         final Method mainMethod = mainClass.getMethod("main", String[].class);
 
         // load the callback handler class
         // again do this before any major work so we can fail fase
         Class callbackHandlerClass = null;
         try {
-            String callbackHandlerName = (String) initialContext.lookup("java:info/callbackHandler");
+            final String callbackHandlerName = (String) initialContext.lookup("java:info/callbackHandler");
             callbackHandlerClass = classLoader.loadClass(callbackHandlerName);
         } catch (NameNotFoundException ignored) {
         }
 
-        InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:info/injections");
+        final InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:info/injections");
         ClientInstance.get().setComponent(InjectionMetaData.class, injectionMetaData);
-        for (Injection injection : injectionMetaData.getInjections()) {
+        for (final Injection injection : injectionMetaData.getInjections()) {
             try {
-                Object value = initialContext.lookup("java:" + injection.getJndiName());
-                Class target = classLoader.loadClass(injection.getTargetClass());
-                Field field = target.getDeclaredField(injection.getName());
+                final Object value = initialContext.lookup("java:" + injection.getJndiName());
+                final Class target = classLoader.loadClass(injection.getTargetClass());
+                final Field field = target.getDeclaredField(injection.getName());
                 setAccessible(field);
                 field.set(null, value);
             } catch (Throwable e) {
-                System.err.println("Injection FAILED: class="+injection.getTargetClass()+", name="+injection.getName()+", jndi-ref="+injection.getJndiName());
+                //noinspection UseOfSystemOutOrSystemErr
+                System.err.println("Injection FAILED: class=" + injection.getTargetClass() + ", name=" + injection.getName() + ", jndi-ref=" + injection.getJndiName());
                 e.printStackTrace();
             }
         }
 
         // if there is no security then just call the main method
-        final Object[] mainArgs = new Object[] {args};
+        final Object[] mainArgs = new Object[]{args};
         if (callbackHandlerClass == null) {
             invoke(mainMethod, mainArgs);
         } else {
             // create the callback handler
-            CallbackHandler callbackHandler = (CallbackHandler) callbackHandlerClass.newInstance();
+            final CallbackHandler callbackHandler = (CallbackHandler) callbackHandlerClass.newInstance();
 
             // initialize the jaas system
             loadJassLoginConfig(classLoader);
 
             // login
-            LoginContext loginContext = new LoginContext("ClientLogin", callbackHandler);
+            final LoginContext loginContext = new LoginContext("ClientLogin", callbackHandler);
             loginContext.login();
 
             // success - get the subject
-            Subject subject = loginContext.getSubject();
+            final Subject subject = loginContext.getSubject();
 
             // call the main method in a doAs so the subject is associated with the thread
             try {
@@ -124,11 +127,11 @@ public class Main {
         }
     }
 
-    private static void invoke(Method mainMethod, Object[] mainArgs) throws Exception {
+    private static void invoke(final Method mainMethod, final Object[] mainArgs) throws Exception {
         try {
             mainMethod.invoke(null, mainArgs);
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
+            final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
             } else if (cause instanceof Error) {
@@ -138,38 +141,37 @@ public class Main {
         }
     }
 
-    private static void loadJassLoginConfig(ClassLoader classLoader) {
-        String path = System.getProperty("java.security.auth.login.config");
+    private static void loadJassLoginConfig(final ClassLoader classLoader) {
+        final String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = classLoader.getResource("client.login.conf");
+            final URL resource = classLoader.getResource("client.login.conf");
             if (resource != null) {
                 System.setProperty("java.security.auth.login.config", URLDecoder.decode(resource.toExternalForm()));
             }
         }
     }
 
-    private static String[] siftArgs(String[] args) {
-        List<String> argsList = new ArrayList<String>();
+    private static String[] siftArgs(final String[] args) {
+        final List<String> argsList = new ArrayList<String>();
         for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
+            final String arg = args[i];
             if (arg.indexOf("-D") == -1) {
                 argsList.add(arg);
             } else {
-                String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-                String val = arg.substring(arg.indexOf("=") + 1);
+                final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
+                final String val = arg.substring(arg.indexOf("=") + 1);
                 System.setProperty(prop, val);
             }
         }
         return argsList.toArray(new String[argsList.size()]);
     }
 
-
     private static void setAccessible(final Field field) {
-         AccessController.doPrivileged(new PrivilegedAction<Object>() {
-             public Object run() {
-                 field.setAccessible(true);
-                 return null;
-             }
-         });
-     }
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            public Object run() {
+                field.setAccessible(true);
+                return null;
+            }
+        });
+    }
 }

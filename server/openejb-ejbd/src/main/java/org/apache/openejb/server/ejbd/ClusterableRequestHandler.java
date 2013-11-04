@@ -21,5 +21,6 @@ import org.apache.openejb.client.ClusterableRequest;
 import org.apache.openejb.client.ClusterableResponse;
 
 public interface ClusterableRequestHandler {
+
     void updateServer(BeanContext beanContext, ClusterableRequest req, ClusterableResponse res);
 }

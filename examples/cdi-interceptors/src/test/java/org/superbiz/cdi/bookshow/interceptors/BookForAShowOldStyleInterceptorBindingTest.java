@@ -24,6 +24,7 @@ import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 
 public class BookForAShowOldStyleInterceptorBindingTest extends TestCase {
+
     @EJB
     private BookForAShowOldStyleInterceptorBinding bookForAShowBean;
     EJBContainer ejbContainer;

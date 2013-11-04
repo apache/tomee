@@ -22,6 +22,7 @@ import javax.jws.WebService;
 @Singleton
 @WebService
 public class CalculatorBean implements Calculator {
+
     @Override
     public int add(int op1, int op2) {
         return op1 + op2;

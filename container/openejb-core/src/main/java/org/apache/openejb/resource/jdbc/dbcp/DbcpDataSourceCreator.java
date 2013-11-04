@@ -17,8 +17,11 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator
@@ -30,7 +33,7 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final String driver, final Properties properties) {
+    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
         if (!properties.containsKey("JdbcDriver")) {
             properties.setProperty("driverClassName", driver);
         }
@@ -38,11 +41,20 @@ public class DbcpDataSourceCreator extends PoolDataSourceCreator {
 
         final BasicDataSource ds = build(BasicDataSource.class, properties);
         ds.setDriverClassName(driver);
+
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            cleanProperty(ds, "xadatasource");
+
+            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+            ds.setDelegate(xaDs);
+        }
+
         return ds;
     }
 
     @Override
-    protected void doDestroy(DataSource dataSource) throws Throwable {
+    protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
         ((org.apache.commons.dbcp.BasicDataSource) dataSource).close();
     }
 }

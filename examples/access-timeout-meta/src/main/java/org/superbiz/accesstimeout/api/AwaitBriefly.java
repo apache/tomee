@@ -29,4 +29,5 @@ import java.util.concurrent.TimeUnit;
 
 @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
 public @interface AwaitBriefly {
+
 }

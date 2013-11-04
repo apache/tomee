@@ -24,7 +24,7 @@ public class RetryConditionAdded {
 
     private final Class<? extends Throwable> condition;
 
-    public RetryConditionAdded(Class<? extends Throwable> condition) {
+    public RetryConditionAdded(final Class<? extends Throwable> condition) {
         this.condition = condition;
     }
 
@@ -35,7 +35,7 @@ public class RetryConditionAdded {
     @Override
     public String toString() {
         return "RetryConditionAdded{" +
-                "condition=" + condition.getName() +
-                '}';
+               "condition=" + condition.getName() +
+               '}';
     }
 }

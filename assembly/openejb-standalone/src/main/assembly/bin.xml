@@ -104,7 +104,7 @@
   </files>
   <dependencySets>
     <dependencySet>
-      <!--<outputFileNameMapping>${artifactId}-${version}.${format}</outputFileNameMapping>-->
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>

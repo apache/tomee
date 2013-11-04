@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 
 public class AnnotatedServlet extends HttpServlet {
+
     @EJB
     private AnnotatedEJBLocal localEJB;
 
@@ -41,7 +42,6 @@ public class AnnotatedServlet extends HttpServlet {
 
     @Resource
     private DataSource ds;
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
@@ -72,7 +72,6 @@ public class AnnotatedServlet extends HttpServlet {
         }
         out.println("JNDI=" + lookupField("remoteEJB"));
         out.println();
-
 
         out.println("DataSource");
         out.println("@Resource=" + ds);

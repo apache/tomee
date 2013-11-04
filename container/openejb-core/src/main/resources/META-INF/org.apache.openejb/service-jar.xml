@@ -1024,7 +1024,7 @@
   <ServiceProvider
           id="Default Queue"
           service="Resource"
-          types="javax.jms.Queue, Queue"
+          types="javax.jms.Queue, Queue, javax.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
@@ -1036,7 +1036,7 @@
   <ServiceProvider
           id="Default Topic"
           service="Resource"
-          types="javax.jms.Topic, Topic"
+          types="javax.jms.Topic, Topic, javax.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
@@ -1106,5 +1106,42 @@
     Router
   </ServiceProvider>
 
+  <!--
+  # ==========================================================
+  # Concurrency Utilities
+  # ==========================================================
+  -->
+  <ServiceProvider id="Default Executor Service"
+                   service="Resource"
+                   types="ManagedExecutorService, javax.enterprise.concurrent.ManagedExecutorService"
+                   factory-name="create"
+                   class-name="org.apache.openejb.concurrencyutilities.ee.factory.ManagedExecutorServiceImplFactory">
+    Core = 5
+    Max = 25
+    KeepAlive = 5 s
+    Queue = 15
+    WaitAtShutdown = 30 seconds
+    ThreadFactory = org.apache.openejb.concurrencyutilities.ee.impl.ManagedThreadFactoryImpl
+  </ServiceProvider>
+  <ServiceProvider id="Default Scheduled Executor Service"
+                   service="Resource"
+                   types="ManagedScheduledExecutorService, javax.enterprise.concurrent.ManagedScheduledExecutorService"
+                   factory-name="create"
+                   class-name="org.apache.openejb.concurrencyutilities.ee.factory.ManagedScheduledExecutorServiceImplFactory">
+    Core = 5
+    WaitAtShutdown = 30 seconds
+    ThreadFactory = org.apache.openejb.concurrencyutilities.ee.impl.ManagedThreadFactoryImpl
+  </ServiceProvider>
+  <ServiceProvider id="Default Managed Thread Factory"
+                   service="Resource"
+                   types="ManagedThreadFactory, javax.enterprise.concurrent.ManagedThreadFactory"
+                   factory-name="create"
+                   class-name="org.apache.openejb.concurrencyutilities.ee.factory.ManagedThreadFactoryImplFactory">
+    Prefix = openejb-managed-thread-
+  </ServiceProvider>
+  <ServiceProvider id="Default Context Service"
+                   service="Resource"
+                   types="ContextService, javax.enterprise.concurrent.ContextService"
+                   class-name="org.apache.openejb.concurrencyutilities.ee.impl.ContextServiceImpl" />
 
 </ServiceJar>

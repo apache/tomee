@@ -26,7 +26,6 @@ import javax.naming.InitialContext;
 import javax.rmi.PortableRemoteObject;
 import java.util.Properties;
 
-
 public class JNDILookupTest {
 
     @Test

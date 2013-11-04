@@ -29,6 +29,8 @@ import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.component.ClassLoaderEnricher;
+import org.apache.openejb.config.ConfigUtils;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.sys.Tomee;
@@ -51,10 +53,12 @@ import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomee.catalina.deployment.TomcatWebappDeployer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
+import org.apache.tomee.installer.Status;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -150,7 +154,7 @@ public class TomcatLoader implements Loader {
             Paths paths = new Paths(new File(openejbWarDir));
             if (paths.verify()) {
                 Installer installer = new Installer(paths);
-                if (installer.getStatus() != Installer.Status.INSTALLED) {
+                if (installer.getStatus() != Status.INSTALLED) {
                     installer.installConfigFiles();
                 }
             }
@@ -163,10 +167,12 @@ public class TomcatLoader implements Loader {
         }
 
         final File conf = new File(SystemInstance.get().getBase().getDirectory(), "conf");
-        final File tomeeXml = new File(conf, "tomee.xml");
-        if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
-            SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
-            SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
+        for (final String possibleTomeePaths : ConfigUtils.deducePaths("tomee.xml")) {
+            final File tomeeXml = new File(conf, possibleTomeePaths);
+            if (tomeeXml.exists()) { // use tomee.xml instead of openejb.xml
+                SystemInstance.get().setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+                SystemInstance.get().setProperty("openejb.configuration.class", Tomee.class.getName());
+            }
         }
 
         // set tomcat pool
@@ -219,8 +225,15 @@ public class TomcatLoader implements Loader {
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
         // tomee webapp enricher
-        SystemInstance.get().setComponent(WebAppEnricher.class, new TomEEClassLoaderEnricher());
+        final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();
+        SystemInstance.get().setComponent(WebAppEnricher.class, classLoaderEnricher);
 
+        // add common lib even in ear "lib" part (if the ear provides myfaces for instance)
+        for (final URL url : classLoaderEnricher.enrichment(null)) { // we rely on the fact we know what the impl does with null but that's fine
+            SystemInstance.get().getComponent(ClassLoaderEnricher.class).addUrl(url);
+        }
+
+        // optional services
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
             // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
             SystemInstance.get().setProperty("openejb.rest.wildcard", "*");
@@ -233,8 +246,14 @@ public class TomcatLoader implements Loader {
         OpenEJB.init(properties, new ServerFederation());
         TomcatJndiBuilder.importOpenEJBResourcesInTomcat(SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources, TomcatHelper.getServer());
 
-        Properties ejbServerProps = new Properties();
+        final Properties ejbServerProps = new Properties();
         ejbServerProps.putAll(properties);
+        for (final String prop : new String[] { "serializer", "gzip" }) { // ensure -Dejbd.xxx are read
+            final String value = SystemInstance.get().getProperty("ejbd." + prop);
+            if (value != null) {
+                ejbServerProps.put(prop, value);
+            }
+        }
         ejbServerProps.setProperty("openejb.ejbd.uri", "http://127.0.0.1:8080/tomee/ejb");
         ejbServer.init(ejbServerProps);
 
@@ -266,6 +285,7 @@ public class TomcatLoader implements Loader {
             // WS
             try {
                 ServerService cxfService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.CxfService").newInstance();
+                cxfService.init(properties);
                 cxfService.start();
                 services.add(cxfService);
             } catch (ClassNotFoundException ignored) {
@@ -277,6 +297,7 @@ public class TomcatLoader implements Loader {
             // REST
             try {
                 ServerService restService = (ServerService) cl.loadClass("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
+                restService.init(properties);
                 restService.start();
                 services.add(restService);
             } catch (ClassNotFoundException ignored) {

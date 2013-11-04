@@ -16,16 +16,17 @@
  */
 package org.superbiz.cdi.session;
 
-import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-@WebServlet(name = "input-servlet", urlPatterns = { "/set-name" })
+@WebServlet(name = "input-servlet", urlPatterns = {"/set-name"})
 public class InputServlet extends HttpServlet {
+
     @Inject
     private SessionBean bean;
 

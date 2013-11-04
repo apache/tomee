@@ -16,23 +16,32 @@
  */
 package org.apache.openejb.client;
 
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
  * @version $Rev$ $Date$
  */
 public class ClusterRequest implements Request {
-    private long clusterMetaDataVersion;
+
+    private static final long serialVersionUID = 2188352573904048149L;
+    private transient long clusterMetaDataVersion;
+    private transient ProtocolMetaData metaData;
 
     public ClusterRequest() {
     }
 
-    public ClusterRequest(ClusterMetaData clusterMetaData) {
+    public ClusterRequest(final ClusterMetaData clusterMetaData) {
         clusterMetaDataVersion = clusterMetaData.getVersion();
     }
 
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
     public RequestType getRequestType() {
         return RequestType.CLUSTER_REQUEST;
     }
@@ -41,11 +50,19 @@ public class ClusterRequest implements Request {
         return clusterMetaDataVersion;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         clusterMetaDataVersion = in.readLong();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeLong(clusterMetaDataVersion);
     }
 }

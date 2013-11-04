@@ -22,19 +22,27 @@ import java.io.ObjectOutput;
 
 public class JNDIRequest implements ClusterableRequest {
 
+    private static final long serialVersionUID = -568798775203142850L;
     private transient RequestMethodCode requestMethod;
     private transient String requestString;
     private transient String moduleId;
     private transient int serverHash;
+    private transient ProtocolMetaData metaData;
 
     public JNDIRequest() {
     }
 
-    public JNDIRequest(RequestMethodCode requestMethod, String requestString) {
+    public JNDIRequest(final RequestMethodCode requestMethod, final String requestString) {
         this.requestMethod = requestMethod;
         this.requestString = requestString;
     }
 
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
     public RequestType getRequestType() {
         return RequestType.JNDI_REQUEST;
     }
@@ -51,30 +59,36 @@ public class JNDIRequest implements ClusterableRequest {
         return moduleId;
     }
 
-    public void setModuleId(String moduleId) {
+    public void setModuleId(final String moduleId) {
         this.moduleId = moduleId;
     }
 
-    public void setRequestMethod(RequestMethodCode requestMethod) {
+    public void setRequestMethod(final RequestMethodCode requestMethod) {
         this.requestMethod = requestMethod;
     }
 
-    public void setRequestString(String requestString) {
+    public void setRequestString(final String requestString) {
         this.requestString = requestString;
     }
 
-    public void setServerHash(int serverHash) {
+    @Override
+    public void setServerHash(final int serverHash) {
         this.serverHash = serverHash;
     }
 
+    @Override
     public int getServerHash() {
         return serverHash;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        int code = in.readByte();
+        final int code = in.readByte();
         try {
             requestMethod = RequestMethodCode.valueOf(code);
         } catch (IllegalArgumentException iae) {
@@ -85,7 +99,11 @@ public class JNDIRequest implements ClusterableRequest {
         serverHash = in.readInt();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
@@ -96,7 +114,7 @@ public class JNDIRequest implements ClusterableRequest {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(100);
+        final StringBuilder sb = new StringBuilder(100);
 
         sb.append(requestMethod);
         sb.append(this.moduleId != null ? moduleId : "").append(":");

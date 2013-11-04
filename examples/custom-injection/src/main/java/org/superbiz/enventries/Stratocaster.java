@@ -31,7 +31,6 @@ import java.util.Map;
 @Stateless
 public class Stratocaster {
 
-
     @Resource(name = "pickups")
     private List<Pickup> pickups;
 

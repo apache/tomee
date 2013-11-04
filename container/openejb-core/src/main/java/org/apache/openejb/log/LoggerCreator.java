@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.log;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Properties;
@@ -65,8 +66,6 @@ public class LoggerCreator implements Callable<Logger> {
                             handler.setLevel(level);
                         }
                     }
-
-                    init = true;
                 }
             }
         }
@@ -83,10 +82,14 @@ public class LoggerCreator implements Callable<Logger> {
         }
 
         private static Logger exec(final LoggerCreator creator) {
+            final ClassLoader old = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(ParentClassLoaderFinder.Helper.get());
             try {
                 return creator.call();
-            } catch (Exception e) { // shouldn't occur regarding the impl we use
+            } catch (final Exception e) { // shouldn't occur regarding the impl we use
                 return Logger.getLogger("default");
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
             }
         }
 
@@ -99,6 +102,10 @@ public class LoggerCreator implements Callable<Logger> {
         }
 
         public static void levels(final LoggerCreator lc, final AtomicBoolean debug, final AtomicBoolean info) {
+            if (lc.init) {
+                return;
+            }
+
             final Logger l;
             try {
                 l = lc.call();
@@ -108,6 +115,7 @@ public class LoggerCreator implements Callable<Logger> {
 
             debug.set(l.isLoggable(Level.FINE));
             info.set(l.isLoggable(Level.INFO));
+            lc.init = true;
         }
     }
 }

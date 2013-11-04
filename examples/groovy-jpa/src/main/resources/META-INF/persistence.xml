@@ -26,10 +26,10 @@
     <class>org.superbiz.groovy.Person</class>
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-      <property name="javax.persistence.jdbc.password" value="" />
-      <property name="javax.persistence.jdbc.user" value="sa" />
-      <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:groovy" />
+      <property name="javax.persistence.jdbc.password" value=""/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:groovy"/>
     </properties>
   </persistence-unit>
 </persistence>

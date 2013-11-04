@@ -16,7 +16,6 @@
  */
 package org.superbiz.enventries;
 
-
 //START SNIPPET: code
 
 import java.beans.PropertyEditorManager;

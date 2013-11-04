@@ -84,7 +84,7 @@ public class DatabaseTimerStore implements TimerStore, Serializable {
     }
 
     @Override
-    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression schedule, final TimerConfig timerConfig)
+    public TimerData createCalendarTimer(final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final ScheduleExpression schedule, final TimerConfig timerConfig, final boolean autoCreated)
             throws TimerStoreException {
         // TODO Auto-generated method stub
         return null;

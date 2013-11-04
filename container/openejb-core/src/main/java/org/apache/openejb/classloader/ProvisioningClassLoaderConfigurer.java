@@ -21,6 +21,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
@@ -78,7 +79,7 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
 
             String line;
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
+                line = PropertyPlaceHolderHelper.SUBSTITUTOR.replace(line.trim());
                 if (line.startsWith("#")) {
                     continue;
                 }

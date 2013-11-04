@@ -31,4 +31,5 @@ import java.lang.annotation.Target;
 @Singleton
 @Lock(LockType.READ)
 public @interface Organic {
+
 }

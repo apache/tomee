@@ -17,33 +17,31 @@
 package org.apache.openejb;
 
 import junit.framework.TestCase;
-import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.openejb.server.ejbd.EjbServer;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentsResolver;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.ejbd.EjbServer;
 
+import javax.ejb.Remote;
+import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
-import javax.ejb.Remote;
-import java.util.Properties;
-import java.util.Collections;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
  */
 public class JndiTest extends TestCase {
+
     public void test() throws Exception {
         EjbServer ejbServer = new EjbServer();
 
@@ -137,8 +135,10 @@ public class JndiTest extends TestCase {
 
     @Remote
     public static interface FruitRemote {
+
     }
 
     public static class Fruit implements FruitRemote {
+
     }
 }

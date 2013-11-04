@@ -61,5 +61,4 @@ public class JobProcessorTest extends TestCase {
 
     }
 
-
 }

@@ -65,16 +65,19 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             if (!uri.getScheme().toLowerCase().startsWith("xbean")) {
 
                 Object value = properties.get("datasource");
-                if (value instanceof String && value.toString().length() == 0) {
+
+                if (String.class.isInstance(value) && value.toString().length() == 0) {
                     value = null;
                 }
 
+                final DataSource dataSource;
+
                 if (value != null) {
-                    final DataSource dataSource;
-                    if (value instanceof DataSource) {
-                        dataSource = (DataSource) value;
-                    } else {
-                        final String resouceId = (String) value;
+
+                    if (DataSource.class.isInstance(value)) {
+                        dataSource = DataSource.class.cast(value);
+                    } else if (String.class.isInstance(value)) {
+                        final String resouceId = String.class.cast(value);
 
                         try {
                             final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -82,19 +85,26 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                             final Object obj = context.lookup("openejb/Resource/" + resouceId);
                             if (!(obj instanceof DataSource)) {
                                 throw new IllegalArgumentException("Resource with id " + resouceId
-                                        + " is not a DataSource, but is " + obj.getClass().getName());
+                                                                   + " is not a DataSource, but is " + obj.getClass().getName());
                             }
                             dataSource = (DataSource) obj;
                         } catch (NamingException e) {
                             throw new IllegalArgumentException("Unknown datasource " + resouceId);
                         }
+                    } else {
+                        throw new IllegalArgumentException("Unexpected datasource definition: " + value);
                     }
 
+                } else {
+                    dataSource = null;
+                }
+
+                if (null != dataSource) {
                     final JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
 
                     if (properties.containsKey("usedatabaselock")) {
                         //This must be false for hsqldb
-                        persistenceAdapter.setUseDatabaseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
+                        persistenceAdapter.setUseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
                     }
 
                     persistenceAdapter.setDataSource(dataSource);
@@ -130,14 +140,26 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     try {
                         //Start before returning - this is known to be safe.
                         if (!bs.isStarted()) {
-                            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Starting ActiveMQ BrokerService");
+                            org.apache
+                                .openejb
+                                .util
+                                .Logger
+                                .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                                .getChildLogger("service")
+                                .info("Starting ActiveMQ BrokerService");
                             bs.start();
                         }
 
                         bs.waitUntilStarted();
 
                         //Force a checkpoint to initialize pools
-                        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Starting ActiveMQ checkpoint");
+                        org.apache
+                            .openejb
+                            .util
+                            .Logger
+                            .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                            .getChildLogger("service")
+                            .info("Starting ActiveMQ checkpoint");
                         bs.getPersistenceAdapter().checkpoint(true);
                         started.set(true);
 
@@ -165,7 +187,13 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             try {
                 timeout = Integer.parseInt(properties.getProperty("startuptimeout", "30000"));
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("Using ActiveMQ startup timeout of " + timeout + "ms");
+                org.apache
+                    .openejb
+                    .util
+                    .Logger
+                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                    .getChildLogger("service")
+                    .info("Using ActiveMQ startup timeout of " + timeout + "ms");
             } catch (Throwable e) {
                 //Ignore
             }
@@ -180,11 +208,18 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
 
             if (null != throwable) {
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker", throwable);
+                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
+                                                                                                                                                throwable);
             } else if (started.get()) {
                 org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
             } else {
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
+                org.apache
+                    .openejb
+                    .util
+                    .Logger
+                    .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
+                    .getChildLogger("service")
+                    .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");
             }
 
         }

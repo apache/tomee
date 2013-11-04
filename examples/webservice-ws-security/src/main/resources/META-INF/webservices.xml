@@ -17,7 +17,7 @@
 <webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
-             xmlns:ger="http://ciaows.org/wsdl" version="1.1">
+             version="1.1">
 
   <webservice-description>
     <webservice-description-name>CalculatorWsService</webservice-description-name>

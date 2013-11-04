@@ -24,7 +24,8 @@ import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")})
+                                      @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")
+})
 public class QuartzMdb implements Job {
 
     @Override

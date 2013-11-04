@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.executor.OfferRejectedExecutionHandler;
 
@@ -98,8 +99,17 @@ public class ExecutorBuilder {
 
         RejectedExecutionHandler handler = this.rejectedExecutionHandler;
         if (handler == null) {
-            final Duration duration = options.get(prefix + ".OfferTimeout", new Duration(30, TimeUnit.SECONDS));
-            handler = new OfferRejectedExecutionHandler(duration);
+            final String rejectedExecutionHandlerClass = options.get(prefix + ".RejectedExecutionHandlerClass", (String) null);
+            if (rejectedExecutionHandlerClass == null) {
+                final Duration duration = options.get(prefix + ".OfferTimeout", new Duration(30, TimeUnit.SECONDS));
+                handler = new OfferRejectedExecutionHandler(duration);
+            } else {
+                try {
+                    handler = RejectedExecutionHandler.class.cast(Thread.currentThread().getContextClassLoader().loadClass(rejectedExecutionHandlerClass).newInstance());
+                } catch (final Exception e) {
+                    throw new OpenEJBRuntimeException(e);
+                }
+            }
         }
 
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize

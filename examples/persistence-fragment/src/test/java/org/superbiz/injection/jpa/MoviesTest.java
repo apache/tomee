@@ -28,6 +28,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 
 public class MoviesTest {
+
     @PersistenceUnit
     private EntityManagerFactory emf;
 

@@ -26,44 +26,56 @@ public class StatelessEJBObjectHandler extends EJBObjectHandler {
     public StatelessEJBObjectHandler() {
     }
 
-    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatelessEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public StatelessEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public StatelessEJBObjectHandler(final EJBMetaDataImpl ejb,
+                                     final ServerMetaData server,
+                                     final ClientMetaData client,
+                                     final Object primaryKey,
+                                     final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
     }
 
-    public static Object createRegistryId(Object primKey, Object deployId, String containerID) {
+    public static Object createRegistryId(final Object primKey, final Object deployId, final String containerID) {
         return "" + deployId + containerID;
     }
 
+    @Override
     public Object getRegistryId() {
         return this.ejb.deploymentID;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
 
-        Object arg = (args.length == 1) ? args[0] : null;
+        final Object arg = (args.length == 1) ? args[0] : null;
 
-        if (arg == null || !(arg instanceof EJBObjectProxy)) return Boolean.FALSE;
-        EJBObjectProxy proxy2 = (EJBObjectProxy) arg;
-        EJBObjectHandler that = proxy2.getEJBObjectHandler();
+        if (arg == null || !(arg instanceof EJBObjectProxy)) {
+            return Boolean.FALSE;
+        }
+        final EJBObjectProxy proxy2 = (EJBObjectProxy) arg;
+        final EJBObjectHandler that = proxy2.getEJBObjectHandler();
         return this.ejb.deploymentID.equals(that.ejb.deploymentID);
     }
 
-    protected Object equals(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object equals(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return isIdentical(method, args, proxy);
     }
 
+    @Override
     protected void invalidateReference() {
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object remove(final Method method, final Object[] args, final Object proxy) throws Throwable {
         // you can't really remove a stateless handle
         return null;
     }

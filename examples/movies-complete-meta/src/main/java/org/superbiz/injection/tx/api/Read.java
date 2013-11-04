@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 
 public @interface Read {
+
     public interface $ {
 
         @Read

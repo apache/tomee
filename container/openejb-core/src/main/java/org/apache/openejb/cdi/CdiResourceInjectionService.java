@@ -33,8 +33,10 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PassthroughFactory;
 import org.apache.webbeans.component.ResourceBean;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.api.ResourceReference;
+import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -47,15 +49,17 @@ import java.util.List;
 import java.util.Map.Entry;
 
 public class CdiResourceInjectionService implements ResourceInjectionService {
-
     private Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiResourceInjectionService.class);
+
+    private final CdiPlugin ejbPlugin;
     private final List<BeanContext> compContexts = new ArrayList<BeanContext>();
 
-    public CdiResourceInjectionService() {
+    public CdiResourceInjectionService(final WebBeansContext context) {
+        ejbPlugin = CdiPlugin.class.cast(context.getPluginLoader().getEjbPlugin());
     }
 
     public void setAppContext(AppContext appModule) {
-        for (BeanContext beanContext : appModule.getBeanContexts()) {
+        for (final BeanContext beanContext : appModule.getBeanContexts()) {
             if (beanContext.getBeanClass().equals(BeanContext.Comp.class)) {
                 compContexts.add(beanContext);
             }
@@ -86,6 +90,9 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
     @Override
     public void injectJavaEEResources(Object managedBeanInstance) {
+        if (managedBeanInstance != null && ejbPlugin.isSessionBean(managedBeanInstance.getClass())) { // already done
+            return;
+        }
 
         ObjectRecipe receipe = PassthroughFactory.recipe(managedBeanInstance);
         receipe.allow(Option.FIELD_INJECTION);

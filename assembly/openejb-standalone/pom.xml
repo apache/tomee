@@ -23,7 +23,7 @@
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-standalone</artifactId>
@@ -163,6 +163,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>

@@ -28,7 +28,7 @@ public class RetryingRequest {
     private final Request request;
     private final ServerMetaData serverMetaData;
 
-    public RetryingRequest(Request request, ServerMetaData serverMetaData) {
+    public RetryingRequest(final Request request, final ServerMetaData serverMetaData) {
         this.request = request;
         this.serverMetaData = serverMetaData;
     }
@@ -44,7 +44,7 @@ public class RetryingRequest {
     @Override
     public String toString() {
         return "RetryingRequest{" +
-                "server=" + serverMetaData.getLocation() +
-                "} " + request;
+               "server=" + serverMetaData.getLocation() +
+               "} " + request;
     }
 }

@@ -18,14 +18,14 @@
     under the License.
 -->
 <Server port="8005" shutdown="SHUTDOWN">
-  <Listener className="org.apache.tomee.catalina.ServerListener" />
-  <Listener className="org.apache.catalina.security.SecurityListener" />
+  <Listener className="org.apache.tomee.catalina.ServerListener"/>
+  <Listener className="org.apache.catalina.security.SecurityListener"/>
 
   <Service name="Catalina">
     <Connector port="8080" protocol="HTTP/1.1"
                connectionTimeout="20000"
-               redirectPort="8443" />
-    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+               redirectPort="8443"/>
+    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443"/>
     <Engine name="Catalina" defaultHost="localhost">
 
       <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
@@ -33,8 +33,8 @@
              roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
       </Realm>
 
-      <Host name="localhost"  appBase="webapps"
-            unpackWARs="true" autoDeploy="true" />
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="true" autoDeploy="true"/>
     </Engine>
   </Service>
 </Server>

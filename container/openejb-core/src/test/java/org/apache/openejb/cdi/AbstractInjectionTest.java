@@ -52,6 +52,8 @@ public class AbstractInjectionTest {
         final Beans beans = new Beans();
         beans.addManagedClass(PlcBaseDAO.class);
         beans.addManagedClass(PlcBaseJpaDAO.class);
+        beans.addManagedClass(AppCDI.class);
+        beans.addManagedClass(AppJpaDAO.class);
 
         final EjbModule jar = new EjbModule(ejbJar);
         jar.setBeans(beans);

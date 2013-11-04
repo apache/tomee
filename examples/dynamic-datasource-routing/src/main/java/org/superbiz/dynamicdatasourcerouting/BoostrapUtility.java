@@ -27,11 +27,11 @@ import javax.persistence.PersistenceContext;
 /**
  * OpenJPA create the table at the first query.
  * To avoid to have to create the table manunally this singleton will do it for us.
- *
  */
 @Startup
 @Singleton
 public class BoostrapUtility {
+
     @PersistenceContext(unitName = "db1")
     private EntityManager em1;
 

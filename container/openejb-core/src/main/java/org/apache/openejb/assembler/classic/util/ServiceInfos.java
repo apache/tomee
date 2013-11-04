@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic.util;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.config.sys.MapFactory;
 import org.apache.openejb.loader.SystemInstance;
@@ -71,6 +72,10 @@ public final class ServiceInfos {
     }
 
     public static List<Object> resolve(final Collection<ServiceInfo> serviceInfos, final String[] ids) {
+        return resolve(serviceInfos, ids, null);
+    }
+
+    public static List<Object> resolve(final Collection<ServiceInfo> serviceInfos, final String[] ids, final Factory factory) {
         if (ids == null || ids.length == 0) {
             return null;
         }
@@ -80,10 +85,18 @@ public final class ServiceInfos {
             Object instance = resolve(serviceInfos, id);
             if (instance == null) {  // maybe id == classname
                 try {
-                    instance = Thread.currentThread().getContextClassLoader().loadClass(id).newInstance();
-                } catch (Exception e) {
+                    final Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(id);
+                    if (factory == null) {
+                        instance = aClass.newInstance();
+                    } else {
+                        instance = factory.newInstance(aClass);
+                    }
+                } catch (final Exception e) {
                     // ignore
                 }
+            }
+            if (instance == null) {
+                instance = resolve(SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.services, id);
             }
 
             if (instance != null) {
@@ -142,5 +155,9 @@ public final class ServiceInfos {
         Assembler.logUnusedProperties(serviceRecipe, info);
 
         return service;
+    }
+
+    public static interface Factory {
+        Object newInstance(final Class<?> clazz) throws Exception;
     }
 }

@@ -41,16 +41,13 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         }
     }
 
-    public Object getResource(Object key) {
-        Transaction transaction = getActiveTransaction();
-
-        Map<Object, Object> resources = transactionResources.get(transaction);
+    public Object getResource(final Object key) {
+        final Transaction transaction = getActiveTransaction();
+        final Map<Object, Object> resources = transactionResources.get(transaction);
         if (resources == null) {
             return null;
         }
-
-        Object value = resources.get(key);
-        return value;
+        return resources.get(key);
     }
 
     public void putResource(Object key, Object value) {

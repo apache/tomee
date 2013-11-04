@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SubjectDaoTest {
+
     private static EJBContainer container;
 
     @Inject

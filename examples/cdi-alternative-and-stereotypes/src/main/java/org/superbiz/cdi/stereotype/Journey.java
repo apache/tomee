@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 @Singleton
 public class Journey {
+
     @Inject
     private Vehicle vehicle;
     @Inject

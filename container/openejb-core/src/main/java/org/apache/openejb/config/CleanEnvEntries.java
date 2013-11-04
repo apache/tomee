@@ -26,8 +26,10 @@ import org.apache.openejb.jee.JndiConsumer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,63 +50,77 @@ public class CleanEnvEntries implements DynamicDeployer {
         return appModule;
     }
 
-    public AppModule removeUnsetEnvEntries(AppModule appModule) throws OpenEJBException {
+    public AppModule removeUnsetEnvEntries(final AppModule appModule) throws OpenEJBException {
+        final Map<String, EnvEntry> appEnvEntryMap = getAppEnvEntryMap(appModule);
 
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
             if (consumer == null) continue;
 
-            removeUnsetEnvEntries(consumer);
+            removeUnsetEnvEntries(appEnvEntryMap, consumer);
         }
 
-        for (WebModule module : appModule.getWebModules()) {
+        for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
             if (consumer == null) continue;
 
-            removeUnsetEnvEntries(consumer);
+            removeUnsetEnvEntries(appEnvEntryMap, consumer);
         }
 
-        for (EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
             if (ejbJar == null) continue;
 
-            for (EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
-                removeUnsetEnvEntries(consumer);
+            for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
+                removeUnsetEnvEntries(appEnvEntryMap, consumer);
             }
         }
 
         return appModule;
     }
 
-    private void removeUnsetEnvEntries(JndiConsumer consumer) {
+    private static Map<String, EnvEntry> getAppEnvEntryMap(final AppModule appModule) {
+        if (appModule.getApplication() != null && appModule.getApplication().getEnvEntry() != null) {
+            return appModule.getApplication().getEnvEntryMap();
+        }
+        return Collections.emptyMap();
+    }
+
+    private void removeUnsetEnvEntries(final Map<String,EnvEntry> appEntries, final JndiConsumer consumer) {
         final Iterator<EnvEntry> entries = consumer.getEnvEntry().iterator();
         while (entries.hasNext()) {
             final EnvEntry entry = entries.next();
-            if (entry.getEnvEntryValue() != null) continue;
-            if (entry.getLookupName() != null) continue;
+            if (entry.getEnvEntryValue() != null || entry.getLookupName() != null) {
+                continue;
+            }
 
-            entries.remove();
+            final EnvEntry appEntry = appEntries.get(entry.getName());
+            if (appEntry != null && appEntry.getEnvEntryValue() != null) {
+                entry.setEnvEntryValue(appEntry.getEnvEntryValue());
+            } else {
+                entries.remove();
+            }
         }
     }
 
 
-    public AppModule fillInMissingType(AppModule appModule) throws OpenEJBException {
+    public AppModule fillInMissingType(final AppModule appModule) throws OpenEJBException {
 
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
             if (consumer == null) continue;
 
             fillInMissingType(consumer, module);
         }
 
-        for (WebModule module : appModule.getWebModules()) {
+        for (final WebModule module : appModule.getWebModules()) {
             final JndiConsumer consumer = module.getWebApp();
             if (consumer == null) continue;
 
             fillInMissingType(consumer, module);
         }
 
-        for (EjbModule module : appModule.getEjbModules()) {
+        for (final EjbModule module : appModule.getEjbModules()) {
             final EjbJar ejbJar = module.getEjbJar();
             if (ejbJar == null) continue;
 
@@ -116,16 +132,16 @@ public class CleanEnvEntries implements DynamicDeployer {
         return appModule;
     }
 
-    private void fillInMissingType(JndiConsumer consumer, DeploymentModule module) {
+    private void fillInMissingType(final JndiConsumer consumer, final DeploymentModule module) {
         final ClassLoader loader = module.getClassLoader();
 
-        for (EnvEntry entry : consumer.getEnvEntry()) {
+        for (final EnvEntry entry : consumer.getEnvEntry()) {
             fillInMissingType(loader, entry);
         }
 
     }
 
-    private void fillInMissingType(ClassLoader loader, EnvEntry entry) {
+    private void fillInMissingType(final ClassLoader loader, final EnvEntry entry) {
         if (entry.getType() != null) return;
 
         // If it has the lookup supplied we don't care if there is no type
@@ -136,7 +152,7 @@ public class CleanEnvEntries implements DynamicDeployer {
 
         final Set<Class> types = new HashSet<Class>();
 
-        for (InjectionTarget target : entry.getInjectionTarget()) {
+        for (final InjectionTarget target : entry.getInjectionTarget()) {
             if (target.getInjectionTargetClass() == null) continue;
             if (target.getInjectionTargetName() == null) continue;
 
@@ -150,7 +166,7 @@ public class CleanEnvEntries implements DynamicDeployer {
         entry.setType(type.getName());
     }
 
-    private void normalize(Set<Class> types) {
+    private void normalize(final Set<Class> types) {
         types.remove(Object.class);
 
         if (types.contains(int.class)) {

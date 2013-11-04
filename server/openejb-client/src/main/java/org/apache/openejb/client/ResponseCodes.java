@@ -18,7 +18,8 @@ package org.apache.openejb.client;
 
 public class ResponseCodes {
 
-    private ResponseCodes() { }
+    private ResponseCodes() {
+    }
 
     public static final int AUTH_GRANTED = 1;
     public static final int AUTH_REDIRECT = 2;

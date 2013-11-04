@@ -23,19 +23,19 @@ import org.apache.cxf.message.Message;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.rest.ThreadLocalContextManager;
-import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
-import org.apache.webbeans.intercept.InterceptorData;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -49,7 +49,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
@@ -89,17 +88,28 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
 
-            if (bean instanceof AbstractInjectionTargetBean<?>) {
-                final List<InterceptorData> stack = ((AbstractInjectionTargetBean) bean).getInterceptorStack();
-                if (stack != null) {
-                    for (InterceptorData id : stack) {
-                        final Interceptor<?> webBeansInterceptor = id.getWebBeansInterceptor();
-                        if (webBeansInterceptor == null || webBeansInterceptor.getBeanClass() == null) {
-                            continue;
-                        }
-
-                        Contexts.findContextFields(webBeansInterceptor.getBeanClass(), contextTypes);
+            if (bean instanceof InjectionTargetBean<?>) {
+                final InterceptorResolutionService.BeanInterceptorInfo info = InjectionTargetImpl.class.cast(InjectionTargetBean.class.cast(bean).getInjectionTarget()).getInterceptorInfo();
+                for (final Interceptor<?> interceptor : info.getCdiInterceptors()) {
+                    if (interceptor == null || interceptor.getBeanClass() == null) {
+                        continue;
                     }
+
+                    Contexts.findContextFields(interceptor.getBeanClass(), contextTypes);
+                }
+                for (final Interceptor<?> interceptor : info.getEjbInterceptors()) {
+                    if (interceptor == null || interceptor.getBeanClass() == null) {
+                        continue;
+                    }
+
+                    Contexts.findContextFields(interceptor.getBeanClass(), contextTypes);
+                }
+                for (final Decorator<?> decorator : info.getDecorators()) {
+                    if (decorator == null || decorator.getBeanClass() == null) {
+                        continue;
+                    }
+
+                    Contexts.findContextFields(decorator.getBeanClass(), contextTypes);
                 }
             }
         } else {
@@ -115,7 +125,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     }
 
     @Override
-    public Object getInstance(Message m) {
+    public Object getInstance(final Message m) {
         Contexts.bind(m.getExchange(), contextTypes);
 
         if (creator == null) {
@@ -140,7 +150,6 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         if (creator != null) {
             creator.release();
         }
-        ThreadLocalContextManager.reset();
     }
 
     @Override
@@ -257,18 +266,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                 final BeanManager bm = webbeansContext.getBeanManagerImpl();
                 creationalContext = bm.createCreationalContext(null);
 
-                final Object oldValue = AbstractInjectable.instanceUnderInjection.get();
-                AbstractInjectable.instanceUnderInjection.set(instance);
                 try {
                     OWBInjector.inject(bm, instance, creationalContext);
                 } catch (Exception e) {
                     // ignored
-                } finally {
-                    if (oldValue != null) {
-                        AbstractInjectable.instanceUnderInjection.set(oldValue);
-                    } else {
-                        AbstractInjectable.instanceUnderInjection.remove();
-                    }
                 }
 
                 // injector.postConstruct(); // it doesn't know it

@@ -16,19 +16,26 @@
  */
 package org.apache.openejb.core.cmp;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ContainerType;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.entity.EntityContext;
+import org.apache.openejb.core.entity.EntrancyTracker;
+import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.EjbTimerServiceImpl;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Enumerator;
+
+import javax.ejb.EJBAccessException;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -36,37 +43,31 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
+import javax.ejb.FinderException;
 import javax.ejb.ObjectNotFoundException;
 import javax.ejb.RemoveException;
 import javax.ejb.Timer;
-import javax.ejb.FinderException;
-import javax.ejb.EJBAccessException;
+import javax.transaction.Synchronization;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.Synchronization;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.ContainerType;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ExceptionType;
-import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.EjbTimerServiceImpl;
-import org.apache.openejb.core.entity.EntityContext;
-import org.apache.openejb.core.entity.EntrancyTracker;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.Enumerator;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 /**
  * @org.apache.xbean.XBean element="cmpContainer"
@@ -172,14 +173,13 @@ public class CmpContainer implements RpcContainer {
             beansByClass.put(beanContext.getCmpImplClass(), beanContext);
             beanContext.setContainer(this);
         }
+    }
 
-        EjbTimerService timerService = beanContext.getEjbTimerService();
+    public void start(final BeanContext beanContext) throws OpenEJBException {
+        final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
         }
-    }
-
-    public void start(BeanContext beanContext) throws OpenEJBException {
     }
     
     public void stop(BeanContext beanContext) throws OpenEJBException {
@@ -213,17 +213,6 @@ public class CmpContainer implements RpcContainer {
         } finally {
             ThreadContext.exit(oldCallContext);
         }
-    }
-
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
     }
 
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {

@@ -30,9 +30,6 @@ public class JuliLogStream implements LogStream {
 
     public JuliLogStream(LogCategory logCategory) {
         logger = new LoggerCreator(logCategory.getName());
-        if (logger.isInit()) {
-            LoggerCreator.Get.levels(logger, debug, info);
-        }
     }
 
     public boolean isFatalEnabled() {
@@ -72,7 +69,8 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isInfoEnabled() {
-        return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.INFO);
+        LoggerCreator.Get.exec(logger, debug, info);
+        return info.get();
     }
 
     public void info(String message) {
@@ -84,6 +82,7 @@ public class JuliLogStream implements LogStream {
     }
 
     public boolean isDebugEnabled() {
+        LoggerCreator.Get.levels(logger, debug, info); // cost nothing is init is done
         return debug.get();
     }
 

@@ -16,10 +16,11 @@
  */
 package org.superbiz.deltaspike.config;
 
-import java.util.Arrays;
-import java.util.List;
 import org.apache.deltaspike.core.spi.config.ConfigSource;
 import org.apache.deltaspike.core.spi.config.ConfigSourceProvider;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MyConfigSourceProvider implements ConfigSourceProvider {
     @Override

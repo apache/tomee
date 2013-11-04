@@ -157,7 +157,7 @@ public class EjbTimerImplSerializableTest {
         final EjbTimerService timer = context.getEjbTimerService();
         final MethodContext ctx = context.getMethodContext(EJBWithTimer.class.getMethod("doSthg"));
         final ScheduleData sd = ctx.getSchedules().iterator().next();
-        return new CalendarTimerData(1, (EjbTimerServiceImpl) timer, context.getDeploymentID().toString(), null, ctx.getBeanMethod(), sd.getConfig(), sd.getExpression());
+        return new CalendarTimerData(1, (EjbTimerServiceImpl) timer, context.getDeploymentID().toString(), null, ctx.getBeanMethod(), sd.getConfig(), sd.getExpression(), false);
     }
 
     @Module

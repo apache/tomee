@@ -53,6 +53,7 @@ public class AppInfo extends InfoObject {
     public final Properties jmx = new Properties();
     public final Set<String> mbeans = new TreeSet<String>();
     public final Set<String> jaxRsProviders = new TreeSet<String>();
+    public final Set<String> jsfClasses = new TreeSet<String>();
     public final Set<String> eventClassesNeedingAppClassloader = new TreeSet<String>();
     public boolean webAppAlone;
 }

@@ -30,10 +30,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "comment.list", query = "select c from Comment c")
-})
+                  @NamedQuery(name = "comment.list", query = "select c from Comment c")
+              })
 @XmlRootElement(name = "comment")
 public class Comment extends Model {
+
     @NotNull
     @Size(min = 1)
     private String author;

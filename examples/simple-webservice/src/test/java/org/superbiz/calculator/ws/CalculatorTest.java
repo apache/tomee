@@ -43,8 +43,8 @@ public class CalculatorTest {
     @Test
     public void test() throws Exception {
         Service calculatorService = Service.create(
-                new URL("http://127.0.0.1:4204/simple-webservice/Calculator?wsdl"),
-                new QName("http://superbiz.org/wsdl", "CalculatorService"));
+                                                      new URL("http://127.0.0.1:4204/simple-webservice/Calculator?wsdl"),
+                                                      new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
         assertNotNull(calculatorService);
 

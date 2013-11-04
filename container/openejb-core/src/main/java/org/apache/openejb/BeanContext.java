@@ -28,8 +28,8 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
-import org.apache.openejb.core.ivm.naming.ContextWrapper;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
@@ -37,44 +37,36 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
-import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.intercept.DecoratorHandler;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.portable.InjectionTargetImpl;
+import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 import org.apache.xbean.recipe.ConstructionException;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
+import javax.ejb.*;
+import javax.ejb.ApplicationException;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.Decorator;
+import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -85,6 +77,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 @SuppressWarnings("unchecked")
@@ -96,9 +89,56 @@ public class BeanContext extends DeploymentContext {
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     private boolean isPassivatingScope = true;
+    private ConstructorInjectionBean<Object> constructorInjectionBean = null;
 
     public boolean isDynamicallyImplemented() {
         return proxyClass != null;
+    }
+
+    public void mergeOWBAndOpenEJBInfo() {
+        final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
+        if (cdiEjbBean == null) {
+            return;
+        }
+
+        final InjectionTargetImpl<?> injectionTarget = InjectionTargetImpl.class.cast(get(CdiEjbBean.class).getInjectionTarget());
+        final InterceptorResolutionService.BeanInterceptorInfo info = injectionTarget.getInterceptorInfo();
+        if (info == null) {
+            return;
+        }
+
+        for (final Map.Entry<Method, InterceptorResolutionService.BusinessMethodInterceptorInfo> entry : info.getBusinessMethodsInfo().entrySet()) {
+            final Interceptor<?>[] interceptors = entry.getValue().getCdiInterceptors();
+            if (interceptors == null) {
+                continue;
+            }
+
+            for (final Interceptor<?> i : interceptors) {
+                addCdiMethodInterceptor(entry.getKey(), InterceptorData.scan(i.getBeanClass()));
+            }
+            entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
+            entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
+        }
+
+        if (info.getSelfInterceptorBean() != null) { // handled by openejb
+            try {
+                final Field field = InterceptorResolutionService.BeanInterceptorInfo.class.getDeclaredField("selfInterceptorBean");
+                field.setAccessible(true);
+                field.set(info, null);
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
+
+        // handled by OpenEJB so clean up from OWB
+        Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors")).clear();
+        Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")).clear();
+
+        Collection.class.cast(Reflections.get(info, "ejbInterceptors")).clear();
+        Collection.class.cast(Reflections.get(info, "cdiInterceptors")).clear();
     }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
@@ -160,6 +200,7 @@ public class BeanContext extends DeploymentContext {
 
     private String ejbName;
     private String runAs;
+    private String runAsUser;
 
     private final BeanType componentType;
 
@@ -178,7 +219,7 @@ public class BeanContext extends DeploymentContext {
     private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
-    private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
+    private final Map<Class, ExceptionType> exceptions = new ConcurrentHashMap<Class, ExceptionType>();
 
     private final boolean localbean;
     private Duration accessTimeout;
@@ -255,6 +296,12 @@ public class BeanContext extends DeploymentContext {
             return InterfaceType.EJB_HOME;
         if (javax.ejb.EJBObject.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_OBJECT;
+
+        for (final Entry<Class, InterfaceType> entry : interfaces.entrySet()) { // for @Remote case where the loaded interface can be different from the stored one
+            if (entry.getKey().getName().equals(clazz.getName())) {
+                return entry.getValue();
+            }
+        }
 
         return null;
     }
@@ -474,11 +521,17 @@ public class BeanContext extends DeploymentContext {
         }
 
         // Unregistered - runtime exceptions are system exception and the rest are application exceptions
+        final Class<? extends Throwable> eClass = e.getClass();
+        final ApplicationException applicationException = eClass.getAnnotation(ApplicationException.class);
+        if (applicationException != null) {
+            addApplicationException(eClass, applicationException.rollback(), applicationException.inherited());
+            return getExceptionType(e);
+        }
+
         if (e instanceof RuntimeException) {
             return ExceptionType.SYSTEM;
-        } else {
-            return ExceptionType.APPLICATION;
         }
+        return ExceptionType.APPLICATION;
     }
 
     public BeanContext(final String id, final Context jndiContext, final ModuleContext moduleContext, final Class beanClass, final Class mdbInterface, final Map<String, String> activationProperties) throws SystemException {
@@ -1283,12 +1336,25 @@ public class BeanContext extends DeploymentContext {
         return runAs;
     }
 
+    public String getRunAsUser() {
+        return runAsUser;
+    }
+
     public void setEjbName(final String ejbName) {
         this.ejbName = ejbName;
     }
 
     public void setRunAs(final String runAs) {
         this.runAs = runAs;
+        if (runAsUser == null) { // default user
+            runAsUser = runAs;
+        }
+    }
+
+    public void setRunAsUser(final String runAsUser) { // principal
+        if (runAsUser != null) {
+            this.runAsUser = runAsUser;
+        }
     }
 
     public String toString() {
@@ -1354,36 +1420,46 @@ public class BeanContext extends DeploymentContext {
         final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         final ThreadContext oldContext = ThreadContext.enter(callContext);
 
-        final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
-        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
+        final boolean dynamicallyImplemented = isDynamicallyImplemented();
 
-        if (isDynamicallyImplemented()) {
+        final WebBeansContext webBeansContext = getWebBeansContext();
+
+        if (dynamicallyImplemented) {
             if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
                 throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
         }
 
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
-        if (beanDefinition == null) {
-            beanDefinition = beanConstructor;
-        }
-
         try {
-            final Context ctx = this.getJndiEnc();
-            final Class beanClass = this.getBeanClass();
+            final Context ctx = getJndiEnc();
+            final Class beanClass = getBeanClass();
 
             final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
             CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
 
-            if (creationalContext == null) {
-                creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+            final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
+
+            if (!CreationalContextImpl.class.isInstance(creationalContext) && webBeansContext != null) {
+                if (creationalContext == null) {
+                    creationalContext = webBeansContext.getCreationalContextFactory().getCreationalContext(cdiEjbBean);
+                } else {
+                    creationalContext = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(creationalContext, cdiEjbBean);
+                }
+            }
+
+            Object rootInstance;
+            if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
+                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
+            } else { // not a cdi bean
+                rootInstance = getManagedClass().newInstance();
             }
 
             // Create bean instance
-            final Object beanInstance;
+            Object beanInstance;
+
             final InjectionProcessor injectionProcessor;
-            if (!isDynamicallyImplemented()) {
-                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), getInjections(), InjectionProcessor.unwrap(ctx));
+            if (!dynamicallyImplemented) {
+                injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
                 beanInstance = injectionProcessor.createInstance();
                 inject(beanInstance, creationalContext);
             } else {
@@ -1391,7 +1467,7 @@ public class BeanContext extends DeploymentContext {
                 final List<Injection> newInjections = new ArrayList<Injection>();
                 for (final Injection injection : getInjections()) {
                     if (beanClass.equals(injection.getTarget())) {
-                        final Injection updated = new Injection(injection.getJndiName(), injection.getName(), beanDefinition.getBeanClass());
+                        final Injection updated = new Injection(injection.getJndiName(), injection.getName(), proxyClass);
                         newInjections.add(updated);
                     } else {
                         newInjections.add(injection);
@@ -1400,7 +1476,7 @@ public class BeanContext extends DeploymentContext {
                 injections.clear();
                 injections.addAll(newInjections);
 
-                injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), injections, InjectionProcessor.unwrap(ctx));
+                injectionProcessor = new InjectionProcessor(rootInstance, injections, InjectionProcessor.unwrap(ctx));
                 final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
                 inject(handler, creationalContext);
@@ -1422,25 +1498,33 @@ public class BeanContext extends DeploymentContext {
 
                 final Class clazz = interceptorData.getInterceptorClass();
 
-                final ConstructorInjectionBean interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz);
-                final InjectionProcessor interceptorInjector = new InjectionProcessor(interceptorConstructor.create(creationalContext), this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
-                try {
-                    final Object interceptorInstance = interceptorInjector.createInstance();
-                    try {
-                        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
-                        AbstractInjectable.instanceUnderInjection.set(interceptorInstance);
-                        try {
-                            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
-                        } finally {
-                            if (oldInstanceUnderInjection != null) {
-                                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-                            } else {
-                                AbstractInjectable.instanceUnderInjection.remove();
+                final Object iInstance;
+                if (webBeansContext != null) {
+                    ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                    if (interceptorConstructor == null) {
+                        synchronized (this) {
+                            interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                            if (interceptorConstructor == null) {
+                                interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
+                                interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
                             }
                         }
-                    } catch (Throwable t) {
-                        // TODO handle this differently
-                        // this is temporary till the injector can be rewritten
+                    }
+                    iInstance = interceptorConstructor.create(creationalContext);
+                } else {
+                    iInstance = clazz.newInstance();
+                }
+
+                final InjectionProcessor interceptorInjector = new InjectionProcessor(iInstance, this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
+                try {
+                    final Object interceptorInstance = interceptorInjector.createInstance();
+                    if (webBeansContext != null) {
+                        try {
+                            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
+                        } catch (final Throwable t) {
+                            // TODO handle this differently
+                            // this is temporary till the injector can be rewritten
+                        }
                     }
 
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
@@ -1475,6 +1559,9 @@ public class BeanContext extends DeploymentContext {
             final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try {
                 //Call the chain
+                if (cdiEjbBean != null) { // call it, it has no postconstruct but extensions can add stuff here, TODO: see if it should be called before or after effective postconstruct
+                    cdiEjbBean.getInjectionTarget().postConstruct(beanInstance);
+                }
                 postConstruct.invoke();
             } catch (Throwable e) {
                 //RollBack Transaction
@@ -1483,61 +1570,77 @@ public class BeanContext extends DeploymentContext {
                 EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
             }
 
+            // handle cdi decorators
+            if (cdiEjbBean != null) {
+                final Class<?> proxyClass = Class.class.cast(Reflections.get(cdiEjbBean.getInjectionTarget(), "proxyClass"));
+                if (proxyClass != null) { // means interception
+                    final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = cdiEjbBean.getBeanContext().get(InterceptorResolutionService.BeanInterceptorInfo.class);
+                    if (interceptorInfo.getDecorators() != null && !interceptorInfo.getDecorators().isEmpty()) {
+                        final InterceptorDecoratorProxyFactory pf = webBeansContext.getInterceptorDecoratorProxyFactory();
+
+                        // decorators
+                        final Object instance = beanInstance;
+                        final List<Decorator<?>> decorators = interceptorInfo.getDecorators();
+                        final Map<Decorator<?>, Object> instances = new HashMap<Decorator<?>, Object>();
+                        for (int i = decorators.size(); i > 0; i--) {
+                            final Decorator<?> decorator = decorators.get(i - 1);
+                            CreationalContextImpl.class.cast(creationalContext).putDelegate(beanInstance);
+                            final Object decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
+                            instances.put(decorator, decoratorInstance);
+                            beanInstance = pf.createProxyInstance(proxyClass, instance, new DecoratorHandler(interceptorInfo, instances, i - 1, instance, cdiEjbBean.getId()));
+                        }
+                    }
+                }
+            }
+
             return new InstanceContext(this, beanInstance, interceptorInstances, creationalContext);
         } finally {
             ThreadContext.exit(oldContext);
         }
     }
 
-    protected <X> X getBean(final Class<X> clazz, final Bean<?> bean) {
-        return clazz.cast(bean);
+    private ConstructorInjectionBean<Object> createConstructorInjectionBean(final WebBeansContext webBeansContext) {
+        if (constructorInjectionBean != null) {
+            return constructorInjectionBean;
+        }
+
+        synchronized (this) { // concurrentmodificationexception because of annotatedtype internals otherwise
+            if (constructorInjectionBean == null) {
+                constructorInjectionBean = new ConstructorInjectionBean<Object>(
+                                                webBeansContext, getManagedClass(),
+                                                webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
+            }
+        }
+        return constructorInjectionBean;
     }
 
     @SuppressWarnings("unchecked")
     public <T> void inject(final T instance, CreationalContext<T> ctx) {
 
-        final WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        final WebBeansContext webBeansContext = getWebBeansContext();
+        if (webBeansContext == null) {
+            return;
+        }
 
-        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
-
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, getManagedClass());
+        InjectionTargetBean<T> beanDefinition = get(CdiEjbBean.class);
 
         if (beanDefinition == null) {
-            beanDefinition = beanConstructor;
+            beanDefinition = InjectionTargetBean.class.cast(createConstructorInjectionBean(webBeansContext));
         }
 
         if (!(ctx instanceof CreationalContextImpl)) {
             ctx = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(ctx, beanDefinition);
         }
 
-        final Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
-        boolean isInjectionToAnotherBean = false;
-        try {
-            if (ctx instanceof CreationalContextImpl) {
-                final Contextual<?> contextual = ((CreationalContextImpl) ctx).getBean();
-                isInjectionToAnotherBean = contextual != getBean(InjectionTargetBean.class, beanDefinition);
-            }
+        beanDefinition.getInjectionTarget().inject(instance, ctx);
+    }
 
-            if (!isInjectionToAnotherBean) {
-                AbstractInjectable.instanceUnderInjection.set(instance);
-            }
-
-            final InjectionTargetBean<T> bean = getBean(InjectionTargetBean.class, beanDefinition);
-
-            bean.injectResources(instance, ctx);
-            bean.injectSuperFields(instance, ctx);
-            bean.injectSuperMethods(instance, ctx);
-            bean.injectFields(instance, ctx);
-            bean.injectMethods(instance, ctx);
-        } finally {
-            if (oldInstanceUnderInjection != null) {
-                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
-            } else {
-                AbstractInjectable.instanceUnderInjection.set(null);
-                AbstractInjectable.instanceUnderInjection.remove();
-            }
+    public WebBeansContext getWebBeansContext() {
+        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
+        if (bean != null) {
+            return bean.getWebBeansContext();
         }
-
+        return moduleContext.getAppContext().getWebBeansContext();
     }
 
     public Set<Class<?>> getAsynchronousClasses() {
@@ -1622,29 +1725,6 @@ public class BeanContext extends DeploymentContext {
         this.hidden = hidden;
     }
 
-    public void initIsPassivationScope() {
-        // CDI 6.6.4
-        if (BeanType.STATELESS.equals(componentType) || BeanType.SINGLETON.equals(componentType)) {
-            isPassivatingScope = false;
-            return;
-        }
-
-        final BeanManagerImpl bm = moduleContext.getAppContext().getWebBeansContext().getBeanManagerImpl();
-        if (!bm.isInUse()) {
-            isPassivatingScope = true;
-            return;
-        }
-
-        final CdiEjbBean<?> bean = get(CdiEjbBean.class);
-        if (bean == null) {
-            isPassivatingScope = true;
-            return;
-        }
-
-        final Class<? extends Annotation> scope = bean.getScope();
-        isPassivatingScope = !bm.isNormalScope(scope) || bm.isPassivatingScope(scope);
-    }
-
     public boolean isPassivatingScope() {
         final CdiEjbBean<?> bean = get(CdiEjbBean.class);
         if (bean == null) {
@@ -1711,40 +1791,5 @@ public class BeanContext extends DeploymentContext {
         private Class localHomeInterface;
         private Class localInterface;
         private Method createMethod;
-    }
-
-    private static class ContextHandler extends ContextWrapper {
-
-        public ContextHandler(final Context jndiContext) {
-            super(jndiContext);
-        }
-
-        @Override
-        public Object lookup(final Name name) throws NamingException {
-            try {
-                return context.lookup(name);
-            } catch (NameNotFoundException nnfe) {
-                try {
-                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-                } catch (NameNotFoundException nnfe2) {
-                    // ignore, let it be thrown
-                }
-                throw nnfe;
-            }
-        }
-
-        @Override
-        public Object lookup(String name) throws NamingException {
-            try {
-                return context.lookup(name);
-            } catch (NameNotFoundException nnfe) {
-                try {
-                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-                } catch (NameNotFoundException nnfe2) {
-                    // ignore, let it be thrown
-                }
-                throw nnfe;
-            }
-        }
     }
 }

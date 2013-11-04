@@ -29,8 +29,8 @@ import java.util.Properties;
 
 public class ConnectionManager {
 
-    private static Registry<ConnectionFactory> factories = Registry.create(ConnectionFactory.class);
-    private static Registry<ConnectionStrategy> strategies = Registry.create(ConnectionStrategy.class);
+    private static final Registry<ConnectionFactory> factories = Registry.create(ConnectionFactory.class);
+    private static final Registry<ConnectionStrategy> strategies = Registry.create(ConnectionStrategy.class);
 
     static {
         final SocketConnectionFactory ejbdFactory = new SocketConnectionFactory();
@@ -59,8 +59,12 @@ public class ConnectionManager {
     }
 
     public static Connection getConnection(final ClusterMetaData cluster, final ServerMetaData server, final Request req) throws IOException {
-        if (cluster == null) throw new IllegalArgumentException("cluster cannot be null");
-        if (server == null) throw new IllegalArgumentException("server cannot be null");
+        if (cluster == null) {
+            throw new IllegalArgumentException("cluster cannot be null");
+        }
+        if (server == null) {
+            throw new IllegalArgumentException("server cannot be null");
+        }
 
         String name = cluster.getConnectionStrategy();
 
@@ -70,7 +74,9 @@ public class ConnectionManager {
             name = p.getProperty("openejb.client.connection.strategy", name);
         }
 
-        if (name == null) name = "default";
+        if (name == null) {
+            name = "default";
+        }
 
         final ConnectionStrategy strategy = strategies.get(name);
         if (strategy == null) {
@@ -91,7 +97,9 @@ public class ConnectionManager {
     }
 
     public static Connection getConnection(final URI uri) throws IOException {
-        if (uri == null) throw new IllegalArgumentException("uri cannot be null");
+        if (uri == null) {
+            throw new IllegalArgumentException("uri cannot be null");
+        }
 
         final String scheme = uri.getScheme();
         final ConnectionFactory factory = factories.get(scheme);
@@ -154,6 +162,7 @@ public class ConnectionManager {
 
     @Log(Log.Level.SEVERE)
     public static class UnsupportedConnectionStrategyException extends IOException {
+
         public UnsupportedConnectionStrategyException(final String message) {
             super(message);
         }
@@ -161,6 +170,7 @@ public class ConnectionManager {
 
     @Log(Log.Level.SEVERE)
     public static class UnsupportedConnectionFactoryException extends IOException {
+
         public UnsupportedConnectionFactoryException(final String message) {
             super(message);
         }

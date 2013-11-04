@@ -22,6 +22,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 // in embedded mode simply put all provider in appclassloader
 // otherwise arquillian will be fooled by src/main/java
 public final class JPAEnrichers {
+
     private JPAEnrichers() {
         // no-op
     }

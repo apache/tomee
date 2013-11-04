@@ -22,7 +22,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0</version>
+    <version>1.6.0-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-common</artifactId>
   <packaging>jar</packaging>
@@ -30,6 +30,12 @@
   <name>OpenEJB :: Arquillian Adaptors Parent :: TomEE Common</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_2.5_spec</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-common</artifactId>
@@ -140,7 +146,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm-shaded</artifactId>
+          <artifactId>xbean-asm4-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
@@ -220,12 +226,6 @@
           <groupId>org.apache.openwebbeans</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-provisionning</artifactId>
-      <version>${openejb.version}</version>
     </dependency>
 
     <dependency>

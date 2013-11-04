@@ -17,31 +17,39 @@
 package org.apache.openejb.client;
 
 import java.io.Externalizable;
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
  * @version $Rev$ $Date$
  */
 public class DataSourceMetaData implements Externalizable {
-    private String jdbcUrl;
-    private String jdbcDriver;
-    private String defaultPassword;
-    private String defaultUserName;
+
+    private static final long serialVersionUID = 5531437575034018602L;
+    private transient String jdbcUrl;
+    private transient String jdbcDriver;
+    private transient String defaultPassword;
+    private transient String defaultUserName;
+    private transient ProtocolMetaData metaData;
 
     public DataSourceMetaData() {
     }
 
-    public DataSourceMetaData(String jdbcDriver, String jdbcUrl, String defaultUserName, String defaultPassword) {
+    public DataSourceMetaData(final String jdbcDriver, final String jdbcUrl, final String defaultUserName, final String defaultPassword) {
         this.defaultPassword = defaultPassword;
         this.defaultUserName = defaultUserName;
         this.jdbcDriver = jdbcDriver;
         this.jdbcUrl = jdbcUrl;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
         jdbcDriver = (String) in.readObject();
         jdbcUrl = (String) in.readObject();
@@ -49,7 +57,8 @@ public class DataSourceMetaData implements Externalizable {
         defaultPassword = (String) in.readObject();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 

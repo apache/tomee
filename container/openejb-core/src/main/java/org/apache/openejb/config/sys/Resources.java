@@ -45,7 +45,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "container", "resource", "service", "connector" })
+@XmlType(name = "", propOrder = { "container", "resource", "service", "connector", "jndiProvider" })
 @XmlRootElement(name = "resources")
 public class Resources {
 
@@ -60,6 +60,9 @@ public class Resources {
 
     @XmlElement(name = "Connector")
     protected List<Connector> connector;
+
+    @XmlElement(name = "JndiProvider")
+    protected List<JndiProvider> jndiProvider;
 
     public List<Resource> getResource() {
         if (resource == null) {
@@ -84,11 +87,18 @@ public class Resources {
         return service;
     }
 
-    private List<Connector> getConnector() {
+    public List<Connector> getConnector() {
         if (connector == null) {
             connector = new ArrayList<Connector>();
         }
         return this.connector;
+    }
+
+    public List<JndiProvider> getJndiProvider() {
+        if (jndiProvider == null) {
+            jndiProvider = new ArrayList<JndiProvider>();
+        }
+        return this.jndiProvider;
     }
 
     public void add(Object service) {
@@ -98,6 +108,8 @@ public class Resources {
             getService().add((Service) service);
         } else if (service instanceof Connector) {
             getConnector().add((Connector) service);
+        } else if (JndiProvider.class.isInstance(service)) {
+            getJndiProvider().add(JndiProvider.class.cast(service));
         }
     }
 }

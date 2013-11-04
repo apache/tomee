@@ -26,6 +26,7 @@ import javax.ejb.Singleton;
 @Proxy(DynamicMBeanHandler.class)
 @ObjectName(value = DynamicRemoteMBeanClient.OBJECT_NAME, url = "service:jmx:rmi:///jndi/rmi://localhost:8243/jmxrmi")
 public interface DynamicRemoteMBeanClient {
+
     static final String OBJECT_NAME = "test:group=DynamicMBeanClientTest";
 
     int getCounter();

@@ -43,30 +43,31 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class MoviesArquillianHtmlUnitTest {
+
     private static final String WEBAPP_SRC = "src/main/webapp";
 
     @Deployment
     public static WebArchive createDeployment() {
 
         Collection<String> dependencies = Arrays.asList(new String[]{
-                "javax.servlet:jstl",
-                "taglibs:standard",
-                "commons-lang:commons-lang"
+                                                                        "javax.servlet:jstl",
+                                                                        "taglibs:standard",
+                                                                        "commons-lang:commons-lang"
         });
 
         File[] libs = Maven.resolver()
-                .loadPomFromFile("pom.xml").resolve(dependencies)
-                .withTransitivity().asFile();
+                           .loadPomFromFile(Basedir.basedir("pom.xml")).resolve(dependencies)
+                           .withTransitivity().asFile();
 
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(Movie.class, MoviesBean.class, MoviesArquillianHtmlUnitTest.class, ActionServlet.class)
-                .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
-                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
-                .addAsLibraries(libs);
+                                   .addClasses(Movie.class, MoviesBean.class, MoviesArquillianHtmlUnitTest.class, ActionServlet.class)
+                                   .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml")
+                                   .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
+                                   .addAsLibraries(libs);
 
         war.merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
-                .importDirectory(WEBAPP_SRC).as(GenericArchive.class),
-                "/", Filters.includeAll());
+                            .importDirectory(Basedir.basedir(WEBAPP_SRC)).as(GenericArchive.class),
+                  "/", Filters.includeAll());
 
         return war;
     }

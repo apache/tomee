@@ -18,10 +18,9 @@ package org.apache.openejb;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.openejb.server.ejbd.EjbServer;
-import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.ejbd.EjbServer;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -32,6 +31,7 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class AuthTest extends TestCase {
+
     public void test() throws Exception {
         EjbServer ejbServer = new EjbServer();
 
@@ -45,17 +45,16 @@ public class AuthTest extends TestCase {
 
         int port = serviceDaemon.getPort();
 
-
         try {
 
             // good creds
             Properties props = new Properties();
             props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
             props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-            props.put(Context.SECURITY_PRINCIPAL, "jonathan");
-            props.put(Context.SECURITY_CREDENTIALS, "secret");
+            props.put("openejb.authentication.realmName", "LM"); // reusing LoginModule from AuthentWithRequestTest since it is more specific
+            props.put(Context.SECURITY_PRINCIPAL, "foo");
+            props.put(Context.SECURITY_CREDENTIALS, "bar");
             new InitialContext(props);
-
 
             try {
                 props.put(Context.SECURITY_PRINCIPAL, "alfred");

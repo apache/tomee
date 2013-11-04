@@ -23,7 +23,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ee.event.TransactionalEventNotifier;
+import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.spi.TransactionService;
 
 import javax.enterprise.event.TransactionPhase;
@@ -33,6 +35,9 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * this is a copy of the class in the owb webbeans-openejb jar which we aren't using.
@@ -41,6 +46,7 @@ public class OpenEJBTransactionService implements TransactionService {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBTransactionService.class);
 
     private final ContainerSystem containerSystem;
+    private WebBeansContext webBeansContext;
 
     public OpenEJBTransactionService() {
         containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -78,7 +84,21 @@ public class OpenEJBTransactionService implements TransactionService {
     }
 
     @Override
-    public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
-        TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
+    public void registerTransactionSynchronization(final TransactionPhase phase, final ObserverMethod<? super Object> observer, final Object event) throws Exception {
+        Set<Annotation> qualifiers = observer.getObservedQualifiers();
+        if (qualifiers == null) {
+            qualifiers = Collections.emptySet();
+        }
+
+        TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event,
+                new EventMetadataImpl(observer.getObservedType(), null, qualifiers.toArray(new Annotation[qualifiers.size()])));
+    }
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
+
+    public WebBeansContext getWebBeansContext() {
+        return webBeansContext;
     }
 }

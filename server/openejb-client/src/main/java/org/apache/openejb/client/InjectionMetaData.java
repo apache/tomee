@@ -17,46 +17,56 @@
 package org.apache.openejb.client;
 
 import java.io.Externalizable;
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
 public class InjectionMetaData implements Externalizable {
 
+    private static final long serialVersionUID = -4034793010942105791L;
     private final List<Injection> injections = new ArrayList<Injection>();
+    private transient ProtocolMetaData metaData;
 
+    public InjectionMetaData() {
+    }
+
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
 
     public List<Injection> getInjections() {
         return injections;
     }
 
-    public void addInjection(String target, String name, String jndiName){
+    public void addInjection(final String target, final String name, final String jndiName) {
         injections.add(new Injection(target, name, jndiName));
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        int size = in.readInt();
+        final int size = in.readInt();
         for (int i = 0; i < size; i++) {
-            String jndiName = (String) in.readObject();
-            String name = (String) in.readObject();
-            String target = (String) in.readObject();
+            final String jndiName = (String) in.readObject();
+            final String name = (String) in.readObject();
+            final String target = (String) in.readObject();
             addInjection(target, name, jndiName);
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
         out.writeInt(injections.size());
-        for (Injection injection : injections) {
+        for (final Injection injection : injections) {
             out.writeObject(injection.getJndiName());
             out.writeObject(injection.getName());
             out.writeObject(injection.getTargetClass());

@@ -21,12 +21,12 @@ Licensed to the Apache Software Foundation (ASF) under one or more
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.openejb.maven</groupId>
-    <version>1.0.2</version>
+    <version>1.0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jarstxt-maven-plugin</artifactId>
-  <version>4.6.0</version>
+  <version>4.6.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>OpenEJB :: Maven Plugins :: jars.txt Maven Plugin</name>
 
@@ -48,6 +48,11 @@ Licensed to the Apache Software Foundation (ASF) under one or more
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
     </dependency>
   </dependencies>
 

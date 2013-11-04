@@ -21,6 +21,7 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 
 public class ServerHandler implements Handler {
+
     public boolean handleMessage(MessageContext messageContext) {
         WebserviceServlet.write("        ServerHandler handleMessage");
         return true;

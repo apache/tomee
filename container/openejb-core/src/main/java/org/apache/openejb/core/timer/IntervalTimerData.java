@@ -58,7 +58,7 @@ public class IntervalTimerData extends TimerData {
     @Override
     public AbstractTrigger<?> initializeTrigger() {
         SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
-        Date startTime = new Date(initialExpiration.getTime() - intervalDuration);
+        Date startTime = new Date(initialExpiration.getTime());
         simpleTrigger.setStartTime(startTime);
         simpleTrigger.setRepeatInterval(intervalDuration);
         simpleTrigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);

@@ -55,7 +55,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         return Integer.parseInt(this.startupTimeout);
     }
 
-    public void setStartupTimeout(Duration startupTimeout) {
+    public void setStartupTimeout(final Duration startupTimeout) {
         if (startupTimeout.getUnit() == null) {
             startupTimeout.setUnit(TimeUnit.MILLISECONDS);
         }
@@ -90,7 +90,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
 
         // prefix server uri with 'broker:' so our broker factory is used
-        if (brokerXmlConfig != null) {
+        if (brokerXmlConfig != null && !brokerXmlConfig.trim().isEmpty()) {
 
             try {
 
@@ -116,8 +116,12 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             } catch (URISyntaxException e) {
                 throw new ResourceAdapterInternalException("Invalid BrokerXmlConfig", e);
             }
-        }
 
+            createInternalBroker(brokerXmlConfig, properties);
+        }
+    }
+
+    private void createInternalBroker(final String brokerXmlConfig, final Properties properties) {
         ActiveMQFactory.setThreadProperties(properties);
 
         try {

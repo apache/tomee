@@ -110,7 +110,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
     // update the current subject and security context
     private void updateSecurityContext() {
-        defaultSubject = createSubject(defaultUser);
+        defaultSubject = createSubject(defaultUser, defaultUser);
         defaultContext = new SecurityContext(defaultSubject);
     }
 
@@ -140,10 +140,12 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         final String moduleID = newContext.getBeanContext().getModuleID();
         PolicyContext.setContextID(moduleID);
 
-        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
+        Subject runAsSubject = getRunAsSubject(newContext.getBeanContext());
+        if (oldContext != null && runAsSubject == null) {
+            runAsSubject = getRunAsSubject(oldContext.getBeanContext());
+        }
 
-        final BeanContext callingBeanContext = (oldContext != null) ? oldContext.getBeanContext() : null;
-        final Subject runAsSubject = getRunAsSubject(callingBeanContext);
+        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
         if (runAsSubject != null) {
 
             securityContext = new SecurityContext(runAsSubject);
@@ -165,13 +167,11 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         if (callingBeanContext == null) {
             return null;
         }
-
-        final String runAsRole = callingBeanContext.getRunAs();
-        return createRunAsSubject(runAsRole);
+        return createRunAsSubject(callingBeanContext.getRunAsUser(), callingBeanContext.getRunAs());
     }
 
-    protected Subject createRunAsSubject(final String runAsRole) {
-        return createSubject(runAsRole);
+    protected Subject createRunAsSubject(final String runAsUser, final String runAsRole) {
+        return createSubject(runAsUser, runAsRole);
     }
 
     @Override
@@ -329,13 +329,13 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    protected Subject createSubject(final String name) {
+    protected Subject createSubject(final String name, final String groupName) {
         if (name == null) {
             return null;
         }
 
         final User user = new User(name);
-        final Group group = new Group(name);
+        final Group group = new Group(groupName);
         group.addMember(user);
 
         final HashSet<Principal> principals = new HashSet<Principal>();
@@ -433,6 +433,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
+    @CallerPrincipal // to force it to be before group in getCallerPrincipal, otherwise we aren't deterministic
     public static class User implements Principal {
 
         private final String name;

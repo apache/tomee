@@ -157,7 +157,7 @@ public class StatelessInvocationStatsTest extends TestCase {
         bean.blue();
 
         final MBeanServer server = LocalMBeanServer.get();
-        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters
 
@@ -312,7 +312,7 @@ public class StatelessInvocationStatsTest extends TestCase {
         bean.waitSecs();
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsInvocModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsInvocModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters        
         final MBeanInfo invocationsMBeanInfo = server.getMBeanInfo(invocationsName);

@@ -22,5 +22,6 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public interface SecondStatelessInterceptedLocal {
+
     List<String> methodWithDefaultInterceptorsExcluded();
 }

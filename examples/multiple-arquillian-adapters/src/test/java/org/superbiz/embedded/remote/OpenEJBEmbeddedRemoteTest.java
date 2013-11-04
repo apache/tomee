@@ -16,8 +16,6 @@
  */
 package org.superbiz.embedded.remote;
 
-import java.io.IOException;
-import java.net.URL;
 import org.apache.ziplock.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,11 +26,15 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.superbiz.SomeRest;
 
+import java.io.IOException;
+import java.net.URL;
+
 import static org.junit.Assert.assertEquals;
 
 @Category(EmbeddedRemote.class)
 @RunWith(Arquillian.class)
 public class OpenEJBEmbeddedRemoteTest {
+
     @Deployment
     public static JavaArchive jar() {
         return ShrinkWrap.create(JavaArchive.class, "my-webapp.jar").addClass(SomeRest.class);

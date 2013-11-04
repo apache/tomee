@@ -73,13 +73,13 @@ public class WsRsTest {
         final String expected = "" +
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                 "<soap:Body>" +
-                "<ns2:helloResponse xmlns:ns2=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\">" +
+                "<ns:helloResponse xmlns:ns=\"http://wsrs.jaxws.tests.arquillian.openejb.apache.org/\">" +
                 "<return>hola</return>" +
-                "</ns2:helloResponse>" +
+                "</ns:helloResponse>" +
                 "</soap:Body>" +
                 "</soap:Envelope>";
 
-        Assert.assertEquals(expected, body);
+        Assert.assertEquals(expected, body.replaceAll("ns[0-9]*", "ns"));
     }
 
     @Test

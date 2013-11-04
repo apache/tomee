@@ -73,6 +73,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,8 @@ public class DeploymentLoader implements DeploymentFilterable {
     public static final String URLS_KEY = "urls";
 
     private static final String RESOURCES_XML = "resources.xml";
+    private static final String WEB_FRAGMENT_XML = "web-fragment.xml";
+
     private boolean scanManagedBeans = true;
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
@@ -182,8 +185,28 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String jarLocation = URLs.toFilePath(baseUrl);
                 final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), null);
 
+                final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
+
+                // let it be able to deploy the same connector several times
+                final String id = connectorModule.getModuleId();
+                if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.connector." + id + ".skip-default", "false"))) {
+                    connectorModules.add(connectorModule);
+                }
+
+                final String aliases = SystemInstance.get().getProperty("openejb.connector." + id + ".aliases");
+                if (aliases != null) {
+                    for (final String alias : aliases.split(",")) {
+                        final ConnectorModule aliasModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), alias);
+                        connectorModules.add(aliasModule);
+                    }
+                }
+
+
+
                 // Wrap the resource module with an Application Module
-                return new AppModule(connectorModule);
+                final AppModule appModule = new AppModule(connectorModules.toArray(new ConnectorModule[connectorModules.size()]));
+
+                return appModule;
             }
 
             if (WebModule.class.equals(moduleClass)) {
@@ -219,8 +242,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                 addWebPersistenceDD("persistence.xml", otherDD, appModule);
                 addWebPersistenceDD("persistence-fragment.xml", otherDD, appModule);
                 addPersistenceUnits(appModule, baseUrl);
+                addWebFragments(webModule, urls);
                 appModule.setStandloneWebModule();
-                appModule.setDelegateFirst(false);
+                appModule.setDelegateFirst(true); // force it for webapps
                 return appModule;
             }
 
@@ -352,11 +376,11 @@ public class DeploymentLoader implements DeploymentFilterable {
             // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
             //
 
-            final Map<String, URL> ejbModules = new HashMap<String, URL>();
-            final Map<String, URL> clientModules = new HashMap<String, URL>();
-            final Map<String, URL> resouceModules = new HashMap<String, URL>();
-            final Map<String, URL> webModules = new HashMap<String, URL>();
-            final Map<String, String> webContextRoots = new HashMap<String, String>();
+            final Map<String, URL> ejbModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> clientModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> resouceModules = new LinkedHashMap<String, URL>();
+            final Map<String, URL> webModules = new LinkedHashMap<String, URL>();
+            final Map<String, String> webContextRoots = new LinkedHashMap<String, String>();
 
             final URL applicationXmlUrl = appDescriptors.get("application.xml");
             final List<URL> extraLibs = new ArrayList<URL>();
@@ -577,14 +601,37 @@ public class DeploymentLoader implements DeploymentFilterable {
             DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
             addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
 
+            final Object pXmls = appModule.getAltDDs().get("persistence.xml");
+
             for (final WebModule webModule : appModule.getWebModules()) {
-                final List<URL> scannableUrls = webModule.getScannableUrls();
                 final List<URL> foundRootUrls = new ArrayList<URL>();
+                final List<URL> scannableUrls = webModule.getScannableUrls();
                 for (final URL url : scannableUrls) {
                     if (!addPersistenceUnits(appModule, url).isEmpty()) {
                         foundRootUrls.add(url);
                     }
                 }
+
+                if (pXmls != null && Collection.class.isInstance(pXmls)) {
+                    final File webapp = webModule.getFile();
+                    if (webapp == null) {
+                        continue;
+                    }
+                    final String webappAbsolutePath = webapp.getAbsolutePath();
+
+                    final Collection<URL> list = Collection.class.cast(pXmls);
+                    for (final URL url : list) {
+                        try {
+                            final File file = URLs.toFile(url);
+                            if (file.getAbsolutePath().startsWith(webappAbsolutePath)) {
+                                foundRootUrls.add(url);
+                            }
+                        } catch (final IllegalArgumentException iae) {
+                            // no-op
+                        }
+                    }
+                }
+
                 webModule.getAltDDs().put(EAR_WEBAPP_PERSISTENCE_XML_JARS, foundRootUrls);
             }
 
@@ -1327,6 +1374,46 @@ public class DeploymentLoader implements DeploymentFilterable {
         return connectorModule;
     }
 
+    protected static void addWebFragments(final WebModule webModule, final Collection<URL> urls) throws OpenEJBException {
+        if (urls == null) {
+            return;
+        }
+
+        List<URL> webFragmentUrls;
+        try {
+            webFragmentUrls = (List<URL>) webModule.getAltDDs().get(WEB_FRAGMENT_XML);
+        } catch (final ClassCastException e) {
+            final Object value = webModule.getAltDDs().get(WEB_FRAGMENT_XML);
+            webFragmentUrls = new ArrayList<URL>();
+            webFragmentUrls.add(URL.class.cast(value));
+            webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
+        }
+        if (webFragmentUrls == null) {
+            webFragmentUrls = new ArrayList<URL>();
+            webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
+        }
+
+
+        for (final URL url : urls) {
+            final ResourceFinder finder = new ResourceFinder("", webModule.getClassLoader(), url);
+            final Map<String, URL> descriptors = getDescriptors(finder, false);
+
+            if (descriptors.containsKey(WEB_FRAGMENT_XML)) {
+                final URL descriptor = descriptors.get(WEB_FRAGMENT_XML);
+                if (webFragmentUrls.contains(descriptor)) {
+                    continue;
+                }
+
+                final String urlString = descriptor.toExternalForm();
+                if (!urlString.contains("META-INF/" + WEB_FRAGMENT_XML)) {
+                    logger.info("AltDD persistence.xml -> " + urlString);
+                }
+
+                webFragmentUrls.add(descriptor);
+            }
+        }
+    }
+
     @SuppressWarnings({"unchecked"})
     protected static Collection<URL> addPersistenceUnits(final AppModule appModule, final URL... urls) throws OpenEJBException {
         final Collection<URL> added = new ArrayList<URL>();
@@ -1528,16 +1615,14 @@ public class DeploymentLoader implements DeploymentFilterable {
             // handle some few file(s) which can be in META-INF too
             final File webAppDdDir = new File(webInfDir, "classes/" + ddDir);
             if (webAppDdDir.isDirectory()) {
-                final File[] files = webInfDir.listFiles();
+                final File[] files = webAppDdDir.listFiles();
                 if (files != null) {
                     for (final File file : files) {
                         final String name = file.getName();
-                        if (RESOURCES_XML.equals(name)) {
-                            if (!descriptors.containsKey(name)) {
-                                descriptors.put(name, file.toURI().toURL());
-                            } else {
-                                logger.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
-                            }
+                        if (!descriptors.containsKey(name)) {
+                            descriptors.put(name, file.toURI().toURL());
+                        } else {
+                            logger.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
                         }
                     }
                 }
@@ -1600,6 +1685,10 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (dirFiles != null) {
             for (final File file : dirFiles) {
                 if (file.isDirectory()) {
+                    if (DeploymentsResolver.isExtractedDir(file)) {
+                        continue;
+                    }
+
                     if (recursive) {
                         scanDir(file, files, path + file.getName() + "/");
                     }
@@ -1651,7 +1740,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             path = path.substring(0, path.length() - 1);
         }
 
-        if (path.endsWith(".xml")) { // let say it is a resource module
+        if (path.endsWith(".xml") || path.endsWith(".json")) { // let say it is a resource module
             return ResourcesModule.class;
         }
 
@@ -1665,7 +1754,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (baseUrl != null) {
             final Map<String, URL> webDescriptors = getWebDescriptors(getFile(baseUrl));
-            if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey("web-fragment.xml") // descriptor
+            if (webDescriptors.containsKey("web.xml") || webDescriptors.containsKey(WEB_FRAGMENT_XML) // descriptor
                     || path.endsWith(".war") || new File(path, "WEB-INF").exists()) { // webapp specific files
                 return WebModule.class;
             }

@@ -16,30 +16,21 @@
  */
 package org.apache.openejb.core.interceptor;
 
-import static org.apache.openejb.util.Join.join;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
+import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
-
-import javax.interceptor.InvocationContext;
-
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.util.Classes;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
 /**
  * @version $Rev$ $Date$
  */
 public class InterceptorStack {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private final Object beanInstance;
     private final List<Interceptor> interceptors;
     private final Method targetMethod;
@@ -53,10 +44,6 @@ public class InterceptorStack {
         this.operation = operation;
 
         interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
-//        try {
-//            interceptors.add(new Interceptor(new Debug(), Debug.class.getMethod("invoke", InvocationContext.class)));
-//        } catch (Throwable e) {
-//        }
 
         for (InterceptorData interceptorData : interceptorDatas) {
             Class interceptorClass = interceptorData.getInterceptorClass();
@@ -80,53 +67,8 @@ public class InterceptorStack {
 
     }
 
-    private static final ThreadLocal<Stack> stack = new ThreadLocal<Stack>();
-    private class Debug {
-
-        private Stack stack() {
-            Stack s = stack.get();
-            if (s == null){
-                s = new Stack();
-                stack.set(s);
-            }
-            return s;
-        }
-
-        public Object invoke(InvocationContext context) throws Exception {
-            try {
-                StringBuilder sb = new StringBuilder();
-                ThreadContext threadContext = ThreadContext.getThreadContext();
-                String txPolicy = threadContext.getTransactionPolicy().getClass().getSimpleName();
-                String ejbName = threadContext.getBeanContext().getEjbName();
-                String methodName = targetMethod.getName() + "(" + join(", ", Classes.getSimpleNames(targetMethod.getParameterTypes())) + ")";
-                sb.append(join("", stack()));
-                sb.append(ejbName).append(".");
-                sb.append(methodName).append(" <").append(txPolicy).append("> {");
-                synchronized (System.out){
-                    System.out.println(sb.toString());
-                }
-            } catch (Throwable e) {
-            }
-
-            try {
-
-                stack().push("  ");
-                return context.proceed();
-            } finally {
-                stack().pop();
-                StringBuilder sb = new StringBuilder();
-                sb.append(join("", stack()));
-                sb.append("}");
-                synchronized (System.out){
-                    System.out.println(sb.toString());
-                }
-            }
-        }
-    }
-
     public InvocationContext createInvocationContext(Object... parameters) {
-        InvocationContext invocationContext = new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, parameters);
-        return invocationContext;
+        return new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, parameters);
     }
 
     public Object invoke(Object... parameters) throws Exception {
@@ -135,8 +77,7 @@ public class InterceptorStack {
             if (ThreadContext.getThreadContext() != null) {
                 ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
             }
-            Object value = invocationContext.proceed();
-            return value;
+            return invocationContext.proceed();
         } finally {
             if (ThreadContext.getThreadContext() != null) {
                 ThreadContext.getThreadContext().remove(InvocationContext.class);
@@ -148,8 +89,7 @@ public class InterceptorStack {
         try {
             InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
             ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
-            Object value = invocationContext.proceed();
-            return value;
+            return invocationContext.proceed();
         } finally {
             ThreadContext.getThreadContext().remove(InvocationContext.class);
         }
@@ -159,8 +99,7 @@ public class InterceptorStack {
         try {
             InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
             ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
-            Object value = invocationContext.proceed();
-            return value;
+            return invocationContext.proceed();
         } finally {
             ThreadContext.getThreadContext().remove(InvocationContext.class);
         }

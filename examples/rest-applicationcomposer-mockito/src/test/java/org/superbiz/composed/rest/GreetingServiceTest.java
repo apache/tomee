@@ -18,11 +18,11 @@ package org.superbiz.composed.rest;
 
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.mockito.MockitoInjector;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.MockInjector;
 import org.apache.openejb.testing.Module;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.mockito.MockitoInjector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
+
     @Mock
     private Messager messager;
 
@@ -53,7 +54,7 @@ public class GreetingServiceTest {
 
     @Module
     public Class<?>[] app() {
-        return new Class<?>[] { GreetingService.class, Messager.class };
+        return new Class<?>[]{GreetingService.class, Messager.class};
     }
 
     @Test

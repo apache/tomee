@@ -16,59 +16,57 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.resource.XAResourceWrapper;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.SystemException;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ExceptionType;
-import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.transaction.xa.XAResource;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.UnavailableException;
-import javax.resource.ResourceException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.NamingException;
-import javax.validation.ConstraintViolation; 
-import javax.validation.ConstraintViolationException; 
-import javax.validation.Validator; 
-import java.lang.reflect.Method;
+import javax.resource.ResourceException;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.UnavailableException;
+import javax.transaction.xa.XAResource;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.TreeSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 public class MdbContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -190,12 +188,6 @@ public class MdbContainer implements RpcContainer {
 
             throw new OpenEJBException(e);
         }
-
-        // start the timer service
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.start();
-        }
     }
 
     private ActivationSpec createActivationSpec(BeanContext beanContext)throws OpenEJBException {
@@ -252,7 +244,11 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public void start(BeanContext info) throws OpenEJBException {
+    public void start(final BeanContext info) throws OpenEJBException {
+        final EjbTimerService timerService = info.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
     
     public void stop(BeanContext info) throws OpenEJBException {
@@ -283,17 +279,6 @@ public class MdbContainer implements RpcContainer {
             beanContext.setContainerData(null);
             deployments.remove(beanContext.getDeploymentID());
         }
-    }
-
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
     }
 
     public Object invoke(Object deploymentId, InterfaceType type, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {

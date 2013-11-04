@@ -19,11 +19,12 @@ package org.apache.openejb.client;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class PortRefMetaData implements Serializable {
+
     private static final long serialVersionUID = 4343767807431809218L;
 
     private QName qname;
@@ -36,7 +37,7 @@ public class PortRefMetaData implements Serializable {
         return qname;
     }
 
-    public void setQName(QName qname) {
+    public void setQName(final QName qname) {
         this.qname = qname;
     }
 
@@ -44,7 +45,7 @@ public class PortRefMetaData implements Serializable {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(String serviceEndpointInterface) {
+    public void setServiceEndpointInterface(final String serviceEndpointInterface) {
         this.serviceEndpointInterface = serviceEndpointInterface;
     }
 
@@ -52,7 +53,7 @@ public class PortRefMetaData implements Serializable {
         return enableMtom;
     }
 
-    public void setEnableMtom(boolean value) {
+    public void setEnableMtom(final boolean value) {
         this.enableMtom = value;
     }
 

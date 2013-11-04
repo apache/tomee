@@ -16,16 +16,30 @@
  */
 package org.apache.openejb.resolver.maven;
 
-import java.net.MalformedURLException;
 import org.ops4j.pax.url.maven.commons.MavenRepositoryURL;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * This class respects both Maven Coordinates
+ *
+ *  - groupId:artifactId:packaging:classifier:version
+ *  - http://maven.apache.org/pom.html#Maven_Coordinates
+ *
+ * And OPS4j coordinates
+ *
+ *  - groupId/artifactId/version/packaging/classifier
+ *  - https://ops4j1.jira.com/wiki/display/paxurl/Mvn+Protocol
+ *
+ */
 public class Parser {
-    public static final String VERSION_LATEST = "LATEST";
     private static final String SYNTAX = "mvn:[repository_url!]groupId/artifactId[/[version]/[type]]";
     private static final String REPOSITORY_SEPARATOR = "!";
     private static final String ARTIFACT_SEPARATOR = "/";
     private static final String VERSION_SNAPSHOT = "SNAPSHOT";
-    private static final String TYPE_JAR = "jar";
     private static final String FILE_SEPARATOR = "/";
     private static final String GROUP_SEPARATOR = "\\.";
     private static final String VERSION_SEPARATOR = "-";
@@ -33,106 +47,114 @@ public class Parser {
     private static final String CLASSIFIER_SEPARATOR = "-";
     private static final String METADATA_FILE = "maven-metadata.xml";
     private static final String METADATA_FILE_LOCAL = "maven-metadata-local.xml";
-    private String m_group;
-    private String m_artifact;
-    private String m_version;
-    private String m_type;
-    private String m_classifier;
-    private String m_fullClassifier;
-    private MavenRepositoryURL m_repositoryURL;
 
-    public Parser(final String rawPath)
-            throws MalformedURLException {
-        if (rawPath == null) {
-            throw new MalformedURLException("Path cannot be null. Syntax " + SYNTAX);
-        }
+    private final String group;
+    private final String artifact;
+    private final String version;
+    private final String type;
+    private final String classifier;
+    private final String fullClassifier;
+
+    private MavenRepositoryURL repositoryURL;
+
+    public Parser(final String rawPath) throws MalformedURLException {
+
+        if (rawPath == null) throw new MalformedURLException("Path cannot be null. Syntax " + SYNTAX);
+
+        final boolean possibleMavenCoordinates = rawPath.contains(":");
+
         final String path = rawPath.replace(":", "/"); // mvn:G:A:V = mvn:G/A/V
+
         if (path.startsWith(REPOSITORY_SEPARATOR) || path.endsWith(REPOSITORY_SEPARATOR)) {
-            throw new MalformedURLException(
-                    "Path cannot start or end with " + REPOSITORY_SEPARATOR + ". Syntax " + SYNTAX
-            );
+            throw new MalformedURLException("Path cannot start or end with " + REPOSITORY_SEPARATOR + ". Syntax " + SYNTAX);
         }
+
+        final String part;
+
         if (path.contains(REPOSITORY_SEPARATOR)) {
             int pos = path.lastIndexOf(REPOSITORY_SEPARATOR);
-            parseArtifactPart(path.substring(pos + 1));
-            m_repositoryURL = new MavenRepositoryURL(path.substring(0, pos) + "@snapshots");
+            part = path.substring(pos + 1);
+            repositoryURL = new MavenRepositoryURL(path.substring(0, pos) + "@snapshots");
         } else {
-            parseArtifactPart(path);
+            part = path;
         }
-    }
 
-    private void parseArtifactPart(final String part)
-            throws MalformedURLException {
-        String[] segments = part.split(ARTIFACT_SEPARATOR);
-        if (segments.length < 2) {
+        final List<String> segments = new ArrayList<String>(Arrays.asList(part.split(ARTIFACT_SEPARATOR)));
+
+        if (segments.size() < 2 || segments.size() > 5) {
             throw new MalformedURLException("Invalid path. Syntax " + SYNTAX);
         }
-        // we must have a valid group
-        m_group = segments[0];
-        if (m_group.trim().length() == 0) {
+
+        // If Maven Coordinates were used, rearrange the segments to the OPS4j format
+        if (possibleMavenCoordinates && segments.get(segments.size() - 1).matches("[0-9].*")) {
+            // position the version after the artifactId
+            final String version = segments.remove(segments.size() - 1);
+            segments.add(2, version);
+        }
+
+        final String[] coordinates = {null, null, "LATEST", "jar", null};
+
+        for (int i = 0; i < segments.size(); i++) {
+            final String value = segments.get(i).trim();
+            if (value.length() != 0) {
+                coordinates[i] = value;
+            }
+        }
+
+        this.group = coordinates[0];
+        this.artifact = coordinates[1];
+        this.version = coordinates[2];
+        this.type = coordinates[3];
+        this.classifier = coordinates[4];
+        this.fullClassifier = (this.classifier != null) ? CLASSIFIER_SEPARATOR + classifier : null;
+
+        if (group == null) {
             throw new MalformedURLException("Invalid groupId. Syntax " + SYNTAX);
         }
-        // valid artifact
-        m_artifact = segments[1];
-        if (m_artifact.trim().length() == 0) {
+
+        if (artifact == null) {
             throw new MalformedURLException("Invalid artifactId. Syntax " + SYNTAX);
-        }
-        // version is optional but we have a default value
-        m_version = VERSION_LATEST;
-        if (segments.length >= 3 && segments[2].trim().length() > 0) {
-            m_version = segments[2];
-        }
-        // type is optional but we have a default value
-        m_type = TYPE_JAR;
-        if (segments.length >= 4 && segments[3].trim().length() > 0) {
-            m_type = segments[3];
-        }
-        // classifier is optional (if not pressent or empty we will have a null classsifier
-        m_fullClassifier = "";
-        if (segments.length >= 5 && segments[4].trim().length() > 0) {
-            m_classifier = segments[4];
-            m_fullClassifier = CLASSIFIER_SEPARATOR + m_classifier;
         }
     }
 
     public String getGroup() {
-        return m_group;
+        return group;
     }
 
     public String getArtifact() {
-        return m_artifact;
+        return artifact;
     }
 
     public String getVersion() {
-        return m_version;
+        return version;
     }
 
     public String getType() {
-        return m_type;
+        return type;
     }
 
     public String getClassifier() {
-        return m_classifier;
+        return classifier;
     }
 
     public String getArtifactPath() {
-        return getArtifactPath(m_version);
+        return getArtifactPath(version);
     }
 
     public String getArtifactPath(final String version) {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(version)
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(VERSION_SEPARATOR)
                 .append(version)
-                .append(m_fullClassifier)
+                .append(fullClassifier)
                 .append(TYPE_SEPARATOR)
-                .append(m_type)
+                .append(type)
                 .toString();
     }
 
@@ -142,26 +164,26 @@ public class Parser {
 
     public String getSnapshotPath(final String version, final String timestamp, final String buildnumber) {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(version)
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(VERSION_SEPARATOR)
                 .append(getSnapshotVersion(version, timestamp, buildnumber))
-                .append(m_fullClassifier)
+                .append(fullClassifier)
                 .append(TYPE_SEPARATOR)
-                .append(m_type)
+                .append(type)
                 .toString();
     }
 
     public String getVersionMetadataPath(final String version) {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(version)
                 .append(FILE_SEPARATOR)
@@ -171,9 +193,9 @@ public class Parser {
 
     public String getVersionLocalMetadataPath(final String version) {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(version)
                 .append(FILE_SEPARATOR)
@@ -183,9 +205,9 @@ public class Parser {
 
     public String getArtifactLocalMetdataPath() {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(METADATA_FILE_LOCAL)
                 .toString();
@@ -193,15 +215,15 @@ public class Parser {
 
     public String getArtifactMetdataPath() {
         return new StringBuilder()
-                .append(m_group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
+                .append(group.replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR))
                 .append(FILE_SEPARATOR)
-                .append(m_artifact)
+                .append(artifact)
                 .append(FILE_SEPARATOR)
                 .append(METADATA_FILE)
                 .toString();
     }
 
     public MavenRepositoryURL getRepositoryURL() {
-        return m_repositoryURL;
+        return repositoryURL;
     }
 }

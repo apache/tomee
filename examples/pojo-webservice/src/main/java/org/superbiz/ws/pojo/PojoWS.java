@@ -18,11 +18,12 @@ package org.superbiz.ws.pojo;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.transaction.UserTransaction;
+import javax.xml.ws.WebServiceContext;
 
 @WebService
 public class PojoWS implements WS {
+
     @Resource
     private WebServiceContext webServiceContext;
 

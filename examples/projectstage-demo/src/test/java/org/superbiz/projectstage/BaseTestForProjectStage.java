@@ -37,16 +37,17 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public abstract class BaseTestForProjectStage {
+
     @Inject
     protected Manager manager;
 
     protected static WebArchive war(final String projectStageName) {
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(ProjectStageProducer.class, BaseTestForProjectStage.class, Manager.class, ManagerFactory.class)
-                .addAsResource(new StringAsset("org.apache.deltaspike.ProjectStage = " + projectStageName), ArchivePaths.create(ProjectStageProducer.CONFIG_PATH))
-                .addAsServiceProvider(ConfigSourceProvider.class, ProjectStageProducer.class)
-                .addAsLibraries(JarLocation.jarLocation(ProjectStage.class))
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+                         .addClasses(ProjectStageProducer.class, BaseTestForProjectStage.class, Manager.class, ManagerFactory.class)
+                         .addAsResource(new StringAsset("org.apache.deltaspike.ProjectStage = " + projectStageName), ArchivePaths.create(ProjectStageProducer.CONFIG_PATH))
+                         .addAsServiceProvider(ConfigSourceProvider.class, ProjectStageProducer.class)
+                         .addAsLibraries(JarLocation.jarLocation(ProjectStage.class))
+                         .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
     }
 
     @Test

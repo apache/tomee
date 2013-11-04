@@ -29,7 +29,7 @@ public class ClientThread implements Runnable {
     private final AtomicLong delay = new AtomicLong(0);
     private final Callable callable;
 
-    public ClientThread(Callable callable) {
+    public ClientThread(final Callable callable) {
         this.callable = callable;
     }
 
@@ -46,12 +46,12 @@ public class ClientThread implements Runnable {
         }
     }
 
-    public ClientThread delay(long delay){
+    public ClientThread delay(final long delay){
         setDelay(delay);
         return this;
     }
 
-    public void setDelay(long delay) {
+    public void setDelay(final long delay) {
         this.delay.set(delay);
     }
 

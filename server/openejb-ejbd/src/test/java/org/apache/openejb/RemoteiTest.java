@@ -24,15 +24,14 @@ import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
-import org.apache.openejb.test.singleton.SingletonTestSuite;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
+import org.apache.openejb.test.singleton.SingletonTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 
-import java.util.Properties;
-
 import javax.naming.Context;
+import java.util.Properties;
 
 /**
  * To run from intellij or another IDE add
@@ -45,7 +44,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
 
     protected void setUp() throws Exception {
         System.setProperty("openejb.test.server", EjbTestServer.class.getName());
-//        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
+        //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
         System.setProperty("openejb.deployments.classpath.ear", "false");
         TestManager.init(null);
@@ -64,11 +63,12 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(StatefulTestSuite.suite());
         suite.addTest(BmpTestSuite.suite());
         suite.addTest(CmpTestSuite.suite());
-//        suite.addTest(Cmp2TestSuite.suite());
+        //        suite.addTest(Cmp2TestSuite.suite());
         return suite;
     }
 
     public static class EjbTestServer implements org.apache.openejb.test.TestServer {
+
         private ServiceDaemon serviceDaemon;
         private int port;
 
@@ -81,7 +81,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
                 props.put("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
                 // ...and have the openejb-itests-beans included in the deployments (it's a system app)
                 props.put("openejb.deployments.classpath.filter.systemapps", "false");
-//                props.put("openejb.debuggable-vm-hackery", "true");
+                //                props.put("openejb.debuggable-vm-hackery", "true");
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
 

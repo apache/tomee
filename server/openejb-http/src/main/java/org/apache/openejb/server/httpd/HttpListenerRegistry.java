@@ -31,8 +31,10 @@ public class HttpListenerRegistry implements HttpListener {
     private final ThreadLocal<FilterListener> currentFilterListener = new ThreadLocal<FilterListener>();
 
     public HttpListenerRegistry() {
+        // no-op
     }
 
+    @Override
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
         final String path = request.getURI().getPath();
         final FilterListener currentFL = currentFilterListener.get();
@@ -63,9 +65,9 @@ public class HttpListenerRegistry implements HttpListener {
                 listeners = new HashMap<String, HttpListener>(registry);
             }
 
-            for (Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
-                String pattern = entry.getKey();
-                if (path.matches(pattern)) {
+            for (final Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
+                final String pattern = entry.getKey();
+                if (path.matches(pattern) || path.equals(pattern)) {
                     entry.getValue().onMessage(request, response);
                     break;
                 }

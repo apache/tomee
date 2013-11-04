@@ -28,46 +28,53 @@ import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
+@SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBHomeHandler extends EJBInvocationHandler implements Externalizable {
 
+    private static final long serialVersionUID = 4212515330775330214L;
     protected static final Method GETEJBMETADATA = getMethod(EJBHome.class, "getEJBMetaData", null);
     protected static final Method GETHOMEHANDLE = getMethod(EJBHome.class, "getHomeHandle", null);
+    @SuppressWarnings("RedundantArrayCreation")
     protected static final Method REMOVE_W_KEY = getMethod(EJBHome.class, "remove", new Class[]{Object.class});
+    @SuppressWarnings("RedundantArrayCreation")
     protected static final Method REMOVE_W_HAND = getMethod(EJBHome.class, "remove", new Class[]{Handle.class});
     protected static final Method GETHANDLER = getMethod(EJBHomeProxy.class, "getEJBHomeHandler", null);
 
     public EJBHomeHandler() {
     }
 
-    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
-        super(ejb, server, client);
+    public EJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
+    public static EJBHomeHandler createEJBHomeHandler(final EJBMetaDataImpl ejb,
+                                                      final ServerMetaData server,
+                                                      final ClientMetaData client,
+                                                      final JNDIContext.AuthenticationInfo auth) {
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBHomeHandler(ejb, server, client);
+                return new EntityEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBHomeHandler(ejb, server, client);
+                return new StatefulEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBHomeHandler(ejb, server, client);
+                return new StatelessEJBHomeHandler(ejb, server, client, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBHomeHandler(ejb, server, client);
+                return new SingletonEJBHomeHandler(ejb, server, client, auth);
         }
 
-        throw new IllegalStateException("Uknown bean type code '"+ejb.type +"' : "+ejb.toString());
+        throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
 
     }
 
-//    protected abstract EJBObjectHandler newEJBObjectHandler();
+    //    protected abstract EJBObjectHandler newEJBObjectHandler();
 
     public EJBHomeProxy createEJBHomeProxy() {
         try {
@@ -77,10 +84,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             final Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
-            throw new ClientRuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
+            throw new ClientRuntimeException("Unable to create proxy for " + ejb.homeClass, e);
         }
     }
 
+    @Override
     protected Object _invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 
         final String methodName = method.getName();
@@ -95,7 +103,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                     return Boolean.FALSE;
 
                 } else if (method.equals(HASHCODE)) {
-                    return new Integer(this.hashCode());
+                    return this.hashCode();
 
                 } else {
                     throw new UnsupportedOperationException("Unkown method: " + method);
@@ -177,7 +185,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     }
 
     public Object homeMethod(final Method method, final Object[] args, final Object proxy) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_METHOD, ejb, method, args, null, client.getSerializer());
 
         final EJBResponse res = request(req);
 
@@ -201,7 +209,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     /*-------------------------------------------------*/
 
     protected Object create(final Method method, final Object[] args, final Object proxy) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_CREATE, ejb, method, args, null, client.getSerializer());
 
         final EJBResponse res = request(req);
 
@@ -215,7 +223,7 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             case ResponseCodes.EJB_OK:
 
                 final Object primKey = res.getResult();
-                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                 handler.setEJBHomeProxy((EJBHomeProxy) proxy);
 
                 return handler.createEJBObjectProxy();
@@ -243,9 +251,11 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
     protected abstract Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable;
 
+    @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
     }
 
+    @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
     }
 

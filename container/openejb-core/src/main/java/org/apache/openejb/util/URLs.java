@@ -68,9 +68,7 @@ public class URLs {
     public static UrlSet cullSystemJars(final UrlSet original) throws IOException {
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(ClassLoader.getSystemClassLoader().getParent());
-        urls = urls.excludeJavaExtDirs();
-        urls = urls.excludeJavaEndorsedDirs();
-        urls = urls.excludeJavaHome();
+        urls = urls.excludeJvm();
         urls = urls.excludePaths(System.getProperty("sun.boot.class.path", ""));
         urls = urls.exclude(".*/JavaVM.framework/.*");
         return urls;

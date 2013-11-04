@@ -16,19 +16,22 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
-import java.util.LinkedList;
-
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import java.util.LinkedList;
 
 public class SaajUniverse {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, SaajUniverse.class);
     
     static {
-        setProperty("javax.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
-        setProperty("javax.xml.soap.SOAPFactory", "org.apache.openejb.server.webservices.saaj.SoapFactoryImpl");
-        setProperty("javax.xml.soap.SOAPConnectionFactory", "org.apache.openejb.server.webservices.saaj.SoapConnectionFactoryImpl");
-        setProperty("javax.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.SaajMetaFactoryImpl");
+        if (SystemInstance.get().getOptions().get("openejb.soap.override-factory", false)) { // default are far faster than our chain
+            setProperty("javax.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
+            setProperty("javax.xml.soap.SOAPFactory", "org.apache.openejb.server.webservices.saaj.SoapFactoryImpl");
+            setProperty("javax.xml.soap.SOAPConnectionFactory", "org.apache.openejb.server.webservices.saaj.SoapConnectionFactoryImpl");
+            setProperty("javax.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.SaajMetaFactoryImpl");
+        }
     }
 
     private static void setProperty(String name, String value) {
@@ -74,9 +77,8 @@ public class SaajUniverse {
         final LinkedList<Type> universeList = currentUniverse.get();
         if (universeList != null && !universeList.isEmpty()) {
             return universeList.getLast();
-        } else {
-            return null;
-        }                
+        }
+        return null;
     }
        
 }

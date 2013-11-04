@@ -26,7 +26,7 @@ public class Jdk13InvocationHandler implements java.lang.reflect.InvocationHandl
     public Jdk13InvocationHandler() {
     }
 
-    public Jdk13InvocationHandler(InvocationHandler delegate) {
+    public Jdk13InvocationHandler(final InvocationHandler delegate) {
         setInvocationHandler(delegate);
     }
 
@@ -34,14 +34,17 @@ public class Jdk13InvocationHandler implements java.lang.reflect.InvocationHandl
         return delegate;
     }
 
-    public InvocationHandler setInvocationHandler(InvocationHandler handler) {
-        InvocationHandler old = delegate;
+    public InvocationHandler setInvocationHandler(final InvocationHandler handler) {
+        final InvocationHandler old = delegate;
         delegate = handler;
         return old;
     }
 
-    public Object invoke(Object proxy, Method method, Object... args) throws Throwable {
-        if (delegate == null) throw new NullPointerException("No invocation handler for proxy " + proxy);
+    @Override
+    public Object invoke(final Object proxy, final Method method, final Object... args) throws Throwable {
+        if (delegate == null) {
+            throw new NullPointerException("No invocation handler for proxy " + proxy);
+        }
 
         return delegate.invoke(proxy, method, args);
     }

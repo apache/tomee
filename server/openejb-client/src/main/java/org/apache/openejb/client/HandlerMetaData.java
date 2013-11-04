@@ -17,11 +17,12 @@
  */
 package org.apache.openejb.client;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HandlerMetaData implements Serializable {
+
     private static final long serialVersionUID = -297817668220375028L;
     private String handlerClass;
     private List<CallbackMetaData> postConstruct = new ArrayList<CallbackMetaData>();
@@ -31,7 +32,7 @@ public class HandlerMetaData implements Serializable {
         return handlerClass;
     }
 
-    public void setHandlerClass(String handlerClass) {
+    public void setHandlerClass(final String handlerClass) {
         this.handlerClass = handlerClass;
     }
 
@@ -39,7 +40,7 @@ public class HandlerMetaData implements Serializable {
         return postConstruct;
     }
 
-    public void setPostConstruct(List<CallbackMetaData> postConstruct) {
+    public void setPostConstruct(final List<CallbackMetaData> postConstruct) {
         this.postConstruct = postConstruct;
     }
 
@@ -47,7 +48,7 @@ public class HandlerMetaData implements Serializable {
         return preDestroy;
     }
 
-    public void setPreDestroy(List<CallbackMetaData> preDestroy) {
+    public void setPreDestroy(final List<CallbackMetaData> preDestroy) {
         this.preDestroy = preDestroy;
     }
 }

@@ -21,7 +21,9 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.StatefulBean;
@@ -69,8 +71,10 @@ public class StatefulConstructorInjectionTest extends TestCase {
         StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(WidgetBean.class));
         bean.getEnvEntry().add(new EnvEntry("count", Integer.class.getName(), "10"));
 
+        final EjbModule module = new EjbModule(ejbJar);
+        module.setBeans(new Beans());
 
-        assembler.createApplication(config.configureApplication(ejbJar));
+        assembler.createApplication(config.configureApplication(module));
 
     }
 

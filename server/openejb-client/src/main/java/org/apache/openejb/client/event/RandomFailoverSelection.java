@@ -20,12 +20,12 @@ import java.net.URI;
 import java.util.Set;
 
 /**
-* @version $Rev$ $Date$
-*/
+ * @version $Rev$ $Date$
+ */
 @Log(Log.Level.WARNING)
 public class RandomFailoverSelection extends FailoverSelection {
 
-    public RandomFailoverSelection(Set<URI> remaining, Set<URI> failed, URI server) {
+    public RandomFailoverSelection(final Set<URI> remaining, final Set<URI> failed, final URI server) {
         super(remaining, failed, server);
     }
 }

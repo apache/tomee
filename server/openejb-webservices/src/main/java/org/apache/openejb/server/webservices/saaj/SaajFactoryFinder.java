@@ -53,17 +53,23 @@ class SaajFactoryFinder {
     }
 
     private static void initDefaultSAAJProvider() {
-        final String provider = SystemInstance.get().getOptions().get(SAAJ_PROVIDER_PROPERTY, (String) null);
+        final String provider = SystemInstance.get().getOptions().get(SAAJ_PROVIDER_PROPERTY, "sun"); // sun is the best default we can get + can impact perfs a lot
         if (provider != null) {
             if (provider.equalsIgnoreCase("axis2")) {
                 DEFAULT_SAAJ_UNIVERSE = SaajUniverse.Type.AXIS2;
             } else if (provider.equalsIgnoreCase("sun")) {
                 DEFAULT_SAAJ_UNIVERSE = SaajUniverse.Type.SUN;
+            } else if (provider.equalsIgnoreCase("default")) {
+                DEFAULT_SAAJ_UNIVERSE = null;
             } else {
                 throw new ServerRuntimeException("Invalid SAAJ universe specified: " + provider);
             }
 
-            logger.info("Default SAAJ universe: " + DEFAULT_SAAJ_UNIVERSE);
+            if (DEFAULT_SAAJ_UNIVERSE != null) {
+                logger.info("Default SAAJ universe: " + DEFAULT_SAAJ_UNIVERSE);
+            } else {
+                logger.info("Default SAAJ universe not set");
+            }
         } else {
             logger.info("Default SAAJ universe not set");
         }

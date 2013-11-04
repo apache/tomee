@@ -23,10 +23,12 @@ import java.io.ObjectOutput;
 public class EJBResponse implements ClusterableResponse {
 
     /**
+     * Version provides the protocol hint for backwards compatibility:
      * 1. Initial
      * 2. Append times.
      */
     public static final byte VERSION = 2;
+    private static final long serialVersionUID = 611943612548626399L;
 
     private transient byte version = VERSION;
     private transient int responseCode = -1;
@@ -34,8 +36,23 @@ public class EJBResponse implements ClusterableResponse {
     private transient ServerMetaData server;
     private transient final long[] times = new long[Time.values().length];
     private transient final int timesLength = times.length;
+    private transient EJBRequest request;
+    private transient ProtocolMetaData metaData;
 
     public EJBResponse() {
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public EJBRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(final EJBRequest request) {
+        this.request = request;
     }
 
     public int getResponseCode() {
@@ -120,6 +137,7 @@ public class EJBResponse implements ClusterableResponse {
         final boolean readServer = in.readBoolean();
         if (readServer) {
             server = new ServerMetaData();
+            server.setMetaData(metaData);
             server.readExternal(in);
         }
 
@@ -127,7 +145,7 @@ public class EJBResponse implements ClusterableResponse {
 
         result = in.readObject();
 
-        if (version == 2) {
+        if (version >= 2) {
 
             final byte size = in.readByte();
 
@@ -144,6 +162,7 @@ public class EJBResponse implements ClusterableResponse {
 
         if (null != server) {
             out.writeBoolean(true);
+            server.setMetaData(metaData);
             server.writeExternal(out);
         } else {
             out.writeBoolean(false);
@@ -152,6 +171,7 @@ public class EJBResponse implements ClusterableResponse {
         out.writeByte(responseCode);
 
         switch (responseCode) {
+            case ResponseCodes.AUTH_DENIED:
             case ResponseCodes.EJB_APP_EXCEPTION:
             case ResponseCodes.EJB_ERROR:
             case ResponseCodes.EJB_SYS_EXCEPTION:
@@ -167,7 +187,7 @@ public class EJBResponse implements ClusterableResponse {
         stop(Time.SERIALIZATION);
         stop(Time.TOTAL);
 
-        if (this.version == 2) {
+        if (this.version >= 2) {
 
             out.writeByte(timesLength);
 

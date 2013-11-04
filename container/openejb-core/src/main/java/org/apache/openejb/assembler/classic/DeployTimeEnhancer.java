@@ -26,7 +26,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.apache.openejb.util.URLs;
-import org.apache.xbean.finder.filter.Filter;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,7 +58,6 @@ public class DeployTimeEnhancer {
     private static final String PROPERTIES_FILE_PROP = "propertiesFile";
     private static final String META_INF_PERSISTENCE_XML = "META-INF/persistence.xml";
     private static final String TMP_ENHANCEMENT_SUFFIX = ".tmp-enhancement";
-    private static final String JAR_ENHANCEMENT_SUFFIX = "-enhanced";
 
     private final Method enhancerMethod;
     private final Constructor<?> optionsConstructor;
@@ -90,35 +88,32 @@ public class DeployTimeEnhancer {
 
         // find persistence.xml
         final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
-        final Filter filter = new AlreadyEnhancedFilter();
         final List<URL> usedUrls = new ArrayList<URL>(); // for fake classloader
         for (URL url : event.getUrls()) {
             final File file = URLs.toFile(url);
-            if (filter.accept(file.getName())) {
-                if (file.isDirectory()) {
-                    final String pXmls = getWarPersistenceXml(url);
-                    if (pXmls != null) {
-                        feed(classesByPXml, pXmls);
+            if (file.isDirectory()) {
+                final String pXmls = getWarPersistenceXml(url);
+                if (pXmls != null) {
+                    feed(classesByPXml, pXmls);
+                }
+
+                usedUrls.add(url);
+            } else if (file.getName().endsWith(".jar")) {
+                try {
+                    final JarFile jar = new JarFile(file);
+                    ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
+                    if (entry != null) {
+                        final String path = file.getAbsolutePath();
+                        final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
+                        JarExtractor.extract(file, unpacked);
+
+                        // replace jar by folder url since otherwise enhancement doesn't work
+                        usedUrls.add(unpacked.toURI().toURL());
+
+                        feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
                     }
-
-                    usedUrls.add(url);
-                } else if (file.getName().endsWith(".jar")) {
-                    try {
-                        final JarFile jar = new JarFile(file);
-                        ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
-                        if (entry != null) {
-                            final String path = file.getAbsolutePath();
-                            final File unpacked = new File(path.substring(0, path.length() - 4) + TMP_ENHANCEMENT_SUFFIX);
-                            JarExtractor.extract(file, unpacked);
-
-                            // replace jar by folder url since otherwise enhancement doesn't work
-                            usedUrls.add(unpacked.toURI().toURL());
-
-                            feed(classesByPXml, new File(unpacked, META_INF_PERSISTENCE_XML).getAbsolutePath());
-                        }
-                    } catch (IOException e) {
-                        // ignored
-                    }
+                } catch (IOException e) {
+                    // ignored
                 }
             } else {
                 usedUrls.add(url);
@@ -128,7 +123,7 @@ public class DeployTimeEnhancer {
         // enhancement
 
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader fakeClassLoader = new URLClassLoader(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
+        final ClassLoader fakeClassLoader = new URLClassLoaderFirst(usedUrls.toArray(new URL[usedUrls.size()]), event.getParentClassLoader());
 
         Thread.currentThread().setContextClassLoader(fakeClassLoader);
         try {
@@ -156,7 +151,7 @@ public class DeployTimeEnhancer {
             usedUrls.clear();
         }
 
-        // clean up extracted jars
+        // clean up extracted jars and replace jar to keep consistent classloading
         for (Map.Entry<String, List<String>> entry : classesByPXml.entrySet()) {
             final List<String> values = entry.getValue();
             for (String rawPath : values) {
@@ -165,11 +160,13 @@ public class DeployTimeEnhancer {
                     final File file = new File(rawPath.substring(0, rawPath.length() - TMP_ENHANCEMENT_SUFFIX.length() - 1) + ".jar");
                     if (file.exists()) {
                         String name = dir.getName();
-                        name = name.substring(0, name.length() - TMP_ENHANCEMENT_SUFFIX.length()) + JAR_ENHANCEMENT_SUFFIX + ".jar";
-                        try {
-                            JarCreator.jarDir(dir, new File(dir.getParentFile(), name));
-                            Files.delete(file); // don't delete if any exception is thrown
-                        } catch (IOException e) {
+                        name = name.substring(0, name.length() - TMP_ENHANCEMENT_SUFFIX.length()) + ".jar";
+
+                        final File target = new File(dir.getParentFile(), name);
+                        try { // override existing jar otherwise classloading is broken in tomee
+                            Files.delete(file);
+                            JarCreator.jarDir(dir, target);
+                        } catch (final IOException e) {
                             LOGGER.error("can't repackage enhanced jar file " + file.getName());
                         }
                         Files.delete(dir);
@@ -277,7 +274,7 @@ public class DeployTimeEnhancer {
         @Override
         public void characters(final char ch[], final int start, final int length) throws SAXException {
             if (getIt) {
-                paths.add(new StringBuilder().append(ch, start, length).toString());
+                paths.add(String.valueOf(ch, start, length));
             }
         }
 
@@ -288,15 +285,6 @@ public class DeployTimeEnhancer {
 
         public List<String> getPaths() {
             return paths;
-        }
-    }
-
-    private static class AlreadyEnhancedFilter implements Filter {
-        public static final String SUFFIX = JAR_ENHANCEMENT_SUFFIX + ".jar";
-
-        @Override
-        public boolean accept(final String s) {
-            return !s.endsWith(SUFFIX);
         }
     }
 }

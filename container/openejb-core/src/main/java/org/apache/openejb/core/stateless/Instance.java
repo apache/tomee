@@ -27,7 +27,7 @@ import java.util.Map;
 public class Instance {
     public final Object bean;
     public final Map<String, Object> interceptors;
-    public CreationalContext creationalContext;
+    public final CreationalContext creationalContext;
 
     private Pool<Instance>.Entry poolEntry;
 

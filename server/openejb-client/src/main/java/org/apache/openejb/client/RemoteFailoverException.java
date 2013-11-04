@@ -22,14 +22,15 @@ import java.rmi.RemoteException;
  * @version $Rev$ $Date$
  */
 public class RemoteFailoverException extends RemoteException {
+
     public RemoteFailoverException() {
     }
 
-    public RemoteFailoverException(String s) {
+    public RemoteFailoverException(final String s) {
         super(s);
     }
 
-    public RemoteFailoverException(String s, Throwable cause) {
+    public RemoteFailoverException(final String s, final Throwable cause) {
         super(s, cause);
     }
 }

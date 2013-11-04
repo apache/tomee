@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.classloader;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -33,8 +34,14 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // log4j is optional, moreover it will likely not work if not skipped and loaded by a temp classloader
     private static final boolean SKIP_LOG4J = "true".equals(SystemInstance.get().getProperty("openejb.skip.log4j", "true")) && skipLib("org.apache.log4j.Logger");
     private static final boolean SKIP_MYFACES = "true".equals(SystemInstance.get().getProperty("openejb.skip.myfaces", "true")) && skipLib("org.apache.myfaces.spi.FactoryFinderProvider");
+    private static final boolean SKIP_HSQLDB = skipLib("org.hsqldb.lib.HsqlTimer");
     // commons-net is only in tomee-plus
     private static final boolean SKIP_COMMONS_NET = skipLib("org.apache.commons.net.pop3.POP3Client");
+
+    // first skip container APIs if not in the jaxrs or plus version
+    private static final boolean SKIP_JAXRS = skipLib("org.apache.cxf.jaxrs.JAXRSInvoker");
+    private static final boolean SKIP_JAXWS = skipLib("org.apache.cxf.jaxws.support.JaxWsImplementorInfo");
+    private static final boolean SKIP_JMS = skipLib("org.apache.activemq.broker.BrokerFactory");
 
     // - will not match anything, that's the desired default behavior
     public static final Collection<String> FORCED_SKIP = new ArrayList<String>();
@@ -43,6 +50,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     static {
         reloadConfig();
     }
+
+    public static final String SLF4J_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
 
     public static void reloadConfig() {
         list(FORCED_SKIP, "openejb.classloader.forced-skip");
@@ -101,7 +110,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // look for it in this classloader
-        boolean ok = !(shouldSkip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name)));
+        boolean ok = !(shouldSkip(name) || shouldDelegateToTheContainer(this, name));
         if (ok) {
             clazz = loadInternal(name, resolve);
             if (clazz != null) {
@@ -123,6 +132,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         throw new ClassNotFoundException(name);
+    }
+
+    public static boolean shouldDelegateToTheContainer(final ClassLoader loader, final String name) {
+        return shouldSkipJsf(loader, name) || shouldSkipSlf4j(loader, name);
     }
 
     private Class<?> loadFromParent(final String name, final boolean resolve) {
@@ -188,7 +201,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.mail.")) return false;
-        if (name.startsWith("javax.")) return true;
+        if (name.startsWith("javax.")) return isInServer(name);
         if (name.startsWith("sun.")) return true;
 
         // can be provided in the webapp
@@ -302,7 +315,14 @@ public class URLClassLoaderFirst extends URLClassLoader {
             }
 
             // other org packages
-            if (org.startsWith("codehaus.swizzle")) return true;
+            if (org.startsWith("hsqldb.") && SKIP_HSQLDB) return true;
+            if (org.startsWith("codehaus.swizzle.")) {
+                final String swizzle = org.substring("codehaus.swizzle.".length());
+                if (swizzle.startsWith("stream.")) return true;
+                if (swizzle.startsWith("rss.")) return true;
+                if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) return true;
+                return false;
+            }
             if (org.startsWith("w3c.dom")) return true;
             if (org.startsWith("quartz")) return true;
             if (org.startsWith("eclipse.jdt.")) return true;
@@ -314,20 +334,30 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.org.apache.")) return true;
-        if (name.startsWith("javassist")) return true;
+        if (name.startsWith("com.sun.")) {
+            final String sun = name.substring("com.sun.".length());
+            if (sun.startsWith("org.apache.")) return true;
+            if (sun.startsWith("crypto.")) return true;
+            return false;
+        }
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
     }
 
-    public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
-        ClassLoader parentLoader = loader.getParent();
-        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
-            parentLoader = parentLoader.getParent();
+    private static boolean isInServer(final String name) {
+        if (name.startsWith("javax.")) {
+            final String sub = name.substring("javax.".length());
+            if (sub.startsWith("ws.rs.")) return SKIP_JAXRS;
+            if (sub.startsWith("jws.")) return SKIP_JAXWS;
+            if (sub.startsWith("jms.")) return SKIP_JMS;
         }
-        if (parentLoader == null) {
-            return true;
+        return ParentClassLoaderFinder.Helper.get().getResource(name.replace('.', '/') + ".class") != null;
+    }
+
+    public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
+        if (!name.startsWith("javax.faces.")) {
+            return false;
         }
 
         // using annotation to test to avoid to load more classes with deps
@@ -339,13 +369,22 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         final String classname = testClass.replace('.', '/') + ".class";
-        final URL thisJSf = loader.getResource(classname);
-        if (thisJSf == null) {
+        try {
+            final Enumeration<URL> resources = loader.getResources(classname);
+            final Collection<URL> thisJSf = Collections.list(resources);
+            return thisJSf.isEmpty() || thisJSf.size() <= 1;
+        } catch (final IOException e) {
             return true;
         }
-        final URL containerJsf = loader.getResource(classname);
-        return containerJsf != null && thisJSf.equals(containerJsf);
 
+    }
+
+    private static ClassLoader findParent(final ClassLoader loader) {
+        ClassLoader parentLoader = loader.getParent();
+        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
+            parentLoader = parentLoader.getParent();
+        }
+        return parentLoader;
     }
 
     // in org.apache.openejb.
@@ -361,9 +400,17 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean isFilterableResource(final String name) {
-        // currently bean validation, Slf4j
-        return "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
-                || "org/slf4j/impl/StaticLoggerBinder.class".equals(name);
+        // currently bean validation, Slf4j, myfaces (because of enrichment)
+        return name != null
+                && ("META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
+                || name.startsWith("META-INF/services/org.apache.myfaces.spi")
+                || SLF4J_BINDER_CLASS.equals(name));
+    }
+
+    public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
+        final URL resource = loader.getResource(SLF4J_BINDER_CLASS);
+        return name != null && name.startsWith("org.slf4j.") && resource != null
+                && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
     }
 
     // useful method for SPI

@@ -25,33 +25,46 @@ import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 public abstract class PoolDataSourceCreator implements DataSourceCreator {
-    private final Map<Object, ObjectRecipe> recipes = new HashMap<Object, ObjectRecipe>();
+    protected final Map<Object, ObjectRecipe> recipes = new HashMap<Object, ObjectRecipe>();
+
+    protected void cleanProperty(final Object ds, final String name) {
+        final Map<String, Object> unsetProperties = recipes.get(ds).getUnsetProperties();
+        final Iterator<Map.Entry<String,Object>> iterator = unsetProperties.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final Map.Entry<String, Object> entry = iterator.next();
+            if (entry.getKey().equalsIgnoreCase(name)) {
+                iterator.remove();
+            }
+        }
+    }
 
     @Override
-    public DataSource managed(final String name, final DataSource ds) {
+    public DataSource managed(final String name, final CommonDataSource ds) {
         final TransactionManager transactionManager = OpenEJB.getTransactionManager();
         if (ds instanceof XADataSource) {
             return new ManagedXADataSource(ds, transactionManager);
         }
-        return new ManagedDataSource(ds, transactionManager);
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
     }
 
     @Override
     public DataSource poolManagedWithRecovery(final String name, final XAResourceWrapper xaResourceWrapper, final String driver, final Properties properties) {
         final TransactionManager transactionManager = new TransactionManagerWrapper(OpenEJB.getTransactionManager(), name, xaResourceWrapper);
-        final DataSource ds = pool(name, driver, properties);
+        final CommonDataSource ds = pool(name, driver, properties);
         if (ds instanceof XADataSource) {
             return new ManagedXADataSource(ds, transactionManager);
-    }
-        return new ManagedDataSource(ds, transactionManager);
+        }
+        return new ManagedDataSource(DataSource.class.cast(ds), transactionManager);
     }
 
     @Override
@@ -73,7 +86,7 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
         }
     }
 
-    protected abstract void doDestroy(DataSource dataSource) throws Throwable;
+    protected abstract void doDestroy(CommonDataSource dataSource) throws Throwable;
 
     protected <T> T build(final Class<T> clazz, final Properties properties) {
         final ObjectRecipe serviceRecipe = new ObjectRecipe(clazz);

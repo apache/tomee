@@ -18,36 +18,36 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.client.Client;
-import org.apache.openejb.util.CountingLatch;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.client.Client;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.ServicePool;
-import org.apache.openejb.server.ServerServiceFilter;
 import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServerServiceFilter;
+import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.util.CountingLatch;
 
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Rev$ $Date$
@@ -74,14 +74,14 @@ public class FullPoolFailoverTest extends TestCase {
         paused = new CountingLatch(10);
 
         // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
+        Runnable r = new Runnable() {
+            public void run() {
                 counter.hit();
-        	}
+            }
         };
 
         hold.add(red);
-        
+
         for (int i = 0; i < 10; i++) {
             Thread t = new Thread(r);
             t.start();
@@ -101,7 +101,9 @@ public class FullPoolFailoverTest extends TestCase {
         assertEquals(10, hits.size());
 
         List<URI> expected = new ArrayList<URI>();
-        for (int i = 0; i < 10; i++) expected.add(red);
+        for (int i = 0; i < 10; i++) {
+            expected.add(red);
+        }
 
         assertEquals(expected, hits);
 
@@ -148,10 +150,10 @@ public class FullPoolFailoverTest extends TestCase {
         paused = new CountingLatch(10);
 
         // Do a business method...
-        Runnable r = new Runnable(){
-        	public void run(){
+        Runnable r = new Runnable() {
+            public void run() {
                 counter.hit();
-        	}
+            }
         };
 
         hold.add(red);
@@ -209,12 +211,13 @@ public class FullPoolFailoverTest extends TestCase {
         resume.countDown(); // go
     }
 
-
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        for (ServiceDaemon daemon : daemons) daemon.stop();
+        for (ServiceDaemon daemon : daemons) {
+            daemon.stop();
+        }
 
         OpenEJB.destroy();
     }
@@ -234,7 +237,7 @@ public class FullPoolFailoverTest extends TestCase {
 
         daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, red));
         daemons.add(createServiceDaemon(connectionPoolSize, ejbServer, blue));
-        
+
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
@@ -283,10 +286,10 @@ public class FullPoolFailoverTest extends TestCase {
         return daemon;
     }
 
-
     public static ThreadLocal<URI> host = new ThreadLocal<URI>();
 
     public static class ServiceIdentifier extends ServerServiceFilter {
+
         private final URI me;
 
         public ServiceIdentifier(ServerService service, URI me) {
@@ -296,7 +299,7 @@ public class FullPoolFailoverTest extends TestCase {
 
         @Override
         public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-            synchronized (hits){
+            synchronized (hits) {
                 hits.add(me);
             }
             host.set(me);
@@ -311,13 +314,14 @@ public class FullPoolFailoverTest extends TestCase {
     public static Object lock = new Object[]{};
 
     private static void comment(String x) {
-//        synchronized(lock){
-//            System.out.println(x);
-//            System.out.flush();
-//        }
+        //        synchronized(lock){
+        //            System.out.println(x);
+        //            System.out.flush();
+        //        }
     }
 
     public static interface Counter {
+
         int count();
 
         URI hit();

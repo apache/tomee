@@ -16,16 +16,16 @@
   limitations under the License.
 -->
 <Server port="8005" shutdown="SHUTDOWN">
-  <Listener className="org.apache.tomee.catalina.ServerListener" />
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-  <Listener className="org.apache.catalina.core.JasperListener" />
-  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
-  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
-  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+  <Listener className="org.apache.tomee.catalina.ServerListener"/>
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
+  <Listener className="org.apache.catalina.core.JasperListener"/>
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
 
   <Service name="Catalina">
     <Connector port="8080" protocol="HTTP/1.1"
-               connectionTimeout="20000" />
+               connectionTimeout="20000"/>
 
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.LockOutRealm">
@@ -39,8 +39,8 @@
             roleNameCol="role_name"/>
       </Realm>
 
-      <Host name="localhost"  appBase="webapps"
-            unpackWARs="true" autoDeploy="true" />
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="true" autoDeploy="true"/>
     </Engine>
   </Service>
 </Server>

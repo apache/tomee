@@ -24,6 +24,7 @@ import org.apache.commons.dbcp.managed.TransactionRegistry;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.openejb.resource.jdbc.DataSourceHelper;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
 import java.lang.reflect.Field;
@@ -31,11 +32,14 @@ import java.sql.SQLException;
 
 public class DbcpManagedDataSource extends BasicManagedDataSource {
 
-    private final DataSource ds;
+    private final CommonDataSource ds;
 
-    public DbcpManagedDataSource(final String name, final DataSource dataSource) {
+    public DbcpManagedDataSource(final String name, final CommonDataSource dataSource) {
         super(name);
         this.ds = dataSource;
+        if (XADataSource.class.isInstance(dataSource)) {
+            setXaDataSourceInstance(XADataSource.class.cast(ds));
+        }
     }
 
     @Override
@@ -49,26 +53,24 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
 
     @Override
     protected ConnectionFactory createConnectionFactory() throws SQLException {
-
-        if (this.ds instanceof XADataSource) {
+        if (ds instanceof XADataSource) {
 
             // Create the XAConectionFactory using the XA data source
-            XADataSource xaDataSourceInstance = (XADataSource) this.ds;
+            XADataSource xaDataSourceInstance = (XADataSource) ds;
             XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, username, password);
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
             return xaConnectionFactory;
 
-        } else {
-
-            // If xa data source is not specified a DriverConnectionFactory is created and wrapped with a LocalXAConnectionFactory
-            ConnectionFactory connectionFactory = new DataSourceConnectionFactory(this.ds, username, password);
-            XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
-            setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
-            return xaConnectionFactory;
         }
+
+        // If xa data source is not specified a DriverConnectionFactory is created and wrapped with a LocalXAConnectionFactory
+        ConnectionFactory connectionFactory = new DataSourceConnectionFactory(DataSource.class.cast(ds), username, password);
+        XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
+        setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
+        return xaConnectionFactory;
     }
 
-    public void setTransactionRegistry(TransactionRegistry registry) {
+    public void setTransactionRegistry(final TransactionRegistry registry) {
         try {
             final Field field = org.apache.commons.dbcp.managed.BasicManagedDataSource.class.getDeclaredField("transactionRegistry");
             field.setAccessible(true);

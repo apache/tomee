@@ -21,9 +21,11 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
+import org.apache.catalina.deploy.ApplicationListener;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.WebXml;
+import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.naming.factory.Constants;
 import org.apache.naming.resources.BaseDirContext;
@@ -51,18 +53,25 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.util.bcel.classfile.AnnotationEntry;
 import org.apache.tomcat.util.bcel.classfile.ElementValuePair;
 import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomee.catalina.realm.TomEEDataSourceRealm;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
+import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.Application;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,8 +87,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     private static final String MYFACES_TOMEEM_CONTAINER_INITIALIZER = "org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer";
     private static final String TOMEE_MYFACES_CONTEXT_LISTENER = "org.apache.tomee.myfaces.TomEEMyFacesContextListener";
     private static final String ADJUST_DATASOURCE_JNDI_NAMES = SystemInstance.get().getProperty("tomee.resources.adjust-web-xml-jndi-name", "true");
+    private static final File BASE = SystemInstance.get().getBase().getDirectory();
 
     private TomcatWebAppBuilder.StandardContextInfo info;
+    private IAnnotationFinder finder = null;
+    private ClassLoader tempLoader = null;
 
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
@@ -88,6 +100,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     public OpenEJBContextConfig(TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
         info = standardContextInfo;
+    }
+
+    public void finder(final IAnnotationFinder finder, final ClassLoader tmpLoader) {
+        this.finder = finder;
+        this.tempLoader = tmpLoader;
     }
 
     @Override
@@ -174,13 +191,60 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
 
             // cleanup
-            for (String clazz : webAppInfo.restApplications) {
+            for (final String clazz : webAppInfo.restApplications) {
                 final Container child = mappedChildren.get(clazz);
-                if (child != null) {
+                try { // remove only "fake" servlets to let users use their own stuff
+                    if (child != null) {
+                        final String servletClass = StandardWrapper.class.cast(child).getServletClass();
+                        if ("org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass) || !HttpServlet.class.isAssignableFrom(info.loader().loadClass(servletClass))) {
+                            context.removeChild(child);
+                        }
+                    }
+                } catch (final NoClassDefFoundError e) {
+                    context.removeChild(child);
+                } catch (final ClassNotFoundException e) {
                     context.removeChild(child);
                 }
             }
         }
+    }
+
+    @Override
+    protected void processContextConfig(final Digester digester, final URL contextXml) {
+        try {
+            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml));
+        } catch (final MalformedURLException e) {
+            super.processContextConfig(digester, contextXml);
+        }
+    }
+
+    private URL replaceKnownRealmsByTomEEOnes(final URL contextXml) throws MalformedURLException {
+        return new URL(contextXml.getProtocol(), contextXml.getHost(), contextXml.getPort(), contextXml.getFile(), new URLStreamHandler() {
+            @Override
+            protected URLConnection openConnection(final URL u) throws IOException {
+                final URLConnection c = contextXml.openConnection();
+                return new URLConnection(u) {
+                    @Override
+                    public void connect() throws IOException {
+                        c.connect();
+                    }
+
+                    @Override
+                    public InputStream getInputStream() throws IOException {
+                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IO.copy(c.getInputStream(), baos);
+                        return new ByteArrayInputStream(new String(baos.toByteArray())
+                                        .replace(DataSourceRealm.class.getName(), TomEEDataSourceRealm.class.getName()
+                                    ).getBytes());
+                    }
+
+                    @Override
+                    public String toString() {
+                        return c.toString();
+                    }
+                };
+            }
+        });
     }
 
     @Override
@@ -214,7 +278,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         final ContextResource[] foundResources = resources.findResources();
         String[] ids = null;
         if (foundResources != null) {
-            for (ContextResource resource : foundResources) {
+            for (final ContextResource resource : foundResources) {
                 if ("javax.sql.DataSource".equals(resource.getType())) {
                     String jndiName = (String) resource.getProperty("mappedName");
                     if (jndiName == null) {
@@ -246,6 +310,8 @@ public class OpenEJBContextConfig extends ContextConfig {
                             break;
                         } else if (jndiName.endsWith("/" + id) && mostMatchingId == null) {
                             mostMatchingId = id;
+                        } else if (id.endsWith("/" + jndiName) && mostMatchingId == null) {
+                            mostMatchingId = "openejb/Resource/" + id;
                         }
                     }
 
@@ -295,13 +361,25 @@ public class OpenEJBContextConfig extends ContextConfig {
         // read the real config
         super.webConfig();
 
-        // add myfaces auto-initializer
+        if (IgnoredStandardContext.class.isInstance(context)) { // no need of jsf
+            return;
+        }
+
+        // add myfaces auto-initializer if mojarra is not present
+        try {
+            context.getLoader().getClassLoader().loadClass("com.sun.faces.context.SessionMap");
+            return;
+        } catch (final Throwable ignored) {
+            // no-op
+        }
         try {
             final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, context.getLoader().getClassLoader());
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
-            context.addApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER); // cleanup listener
-        } catch (Exception ignored) {
+            context.addApplicationListener(new ApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER, false)); // cleanup listener
+        } catch (final Exception ignored) {
+            // no-op
+        } catch (final NoClassDefFoundError error) {
             // no-op
         }
     }
@@ -334,6 +412,43 @@ public class OpenEJBContextConfig extends ContextConfig {
         webInfClassesAnnotationsProcessed = false;
         try {
             super.processServletContainerInitializers(fragments);
+
+            if (typeInitializerMap.size() > 0 && finder != null) {
+                final ClassLoader loader = context.getLoader().getClassLoader();
+
+                for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
+                    final Class<?> annotation = entry.getKey();
+                    for (final ServletContainerInitializer sci : entry.getValue()) {
+                        if (annotation.isAnnotation()) {
+                            try {
+                                final Class<? extends Annotation> reloadedAnnotation = Class.class.cast(tempLoader.loadClass(annotation.getName()));
+                                addClassesWithRightLoader(loader, sci, finder.findAnnotatedClasses(reloadedAnnotation));
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        } else {
+                            try {
+                                final Class<?> reloadedClass = tempLoader.loadClass(annotation.getName());
+
+                                final List<Class<?>> implementations;
+                                if (annotation.isInterface()) {
+                                    implementations = List.class.cast(finder.findImplementations(reloadedClass));
+                                } else {
+                                    implementations = List.class.cast(finder.findSubclasses(reloadedClass));
+                                }
+
+                                addClassesWithRightLoader(loader, sci, implementations);
+                            } catch (final Throwable th) {
+                                // no-op
+                            }
+                        }
+                    }
+                }
+            }
+
+            // done
+            finder = null;
+            tempLoader = null;
         } catch (RuntimeException e) { // if exception occurs we have to clear the threadlocal
             webInfClassesAnnotationsProcessed = false;
             throw e;
@@ -362,7 +477,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
-        internalProcessAnnotations(file, webAppInfo, fragment, handlesTypesOnly);
+        internalProcessAnnotations(file, webAppInfo, fragment);
     }
 
     @Override
@@ -410,25 +525,32 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
 
-        internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment, handlesTypeOnly);
+        internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment);
     }
 
-    private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment, final boolean  handlesTypeOnly) {
-        for (ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
+    private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment) {
+        for (final ClassListInfo webAnnotated : webAppInfo.webAnnotatedClasses) {
             try {
                 if (!isIncludedIn(webAnnotated.name, currentUrlAsFile)) {
                     continue;
                 }
 
-                internalProcessAnnotationsStream(webAnnotated.list, fragment, handlesTypeOnly);
-            } catch (MalformedURLException e) {
+                internalProcessAnnotationsStream(webAnnotated.list, fragment, false);
+            } catch (final MalformedURLException e) {
                 throw new IllegalArgumentException(e);
             }
         }
     }
 
+    private void addClassesWithRightLoader(final ClassLoader loader, final ServletContainerInitializer sci, final List<Class<?>> implementations) throws ClassNotFoundException {
+        final Set<Class<?>> classes = initializerClassMap.get(sci);
+        for (final Class<?> c : implementations) {
+            classes.add(loader.loadClass(c.getName()));
+        }
+    }
+
     private void internalProcessAnnotationsStream(final Collection<String> urls, final WebXml fragment, final boolean handlesTypeOnly) {
-        for (String url : urls) {
+        for (final String url : urls) {
             InputStream is = null;
             try {
                 is = new URL(url).openStream();
@@ -493,7 +615,12 @@ public class OpenEJBContextConfig extends ContextConfig {
                 webInf = true; // if class loaded from JVM classloader we'll not find it in the war
             }
             current = current.getParentFile();
+            if (BASE.equals(current)) {
+                return false;
+            }
         }
-        return !webInf; // not in the file but not in a war too so use it
+
+        return !(classAsFile != null && classAsFile.getName().endsWith(".jar") && file.getName().endsWith(".jar")) && !webInf;
+
     }
 }

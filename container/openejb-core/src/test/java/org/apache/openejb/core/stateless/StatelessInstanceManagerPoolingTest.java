@@ -24,6 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.ReflectionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -125,7 +129,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
 
         boolean success = invocations.await(20000, TimeUnit.MILLISECONDS);
 
-        assertTrue(success);
+        assertTrue("invocations timeout -> invocations.getCount() == " + invocations.getCount(), success);
 
         assertEquals(30, CounterBean.discardedInstances.get());
 
@@ -172,7 +176,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         // Wait for the other beans timeout
         assertTrue("expected 10 timeouts", timeouts.await(3000, TimeUnit.MILLISECONDS));
 
-        assertEquals(10, CounterBean.instances.get());
+        assertEquals(10, CounterBean.instances.get(), 1.1);
 
         comment("Go!");
 
@@ -262,7 +266,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         public void explode(CountDownLatch invocations){
         	try{
         	    discardedInstances.incrementAndGet();
-        	    throw new NullPointerException();
+        	    throw new NullPointerException("Test expected this null pointer");
         	}finally{
         		invocations.countDown();
         	}

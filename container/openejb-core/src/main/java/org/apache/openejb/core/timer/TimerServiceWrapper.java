@@ -16,25 +16,23 @@
  */
 package org.apache.openejb.core.timer;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.MethodContext;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.EJBException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.MethodContext;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 public class TimerServiceWrapper implements TimerService {
     
@@ -88,18 +86,18 @@ public class TimerServiceWrapper implements TimerService {
     }
 
     private TimerService getTimerService() throws IllegalStateException {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext beanContext = threadContext.getBeanContext();
-        EjbTimerService timerService = beanContext.getEjbTimerService();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
+        final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
         } else if(beanContext.getEjbTimeout() == null) {
             
             boolean hasSchedules = false;
             
-            for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
-                Map.Entry<Method, MethodContext> entry = it.next();
-                MethodContext methodContext = entry.getValue();
+            for (final Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
+                final Map.Entry<Method, MethodContext> entry = it.next();
+                final MethodContext methodContext = entry.getValue();
                 if (methodContext.getSchedules().size() > 0) {
                     hasSchedules = true;
                 }
@@ -110,6 +108,7 @@ public class TimerServiceWrapper implements TimerService {
             }
             
         }
+
         return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
     }
 }

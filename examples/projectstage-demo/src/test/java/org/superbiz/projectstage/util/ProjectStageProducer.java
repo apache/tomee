@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public final class ProjectStageProducer implements ConfigSourceProvider  {
+public final class ProjectStageProducer implements ConfigSourceProvider {
+
     public static final String CONFIG_PATH = "project-stage.properties";
 
     private static final Properties PROPERTIES = new Properties();
+
     static {
         try {
             PROPERTIES.load(ProjectStageProducer.class.getResourceAsStream("/project-stage.properties"));

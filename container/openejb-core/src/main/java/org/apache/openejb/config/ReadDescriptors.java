@@ -17,9 +17,9 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Resources;
-import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
@@ -29,9 +29,11 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.Keyable;
 import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebFragment;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -46,6 +48,7 @@ import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.sxc.ApplicationClientXml;
 import org.apache.openejb.sxc.EjbJarXml;
 import org.apache.openejb.sxc.FacesConfigXml;
@@ -63,9 +66,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -76,11 +76,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ReadDescriptors implements DynamicDeployer {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
+
+    private static final boolean ROOT_URL_FROM_WEBINF = SystemInstance.get().getOptions().get("openejb.jpa.root-url-from-webinf", false);
 
     @SuppressWarnings({"unchecked"})
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
@@ -149,7 +153,11 @@ public class ReadDescriptors implements DynamicDeployer {
 
                     final String extForm = pUrl.toExternalForm();
                     if (extForm.contains("WEB-INF/classes/META-INF/")) {
-                        tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                        if (!ROOT_URL_FROM_WEBINF) {
+                            tmpRootUrl = extForm.substring(0, extForm.indexOf("/META-INF"));
+                        } else {
+                            tmpRootUrl = extForm.substring(0, extForm.indexOf("/classes/META-INF"));
+                        }
                     }
                     if (tmpRootUrl.endsWith(".war")) {
                         tmpRootUrl = tmpRootUrl.substring(0, tmpRootUrl.length() - ".war".length());
@@ -266,13 +274,26 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static void readResourcesXml(final Module module) {
-        final Source url = getSource(module.getAltDDs().get("resources.xml"));
-        if (url != null) {
-            try {
-                final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
-                module.initResources(openejb);
-            } catch (Exception e) {
-                logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+        { // xml
+            final Source url = getSource(module.getAltDDs().get("resources.xml"));
+            if (url != null) {
+                try {
+                    final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
+                    module.initResources(openejb);
+                } catch (Exception e) {
+                    logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+                }
+            }
+        }
+        { // json
+            final Source url = getSource(module.getAltDDs().get("resources.json"));
+            if (url != null) {
+                try {
+                    final Resources openejb = JSonConfigReader.read(Resources.class, url.get());
+                    module.initResources(openejb);
+                } catch (Exception e) {
+                    logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
+                }
             }
         }
     }
@@ -513,7 +534,10 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private void readWebApp(final WebModule webModule, final AppModule appModule) throws OpenEJBException {
-        if (webModule.getWebApp() != null) return;
+        if (webModule.getWebApp() != null) {
+            mergeWebFragments(webModule);
+            return;
+        }
 
         final Object data = webModule.getAltDDs().get("web.xml");
         if (data instanceof WebApp) {
@@ -525,6 +549,46 @@ public class ReadDescriptors implements DynamicDeployer {
         } else {
             DeploymentLoader.logger.debug("No web.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + webModule.getModuleId());
             webModule.setWebApp(new WebApp());
+        }
+
+        mergeWebFragments(webModule);
+    }
+
+    private void mergeWebFragments(final WebModule webModule) {
+        // web-fragment.xml, to get jndi entries to merge, other stuff is done by tomcat ATM
+        final Collection<URL> urls = Collection.class.cast(webModule.getAltDDs().get("web-fragment.xml"));
+        if (urls != null) {
+            for (final URL rawUrl : urls) {
+                if (rawUrl != null) {
+                    final Source url = getSource(rawUrl);
+                    try {
+                        final WebFragment webFragment = WebFragment.class.cast(JaxbJavaee.unmarshal(WebFragment.class, url.get(), false));
+
+                        // in tomcat if the env entry is already don't override it
+                        mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceContextRefMap(), webFragment.getPersistenceContextRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getPersistenceUnitRefMap(), webFragment.getPersistenceUnitRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getMessageDestinationRefMap(), webFragment.getMessageDestinationRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getDataSourceMap(), webFragment.getDataSource());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEjbLocalRefMap(), webFragment.getEjbLocalRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEjbRefMap(), webFragment.getEjbRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getServiceRefMap(), webFragment.getServiceRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getEnvEntryMap(), webFragment.getEnvEntry());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getResourceEnvRefMap(), webFragment.getResourceEnvRef());
+                        mergeOnlyMissingEntries(webModule.getWebApp().getResourceRefMap(), webFragment.getResourceRef());
+                    } catch (final Exception e) {
+                        logger.warning("can't read " + url.toString(), e);
+                    }
+                }
+            }
+        }
+    }
+
+    private static <A extends Keyable<String>> void mergeOnlyMissingEntries(final Map<String, A> existing, final Collection<A> news) {
+        for (final A entry : news) {
+            final String key = entry.getKey();
+            if (!existing.containsKey(key)) {
+                existing.put(key, entry);
+            }
         }
     }
 
@@ -569,6 +633,7 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
+            e.printStackTrace();
             throw new OpenEJBException("Cannot unmarshall the beans.xml");// file: " + url.toExternalForm(), e);
         } catch (IOException e) {
             throw new OpenEJBException("Cannot read the beans.xml");// file: " + url.toExternalForm(), e);
@@ -675,23 +740,6 @@ public class ReadDescriptors implements DynamicDeployer {
         return wsdlMapping;
     }
 
-    public static Definition readWsdl(final URL url) throws OpenEJBException {
-        final Definition definition;
-        try {
-            final WSDLFactory factory = WSDLFactory.newInstance();
-            final WSDLReader reader = factory.newWSDLReader();
-            reader.setFeature("javax.wsdl.verbose", true);
-            reader.setFeature("javax.wsdl.importDocuments", true);
-            final WsdlResolver wsdlResolver = new WsdlResolver(new URL(url, ".").toExternalForm(), new InputSource(IO.read(url)));
-            definition = reader.readWSDL(wsdlResolver);
-        } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the wsdl file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the wsdl file: " + url.toExternalForm(), e);
-        }
-        return definition;
-    }
-
     public static Connector readConnector(final URL url) throws OpenEJBException {
         Connector connector;
         try {
@@ -783,12 +831,12 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static Source getSource(final Object o) {
-        if (o instanceof Source) {
-            return (Source) o;
-        }
-
         if (o instanceof URL) {
             return new UrlSource((URL) o);
+        }
+
+        if (o instanceof Source) {
+            return (Source) o;
         }
 
         if (o instanceof String) {

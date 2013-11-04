@@ -18,17 +18,20 @@
 
 package org.apache.openejb.rest;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.openejb.core.ivm.naming.AbstractThreadLocalProxy;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-public class ThreadLocalHttpHeaders extends AbstractThreadLocalProxy<HttpHeaders>
+public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHeaders>
     implements HttpHeaders {
+
+    protected ThreadLocalHttpHeaders() {
+        super(HttpHeaders.class);
+    }
 
     public List<MediaType> getAcceptableMediaTypes() {
         return get().getAcceptableMediaTypes();

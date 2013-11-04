@@ -40,10 +40,22 @@ public class CxfContainerClassLoader extends ClassLoader {
         tccl.remove();
     }
 
+    public boolean hasTccl() {
+        final ClassLoader current = tccl.get();
+        if (current != null) {
+            return true;
+        }
+
+        tccl.remove();
+        return false;
+    }
+
     private ClassLoader tccl() {
         final ClassLoader current = tccl.get();
         if (current != null) {
             return current;
+        } else {
+            tccl.remove();
         }
         return CONTAINER_LOADER;
     }

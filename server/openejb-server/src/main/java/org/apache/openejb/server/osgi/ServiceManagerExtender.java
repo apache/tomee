@@ -20,6 +20,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -30,9 +31,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -49,136 +48,145 @@ public class ServiceManagerExtender extends ServiceManager {
 
     static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
-    private BundleContext bundleContext;
-    private BundleTracker tracker;    
-    private Map<Bundle, List<Service>> serverMap = new HashMap<Bundle, List<Service>>();
+    private final BundleContext bundleContext;
+    private BundleTracker tracker;
+    private final Map<Bundle, List<Service>> serverMap = new HashMap<Bundle, List<Service>>();
     private Boolean started;
-    
-    public ServiceManagerExtender(BundleContext bundleContext) {
+    private volatile boolean stopped = false;
+
+    public ServiceManagerExtender(final BundleContext bundleContext) {
         setServiceManager(this);
-        
+
         this.bundleContext = bundleContext;
     }
-        
+
+    @Override
     public void init() throws Exception {
         if (started != null && started.equals(Boolean.TRUE)) {
             throw new IllegalStateException("ServiceManager is already initialized");
         }
-        DiscoveryRegistry registry = new DiscoveryRegistry();
+        final DiscoveryRegistry registry = new DiscoveryRegistry();
         SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
-        
+
         started = Boolean.FALSE;
-        ServerServiceTracker t = new ServerServiceTracker();
+        stopped = false;
+        final ServerServiceTracker t = new ServerServiceTracker();
         tracker = new BundleTracker(bundleContext, Bundle.ACTIVE | Bundle.STOPPING, t);
-        tracker.open();       
-    }
-    
-    public synchronized void start(boolean block) {
-        start();
+        tracker.open();
     }
 
-    public synchronized void start() {
+    @Override
+    public synchronized void start(final boolean block) throws ServiceException {
+
+        //This implementaion ignores block
+
         if (started == null) {
-            throw new IllegalStateException("ServiceManager not initialized");
+            throw new ServiceException("ServiceManager not initialized");
         }
+        if (stopped) {
+            throw new ServiceException("ServiceManager has already been stopped");
+        }
+
         started = Boolean.TRUE;
-        for (Map.Entry<Bundle, List<Service>> entry : serverMap.entrySet()) {
-            for (Service service : entry.getValue()) {
+        for (final Map.Entry<Bundle, List<Service>> entry : serverMap.entrySet()) {
+            for (final Service service : entry.getValue()) {
                 service.start();
             }
         }
     }
-    
-    private synchronized void startServers(Bundle bundle, List<Service> services) {
+
+    private synchronized void startServers(final Bundle bundle, final List<Service> services) {
         serverMap.put(bundle, services);
-        if (started == Boolean.TRUE) { 
-            for (Service service : services) {
+        if (started == Boolean.TRUE) {
+            for (final Service service : services) {
                 service.start();
             }
         }
     }
-    
-    protected void addedServers(Bundle bundle, Map<String, Properties> resources) {
-        List<Service> services = new ArrayList<Service>();
-        for (Map.Entry<String, Properties> entry : resources.entrySet()) {
+
+    protected void addedServers(final Bundle bundle, final Map<String, Properties> resources) {
+        final List<Service> services = new ArrayList<Service>();
+        for (final Map.Entry<String, Properties> entry : resources.entrySet()) {
             services.add(new Service(bundle, entry.getKey(), entry.getValue()));
         }
         startServers(bundle, services);
     }
-        
+
+    @Override
     public synchronized void stop() {
         if (started == Boolean.TRUE) {
             started = Boolean.FALSE;
-            for (Map.Entry<Bundle, List<Service>> entry : serverMap.entrySet()) {
-                for (Service service : entry.getValue()) {
+            for (final Map.Entry<Bundle, List<Service>> entry : serverMap.entrySet()) {
+                for (final Service service : entry.getValue()) {
                     service.stop();
                 }
             }
         }
     }
-        
-    protected synchronized void removedServers(Bundle bundle) {
-        List<Service> services = serverMap.remove(bundle);
+
+    protected synchronized void removedServers(final Bundle bundle) {
+        final List<Service> services = serverMap.remove(bundle);
         if (services != null) {
-            for (Service service : services) {
+            for (final Service service : services) {
                 service.stop();
             }
         }
     }
-        
+
     protected void shutdown() {
         if (tracker != null) {
             tracker.close();
         }
         stop();
     }
-    
+
     private class Service {
-        
-        private String name;
-        private Properties description;
-        private Bundle bundle;
-        
+
+        private final String name;
+        private final Properties description;
+        private final Bundle bundle;
+
         private ServiceRegistration registration;
         private ServerService server;
-        
-        public Service(Bundle bundle, String name, Properties description) {
+
+        public Service(final Bundle bundle, final String name, final Properties description) {
             this.bundle = bundle;
             this.name = name;
             this.description = description;
         }
-        
+
         public void start() {
             try {
                 server = initServer(name, description);
             } catch (IOException e) {
                 logger.error("Error initializing " + name + " service.", e);
             }
-            
+
             if (server != null) {
                 try {
-                    server.start();                
+                    server.start();
                 } catch (Exception e) {
                     logger.error("Service Start Failed: " + name + " " + server.getIP() + " " + server.getPort() + ". Exception: " + e.getMessage(), e);
                 }
-            
-                BundleContext context = bundle.getBundleContext();
-                registration = context.registerService(ServerService.class.getName(), 
-                                                       server, 
+
+                final BundleContext context = bundle.getBundleContext();
+                registration = context.registerService(ServerService.class.getName(),
+                                                       server,
                                                        getServiceProperties());
             }
         }
-        
+
+        @SuppressWarnings({"UseOfObsoleteCollectionType", "unchecked"})
         private Hashtable getServiceProperties() {
-            Hashtable props = new Hashtable();
-            for (Map.Entry<Object, Object> entry : description.entrySet()) {
+            final Hashtable props = new Hashtable();
+            for (final Map.Entry<Object, Object> entry : description.entrySet()) {
                 if (entry.getKey() instanceof String) {
                     props.put(entry.getKey(), entry.getValue());
                 }
             }
             return props;
         }
-        
+
         public void stop() {
             if (server != null) {
                 try {
@@ -188,34 +196,41 @@ public class ServiceManagerExtender extends ServiceManager {
                 }
             }
             if (registration != null) {
-                try { registration.unregister(); } catch (IllegalStateException ignore) {}
+                try {
+                    registration.unregister();
+                } catch (IllegalStateException ignore) {
+                }
             }
         }
     }
-    
+
     private class ServerServiceTracker implements BundleTrackerCustomizer {
 
-        public Object addingBundle(Bundle bundle, BundleEvent event) {
+        @Override
+        public Object addingBundle(final Bundle bundle, final BundleEvent event) {
             return scan(bundle);
         }
 
-        public void modifiedBundle(Bundle bundle, BundleEvent event, Object arg2) {
+        @Override
+        public void modifiedBundle(final Bundle bundle, final BundleEvent event, final Object arg2) {
         }
 
-        public void removedBundle(Bundle bundle, BundleEvent event, Object arg2) {
+        @Override
+        public void removedBundle(final Bundle bundle, final BundleEvent event, final Object arg2) {
             removedServers(bundle);
         }
-        
-        private Object scan(Bundle bundle) {
-            String basePath = "/META-INF/" + ServerService.class.getName() + "/";
-            Enumeration<URL> entries = bundle.findEntries(basePath, "*", false);
-            if (entries != null) {             
-                Map<String, Properties> resources = new HashMap<String, Properties>();
+
+        @SuppressWarnings("unchecked")
+        private Object scan(final Bundle bundle) {
+            final String basePath = "/META-INF/" + ServerService.class.getName() + "/";
+            final Enumeration<URL> entries = bundle.findEntries(basePath, "*", false);
+            if (entries != null) {
+                final Map<String, Properties> resources = new HashMap<String, Properties>();
                 while (entries.hasMoreElements()) {
-                    URL entry = entries.nextElement();
-                    String name = entry.getPath().substring(basePath.length());
+                    final URL entry = entries.nextElement();
+                    final String name = entry.getPath().substring(basePath.length());
                     try {
-                        Properties props = loadProperties(entry);
+                        final Properties props = loadProperties(entry);
                         setClass(props, bundle, ServerService.class);
                         setRawProperties(props, entry);
                         resources.put(name, props);
@@ -225,11 +240,11 @@ public class ServiceManagerExtender extends ServiceManager {
                 }
                 addedServers(bundle, resources);
                 return bundle;
-            }   
+            }
             return null;
         }
-        
-        private void setClass(Properties properties, Bundle bundle, Class interfase) throws ClassNotFoundException {
+
+        private void setClass(final Properties properties, final Bundle bundle, final Class interfase) throws ClassNotFoundException {
             String className = properties.getProperty("className");
             if (className == null) {
                 className = properties.getProperty("classname");
@@ -238,20 +253,20 @@ public class ServiceManagerExtender extends ServiceManager {
                 }
             }
 
-            Class impl = bundle.loadClass(className);
+            final Class impl = bundle.loadClass(className);
             properties.put(interfase, impl);
         }
 
-        private void setRawProperties(Properties properties, URL entry) throws IOException {
-            String rawProperties = readContents(entry);
+        private void setRawProperties(final Properties properties, final URL entry) throws IOException {
+            final String rawProperties = readContents(entry);
             properties.put(Properties.class, rawProperties);
         }
 
-        private Properties loadProperties(URL resource) throws IOException {
+        private Properties loadProperties(final URL resource) throws IOException {
             return IO.readProperties(resource);
         }
-        
-        private String readContents(URL resource) throws IOException {
+
+        private String readContents(final URL resource) throws IOException {
             return IO.slurp(resource);
         }
 

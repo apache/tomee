@@ -44,7 +44,6 @@ public class ChatBeanTest extends TestCase {
     public void test() throws Exception {
         EJBContainer.createEJBContainer().getContext().bind("inject", this);
 
-
         final Connection connection = connectionFactory.createConnection();
 
         connection.start();
@@ -55,16 +54,13 @@ public class ChatBeanTest extends TestCase {
 
         final MessageConsumer answers = session.createConsumer(answerQueue);
 
-
         sendText("Hello World!", questions, session);
 
         assertEquals("Hello, Test Case!", receiveText(answers));
 
-
         sendText("How are you?", questions, session);
 
         assertEquals("I'm doing well.", receiveText(answers));
-
 
         sendText("Still spinning?", questions, session);
 

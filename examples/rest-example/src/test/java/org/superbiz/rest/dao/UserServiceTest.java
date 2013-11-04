@@ -16,9 +16,9 @@
  */
 package org.superbiz.rest.dao;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.tomee.embedded.EmbeddedTomEEContainer;
+import org.apache.ziplock.Archive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,16 +36,16 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 public class UserServiceTest {
 
     private static EJBContainer container;
-    private static File webApp;
 
     @BeforeClass
     public static void start() throws IOException {
-        webApp = createWebApp();
-        Properties p = new Properties();
+        final File webApp = Archive.archive().copyTo("WEB-INF/classes", jarLocation(UserDAO.class)).asDir();
+        final Properties p = new Properties();
         p.setProperty(EJBContainer.APP_NAME, "rest-example");
         p.setProperty(EJBContainer.PROVIDER, "tomee-embedded"); // need web feature
         p.setProperty(EJBContainer.MODULES, webApp.getAbsolutePath());
@@ -58,39 +58,21 @@ public class UserServiceTest {
         if (container != null) {
             container.close();
         }
-        if (webApp != null) {
-            try {
-                FileUtils.forceDelete(webApp);
-            } catch (IOException e) {
-                FileUtils.deleteQuietly(webApp);
-            }
-        }
     }
 
     @Test
     public void create() throws NamingException {
-        UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
-        User user = dao.create("foo", "dummy", "foo@dummy.org");
+        final UserDAO dao = (UserDAO) container.getContext().lookup("java:global/rest-example/UserDAO");
+        final User user = dao.create("foo", "dummy", "foo@dummy.org");
         assertNotNull(dao.find(user.getId()));
 
-        String uri = "http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/rest-example";
-        UserServiceClientAPI client = JAXRSClientFactory.create(uri, UserServiceClientAPI.class);
-        User retrievedUser = client.show(user.getId());
+        final String uri = "http://127.0.0.1:" + System.getProperty(EmbeddedTomEEContainer.TOMEE_EJBCONTAINER_HTTP_PORT) + "/rest-example";
+        final UserServiceClientAPI client = JAXRSClientFactory.create(uri, UserServiceClientAPI.class);
+        final User retrievedUser = client.show(user.getId());
         assertNotNull(retrievedUser);
         assertEquals("foo", retrievedUser.getFullname());
         assertEquals("dummy", retrievedUser.getPassword());
         assertEquals("foo@dummy.org", retrievedUser.getEmail());
-    }
-
-    private static File createWebApp() throws IOException {
-        File file = new File(System.getProperty("java.io.tmpdir") + "/tomee-" + Math.random());
-        if (!file.mkdirs() && !file.exists()) {
-            throw new RuntimeException("can't create " + file.getAbsolutePath());
-        }
-
-        FileUtils.copyDirectory(new File("target/classes"), new File(file, "WEB-INF/classes"));
-
-        return file;
     }
 
     /**

@@ -16,28 +16,30 @@
  */
 package org.apache.openejb.client;
 
-import java.lang.reflect.Method;
-
 import javax.ejb.RemoveException;
+import java.lang.reflect.Method;
 
 public class StatelessEJBHomeHandler extends EJBHomeHandler {
 
     public StatelessEJBHomeHandler() {
     }
 
-    public StatelessEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatelessEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object findX(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new SystemException(new UnsupportedOperationException("Session beans may not have find methods"));
     }
 
-    protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object removeByPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new ApplicationException(new RemoveException("Session objects are private resources and do not have primary keys"));
     }
 
-    protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object removeWithHandle(final Method method, final Object[] args, final Object proxy) throws Throwable {
         // you can't really remove a stateless handle
         return null;
     }

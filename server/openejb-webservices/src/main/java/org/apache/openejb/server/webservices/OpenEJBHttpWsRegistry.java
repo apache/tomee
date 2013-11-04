@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
@@ -24,20 +25,35 @@ import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
 import java.util.List;
 
 public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegistry {
-    public List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception {
-        throw new UnsupportedOperationException("OpenEJB http server does not support POJO webservices");
+    @Override
+    public List<String> setWsContainer(final HttpListener httpListener,
+                                       final ClassLoader classLoader,
+                                       final String context, final String virtualHost, final ServletInfo servletInfo,
+                                       final String realmName, final String transportGuarantee, final String authMethod) throws Exception {
+
+        final String path = servletInfo.mappings.iterator().next();
+        return addWsContainer(httpListener, classLoader, context, virtualHost, path, realmName, transportGuarantee, authMethod);
     }
 
-    public void clearWsContainer(String virtualHost, String contextRoot, String servletName) {
+    @Override
+    public void clearWsContainer(final String context, final String virtualHost, final ServletInfo servletInfo) {
+        final String path = servletInfo.mappings.iterator().next();
+        removeWsContainer(path);
     }
 
-    public List<String> addWsContainer(String context, String path, HttpListener httpListener, String virtualHost, // ignored
-            String realmName, // ignored
-            String transportGuarantee, // ignored
-            String authMethod, // ignored
-            ClassLoader classLoader) throws Exception {
+    @Override
+    public List<String> addWsContainer(final HttpListener inputListener,
+                                       final ClassLoader classLoader,
+                                       final String context,
+                                       final String virtualHost,
+                                       final String path,
+                                       final String realmName,
+                                       final String transportGuarantee, // ignored
+                                       final String authMethod) throws Exception {
 
         if (path == null) throw new NullPointerException("contextRoot is null");
+
+        HttpListener httpListener = inputListener;
         if (httpListener == null) throw new NullPointerException("httpListener is null");
 
         if ("BASIC".equals(authMethod)) {
@@ -67,6 +83,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
         return getResolvedAddresses(deployedPath.toString());
     }
 
+    @Override
     public void removeWsContainer(String path) {
         registry.removeHttpListener(path);
     }

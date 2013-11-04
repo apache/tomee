@@ -24,6 +24,7 @@ import java.util.Collection;
  * @version $Revision$ $Date$
  */
 interface Movies extends javax.ejb.EJBLocalHome {
+
     Movie create(String director, String title, int year) throws CreateException;
 
     Movie findByPrimaryKey(Integer primarykey) throws FinderException;

@@ -19,7 +19,6 @@ package org.superbiz.jsf;
 
 import javax.ejb.Stateless;
 
-
 @Stateless
 public class Calculator {
 

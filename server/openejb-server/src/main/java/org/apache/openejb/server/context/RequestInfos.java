@@ -26,6 +26,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 public final class RequestInfos {
+
     private static final ThreadLocal<RequestInfo> REQUEST_INFO = new ThreadLocal<RequestInfo>();
 
     private RequestInfos() {
@@ -70,17 +71,44 @@ public final class RequestInfos {
     }
 
     public static class RequestInfo {
+
         public String ip;
-        public CountingInputStream inputStream;
-        public CountingOutputStream outputStream;
+        private CountingInputStream inputStream;
+        private CountingOutputStream outputStream;
+
+        public CountingInputStream getInputStream() {
+
+            if (null == inputStream) {
+                throw new RuntimeException("InputStream has not been set");
+            }
+
+            return inputStream;
+        }
+
+        public CountingOutputStream getOutputStream() {
+
+            if (null == outputStream) {
+                throw new RuntimeException("OutputStream has not been set");
+            }
+
+            return outputStream;
+        }
+
+        public void setInputStream(final CountingInputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        public void setOutputStream(final CountingOutputStream outputStream) {
+            this.outputStream = outputStream;
+        }
 
         @Override
         public String toString() {
             return "RequestInfo{"
-                    + "ip='" + ip + '\''
-                    + ", request-size=" + inputStream.getCount()
-                    + ", response-size=" + outputStream.getCount()
-                    + '}';
+                   + "ip='" + ip + '\''
+                   + ", request-size=" + (inputStream != null ? inputStream.getCount() : "unknown")
+                   + ", response-size=" + (outputStream != null ? outputStream.getCount() : "unknown")
+                   + '}';
         }
     }
 }

@@ -16,23 +16,20 @@
  */
 package org.superbiz.rest.dao;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.enterprise.inject.Typed;
-import javax.inject.Inject;
 import org.superbiz.rest.model.Comment;
 import org.superbiz.rest.model.Post;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
-@Typed
 @Singleton
 @Lock(LockType.READ)
 public class CommentDAO {
+
     @Inject
     private DAO dao;
 

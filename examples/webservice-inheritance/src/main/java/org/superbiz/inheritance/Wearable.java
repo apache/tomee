@@ -20,6 +20,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class Wearable extends Item {
+
     protected String size;
 
     public String getSize() {

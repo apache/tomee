@@ -45,6 +45,7 @@ import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ConnectionDefinition;
@@ -239,7 +240,7 @@ class AppInfoBuilder {
                 jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleName, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
 
 
-                jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleName);
+                jndiEncInfoBuilder.buildDependsOnRefs(enterpriseBean, beanInfo, ejbJar.moduleName);
             }
         }
 

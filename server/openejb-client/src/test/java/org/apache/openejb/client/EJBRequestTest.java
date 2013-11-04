@@ -16,144 +16,159 @@
  */
 package org.apache.openejb.client;
 
-import java.io.*;
-import java.lang.reflect.Method;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-
 import junit.framework.TestCase;
 import org.omg.CORBA.UserException;
 
+import javax.ejb.EJBHome;
+import javax.ejb.EJBObject;
+import javax.ejb.Handle;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
+
 public class EJBRequestTest extends TestCase {
+
     private EJBMetaDataImpl ejb;
 
     static interface FooHome extends EJBHome {
+
         FooObject create();
+
         FooObject findByPrimaryKey(Integer key);
     }
-    static interface FooObject extends EJBObject{
+
+    static interface FooObject extends EJBObject {
+
         String businessMethod(String param) throws UserException;
     }
 
-
+    @Override
     protected void setUp() throws Exception {
         ejb = new EJBMetaDataImpl(FooHome.class, FooObject.class, Integer.class, "BMP_ENTITY", "FooBeanID", InterfaceType.BUSINESS_REMOTE, null, null);
     }
 
     public void testEJBHomeCreate() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_CREATE;
-        Method method = FooHome.class.getMethod("create", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_CREATE;
+        final Method method = FooHome.class.getMethod("create", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testEJBHomeFind() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_FIND;
-        Method method = FooHome.class.getMethod("findByPrimaryKey", new Class[]{Integer.class});
-        Object[] args = new Object[]{new Integer(4)};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_FIND;
+        final Method method = FooHome.class.getMethod("findByPrimaryKey", new Class[]{Integer.class});
+        final Object[] args = new Object[]{4};
 
         invoke(requestMethod, method, args);
     }
 
     public void testEJBHomeRemove1() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE;
-        Method method = FooHome.class.getMethod("remove", new Class[]{Handle.class});
-        Object[] args = new Object[]{null};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE;
+        final Method method = FooHome.class.getMethod("remove", new Class[]{Handle.class});
+        final Object[] args = new Object[]{null};
 
         invoke(requestMethod, method, args);
     }
 
     public void testEJBHomeRemove2() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY;
-        Method method = FooHome.class.getMethod("remove", new Class[]{Object.class});
-        Object[] args = new Object[]{new Integer(4)};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY;
+        final Method method = FooHome.class.getMethod("remove", new Class[]{Object.class});
+        final Object[] args = new Object[]{4};
 
         invoke(requestMethod, method, args);
     }
 
     public void testGetMetaData() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_EJB_META_DATA;
-        Method method = FooHome.class.getMethod("getEJBMetaData", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_EJB_META_DATA;
+        final Method method = FooHome.class.getMethod("getEJBMetaData", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testGetHomeHandle() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_HOME_HANDLE;
-        Method method = FooHome.class.getMethod("getHomeHandle", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_GET_HOME_HANDLE;
+        final Method method = FooHome.class.getMethod("getHomeHandle", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testBusinessMethod() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD;
-        Method method = FooObject.class.getMethod("businessMethod", new Class[]{String.class});
-        Object[] args = new Object[]{"hola mundo"};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD;
+        final Method method = FooObject.class.getMethod("businessMethod", new Class[]{String.class});
+        final Object[] args = new Object[]{"hola mundo"};
 
         invoke(requestMethod, method, args);
     }
 
     public void testGetEJBHome() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_EJB_HOME;
-        Method method = FooObject.class.getMethod("getEJBHome", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_EJB_HOME;
+        final Method method = FooObject.class.getMethod("getEJBHome", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testGetHandle() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_HANDLE;
-        Method method = FooObject.class.getMethod("getHandle", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_HANDLE;
+        final Method method = FooObject.class.getMethod("getHandle", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testGetPrimaryKey() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_PRIMARY_KEY;
-        Method method = FooObject.class.getMethod("getPrimaryKey", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_GET_PRIMARY_KEY;
+        final Method method = FooObject.class.getMethod("getPrimaryKey", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
     public void testIsIdentical() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_IS_IDENTICAL;
-        Method method = FooObject.class.getMethod("isIdentical", new Class[]{EJBObject.class});
-        Object[] args = new Object[]{null};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_IS_IDENTICAL;
+        final Method method = FooObject.class.getMethod("isIdentical", new Class[]{EJBObject.class});
+        final Object[] args = new Object[]{null};
 
         invoke(requestMethod, method, args);
     }
 
     public void testEJBObjectRemove() throws Exception {
-        RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_REMOVE;
-        Method method = FooObject.class.getMethod("remove", new Class[]{});
-        Object[] args = new Object[]{};
+        final RequestMethodCode requestMethod = RequestMethodCode.EJB_OBJECT_REMOVE;
+        final Method method = FooObject.class.getMethod("remove", new Class[]{});
+        final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);
     }
 
-    private void invoke(RequestMethodCode requestMethod, Method method, Object[] args) throws IOException, ClassNotFoundException {
-        EJBRequest expected = new EJBRequest(requestMethod, ejb, method, args, null);
+    private void invoke(final RequestMethodCode requestMethod, final Method method, final Object[] args) throws IOException, ClassNotFoundException {
 
-        EJBRequest actual = new EJBRequest();
+        final EJBRequest expected = new EJBRequest(requestMethod, ejb, method, args, null, null);
+        expected.getBody().setAuthentication(new JNDIContext.AuthenticationInfo("realm", "user", new char[]{'p', 'w'}));
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
+        final EJBRequest actual = new EJBRequest();
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream(baos);
 
         expected.writeExternal(out);
         out.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream in = new ObjectInputStream(bais);
 
         actual.readExternal(in);
         actual.getBody().readExternal(in);
+        final JNDIContext.AuthenticationInfo authentication = actual.getBody().getAuthentication();
 
+        assertNotNull(authentication);
+        assertEquals("AuthenticationInfo.Realm", "realm", authentication.getRealm());
+        assertEquals("AuthenticationInfo.User", "user", authentication.getUser());
 
         assertEquals("RequestType", expected.getRequestType(), actual.getRequestType());
         assertEquals("RequestMethod", expected.getRequestMethod(), actual.getRequestMethod());
@@ -169,19 +184,14 @@ public class EJBRequestTest extends TestCase {
 
         assertEquals("MethodInstance", expected.getMethodInstance(), actual.getMethodInstance());
 
-        Object[] expectedParams = expected.getMethodParameters();
-        Object[] actualParams = actual.getMethodParameters();
+        final Object[] expectedParams = expected.getMethodParameters();
+        final Object[] actualParams = actual.getMethodParameters();
 
-        assertNotNull("MethodParameters",actualParams);
+        assertNotNull("MethodParameters", actualParams);
         assertEquals("MethodParameters.length", expectedParams.length, actualParams.length);
         for (int i = 0; i < expectedParams.length; i++) {
-            assertEquals("MethodParameters."+i, expectedParams[i], actualParams[i]);
+            assertEquals("MethodParameters." + i, expectedParams[i], actualParams[i]);
         }
     }
-
-
-
-
-
 
 }

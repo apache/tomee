@@ -16,17 +16,21 @@
  */
 package org.apache.openejb.core.ivm.naming.java;
 
-import java.util.Hashtable;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.ContextHandler;
+import org.apache.openejb.core.ivm.naming.ContextWrapper;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.Context;
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.spi.ObjectFactory;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.loader.SystemInstance;
+import java.util.Hashtable;
 
 public class javaURLContextFactory implements ObjectFactory {
 
@@ -35,10 +39,27 @@ public class javaURLContextFactory implements ObjectFactory {
     }
 
     public static Context getContext() {
-        ThreadContext callContext = ThreadContext.getThreadContext();
+        final ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext == null) {
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            return containerSystem.getJNDIContext();
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final ClassLoader current = Thread.currentThread().getContextClassLoader();
+            final Context globalContext = containerSystem.getJNDIContext();
+            if (current == null) {
+                return globalContext;
+            }
+
+            for (final AppContext appContext : containerSystem.getAppContexts()) {
+                for (final WebContext web : appContext.getWebContexts()) { // more specific first
+                    if (current.equals(web.getClassLoader())) {
+                        return new ContextHandler(web.getJndiEnc());
+                    }
+                }
+                if (current.equals(appContext.getClassLoader())) {
+                    return new ContextHandler(appContext.getAppJndiContext());
+                }
+            }
+
+            return globalContext;
         }
 
         BeanContext di = callContext.getBeanContext();
@@ -47,6 +68,40 @@ public class javaURLContextFactory implements ObjectFactory {
         } else {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             return containerSystem.getJNDIContext();
+        }
+    }
+
+    private static class ContextWithglobalFallbackWrapper extends ContextWrapper {
+        public ContextWithglobalFallbackWrapper(final Context first) {
+            super(first);
+        }
+
+        @Override
+        public Object lookup(final Name name) throws NamingException {
+            try {
+                return super.lookup(name);
+            } catch (final NameNotFoundException nnfe) {
+                try {
+                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
+                } catch (NameNotFoundException nnfe2) {
+                    // ignore, let it be thrown
+                }
+                throw nnfe;
+            }
+        }
+
+        @Override
+        public Object lookup(String name) throws NamingException {
+            try {
+                return super.lookup(name);
+            } catch (NameNotFoundException nnfe) {
+                try {
+                    return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
+                } catch (final NameNotFoundException nnfe2) {
+                    // ignore, let it be thrown
+                }
+                throw nnfe;
+            }
         }
     }
 }

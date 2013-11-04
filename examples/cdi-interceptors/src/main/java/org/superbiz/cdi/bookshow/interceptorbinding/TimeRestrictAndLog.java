@@ -26,7 +26,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- *This InterceptorBinding inherits from @Log and @TimeRestricted Interceptor-Bindings.
+ * This InterceptorBinding inherits from @Log and @TimeRestricted Interceptor-Bindings.
  */
 @Inherited
 @InterceptorBinding
@@ -35,4 +35,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Log
 @TimeRestricted
 public @interface TimeRestrictAndLog {
+
 }

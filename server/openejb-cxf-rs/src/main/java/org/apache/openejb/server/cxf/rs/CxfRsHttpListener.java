@@ -16,16 +16,21 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
+import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.model.wadl.WadlGenerator;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.cxf.service.invoker.Invoker;
@@ -34,9 +39,19 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.api.internal.Internal;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
@@ -48,6 +63,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyEJB;
 import org.apache.webbeans.config.WebBeansContext;
 
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 import javax.naming.Context;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -58,24 +75,35 @@ import javax.ws.rs.core.Application;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class CxfRsHttpListener implements RsHttpListener {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, CxfRsHttpListener.class);
+
+    private static final java.util.logging.Logger SERVER_IMPL_LOGGER = LogUtils.getL7dLogger(ServerImpl.class);
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
     public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
+
+    private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
 
     private static final Map<String, String> STATIC_CONTENT_TYPES;
 
@@ -85,6 +113,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private Server server;
     private String context = "";
     private Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
+    private List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<String, String>();
@@ -97,12 +126,21 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("ico", "image/ico");
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
+
+        // CXF-5319: bug in CXF? it prevents to get the wadl as json otherwise
+        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false"))) {
+            for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
+                final RequestHandler provider = rh.getProvider();
+                if (WadlGenerator.class.isInstance(provider)) {
+                    WadlGenerator.class.cast(provider).setIgnoreMessageWriters(false);
+                }
+            }
+        }
     }
 
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
         transportFactory = httpTransportFactory;
         wildcard = star;
-
     }
 
     @Override
@@ -126,19 +164,27 @@ public class CxfRsHttpListener implements RsHttpListener {
         httpRequest.setAttribute("org.apache.cxf.transport.endpoint.address", baseURL);
 
         // delegate invocation
-        destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
-            // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
-            // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
-            // so without stripping the address until the context the behavior is weird
-            // this is just a workaround waiting for something better
-            @Override
-            public String getRequestURI() {
-                if (httpRequest instanceof HttpRequestImpl) {
-                    return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            destination.invoke(null, httpRequest.getServletContext(), new HttpServletRequestWrapper(httpRequest) {
+                // see org.apache.cxf.jaxrs.utils.HttpUtils.getPathToMatch()
+                // cxf uses implicitly getRawPath() from the endpoint but not for the request URI
+                // so without stripping the address until the context the behavior is weird
+                // this is just a workaround waiting for something better
+                @Override
+                public String getRequestURI() {
+                    if (httpRequest instanceof HttpRequestImpl) {
+                        return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
+                    }
+                    return strip(context, super.getRequestURI());
                 }
-                return strip(context, super.getRequestURI());
+            }, httpResponse);
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
             }
-        }, httpResponse);
+        }
     }
 
     private boolean matchPath(final HttpServletRequest request) {
@@ -256,13 +302,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         for (Object o : additionalProviders) {
             if (o instanceof Class<?>) {
                 final Class<?> clazz = (Class<?>) o;
-                final Object instance = ServiceInfos.resolve(services, clazz.getName());
-                if (instance != null) {
-                    instances.add(instance);
+                final Collection<Object> instance = ServiceInfos.resolve(services, new String[] { clazz.getName() }, ProviderFactory.INSTANCE);
+                if (instance != null && !instance.isEmpty()) {
+                    instances.add(instance.iterator().next());
                 } else {
                     try {
-                        instances.add(clazz.newInstance());
-                    } catch (Exception e) {
+                        instances.add(newProvider(clazz));
+                    } catch (final Exception e) {
                         LOGGER.error("can't instantiate " + clazz.getName(), e);
                     }
                 }
@@ -273,7 +319,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         return instances;
     }
 
+    private Object newProvider(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        return clazz.newInstance();
+    }
+
     public void undeploy() {
+        // unregister all MBeans
+        for (final ObjectName objectName : jmxNames) {
+            LocalMBeanServer.unregisterSilently(objectName);
+        }
+
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
@@ -332,7 +387,14 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
-            server = factory.create();
+            final Level level = SERVER_IMPL_LOGGER.getLevel();
+            SERVER_IMPL_LOGGER.setLevel(Level.OFF);
+            try {
+                server = factory.create();
+            } finally {
+                SERVER_IMPL_LOGGER.setLevel(level);
+            }
+
             this.context = webContext;
             if (!webContext.startsWith("/")) {
                 this.context = "/" + webContext;
@@ -413,7 +475,24 @@ public class CxfRsHttpListener implements RsHttpListener {
         LOGGER.info("REST Application: " + Logs.forceLength(prefix, addressSize, true) + " -> " + application.getClass().getName());
 
         Collections.sort(resourcesToLog);
-        for (Logs.LogResourceEndpointInfo resource : resourcesToLog) {
+
+        for (final Logs.LogResourceEndpointInfo resource : resourcesToLog) {
+
+            // Init and register MBeans
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
+                    .set("j2eeType", "JAX-RS")
+                    .set("J2EEServer", "openejb")
+                    .set("J2EEApplication", base)
+                    .set("EndpointType", resource.type)
+                    .set("name", resource.classname);
+
+            ObjectName jmxObjectName = jmxName.build();
+            LocalMBeanServer.registerDynamicWrapperSilently(
+                    new RestServiceMBean(resource),
+                    jmxObjectName);
+
+            jmxNames.add(jmxObjectName);
+
             LOGGER.info("     Service URI: "
                     + Logs.forceLength(resource.address, addressSize, true) + " -> "
                     + Logs.forceLength(resource.type, 4, false) + " "
@@ -477,10 +556,29 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         // providers
-        final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+        Set<String> providersConfig = null;
+
+        {
+            final String provider = serviceConfiguration.getProperties().getProperty(PROVIDERS_KEY);
+            if (provider != null) {
+                providersConfig = new HashSet<String>();
+                providersConfig.addAll(Arrays.asList(provider.split(",")));
+            }
+
+            {
+                if (GLOBAL_PROVIDERS != null) {
+                    if (providersConfig == null) {
+                        providersConfig = new HashSet<String>();
+                    }
+                    providersConfig.addAll(Arrays.asList(GLOBAL_PROVIDERS.split(",")));
+                }
+            }
+        }
+
+
         List<Object> providers = null;
-        if (provider != null) {
-            providers = ServiceInfos.resolve(services, provider.split(","));
+        if (providersConfig != null) {
+            providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), ProviderFactory.INSTANCE);
             if (providers != null && additionalProviders != null && !additionalProviders.isEmpty()) {
                 providers.addAll(providers(services, additionalProviders));
             }
@@ -494,6 +592,8 @@ public class CxfRsHttpListener implements RsHttpListener {
                 providers.addAll(defaultProviders());
             }
             factory.setProviders(providers);
+        } else {
+            LOGGER.info("Using providers " + providers);
         }
     }
 
@@ -508,5 +608,130 @@ public class CxfRsHttpListener implements RsHttpListener {
         // json.setSerializeAsArray(true);
 
         return Arrays.asList((Object) jaxb, json);
+    }
+
+    private static class ProviderFactory implements ServiceInfos.Factory {
+        private static final ServiceInfos.Factory INSTANCE = new ProviderFactory();
+
+        @Override
+        public Object newInstance(final Class<?> clazz) throws Exception {
+            boolean found = false;
+            Object instance = null;
+            for (final Constructor<?> c : clazz.getConstructors()) {
+                int contextAnnotations = 0;
+                for (final Annotation[] annotations : c.getParameterAnnotations()) {
+                    for (final Annotation a : annotations) {
+                        if (javax.ws.rs.core.Context.class.equals(a.annotationType())) {
+                            contextAnnotations++;
+                            break;
+                        }
+                    }
+                }
+                if (contextAnnotations == c.getParameterTypes().length) {
+                    if (found) {
+                        LOGGER.warning("Found multiple matching constructor for " + clazz.getName());
+                        return instance;
+                    }
+
+                    final Object[] params = new Object[c.getParameterTypes().length];
+                    for (int i = 0; i < params.length; i++) {
+                        params[i] = ThreadLocalContextManager.findThreadLocal(c.getParameterTypes()[i]);
+                        // params[i] can be null if not a known type
+                    }
+                    instance = c.newInstance(params);
+                    found = true;
+                }
+            }
+            if (instance != null) {
+                return instance;
+            }
+            return clazz.newInstance();
+        }
+    }
+
+    @MBean
+    @Internal
+    @Description("JAX-RS service information")
+    public class RestServiceMBean {
+
+        private String type;
+        private String address;
+        private String classname;
+        private TabularData operations;
+
+        public RestServiceMBean(final Logs.LogResourceEndpointInfo jmxName) {
+            this.type = jmxName.type;
+            this.address = jmxName.address;
+            this.classname = jmxName.classname;
+
+            final String[] names = new String[jmxName.operations.size()];
+            final String[] values = new String[jmxName.operations.size()];
+            int idx = 0;
+            for (final Logs.LogOperationEndpointInfo operation : jmxName.operations) {
+                names[idx] = operation.http + " " + operation.address;
+                values[idx] = operation.method;
+                idx++;
+            }
+            operations = LocalMBeanServer.tabularData("Operations", "Operations for this endpoint", names, values);
+        }
+
+        @ManagedAttribute
+        @Description("The type of the REST service")
+        public String getWadlUrl() {
+            if (address.endsWith("?_wadl")) {
+                return address;
+            }
+            return address + "?_wadl";
+        }
+
+        @ManagedOperation
+        @Description("The type of the REST service")
+        public String getWadl(final String format) {
+            if (format != null && format.toLowerCase().contains("json")) {
+                InputStream inputStream = null;
+                try {
+                    final URL url = new URL(getWadlUrl() + "&_type=json");
+                    final HttpURLConnection connection = HttpURLConnection.class.cast(url.openConnection());
+                    connection.setRequestProperty("Accept", "application/json");
+                    connection.setRequestProperty("Content-type", "application/json");
+                    inputStream = connection.getInputStream();
+                    return IO.slurp(inputStream);
+                } catch (final Exception e) {
+                    return e.getMessage();
+                } finally {
+                    IO.close(inputStream);
+                }
+            } else { // xml
+                try {
+                    return IO.slurp(new URL(getWadlUrl()));
+                } catch (final IOException e) {
+                    return e.getMessage();
+                }
+            }
+        }
+
+        @ManagedAttribute
+        @Description("The type of the REST service")
+        public String getType() {
+            return type;
+        }
+
+        @ManagedAttribute
+        @Description("The REST service address")
+        public String getAddress() {
+            return address;
+        }
+
+        @ManagedAttribute
+        @Description("The REST service class name")
+        public String getClassname() {
+            return classname;
+        }
+
+        @ManagedAttribute
+        @Description("All available methods")
+        public TabularData getOperations() {
+            return operations;
+        }
     }
 }

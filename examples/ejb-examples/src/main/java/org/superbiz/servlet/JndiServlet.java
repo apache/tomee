@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class JndiServlet extends HttpServlet {
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();

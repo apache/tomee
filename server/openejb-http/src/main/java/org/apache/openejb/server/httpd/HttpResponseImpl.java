@@ -383,16 +383,8 @@ public class HttpResponseImpl implements HttpResponse {
      * HTTP/1.1 200 OK
      * @return the string value of this HttpResponseImpl
      */
-    public String toString(){
-        StringBuffer buf = new StringBuffer(40);
-
-        buf.append(HTTP_VERSION);
-        buf.append(SP);
-        buf.append(code);
-        buf.append(SP);
-        buf.append(responseString);
-
-        return buf.toString();
+    public String toString() {
+        return HTTP_VERSION + SP + code + SP + responseString;
     }
 
     /** closes the message sent to the browser
@@ -415,19 +407,16 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     private void setCookieHeader() {
-        if (request == null || request.getSession() == null) return;
+        if (request == null) {
+            return;
+        }
 
-        HttpSession session = request.getSession(false);
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return;
+        }
 
-        if (session == null) return;
-
-        StringBuffer cookie = new StringBuffer();
-        cookie.append(HttpRequestImpl.EJBSESSIONID);
-        cookie.append('=');
-        cookie.append(session.getId());
-        cookie.append("; Path=/");
-
-        headers.put(HttpRequest.HEADER_SET_COOKIE, cookie.toString());
+        headers.put(HttpRequest.HEADER_SET_COOKIE, HttpRequestImpl.EJBSESSIONID + '=' + session.getId() + "; Path=/");
     }
 
     /** Writes a response line similar to this:
@@ -452,7 +441,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */
     private void writeHeaders(DataOutput out) throws IOException{
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
+        for (final Map.Entry<String, String> entry : headers.entrySet()) {
             out.writeBytes(""+entry.getKey());
             out.writeBytes(CSP);
             out.writeBytes(""+entry.getValue());

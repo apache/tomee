@@ -92,19 +92,21 @@ public class FailoverConnectionFactoryTest extends TestCase {
         assertTrue(TestConnectionStrategy.called.get());
     }
 
-
     @Remote
     public static interface Widget {
+
         public Object echo(Object o);
     }
 
     public static class WidgetBean implements Widget {
+
         public Object echo(Object o) {
             return o;
         }
     }
 
     public static class TestConnectionStrategy implements ConnectionStrategy {
+
         public static final AtomicBoolean called = new AtomicBoolean();
 
         private final StickyConnectionStrategy strategy = new StickyConnectionStrategy();

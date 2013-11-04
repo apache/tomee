@@ -26,13 +26,19 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DataSourceDefinitionTest {
+
     private static EJBContainer container;
 
     @Inject
@@ -62,7 +68,7 @@ public class DataSourceDefinitionTest {
         final DbcpManagedDataSource castedDs = (DbcpManagedDataSource) ds;
 
         final String driver = castedDs.getDriverClassName();
-        assertNull(null, driver);
+        assertEquals("org.h2.jdbcx.JdbcDataSource", driver);
 
         final String user = castedDs.getUserName();
         assertEquals("sa", user);

@@ -108,8 +108,8 @@ public class BuiltInEnvironmentEntriesTest {
             }
 
             Assert.assertEquals("app", "BuiltInEnvironmentEntriesTest", app);
-            Assert.assertEquals("module", module, "fantastic");
-            Assert.assertEquals("component", component, "Blue");
+            Assert.assertEquals("module", "fantastic", module);
+            Assert.assertEquals("component", "Blue", component);
         }
 
     }

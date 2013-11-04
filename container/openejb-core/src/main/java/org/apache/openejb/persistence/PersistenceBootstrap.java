@@ -19,7 +19,9 @@ package org.apache.openejb.persistence;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Saxs;
+import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -30,12 +32,14 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.sql.Connection;
@@ -43,14 +47,18 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import static org.apache.openejb.loader.JarLocation.decode;
 
 /**
  * The goal of this class is to support persistence providers that need to do
@@ -84,38 +92,77 @@ public class PersistenceBootstrap {
         try {
             debug("searching for persistence.xml files");
 
-            ArrayList<URL> urls = Collections.list(classLoader.getResources("META-INF/persistence.xml"));
+            // create persistence.xml names respecting altdd
+            final Collection<String> pXmlNames = new ArrayList<String>();
+
+            // altdd logic duplicated to avoid classloading issue in tomee-webapp mode
+            final String altDD = SystemInstance.get().getOptions().get("openejb.altdd.prefix", (String) null);
+            if (altDD != null) {
+                for (final String p : altDD.split(",")) {
+                    pXmlNames.add(p + ".persistence.xml");
+                    pXmlNames.add(p + "-persistence.xml");
+                }
+            } else {
+                pXmlNames.add("persistence.xml");
+            }
+
+            final List<URL> urls = new LinkedList<URL>();
+            for (final String pXmlName : pXmlNames) { // find persistence.xml in the classloader and in WEB-INF
+                urls.addAll(Collections.list(classLoader.getResources("META-INF/" + pXmlName)));
+                try {
+                    final Collection<URL> loaderUrls = ClassLoaders.findUrls(classLoader);
+                    for (final URL url : loaderUrls) {
+                        final File file = toFile(url);
+                        if ("classes".equals(file.getName()) && "WEB-INF".equals(file.getParentFile().getName())) {
+                            final File pXml = new File(file.getParentFile(), pXmlName);
+                            if (pXml.exists()) {
+                                urls.add(pXml.toURI().toURL());
+                            }
+                            break;
+                        }
+                        if (file.getName().endsWith(".jar") && file.getParentFile().getName().equals("lib") && "WEB-INF".equals(file.getParentFile().getParentFile().getName())) {
+                            final File pXml = new File(file.getParentFile().getParentFile(), pXmlName);
+                            if (pXml.exists()) {
+                                urls.add(pXml.toURI().toURL());
+                            }
+                            break;
+                        }
+                    }
+                } catch (final Throwable th) {
+                    // no-op
+                }
+            }
 
             if (urls.size() == 0) {
                 debug("no persistence.xml files found");
                 return;
             }
 
-            Map<String, Unit> units = new HashMap<String, Unit>();
+            final Map<String, Unit> units = new HashMap<String, Unit>();
 
-            for (URL url : urls) {
+            for (final URL url : urls) {
                 String urlPath = url.toExternalForm();
                 debug("found " + urlPath);
                 try {
-                    InputStream in = IO.read(url);
+                    final InputStream in = IO.read(url);
                     try {
                         collectUnits(in, units, args);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         debug("failed to read " + urlPath, e);
                         in.close();
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     debug("failed to read " + urlPath, e);
                 }
             }
 
-            for (Unit unit : units.values()) {
-                String provider = unit.provider;
-                String extraClassesKey = provider + "@classes";
-                String unitNameKey = provider + "@unitName";
-                String unitName = args.getProperty(unitNameKey, "classpath-bootstrap");
+            for (final Unit unit : units.values()) {
+                final String provider = unit.provider;
+                final String extraClassesKey = provider + "@classes";
+                final String unitNameKey = provider + "@unitName";
+                final String unitName = args.getProperty(unitNameKey, "classpath-bootstrap");
 
-                String classes = args.getProperty(extraClassesKey);
+                final String classes = args.getProperty(extraClassesKey);
                 if (classes != null) {
                     debug("parsing value of " + extraClassesKey);
 
@@ -135,7 +182,7 @@ public class PersistenceBootstrap {
                         debug("starting: " + provider);
                     }
 
-                    PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl(new Handler());
+                    final PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl(new Handler());
                     info.setManagedClassNames(new ArrayList(unit.classes));
                     info.setPersistenceProviderClassName(unit.provider);
                     info.setProperties(new Properties());
@@ -147,20 +194,21 @@ public class PersistenceBootstrap {
                     info.setExcludeUnlistedClasses(true);
                     info.setClassLoader(classLoader);
 
-                    for (String name : unit.classes) {
+                    for (final String name : unit.classes) {
                         debug("class " + name);
                     }
-                    Class clazz = classLoader.loadClass(unit.provider);
-                    PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
+                    final Class clazz = classLoader.loadClass(unit.provider);
+                    final PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
                     // Create entity manager factory
-                    EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(info, new HashMap());
+                    final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(info, new HashMap());
+                    emf.close();
                     debug("success: " + provider);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     debug("failed: " + provider, e);
                 }
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             debug("error: ", t);
         }
     }
@@ -181,8 +229,8 @@ public class PersistenceBootstrap {
         String args = Agent.getAgentArgs();
         if (args != null && args.length() != 0) {
             for (String string : args.split("[ ,:&]")) {
-                String[] strings = string.split("=");
-                if (strings != null && strings.length == 2) {
+                final String[] strings = string.split("=");
+                if (strings.length == 2) {
                     properties.put(strings[0], strings[1]);
                 }
             }
@@ -220,7 +268,7 @@ public class PersistenceBootstrap {
             }
 
             public void startPersistenceUnit(String uri, String localName, String qName, Attributes attributes) {
-                String unitName = attributes.getValue(null, "name");
+                String unitName = attributes.getValue("name");
                 unit = new Unit(unitName);
             }
 
@@ -264,6 +312,32 @@ public class PersistenceBootstrap {
                 unit.classes.add(characters.toString());
             }
         });
+    }
+
+    public static File toFile(final URL url) {
+        if ("jar".equals(url.getProtocol())) {
+            try {
+                final String spec = url.getFile();
+
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                return toFile(new URL(spec.substring(0, separator++)));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if ("file".equals(url.getProtocol())) {
+            String path = decode(url.getFile());
+            if (path.endsWith("!")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            return new File(path);
+        } else {
+            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+        }
     }
 
     private static class Unit {

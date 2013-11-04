@@ -65,6 +65,7 @@ import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.common.SystemComponentFactory;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.common.WsFactory;
+import org.apache.webbeans.container.InjectableBeanManager;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
@@ -250,7 +251,7 @@ public class TomcatJndiBuilder {
         if (root != null) {
             try {
                 root.bind("global", SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("global"));
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 // bind only global bindings
                 if (webContext != null && webContext.getBindings() != null) {
                     for (Map.Entry<String, Object> entry : webContext.getBindings().entrySet()) {
@@ -284,12 +285,12 @@ public class TomcatJndiBuilder {
             comp.rebind("ORB", new SystemComponentReference(ORB.class));
             comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
-            if (webContext != null) {
-                comp.rebind("BeanManager", webContext.getAppContext().getBeanManager());
+            if (webContext != null && webContext.getWebbeansContext() != null) {
+                comp.rebind("BeanManager", new InjectableBeanManager(webContext.getWebbeansContext().getBeanManagerImpl()));
             } else if (contextInfo != null) {
-                comp.rebind("BeanManager", cs.getAppContext(contextInfo.appInfo.appId).getBeanManager());
+                comp.rebind("BeanManager", new InjectableBeanManager(cs.getAppContext(contextInfo.appInfo.appId).getWebBeansContext().getBeanManagerImpl()));
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             ignored.printStackTrace();
             // no-op
         }

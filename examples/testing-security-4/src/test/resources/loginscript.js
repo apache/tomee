@@ -16,8 +16,8 @@
  */
 
 var myImports = new JavaImporter(
-    java.util.Properties,
-    javax.naming.InitialContext
+        java.util.Properties,
+        javax.naming.InitialContext
 );
 
 var result = null;
@@ -27,7 +27,7 @@ with (myImports) {
     p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
 
     var ctx = new InitialContext(p);
-    var myBean =  ctx.lookup("java:global/testing-security-4/LoginBean");
+    var myBean = ctx.lookup("java:global/testing-security-4/LoginBean");
     result = myBean.authenticate(user, password);
 }
 

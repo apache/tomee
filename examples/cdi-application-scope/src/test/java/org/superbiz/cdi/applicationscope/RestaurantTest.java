@@ -19,12 +19,11 @@ package org.superbiz.cdi.applicationscope;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.superbiz.cdi.applicationscope.Waiter;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class RestaurantTest {
 

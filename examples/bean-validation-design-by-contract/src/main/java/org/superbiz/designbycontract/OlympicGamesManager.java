@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 
 @Stateless
 public class OlympicGamesManager {
+
     public String addSportMan(@Pattern(regexp = "^[A-Za-z]+$") String name, @Size(min = 2, max = 4) String country) {
         if (country.equals("USA")) {
             return null;

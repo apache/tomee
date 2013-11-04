@@ -78,7 +78,7 @@ public class Setup {
             replacements.put("unpackWARs=\"true\"", "unpackWARs=\"false\"");
         }
 
-        replace(replacements, serverXml);
+        replace(replacements, serverXml, true);
     }
 
     public static File findHome(File directory) {
@@ -164,9 +164,26 @@ public class Setup {
         }
     }
 
-    public static void replace(final Map<String, String> replacements, final File file) throws IOException {
+    public static void replace(final Map<String, String> replacements, final File file, final boolean escape) throws IOException {
 
         InputStream in = IO.read(file);
+
+        if (escape) {
+            final Map<String, String> escaped = new HashMap<String, String>();
+            for (final Map.Entry<String, String> entry : replacements.entrySet()) {
+                final String key = entry.getKey();
+                final String value = entry.getValue();
+                if (key.startsWith("\"") && key.endsWith("\"")) {
+                    escaped.put(key, value);
+                } else {
+                    escaped.put("\"" + key + "\"", "\"" + value + "\"");
+                }
+            }
+
+            replacements.clear();
+            replacements.putAll(escaped);
+        }
+
         in = new ReplaceStringsInputStream(in, replacements);
 
         final String data = IO.slurp(in);
@@ -178,14 +195,22 @@ public class Setup {
         }
     }
 
-    public static void removeUselessWebapps(final File tomeeHome) {
+    public static void removeUselessWebapps(final File tomeeHome, final String... exceptions) {
         final File webapps = new File(tomeeHome, "webapps");
         if (webapps.isDirectory()) {
             final File[] files = webapps.listFiles();
             if (files != null) {
                 for (final File webapp : files) {
-                    final String name = webapp.getName();
-                    if (webapp.isDirectory() && !name.equals("openejb") && !name.equals("tomee")) {
+                    boolean delete = true;
+                    if (exceptions != null) {
+                        for (final String ignore : exceptions) {
+                            if (webapp.getName().equals(ignore)) {
+                                delete = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (delete) {
                         JarExtractor.delete(webapp);
                     }
                 }
@@ -286,7 +311,7 @@ public class Setup {
     public static void installArquillianBeanDiscoverer(final File home) {
         final File destination = new File(home, TOMEE_BEAN_DISCOVERER_JAR);
         ShrinkWrap.create(JavaArchive.class, destination.getName())
-                .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class)
+                .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class, ArquillianFilterRunner.class)
                 .addAsManifestResource(new StringAsset(BeanDicovererInstaller.class.getName()), ArchivePaths.create("org.apache.openejb.extension"))
                 .as(ZipExporter.class).exportTo(destination, false);
     }

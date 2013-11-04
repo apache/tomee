@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 
 @Path("/greeting")
 public class GreetingService {
+
     @GET
     public String message() {
         throw new IllegalArgumentException("this exception is handled by an exception mapper");

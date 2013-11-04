@@ -21,6 +21,7 @@ import org.apache.deltaspike.core.api.message.annotation.MessageTemplate;
 
 @MessageBundle
 public interface MessageHelper {
+
     @MessageTemplate("{openejb.and.deltaspike}")
     String openejbAndDeltaspike();
 }

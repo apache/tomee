@@ -23,14 +23,14 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-query</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: CDI Query</name>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-4</version>
+      <version>6.0-5</version>
       <scope>provided</scope>
     </dependency>
 
@@ -60,6 +60,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.17.1-GA</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -70,7 +75,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.0</version>
+      <version>4.6.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

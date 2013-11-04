@@ -50,8 +50,9 @@ public class GenericServiceLocator extends ServiceLocator {
 
     @Override
     public Object lookup(String name) {
-        if (commonPrefix != null)
+        if (commonPrefix != null) {
             name = commonPrefix + "/" + name;
+        }
         return super.lookup(name);
     }
 

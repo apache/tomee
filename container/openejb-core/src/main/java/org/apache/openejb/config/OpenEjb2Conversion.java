@@ -62,6 +62,7 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
@@ -73,36 +74,39 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class OpenEjb2Conversion implements DynamicDeployer {
-    public AppModule deploy(AppModule appModule) {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            Object altDD = getOpenejbJarType(ejbModule);
-            if (altDD instanceof OpenejbJarType) {
-                convertEjbRefs(ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
-                convertMdbConfigs(ejbModule.getEjbJar(), (OpenejbJarType) altDD);
-                mergeEntityMappings(ejbModule.getModuleId(), appModule.getCmpMappings(), ejbModule.getOpenejbJar(), (OpenejbJarType) altDD);
+
+    @Override
+    public final AppModule deploy(final AppModule appModule) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final Object altDD = getOpenejbJarType(ejbModule);
+            if (OpenejbJarType.class.isInstance(altDD)) {
+                final OpenejbJarType openejbJarType = OpenejbJarType.class.cast(altDD);
+                convertEjbRefs(ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), openejbJarType);
+                convertMdbConfigs(ejbModule.getEjbJar(), openejbJarType);
+                mergeEntityMappings(ejbModule.getModuleId(), appModule.getCmpMappings(), ejbModule.getOpenejbJar(), openejbJarType);
             }
         }
         return appModule;
     }
 
-    private OpenejbJarType getOpenejbJarType(EjbModule ejbModule) {
+    private OpenejbJarType getOpenejbJarType(final EjbModule ejbModule) {
         Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
         if (altDD instanceof String) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String)altDD).getBytes()), false);
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(((String) altDD).getBytes()), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read(((URL)altDD)), false);
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read(((URL) altDD)), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof JAXBElement) {
-            altDD = ((JAXBElement)altDD).getValue();
+            altDD = ((JAXBElement) altDD).getValue();
         }
         if (altDD instanceof OpenejbJarType) {
             return (OpenejbJarType) altDD;
@@ -110,31 +114,31 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         return null;
     }
 
-    public void convertEjbRefs(EjbJar ejbJar, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
+    public final void convertEjbRefs(final EjbJar ejbJar, final OpenejbJar openejbJar, final OpenejbJarType openejbJarType) {
 
         openejbJar.getProperties().putAll(openejbJarType.getProperties());
 
-        Map<String, EnterpriseBean> ejbs = ejbJar.getEnterpriseBeansByEjbName();
-        Map<String, EjbDeployment> deployments =  openejbJar.getDeploymentsByEjbName();
+        final Map<String, EnterpriseBean> ejbs = ejbJar.getEnterpriseBeansByEjbName();
+        final Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
-        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
-            EnterpriseBean ejb = ejbs.get(enterpriseBean.getEjbName());
+        for (final org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+            final EnterpriseBean ejb = ejbs.get(enterpriseBean.getEjbName());
             if (ejb == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
-            Map<String,EjbRef> ejbRefs =  ejb.getEjbRefMap();
+            final Map<String, EjbRef> ejbRefs = ejb.getEjbRefMap();
 
-            EjbDeployment deployment = deployments.get(enterpriseBean.getEjbName());
+            final EjbDeployment deployment = deployments.get(enterpriseBean.getEjbName());
             if (deployment == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
-            
+
             // Add WS Security
             if (enterpriseBean instanceof SessionBeanType) {
-                SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
-                WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
+                final SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
+                final WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
 
                 if (webServiceSecurityType != null) {
 
@@ -167,171 +171,177 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             }
 
             deployment.getProperties().putAll(enterpriseBean.getProperties());
-            
-            for (String name : enterpriseBean.getLocalJndiName()) {
+
+            for (final String name : enterpriseBean.getLocalJndiName()) {
                 deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(name, "LocalHome"));
             }
 
-            for (String name : enterpriseBean.getJndiName()) {
+            for (final String name : enterpriseBean.getJndiName()) {
                 deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(name, "RemoteHome"));
             }
 
-            for (Jndi jndi : enterpriseBean.getJndi()) {
+            for (final Jndi jndi : enterpriseBean.getJndi()) {
                 deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(jndi.getName(), jndi.getInterface()));
             }
 
-            Set<String> ejbLinks =  new TreeSet<String>();
-            for (EjbLink ejbLink : deployment.getEjbLink()) {
+            final Set<String> ejbLinks = new TreeSet<String>();
+            for (final EjbLink ejbLink : deployment.getEjbLink()) {
                 ejbLinks.add(ejbLink.getEjbRefName());
             }
 
-            for (EjbRefType refType : enterpriseBean.getEjbRef()) {
-                String refName = refType.getRefName();
+            for (final EjbRefType refType : enterpriseBean.getEjbRef()) {
+                final String refName = refType.getRefName();
                 if (ejbLinks.contains(refName)) {
                     // don't overwrite refs that have been already set
                     continue;
                 }
 
-                String nsCorbaloc = refType.getNsCorbaloc();
+                final String nsCorbaloc = refType.getNsCorbaloc();
                 if (nsCorbaloc != null) {
-                    EjbRef ref = ejbRefs.get(refName);
+                    final EjbRef ref = ejbRefs.get(refName);
                     if (ref != null) {
                         ref.setMappedName("jndi:" + nsCorbaloc);
                     }
                 } else if (refType.getEjbLink() != null) {
-                    EjbRef ref = ejbRefs.get(refName);
+                    final EjbRef ref = ejbRefs.get(refName);
                     if (ref != null) {
                         ref.setEjbLink(refType.getEjbLink());
                     }
                 } else {
-                    PatternType pattern = refType.getPattern();
+                    final PatternType pattern = refType.getPattern();
                     addEjbLink(deployment, refName, pattern);
                 }
             }
 
-            for (EjbLocalRefType refType : enterpriseBean.getEjbLocalRef()) {
-                String refName = refType.getRefName();
+            for (final EjbLocalRefType refType : enterpriseBean.getEjbLocalRef()) {
+                final String refName = refType.getRefName();
                 if (ejbLinks.contains(refName)) {
                     // don't overwrite refs that have been already set
                     continue;
                 }
 
                 if (refType.getEjbLink() != null) {
-                    EjbRef ref = ejbRefs.get(refName);
+                    final EjbRef ref = ejbRefs.get(refName);
                     if (ref != null) {
                         ref.setEjbLink(refType.getEjbLink());
                     }
                 } else {
-                    PatternType pattern = refType.getPattern();
+                    final PatternType pattern = refType.getPattern();
                     addEjbLink(deployment, refName, pattern);
                 }
             }
         }
     }
 
-    private void addEjbLink(EjbDeployment deployment, String refName, PatternType pattern) {
+    private void addEjbLink(final EjbDeployment deployment, final String refName, final PatternType pattern) {
         String module = pattern.getModule();
         if (module == null) {
             module = pattern.getArtifactId();
         }
-        String ejbName = pattern.getName();
-        String deploymentId = module + "/" + ejbName;
-        EjbLink ejbLink = new EjbLink(refName, deploymentId);
+        final String ejbName = pattern.getName();
+        final String deploymentId = module + "/" + ejbName;
+        final EjbLink ejbLink = new EjbLink(refName, deploymentId);
         deployment.getEjbLink().add(ejbLink);
     }
 
-    public void convertMdbConfigs(EjbJar ejbJar, OpenejbJarType openejbJarType) {
-        Map<String, MessageDrivenBean> mdbs =  new TreeMap<String, MessageDrivenBean>();
-        for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+    public final void convertMdbConfigs(final EjbJar ejbJar, final OpenejbJarType openejbJarType) {
+        final Map<String, MessageDrivenBean> mdbs = new TreeMap<String, MessageDrivenBean>();
+        for (final EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof MessageDrivenBean)) {
                 continue;
             }
             mdbs.put(enterpriseBean.getEjbName(), (MessageDrivenBean) enterpriseBean);
         }
-        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+        for (final org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof MessageDrivenBeanType)) {
                 continue;
             }
-            MessageDrivenBeanType bean = (MessageDrivenBeanType) enterpriseBean;
-            MessageDrivenBean mdb = mdbs.get(bean.getEjbName());
+            final MessageDrivenBeanType bean = (MessageDrivenBeanType) enterpriseBean;
+            final MessageDrivenBean mdb = mdbs.get(bean.getEjbName());
             if (mdb == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
-            ActivationConfigType activationConfigType = bean.getActivationConfig();
+            final ActivationConfigType activationConfigType = bean.getActivationConfig();
             if (activationConfigType != null) {
                 ActivationConfig activationConfig = mdb.getActivationConfig();
                 if (activationConfig == null) {
                     activationConfig = new ActivationConfig();
                     mdb.setActivationConfig(activationConfig);
                 }
-                for (ActivationConfigPropertyType propertyType : activationConfigType.getActivationConfigProperty()) {
-                    ActivationConfigProperty property = new ActivationConfigProperty(
-                            propertyType.getActivationConfigPropertyName(),
-                            propertyType.getActivationConfigPropertyValue());
+                for (final ActivationConfigPropertyType propertyType : activationConfigType.getActivationConfigProperty()) {
+                    final ActivationConfigProperty property = new ActivationConfigProperty(
+                                                                                              propertyType.getActivationConfigPropertyName(),
+                                                                                              propertyType.getActivationConfigPropertyValue());
                     activationConfig.getActivationConfigProperty().add(property);
                 }
             }
         }
     }
 
-    public void mergeEntityMappings(String moduleId, EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
-        Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
+    public final void mergeEntityMappings(final String moduleId, final EntityMappings entityMappings, final OpenejbJar openejbJar, final OpenejbJarType openejbJarType) {
+        final Map<String, EntityData> entities = new TreeMap<String, EntityData>();
         if (entityMappings != null) {
-            for (Entity entity : entityMappings.getEntity()) {
-                entities.put(entity.getDescription(), new EntityData(entity));
+            for (final Entity entity : entityMappings.getEntity()) {
+                try {
+                    entities.put(entity.getDescription(), new EntityData(entity));
+                } catch (IllegalArgumentException e) {
+                    LoggerFactory.getLogger(this.getClass()).error(e.getMessage(), e);
+                }
             }
         }
-        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+        for (final org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof EntityBeanType)) {
                 continue;
             }
-            EntityBeanType bean = (EntityBeanType) enterpriseBean;
-            EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
+            final EntityBeanType bean = (EntityBeanType) enterpriseBean;
+            final EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
 
-            Table table = new Table();
+            final Table table = new Table();
             table.setName(bean.getTableName());
             entityData.entity.setTable(table);
 
-            for (EntityBeanType.CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
-                String cmpFieldName = cmpFieldMapping.getCmpFieldName();
-                Field field = entityData.fields.get(cmpFieldName);
+            for (final EntityBeanType.CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
+                final String cmpFieldName = cmpFieldMapping.getCmpFieldName();
+                final Field field = entityData.fields.get(cmpFieldName);
                 if (field == null) {
                     // todo warn no such cmp-field in the ejb-jar.xml
                     continue;
                 }
-                Column column = new Column();
+                final Column column = new Column();
                 column.setName(cmpFieldMapping.getTableColumn());
                 field.setColumn(column);
             }
 
             if (bean.getKeyGenerator() != null) {
                 // todo support complex primary keys
-                Attributes attributes = entityData.entity.getAttributes();
+                final Attributes attributes = entityData.entity.getAttributes();
                 if (attributes != null && attributes.getId().size() == 1) {
-                    Id id = attributes.getId().get(0);
+                    final Id id = attributes.getId().get(0);
 
                     // todo detect specific generation strategy
                     id.setGeneratedValue(new GeneratedValue(GenerationType.IDENTITY));
                 }
             }
 
-            for (QueryType query : bean.getQuery()) {
-                NamedQuery namedQuery = new NamedQuery();
-                QueryType.QueryMethod queryMethod = query.getQueryMethod();
+            for (final QueryType query : bean.getQuery()) {
+                final NamedQuery namedQuery = new NamedQuery();
+                final QueryType.QueryMethod queryMethod = query.getQueryMethod();
 
                 // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
-                StringBuilder name = new StringBuilder();
+                final StringBuilder name = new StringBuilder();
                 name.append(entityData.entity.getName()).append(".").append(queryMethod.getMethodName());
                 if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
                     name.append('(');
                     boolean first = true;
-                    for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
-                        if (!first) name.append(",");
+                    for (final String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                        if (!first) {
+                            name.append(",");
+                        }
                         name.append(methodParam);
                         first = false;
                     }
@@ -344,28 +354,32 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             }
         }
 
-        for (EjbRelationType relation : openejbJarType.getEjbRelation()) {
-            List<EjbRelationshipRoleType> roles = relation.getEjbRelationshipRole();
+        for (final EjbRelationType relation : openejbJarType.getEjbRelation()) {
+            final List<EjbRelationshipRoleType> roles = relation.getEjbRelationshipRole();
             if (roles.isEmpty()) {
                 continue;
             }
 
             if (relation.getManyToManyTableName() == null) {
-                EjbRelationshipRoleType leftRole = roles.get(0);
-                EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
-                String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
-                EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
-                String leftFieldName = leftRole.getCmrField().getCmrFieldName();
+                final EjbRelationshipRoleType leftRole = roles.get(0);
+                final EjbRelationshipRoleType.RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
+                final String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
+                final EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
+                final EjbRelationshipRoleType.CmrField cmrField = leftRole.getCmrField();
+
+                final String leftFieldName = (null != cmrField ? cmrField.getCmrFieldName() : null);
 
                 RelationField field;
                 if (leftRole.isForeignKeyColumnOnSource()) {
-                    field = leftEntityData.relations.get(leftFieldName);
+
+                    field = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
+
                     // todo warn field not found
                     if (field == null) {
                         continue;
                     }
                 } else {
-                    RelationField other = leftEntityData.relations.get(leftFieldName);
+                    final RelationField other = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
                     // todo warn field not found
                     if (other == null) {
                         continue;
@@ -386,32 +400,32 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 // For one-to-one, make sure that the field to recieve the FK
                 // is marked as the owning field
                 if (field instanceof OneToOne) {
-                    OneToOne left = (OneToOne) field;
-                    OneToOne right = (OneToOne) left.getRelatedField();
+                    final OneToOne left = (OneToOne) field;
+                    final OneToOne right = (OneToOne) left.getRelatedField();
                     if (right != null) {
                         left.setMappedBy(null);
                         right.setMappedBy(left.getName());
                     }
 
                 }
-                EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
-                for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                    JoinColumn joinColumn = new JoinColumn();
+                final EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
+                for (final EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                    final JoinColumn joinColumn = new JoinColumn();
                     joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
                     joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
                     field.getJoinColumn().add(joinColumn);
                 }
             } else {
-                JoinTable joinTable = new JoinTable();
+                final JoinTable joinTable = new JoinTable();
                 joinTable.setName(relation.getManyToManyTableName());
 
                 //
                 // left
-                EjbRelationshipRoleType leftRole = roles.get(0);
+                final EjbRelationshipRoleType leftRole = roles.get(0);
                 RelationField left = null;
                 if (leftRole.getRelationshipRoleSource() != null) {
-                    String leftEjbName = leftRole.getRelationshipRoleSource().getEjbName();
-                    EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
+                    final String leftEjbName = leftRole.getRelationshipRoleSource().getEjbName();
+                    final EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
                     if (leftEntityData == null) {
                         // todo warn no such entity in ejb-jar.xml
                         continue;
@@ -422,9 +436,9 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 if (left != null) {
                     left.setJoinTable(joinTable);
 
-                    EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
-                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                        JoinColumn joinColumn = new JoinColumn();
+                    final EjbRelationshipRoleType.RoleMapping roleMapping = leftRole.getRoleMapping();
+                    for (final EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                        final JoinColumn joinColumn = new JoinColumn();
                         joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
                         joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
                         joinTable.getJoinColumn().add(joinColumn);
@@ -434,32 +448,34 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 //
                 // right
                 if (roles.size() > 1) {
-                    EjbRelationshipRoleType rightRole = roles.get(1);
+                    final EjbRelationshipRoleType rightRole = roles.get(1);
 
                     // if there wasn't a left cmr field, find the field for the right, so we can add the join table to it
                     if (left == null) {
-                        RelationField right = left.getRelatedField();
-                        if (right == null) {
-                            if (rightRole.getCmrField() == null) {
-                                // todo warn no cmr field declared for either role
+
+                        if (rightRole.getCmrField() == null) {
+                            // todo warn no cmr field declared for either role
+                            continue;
+                        }
+
+                        if (rightRole.getRelationshipRoleSource() != null) {
+                            final String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
+                            final EntityData rightEntityData = entities.get(moduleId + "#" + rightEjbName);
+
+                            if (rightEntityData == null) {
+                                // todo warn no such entity in ejb-jar.xml
                                 continue;
                             }
-                            if (rightRole.getRelationshipRoleSource() != null) {
-                                String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
-                                EntityData rightEntityData = entities.get(moduleId + "#" + rightEjbName);
-                                if (rightEntityData == null) {
-                                    // todo warn no such entity in ejb-jar.xml
-                                    continue;
-                                }
-                                right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
-                            }
+
+                            final RelationField right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
+                            right.setJoinTable(joinTable);
                         }
-                        right.setJoinTable(joinTable);
+
                     }
 
-                    EjbRelationshipRoleType.RoleMapping roleMapping = rightRole.getRoleMapping();
-                    for (EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
-                        JoinColumn joinColumn = new JoinColumn();
+                    final EjbRelationshipRoleType.RoleMapping roleMapping = rightRole.getRoleMapping();
+                    for (final EjbRelationshipRoleType.RoleMapping.CmrFieldMapping cmrFieldMapping : roleMapping.getCmrFieldMapping()) {
+                        final JoinColumn joinColumn = new JoinColumn();
                         joinColumn.setName(cmrFieldMapping.getForeignKeyColumn());
                         joinColumn.setReferencedColumnName(cmrFieldMapping.getKeyColumn());
                         joinTable.getInverseJoinColumn().add(joinColumn);
@@ -471,11 +487,12 @@ public class OpenEjb2Conversion implements DynamicDeployer {
 
     /**
      * Actually called from ReadDescriptors as Geronimo needs this info early
-     * @param o2
-     * @return
+     *
+     * @param o2 OpenejbJarType
+     * @return GeronimoEjbJarType
      */
-    public static GeronimoEjbJarType convertToGeronimoOpenejbXml(OpenejbJarType o2) {
-        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
+    public static GeronimoEjbJarType convertToGeronimoOpenejbXml(final OpenejbJarType o2) {
+        final GeronimoEjbJarType g2 = new GeronimoEjbJarType();
 
         g2.setEnvironment(o2.getEnvironment());
         g2.setSecurity(o2.getSecurity());
@@ -483,7 +500,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         g2.getMessageDestination().addAll(o2.getMessageDestination());
         g2.getPersistence().addAll(o2.getPersistence());
 
-        for (org.apache.openejb.jee.oejb2.EnterpriseBean bean : o2.getEnterpriseBeans()) {
+        for (final org.apache.openejb.jee.oejb2.EnterpriseBean bean : o2.getEnterpriseBeans()) {
             g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
             g2.getPersistenceContextRef().addAll(bean.getPersistenceContextRef());
             g2.getPersistenceUnitRef().addAll(bean.getPersistenceUnitRef());
@@ -494,20 +511,20 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             g2.getServiceRef().addAll(bean.getServiceRef());
 
             if (bean instanceof RpcBean) {
-                RpcBean rpcBean = (RpcBean) bean;
-                if (rpcBean.getTssLink() != null){
+                final RpcBean rpcBean = (RpcBean) bean;
+                if (rpcBean.getTssLink() != null) {
                     g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
                 }
             }
 
             if (bean instanceof SessionBeanType) {
-                SessionBeanType sb = (SessionBeanType) bean;
-                WebServiceBindingType b = new WebServiceBindingType();
+                final SessionBeanType sb = (SessionBeanType) bean;
+                final WebServiceBindingType b = new WebServiceBindingType();
                 b.setEjbName(sb.getEjbName());
                 b.setWebServiceAddress(sb.getWebServiceAddress());
                 b.setWebServiceVirtualHost(sb.getWebServiceVirtualHost());
                 b.setWebServiceSecurity(sb.getWebServiceSecurity());
-                if (b.containsData()){
+                if (b.containsData()) {
                     g2.getWebServiceBinding().add(b);
                 }
             }
@@ -515,51 +532,50 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         return g2;
     }
 
-    private class EntityData {
+    private static class EntityData {
+
         private final Entity entity;
         private final Map<String, Field> fields = new TreeMap<String, Field>();
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
-        public EntityData(Entity entity) {
-            if (entity == null) throw new NullPointerException("entity is null");
-            this.entity = entity;
+        public EntityData(final Entity e) {
 
-            Attributes attributes = entity.getAttributes();
+            this.entity = e;
+
+            if (this.entity == null) {
+                throw new IllegalArgumentException("entity is null");
+            }
+
+            final Attributes attributes = this.entity.getAttributes();
+
             if (attributes != null) {
-                for (Id id : attributes.getId()) {
-                    String name = id.getName();
-                    fields.put(name, id);
+                for (final Id id : attributes.getId()) {
+                    this.fields.put(id.getName(), id);
                 }
 
-                for (Basic basic : attributes.getBasic()) {
-                    String name = basic.getName();
-                    fields.put(name, basic);
+                for (final Basic basic : attributes.getBasic()) {
+                    this.fields.put(basic.getName(), basic);
                 }
 
-                for (RelationField relationField : attributes.getOneToOne()) {
-                    String name = relationField.getName();
-                    relations.put(name, relationField);
+                for (final RelationField relationField : attributes.getOneToOne()) {
+                    this.relations.put(relationField.getName(), relationField);
                 }
 
-                for (RelationField relationField : attributes.getOneToMany()) {
-                    String name = relationField.getName();
-                    relations.put(name, relationField);
+                for (final RelationField relationField : attributes.getOneToMany()) {
+                    this.relations.put(relationField.getName(), relationField);
                 }
 
-                for (RelationField relationField : attributes.getManyToOne()) {
-                    String name = relationField.getName();
-                    relations.put(name, relationField);
+                for (final RelationField relationField : attributes.getManyToOne()) {
+                    this.relations.put(relationField.getName(), relationField);
                 }
 
-                for (RelationField relationField : attributes.getManyToMany()) {
-                    String name = relationField.getName();
-                    relations.put(name, relationField);
+                for (final RelationField relationField : attributes.getManyToMany()) {
+                    this.relations.put(relationField.getName(), relationField);
                 }
             }
 
-            for (AttributeOverride attributeOverride : entity.getAttributeOverride()) {
-                String name = attributeOverride.getName();
-                fields.put(name, attributeOverride);
+            for (final AttributeOverride attributeOverride : this.entity.getAttributeOverride()) {
+                this.fields.put(attributeOverride.getName(), attributeOverride);
             }
         }
     }

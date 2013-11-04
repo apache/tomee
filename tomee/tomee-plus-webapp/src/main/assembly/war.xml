@@ -63,14 +63,9 @@
       <includes>
         <include>WEB-INF/web.xml</include>
         <include>WEB-INF/classes/**</include>
-        <include>**/*.jsp</include>
-        <include>**/*.css</include>
-        <include>**/*.less</include>
-        <include>**/*.png</include>
-        <include>**/*.js</include>
         <include>**/*.html</include>
-        <include>**/*.handlebars</include>
-        <include>images/*.gif</include>
+        <include>**/*.css</include>
+        <include>**/*.js</include>
         <include>lib/*.jar</include>
       </includes>
     </fileSet>
@@ -82,6 +77,9 @@
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
+
+        <!-- exclude all the static web content -->
+        <exclude>org.apache.openejb.staticweb:*</exclude>
 
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
@@ -97,6 +95,8 @@
       <includes>
         <include>org.apache.openejb:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>
+        <include>org.apache.openejb.staticweb:static-tomee-bootstrap</include>
+        <include>org.apache.openejb.staticweb:static-tomee-jquery</include>
       </includes>
     </dependencySet>
   </dependencySets>

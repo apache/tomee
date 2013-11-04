@@ -17,7 +17,7 @@
 -->
 <resources>
   <!-- router -->
-  <Resource id="ClientRouter" type="jug.routing.PollingRouter" provider="jug.polling:PollingRouter" />
+  <Resource id="ClientRouter" type="jug.routing.PollingRouter" provider="jug.polling:PollingRouter"/>
 
   <!-- routed datasources -->
   <Resource id="jdbc/polling" provider="RoutedDataSource" type="javax.sql.DataSource">

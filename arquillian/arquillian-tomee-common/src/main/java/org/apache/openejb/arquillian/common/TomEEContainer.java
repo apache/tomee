@@ -48,7 +48,6 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.Character;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +79,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
         if (prefixes == null) return;
 
-        ConfigurationOverrides.apply(configuration, System.getProperties(), prefixes.value());
+        final Properties systemProperties = System.getProperties();
+        ConfigurationOverrides.apply(configuration, systemProperties, prefixes.value());
 
         setPorts();
 
@@ -105,6 +105,8 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                 }
             }
         }
+
+        ArquillianUtil.preLoadClassesAsynchronously(configuration.getPreloadClasses());
     }
 
     protected void setPorts() {
@@ -117,7 +119,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
 
         final ObjectMap map = new ObjectMap(configuration);
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
             if (!entry.getKey().toLowerCase().endsWith("port")) continue;
             try {
                 Object value = entry.getValue();
@@ -245,17 +247,18 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             }
 
             final AppInfo appInfo;
+            final String archiveName = archive.getName();
             try {
                 appInfo = deployer().deploy(file.getAbsolutePath());
                 if (appInfo != null) {
-                    moduleIds.put(archive.getName(), new DeployedApp(appInfo.path, file.getParentFile()));
+                    moduleIds.put(archiveName, new DeployedApp(appInfo.path, file.getParentFile()));
                     Files.deleteOnExit(file); // "i" folder
                 } else {
                     LOGGER.severe("appInfo was not found for " + file.getPath() + ", available are: " + apps());
                     throw new OpenEJBException("can't get appInfo");
                 }
             } catch (OpenEJBException re) { // clean up in undeploy needs it
-                moduleIds.put(archive.getName(), new DeployedApp(file.getPath(), file.getParentFile()));
+                moduleIds.put(archiveName, new DeployedApp(file.getPath(), file.getParentFile()));
                 throw re;
             }
 
@@ -267,8 +270,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
-            final Object object = archive;
-            if (object instanceof WebArchive) {
+            if (archiveName.endsWith(".war") || (archiveName.endsWith(".ear") && appInfo.webApps.size() == 1)) {
                 arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
             } else {
                 arquillianServlet = "/arquillian-protocol";

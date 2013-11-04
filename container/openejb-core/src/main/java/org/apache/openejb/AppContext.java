@@ -66,6 +66,9 @@ public class AppContext extends DeploymentContext {
     }
 
     public BeanManager getBeanManager() {
+        if (webBeansContext == null) {
+            return null;
+        }
         return webBeansContext.getBeanManagerImpl();
     }
 

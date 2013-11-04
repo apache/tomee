@@ -16,11 +16,14 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -49,6 +52,34 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     public BasicManagedDataSource(final String name) {
         registerAsMbean(name);
+    }
+
+    @Override
+    protected ConnectionFactory createConnectionFactory() throws SQLException {
+        final String xaDataSource = getXADataSource();
+        if (xaDataSource != null & getXaDataSourceInstance() == null) {
+            try {
+                try {
+                    Thread.currentThread().getContextClassLoader().loadClass(xaDataSource);
+                } catch (final ClassNotFoundException cnfe) {
+                    setJndiXaDataSource(xaDataSource);
+                } catch (final NoClassDefFoundError ncdfe) {
+                    setJndiXaDataSource(xaDataSource);
+                }
+            } catch (final Throwable th) {
+                // no-op
+            }
+        }
+        return super.createConnectionFactory();
+    }
+
+    private void setJndiXaDataSource(final String xaDataSource) {
+        setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate
+            XADataSourceResource.proxy(getDriverClassLoader() != null ? getDriverClassLoader() : Thread.currentThread().getContextClassLoader(), xaDataSource));
+
+        if (getTransactionManager() == null) {
+            setTransactionManager(OpenEJB.getTransactionManager());
+        }
     }
 
     private void registerAsMbean(final String name) {

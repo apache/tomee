@@ -33,12 +33,16 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.openejb.loader.Files.*;
+import static org.apache.openejb.loader.Files.dir;
+import static org.apache.openejb.loader.Files.exists;
+import static org.apache.openejb.loader.Files.file;
+import static org.apache.openejb.loader.Files.readable;
+import static org.apache.openejb.loader.Files.select;
 
 /**
  * @version $Rev$ $Date$
  */
-@SuppressWarnings({"UnusedDeclaration"})
+@SuppressWarnings({"UnusedDeclaration", "UseOfSystemOutOrSystemErr"})
 public class StandaloneServer {
 
     private final File home;
@@ -55,11 +59,11 @@ public class StandaloneServer {
     private Options options = new Options(properties);
     private Context context = new Context();
 
-    public StandaloneServer(File home) {
+    public StandaloneServer(final File home) {
         this(home, home);
     }
 
-    public StandaloneServer(File home, File base) {
+    public StandaloneServer(final File home, final File base) {
         this.home = home;
         this.base = base;
 
@@ -90,7 +94,7 @@ public class StandaloneServer {
         return context;
     }
 
-    public ServerService getServerService(String string) {
+    public ServerService getServerService(final String string) {
         return new ServerService(string);
     }
 
@@ -98,7 +102,7 @@ public class StandaloneServer {
 
         private final String name;
 
-        public ServerService(String name) {
+        public ServerService(final String name) {
             this.name = name;
         }
 
@@ -106,7 +110,7 @@ public class StandaloneServer {
             return options.get(name + ".port", -1);
         }
 
-        public void setPort(int i) {
+        public void setPort(final int i) {
             properties.put(name + ".port", i + "");
         }
 
@@ -118,11 +122,11 @@ public class StandaloneServer {
             return !isDisabled();
         }
 
-        public void setDisabled(boolean b) {
+        public void setDisabled(final boolean b) {
             properties.put(name + ".disabled", b + "");
         }
 
-        public void setEnabled(boolean b) {
+        public void setEnabled(final boolean b) {
             setDisabled(!b);
         }
 
@@ -130,7 +134,7 @@ public class StandaloneServer {
             return options.get(name + ".bind", "");
         }
 
-        public void setBind(String bind) {
+        public void setBind(final String bind) {
             properties.put(name + ".bind", bind);
         }
 
@@ -138,25 +142,25 @@ public class StandaloneServer {
             return options.get(name + ".threads", -1);
         }
 
-        public void setThreads(int threads) {
+        public void setThreads(final int threads) {
             properties.put(name + ".threads", threads + "");
         }
 
-        public ServerService set(String name, String value) {
+        public ServerService set(final String name, final String value) {
             properties.put(this.name + "." + name, value);
             return this;
         }
 
-        public Object get(String name) {
+        public Object get(final String name) {
             return properties.get(this.name + "." + name);
         }
 
-        public ServerService threads(int threads) {
+        public ServerService threads(final int threads) {
             setThreads(threads);
             return this;
         }
 
-        public ServerService port(int port) {
+        public ServerService port(final int port) {
             setPort(port);
             return this;
         }
@@ -171,11 +175,10 @@ public class StandaloneServer {
             return this;
         }
 
-        public ServerService bind(String host) {
+        public ServerService bind(final String host) {
             setBind(host);
             return this;
         }
-
 
     }
 
@@ -191,7 +194,7 @@ public class StandaloneServer {
         return debug;
     }
 
-    public void setDebug(boolean debug) {
+    public void setDebug(final boolean debug) {
         this.debug = debug;
     }
 
@@ -199,7 +202,7 @@ public class StandaloneServer {
         return profile;
     }
 
-    public void setProfile(boolean profile) {
+    public void setProfile(final boolean profile) {
         this.profile = profile;
     }
 
@@ -207,7 +210,7 @@ public class StandaloneServer {
         return process;
     }
 
-    public void setProcess(Process process) {
+    public void setProcess(final Process process) {
         this.process = process;
     }
 
@@ -215,7 +218,7 @@ public class StandaloneServer {
         return verbose;
     }
 
-    public void setVerbose(boolean verbose) {
+    public void setVerbose(final boolean verbose) {
         this.verbose = verbose;
     }
 
@@ -223,7 +226,7 @@ public class StandaloneServer {
         return out;
     }
 
-    public void setOut(OutputStream out) {
+    public void setOut(final OutputStream out) {
         this.out = out;
     }
 
@@ -239,7 +242,7 @@ public class StandaloneServer {
         return properties;
     }
 
-    public Object setProperty(String key, String value) {
+    public Object setProperty(final String key, final String value) {
         return getProperties().setProperty(key, value);
     }
 
@@ -247,11 +250,13 @@ public class StandaloneServer {
         start(0, TimeUnit.MILLISECONDS);
     }
 
-    public void start(int timeout, TimeUnit minutes) {
-        if (process != null) throw new ServerRunningException(home, "Server already running");
+    public void start(final int timeout, final TimeUnit minutes) {
+        if (process != null) {
+            throw new ServerRunningException(home, "Server already running");
+        }
 
         try {
-            List<String> args = new ArrayList<String>();
+            final List<String> args = new ArrayList<String>();
             args.add(java.getAbsolutePath());
             args.addAll(jvmOpts);
             final Set<Map.Entry<Object, Object>> collection = properties.entrySet();
@@ -287,18 +292,22 @@ public class StandaloneServer {
     }
 
     private void edit() {
-        if (process != null) throw new ServerRunningException(home, "Cannot change settings while server is running");
+        if (process != null) {
+            throw new ServerRunningException(home, "Cannot change settings while server is running");
+        }
     }
 
     public static class DevNull extends OutputStream {
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
         }
     }
 
     public void kill() {
-        if (process == null) return;
+        if (process == null) {
+            return;
+        }
 
         process.destroy();
 
@@ -314,12 +323,14 @@ public class StandaloneServer {
         process = null;
     }
 
-    private int command(String... strings) {
+    private int command(final String... strings) {
         return command(Arrays.asList(strings));
     }
 
-    private int command(List<String> strings) {
-        if (process == null) throw new ServerNotRunningException(home);
+    private int command(final List<String> strings) {
+        if (process == null) {
+            throw new ServerNotRunningException(home);
+        }
 
         try {
             final List<String> args = new ArrayList<String>();
@@ -340,14 +351,14 @@ public class StandaloneServer {
         return -1;
     }
 
-    public void deploy(String path) {
+    public void deploy(final String path) {
         final int code = command("deploy", getServerUrl(), path);
         if (code != 0) {
             throw new DeployException(home, code, path);
         }
     }
 
-    public void undeploy(String path) {
+    public void undeploy(final String path) {
         final int code = command("undeploy", getServerUrl(), path);
         if (code != 0) {
             throw new UndeployException(home, code, path);
@@ -362,9 +373,10 @@ public class StandaloneServer {
         waitForExit();
     }
 
-
     public void killOnExit() {
-        if (kill.contains(this)) return;
+        if (kill.contains(this)) {
+            return;
+        }
         kill.add(this);
     }
 
@@ -375,7 +387,7 @@ public class StandaloneServer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                for (StandaloneServer server : kill) {
+                for (final StandaloneServer server : kill) {
                     try {
                         if (server.process != null) {
                             server.process.destroy();
@@ -389,18 +401,19 @@ public class StandaloneServer {
     }
 
     public static class ServerException extends RuntimeException {
+
         private final File home;
 
-        public ServerException(File home) {
+        public ServerException(final File home) {
             this.home = home;
         }
 
-        public ServerException(File home, String message) {
+        public ServerException(final File home, final String message) {
             super(message);
             this.home = home;
         }
 
-        public ServerException(File home, String message, Throwable cause) {
+        public ServerException(final File home, final String message, final Throwable cause) {
             super(message, cause);
             this.home = home;
         }
@@ -412,26 +425,29 @@ public class StandaloneServer {
     }
 
     public static class ServerNotRunningException extends ServerException {
-        public ServerNotRunningException(File home) {
+
+        public ServerNotRunningException(final File home) {
             super(home);
         }
     }
 
     public static class ServerRunningException extends ServerException {
-        public ServerRunningException(File home) {
+
+        public ServerRunningException(final File home) {
             super(home);
         }
 
-        public ServerRunningException(File home, String message) {
+        public ServerRunningException(final File home, final String message) {
             super(home, message);
         }
     }
 
     public static class ServerCommandException extends ServerException {
+
         private final int returnCode;
         private final String[] args;
 
-        public ServerCommandException(File home, int returnCode, String... args) {
+        public ServerCommandException(final File home, final int returnCode, final String... args) {
             super(home);
             this.returnCode = returnCode;
             this.args = args;
@@ -439,26 +455,30 @@ public class StandaloneServer {
     }
 
     public static class DeployException extends ServerCommandException {
-        public DeployException(File home, int returnCode, String... args) {
+
+        public DeployException(final File home, final int returnCode, final String... args) {
             super(home, returnCode, args);
         }
     }
 
     public static class UndeployException extends ServerCommandException {
-        public UndeployException(File home, int returnCode, String... args) {
+
+        public UndeployException(final File home, final int returnCode, final String... args) {
             super(home, returnCode, args);
         }
     }
 
     public static class StopException extends ServerCommandException {
-        public StopException(File home, int returnCode, String... args) {
+
+        public StopException(final File home, final int returnCode, final String... args) {
             super(home, returnCode, args);
         }
     }
 
     private static class SystemPropertiesCallback implements Join.NameCallback<Map.Entry<Object, Object>> {
+
         @Override
-        public String getName(Map.Entry<Object, Object> e) {
+        public String getName(final Map.Entry<Object, Object> e) {
             return String.format("-D%s=%s", e.getKey().toString(), e.getValue().toString());
         }
     }
@@ -467,10 +487,14 @@ public class StandaloneServer {
         final ServerService ejbd = getServerService("ejbd");
 
         int port = ejbd.getPort();
-        if (port == 0) port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
+        if (port == 0) {
+            port = Integer.parseInt(System.getProperty("ejbd.port", "4201"));
+        }
 
         String host = ejbd.getBind();
-        if (host == null || host.length() == 0) host = "localhost";
+        if (host == null || host.length() == 0) {
+            host = "localhost";
+        }
 
         return String.format("--server-url=ejbd://%s:%s", host, port);
     }

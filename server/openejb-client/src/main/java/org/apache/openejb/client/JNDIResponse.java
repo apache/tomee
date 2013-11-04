@@ -23,16 +23,32 @@ import java.io.ObjectOutput;
 
 public class JNDIResponse implements ClusterableResponse {
 
+    private static final long serialVersionUID = 6741338056648918607L;
     private transient int responseCode = -1;
     private transient Object result;
     private transient ServerMetaData server;
+    private transient JNDIRequest request;
+    private transient ProtocolMetaData metaData;
 
     public JNDIResponse() {
     }
 
-    public JNDIResponse(int code, Object obj) {
+    public JNDIResponse(final int code, final Object obj) {
         responseCode = code;
         result = obj;
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    public JNDIRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(final JNDIRequest request) {
+        this.request = request;
     }
 
     public int getResponseCode() {
@@ -43,33 +59,36 @@ public class JNDIResponse implements ClusterableResponse {
         return result;
     }
 
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(final int responseCode) {
         this.responseCode = responseCode;
     }
 
-    public void setResult(Object result) {
+    public void setResult(final Object result) {
         this.result = result;
     }
 
-    public void setServer(ServerMetaData server) {
+    @Override
+    public void setServer(final ServerMetaData server) {
         this.server = server;
     }
 
     public ServerMetaData getServer() {
         return server;
     }
-    
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
 
-        boolean readServer = in.readBoolean();
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
+
+        final boolean readServer = in.readBoolean();
         if (readServer) {
             server = new ServerMetaData();
+            server.setMetaData(metaData);
             server.readExternal(in);
         }
-        
+
         responseCode = in.readByte();
-        
+
         switch (responseCode) {
             case ResponseCodes.JNDI_BUSINESS_OBJECT:
             case ResponseCodes.JNDI_OK:
@@ -83,46 +102,51 @@ public class JNDIResponse implements ClusterableResponse {
             case ResponseCodes.JNDI_NOT_FOUND:
                 break;
             case ResponseCodes.JNDI_EJBHOME:
-                EJBMetaDataImpl m = new EJBMetaDataImpl();
+                final EJBMetaDataImpl m = new EJBMetaDataImpl();
+                m.setMetaData(metaData);
                 m.readExternal(in);
                 result = m;
                 break;
             case ResponseCodes.JNDI_DATA_SOURCE:
-                DataSourceMetaData ds = new DataSourceMetaData();
+                final DataSourceMetaData ds = new DataSourceMetaData();
+                ds.setMetaData(metaData);
                 ds.readExternal(in);
                 result = ds;
                 break;
             case ResponseCodes.JNDI_INJECTIONS:
-                InjectionMetaData imd = new InjectionMetaData();
+                final InjectionMetaData imd = new InjectionMetaData();
+                imd.setMetaData(metaData);
                 imd.readExternal(in);
                 result = imd;
                 break;
             case ResponseCodes.JNDI_WEBSERVICE:
-                WsMetaData ws = (WsMetaData) in.readObject();
-                result = ws;
+                result = in.readObject();
                 break;
             case ResponseCodes.JNDI_ENUMERATION:
-                NameClassPairEnumeration ncpe = new NameClassPairEnumeration();
+                final NameClassPairEnumeration ncpe = new NameClassPairEnumeration();
+                ncpe.setMetaData(metaData);
                 ncpe.readExternal(in);
                 result = ncpe;
                 break;
             case ResponseCodes.JNDI_REFERENCE:
-                result = (Reference)in.readObject();
+                result = in.readObject();
                 break;
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
         if (null != server) {
             out.writeBoolean(true);
+            server.setMetaData(metaData);
             server.writeExternal(out);
         } else {
             out.writeBoolean(false);
         }
-        
+
         out.writeByte((byte) responseCode);
 
         switch (responseCode) {
@@ -138,47 +162,73 @@ public class JNDIResponse implements ClusterableResponse {
             case ResponseCodes.JNDI_NOT_FOUND:
                 break;
             case ResponseCodes.JNDI_EJBHOME:
-                EJBMetaDataImpl m = (EJBMetaDataImpl) result;
+                final EJBMetaDataImpl m = (EJBMetaDataImpl) result;
+                m.setMetaData(metaData);
                 m.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_DATA_SOURCE:
-                DataSourceMetaData ds = (DataSourceMetaData) result;
+                final DataSourceMetaData ds = (DataSourceMetaData) result;
+                ds.setMetaData(metaData);
                 ds.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_INJECTIONS:
-                InjectionMetaData imd = (InjectionMetaData) result;
+                final InjectionMetaData imd = (InjectionMetaData) result;
+                imd.setMetaData(metaData);
                 imd.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_WEBSERVICE:
-                WsMetaData ws = (WsMetaData) result;
+                final WsMetaData ws = (WsMetaData) result;
                 out.writeObject(ws);
                 break;
             case ResponseCodes.JNDI_ENUMERATION:
-                NameClassPairEnumeration ncpe = (NameClassPairEnumeration) result;
+                final NameClassPairEnumeration ncpe = (NameClassPairEnumeration) result;
+                ncpe.setMetaData(metaData);
                 ncpe.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_REFERENCE:
-                Reference ref = (Reference) result;
+                final Reference ref = (Reference) result;
                 out.writeObject(ref);
                 break;
         }
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(100);
+        final StringBuilder sb = new StringBuilder(100);
 
         switch (responseCode) {
-            case ResponseCodes.JNDI_BUSINESS_OBJECT: sb.append("JNDI_BUSINESS_OBJECT:"); break;
-            case ResponseCodes.JNDI_OK: sb.append("JNDI_OK:"); break;
-            case ResponseCodes.JNDI_NAMING_EXCEPTION: sb.append("JNDI_NAMING_EXCEPTION:"); break;
-            case ResponseCodes.JNDI_RUNTIME_EXCEPTION: sb.append("JNDI_RUNTIME_EXCEPTION:"); break;
-            case ResponseCodes.JNDI_ERROR: sb.append("JNDI_ERROR:"); break;
-            case ResponseCodes.JNDI_RESOURCE: sb.append("JNDI_RESOURCE:"); break;
-            case ResponseCodes.JNDI_CONTEXT: sb.append("JNDI_CONTEXT:"); break;
-            case ResponseCodes.JNDI_NOT_FOUND: sb.append("JNDI_NOT_FOUND:"); break;
-            case ResponseCodes.JNDI_EJBHOME: sb.append("JNDI_EJBHOME:"); break;
-            case ResponseCodes.JNDI_DATA_SOURCE: sb.append("JNDI_DATA_SOURCE:"); break;
-            case ResponseCodes.JNDI_INJECTIONS: sb.append("JNDI_INJECTIONS:"); break;
+            case ResponseCodes.JNDI_BUSINESS_OBJECT:
+                sb.append("JNDI_BUSINESS_OBJECT:");
+                break;
+            case ResponseCodes.JNDI_OK:
+                sb.append("JNDI_OK:");
+                break;
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+                sb.append("JNDI_NAMING_EXCEPTION:");
+                break;
+            case ResponseCodes.JNDI_RUNTIME_EXCEPTION:
+                sb.append("JNDI_RUNTIME_EXCEPTION:");
+                break;
+            case ResponseCodes.JNDI_ERROR:
+                sb.append("JNDI_ERROR:");
+                break;
+            case ResponseCodes.JNDI_RESOURCE:
+                sb.append("JNDI_RESOURCE:");
+                break;
+            case ResponseCodes.JNDI_CONTEXT:
+                sb.append("JNDI_CONTEXT:");
+                break;
+            case ResponseCodes.JNDI_NOT_FOUND:
+                sb.append("JNDI_NOT_FOUND:");
+                break;
+            case ResponseCodes.JNDI_EJBHOME:
+                sb.append("JNDI_EJBHOME:");
+                break;
+            case ResponseCodes.JNDI_DATA_SOURCE:
+                sb.append("JNDI_DATA_SOURCE:");
+                break;
+            case ResponseCodes.JNDI_INJECTIONS:
+                sb.append("JNDI_INJECTIONS:");
+                break;
         }
         sb.append(this.getResult());
         return sb.toString();

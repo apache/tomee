@@ -31,7 +31,7 @@ public class ConnectionPoolTimeout {
     private final TimeUnit timeUnit;
     private final Throwable caller;
 
-    public ConnectionPoolTimeout(URI uri, int size, long timeout, TimeUnit timeUnit, Throwable caller) {
+    public ConnectionPoolTimeout(final URI uri, final int size, final long timeout, final TimeUnit timeUnit, final Throwable caller) {
         this.uri = uri;
         this.size = size;
         this.timeout = timeout;
@@ -58,9 +58,9 @@ public class ConnectionPoolTimeout {
     @Override
     public String toString() {
         return "ConnectionPoolCreated{" +
-                "uri=" + uri +
-                ", size=" + size +
-                ", timeout='" + timeout + " " + timeUnit + "'" +
-                '}';
+               "uri=" + uri +
+               ", size=" + size +
+               ", timeout='" + timeout + " " + timeUnit + "'" +
+               '}';
     }
 }

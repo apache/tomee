@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.6.0</version>
+  <version>4.6.0-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -90,14 +90,17 @@
 
   <properties>
 
-    <openejb.version>4.6.0</openejb.version>
-    <tomee.version>1.6.0</tomee.version>
+    <openejb.version>4.6.0-SNAPSHOT</openejb.version>
+    <tomee.version>1.6.0-SNAPSHOT</tomee.version>
+
+    <openjpa.version>2.3.0-SNAPSHOT</openjpa.version>
+    <org.apache.openwebbeans.version>1.2.1-SNAPSHOT</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.13</xbeanVersion>
+    <xbeanVersion>3.15-SNAPSHOT</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -118,18 +121,20 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.39</tomcat.version>
+    <tomcat.version>7.0.47</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.6</cxf.version> <!--2.6.4 requires wss4j 1.6.8-->
-    <ehcache.version>2.6.3</ehcache.version> <!-- used by cxf for security (replay attack) -->
+    <cxf.version>2.6.9</cxf.version>
+    <!--2.6.4 requires wss4j 1.6.8-->
+    <ehcache.version>2.6.3</ehcache.version>
+    <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
     <aether.version>1.13.1</aether.version>
-    <maven.version>3.0.4</maven.version>
+    <maven.version>3.0.5</maven.version>
     <wagon.version>2.2</wagon.version>
     <plexus.version>1.5.5</plexus.version>
-    <plexus-utils.version>2.0.6</plexus-utils.version>
+    <plexus-utils.version>3.0.10</plexus-utils.version>
 
     <!--
     - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
@@ -137,22 +142,20 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <bval.version>0.5</bval.version>
-    <org.apache.activemq.version>5.8.0</org.apache.activemq.version>
-    <quartz.version>2.1.6</quartz.version>
-    <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
+    <org.apache.activemq.version>5.9.0</org.apache.activemq.version>
+    <quartz.version>2.2.0</quartz.version>
+    <org.springframework.version>3.1.3.RELEASE</org.springframework.version>
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <org.apache.openwebbeans.version>1.1.8</org.apache.openwebbeans.version>
     <geronimo.connector.version>3.1.1</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.1.10</myfaces.version>
-    <slf4j.version>1.7.2</slf4j.version>
+    <myfaces.version>2.1.13</myfaces.version>
+    <slf4j.version>1.7.5</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <hsqldb.version>2.2.8</hsqldb.version>
-    <openjpa.version>2.2.0</openjpa.version>
+    <hsqldb.version>2.3.0</hsqldb.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.8.3</commons-beanutils.version>
@@ -169,6 +172,8 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
     <commons-net.version>3.2</commons-net.version>
+    <version.axiom>1.2.14</version.axiom>
+    <version.xalan>2.7.1</version.xalan>
   </properties>
 
   <build>
@@ -189,7 +194,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.6</version>
+          <version>2.8</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -199,12 +204,32 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.7</version>
+          <version>1.8</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.0</version>
+          <version>3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.14.1</version>
+        </plugin>
+        <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
+          <groupId>org.apache.geronimo.buildsupport</groupId>
+          <artifactId>geronimo-property-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.swizzle</groupId>
+          <artifactId>dependency-report-plugin</artifactId>
+          <version>1.0.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -221,7 +246,6 @@
       <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
         <groupId>org.apache.geronimo.buildsupport</groupId>
         <artifactId>geronimo-property-plugin</artifactId>
-        <version>3.0.0</version>
         <configuration>
           <propertyName>openejb.build.endorsed</propertyName>
           <listFiles>false</listFiles>
@@ -246,7 +270,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
         <configuration>
           <forkMode>always</forkMode>
         </configuration>
@@ -289,7 +312,6 @@
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
         <artifactId>dependency-report-plugin</artifactId>
-        <version>1.0.2</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -308,7 +330,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -349,6 +370,17 @@
         <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>openejb</id>
+      <modules>
+        <module>deps</module>
+        <module>itests</module>
+        <module>container</module>
+        <module>server</module>
+        <module>assembly</module>
+        <module>utils</module>
       </modules>
     </profile>
     <profile>
@@ -464,34 +496,6 @@
     </profile>
   </profiles>
   <repositories>
-  <repository>
-    <id>tomcat-staging</id>
-    <url>https://repository.apache.org/content/repositories/orgapachetomcat-015/</url>
-    <releases><enabled>true</enabled></releases>
-    <snapshots><enabled>false</enabled></snapshots>
-  </repository>
-  <repository>
-    <id>openwebbeans-staging</id>
-      <name>openwebbeans-staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-008</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>javaee-api-staging</id>
-      <name>javaee-api-staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-009</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
     <!--<repository>-->
     <!--<id>codehaus-snapshot</id>-->
     <!--<name>CodeHaus SNAPSHOT repository</name>-->
@@ -960,11 +964,11 @@
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <artifactId>spring</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-context</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -994,7 +998,7 @@
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
           </exclusion>
-              <exclusion>
+          <exclusion>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
           </exclusion>
@@ -1004,7 +1008,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-        <dependency>
+      <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
         <version>${commons-net.version}</version>
@@ -1159,12 +1163,12 @@
       <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
-        <version>2.7.1</version>
+        <version>${version.xalan}</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
         <artifactId>serializer</artifactId>
-        <version>2.7.1</version>
+        <version>${version.xalan}</version>
       </dependency>
       <dependency>
         <groupId>stax</groupId>
@@ -1254,10 +1258,20 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>stax</groupId>
+        <artifactId>stax-api</artifactId>
+        <version>1.0.1</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>
+          <exclusion>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jpa_2.0_spec</artifactId>
@@ -1284,6 +1298,10 @@
           <exclusion>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.xml.stream</groupId>
+            <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1323,7 +1341,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm-shaded</artifactId>
+        <artifactId>xbean-asm4-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
@@ -1355,7 +1373,7 @@
       <dependency>
         <groupId>org.codehaus.swizzle</groupId>
         <artifactId>swizzle-stream</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
       </dependency>
       <!--  <dependency>
        <groupId>org.apache.openejb</groupId>
@@ -1380,12 +1398,23 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.8</version>
+        <version>1.6.11</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <artifactId>xmlsec</artifactId>
+        <groupId>org.apache.santuario</groupId>
+        <version>1.5.4</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
         <artifactId>wsdl4j</artifactId>
-        <version>1.6.2</version>
+        <version>1.6.3</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>
@@ -1411,6 +1440,10 @@
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1424,21 +1457,20 @@
         <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>3.17.1-GA</version>
-      </dependency>
-      <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>1.3.04</version>
+        <version>1.4.01</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.2</version>
         <exclusions>
+          <exclusion>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
@@ -1457,17 +1489,17 @@
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-api</artifactId>
-        <version>1.2.12</version>
+        <version>${version.axiom}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-impl</artifactId>
-        <version>1.2.12</version>
+        <version>${version.axiom}</version>
       </dependency>
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>2.9.1</version>
+        <version>2.11.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -1477,7 +1509,17 @@
       <dependency>
         <artifactId>serp</artifactId>
         <groupId>net.sourceforge.serp</groupId>
-        <version>1.13.1</version>
+        <version>1.14.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-core</artifactId>
+        <version>0.8.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>1.0</version>
       </dependency>
       <dependency>
         <artifactId>slf4j-api</artifactId>
@@ -1541,6 +1583,10 @@
           <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1626,6 +1672,12 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
         <version>${org.apache.openwebbeans.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-finder-shaded</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
@@ -1645,7 +1697,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>6.3.1</version>
+        <version>6.8.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1673,6 +1725,11 @@
         <artifactId>ehcache-core</artifactId>
         <version>${ehcache.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbynet</artifactId>
+        <version>10.9.1.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <distributionManagement>
@@ -1686,7 +1743,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8</version>
+        <version>2.9</version>
         <configuration>
           <aggregate>true</aggregate>
           <additionalJOption>-J-Xmx1024m</additionalJOption>

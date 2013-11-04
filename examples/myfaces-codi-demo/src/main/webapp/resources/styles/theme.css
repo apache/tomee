@@ -1,0 +1,480 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Init --------------------------------------------------------------------- */
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    text-align: center; /*font-size: 75%;*/
+    /*=12pixels*/
+    font-size: 12px;
+    font-family: verdana, tahoma, sans-serif;
+    font-weight: normal;
+    line-height: 1.4em;
+    color: #666666;
+    background-color: white;
+}
+
+div {
+    text-align: left;
+}
+
+span {
+    display: inline;
+}
+
+img {
+    display: block;
+}
+
+h1, h2, h3 {
+    font-family: arial, geneva, helvetica, sans-serif;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #669900;
+}
+
+h1 {
+    font-size: 1.6em;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+h3 {
+    font-size: 1.1em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+    color: #669900;
+}
+
+a:hover {
+    color: #FF9900;
+}
+
+/*
+ * Clear float positions.
+ */
+.clear {
+    clear: both;
+}
+
+/* IE fixes ------------------------------------------------ */
+/* Solve the IE 3px gap bug */
+/* Hides from IE5-mac \*/
+* html .section, p {
+    height: 1%;
+}
+
+/* End hide from IE5-mac */
+/* Add the min and max width in IE */
+* #main_container, * #top_menu_container, * #logo_banner_container, * .copyright {
+    width: expression(document . body . clientWidth >   1210 ?   "1200px" :   (
+		document . body . clientWidth <   960 ?   "950px" :   "auto") );
+}
+
+/* PNG transparency fix */
+img {
+    behavior: url(css/png-fix.htc);
+}
+
+/* IE fixes ----------------------------------------------------------------- */
+/* Fluid layout constraints ----------------------------------------- */
+#main_container, #top_menu_container, #logo_banner_container, .copyright {
+    max-width: 1200px;
+    min-width: 950px;
+}
+
+#footer, #top_menu, #header_bottom {
+    width: 100%;
+    min-width: 950px;
+}
+
+/* Main layout -------------------------------------------------------------- */
+#main_container {
+    margin: 0px auto 0px auto;
+}
+
+#footer {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    height: 90px;
+    margin-top: 50px;
+    text-align: center;
+    color: white;
+    background: #52842D url("#{resource['images:slices/footer.png']}") repeat-x;
+}
+
+/* Header layout ------------------------------------------------------------ */
+#top_menu {
+    width: auto;
+    height: 45px;
+    text-align: center;
+    background: #52842D url("#{resource['images:slices/top_menu.png']}") repeat-x;
+}
+
+#top_menu_container {
+    margin: 0px auto 0px auto;
+    padding-top: 4px;
+}
+
+#header_bottom {
+    height: auto;
+    text-align: center;
+    background: url("#{resource['images:slices/logo_banner_container.png']}") repeat-x;
+}
+
+#logo_banner_container {
+    margin: 0px auto 0px auto;
+}
+
+/* body layout -------------------------------------------------------------- */
+#left_column {
+    float: left;
+    width: 210px;
+    height: auto;
+}
+
+#body_column {
+    padding: 1px 0px 0px 230px;
+    width: auto;
+}
+
+/* footer layout ------------------------------------------------------------ */
+.copyright {
+    margin: 0px auto 0px auto;
+    padding-top: 15px;
+}
+
+/* logo_banner_container layout --------------------------------------------- */
+#logo {
+    float: left;
+    width: 210px;
+    height: 100px;
+    margin-top: 10px;
+}
+
+#banner {
+    float: right;
+    width: 210px;
+    height: 85px;
+    margin-top: 10px;
+}
+
+/* leftColumn layout ------------------------------------------------------ */
+.left_menu_container {
+    width: 210px;
+}
+
+#powered_by {
+    /*float: right;*/
+    text-align: center;
+}
+
+#powered_by img {
+    margin: 10px auto 10px auto;
+}
+
+/* left_menu layout --------------------------------------------------------- */
+.left_menu_top {
+    width: 210px;
+    background: url("#{resource['images:slices/left_menu_top.png']}") no-repeat top;
+}
+
+.left_menu_bottom {
+    width: 210px;
+    background: url("#{resource['images:slices/left_menu_bottom.png']}") no-repeat bottom;
+}
+
+/* top menu ----------------------------------------------------------------- */
+#top_menu div.date, #top_menu div.version {
+    margin: 9px 0px 0px 10px;
+    float: left;
+    color: white;
+}
+
+#top_menu ul {
+    float: right;
+    height: 37px;
+    border-right: 1px solid #80AA66;
+}
+
+#top_menu li {
+    display: inline;
+    height: 37px;
+    margin-left: -4px;
+}
+
+#top_menu a {
+    position: relative;
+    top: 9px;
+    border-left: 1px solid #80AA66;
+    padding: 10px 10px 13px 10px;
+    font-size: 12px;
+    color: white;
+}
+
+#top_menu a:hover {
+    text-decoration: underline;
+    background: url("#{resource['images:slices/top_menu_hover.png']}") repeat-x top;
+}
+
+/* left menu - first level menu --------------------------------------------- */
+.left_menu_top h5 {
+    padding: 26px 20px 0px 25px;
+    font-size: 1em;
+    color: #84683E;
+}
+
+ul.left_menu {
+    padding: 22px 20px 22px 25px;
+}
+
+ul.left_menu a {
+    font-size: 0.9em;
+    color: #705F38;
+    margin-left: 2px;
+    padding-left: 15px;
+}
+
+ul.left_menu a:hover {
+    color: #FF9900;
+}
+
+ul.left_menu li.none a {
+    background: url("#{resource['images:slices/left_menu_option.gif']}") no-repeat left;
+}
+
+ul.left_menu li.none a:hover {
+    background: url("#{resource['images:slices/left_menu_option_hover.gif']}") no-repeat left;
+}
+
+ul.left_menu li.none a.selected {
+    font-weight: bold;
+    background: none;
+}
+
+ul.left_menu li.expanded a {
+    font-weight: bold;
+    margin-left: 0px;
+    background: url("#{resource['images:slices/left_menu_expand_selected.gif']}") no-repeat left;
+}
+
+ul.left_menu li.expanded a:hover {
+    background: url("#{resource['images:slices/left_menu_expand_hover.gif']}") no-repeat left;
+}
+
+ul.left_menu li.collapsed a {
+    margin-left: 0px;
+    background: url("#{resource['images:slices/left_menu_expand.gif']}") no-repeat left;
+}
+
+ul.left_menu li.collapsed a:hover {
+    background: url("#{resource['images:slices/left_menu_expand_hover.gif']}") no-repeat left;
+}
+
+/* left menu - second level menu ------------------------------------------- */
+ul.left_menu ul {
+    list-style-type: none;
+    padding: 0px 0px 10px 10px;
+}
+
+ul.left_menu li.expanded ul {
+    display: block;
+}
+
+ul.left_menu li.expanded ul a {
+    font-weight: normal;
+    background: none;
+}
+
+ul.left_menu li.expanded ul li.expanded a {
+    font-weight: bold;
+    background: url("#{resource['images:slices/left_menu_expand_selected.gif']}") no-repeat left;
+}
+
+ul.left_menu li.expanded ul li.expanded a:hover {
+    background: url("#{resource['images:slices/left_menu_expand_hover.gif']}") no-repeat left;
+}
+
+ul.left_menu li.expanded ul li.collapsed a {
+    font-weight: normal;
+    background: url("#{resource['images:slices/left_menu_expand.gif']}") no-repeat left;
+}
+
+ul.left_menu li.expanded ul li.collapsed a:hover {
+    background: url("#{resource['images:slices/left_menu_expand_hover.gif']}") no-repeat left;
+}
+
+ul.left_menu li.expanded ul a.selected {
+    font-weight: bold;
+}
+
+ul.left_menu li.collapsed ul {
+    display: none;
+}
+
+ul.left_menu ul li.none a,
+ul.left_menu ul li.none a:hover,
+ul.left_menu ul li.none a.selected {
+    background: none;
+}
+
+/* left menu - third level menu --------------------------------------------- */
+ul.left_menu ul ul {
+    padding: 0px 0px 10px 10px;
+}
+
+ul.left_menu ul li.expanded ul {
+    display: block;
+}
+
+ul.left_menu ul li.expanded ul li.none a {
+    font-weight: normal;
+}
+
+ul.left_menu ul li.expanded ul li.none a.selected {
+    font-weight: bold;
+}
+
+ul.left_menu ul li.expanded ul li.none a,
+ul.left_menu ul li.expanded ul li.none a:hover,
+ul.left_menu ul li.expanded ul li.none a.selected {
+    background: none;
+}
+
+/* body_column -------------------------------------------------------------- */
+#body_column p {
+    margin: 15px 15px 0px 0px;
+}
+
+#body_column .section, #body_column dl {
+    margin: 25px 0px 0px 0px;
+    padding: 0px 10px;
+}
+
+#body_column .section {
+}
+
+#body_column .section .section {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    overflow: auto;
+}
+
+/* Overflow fix for IE */
+* #body_column .section .section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+#body_column ul {
+    margin: 0px 15px 10px 15px;
+}
+
+#body_column ul li {
+    padding: 0px 0px 0px 15px;
+    background: url("#{resource['images:slices/main_space_list.gif']}") no-repeat left 5px;
+}
+
+#body_column ol {
+    padding: 15px 0px 15px 20px;
+}
+
+#body_column ol ol {
+    padding: 0px 0px 0px 15px;
+}
+
+/* tables ------------------------------------------------------------------- */
+#body_column table.bodyTable {
+    margin: 0px 0px 10px 0px;
+    border-collapse: collapse;
+    padding: 2px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 0.9em;
+    color: #333333;
+    background: white;
+}
+
+#body_column table.bodyTable th, table.bodyTable tr, table.bodyTable td {
+    margin: 0px;
+    border: 1px solid white;
+    padding: 0px 7px 0px 7px;
+}
+
+#body_column table.bodyTable tr.a {
+    background: #F7F9F4;
+}
+
+#body_column table.bodyTable tr.b {
+    background: #F2F5ED;
+}
+
+#body_column table a.externalLink {
+    background: none;
+    padding-right: 0px;
+}
+
+#body_column table.bodyTable th {
+    padding: 7px 7px 5px 7px;
+    background: #CDDCB8 url("#{resource['images:slices/table_head_dark.png']}") repeat-x;
+}
+
+/* source sections ---------------------------------------------------------- */
+#body_column .source, code {
+    margin: 14px 0px 14px 0px;
+    border: 1px solid #E6E9DA;
+    font-size: 1.1em;
+    font-family: "Courier new", Courier, monospace;
+    color: #333333;
+    background: #F9FAF5 url("#{resource['images:slices/code_section.png']}") repeat-x top;
+}
+
+#body_column b {
+    padding-top: 10px;
+}
+
+#body_column h2 {
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #D8E4C7;
+    background: white url("#{resource['images:slices/h2.png']}") repeat-x top;
+}
+
+.main_content {
+    padding: 30px;
+}
+
+/* copyright ---------------------------------------------------------------- */
+.copyright p {
+    font-size: 0.9em;
+}

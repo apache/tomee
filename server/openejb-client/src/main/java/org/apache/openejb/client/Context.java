@@ -26,17 +26,17 @@ public class Context {
     private final HashMap<Class, Object> components = new HashMap<Class, Object>();
 
     @SuppressWarnings({"unchecked"})
-    public <T> T getComponent(Class<T> type) {
+    public <T> T getComponent(final Class<T> type) {
         return (T) components.get(type);
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T setComponent(Class<T> type, T component) {
+    public <T> T setComponent(final Class<T> type, final T component) {
         return (T) components.put(type, component);
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T removeComponent(Class<T> type) {
+    public <T> T removeComponent(final Class<T> type) {
         return (T) components.remove(type);
     }
 }

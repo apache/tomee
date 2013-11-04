@@ -74,7 +74,12 @@ public class JaxWsProviderWrapperTest extends TestCase {
         }
 
         @Override
-        public W3CEndpointReference createW3CEndpointReference(final String address, final QName serviceName, final QName portName, final List<Element> metadata, final String wsdlDocumentLocation, final List<Element> referenceParameters) {
+        public W3CEndpointReference createW3CEndpointReference(final String address,
+                                                               final QName serviceName,
+                                                               final QName portName,
+                                                               final List<Element> metadata,
+                                                               final String wsdlDocumentLocation,
+                                                               final List<Element> referenceParameters) {
             return null;
         }
 

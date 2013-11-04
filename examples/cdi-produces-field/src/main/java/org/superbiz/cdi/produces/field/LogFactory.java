@@ -21,12 +21,12 @@ import javax.enterprise.inject.Produces;
 public class LogFactory {
 
     private int type = 2;
-    
+
     @Produces
     LogHandler handler;
-    
-    public LogFactory(){
-    	handler = getLogHandler();
+
+    public LogFactory() {
+        handler = getLogHandler();
     }
 
     public LogHandler getLogHandler() {

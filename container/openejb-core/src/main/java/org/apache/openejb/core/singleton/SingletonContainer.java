@@ -22,6 +22,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -31,7 +32,6 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
-import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.xbean.finder.ClassFinder;
@@ -44,13 +44,19 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.*;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
@@ -111,16 +117,16 @@ public class SingletonContainer implements RpcContainer {
             deploymentRegistry.put(id, beanContext);
             beanContext.setContainer(this);
         }
-
-        EjbTimerService timerService = beanContext.getEjbTimerService();
-        if (timerService != null) {
-            timerService.start();
-        }
     }
 
     @Override
-    public void start(BeanContext info) throws OpenEJBException {
+    public void start(final BeanContext info) throws OpenEJBException {
         instanceManager.start(info);
+
+        final EjbTimerService timerService = info.getEjbTimerService();
+        if (timerService != null) {
+            timerService.start();
+        }
     }
 
     @Override
@@ -148,20 +154,6 @@ public class SingletonContainer implements RpcContainer {
         }
     }
 
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    @Deprecated
-    @Override
-    public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    @Override
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
-    }
-
     @Override
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         BeanContext beanContext = this.getBeanContext(deployID);
@@ -175,6 +167,7 @@ public class SingletonContainer implements RpcContainer {
 
         ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
             boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
@@ -197,10 +190,17 @@ public class SingletonContainer implements RpcContainer {
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
 
+            if (currentCreationalContext != null) {
+                currentCreationalContext.set(instance.creationalContext);
+            }
+
             return _invoke(callMethod, runMethod, args, instance, callContext, type);
 
         } finally {
             ThreadContext.exit(oldCallContext);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 

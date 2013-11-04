@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
+import org.apache.webbeans.exception.WebBeansCreationException;
 
 /**
  * @version $Rev$ $Date$
@@ -43,6 +44,21 @@ public class JavaeeInstanceManager implements InstanceManager {
     }
 
     @Override
+    public Object newInstance(final Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
+        try {
+            final Object object = webContext.newInstance(clazz);
+            postConstruct(object, clazz);
+            return object;
+        } catch (final OpenEJBException e) {
+            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        } catch (final WebBeansConfigurationException e) {
+            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        } catch (final WebBeansCreationException e) {
+            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        }
+    }
+
+    @Override
     public Object newInstance(String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
         final ClassLoader classLoader = webContext.getClassLoader();
         return newInstance(className, classLoader);
@@ -50,16 +66,7 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     @Override
     public Object newInstance(String className, ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
-        try {
-            final Class<?> clazz = classLoader.loadClass(className);
-            final Object object = webContext.newInstance(clazz);
-            postConstruct(object, clazz);
-            return object;
-        } catch (OpenEJBException e) {
-            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
-        } catch (WebBeansConfigurationException e) {
-            throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
-        }
+        return newInstance(classLoader.loadClass(className));
     }
 
     @Override

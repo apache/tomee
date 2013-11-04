@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.serializer.EJBDSerializer;
+import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.omg.CORBA.ORB;
 
 import javax.naming.Context;
@@ -32,12 +34,15 @@ import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
 
+    private static final long serialVersionUID = -2075915633178128028L;
     private transient RequestMethodCode requestMethod;
     private transient int deploymentCode = 0;
     private transient Object clientIdentity;
     private transient String deploymentId;
     private transient int serverHash;
     private transient Body body;
+    private transient EJBDSerializer serializer;
+    private transient ProtocolMetaData metaData;
 
     // Only visible on the client side
     private transient final EJBMetaDataImpl ejbMetaData;
@@ -52,16 +57,29 @@ public class EJBRequest implements ClusterableRequest {
         ejbMetaData = null;
     }
 
-    public EJBRequest(final RequestMethodCode requestMethod, final EJBMetaDataImpl ejb, final Method method, final Object[] args, final Object primaryKey) {
-        body = new Body(ejb);
+    public EJBRequest(final RequestMethodCode requestMethod,
+                      final EJBMetaDataImpl ejb,
+                      final Method method,
+                      final Object[] args,
+                      final Object primaryKey,
+                      final EJBDSerializer serializer) {
 
+        this.body = new Body(ejb);
+        this.serializer = serializer;
         this.ejbMetaData = ejb;
         this.requestMethod = requestMethod;
+
         setDeploymentCode(ejb.deploymentCode);
         setDeploymentId(ejb.deploymentID);
         setMethodInstance(method);
         setMethodParameters(args);
         setPrimaryKey(primaryKey);
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+        this.body.setMetaData(this.metaData);
     }
 
     public EJBMetaDataImpl getEjbMetaData() {
@@ -81,7 +99,27 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public Object[] getMethodParameters() {
-        return body.getMethodParameters();
+        final Object[] params = body.getMethodParameters();
+        if (params == null || serializer == null) {
+            return params;
+        }
+
+        final Object[] unserialized = new Object[params.length];
+        int i = 0;
+        for (final Object o : params) {
+            if (SerializationWrapper.class.isInstance(o)) {
+                final SerializationWrapper wrapper = SerializationWrapper.class.cast(o);
+                try {
+                    unserialized[i] = serializer.deserialize(wrapper.getData(), body.getMethodInstance().getDeclaringClass().getClassLoader().loadClass(wrapper.getClassname()));
+                } catch (final ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                unserialized[i] = o;
+            }
+            i++;
+        }
+        return unserialized;
     }
 
     public Class[] getMethodParamTypes() {
@@ -97,7 +135,21 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public void setMethodParameters(final Object[] methodParameters) {
-        body.setMethodParameters(methodParameters);
+        if (serializer == null || methodParameters == null) {
+            body.setMethodParameters(methodParameters);
+        } else {
+            final Object[] params = new Object[methodParameters.length];
+            int i = 0;
+            for (final Object o : methodParameters) {
+                if (o == null) {
+                    params[i] = null;
+                } else {
+                    params[i] = new SerializationWrapper(serializer.serialize(o), o.getClass().getName());
+                }
+                i++;
+            }
+            body.setMethodParameters(params);
+        }
     }
 
     public void setPrimaryKey(final Object primaryKey) {
@@ -116,8 +168,148 @@ public class EJBRequest implements ClusterableRequest {
         return this.body.getVersion();
     }
 
+    public void setSerializer(final EJBDSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    @Override
+    public RequestType getRequestType() {
+        return RequestType.EJB_REQUEST;
+    }
+
+    public RequestMethodCode getRequestMethod() {
+        return requestMethod;
+    }
+
+    public Object getClientIdentity() {
+        return clientIdentity;
+    }
+
+    public String getDeploymentId() {
+        return deploymentId;
+    }
+
+    public int getDeploymentCode() {
+        return deploymentCode;
+    }
+
+    public void setRequestMethod(final RequestMethodCode requestMethod) {
+        this.requestMethod = requestMethod;
+    }
+
+    public void setClientIdentity(final Object clientIdentity) {
+        this.clientIdentity = clientIdentity;
+    }
+
+    public void setDeploymentId(final String deploymentId) {
+        this.deploymentId = deploymentId;
+    }
+
+    public void setDeploymentCode(final int deploymentCode) {
+        this.deploymentCode = deploymentCode;
+    }
+
+    @Override
+    public void setServerHash(final int serverHash) {
+        this.serverHash = serverHash;
+    }
+
+    @Override
+    public int getServerHash() {
+        return serverHash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("EJBRequest{");
+        sb.append("deploymentId='");
+        sb.append(deploymentId);
+        sb.append("'");
+
+        if (requestMethod != null) {
+            sb.append(", type=").append(requestMethod);
+        }
+        if (body != null) {
+            sb.append(", ").append(body.toString());
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     * <p/>
+     * When the Request externalizes itself, it will reset
+     * the appropriate values so that this instance can be used again.
+     * <p/>
+     * There will be one request instance for each handler
+     */
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        ClassNotFoundException ex = null;
+
+        deploymentId = null;
+        deploymentCode = -1;
+        clientIdentity = null;
+
+        final int code = in.readByte();
+        try {
+            requestMethod = RequestMethodCode.valueOf(code);
+        } catch (IllegalArgumentException iae) {
+            throw new IOException("Invalid request code " + code);
+        }
+        try {
+            deploymentId = (String) in.readObject();
+        } catch (ClassNotFoundException cnfe) {
+            ex = cnfe;
+        }
+        deploymentCode = in.readShort();
+        try {
+            clientIdentity = in.readObject();
+        } catch (ClassNotFoundException cnfe) {
+            if (ex == null) {
+                ex = cnfe;
+            }
+        }
+        serverHash = in.readInt();
+
+        if (ex != null) {
+            throw ex;
+        }
+    }
+
+    /**
+     * Write to server.
+     * WARNING: To maintain backwards compatibility never change the order or insert new writes, always append to
+     * {@link org.apache.openejb.client.EJBRequest.Body#writeExternal(java.io.ObjectOutput)}
+     *
+     * @param out ObjectOutput
+     * @throws IOException
+     */
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+
+        out.writeByte(requestMethod.getCode());
+
+        if (deploymentCode > 0) {
+            out.writeObject(null);
+        } else {
+            out.writeObject(deploymentId);
+        }
+
+        out.writeShort(deploymentCode);
+        out.writeObject(clientIdentity);
+        out.writeInt(serverHash);
+        out.flush();
+
+        body.setMetaData(metaData);
+        body.writeExternal(out);
+    }
+
     public static class Body implements java.io.Externalizable {
 
+        private static final long serialVersionUID = -5364100745236348268L;
         private transient volatile String toString = null;
         private transient EJBMetaDataImpl ejb;
         private transient ORB orb;
@@ -131,6 +323,9 @@ public class EJBRequest implements ClusterableRequest {
         private transient String requestId;
         private byte version = EJBResponse.VERSION;
 
+        private transient JNDIContext.AuthenticationInfo authentication;
+        private transient ProtocolMetaData metaData;
+
         public Body(final EJBMetaDataImpl ejb) {
             this.ejb = ejb;
         }
@@ -138,8 +333,20 @@ public class EJBRequest implements ClusterableRequest {
         public Body() {
         }
 
+        public void setMetaData(final ProtocolMetaData metaData) {
+            this.metaData = metaData;
+        }
+
         public byte getVersion() {
             return version;
+        }
+
+        public void setAuthentication(final JNDIContext.AuthenticationInfo authentication) {
+            this.authentication = authentication;
+        }
+
+        public JNDIContext.AuthenticationInfo getAuthentication() {
+            return authentication;
         }
 
         public Method getMethodInstance() {
@@ -214,6 +421,9 @@ public class EJBRequest implements ClusterableRequest {
             this.requestId = requestId;
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         @SuppressWarnings("unchecked")
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
@@ -245,6 +455,7 @@ public class EJBRequest implements ClusterableRequest {
 
             if (interfaceClass != null) {
                 try {
+                    //noinspection unchecked
                     methodInstance = interfaceClass.getMethod(methodName, methodParamTypes);
                 } catch (NoSuchMethodException nsme) {
                     if (result == null) {
@@ -253,11 +464,20 @@ public class EJBRequest implements ClusterableRequest {
                 }
             }
 
+            if (null == metaData || metaData.isAtLeast(4, 6)) {
+                authentication = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
+            } else {
+                authentication = null;
+            }
+
             if (result != null) {
                 throw result;
             }
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         @Override
         public void writeExternal(final ObjectOutput out) throws IOException {
 
@@ -268,12 +488,21 @@ public class EJBRequest implements ClusterableRequest {
             out.writeObject(primaryKey);
 
             out.writeObject(interfaceClass);
-            //            out.writeObject(methodClass);
+
             out.writeUTF(methodName);
 
             writeMethodParameters(out, methodParamTypes, methodParameters);
+
+            if (null == metaData || metaData.isAtLeast(4, 6)) {
+                out.writeObject(authentication);
+            }
+
+            out.flush();
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         protected void writeMethodParameters(final ObjectOutput out, final Class[] types, final Object[] args) throws IOException {
 
             out.writeByte(types.length);
@@ -354,14 +583,14 @@ public class EJBRequest implements ClusterableRequest {
          * @throws java.io.IOException On error
          */
         protected ORB getORB() throws IOException {
-            // first ORB request?  Check our various sources 
+            // first ORB request?  Check our various sources
             if (orb == null) {
                 try {
                     final Context initialContext = new InitialContext();
                     orb = (ORB) initialContext.lookup("java:comp/ORB");
                 } catch (Throwable e) {
                     try {
-                        // any orb will do if we can't get a context one. 
+                        // any orb will do if we can't get a context one.
                         orb = ORB.init();
                     } catch (Throwable ex) {
                         throw new IOException("Unable to connect PortableRemoteObject stub to an ORB, no ORB bound to java:comp/ORB");
@@ -371,6 +600,9 @@ public class EJBRequest implements ClusterableRequest {
             return orb;
         }
 
+        /**
+         * Changes to this method must observe the optional {@link #metaData} version
+         */
         protected void readMethodParameters(final ObjectInput in) throws IOException, ClassNotFoundException {
             final int length = in.read();
 
@@ -481,128 +713,5 @@ public class EJBRequest implements ClusterableRequest {
             return toString;
         }
     }
-
-    @Override
-    public RequestType getRequestType() {
-        return RequestType.EJB_REQUEST;
-    }
-
-    public RequestMethodCode getRequestMethod() {
-        return requestMethod;
-    }
-
-    public Object getClientIdentity() {
-        return clientIdentity;
-    }
-
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public int getDeploymentCode() {
-        return deploymentCode;
-    }
-
-    public void setRequestMethod(final RequestMethodCode requestMethod) {
-        this.requestMethod = requestMethod;
-    }
-
-    public void setClientIdentity(final Object clientIdentity) {
-        this.clientIdentity = clientIdentity;
-    }
-
-    public void setDeploymentId(final String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public void setDeploymentCode(final int deploymentCode) {
-        this.deploymentCode = deploymentCode;
-    }
-
-    @Override
-    public void setServerHash(final int serverHash) {
-        this.serverHash = serverHash;
-    }
-
-    @Override
-    public int getServerHash() {
-        return serverHash;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("EJBRequest{");
-        sb.append("deploymentId='");
-        sb.append(deploymentId);
-        sb.append("'");
-
-        if (requestMethod != null) {
-            sb.append(", type=").append(requestMethod);
-        }
-        if (body != null) {
-            sb.append(", ").append(body.toString());
-        }
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /*
-    When the Request externalizes itself, it will reset
-    the appropriate values so that this instance can be used
-    again.
-
-    There will be one request instance for each handler
-    */
-
-    @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        ClassNotFoundException result = null;
-
-        deploymentId = null;
-        deploymentCode = -1;
-        clientIdentity = null;
-
-        final int code = in.readByte();
-        try {
-            requestMethod = RequestMethodCode.valueOf(code);
-        } catch (IllegalArgumentException iae) {
-            throw new IOException("Invalid request code " + code);
-        }
-        try {
-            deploymentId = (String) in.readObject();
-        } catch (ClassNotFoundException cnfe) {
-            result = cnfe;
-        }
-        deploymentCode = in.readShort();
-        try {
-            clientIdentity = in.readObject();
-        } catch (ClassNotFoundException cnfe) {
-            if (result == null) {
-                result = cnfe;
-            }
-        }
-        serverHash = in.readInt();
-        if (result != null) {
-            throw result;
-        }
-    }
-
-    @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        out.writeByte(requestMethod.getCode());
-
-        if (deploymentCode > 0) {
-            out.writeObject(null);
-        } else {
-            out.writeObject(deploymentId);
-        }
-
-        out.writeShort(deploymentCode);
-        out.writeObject(clientIdentity);
-        out.writeInt(serverHash);
-        body.writeExternal(out);
-    }
-
 }
 

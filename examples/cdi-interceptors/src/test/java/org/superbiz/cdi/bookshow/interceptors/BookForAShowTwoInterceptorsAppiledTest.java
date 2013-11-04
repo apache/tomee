@@ -25,6 +25,7 @@ import javax.ejb.embeddable.EJBContainer;
 import java.util.List;
 
 public class BookForAShowTwoInterceptorsAppiledTest extends TestCase {
+
     @EJB
     private BookForAShowTwoInterceptorsApplied bookForAShowBean;
     EJBContainer ejbContainer;

@@ -24,7 +24,6 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.IdPropertiesInfo;
-import org.apache.openejb.assembler.classic.ParamValueInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
@@ -33,6 +32,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
+import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.assembler.classic.util.PojoUtil;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -163,7 +163,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         realmName = props.getProperty("realmName");
         transportGuarantee = props.getProperty("transportGuarantee");
         authMethod = props.getProperty("authMethod");
-        virtualHost = props.getProperty("virtualHost");
+        virtualHost = props.getProperty("virtualHost", "localhost");
     }
 
     @Override
@@ -184,7 +184,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (assembler != null) {
             SystemInstance.get().addObserver(this);
             for (final AppInfo appInfo : assembler.getDeployedApplications()) {
-                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo));
+                afterApplicationCreated(new AssemblerAfterApplicationCreated(appInfo, null));
             }
         }
     }
@@ -213,111 +213,126 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     protected abstract void destroyPojoWsContainer(String serviceId);
 
-    public void afterApplicationCreated(
-                                               @Observes
-                                               final AssemblerAfterApplicationCreated event) {
+    // handle webapp ejbs of ears - called before afterApplicationCreated for ear so dont add app to deployedApplications here
+    public void newEjbToDeploy(final @Observes NewEjbAvailableAfterApplicationCreated event) {
+        deployApp(event.getApp(), event.getBeanContexts());
+    }
+
+    public void afterApplicationCreated(final @Observes AssemblerAfterApplicationCreated event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.add(appInfo)) {
-            final Map<String, String> webContextByEjb = new HashMap<String, String>();
-            for (final WebAppInfo webApp : appInfo.webApps) {
-                for (final String ejb : webApp.ejbWebServices) {
-                    webContextByEjb.put(ejb, webApp.contextRoot);
+            deployApp(appInfo, event.getDeployedEjbs());
+        }
+    }
+
+    private void deployApp(final AppInfo appInfo, final Collection<BeanContext> ejbs) {
+        final Map<String, String> webContextByEjb = new HashMap<String, String>();
+        for (final WebAppInfo webApp : appInfo.webApps) {
+            for (final String ejb : webApp.ejbWebServices) {
+                webContextByEjb.put(ejb, webApp.contextRoot);
+            }
+        }
+
+        final Map<String, String> contextData = new HashMap<String, String>();
+        contextData.put("appId", appInfo.path);
+        for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+            for (final PortInfo port : ejbJar.portInfos) {
+                ports.put(port.serviceLink, port);
+            }
+
+            URL moduleBaseUrl = null;
+            if (ejbJar.path != null) {
+                try {
+                    moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
+                } catch (MalformedURLException e) {
+                    logger.error("Invalid ejb jar location " + ejbJar.path, e);
                 }
             }
 
-            final Map<String, String> contextData = new HashMap<String, String>();
-            contextData.put("appId", appInfo.path);
-            for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
-                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
-                for (final PortInfo port : ejbJar.portInfos) {
-                    ports.put(port.serviceLink, port);
-                }
+            StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
+            if (ejbJar.properties.containsKey(WS_ADDRESS_FORMAT)) {
+                final String format = ejbJar.properties.getProperty(WS_ADDRESS_FORMAT);
+                logger.info("Using " + WS_ADDRESS_FORMAT + " '" + format + "'");
+                deploymentIdTemplate = new StringTemplate(format);
+            }
+            contextData.put("ejbJarId", ejbJar.moduleName);
 
-                URL moduleBaseUrl = null;
-                if (ejbJar.path != null) {
+            for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
+
+                    final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                    if (beanContext == null || (ejbs != null && !ejbs.contains(beanContext))) {
+                        continue;
+                    }
+
+                    final PortInfo portInfo = ports.get(bean.ejbName);
+                    if (portInfo == null)
+                        continue;
+
+                    final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(beanContext.getClassLoader());
                     try {
-                        moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
-                    } catch (MalformedURLException e) {
-                        logger.error("Invalid ejb jar location " + ejbJar.path, e);
-                    }
-                }
+                        final PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
 
-                StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
-                if (ejbJar.properties.containsKey(WS_ADDRESS_FORMAT)) {
-                    final String format = ejbJar.properties.getProperty(WS_ADDRESS_FORMAT);
-                    logger.info("Using " + WS_ADDRESS_FORMAT + " '" + format + "'");
-                    deploymentIdTemplate = new StringTemplate(format);
-                }
-                contextData.put("ejbJarId", ejbJar.moduleName);
+                        final HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, new ServiceConfiguration(beanContext.getProperties(), appInfo.services));
 
-                for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                    if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
-
-                        final BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
-                        if (beanContext == null)
-                            continue;
-
-                        final PortInfo portInfo = ports.get(bean.ejbName);
-                        if (portInfo == null)
-                            continue;
-
-                        final ClassLoader old = Thread.currentThread().getContextClassLoader();
-                        Thread.currentThread().setContextClassLoader(beanContext.getClassLoader());
-                        try {
-                            final PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
-
-                            final HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext, new ServiceConfiguration(beanContext.getProperties(), appInfo.services));
-
-                            // generate a location if one was not assigned
-                            String location = port.getLocation();
-                            if (location == null) {
-                                location = autoAssignWsLocation(bean, port, contextData, deploymentIdTemplate);
-                            }
-                            if (!location.startsWith("/"))
-                                location = "/" + location;
-                            ejbLocations.put(bean.ejbDeploymentId, location);
-
-                            final ClassLoader classLoader = beanContext.getClassLoader();
-                            if (wsRegistry != null) {
-                                String auth = authMethod;
-                                String realm = realmName;
-                                String transport = transportGuarantee;
-
-                                if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
-                                    auth = portInfo.authMethod;
-                                    realm = portInfo.realmName;
-                                    transport = portInfo.transportGuarantee;
-                                }
-
-                                String context = webContextByEjb.get(bean.ejbClass);
-                                if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
-                                    context = ejbJar.moduleName;
-                                }
-                                final List<String> addresses = wsRegistry.addWsContainer(context, location, container, virtualHost, realm, transport, auth, classLoader);
-
-                                // one of the registered addresses to be the canonical address
-                                final String address = HttpUtil.selectSingleAddress(addresses);
-
-                                if (address != null) {
-                                    // register wsdl location
-                                    portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                                    logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
-                                    ejbAddresses.put(bean.ejbDeploymentId, address);
-                                    addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
-                                }
-                            }
-                        } catch (Throwable e) {
-                            logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
-                        } finally {
-                            Thread.currentThread().setContextClassLoader(old);
+                        // generate a location if one was not assigned
+                        String location = port.getLocation();
+                        if (location == null) {
+                            location = autoAssignWsLocation(bean, port, contextData, deploymentIdTemplate);
                         }
+                        if (!location.startsWith("/"))
+                            location = "/" + location;
+                        ejbLocations.put(bean.ejbDeploymentId, location);
+
+                        final ClassLoader classLoader = beanContext.getClassLoader();
+                        if (wsRegistry != null) {
+                            String auth = authMethod;
+                            String realm = realmName;
+                            String transport = transportGuarantee;
+
+                            if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                                auth = portInfo.authMethod;
+                                realm = portInfo.realmName;
+                                transport = portInfo.transportGuarantee;
+                            }
+
+                            String context = webContextByEjb.get(bean.ejbClass);
+                            if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
+                                context = ejbJar.moduleName;
+                            }
+                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, virtualHost, location, realm, transport, auth);
+
+                            // one of the registered addresses to be the canonical address
+                            final String address = HttpUtil.selectSingleAddress(addresses);
+
+                            if (address != null) {
+                                // register wsdl location
+                                portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                                setWsdl(container, address);
+                                logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
+                                ejbAddresses.put(bean.ejbDeploymentId, address);
+                                addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
+                            }
+                        }
+                    } catch (Throwable e) {
+                        logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
+                    } finally {
+                        Thread.currentThread().setContextClassLoader(old);
                     }
                 }
             }
+        }
+        if (ejbs == null || appInfo.webAppAlone) {
             for (final WebAppInfo webApp : appInfo.webApps) {
                 afterApplicationCreated(appInfo, webApp);
             }
-        }
+        } // else called because of ear case where new ejbs are deployed in webapps
+    }
+
+    protected void setWsdl(final HttpListener listener, final String wsdl) {
+        // no-op
     }
 
     private List<EndpointInfo> addressesForApp(final String appId) {
@@ -373,18 +388,29 @@ public abstract class WsService implements ServerService, SelfManaging {
                 pojoConfiguration = PojoUtil.findPojoConfig(pojoConfiguration, appInfo, webApp);
 
                 final HttpListener container = createPojoWsContainer(classLoader, moduleBaseUrl, port, portInfo.serviceLink,
-                                                                     target, context, webApp.contextRoot, bindings,
-                                                                     new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
+                        target, context, webApp.contextRoot, bindings,
+                        new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
                 if (wsRegistry != null) {
+                    String auth = authMethod;
+                    String realm = realmName;
+                    String transport = transportGuarantee;
+
+                    if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                        auth = portInfo.authMethod;
+                        realm = portInfo.realmName;
+                        transport = portInfo.transportGuarantee;
+                    }
+
                     // give servlet a reference to the webservice container
-                    final List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
+                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, virtualHost, servlet, realm, transport, auth);
 
                     // one of the registered addresses to be the connonical address
                     final String address = HttpUtil.selectSingleAddress(addresses);
 
                     // add address to global registry
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                    setWsdl(container, address);
                     logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                     servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                     addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
@@ -398,8 +424,8 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public void beforeApplicationDestroyed(
-                                                  @Observes
-                                                  final AssemblerBeforeApplicationDestroyed event) {
+            @Observes
+            final AssemblerBeforeApplicationDestroyed event) {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo)) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -472,7 +498,7 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // clear servlet's reference to the webservice container
                     if (this.wsRegistry != null) {
                         try {
-                            this.wsRegistry.clearWsContainer(virtualHost, webApp.contextRoot, servlet.servletName);
+                            this.wsRegistry.clearWsContainer(webApp.contextRoot, virtualHost, servlet);
                         } catch (IllegalArgumentException ignored) {
                             // no-op
                         }

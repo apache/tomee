@@ -22,6 +22,9 @@ import org.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 
 /**
@@ -30,11 +33,13 @@ import java.lang.reflect.Method;
 public class CalendarTimerData extends TimerData {
     private static final long serialVersionUID = 1L;
 
-    private final ScheduleExpression scheduleExpression;
+    private ScheduleExpression scheduleExpression;
+    private boolean autoCreated;
 
-    public CalendarTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, ScheduleExpression scheduleExpression) {
+    public CalendarTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, ScheduleExpression scheduleExpression, boolean auto) {
         super(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig);
         this.scheduleExpression = scheduleExpression;
+        this.autoCreated = auto;
     }
 
     @Override
@@ -46,6 +51,10 @@ public class CalendarTimerData extends TimerData {
         return scheduleExpression;
     }
 
+    public boolean isAutoCreated() {
+        return autoCreated;
+    }
+
     @Override
     public AbstractTrigger<?> initializeTrigger() {
         try {
@@ -53,6 +62,22 @@ public class CalendarTimerData extends TimerData {
         } catch (ParseException e) {
             //TODO how to handle the ParseException
             throw new IllegalArgumentException("Fail to parse schedule expression " + scheduleExpression, e);
+        }
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        super.doWriteObject(out);
+        out.writeBoolean(autoCreated);
+        out.writeObject(scheduleExpression);
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException {
+        super.doReadObject(in);
+        autoCreated = in.readBoolean();
+        try {
+            scheduleExpression = ScheduleExpression.class.cast(in.readObject());
+        } catch (ClassNotFoundException e) {
+            throw new IOException(e);
         }
     }
 

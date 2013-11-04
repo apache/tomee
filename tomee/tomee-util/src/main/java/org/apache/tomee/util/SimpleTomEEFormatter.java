@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.LogRecord;
 
+// Note: don't rely on any dep since this class is often added to main cp
+// even in tomee where only bootstrap and tomcat-juli are present
 public class SimpleTomEEFormatter extends java.util.logging.Formatter {
     private static final String LN = System.getProperty("line.separator");
 

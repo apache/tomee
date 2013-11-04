@@ -19,21 +19,17 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.webbeans.component.InjectionPointBean;
-import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.ejb.common.component.EjbBeanCreatorImpl;
-import org.apache.webbeans.ejb.common.util.EjbUtility;
-import org.apache.webbeans.intercept.InterceptorData;
-import org.apache.webbeans.portable.events.ExtensionLoader;
-import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
+import org.apache.webbeans.intercept.InterceptorResolutionService;
+import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
@@ -46,22 +42,12 @@ import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.xml.WebBeansXMLConfigurator;
 
 import javax.el.ELResolver;
-import javax.enterprise.inject.Specializes;
-import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -71,6 +57,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev:$ $Date:$
  */
 public class OpenEJBLifecycle implements ContainerLifecycle {
+    public static final ThreadLocal<AppInfo> CURRENT_APP_INFO = new ThreadLocal<AppInfo>();
 
     //Logger instance
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
@@ -85,7 +72,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private final boolean skipClassNotFoundError;
 
     /**Deploy discovered beans*/
-    private final BeansDeployer deployer;
+    private final org.apache.webbeans.config.BeansDeployer deployer;
 
     /**XML discovery. */
     //XML discovery is removed from the specification. It is here for next revisions of spec.
@@ -100,11 +87,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**Manages unused conversations*/
     private ScheduledExecutorService service = null;
 
-    //TODO make sure this isn't used and remove it
-    public OpenEJBLifecycle() {
-        this(WebBeansContext.currentInstance());
-    }
-
     public OpenEJBLifecycle(WebBeansContext webBeansContext)
     {
         this.webBeansContext = webBeansContext;
@@ -112,7 +94,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         this.beanManager = webBeansContext.getBeanManagerImpl();
         this.xmlDeployer = new WebBeansXMLConfigurator();
-        this.deployer = new BeansDeployer(this.xmlDeployer, webBeansContext);
+        this.deployer = new org.apache.webbeans.config.BeansDeployer(this.xmlDeployer, webBeansContext);
         this.jndiService = webBeansContext.getService(JNDIService.class);
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();
@@ -180,17 +162,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Deploy the beans
             try {
                 //Load Extensions
-                loadExtensions(appContext);
+                webBeansContext.getExtensionLoader().loadExtensionServices(Thread.currentThread().getContextClassLoader()); // init in OpenEJBLifecycle
 
                 //Initialize contexts
                 this.contextsService.init(startupObject);
-
-                //Configure Default Beans
-                // need to be done before fireBeforeBeanDiscoveryEvent
-                deployer.configureDefaultBeans();
-
-                //Fire Event
-                deployer.fireBeforeBeanDiscoveryEvent();
 
                 //Scanning process
                 logger.debug("Scanning classpaths for beans artifacts.");
@@ -205,116 +180,29 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 //Scan
                 this.scannerService.scan();
 
+                // just to let us write custom CDI Extension using our internals easily
+                CURRENT_APP_INFO.set(StartupObject.class.cast(startupObject).getAppInfo());
+
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
-                deployer.deployFromXML(scannerService);
-
-                //Checking stereotype conditions
-                deployer.checkStereoTypes(scannerService);
-
-                //Discover classpath classes
-                deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
-
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-                    if (!beanContext.isCdiCompatible()) continue;
-
-                    final Class implClass = beanContext.getManagedClass();
-
-                    //Define annotation type
-                    final AnnotatedType<Object> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
-
-                    //Fires ProcessAnnotatedType
-                    final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
-
-                    // TODO Can you really veto an EJB?
-                    //if veto() is called
-                    if (processAnnotatedEvent.isVeto()) {
-                        continue;
-                    }
-
-                    final CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
-                    bean.setAnnotatedType((AnnotatedType<Object>) processAnnotatedEvent.getAnnotatedType()); // update AnnotatedType -- can be updated in extensions
-
-                    beanContext.set(CdiEjbBean.class, bean);
-                    beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
-                    beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
-
-                    EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
-
-                    beanContext.initIsPassivationScope();
-
-                    webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
-
-                    Class clazz = beanContext.getBeanClass();
-                    while (clazz.isAnnotationPresent(Specializes.class)) {
-                        clazz = clazz.getSuperclass();
-
-                        if (clazz == null || Object.class.equals(clazz)) break;
-
-                        final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
-
-                        EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
-
-                        //Define meta-data
-                        ejbBeanCreator.defineSerializable();
-                        ejbBeanCreator.defineStereoTypes();
-                        ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
-                        ejbBeanCreator.defineQualifier();
-                        ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
-
-                        bean.specialize(superBean);
-
-                        EjbUtility.defineSpecializedData(clazz, bean);
-                    }
-                }
-
-                //Check Specialization
-                deployer.checkSpecializations(scannerService);
-
-                //Fire Event
-                deployer.fireAfterBeanDiscoveryEvent();
-
-                //Validate injection Points
-                deployer.validateInjectionPoints();
-
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-                    if (!beanContext.isCdiCompatible() || beanContext.isDynamicallyImplemented()) continue;
-                    final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
-
-                    // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.
-                    final List<InterceptorData> datas = bean.getInterceptorStack();
-
-                    final List<org.apache.openejb.core.interceptor.InterceptorData> converted = new ArrayList<org.apache.openejb.core.interceptor.InterceptorData>();
-                    for (InterceptorData data : datas) {
-                        // todo this needs to use the code in InterceptorBindingBuilder that respects override rules and private methods
-                        final org.apache.openejb.core.interceptor.InterceptorData openejbData = org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass());
-                        if (data.isDefinedInMethod()) {
-                            final Method method = data.getInterceptorBindingMethod();
-                            beanContext.addCdiMethodInterceptor(method, openejbData);
-                        } else {
-                            converted.add(openejbData);
-                        }
-                    }
-
-                    beanContext.setCdiInterceptors(converted);
-                }
-
-                //Fire Event
-                deployer.fireAfterDeploymentValidationEvent();
-
-                for (BeanContext beanContext : stuff.getBeanContexts()) {
-
-                    final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
-
-                    if (bean == null) continue;
-
-                    final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-                    manager.addBean(new NewCdiEjbBean<Object>(bean));
-                }
-
+                deployer.deploy(scannerService);
             } catch (Exception e1) {
                 Assembler.logger.error("CDI Beans module deployment failed", e1);
                 throw new OpenEJBRuntimeException(e1);
+            } finally {
+                CURRENT_APP_INFO.remove();
             }
+
+            for (final BeanContext bc : stuff.getBeanContexts()) {
+                final CdiEjbBean cdiEjbBean = bc.get(CdiEjbBean.class);
+                if (cdiEjbBean == null) {
+                    continue;
+                }
+
+                cdiEjbBean.defineBeanInterceptorStack();
+                bc.mergeOWBAndOpenEJBInfo();
+                bc.set(InterceptorResolutionService.BeanInterceptorInfo.class, InjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).getInterceptorInfo());
+            }
+
             //Start actual starting on sub-classes
             afterStartApplication(startupObject);
         } finally {
@@ -326,83 +214,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
-    }
-
-    public static class NewEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
-
-        public NewEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
-            super(beanContext, webBeansContext);
-        }
-
-
-    }
-
-    private void loadExtensions(AppContext appContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        final ExtensionLoader extensionLoader = webBeansContext.getExtensionLoader();
-
-        // Load regularly visible Extensions
-        extensionLoader.loadExtensionServices(Thread.currentThread().getContextClassLoader()); // init in OpenEJBLifecycle
-
-
-        // Load any potentially misplaced extensions -- TCK seems to be full of them
-        // This could perhaps be improved or addressed elsewhere
-//        final String s = "WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension";
-//        final ArrayList<URL> list = Collections.list(appContext.getClassLoader().getResources(s));
-//        for (URL url : list) {
-//            final String className = readContents(url).trim();
-//
-//            final Class<?> extensionClass = appContext.getClassLoader().loadClass(className);
-//
-//            if (Extension.class.isAssignableFrom(extensionClass)) {
-//                final Extension extension = (Extension) extensionClass.newInstance();
-//                extensionLoader.addExtension(extension);
-//            }
-//        }
-    }
-
-    private void deployManagedBeans(Set<Class<?>> beanClasses, List<BeanContext> ejbs) {
-        Set<Class<?>> managedBeans = new HashSet<Class<?>>(beanClasses);
-        for (BeanContext beanContext: ejbs) {
-            if (beanContext.getComponentType().isSession()) {
-                managedBeans.remove(beanContext.getBeanClass());
-            }
-        }
-        // Start from the class
-        final Map<Class<?>, AnnotatedType<?>> annotatedTypes = new LinkedHashMap<Class<?>, AnnotatedType<?>>();
-        for (Class<?> implClass : managedBeans) { // create all annotated types first to be sure extensions can use it during the fire
-            //Define annotation type
-            final AnnotatedType<?> at = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
-            if (at != null) {
-                annotatedTypes.put(implClass, at);
-            } else {
-                logger.warning("an error occured create AnnotatedType for class "
-                        + implClass.getName() + ". Skipping.");
-            }
-        }
-        for (Map.Entry<Class<?>, AnnotatedType<?>> implClass : annotatedTypes.entrySet()) {
-            //Fires ProcessAnnotatedType
-            final ProcessAnnotatedTypeImpl<?> processAnnotatedEvent;
-            try {
-                processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(implClass.getValue());
-            } catch (RuntimeException cnfe) {
-                if (skipClassNotFoundError && rootCauseIsClassNotFound(cnfe)) {
-                    logger.error("an error occured firing ProcessAnnotatedEvent for class "
-                        + implClass.getValue().getJavaClass().getName() + ". Skipping the bean.");
-                    logger.debug("Skipping bean cause", cnfe);
-                    continue;
-                } else {
-                    throw cnfe;
-                }
-            }
-
-            //if veto() is called
-            if (processAnnotatedEvent.isVeto()) {
-                continue;
-            }
-
-            deployer.defineManagedBean((Class<Object>) implClass.getKey(), (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
-        }
-        annotatedTypes.clear();
     }
 
     private static boolean rootCauseIsClassNotFound(final RuntimeException re) {
@@ -431,7 +242,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (beanManager instanceof WebappBeanManager) {
                 ((WebappBeanManager) beanManager).beforeStop();
             }
-            this.beanManager.fireEvent(new BeforeShutdownImpl(), BeansDeployer.EMPTY_ANNOTATION_ARRAY);
+            this.beanManager.fireEvent(new BeforeShutdownImpl());
 
             //Destroys context
             this.contextsService.destroy(null);
@@ -450,9 +261,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             //Delete Resolutions Cache
             beanManager.getInjectionResolver().clearCaches();
-
-            //Delte proxies
-            webBeansContext.getProxyFactory().clear();
 
             //Delete AnnotateTypeCache
             webBeansContext.getAnnotatedElementFactory().clear();
@@ -488,14 +296,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     public ContextsService getContextService()
     {
         return contextsService;
-    }
-
-    /**
-     * @return the deployer
-     */
-    protected BeansDeployer getDeployer()
-    {
-        return deployer;
     }
 
     /**
@@ -607,19 +407,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Comment out for commit OWB-502
         //ContextFactory.cleanUpContextFactory();
 
-        this.cleanupShutdownThreadLocals();
-
         WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
-    }
-
-    /**
-     * Ensures that all ThreadLocals, which could have been set in this
-     * (shutdown-) Thread, are removed in order to prevent memory leaks.
-     */
-    private void cleanupShutdownThreadLocals()
-    {
-        // TODO maybe there are more to cleanup
-        InjectionPointBean.removeThreadLocal();
     }
 
     /**

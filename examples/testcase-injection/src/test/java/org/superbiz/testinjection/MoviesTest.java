@@ -70,7 +70,6 @@ public class MoviesTest extends TestCase {
             userTransaction.commit();
         }
 
-
     }
 }
 //END SNIPPET: code

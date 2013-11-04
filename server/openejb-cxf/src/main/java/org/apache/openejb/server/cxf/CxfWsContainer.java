@@ -22,55 +22,72 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.management.ObjectName;
 
 public abstract class CxfWsContainer implements HttpListener {
     protected final Bus bus;
     protected final PortData port;
     protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
-    protected final HTTPTransportFactory httpTransportFactory;
+    protected HTTPTransportFactory httpTransportFactory;
     protected final ServiceConfiguration serviceConfiguration;
+    private ObjectName jmxName;
 
-    public CxfWsContainer(final Bus bus, final PortData port, final ServiceConfiguration config) {
+    public CxfWsContainer(final Bus bus, final HTTPTransportFactory httpTransportFactory, final PortData port, final ServiceConfiguration config) {
         this.bus = bus;
         this.port = port;
         this.serviceConfiguration = config;
-        
-        final List<String> ids = new ArrayList<String>();
-        ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
-
-        httpTransportFactory = new HttpTransportFactory(bus);
-        httpTransportFactory.setTransportIds(ids);
+        this.httpTransportFactory = httpTransportFactory;
     }
 
     public void start() {
         endpoint = createEndpoint();
-        endpoint.publish("http://nopath");
+        endpoint.publish("http://" + getFakeUrl()); // needs to be unique
         destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
+
+        // register an MBean for this endpoint
+        this.jmxName = registerMBean();
+    }
+
+    protected String getFakeUrl() {
+        return "" + endpoint.hashCode();
     }
 
     protected abstract CxfEndpoint createEndpoint();
+    protected abstract ObjectName registerMBean();
+
+    protected abstract void setWsldUrl(String wsdl);
 
     public void destroy() {
+        unregisterMBean();
+
         if (endpoint != null) {
             endpoint.stop();
             endpoint = null;
         }
-        // if (destination != null) {
-        //    destination.shutdown();
-        //    destination = null;
-        // }
+    }
+
+    private void unregisterMBean() {
+        LocalMBeanServer.unregisterSilently(jmxName);
     }
 
     @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
-        destination.invoke(null, request.getServletContext(), request, response);
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        try {
+            destination.invoke(null, request.getServletContext(), request, response);
+        } finally {
+            if (oldLoader != null) {
+                CxfUtil.clearBusLoader(oldLoader);
+            }
+        }
     }
+
 }

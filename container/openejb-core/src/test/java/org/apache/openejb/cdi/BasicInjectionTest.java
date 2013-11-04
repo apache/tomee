@@ -20,7 +20,9 @@ import junit.framework.TestCase;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +43,7 @@ import java.net.URI;
 public class BasicInjectionTest extends TestCase {
 
     @Module
+    @Classes(cdi = true, value = { Configuration.class })
     public StatelessBean app() throws Exception {
 
         final StatelessBean bean = new StatelessBean(WidgetBean.class);
@@ -49,6 +52,14 @@ public class BasicInjectionTest extends TestCase {
         return bean;
     }
 
+    @Inject
+    private WidgetBean bean;
+
+    @Test
+    public void test() {
+        assertNotNull(bean.getJmsLocation());
+        assertNotNull(bean.getWebLocation());
+    }
 
 
     public static class WidgetBean {

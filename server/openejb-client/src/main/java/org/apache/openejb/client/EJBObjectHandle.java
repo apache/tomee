@@ -16,60 +16,72 @@
  */
 package org.apache.openejb.client;
 
+import javax.ejb.EJBObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBObject;
-
 public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle {
 
+    private static final long serialVersionUID = -4428541526493118024L;
     protected transient EJBObjectProxy ejbObjectProxy;
     protected transient EJBObjectHandler handler;
+    private transient ProtocolMetaData metaData;
 
     public EJBObjectHandle() {
     }
 
-    public EJBObjectHandle(EJBObjectProxy proxy) {
+    public EJBObjectHandle(final EJBObjectProxy proxy) {
         this.ejbObjectProxy = proxy;
         this.handler = ejbObjectProxy.getEJBObjectHandler();
     }
 
-    protected void setEJBObjectProxy(EJBObjectProxy ejbObjectProxy) {
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    protected void setEJBObjectProxy(final EJBObjectProxy ejbObjectProxy) {
         this.ejbObjectProxy = ejbObjectProxy;
         this.handler = ejbObjectProxy.getEJBObjectHandler();
     }
 
+    @Override
     public EJBObject getEJBObject() throws RemoteException {
         return (EJBObject) ejbObjectProxy;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
-
+        handler.client.setMetaData(metaData);
         handler.client.writeExternal(out);
 
-        EJBMetaDataImpl ejb = handler.ejb;
+        final EJBMetaDataImpl ejb = handler.ejb;
         out.writeObject(getClassName(ejb.homeClass));
         out.writeObject(getClassName(ejb.remoteClass));
         out.writeObject(getClassName(ejb.keyClass));
         out.writeByte(ejb.type);
         out.writeUTF(ejb.deploymentID);
         out.writeShort(ejb.deploymentCode);
+
+        handler.server.setMetaData(metaData);
         handler.server.writeExternal(out);
+
         out.writeObject(handler.primaryKey);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        ClientMetaData client = new ClientMetaData();
-        EJBMetaDataImpl ejb = new EJBMetaDataImpl();
-        ServerMetaData server = new ServerMetaData();
+        final ClientMetaData client = new ClientMetaData();
+        final EJBMetaDataImpl ejb = new EJBMetaDataImpl();
+        final ServerMetaData server = new ServerMetaData();
 
+        client.setMetaData(metaData);
         client.readExternal(in);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -84,18 +96,20 @@ public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle
         ejb.deploymentID = in.readUTF();
         ejb.deploymentCode = in.readShort();
 
+        server.setMetaData(metaData);
         server.readExternal(in);
-        Object primaryKey = in.readObject();
 
-        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final Object primaryKey = in.readObject();
+
+        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, null);
         ejbObjectProxy = handler.createEJBObjectProxy();
     }
 
-    private static String getClassName(Class clazz) {
-        return (clazz == null) ? null: clazz.getName();
+    private static String getClassName(final Class clazz) {
+        return (clazz == null) ? null : clazz.getName();
     }
 
-    private static Class loadClass(ClassLoader classLoader, String homeClassName) throws ClassNotFoundException {
+    private static Class loadClass(final ClassLoader classLoader, final String homeClassName) throws ClassNotFoundException {
         return (homeClassName == null) ? null : Class.forName(homeClassName, true, classLoader);
     }
 }

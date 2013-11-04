@@ -17,11 +17,11 @@
  */
 package org.apache.openejb.client;
 
-import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
 /**
@@ -32,23 +32,23 @@ public class UsernamePasswordCallbackHandler implements CallbackHandler {
     private final String username;
     private final String password;
 
-    public UsernamePasswordCallbackHandler(String username, String password) {
+    public UsernamePasswordCallbackHandler(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
 
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        for (int i = 0; i < callbacks.length; i++) {
-            Callback callback = callbacks[i];
+    @Override
+    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (final Callback callback : callbacks) {
             if (callback instanceof PasswordCallback) {
-                PasswordCallback passwordCallback = (PasswordCallback) callback;
+                final PasswordCallback passwordCallback = (PasswordCallback) callback;
                 if (password == null) {
                     passwordCallback.setPassword(null);
                 } else {
                     passwordCallback.setPassword(password.toCharArray());
                 }
             } else if (callback instanceof NameCallback) {
-                NameCallback nameCallback = (NameCallback) callback;
+                final NameCallback nameCallback = (NameCallback) callback;
                 if (username == null) {
                     nameCallback.setName(null);
                 } else {

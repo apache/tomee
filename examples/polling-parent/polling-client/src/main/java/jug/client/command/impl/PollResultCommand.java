@@ -25,6 +25,7 @@ import static jug.client.command.impl.PollResultCommand.RESULT_CMD;
 
 @Command(name = RESULT_CMD, usage = RESULT_CMD + " <name>", description = "result of a poll")
 public class PollResultCommand extends AbstractCommand {
+
     public static final String RESULT_CMD = "result";
 
     @Override

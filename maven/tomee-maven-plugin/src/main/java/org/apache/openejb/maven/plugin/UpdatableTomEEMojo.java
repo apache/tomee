@@ -84,8 +84,8 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             forceReloadable = true;
         }
 
-        if (removeTomeeWebapp) {
-            getLog().warn("TomEE webapp is asked to be removed (<removeTomeeWebapp>true</removeTomeeWebapp>) so you can use reload feature");
+        if (removeTomeeWebapp && !ejbRemote) {
+            getLog().warn("TomEE webapp is asked to be removed (<ejbRemote>true> or <removeTomeeWebapp>true</removeTomeeWebapp>) so you can use reload feature");
         }
 
         super.run();
@@ -330,8 +330,8 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     }
 
     private Deployer deployer() {
-        if (removeTomeeWebapp) {
-            throw new OpenEJBRuntimeException("Can't use reload feature without TomEE Webapp, please set removeTomeeWebapp to false");
+        if (removeTomeeWebapp && !ejbRemote) {
+            throw new OpenEJBRuntimeException("Can't use reload feature without TomEE Webapp, please set removeTomeeWebapp to false or ejbRemote to true");
         }
 
         final Properties properties = new Properties();

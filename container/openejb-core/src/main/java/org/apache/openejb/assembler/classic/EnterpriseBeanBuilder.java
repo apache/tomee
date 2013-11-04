@@ -22,6 +22,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Duration;
@@ -77,6 +78,10 @@ class EnterpriseBeanBuilder {
 
     public BeanContext build() throws OpenEJBException {
         Class ejbClass = loadClass(bean.ejbClass, "classNotFound.ejbClass");
+
+        if (DynamicSubclass.isDynamic(ejbClass)) {
+            ejbClass = DynamicSubclass.createSubclass(ejbClass, moduleContext.getClassLoader());
+        }
 
         Class home = null;
         Class remote = null;
@@ -163,6 +168,7 @@ class EnterpriseBeanBuilder {
         deployment.setEjbName(bean.ejbName);
 
         deployment.setRunAs(bean.runAs);
+        deployment.setRunAsUser(bean.runAsUser);
 
         deployment.getInjections().addAll(injections);
 

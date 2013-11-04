@@ -19,23 +19,23 @@ package org.apache.openejb.server.ejbd;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.client.proxy.ProxyManager;
-import org.apache.openejb.client.proxy.InvocationHandler;
-import org.apache.openejb.client.EJBObjectHandler;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.client.EJBObjectHandler;
+import org.apache.openejb.client.proxy.InvocationHandler;
+import org.apache.openejb.client.proxy.ProxyManager;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.ejb.Remote;
 import javax.naming.Context;
@@ -81,7 +81,7 @@ public class PropertiesPropogationTest extends TestCase {
         assertTrue(beanInfo.properties.containsKey("openejb.client.color"));
         assertEquals("orange", beanInfo.properties.get("color"));
         assertEquals("red", beanInfo.properties.get("openejb.client.color"));
-        
+
         assembler.createApplication(ejbJarInfo);
 
         ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -93,7 +93,6 @@ public class PropertiesPropogationTest extends TestCase {
 
         assertEquals("orange", info.getProperties().get("color"));
         assertEquals("red", info.getProperties().get("openejb.client.color"));
-
 
         Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
@@ -116,13 +115,14 @@ public class PropertiesPropogationTest extends TestCase {
         assertEquals("red", properties.getProperty("openejb.client.color"));
     }
 
-
     @Remote
     public static interface Widget {
+
         public Object echo(Object o);
     }
 
     public static class WidgetBean implements Widget {
+
         public Object echo(Object o) {
             return o;
         }

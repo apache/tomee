@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import java.io.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
@@ -27,32 +27,54 @@ import java.lang.reflect.Proxy;
  */
 public class EjbObjectInputStream extends ObjectInputStream {
 
-    public EjbObjectInputStream(InputStream in) throws IOException {
+    public EjbObjectInputStream(final InputStream in) throws IOException {
         super(in);
     }
 
-    protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+    @Override
+    protected Class<?> resolveClass(final ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+        final String n = classDesc.getName();
+        final ClassLoader classloader = getClassloader();
         try {
-            return Class.forName(classDesc.getName(), false, getClassloader());
+            return Class.forName(n, false, classloader);
         } catch (ClassNotFoundException e) {
-            String n = classDesc.getName();
-            if (n.equals("boolean")) return boolean.class;
-            if (n.equals("byte")) return byte.class;
-            if (n.equals("char")) return char.class;
-            if (n.equals("short")) return short.class;
-            if (n.equals("int")) return int.class;
-            if (n.equals("long")) return long.class;
-            if (n.equals("float")) return float.class;
-            if (n.equals("double")) return double.class;
 
-            throw e;
+            if (n.equals("boolean")) {
+                return boolean.class;
+            }
+            if (n.equals("byte")) {
+                return byte.class;
+            }
+            if (n.equals("char")) {
+                return char.class;
+            }
+            if (n.equals("short")) {
+                return short.class;
+            }
+            if (n.equals("int")) {
+                return int.class;
+            }
+            if (n.equals("long")) {
+                return long.class;
+            }
+            if (n.equals("float")) {
+                return float.class;
+            }
+            if (n.equals("double")) {
+                return double.class;
+            }
+
+            //Last try - Let runtime try and find it.
+            return Class.forName(n, false, null);
         }
     }
 
-    protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
-        Class[] cinterfaces = new Class[interfaces.length];
-        for (int i = 0; i < interfaces.length; i++)
+    @Override
+    protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
+        final Class[] cinterfaces = new Class[interfaces.length];
+        for (int i = 0; i < interfaces.length; i++) {
             cinterfaces[i] = getClassloader().loadClass(interfaces[i]);
+        }
 
         try {
             return Proxy.getProxyClass(getClassloader(), cinterfaces);

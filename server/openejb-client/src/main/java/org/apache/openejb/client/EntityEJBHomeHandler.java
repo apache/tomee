@@ -16,29 +16,29 @@
  */
 package org.apache.openejb.client;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 
 public class EntityEJBHomeHandler extends EJBHomeHandler {
 
     public EntityEJBHomeHandler() {
     }
 
-    public EntityEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public EntityEJBHomeHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_FIND, ejb, method, args, null);
+    @Override
+    protected Object findX(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_FIND, ejb, method, args, null, client.getSerializer());
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
-        Object primKey = null;
-        EJBObjectHandler handler = null;
-        Object[] primaryKeys = null;
+        Object primKey;
+        EJBObjectHandler handler;
+        final Object[] primaryKeys;
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
@@ -53,7 +53,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 if (primKey == null) {
                     return null;
                 } else {
-                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                    handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                     handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                     registerHandler(ejb.deploymentID + ":" + primKey, handler);
                     return handler.createEJBObjectProxy();
@@ -66,7 +66,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
                     if (primKey != null) {
-                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                         registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();
@@ -80,7 +80,7 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 for (int i = 0; i < primaryKeys.length; i++) {
                     primKey = primaryKeys[i];
                     if (primKey != null) {
-                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey);
+                        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
                         registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();
@@ -93,14 +93,17 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
         }
     }
 
-    protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
-        Object primKey = args[0];
+    @Override
+    protected Object removeByPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        final Object primKey = args[0];
 
-        if (primKey == null) throw new NullPointerException("The primary key is null.");
+        if (primKey == null) {
+            throw new NullPointerException("The primary key is null.");
+        }
 
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY, ejb, method, args, primKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_PKEY, ejb, method, args, primKey, client.getSerializer());
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
@@ -117,20 +120,27 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
         }
     }
 
-    protected Object removeWithHandle(Method method, Object[] args, Object proxy) throws Throwable {
-        if (args[0] == null) throw new RemoteException("Handler is null");
+    @Override
+    protected Object removeWithHandle(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        if (args[0] == null) {
+            throw new RemoteException("Handler is null");
+        }
 
-        Handle handle = (Handle) args[0];
+        final Handle handle = (Handle) args[0];
 
-        EJBObject ejbObject = handle.getEJBObject();
-        if (ejbObject == null) throw new NullPointerException("The handle.getEJBObject() is null.");
+        final EJBObject ejbObject = handle.getEJBObject();
+        if (ejbObject == null) {
+            throw new NullPointerException("The handle.getEJBObject() is null.");
+        }
 
-        Object primKey = ejbObject.getPrimaryKey();
-        if (primKey == null) throw new NullPointerException("The handle.getEJBObject().getPrimaryKey() is null.");
+        final Object primKey = ejbObject.getPrimaryKey();
+        if (primKey == null) {
+            throw new NullPointerException("The handle.getEJBObject().getPrimaryKey() is null.");
+        }
 
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_HOME_REMOVE_BY_HANDLE, ejb, method, args, primKey, client.getSerializer());
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:

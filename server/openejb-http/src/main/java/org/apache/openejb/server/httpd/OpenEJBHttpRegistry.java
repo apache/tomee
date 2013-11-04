@@ -82,7 +82,7 @@ public class OpenEJBHttpRegistry {
         private final HttpListener delegate;
         private final ClassLoader classLoader;
 
-        private ClassLoaderHttpListener(HttpListener delegate, ClassLoader classLoader) {
+        protected ClassLoaderHttpListener(HttpListener delegate, ClassLoader classLoader) {
             this.delegate = delegate;
             this.classLoader = classLoader;
         }

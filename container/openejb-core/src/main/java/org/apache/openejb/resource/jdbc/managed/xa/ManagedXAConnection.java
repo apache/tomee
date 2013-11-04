@@ -26,12 +26,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ManagedXAConnection extends ManagedConnection {
-    public ManagedXAConnection(final DataSource ds, final Connection connection, final TransactionManager txMgr) throws SQLException {
+    private final XAConnection xaConnection;
+
+    public ManagedXAConnection(final DataSource ds, final XAConnection xa, final Connection connection, final TransactionManager txMgr) throws SQLException {
         super(ds, connection, txMgr);
+        this.xaConnection = xa;
     }
 
     @Override
     public XAResource getXAResource() throws SQLException {
-        return ((XAConnection) delegate).getXAResource();
+        return xaConnection.getXAResource();
     }
 }

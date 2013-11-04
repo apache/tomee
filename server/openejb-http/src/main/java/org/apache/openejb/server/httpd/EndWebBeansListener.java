@@ -20,12 +20,10 @@ import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.cdi.WebappWebBeansContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.conversation.ConversationManager;
 import org.apache.webbeans.el.ELContextStore;
 import org.apache.webbeans.spi.FailOverService;
-import org.apache.webbeans.web.context.WebContextsService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
@@ -35,9 +33,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @version $Rev$ $Date$
+ *
+ * Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {
 
@@ -62,19 +64,12 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     public EndWebBeansListener(WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
-        this.failoverService = this.webBeansContext.getService(FailOverService.class);
-        this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
-    }
-
-    /**
-     * Ensures that all ThreadLocals, which could have been set in this
-     * request's Thread, are removed in order to prevent memory leaks.
-     */
-    private void cleanupRequestThreadLocals() {
-        // TODO maybe there are more to cleanup
-
-        InjectionPointBean.removeThreadLocal();
-        WebContextsService.removeThreadLocals();
+        if (webBeansContext != null) {
+            this.failoverService = this.webBeansContext.getService(FailOverService.class);
+            this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
+        } else {
+            this.contextKey = "notused";
+        }
     }
 
     /**
@@ -82,6 +77,10 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     @Override
     public void requestDestroyed(ServletRequestEvent event) {
+        if (webBeansContext == null) {
+            return;
+        }
+
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying a request : [{0}]", event.getServletRequest().getRemoteAddr());
         }
@@ -107,12 +106,10 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
                 elStore.destroyELContextStore();
             }
 
-
             webBeansContext.getContextsService().endContext(RequestScoped.class, event);
             if (webBeansContext instanceof WebappWebBeansContext) { // end after child
                 ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(RequestScoped.class, event);
             }
-            cleanupRequestThreadLocals();
         } finally {
             ThreadSingletonServiceImpl.enter((WebBeansContext) oldContext);
         }
@@ -139,13 +136,20 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
      */
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
+        if (webBeansContext == null) {
+            return;
+        }
+
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying a session with session id : [{0}]", event.getSession().getId());
         }
 
-        this.webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
-        if (webBeansContext instanceof WebappWebBeansContext) { // end after child
-            ((WebappWebBeansContext) webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
+        // ensure session ThreadLocal is set
+        webBeansContext.getContextsService().startContext(SessionScoped.class, event.getSession());
+
+        webBeansContext.getContextsService().endContext(SessionScoped.class, event.getSession());
+        if (WebappWebBeansContext.class.isInstance(webBeansContext)) { // end after child
+            WebappWebBeansContext.class.cast(webBeansContext).getParent().getContextsService().endContext(SessionScoped.class, event.getSession());
         }
 
         ConversationManager conversationManager = webBeansContext.getConversationManager();
@@ -155,6 +159,10 @@ public class EndWebBeansListener implements ServletRequestListener, HttpSessionL
 
     @Override
     public void sessionWillPassivate(HttpSessionEvent event) {
+        if (webBeansContext == null) {
+            return;
+        }
+
         if (failoverService != null && failoverService.isSupportPassivation()) {
             failoverService.sessionWillPassivate(event.getSession());
         }

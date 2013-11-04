@@ -49,8 +49,7 @@ public class CrossClassLoaderJndiReference extends IntraVmJndiReference {
 
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             ObjectInputStream in = new EjbObjectInputStream(bais);
-            Object copy = in.readObject();
-            return copy;
+            return in.readObject();
         } finally {
             IntraVmCopyMonitor.postCrossClassLoaderOperation();
         }

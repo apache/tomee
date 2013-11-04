@@ -24,43 +24,54 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
     public EntityEJBObjectHandler() {
     }
 
-    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public EntityEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public EntityEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public EntityEJBObjectHandler(final EJBMetaDataImpl ejb,
+                                  final ServerMetaData server,
+                                  final ClientMetaData client,
+                                  final Object primaryKey,
+                                  final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
         registryId = ejb.deploymentID + ":" + primaryKey;
         registerHandler(registryId, this);
     }
 
+    @Override
     public Object getRegistryId() {
         return registryId;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return primaryKey;
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
-        if (args[0] == null) return Boolean.FALSE;
+    @Override
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        if (args[0] == null) {
+            return Boolean.FALSE;
+        }
 
-        EJBObjectProxy ejbObject = (EJBObjectProxy) args[0];
-        EJBObjectHandler that = ejbObject.getEJBObjectHandler();
+        final EJBObjectProxy ejbObject = (EJBObjectProxy) args[0];
+        final EJBObjectHandler that = ejbObject.getEJBObjectHandler();
 
-        return new Boolean(this.registryId.equals(that.registryId));
+        return this.registryId.equals(that.registryId);
 
     }
 
-    protected Object equals(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object equals(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return isIdentical(method, args, proxy);
     }
 
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object remove(final Method method, final Object[] args, final Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey, client.getSerializer());
 
-        EJBResponse res = request(req);
+        final EJBResponse res = request(req);
 
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
@@ -77,6 +88,7 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
         }
     }
 
+    @Override
     protected void invalidateReference() {
         // entity bean object references should not be invalidated since they
         // will automatically hook up to a new instance of the bean using the

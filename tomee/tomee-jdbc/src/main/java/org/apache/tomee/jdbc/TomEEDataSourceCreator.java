@@ -24,6 +24,7 @@ import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -36,12 +37,12 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
 
 import javax.management.ObjectName;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -69,7 +70,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final String driver, final Properties properties) {
+    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
         final Properties converted = new Properties();
         converted.setProperty("name", name);
 
@@ -78,7 +79,17 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         updateProperties(prop, converted, driver);
         final PoolConfiguration config = build(PoolProperties.class, converted);
-        return build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
+        final TomEEDataSource ds = build(TomEEDataSource.class, new TomEEDataSource(config, name), converted);
+
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            cleanProperty(ds, "xadatasource");
+
+            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+            ds.setDataSource(xaDs);
+        }
+
+        return ds;
     }
 
     private void updateProperties(final SuperProperties properties, final Properties converted, final String driver) {
@@ -190,8 +201,8 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public void doDestroy(final DataSource object) throws Throwable {
-        org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) object;
+    protected void doDestroy(CommonDataSource dataSource) throws Throwable {
+        org.apache.tomcat.jdbc.pool.DataSource ds = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
         if (ds instanceof TomEEDataSource) {
             ((TomEEDataSource) ds).internalJMXUnregister();
         }
@@ -218,6 +229,16 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             } catch (Throwable e) {
                 LOGGER.error("Can't create DataSource", e);
             }
+        }
+
+        @Override
+        protected void registerJmx() {
+            // no-op
+        }
+
+        @Override
+        protected void unregisterJmx() {
+            // no-op
         }
 
         @Override
@@ -252,7 +273,11 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             }
 
             // prevent overriding of the configuration
-            return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            try {
+                return (PoolConfiguration) Proxy.newProxyInstance(TomEEDataSourceCreator.class.getClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            } catch (final Throwable e) {
+                return (PoolConfiguration) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_POOL_CLASS, new ReadOnlyConnectionpool(pool));
+            }
         }
 
         private void initJmx(final String name) {
@@ -262,7 +287,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                     if (pool.getJmxPool()!=null) {
                         LocalMBeanServer.get().registerMBean(pool.getJmxPool(), internalOn);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error("Unable to register JDBC pool with JMX", e);
                 }
             } catch (Exception ignored) {
@@ -274,24 +299,10 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
             if (internalOn != null) {
                 try {
                     LocalMBeanServer.get().unregisterMBean(internalOn);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error("Unable to unregister JDBC pool with JMX", e);
                 }
             }
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            final Connection connection = super.getConnection();
-            return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
-        }
-
-        @Override
-        public Connection getConnection(final String u, final String p) throws SQLException {
-            final Connection connection = super.getConnection(u, p);
-            return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { Connection.class }, new ContantHashCodeHandler(connection, connection.hashCode()));
         }
     }
 
@@ -304,8 +315,12 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            if (!(method.getName().startsWith("set") && args != null && args.length == 1 && Void.TYPE.equals(method.getReturnType()))) {
+            final String name = method.getName();
+            if (!(name.startsWith("set") && args != null && args.length == 1 && Void.TYPE.equals(method.getReturnType()))) {
                 return method.invoke(delegate, args);
+            }
+            if (name.equals("setDataSource")) {
+                delegate.setDataSource(args[0]);
             }
             return null;
         }
@@ -332,28 +347,6 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
                 }
             }
             return con;
-        }
-    }
-
-    private static class ContantHashCodeHandler implements InvocationHandler { // will be fixed in tomcat-jdbc in next version
-        private final Object delegate;
-        private final int hashCode;
-
-        public ContantHashCodeHandler(final Object object, int hashCode) {
-            this.delegate = object;
-            this.hashCode = hashCode;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if ("hashCode".equals(method.getName())) {
-                return hashCode;
-            }
-            try {
-                return method.invoke(delegate, args);
-            } catch (InvocationTargetException ite) {
-                throw ite.getCause();
-            }
         }
     }
 }

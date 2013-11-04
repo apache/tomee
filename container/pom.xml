@@ -20,7 +20,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>container</artifactId>
@@ -35,5 +35,6 @@
     <module>openejb-jee-accessors</module>
     <module>openejb-junit</module>
     <module>openejb-jpa-integration</module>
+    <module>openejb-concurrency-utilities-ee</module>
   </modules>
 </project>

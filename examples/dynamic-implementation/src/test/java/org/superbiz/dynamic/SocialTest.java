@@ -25,6 +25,7 @@ import javax.ejb.embeddable.EJBContainer;
 import static junit.framework.Assert.assertTrue;
 
 public class SocialTest {
+
     private static SocialBean social;
     private static EJBContainer container;
 

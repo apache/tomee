@@ -17,11 +17,11 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm.ClassWriter;
-import org.apache.xbean.asm.Label;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.Type;
+import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm4.Label;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -147,7 +147,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     }
 
     public static Class createProxy(final Class<?> classToProxy, final ClassLoader cl, final Class... interfaces) {
-        return createProxy(classToProxy, cl, classToProxy.getName() + "$LocalBeanProxy", interfaces);
+        return createProxy(classToProxy, cl, classToProxy.getName() + "$$LocalBeanProxy", interfaces);
     }
 
     public static byte[] generateProxy(final Class<?> classToProxy, final String proxyName, final Class<?>... interfaces) throws ProxyGenerationException {
@@ -241,11 +241,15 @@ public class LocalBeanProxyFactory implements Opcodes {
         return false;
     }
 
-    private static void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
+    public static void processMethod(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
         if ("<init>".equals(method.getName())) {
             return;
         }
 
+        visit(cw, method, proxyName, handlerName).visitEnd();
+    }
+
+    public static MethodVisitor visit(ClassWriter cw, Method method, String proxyName, String handlerName) throws ProxyGenerationException {
         final Class<?> returnType = method.getReturnType();
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Class<?>[] exceptionTypes = method.getExceptionTypes();
@@ -401,7 +405,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             for (int i = 0; i < exceptionTypes.length; i++) {
                 final Class<?> exceptionType = exceptionTypes[i];
 
-                mv.visitLdcInsn(Type.getType("L" + exceptionType.getCanonicalName().replace('.', '/') + ";"));
+                mv.visitLdcInsn(Type.getType("L" + exceptionType.getName().replace('.', '/') + ";"));
                 mv.visitVarInsn(ALOAD, length);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
@@ -415,7 +419,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 mv.visitVarInsn(ALOAD, length);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/InvocationTargetException", "getCause", "()Ljava/lang/Throwable;");
-                mv.visitTypeInsn(CHECKCAST, exceptionType.getCanonicalName().replace('.', '/'));
+                mv.visitTypeInsn(CHECKCAST, exceptionType.getName().replace('.', '/'));
                 mv.visitInsn(ATHROW);
                 mv.visitLabel(l6);
 
@@ -431,7 +435,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // finish this method
         mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        return mv;
     }
 
     /**
@@ -694,7 +698,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     /**
      * The methods of this class model sun.misc.Unsafe which is used reflectively
      */
-    private static class Unsafe {
+    public static class Unsafe {
 
         // sun.misc.Unsafe
         private static final Object unsafe;
@@ -812,7 +816,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
         }
 
-        private static Class defineClass(final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
+        public static Class defineClass(final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
             return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
         }
     }

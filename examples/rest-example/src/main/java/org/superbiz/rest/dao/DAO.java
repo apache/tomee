@@ -16,24 +16,22 @@
  */
 package org.superbiz.rest.dao;
 
-import java.util.List;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.enterprise.inject.Typed;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Simply maps the entitymanager.
  * It simplifies refactoring (unitName change) and wraps some logic (limited queries).
- *
  */
-@Typed
 @Singleton
 @Lock(LockType.READ)
 public class DAO {
+
     @PersistenceContext(unitName = "blog")
     private EntityManager em;
 

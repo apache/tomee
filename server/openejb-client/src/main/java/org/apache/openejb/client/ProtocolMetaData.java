@@ -21,6 +21,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
@@ -36,12 +37,15 @@ import java.io.OutputStream;
 @SuppressWarnings("UnusedDeclaration")
 public class ProtocolMetaData {
 
+    public static final String VERSION = "4.6";
+
     private static final String OEJB = "OEJP";
-    private String id;
-    private int major;
-    private int minor;
+    private transient String id;
+    private transient int major;
+    private transient int minor;
 
     public ProtocolMetaData() {
+        init(OEJB + "/" + VERSION);
     }
 
     public ProtocolMetaData(final String version) {
@@ -51,7 +55,7 @@ public class ProtocolMetaData {
     private void init(final String spec) {
 
         if (!spec.matches("^OEJP/[0-9]\\.[0-9]$")) {
-            throw new RuntimeException("Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ]");
+            throw new RuntimeException("Protocol version spec must follow format [ \"OEJB\" \"/\" 1*DIGIT \".\" 1*DIGIT ] - " + spec);
         }
 
         final char[] chars = new char[8];
@@ -60,6 +64,10 @@ public class ProtocolMetaData {
         this.id = new String(chars, 0, 4);
         this.major = Integer.parseInt(new String(chars, 5, 1));
         this.minor = Integer.parseInt(new String(chars, 7, 1));
+    }
+
+    public boolean isAtLeast(final int major, final int minor) {
+        return this.major >= major && (this.major != major || this.minor >= minor);
     }
 
     public String getId() {
@@ -95,6 +103,10 @@ public class ProtocolMetaData {
                 throw new EOFException("Unable to read protocol version.  Reached the end of the stream.");
             }
         }
-        init(new String(spec, "UTF-8"));
+        try {
+            init(new String(spec, "UTF-8"));
+        } catch (Throwable e) {
+            throw new IOException("Failed to read spec: " + Arrays.toString(spec), e);
+        }
     }
 }

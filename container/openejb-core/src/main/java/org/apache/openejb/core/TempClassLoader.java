@@ -19,9 +19,9 @@ package org.apache.openejb.core;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.xbean.asm.ClassReader;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.shade.commons.EmptyVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,6 +46,7 @@ import java.util.Set;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
+    private static final ClassLoader PARENT_LOADER = ParentClassLoaderFinder.Helper.get();
 
     private final Set<Skip> skip;
     private final ClassLoader system;
@@ -103,7 +104,7 @@ public class TempClassLoader extends URLClassLoader {
          * 3. Result is , AnnotationDeployer throws a ClassNotFoundException
          */
         if (this.skip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(getParent(), name))) {
-            return Class.forName(name, resolve, this.getClass().getClassLoader());
+            return Class.forName(name, resolve, PARENT_LOADER);
         }
 
         // don't load classes from app classloader
@@ -152,11 +153,11 @@ public class TempClassLoader extends URLClassLoader {
         // Annotation classes must be loaded by the normal classloader
         // So must Enum classes to prevent problems with the sun jdk.
         if (this.skip.contains(Skip.ANNOTATIONS) && isAnnotationClass(bytes)) {
-            return Class.forName(name, resolve, this.getClass().getClassLoader());
+            return Class.forName(name, resolve, PARENT_LOADER);
         }
 
         if (this.skip.contains(Skip.ENUMS) && isEnum(bytes)) {
-            return Class.forName(name, resolve, this.getClass().getClassLoader());
+            return Class.forName(name, resolve, PARENT_LOADER);
         }
 
         // define the package

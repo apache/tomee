@@ -31,8 +31,8 @@ import java.io.ObjectOutputStream;
 public class JndiRequestTest extends TestCase {
 
     public void testExternalize() throws Exception {
-        JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
-        JNDIRequest actual = new JNDIRequest();
+        final JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
+        final JNDIRequest actual = new JNDIRequest();
 
         externalize(expected, actual);
 
@@ -40,12 +40,11 @@ public class JndiRequestTest extends TestCase {
         assertEquals("ModuleId not the same", expected.getModuleId(), actual.getModuleId());
         assertEquals("JNDI Name not the same", expected.getRequestString(), actual.getRequestString());
     }
-
 
     public void testExternalize2() throws Exception {
-        JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
+        final JNDIRequest expected = new JNDIRequest(RequestMethodCode.JNDI_LOOKUP, "this/is/a/jndi/name");
         expected.setModuleId("foobar");
-        JNDIRequest actual = new JNDIRequest();
+        final JNDIRequest actual = new JNDIRequest();
 
         externalize(expected, actual);
 
@@ -54,16 +53,15 @@ public class JndiRequestTest extends TestCase {
         assertEquals("JNDI Name not the same", expected.getRequestString(), actual.getRequestString());
     }
 
-
-    private void externalize(Externalizable original, Externalizable copy) throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
+    private void externalize(final Externalizable original, final Externalizable copy) throws IOException, ClassNotFoundException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream(baos);
 
         original.writeExternal(out);
         out.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream in = new ObjectInputStream(bais);
 
         copy.readExternal(in);
     }

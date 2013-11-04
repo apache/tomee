@@ -46,7 +46,7 @@ public class SystemInstance {
     /**
      * Properties that have to be away from System (i.e. {@link System#setProperty(String, String)} must not be called)
      */
-    private final Properties internalProperties = new Properties();
+    private final Properties internalProperties = new Properties(System.getProperties());
 
     private final Options options;
 
@@ -67,7 +67,8 @@ public class SystemInstance {
     private SystemInstance(final Properties properties) throws Exception {
         this.components = new HashMap<Class, Object>();
 
-        for (Map.Entry<? extends Object, ? extends Object> e : System.getProperties().entrySet()){
+        // import JVM system property config (if a resource/container/... is set through this way)
+        for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()){
             final String key = e.getKey().toString();
             if (key.startsWith("sun.")) continue;
             if (key.startsWith("os.")) continue;
@@ -180,7 +181,23 @@ public class SystemInstance {
      * @throws IllegalStateException of the component isn't found
      */
     public <T> T getComponent(final Class<T> type) {
-        return (T) components.get(type);
+        final T component = (T) components.get(type);
+        if (component != null) {
+            return component;
+        }
+
+        final String classname = getProperty(type.getName());
+        if (classname != null) {
+            try {
+                final T instance = type.cast(Thread.currentThread().getContextClassLoader()
+                                                                .loadClass(classname).newInstance());
+                components.put(type, instance);
+                return instance;
+            } catch (final Exception e) {
+                // no-op
+            }
+        }
+        return null;
     }
 
     public <T> T removeComponent(final Class<T> type) {
@@ -237,6 +254,7 @@ public class SystemInstance {
         readUserSystemProperties();
         readSystemProperties();
         readSystemProperties(get().currentProfile());
+        System.getProperties().putAll(system.getProperties()); // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
     }
@@ -302,7 +320,6 @@ public class SystemInstance {
             return;
         }
 
-        System.getProperties().putAll(systemProperties);
         system.getProperties().putAll(systemProperties);
     }
 

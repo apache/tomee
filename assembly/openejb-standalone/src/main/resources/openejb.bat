@@ -44,11 +44,16 @@ set "OPENEJB_HOME=%CD%"
 
 REM echo OPENEJB_HOME is: %OPENEJB_HOME%
 
-set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar;$OPENEJB_HOME/lib/javaee-api-*.jar"
+set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar"
+set OPENEJB_EE_JAR="%OPENEJB_HOME%\lib\javaee-api-*.jar"
 set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
 
 for %%a in (%OPENEJB_CORE_JAR%) do (
   set OPENEJB_CORE_JAR="%%a"
+)
+
+for %%a in (%OPENEJB_EE_JAR%) do (
+  set OPENEJB_EE_JAR="%%a"
 )
 
 for %%a in (%OPENEJB_JAVAAGENT_JAR%) do (
@@ -56,12 +61,13 @@ for %%a in (%OPENEJB_JAVAAGENT_JAR%) do (
 )
 
 REM echo OPENEJB_CORE_JAR is: %OPENEJB_CORE_JAR%
+REM echo OPENEJB_EE_JAR is: %OPENEJB_EE_JAR%
 REM echo OPENEJB_JAVAAGENT_JAR is: %OPENEJB_JAVAAGENT_JAR%
 
-if exist %OPENEJB_CORE_JAR% goto openejbHomeSet
+if exist "%OPENEJB_CORE_JAR%" goto openejbHomeSet
 
 :noOpenEJBHome
-echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located. Please set "%OPENEJB_HOME%".
+echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located at "%OPENEJB_HOME%".
 goto EOF
 
 :openejbHomeSet
@@ -69,7 +75,7 @@ set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
 REM echo %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
-java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -cp %OPENEJB_CORE_JAR%  org.apache.openejb.cli.Bootstrap %*
+java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -cp %OPENEJB_CORE_JAR%;%OPENEJB_EE_JAR%  org.apache.openejb.cli.Bootstrap %*
 
 :EOF
 ENDLOCAL

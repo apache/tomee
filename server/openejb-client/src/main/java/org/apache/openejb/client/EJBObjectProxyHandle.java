@@ -24,46 +24,62 @@ import java.io.ObjectStreamException;
 
 public class EJBObjectProxyHandle implements Externalizable {
 
-    public static ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+    private static final long serialVersionUID = -8325446328982364608L;
+    public static final ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
 
-    EJBObjectHandler handler;
+    private transient EJBObjectHandler handler;
+    private transient ProtocolMetaData metaData;
 
     public EJBObjectProxyHandle() {
     }
 
-    public EJBObjectProxyHandle(EJBObjectHandler handler) {
+    public EJBObjectProxyHandle(final EJBObjectHandler handler) {
         this.handler = handler;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
+        handler.client.setMetaData(metaData);
         handler.client.writeExternal(out);
 
+        handler.ejb.setMetaData(metaData);
         handler.ejb.writeExternal(out);
 
+        handler.server.setMetaData(metaData);
         handler.server.writeExternal(out);
+
         out.writeObject(handler.primaryKey);
+        out.writeObject(handler.authenticationInfo);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        byte version = in.readByte(); // future use
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final byte version = in.readByte(); // future use
 
-        ClientMetaData client = new ClientMetaData();
-        EJBMetaDataImpl ejb = new EJBMetaDataImpl();
-        ServerMetaData server = new ServerMetaData();
+        final ClientMetaData client = new ClientMetaData();
+        final EJBMetaDataImpl ejb = new EJBMetaDataImpl();
+        final ServerMetaData server = new ServerMetaData();
+
+        client.setMetaData(metaData);
+        ejb.setMetaData(metaData);
+        server.setMetaData(metaData);
 
         client.readExternal(in);
-
         ejb.readExternal(in);
-
         server.readExternal(in);
 
-        Object primaryKey = in.readObject();
+        final Object primaryKey = in.readObject();
 
-        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final JNDIContext.AuthenticationInfo authenticationInfo = JNDIContext.AuthenticationInfo.class.cast(in.readObject());
 
+        handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, authenticationInfo);
     }
 
     private Object readResolve() throws ObjectStreamException {
@@ -71,11 +87,14 @@ public class EJBObjectProxyHandle implements Externalizable {
     }
 
     public static interface Resolver {
+
         Object resolve(EJBObjectHandler handler);
     }
 
     public static class ClientSideResovler implements Resolver {
-        public Object resolve(EJBObjectHandler handler) {
+
+        @Override
+        public Object resolve(final EJBObjectHandler handler) {
             return handler.createEJBObjectProxy();
         }
     }

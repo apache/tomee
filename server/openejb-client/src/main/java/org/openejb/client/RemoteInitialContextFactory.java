@@ -19,7 +19,9 @@ package org.openejb.client;
 
 /**
  * @version $Revision$ $Date$
- * @deprecated use org.apache.openejb.client.RemoteInitialContextFactory 
+ * @deprecated use org.apache.openejb.client.RemoteInitialContextFactory
  */
+@Deprecated
 public class RemoteInitialContextFactory extends org.apache.openejb.client.RemoteInitialContextFactory {
+
 }

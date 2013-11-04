@@ -25,6 +25,7 @@ import javax.naming.InitialContext;
 import java.util.Properties;
 
 public final class ClientUtil {
+
     private ClientUtil() {
         // no-op
     }

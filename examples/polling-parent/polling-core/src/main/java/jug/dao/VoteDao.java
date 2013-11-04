@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 @Singleton
 @Lock(LockType.READ)
 public class VoteDao {
+
     @PersistenceContext(unitName = "polling")
     private EntityManager em;
 

@@ -31,7 +31,7 @@ public class ConnectionStrategyFailed {
     private final ServerMetaData server;
     private final Throwable cause;
 
-    public ConnectionStrategyFailed(ConnectionStrategy strategy, ClusterMetaData cluster, ServerMetaData server, Throwable cause) {
+    public ConnectionStrategyFailed(final ConnectionStrategy strategy, final ClusterMetaData cluster, final ServerMetaData server, final Throwable cause) {
         this.strategy = strategy;
         this.cluster = cluster;
         this.server = server;
@@ -57,9 +57,9 @@ public class ConnectionStrategyFailed {
     @Override
     public String toString() {
         return "ConnectionStrategyFailed{" +
-                "strategy=" + strategy.getClass().getSimpleName() +
-                ", cluster=" + cluster +
-                ", server=" + server.getLocation() +
-                '}';
+               "strategy=" + strategy.getClass().getSimpleName() +
+               ", cluster=" + cluster +
+               ", server=" + server.getLocation() +
+               '}';
     }
 }

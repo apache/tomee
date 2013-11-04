@@ -49,7 +49,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost) {
+    public AddressInfo createRsHttpListener(String webContext, HttpListener listener, ClassLoader classLoader, String completePath, String virtualHost, String auth, String realm) {
         String path = webContext;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -80,6 +80,7 @@ public class TomcatRsRegistry implements RsRegistry {
         final String name = "rest_" + listener.hashCode();
         wrapper.setName(name);
         wrapper.setServletClass(RsServlet.class.getName());
+        wrapper.setAsyncSupported(true);
 
         String mapping = completePath;
         if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)

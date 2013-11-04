@@ -1,0 +1,19 @@
+importClass(java.util.Properties);
+importClass(javax.naming.Context);
+importClass(javax.naming.InitialContext);
+
+var p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
+p.put(Context.SECURITY_PRINCIPAL, "tomee");
+p.put(Context.SECURITY_CREDENTIALS, "tomee");
+var ctx = new InitialContext(p);
+
+var result = [];
+var pairs = ctx.list("");
+while(pairs.hasMore()) {
+  result.push(pairs.next().getName());
+}
+
+// print restult
+println('javascript -> ' + result.join(", "));

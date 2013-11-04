@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.util;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class Asserts {
         Assert.assertEquals(expected.hasNext(), actual.hasNext());
     }
 
-    public static void assertEquals(Map<?, ?> expectedMap, Map<?, ?> actualMap) {
+    public static void assertEquals(Map<?, ?> expectedMap, Map<?, ?> actualMap, double delta) {
         final Iterator<? extends Map.Entry<?, ?>> expectedIt = expectedMap.entrySet().iterator();
         final Iterator<? extends Map.Entry<?, ?>> actualIt = actualMap.entrySet().iterator();
 
@@ -44,10 +44,22 @@ public class Asserts {
             final Map.Entry<?, ?> expected = expectedIt.next();
             final Map.Entry<?, ?> actual = actualIt.next();
             Assert.assertEquals("key", expected.getKey(), actual.getKey());
-            Assert.assertEquals(expected.getKey().toString(), expected.getValue(), actual.getValue());
+
+            final Object value = expected.getValue();
+            if (Number.class.isInstance(value)) {
+                Assert.assertEquals("" + expected.getKey(), Number.class.cast(value).doubleValue(), Number.class.cast(actual.getValue()).doubleValue(), delta);
+            } else {
+                Assert.assertEquals("" + expected.getKey(), value, actual.getValue());
+            }
+
+            Assert.assertEquals(expected.getKey().toString(), value, actual.getValue());
         }
 
         Assert.assertEquals(expectedIt.hasNext(), actualIt.hasNext());
+    }
+
+    public static void assertEquals(Map<?, ?> expectedMap, Map<?, ?> actualMap) {
+        assertEquals(expectedMap, actualMap, 0.0);
     }
 
 }

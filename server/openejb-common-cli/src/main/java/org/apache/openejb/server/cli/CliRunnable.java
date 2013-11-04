@@ -84,7 +84,7 @@ public class CliRunnable implements Runnable {
 
         final ClassLoader loader = CliRunnable.class.getClassLoader();
         try {
-            UrlSet urlSet = new UrlSet(loader);
+            UrlSet urlSet = new UrlSet(loader).excludeJvm();
             urlSet = urlSet.exclude(loader.getParent());
 
             final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(new ConfigurableClasspathArchive.FakeModule(loader, Collections.EMPTY_MAP), true, urlSet.getUrls()));

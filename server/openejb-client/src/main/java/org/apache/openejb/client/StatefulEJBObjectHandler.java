@@ -24,41 +24,52 @@ public class StatefulEJBObjectHandler extends EJBObjectHandler {
     public StatefulEJBObjectHandler() {
     }
 
-    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-        super(ejb, server, client);
+    public StatefulEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, auth);
     }
 
-    public StatefulEJBObjectHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client, Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public StatefulEJBObjectHandler(final EJBMetaDataImpl ejb,
+                                    final ServerMetaData server,
+                                    final ClientMetaData client,
+                                    final Object primaryKey,
+                                    final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
         registerHandler(primaryKey, this);
     }
 
+    @Override
     public Object getRegistryId() {
         return primaryKey;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
-        if (args[0] == null) return Boolean.FALSE;
+    @Override
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
+        if (args[0] == null) {
+            return Boolean.FALSE;
+        }
 
-        EJBObjectProxy ejbObject = (EJBObjectProxy) args[0];
-        EJBObjectHandler that = ejbObject.getEJBObjectHandler();
+        final EJBObjectProxy ejbObject = (EJBObjectProxy) args[0];
+        final EJBObjectHandler that = ejbObject.getEJBObjectHandler();
 
-        return new Boolean(this.primaryKey.equals(that.primaryKey));
+        return this.primaryKey.equals(that.primaryKey);
     }
 
-    protected Object equals(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object equals(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return isIdentical(method, args, proxy);
     }
-    
-    protected Object remove(Method method, Object[] args, Object proxy) throws Throwable {
 
-        EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey);
+    @Override
+    protected Object remove(final Method method, final Object[] args, final Object proxy) throws Throwable {
 
-        EJBResponse res = request(req);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_REMOVE, ejb, method, args, primaryKey, client.getSerializer());
+
+        final EJBResponse res = request(req);
 
         if (ResponseCodes.EJB_ERROR == res.getResponseCode()) {
             throw (Throwable) res.getResult();

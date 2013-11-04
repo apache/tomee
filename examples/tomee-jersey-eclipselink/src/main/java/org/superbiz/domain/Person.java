@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQuery(name = "Person.findAll", query = "select p from Person p")
 public class Person {
+
     @Id
     @GeneratedValue
     private long id;

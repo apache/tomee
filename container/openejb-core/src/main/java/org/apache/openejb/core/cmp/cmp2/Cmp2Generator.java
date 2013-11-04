@@ -29,12 +29,12 @@ import java.util.Map;
 import javax.ejb.EntityContext;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.xbean.asm.ClassWriter;
-import org.apache.xbean.asm.FieldVisitor;
-import org.apache.xbean.asm.Label;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.Type;
+import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm4.FieldVisitor;
+import org.apache.xbean.asm4.Label;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.Type;
 
 /**
  * Code generate for CMP level 2 beans.  This will 

@@ -101,8 +101,7 @@ public class DataSourceDefinitionPlaceHolderTest {
 
     @Test
     public void checkLookup() throws Exception {
-        final DataSource ds = (DataSource) SystemInstance.get().getComponent(ContainerSystem.class)
-                .getJNDIContext().lookup("java:comp/env/superDS");
+        final DataSource ds = (DataSource) SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("java:comp/env/superDS");
         check(ds);
     }
 }

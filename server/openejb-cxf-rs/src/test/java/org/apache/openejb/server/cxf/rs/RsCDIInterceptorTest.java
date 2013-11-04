@@ -1,0 +1,101 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.openejb.server.cxf.rs;
+
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.ejb.Singleton;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InterceptorBinding;
+import javax.interceptor.InvocationContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
+
+@EnableServices("jax-rs")
+@RunWith(ApplicationComposer.class)
+public class RsCDIInterceptorTest {
+    @Module
+    @Classes(cdi = true, value = { InterceptedEJBRs.class, InterceptedRs.class }, cdiInterceptors = MockingInterceptor.class)
+    public WebApp war() {
+        return new WebApp()
+                .contextRoot("foo");
+    }
+
+    @Test
+    public void ejb() throws IOException {
+        final String response = IO.slurp(new URL("http://127.0.0.1:4204/foo/session-bean/check-ejb"));
+        assertEquals("mock", response);
+    }
+
+    @Test
+    public void pojo() throws IOException {
+        final String response = IO.slurp(new URL("http://127.0.0.1:4204/foo/pojo/check-pojo"));
+        assertEquals("mock", response);
+    }
+
+    @Path("/session-bean")
+    @Singleton
+    @IBinding
+    public static class InterceptedEJBRs {
+        @GET
+        @Path("/check-ejb")
+        public String check() {
+            return null;
+        }
+    }
+
+    @Path("/pojo")
+    @IBinding
+    public static class InterceptedRs {
+        @GET
+        @Path("/check-pojo")
+        public String check() {
+            return null;
+        }
+    }
+
+    @Interceptor @IBinding
+    public static class MockingInterceptor {
+        @AroundInvoke
+        public Object mock(final InvocationContext ic) throws Exception {
+            return "mock";
+        }
+    }
+
+    @InterceptorBinding
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface IBinding {
+
+    }
+}

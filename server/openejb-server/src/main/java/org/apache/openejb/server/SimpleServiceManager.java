@@ -43,7 +43,7 @@ public class SimpleServiceManager extends ServiceManager {
     private static ObjectName objectName = null;
 
     private ServerService[] daemons;
-    private boolean stop = false;
+    private volatile boolean stopped = false;
     private final ServiceFinder serviceFinder;
 
     public SimpleServiceManager() {
@@ -149,10 +149,16 @@ public class SimpleServiceManager extends ServiceManager {
         final List<ServerService> enabledServers = initServers(availableServices);
 
         daemons = enabledServers.toArray(new ServerService[enabledServers.size()]);
+        stopped = false;
     }
 
     @Override
     public synchronized void start(final boolean block) throws ServiceException {
+
+        if(stopped){
+            throw new ServiceException("Stop has already been called on ServiceManager");
+        }
+
         final boolean display = SystemInstance.get().getOptions().get("openejb.nobanner", (String) null) == null;
 
         // starting then displaying to get a more relevant log
@@ -207,7 +213,7 @@ public class SimpleServiceManager extends ServiceManager {
          *  which will set 'stop' to true and notify the user thread.
          */
         try {
-            while (!stop) {
+            while (!stopped) {
 
                 this.wait(Long.MAX_VALUE);
             }
@@ -220,7 +226,7 @@ public class SimpleServiceManager extends ServiceManager {
     @Override
     public synchronized void stop() throws ServiceException {
         logger.info("Stopping server services");
-        stop = true;
+        stopped = true;
 
         final ServerService[] services = daemons.clone();
 

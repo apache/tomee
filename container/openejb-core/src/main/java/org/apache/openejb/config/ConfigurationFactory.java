@@ -62,6 +62,7 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -87,6 +88,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.ResourceFinder;
@@ -127,6 +129,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private static final Messages messages = new Messages(ConfigurationFactory.class);
 
     private static final String IGNORE_DEFAULT_VALUES_PROP = "IgnoreDefaultValues";
+    private static final boolean WSDL4J_AVAILABLE = exists("javax.wsdl.xml.WSDLLocator");
 
     private String configLocation;
     private OpenEjbConfiguration sys;
@@ -142,6 +145,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory() {
         this(!shouldAutoDeploy());
+    }
+
+    private static boolean exists(final String s) {
+        try {
+            ConfigurationFactory.class.getClassLoader().loadClass(s);
+            return true;
+        } catch (final ClassNotFoundException e) {
+            return false;
+        } catch (final NoClassDefFoundError e) {
+            return false;
+        }
     }
 
     private static boolean shouldAutoDeploy() {
@@ -224,7 +238,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new DebuggableVmHackery());
         }
 
-        if (options.get(WEBSERVICES_ENABLED, true)) {
+        if (options.get(WEBSERVICES_ENABLED, true) && WSDL4J_AVAILABLE) {
             chain.add(new WsDeployer());
         } else {
             chain.add(new RemoveWebServices());
@@ -418,21 +432,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    /**
-     * Main loop that gets executed when OpenEJB starts up Reads config files and produces the basic "AST" the assembler needs to actually build the contianer system
-     * <p/>
-     * This method is called by the Assembler once at startup.
-     *
-     * @return OpenEjbConfiguration
-     * @throws OpenEJBException
-     */
-    @Override
-    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
+    public OpenEjbConfiguration getOpenEjbConfiguration(final Openejb providedConf) throws OpenEJBException {
         if (sys != null) {
             return sys;
         }
 
-        if (configLocation != null) {
+        if (providedConf != null) {
+            openejb = providedConf;
+        } else if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
             openejb = JaxbOpenejb.createOpenejb();
@@ -502,6 +509,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (options.get("openejb.system.apps", false)) {
             try {
                 final AppInfo appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
+                // they doesn't use CDI so no need to activate it
+                // 1) will be faster
+                // 2) will let embedded containers (tomee-embedded mainly) not be noised by it in our singleton service
+                appInfo.properties.put("openejb.cdi.activated", "false");
                 sys.containerSystem.applications.add(appInfo);
             } catch (OpenEJBException e) {
                 logger.error("Unable to load the system applications.", e);
@@ -549,6 +560,19 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         openejb = null;
 
         return finished;
+    }
+
+    /**
+     * Main loop that gets executed when OpenEJB starts up Reads config files and produces the basic "AST" the assembler needs to actually build the contianer system
+     * <p/>
+     * This method is called by the Assembler once at startup.
+     *
+     * @return OpenEjbConfiguration
+     * @throws OpenEJBException
+     */
+    @Override
+    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
+        return getOpenEjbConfiguration(null);
     }
 
     private List<File> getDeclaredApps() {
@@ -726,7 +750,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     for (final String path : paths) {
                         urls.add(new File(path).toURI().normalize().toURL());
                     }
-                    deployments.setClasspath(new URLClassLoader(urls.toArray(new URL[urls.size()])));
+                    deployments.setClasspath(new URLClassLoaderFirst(urls.toArray(new URL[urls.size()]), ParentClassLoaderFinder.Helper.get()));
                 }
             }
 
@@ -1335,7 +1359,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return getResourceIds(type, null);
     }
 
-    protected List<String> getResourceIds(final String type, Properties required) {
+    public List<String> getResourceIds(final String type, Properties required) {
         final List<String> resourceIds = new ArrayList<String>();
 
         if (required == null)
@@ -1540,12 +1564,26 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         public String getReference(final ResourceInfo info) {
             for (Object value : info.properties.values()) {
                 if (String.class.isInstance(value)) {
-                    value = ((String) value).trim();
-                    if (ids.contains(value)) {
+                    final String string = String.class.cast(value).trim();
+                    if (string.isEmpty()) {
+                        continue;
+                    }
+
+                    if (ids.contains(string)) {
                         return (String) value;
                     }
+
+                    if (string.contains(",")) { // multiple references
+                        for (final String s : string.split(",")) {
+                            final String trimmed = s.trim();
+                            if (ids.contains(trimmed)) {
+                                return s;
+                            }
+                        }
+                    }
+
                     for (final String s : ids) {
-                        if (s.endsWith((String) value)) {
+                        if (s.endsWith("/" + string)) { // submodule resources
                             return s;
                         }
                     }

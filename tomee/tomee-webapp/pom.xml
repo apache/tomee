@@ -19,11 +19,12 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0</version>
+    <version>1.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
@@ -44,7 +45,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-	      <version>2.2.2</version>
+        <version>2.2.2</version>
         <executions>
           <execution>
             <id>war</id>
@@ -80,6 +81,16 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>static-tomee-bootstrap</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb.staticweb</groupId>
+      <artifactId>static-tomee-jquery</artifactId>
+      <version>${tomee.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
@@ -279,4 +290,3 @@
     </dependency>
   </dependencies>
 </project>
-

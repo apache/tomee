@@ -18,32 +18,32 @@ package org.apache.openejb.deployment.entity.cmp.cmr;
 
 import java.io.Serializable;
 
-
 /**
- *
  * @version $Revision$ $Date$
  */
 public class CompoundPK implements Serializable {
+
     public Integer field1;
     public String field2;
 
-    public CompoundPK() {};
-    
-    public CompoundPK(Integer field1, String field2) {
+    public CompoundPK() {
+    }
+
+    public CompoundPK(final Integer field1, final String field2) {
         this.field1 = field1;
         this.field2 = field2;
     }
-    
-    public boolean equals(Object other) {
-      if ( false == other instanceof CompoundPK ) {
-          return false;
-      }
-      CompoundPK otherPK = (CompoundPK) other;
-      return field1.equals(otherPK.field1) && field2.equals(otherPK.field2);
+
+    public boolean equals(final Object other) {
+        if (!(other instanceof CompoundPK)) {
+            return false;
+        }
+        final CompoundPK otherPK = (CompoundPK) other;
+        return field1.equals(otherPK.field1) && field2.equals(otherPK.field2);
     }
-    
+
     public int hashCode() {
-      return field1.hashCode() ^ field2.hashCode();
+        return field1.hashCode() ^ field2.hashCode();
     }
 
 }

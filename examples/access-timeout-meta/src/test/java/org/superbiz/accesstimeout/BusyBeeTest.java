@@ -42,9 +42,7 @@ public class BusyBeeTest extends TestCase {
         // Are you working yet little bee?
         ready.await();
 
-
         // OK, Bee is busy
-
 
         { // Timeout Immediately
             final long start = System.nanoTime();

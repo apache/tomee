@@ -19,6 +19,8 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.rest.RESTResourceFinder;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
@@ -54,6 +56,8 @@ public class CxfRSService extends RESTService {
     @Override
     public void init(final Properties properties) throws Exception {
         super.init(properties);
+        SystemInstance.get().setComponent(RESTResourceFinder.class, new CxfRESTResourceFinder());
+
         CxfUtil.configureBus();
 
         final Bus bus = CxfUtil.getBus();

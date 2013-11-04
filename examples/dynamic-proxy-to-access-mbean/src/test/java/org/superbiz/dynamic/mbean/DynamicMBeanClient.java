@@ -25,6 +25,7 @@ import javax.ejb.Singleton;
 @Proxy(DynamicMBeanHandler.class)
 @ObjectName(DynamicMBeanClient.OBJECT_NAME)
 public interface DynamicMBeanClient {
+
     static final String OBJECT_NAME = "test:group=DynamicMBeanClientTest";
 
     int getCounter();

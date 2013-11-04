@@ -23,5 +23,6 @@ import javax.ejb.EJBLocalHome;
  * @version $Revision$ $Date$
  */
 public interface HelloEjbLocalHome extends EJBLocalHome {
+
     HelloEjbLocal create() throws CreateException;
 }

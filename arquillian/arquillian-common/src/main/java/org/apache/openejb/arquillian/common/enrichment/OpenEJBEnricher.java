@@ -30,7 +30,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.inject.AbstractInjectable;
 import org.apache.webbeans.inject.OWBInjector;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -58,12 +57,7 @@ public final class OpenEJBEnricher {
                 if (context != null) {
                     context.set(CreationalContext.class, cc);
                 }
-                AbstractInjectable.instanceUnderInjection.set(testInstance);
-                try {
-                    OWBInjector.inject(bm, testInstance, cc);
-                } finally {
-                    AbstractInjectable.instanceUnderInjection.remove();
-                }
+                OWBInjector.inject(bm, testInstance, cc);
             } catch (Throwable t) {
                 Logger.getInstance(LogCategory.OPENEJB, OpenEJBEnricher.class).error("Can't inject in " + testInstance.getClass(), t);
                 if (t instanceof RuntimeException) {

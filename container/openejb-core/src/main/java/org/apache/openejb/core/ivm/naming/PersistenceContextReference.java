@@ -16,16 +16,12 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
-import javax.naming.*;
-
-import org.apache.openejb.persistence.JtaEntityManager;
 
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceContextReference extends Reference{
+public class PersistenceContextReference extends Reference {
 
     private EntityManager em;
 

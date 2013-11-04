@@ -22,8 +22,8 @@ package org.apache.openejb.core.ivm.naming;
  */
 public class AbstractThreadLocalProxy<T> {
 
-    private ThreadLocal<T> infos = new ThreadLocal<T>();
-    
+    private final ThreadLocal<T> infos = new ThreadLocal<T>();
+
     protected AbstractThreadLocalProxy() {
         // no-op
     }

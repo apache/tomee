@@ -25,15 +25,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PollingRouter extends AbstractRouter {
+
     private Map<String, DataSource> dataSources = null;
     private ThreadLocal<DataSource> currentDataSource = new ThreadLocal<DataSource>() {
         @Override
-        public DataSource initialValue() { return dataSources.get("jdbc/client1"); }
+        public DataSource initialValue() {
+            return dataSources.get("jdbc/client1");
+        }
     };
 
     @Override
     public DataSource getDataSource() {
-        if (dataSources == null) { init(); }
+        if (dataSources == null) {
+            init();
+        }
         return currentDataSource.get();
     }
 

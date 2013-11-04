@@ -21,12 +21,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>change-jaxws-url</artifactId>
   <packaging>war</packaging>
-  <version>1.1.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: Change JAXWS URL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.0</openejb.version>
-    <tomee.version>1.6.0</tomee.version>
+    <openejb.version>4.6.0-SNAPSHOT</openejb.version>
+    <tomee.version>1.6.0-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -71,7 +71,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.1.0</version>
+        <version>1.6.0-SNAPSHOT</version>
         <configuration>
           <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
@@ -80,11 +80,11 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>1.1.0</version>
+        <version>${tomee.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.openejb</groupId>
-            <artifactId>tomee-plus</artifactId>
+            <artifactId>apache-tomee</artifactId>
             <version>${tomee.version}</version>
           </dependency>
         </dependencies>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>6.0-4</version>
+      <version>6.0-5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

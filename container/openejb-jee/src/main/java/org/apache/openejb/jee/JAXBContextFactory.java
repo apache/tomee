@@ -24,9 +24,29 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public final class JAXBContextFactory {
+    private static final boolean USE_FAST_BOOT = "true".equals(System.getProperty("openejb.jaxb.fastBoot", "true"));
+    private static final String FAST_BOOT = "com.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot";
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(JAXBContextFactory.class.getName());
 //    private static boolean useSXC = false;
+
+    private static String setFastBoot() {
+        final String fastBoot = System.getProperty(FAST_BOOT);
+        if (USE_FAST_BOOT) {
+            System.setProperty(FAST_BOOT, Boolean.TRUE.toString());
+        }
+        return fastBoot;
+    }
+
+    private static void resetFastBoot(final String fastBoot) {
+        if (USE_FAST_BOOT) {
+            if (fastBoot == null) {
+                System.clearProperty(FAST_BOOT);
+            } else {
+                System.setProperty(FAST_BOOT, fastBoot);
+            }
+        }
+    }
 
     public static JAXBContext newInstance(final String s) throws JAXBException {
 //        if (useSXC) {
@@ -37,7 +57,12 @@ public final class JAXBContextFactory {
 //        }
         final Event event = Event.start(s);
         try {
-            return JAXBContext.newInstance(s);
+            final String fastBoot = setFastBoot();
+            try {
+                return JAXBContext.newInstance(s);
+            } finally {
+                resetFastBoot(fastBoot);
+            }
         } finally {
             event.stop();
         }
@@ -53,7 +78,12 @@ public final class JAXBContextFactory {
 
         final Event event = Event.start(s);
         try {
-            return JAXBContext.newInstance(s, classLoader);
+            final String fastBoot = setFastBoot();
+            try {
+                return JAXBContext.newInstance(s, classLoader);
+            } finally {
+                resetFastBoot(fastBoot);
+            }
         } finally {
             event.stop();
         }
@@ -69,7 +99,12 @@ public final class JAXBContextFactory {
 
         final Event event = Event.start(s);
         try {
-            return JAXBContext.newInstance(s, classLoader, properties);
+            final String fastBoot = setFastBoot();
+            try {
+                return JAXBContext.newInstance(s, classLoader, properties);
+            } finally {
+                resetFastBoot(fastBoot);
+            }
         } finally {
             event.stop();
         }
@@ -90,7 +125,12 @@ public final class JAXBContextFactory {
         sb.deleteCharAt(sb.length() - 1);
         final Event event = Event.start(sb.toString());
         try {
-            return JAXBContext.newInstance(classes);
+            final String fastBoot = setFastBoot();
+            try {
+                return JAXBContext.newInstance(classes);
+            } finally {
+                resetFastBoot(fastBoot);
+            }
         } finally {
             event.stop();
         }
@@ -112,7 +152,12 @@ public final class JAXBContextFactory {
         sb.deleteCharAt(sb.length() - 1);
         final Event event = Event.start(sb.toString());
         try {
-            return JAXBContext.newInstance(classes, properties);
+            final String fastBoot = setFastBoot();
+            try {
+                return JAXBContext.newInstance(classes, properties);
+            } finally {
+                resetFastBoot(fastBoot);
+            }
         } finally {
             event.stop();
         }

@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.openejb.server.ServiceManagers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
@@ -160,6 +161,8 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                 properties.setProperty(key, defaultKey.getValue().toString());
             }
         }
+
+        ArquillianUtil.preLoadClassesAsynchronously(openEJBConfiguration.getPreloadClasses());
     }
 
     @Override
@@ -204,6 +207,13 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
 
+        // if service manager is started allow @ArquillianResource URL injection
+        if (PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE)) {
+            final ProtocolMetaData metaData = ServiceManagers.protocolMetaData(appInfoProducer.get());
+            if (metaData != null) {
+                return metaData;
+            }
+        }
         return new ProtocolMetaData();
     }
 

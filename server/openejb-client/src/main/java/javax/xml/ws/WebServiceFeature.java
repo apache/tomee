@@ -21,6 +21,7 @@ package javax.xml.ws;
  * uses JaxWS 2.1.
  */
 public abstract class WebServiceFeature {
+
     protected boolean enabled;
 
     public abstract java.lang.String getID();

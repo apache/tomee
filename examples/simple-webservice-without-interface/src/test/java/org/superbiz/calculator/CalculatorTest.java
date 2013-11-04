@@ -30,6 +30,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 
 public class CalculatorTest {
+
     private static EJBContainer container;
 
     @BeforeClass

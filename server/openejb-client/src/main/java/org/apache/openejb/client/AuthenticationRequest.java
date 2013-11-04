@@ -22,9 +22,11 @@ import java.io.ObjectOutput;
 
 public class AuthenticationRequest implements Request {
 
+    private static final long serialVersionUID = 7009531340198948330L;
     private transient String realm;
     private transient String username;
     private transient String credentials;
+    private transient ProtocolMetaData metaData;
 
     public AuthenticationRequest() {
     }
@@ -37,6 +39,11 @@ public class AuthenticationRequest implements Request {
         this.realm = realm;
         this.username = principal;
         this.credentials = credentials;
+    }
+
+    @Override
+    public void setMetaData(final ProtocolMetaData metaData) {
+        this.metaData = metaData;
     }
 
     @Override
@@ -56,6 +63,9 @@ public class AuthenticationRequest implements Request {
         return credentials;
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final byte version = in.readByte(); // future use
@@ -65,6 +75,9 @@ public class AuthenticationRequest implements Request {
         credentials = (String) in.readObject();
     }
 
+    /**
+     * Changes to this method must observe the optional {@link #metaData} version
+     */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
@@ -77,8 +90,9 @@ public class AuthenticationRequest implements Request {
 
     public String toString() {
         final StringBuilder sb = new StringBuilder(50);
-        sb.append(realm).append(':');
-        sb.append(username);
+        sb.append(null != realm ? realm : "Unknown realm").append(':');
+        sb.append(null != username ? username : "Unknown user").append(':');
+        sb.append(null != credentials ? credentials : "Unknown credentials");
         return sb.toString();
     }
 }

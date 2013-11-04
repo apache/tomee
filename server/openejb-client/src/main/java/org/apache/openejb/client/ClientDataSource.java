@@ -29,17 +29,18 @@ import java.util.logging.Logger;
 /**
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class ClientDataSource implements DataSource {
+
     private final String jdbcUrl;
     private final String defaultPassword;
     private final String defaultUserName;
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(final String[] args) throws URISyntaxException {
         URI uri1;
-        uri1 = new URI("datasource", null, "/path",null, null);
-        uri1 = new URI("datasource", null, "/path",null, null);
+        uri1 = new URI("datasource", null, "/path", null, null);
         System.out.println("uri = " + uri1);
-        uri1 = new URI("datasource", "host", "/path",null, null);
+        uri1 = new URI("datasource", "host", "/path", null, null);
         System.out.println("uri = " + uri1);
         uri1 = new URI("datasource", "host", "/path", "query", "fragment");
         System.out.println("uri = " + uri1);
@@ -48,7 +49,7 @@ public class ClientDataSource implements DataSource {
         print(new URI(uri1.getSchemeSpecificPart()));
     }
 
-    private static void print(URI uri1) {
+    private static void print(final URI uri1) {
         System.out.println("uri = " + uri1);
         System.out.println("  scheme = " + uri1.getScheme());
         System.out.println("  part   = " + uri1.getSchemeSpecificPart());
@@ -57,61 +58,73 @@ public class ClientDataSource implements DataSource {
         System.out.println("  query  = " + uri1.getQuery());
     }
 
-    public ClientDataSource(DataSourceMetaData d) {
+    public ClientDataSource(final DataSourceMetaData d) {
         this(d.getJdbcDriver(), d.getJdbcUrl(), d.getDefaultUserName(), d.getDefaultPassword());
     }
 
-    public ClientDataSource(String jdbcDriver, String jdbcUrl, String defaultUserName, String defaultPassword) {
+    public ClientDataSource(final String jdbcDriver, final String jdbcUrl, final String defaultUserName, final String defaultPassword) {
         this.defaultPassword = defaultPassword;
         this.defaultUserName = defaultUserName;
         this.jdbcUrl = jdbcUrl;
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             Class.forName(jdbcDriver, true, classLoader);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: "+jdbcDriver, e);
+            throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: " + jdbcDriver, e);
         } catch (NoClassDefFoundError e) {
-            throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: "+jdbcDriver, e);
+            throw new IllegalStateException("Cannot use DataSource in client VM without the JDBC Driver in classpath: " + jdbcDriver, e);
         }
     }
 
+    @Override
     public Connection getConnection() throws SQLException {
         return getConnection(defaultUserName, defaultPassword);
     }
 
-    public Connection getConnection(String username, String password) throws SQLException {
-        Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-        return connection;
+    @Override
+    public Connection getConnection(final String username, final String password) throws SQLException {
+        return DriverManager.getConnection(jdbcUrl, username, password);
     }
 
+    @Override
     public int getLoginTimeout() throws SQLException {
         return 0;
     }
 
+    @Override
     public PrintWriter getLogWriter() throws SQLException {
         return null;
     }
 
-    public void setLoginTimeout(int seconds) throws SQLException {
+    @Override
+    public void setLoginTimeout(final int seconds) throws SQLException {
     }
 
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    @Override
+    public void setLogWriter(final PrintWriter out) throws SQLException {
     }
 
-    public boolean isWrapperFor(java.lang.Class<?> iface) {
-        if (iface == null) throw new NullPointerException("iface is null");
+    @Override
+    public boolean isWrapperFor(final java.lang.Class<?> iface) {
+        if (iface == null) {
+            throw new NullPointerException("iface is null");
+        }
         return iface.isInstance(this);
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (iface == null) throw new NullPointerException("iface is null");
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
+        if (iface == null) {
+            throw new NullPointerException("iface is null");
+        }
         if (iface.isInstance(this)) {
             return (T) this;
         }
         throw new SQLException(getClass().getName() + " does not implement " + iface.getName());
     }
 
+    @SuppressWarnings("override")
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return null;
     }

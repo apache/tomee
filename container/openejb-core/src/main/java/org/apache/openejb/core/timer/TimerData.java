@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public abstract class TimerData implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     public static final String OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_";
@@ -59,18 +60,18 @@ public abstract class TimerData implements Serializable {
 
     private Object info;
     private boolean persistent;
+    private boolean autoScheduled;
 
     protected AbstractTrigger<?> trigger;
-    
+
     protected Scheduler scheduler;
 
-    public void setScheduler(Scheduler scheduler) {
+    public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
     // EJB Timer object given to user code
     private Timer timer;
-
 
     /**
      * Is this a new timer?  A new timer must be scheduled with the java.util.Timer
@@ -84,21 +85,28 @@ public abstract class TimerData implements Serializable {
      */
     private boolean cancelled = false;
 
+    private boolean stopped = false;
+
     /**
      * Has this timer been registered with the transaction for callbacks?  We remember
      * when we are registered to avoid multiple registrations.
      */
     private boolean synchronizationRegistered = false;
-    
-    /**
-     *  Used to set timer to expired state after the timeout callback method has been successfully invoked.
-     *  only apply to 
-     *  1, Single action timer
-     *  2, Calendar timer there are no future timeout.
-     */
-    private boolean expired;    
 
-    public TimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig) {
+    /**
+     * Used to set timer to expired state after the timeout callback method has been successfully invoked.
+     * only apply to
+     * 1, Single action timer
+     * 2, Calendar timer there are no future timeout.
+     */
+    private boolean expired;
+
+    public TimerData(final long id,
+                     final EjbTimerServiceImpl timerService,
+                     final String deploymentId,
+                     final Object primaryKey,
+                     final Method timeoutMethod,
+                     final TimerConfig timerConfig) {
         this.id = id;
         this.timerService = timerService;
         this.deploymentId = deploymentId;
@@ -110,32 +118,45 @@ public abstract class TimerData implements Serializable {
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
+        doWriteObject(out);
+    }
+
+    protected void doWriteObject(final ObjectOutputStream out) throws IOException {
         out.writeLong(id);
         out.writeUTF(deploymentId);
         out.writeBoolean(persistent);
+        out.writeBoolean(autoScheduled);
         out.writeObject(timer);
         out.writeObject(primaryKey);
         out.writeObject(timerService);
         out.writeObject(info);
+        out.writeObject(trigger);
         out.writeUTF(timeoutMethod.getName());
     }
 
     private void readObject(final ObjectInputStream in) throws IOException {
+        doReadObject(in);
+    }
+
+    protected void doReadObject(final ObjectInputStream in) throws IOException {
         id = in.readLong();
         deploymentId = in.readUTF();
         persistent = in.readBoolean();
+        autoScheduled = in.readBoolean();
 
         try {
             timer = (Timer) in.readObject();
             primaryKey = in.readObject();
             timerService = (EjbTimerServiceImpl) in.readObject();
             info = in.readObject();
+            trigger = AbstractTrigger.class.cast(in.readObject());
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
         }
 
         final String mtd = in.readUTF();
         final BeanContext beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
+        scheduler = timerService.getScheduler();
         for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext(); ) {
             final MethodContext methodContext = it.next().getValue();
             /* this doesn't work in all cases
@@ -146,10 +167,9 @@ public abstract class TimerData implements Serializable {
 
             final Method method = methodContext.getBeanMethod();
             if (method != null && method.getName().equals(mtd)) { // maybe we should check parameters too
-                timeoutMethod = method;
+                setTimeoutMethod(method);
                 break;
             }
-
         }
     }
 
@@ -157,8 +177,8 @@ public abstract class TimerData implements Serializable {
         if (trigger != null) {
             try {
                 final Scheduler s = timerService.getScheduler();
-                
-                if(!s.isShutdown()) {
+
+                if (!s.isShutdown()) {
                     if (!isPersistent()) {
                         s.unscheduleJob(trigger.getKey());
                     } else {
@@ -170,6 +190,7 @@ public abstract class TimerData implements Serializable {
             }
         }
         cancelled = true;
+        stopped = true;
     }
 
     public long getId() {
@@ -203,7 +224,11 @@ public abstract class TimerData implements Serializable {
         trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
         trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
         newTimer = true;
-        registerTimerDataSynchronization();
+        try {
+            registerTimerDataSynchronization();
+        } catch (TimerStoreException e) {
+            throw new EJBException("Failed to register new timer data synchronization", e);
+        }
     }
 
     public boolean isCancelled() {
@@ -211,12 +236,16 @@ public abstract class TimerData implements Serializable {
     }
 
     public void cancel() {
+        if (stopped) {
+            return;
+        }
+
         timerService.cancelled(TimerData.this);
         if (trigger != null) {
             try {
                 final Scheduler s = timerService.getScheduler();
-                
-                if(!s.isShutdown()){
+
+                if (!s.isShutdown()) {
                     s.unscheduleJob(trigger.getKey());
                 }
             } catch (SchedulerException e) {
@@ -224,14 +253,22 @@ public abstract class TimerData implements Serializable {
             }
         }
         cancelled = true;
-        registerTimerDataSynchronization();
+        try {
+            registerTimerDataSynchronization();
+        } catch (TimerStoreException e) {
+            throw new EJBException("Failed to register timer data synchronization on cancel", e);
+        }
+    }
+
+    private void setTimeoutMethod(final Method timeoutMethod) {
+        this.timeoutMethod = timeoutMethod;
     }
 
     public Method getTimeoutMethod() {
         return timeoutMethod;
     }
 
-    private void transactionComplete(boolean committed) {
+    private void transactionComplete(final boolean committed) throws TimerStoreException {
         if (newTimer) {
             // you are only a new timer once no matter what
             newTimer = false;
@@ -251,12 +288,14 @@ public abstract class TimerData implements Serializable {
         }
     }
 
-    private void registerTimerDataSynchronization() {
-        if (synchronizationRegistered) return;
+    private void registerTimerDataSynchronization() throws TimerStoreException {
+        if (synchronizationRegistered) {
+            return;
+        }
 
         try {
-            Transaction transaction = timerService.getTransactionManager().getTransaction();
-            int status = transaction == null ? Status.STATUS_NO_TRANSACTION : transaction.getStatus();
+            final Transaction transaction = timerService.getTransactionManager().getTransaction();
+            final int status = transaction == null ? Status.STATUS_NO_TRANSACTION : transaction.getStatus();
 
             if (transaction != null && status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK) {
                 transaction.registerSynchronization(new TimerDataSynchronization());
@@ -271,25 +310,33 @@ public abstract class TimerData implements Serializable {
         transactionComplete(true);
     }
 
+    public boolean isStopped() {
+        return stopped;
+    }
+
     private class TimerDataSynchronization implements Synchronization {
+
         @Override
         public void beforeCompletion() {
         }
 
         @Override
-        public void afterCompletion(int status) {
+        public void afterCompletion(final int status) {
             synchronizationRegistered = false;
-            transactionComplete(status == Status.STATUS_COMMITTED);
+            try {
+                transactionComplete(status == Status.STATUS_COMMITTED);
+            } catch (TimerStoreException e) {
+                throw new EJBException("Failed on afterCompletion", e);
+            }
         }
     }
 
-    public boolean isPersistent(){
+    public boolean isPersistent() {
         return persistent;
     }
-    
-    
+
     public Trigger getTrigger() {
-        
+
         if (scheduler != null) {
             try {
                 final TriggerKey key = new TriggerKey(trigger.getName(), trigger.getGroup());
@@ -299,40 +346,40 @@ public abstract class TimerData implements Serializable {
             } catch (SchedulerException e) {
                 return null;
             }
-        } 
+        }
 
         return trigger;
     }
 
-    public Date getNextTimeout() {    
-        
+    public Date getNextTimeout() {
+
         try {
             // give the trigger 1 ms to init itself to set correct nextTimeout value.
             Thread.sleep(1);
         } catch (InterruptedException e) {
             log.warning("Interrupted exception when waiting 1ms for the trigger to init", e);
         }
-        
+
         Date nextTimeout = null;
-        
-        if(getTrigger()!=null){
-        
+
+        if (getTrigger() != null) {
+
             nextTimeout = getTrigger().getNextFireTime();
         }
-        
+
         return nextTimeout;
     }
 
     public long getTimeRemaining() {
-        Date nextTimeout = getNextTimeout();
+        final Date nextTimeout = getNextTimeout();
         return nextTimeout.getTime() - System.currentTimeMillis();
     }
-    
+
     public boolean isExpired() {
         return expired;
     }
 
-    public void setExpired(boolean expired){
+    public void setExpired(final boolean expired) {
         this.expired = expired;
     }
 

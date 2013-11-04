@@ -26,12 +26,14 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
@@ -53,8 +55,8 @@ public class StatefulDependentInjectionTest {
             orange.someBusinessMethod();
 
             fail("call should not be allowed");
-        } catch (IllegalStateException e) {
-            // pass
+        } catch (final EJBException e) {
+            assertTrue(IllegalStateException.class.isInstance(e.getCause()));
         }
     }
 

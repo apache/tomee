@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.core.ParentClassLoaderFinder;
+
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,10 +29,17 @@ import static org.apache.openejb.util.Join.join;
 public class DaemonThreadFactory implements ThreadFactory {
 
     private final String name;
+    private final ThreadGroup group;
     private AtomicInteger ids = new AtomicInteger(0);
 
     public DaemonThreadFactory(Object... name) {
         this.name = join(" ", name).trim();
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            group = securityManager.getThreadGroup();
+        } else {
+            group = Thread.currentThread().getThreadGroup();
+        }
     }
 
     public DaemonThreadFactory(Class... clazz) {
@@ -48,8 +57,19 @@ public class DaemonThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable runnable) {
-        Thread t = new Thread(runnable, name + " - " + ids.incrementAndGet());
-        t.setDaemon(true);
-        return t;
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(ParentClassLoaderFinder.Helper.get());
+        try {
+            final Thread thread = new Thread(group, runnable, name + " - " + ids.incrementAndGet());
+            if (!thread.isDaemon()) {
+                thread.setDaemon(true);
+            }
+            if (thread.getPriority() != Thread.NORM_PRIORITY) {
+                thread.setPriority(Thread.NORM_PRIORITY);
+            }
+            return thread;
+        } finally {
+            Thread.currentThread().setContextClassLoader(loader);
+        }
     }
 }

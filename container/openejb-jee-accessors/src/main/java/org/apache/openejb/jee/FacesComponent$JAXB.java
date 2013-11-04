@@ -214,7 +214,9 @@ public class FacesComponent$JAXB
                 }
                 componentExtension.add(componentExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "component-type"), new QName("http://java.sun.com/xml/ns/javaee", "component-class"), new QName("http://java.sun.com/xml/ns/javaee", "facet"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "component-extension"));
+                // just here ATM to not prevent users to get JSF 2.2 feature because we can't read it
+                // TODO: handle it properly
+                // context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "component-type"), new QName("http://java.sun.com/xml/ns/javaee", "component-class"), new QName("http://java.sun.com/xml/ns/javaee", "facet"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "component-extension"));
             }
         }
         if (descriptions != null) {

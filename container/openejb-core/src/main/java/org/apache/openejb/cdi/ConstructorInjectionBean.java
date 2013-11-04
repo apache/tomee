@@ -16,64 +16,64 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.webbeans.annotation.DependentScopeLiteral;
-import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.component.WebBeansType;
-import org.apache.webbeans.config.DefinitionUtil;
+import org.apache.webbeans.component.creation.BeanAttributesBuilder;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.InjectableConstructor;
-import org.apache.webbeans.util.WebBeansUtil;
+import org.apache.webbeans.portable.InjectionTargetImpl;
 
-import javax.enterprise.context.spi.CreationalContext;
-import java.lang.reflect.Constructor;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.InjectionPoint;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Set;
 
 /**
-* @version $Rev$ $Date$
+ * NOTE: think to cache this object to avoid concurrent issues.
+ *
+ * @version $Rev$ $Date$
 */
-public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> {
-
-    private final Constructor<T> constructor;
-
-    public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType) {
-        super(WebBeansType.DEPENDENT, returnType, webBeansContext);
-
-        if (webBeansContext == null) throw new NullPointerException("webBeansContext");
-        if (returnType == null) throw new NullPointerException("returnType");
-
-        final WebBeansUtil webBeansUtil = webBeansContext.getWebBeansUtil();
-
-        if (webBeansUtil == null) throw new NullPointerException("webBeansUtil");
-
-        constructor = webBeansUtil.defineConstructor(returnType);
-
-        if (constructor == null) throw new NullPointerException("constructor");
-
-        final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
-
-        if (definitionUtil == null) throw new NullPointerException("definitionUtil");
-
-        definitionUtil.addConstructorInjectionPointMetaData(this, constructor);
+public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TODO: see InjectableConstructor
+    private static final Field INJECTION_TARGET_FIELD;
+    static {
+        try {
+            INJECTION_TARGET_FIELD = InjectionTargetBean.class.getDeclaredField("injectionTarget");
+        } catch (final NoSuchFieldException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+        INJECTION_TARGET_FIELD.setAccessible(true);
     }
 
-    public ConstructorInjectionBean<T> complete() {
-        // these are not used immediately in createInstance()
-        try {
-            final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
-            if (getScope() == null) { // avoid NPE
-                setImplScopeType(new DependentScopeLiteral());
-            }
-            definitionUtil.defineInjectedFields(this);
-            definitionUtil.defineInjectedMethods(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private final boolean passivationCapable;
 
-        return this;
+    public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType, AnnotatedType<T>  at) {
+        this(webBeansContext, returnType, at, null);
+    }
+
+    public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType, AnnotatedType<T>  at, Boolean passivationCapable) {
+        super(webBeansContext, WebBeansType.DEPENDENT, at, BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build(), returnType);
+        try {
+            INJECTION_TARGET_FIELD.set(this, new ConstructorInjectionTarget<T>(getAnnotatedType(), getInjectionPoints(), getWebBeansContext()));
+        } catch (final Exception e) {
+            throw new OpenEJBRuntimeException(e);
+        }
+        if (passivationCapable != null) {
+            this.passivationCapable = passivationCapable;
+        } else {
+            this.passivationCapable = isPassivationCapable();
+        }
     }
 
     @Override
-    protected T createInstance(CreationalContext<T> tCreationalContext) {
-        InjectableConstructor<T> ic = new InjectableConstructor<T>(constructor, this, tCreationalContext);
-        return ic.doInjection();
+    public boolean isPassivationCapable() {
+        return passivationCapable;
+    }
+
+    private static final class ConstructorInjectionTarget<T> extends InjectionTargetImpl<T> {
+        public ConstructorInjectionTarget(final AnnotatedType<T> annotatedType, final Set<InjectionPoint> points, final WebBeansContext webBeansContext) {
+            super(annotatedType, points, webBeansContext, Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
+        }
     }
 }

@@ -41,13 +41,15 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextTransaction;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceBase;
 import org.apache.catalina.ha.CatalinaCluster;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.loader.VirtualWebappLoader;
-import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.realm.RealmBase;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
@@ -83,10 +85,13 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicationCreated;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.TldScanner;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.Resource;
@@ -112,7 +117,7 @@ import org.apache.tomee.catalina.cluster.ClusterObserver;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
-import org.apache.tomee.catalina.session.OWBStandardManager;
+import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 import org.apache.tomee.common.LegacyAnnotationProcessor;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.TomcatVersion;
@@ -134,6 +139,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
@@ -151,12 +157,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static org.apache.tomee.catalina.BackportUtil.getNamingContextListener;
+import static org.apache.tomee.catalina.Contexts.warPath;
 
 /**
  * Web application builder.
@@ -197,6 +206,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             throw new OpenEJBRuntimeException("can't find method getNamingContextName", e);
         }
     }
+
+    private final Map<ClassLoader, InstanceManager> instanceManagers = new ConcurrentHashMap<ClassLoader, InstanceManager>();
 
     /**
      * Context information for web applications
@@ -260,6 +271,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final StandardServer standardServer = TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
+        // force tomcat to use our custom WebSocket ServerEndpointConfigurator
+        forceEEServerEndpointConfigurator();
+
         // could search mbeans
 
         //Getting host config listeners
@@ -304,6 +318,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         deploymentLoader = new DeploymentLoader();
     }
 
+    private void forceEEServerEndpointConfigurator() {
+        // by reflection cause
+        // 1- tomcat algorithm uses ServiceLoader.next() so no real way to ensure it is our META-INF/services/...
+        // 2- avoids getResources which can be slow depending the server config
+        try {
+            final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass("javax.websocket.server.ServerEndpointConfig$Configurator");
+            final Field f = clazz.getDeclaredField("defaultImpl");
+            boolean acc = f.isAccessible();
+            f.setAccessible(true);
+            try {
+                f.set(null, new JavaEEDefaultServerEnpointConfigurator(instanceManagers));
+            } finally {
+                f.setAccessible(acc);
+            }
+        } catch (final ClassNotFoundException cnfe) {
+            // no-op
+        } catch (final Exception e) {
+            logger.warning("Can't set TomEE ServerEndpointConfig$Configurator", e);
+        }
+    }
+
     private void manageCluster(final Cluster cluster) {
         if (cluster == null || cluster instanceof SimpleTomEETcpCluster) {
             return;
@@ -343,6 +378,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     protected Realm tomeeRealm(final Realm realm) {
         final TomEERealm trealm = new TomEERealm();
+        if (RealmBase.class.isInstance(realm)) {
+            trealm.setRealmPath("/tomee/" + RealmBase.class.cast(realm).getRealmPath());
+        }
         trealm.addRealm(realm);
         return trealm;
     }
@@ -443,6 +481,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
+            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
+                continue;
+            }
+
             StandardContext standardContext;
             if (contextXml != null) {
                 synchronized (CONTEXT_DIGESTER) {
@@ -457,11 +499,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
             } else {
-                standardContext = new StandardContext();
-            }
-
-            if (getContextInfo(webApp.host, webApp.contextRoot) != null) {
-                continue;
+                final Host host = hosts.get(defaultHost);
+                if (StandardHost.class.isInstance(host)) {
+                    try {
+                        standardContext = StandardContext.class.cast(ParentClassLoaderFinder.Helper.get().loadClass(StandardHost.class.cast(host).getContextClass()).newInstance());
+                    } catch (final Throwable th) {
+                        logger.warning("Can't use context class specified, using default StandardContext", th);
+                        standardContext = new StandardContext();
+                    }
+                } else {
+                    standardContext = new StandardContext();
+                }
             }
 
             if (standardContext.getPath() != null) {
@@ -475,8 +523,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             // /!\ take care, StandardContext default host = "_" and not null or localhost
-            if (standardContext.getHostname() != null && !"_".equals(standardContext.getHostname())) {
-                webApp.host = standardContext.getHostname();
+            final String hostname = Contexts.getHostname(standardContext);
+            if (hostname != null && !"_".equals(hostname)) {
+                webApp.host = hostname;
             }
 
             final ApplicationParameter appParam = new ApplicationParameter();
@@ -720,7 +769,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // just adding a carriage return to get logs more readable
         logger.info("------------------------- "
-                + standardContext.getHostname().replace("_", defaultHost) + " -> "
+                + Contexts.getHostname(standardContext).replace("_", defaultHost) + " -> "
                 + finalName(standardContext.getPath()));
 
         if (FORCE_RELOADABLE && getContextInfo(standardContext) == null) { // don't do it for ears
@@ -756,7 +805,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     sessionManagerClass = TomcatHelper.getServer().getParentClassLoader().loadClass(sessionManager);
                 } catch (ClassNotFoundException e) {
                     logger.error("can't find '" + sessionManager + "', StandardManager will be used", e);
-                    sessionManagerClass = OWBStandardManager.class;
+                    sessionManagerClass = StandardManager.class;
                 }
             }
 
@@ -767,7 +816,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 logger.error("can't instantiate '" + sessionManager + "', StandardManager will be used", e);
             }
         } else if (standardContext.getCluster() == null) { // else let it use the cluster to create the manager
-            standardContext.setManager(new OWBStandardManager());
+            standardContext.setManager(new StandardManager());
         }
 
         if (standardContext.getConfigFile() == null) {
@@ -902,6 +951,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return null;
         }
 
+        public ClassLoader loader() {
+            if (standardContext != null && standardContext.getLoader() != null) {
+                return standardContext.getLoader().getClassLoader();
+            }
+            return null;
+        }
+
         @Override
         public String toString() {
             if (standardContext == null) return super.toString();
@@ -927,13 +983,35 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
         initContextLoader(standardContext);
+
+        // used to add custom filters first - our arquillian integration uses it for instance
+        // needs to be done now (= before start event) because of addFilterMapBefore() usage
+        final String filters = SystemInstance.get().getProperty("org.apache.openejb.servlet.filters");
+        if (filters != null) {
+            final String[] names = filters.split(",");
+            for (final String name : names) {
+                final String[] clazzMapping = name.split("=");
+
+                final FilterDef filterDef = new FilterDef();
+                filterDef.setFilterClass(clazzMapping[0]);
+                filterDef.setFilterName(clazzMapping[0]);
+                standardContext.addFilterDef(filterDef);
+
+                final FilterMap filterMap = new FilterMap();
+                filterMap.setFilterName(clazzMapping[0]);
+                filterMap.addURLPattern(clazzMapping[1]);
+                standardContext.addFilterMapBefore(filterMap);
+            }
+        }
     }
 
     private void initContextLoader(final StandardContext standardContext) {
         final Loader standardContextLoader = standardContext.getLoader();
         if (standardContextLoader != null
-                && !VirtualWebappLoader.class.equals(standardContextLoader.getClass())
-                && !WebappLoader.class.equals(standardContextLoader.getClass())) {
+                && (
+                       (!VirtualWebappLoader.class.equals(standardContextLoader.getClass()) && !WebappLoader.class.equals(standardContextLoader.getClass()))
+                    || (WebappLoader.class.equals(standardContextLoader.getClass()) && !WebappLoader.class.cast(standardContextLoader).getLoaderClass().startsWith("org.apache.tom")))
+            ) {
             // custom loader, we don't know it
             // and since we don't have a full delegate pattern for our lazy stop loader
             // simply skip lazy stop loader - normally sides effect will be an early shutdown for ears and some particular features
@@ -1013,10 +1091,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final AppModule appModule = loadApplication(standardContext);
 
             if (standardContext.getNamingResources() instanceof OpenEJBNamingResource) {
+                final Collection<String> importedNames = new ArrayList<String>(); // we can get the same resource twice as in tomcat
+
                 // add them to the app as resource
                 final OpenEJBNamingResource nr = (OpenEJBNamingResource) standardContext.getNamingResources();
                 for (ResourceBase resource : nr.getTomcatResources()) {
                     final String name = resource.getName();
+                    if (!importedNames.contains(name)) {
+                        importedNames.add(name);
+                    } else {
+                        continue;
+                    }
 
                     boolean found = false;
                     for (ResourceInfo r : SystemInstance.get().getComponent(OpenEjbConfiguration.class).facilities.resources) {
@@ -1029,15 +1114,50 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
 
                     if (!found) {
-                        final Resource newResource = new Resource(name, resource.getType(), "org.apache.tomee:ProvidedByTomcat");
-                        newResource.getProperties().setProperty("jndiName", newResource.getId());
-                        newResource.getProperties().setProperty("appName", getId(standardContext));
-                        newResource.getProperties().setProperty("factory", (String) resource.getProperty("factory"));
+                        final Resource newResource;
 
-                        final Reference reference = createReference(resource);
-                        if (reference != null) {
-                            newResource.getProperties().put("reference", reference);
+                        if (DataSource.class.getName().equals(resource.getType())) { // we forward it to TomEE datasources
+                            newResource = new Resource(name, resource.getType());
+
+                            boolean jta = false;
+
+                            final Properties properties = newResource.getProperties();
+                            final Iterator<String> params = resource.listProperties();
+                            while (params.hasNext()) {
+                                final String paramName = params.next();
+                                final String paramValue = (String) resource.getProperty(paramName);
+
+                                // handling some param name conversion to OpenEJB style
+                                if ("driverClassName".equals(paramName)) {
+                                    properties.setProperty("JdbcDriver", paramValue);
+                                } else if ("url".equals(paramName)) {
+                                    properties.setProperty("JdbcUrl", paramValue);
+                                } else {
+                                    properties.setProperty(paramName, paramValue);
+                                }
+
+                                if ("JtaManaged".equalsIgnoreCase(paramName)) {
+                                    jta = Boolean.parseBoolean(paramValue);
+                                }
+                            }
+
+                            if (!jta) {
+                                properties.setProperty("JtaManaged", "false");
+                            }
+                        } else { // custom type, let it be created
+                            newResource = new Resource(name, resource.getType(), "org.apache.tomee:ProvidedByTomcat");
+
+                            final Properties properties = newResource.getProperties();
+                            properties.setProperty("jndiName", newResource.getId());
+                            properties.setProperty("appName", getId(standardContext));
+                            properties.setProperty("factory", (String) resource.getProperty("factory"));
+
+                            final Reference reference = createReference(resource);
+                            if (reference != null) {
+                                properties.put("reference", reference);
+                            }
                         }
+
                         appModule.getResources().add(newResource);
                     }
                 }
@@ -1045,7 +1165,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             if (appModule != null) {
                 try {
-                    contextInfo = addContextInfo(standardContext.getHostname(), standardContext);
+                    contextInfo = addContextInfo(Contexts.getHostname(standardContext), standardContext);
                     contextInfo.standardContext = standardContext; // ensure to do it before an exception can be thrown
 
                     contextInfo.appInfo = configurationFactory.configureApplication(appModule);
@@ -1065,25 +1185,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         }
                     }
 
-                    appContext = a.createApplication(contextInfo.appInfo, classLoader);
-                    // todo add watched resources to context
-
-                    for (final BeanContext deployment : appContext.getBeanContexts()) {
-                        if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
-                            final List<Class> interfaces = new ArrayList<Class>(2);
-                            interfaces.add(Serializable.class);
-                            interfaces.add(IntraVmProxy.class);
-                            final BeanType type = deployment.getComponentType();
-                            if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
-                                interfaces.add(BeanContext.Removable.class);
-                            }
-                            try {
-                                LocalBeanProxyFactory.createProxy(deployment.getBeanClass(), classLoader, interfaces.toArray(new Class<?>[interfaces.size()]));
-                            } catch (final Exception e) {
-                                // no-op: as before
+                    OpenEJBContextConfig openEJBContextConfig = null;
+                    for (final LifecycleListener listener : standardContext.findLifecycleListeners()) {
+                        if (OpenEJBContextConfig.class.isInstance(listener)) {
+                            openEJBContextConfig = OpenEJBContextConfig.class.cast(listener);
+                            break;
+                        }
+                    }
+                    if (openEJBContextConfig != null) {
+                        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+                            if (ejbModule.getFile() != null && warPath(standardContext).equals(rootPath(ejbModule.getFile()))) {
+                                openEJBContextConfig.finder(ejbModule.getFinder(), ejbModule.getClassLoader());
+                                break;
                             }
                         }
                     }
+
+
+                    appContext = a.createApplication(contextInfo.appInfo, classLoader);
+                    // todo add watched resources to context
+
+                    eagerInitOfLocalBeanProxies(appContext.getBeanContexts(), classLoader);
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext, e);
                     undeploy(standardContext, contextInfo);
@@ -1109,7 +1231,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 if (id.equals(getId(w.host, w.contextRoot)) || id.equals(getId(w.host, w.moduleId))) {
                     if (webAppInfo == null) {
                         webAppInfo = w;
-                    } else if (w.host != null && w.host.equals(standardContext.getHostname())) {
+                    } else if (w.host != null && w.host.equals(Contexts.getHostname(standardContext))) {
                         webAppInfo = w;
                     }
 
@@ -1129,7 +1251,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
 
             // ensure matching (see getId() usage)
-            webAppInfo.host = standardContext.getHostname();
+            webAppInfo.host = Contexts.getHostname(standardContext);
             webAppInfo.contextRoot = standardContext.getName();
 
             // save jsf stuff
@@ -1152,11 +1274,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     }
                 }
                 injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
-
-                // jndi bindings
-                final Map<String, Object> bindings = new HashMap<String, Object>();
-                bindings.putAll(appContext.getBindings());
-                bindings.putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
 
                 // merge OpenEJB jndi into Tomcat jndi
                 final TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
@@ -1189,18 +1306,33 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setContextRoot(webAppInfo.contextRoot);
                 webContext.setHost(webAppInfo.host);
-                webContext.setBindings(bindings);
+                webContext.setBindings(new HashMap<String, Object>());
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
 
                 if (!contextInfo.appInfo.webAppAlone) {
                     final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
-                    new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
+                    OpenEJBLifecycle.CURRENT_APP_INFO.set(contextInfo.appInfo);
+                    try {
+                        new CdiBuilder().build(contextInfo.appInfo, appContext, beanContexts, webContext);
+                    } finally {
+                        OpenEJBLifecycle.CURRENT_APP_INFO.remove();
+                    }
                     assembler.startEjbs(true, beanContexts);
+                    assembler.bindGlobals(appContext.getBindings());
+                    eagerInitOfLocalBeanProxies(beanContexts, standardContext.getLoader().getClassLoader());
+
+                    deployWebServicesIfEjbCreatedHere(contextInfo.appInfo, beanContexts);
                 }
 
-                standardContext.setInstanceManager(new JavaeeInstanceManager(webContext, standardContext));
+                // jndi bindings
+                webContext.getBindings().putAll(appContext.getBindings());
+                webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
+
+                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext, standardContext);
+                standardContext.setInstanceManager(instanceManager);
+                instanceManagers.put(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
 
             } catch (Exception e) {
@@ -1227,6 +1359,39 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             filter.setPrefix(standardContext.getName());
             filter.setConfigurationPath(routerConfig);
             standardContext.getPipeline().addValve(filter);
+        }
+    }
+
+    private static File rootPath(final File file) {
+        if (file.isDirectory() && file.getName().equals("classes") && file.getParentFile() != null && file.getParentFile().getName().equals("WEB-INF")) {
+            return file.getParentFile().getParentFile();
+        }
+        return file;
+    }
+
+    private static void deployWebServicesIfEjbCreatedHere(final AppInfo info, final Collection<BeanContext> beanContexts) {
+        if (beanContexts == null || beanContexts.isEmpty()) {
+            return;
+        }
+        SystemInstance.get().fireEvent(new NewEjbAvailableAfterApplicationCreated(info, beanContexts));
+    }
+
+    private static void eagerInitOfLocalBeanProxies(final Collection<BeanContext> beans, final ClassLoader classLoader) {
+        for (final BeanContext deployment : beans) {
+            if (deployment.isLocalbean() && !deployment.isDynamicallyImplemented()) { // init proxy eagerly otherwise deserialization of serialized object can't work
+                final List<Class> interfaces = new ArrayList<Class>(2);
+                interfaces.add(Serializable.class);
+                interfaces.add(IntraVmProxy.class);
+                final BeanType type = deployment.getComponentType();
+                if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
+                    interfaces.add(BeanContext.Removable.class);
+                }
+                try {
+                    LocalBeanProxyFactory.createProxy(deployment.getBeanClass(), classLoader, interfaces.toArray(new Class<?>[interfaces.size()]));
+                } catch (final Exception e) {
+                    // no-op: as before
+                }
+            }
         }
     }
 
@@ -1298,7 +1463,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         final Container child = host.findChild(standardContext.getName());
 
         // skip undeployment if redeploying (StandardContext.redeploy())
-        if (child instanceof org.apache.catalina.Context && TomcatContextUtil.isReloading((org.apache.catalina.Context) child)) {
+        if (child instanceof org.apache.catalina.Context && org.apache.catalina.Context.class.cast(child).getPaused()) {
             return true;
         }
 
@@ -1377,30 +1542,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
+        final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(standardContext.getLoader().getClassLoader());
+
         final NamingContextListener ncl = getNamingContextListener(standardContext);
         final String listenerName = ncl.getName();
         ContextAccessController.setWritable(listenerName, standardContext);
         try {
-
-            Context openejbContext = getContainerSystem().getJNDIContext();
-            openejbContext = (Context) openejbContext.lookup("openejb");
-
-            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            // normal case = startup case use standardclassloader
-            // so simply reproduce it even is a method is called from another context.
-            // that said this code (try) shouldn't be useful anymore for tomcat 7
-            if (tccl instanceof WebappClassLoader) {
-                Thread.currentThread().setContextClassLoader(tccl.getParent());
-            }
-
-            final Context root;
-            final Context comp;
-            try {
-                root = (Context) ContextBindings.getClassLoader().lookup("");
-                comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
-            } finally {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            final Context openejbContext = (Context) getContainerSystem().getJNDIContext().lookup("openejb");
+            final Context root = (Context) ContextBindings.getClassLoader().lookup("");
+            final Context comp = (Context) ContextBindings.getClassLoader().lookup("comp"); // usually fails
 
             // Context root = ncl.getNamingContext();
             // Context comp = (Context) root.lookup("comp");
@@ -1429,12 +1580,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
             safeBind(comp, "TransactionSynchronizationRegistry", synchronizationRegistry);
 
-            safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
-            safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
-        } catch (NamingException e) {
+            if (SystemInstance.get().getComponent(ORB.class) != null) {
+                safeBind(comp, "ORB", new SystemComponentReference(ORB.class));
+            }
+            if (SystemInstance.get().getComponent(HandleDelegate.class) != null) {
+                safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+            }
+        } catch (final NamingException e) {
             // no-op
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalLoader);
+            ContextAccessController.setReadOnly(listenerName);
         }
-        ContextAccessController.setReadOnly(listenerName);
 
         // required for Pojo Web Services because when Assembler creates the application
         // the CoreContainerSystem does not contain the WebContext
@@ -1462,7 +1619,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             }
         }
 
-
+        // owb integration filters
         final WebBeansContext webBeansContext = getWebBeansContext(contextInfo);
         if (webBeansContext != null) {
             // it is important to have a begin and a end listener
@@ -1487,6 +1644,27 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 2];
 
                 newLifecycleListeners[0] = beginWebBeansListener;
+                System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
+                newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
+            }
+        } else {
+            // just add the end listener to be able to stack tasks to execute at the request end
+            final EndWebBeansListener endWebBeansListener = new EndWebBeansListener(webBeansContext);
+
+            {
+                final Object[] appEventListeners = standardContext.getApplicationEventListeners();
+                final Object[] newEventListeners = new Object[appEventListeners.length + 1];
+
+                System.arraycopy(appEventListeners, 0, newEventListeners, 1, appEventListeners.length);
+                newEventListeners[newEventListeners.length - 1] = endWebBeansListener;
+                standardContext.setApplicationEventListeners(newEventListeners);
+            }
+
+            {
+                final Object[] lifecycleListeners = standardContext.getApplicationLifecycleListeners();
+                final Object[] newLifecycleListeners = new Object[lifecycleListeners.length + 1];
+
                 System.arraycopy(lifecycleListeners, 0, newLifecycleListeners, 1, lifecycleListeners.length);
                 newLifecycleListeners[newLifecycleListeners.length - 1] = endWebBeansListener;
                 standardContext.setApplicationLifecycleListeners(newLifecycleListeners);
@@ -1549,7 +1727,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final String name = removeFirstSlashAndWar(web.getContextRoot());
             if (stdName.equals(name)) {
                 webBeansContext = web.getWebbeansContext();
-                if (contextInfo.standardContext.getHostname().equals(web.getHost())) {
+                if (Contexts.getHostname(contextInfo.standardContext).equals(web.getHost())) {
                     break;
                 } // else loop hoping to find a better matching
             }
@@ -1663,7 +1841,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
             }
             ClassLoaderUtil.cleanOpenJPACache(old);
+            instanceManagers.remove(old);
+        } else if (standardContext.getLoader() != null && standardContext.getLoader().getClassLoader() != null) {
+            instanceManagers.remove(standardContext.getLoader().getClassLoader());
         }
+
         if (contextInfo != null && (contextInfo.appInfo == null || contextInfo.appInfo.webAppAlone)) {
             removeContextInfo(standardContext);
         }
@@ -1879,14 +2061,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      *
      * @param standardContext tomcat context instance
      */
-    private void    loadWebModule(final AppModule appModule, final StandardContext standardContext) {
+    private void loadWebModule(final AppModule appModule, final StandardContext standardContext) {
         final WebModule webModule = appModule.getWebModules().get(0);
         final WebApp webApp = webModule.getWebApp();
 
         // create the web module
         final String path = standardContext.getPath();
         logger.debug("context path = " + path);
-        webModule.setHost(standardContext.getHostname());
+        webModule.setHost(Contexts.getHostname(standardContext));
         // Add all Tomcat env entries to context so they can be overriden by the env.properties file
         final NamingResources naming = standardContext.getNamingResources();
         for (final ContextEnvironment environment : naming.findEnvironments()) {
@@ -1918,7 +2100,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webApp.getEnvEntryMap().remove(environment.getName());
             }
         }
-
     }
 
     /**
@@ -1948,7 +2129,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private void safeBind(final Context comp, final String name, final Object value) {
         try {
             comp.lookup(name);
-            logger.info(name + " already bound, ignoring");
+            logger.debug(name + " already bound, ignoring");
         } catch (Exception e) {
             try {
                 comp.bind(name, value);
@@ -1991,7 +2172,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @return id of the context
      */
     private String getId(final StandardContext standardContext) {
-        return getId(standardContext.getHostname(), standardContext.getName());
+        return getId(Contexts.getHostname(standardContext), standardContext.getName());
     }
 
     private String getId(final String host, final String context) {

@@ -19,14 +19,19 @@ package org.apache.openejb.bonecp;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
+import org.apache.openejb.resource.jdbc.managed.xa.ManagedXADataSource;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
+import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Strings;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -37,7 +42,7 @@ import java.util.logging.Logger;
 
 public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
     @Override
-    protected void doDestroy(final DataSource dataSource) throws Throwable {
+    protected void doDestroy(final CommonDataSource dataSource) throws Throwable {
         ((BoneCPDataSource) dataSource).close();
     }
 
@@ -105,7 +110,7 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
     }
 
     @Override
-    public DataSource pool(final String name, final String driver, final Properties properties) {
+    public CommonDataSource pool(final String name, final String driver, final Properties properties) {
         // bonecp already have a kind of ObjectRecipe so simply giving it the values
         final Properties props = new Properties();
         props.put("properties", prefixedProps(properties));
@@ -117,6 +122,15 @@ public class BoneCPDataSourceCreator extends PoolDataSourceCreator {
         if (ds.getPoolName() == null || ds.getPoolName().isEmpty()) {
             ds.setPoolName(name);
         }
+
+        final String xa = String.class.cast(properties.remove("XaDataSource"));
+        if (xa != null) {
+            cleanProperty(ds, "xadatasource");
+
+            final XADataSource xaDs = XADataSourceResource.proxy(Thread.currentThread().getContextClassLoader(), xa);
+            ds.setDatasourceBean(new ManagedXADataSource(xaDs, OpenEJB.getTransactionManager()));
+        }
+
         return ds;
     }
 

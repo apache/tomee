@@ -21,4 +21,5 @@ import com.ctp.cdi.query.EntityDao;
 
 @Dao
 public interface UserDao extends EntityDao<User, Long> {
+
 }

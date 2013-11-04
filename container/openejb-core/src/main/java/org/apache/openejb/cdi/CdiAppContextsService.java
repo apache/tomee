@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OWBLogConst;
@@ -49,6 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
@@ -72,6 +75,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private final WebBeansContext webBeansContext;
 
+    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
+        @Override
+        protected Collection<Runnable> initialValue() {
+            return new ArrayList<Runnable>();
+        }
+    };
+
+
     public CdiAppContextsService() {
         this(WebBeansContext.currentInstance(), WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
     }
@@ -93,6 +104,21 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         singletonContext.setActive(true);
     }
 
+    private void endRequest() {
+        for (final Runnable r : endRequestRunnables.get()) {
+            try {
+                r.run();
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        endRequestRunnables.remove();
+    }
+
+    public static void pushRequestReleasable(final Runnable runnable) {
+        endRequestRunnables.get().add(runnable);
+    }
+
     @Override
     public void init(Object initializeObject) {
         //Start application context
@@ -109,7 +135,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         //Destroy singleton context
         endContext(Singleton.class, destroyObject);
 
+        removeThreadLocals();
+    }
 
+    public void removeThreadLocals() {
         //Remove thread locals
         //for preventing memory leaks
         requestContext.set(null);
@@ -121,7 +150,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             conversationContext.set(null);
             conversationContext.remove();
         }
-
     }
 
     @Override
@@ -235,12 +263,15 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private void destroyRequestContext() {
+        // execute request tasks
+        endRequest();
+
         if (supportsConversation()) { // OWB-595
             cleanupConversation();
         }
 
         //Get context
-        RequestContext context = getRequestContext();
+        final RequestContext context = getRequestContext();
 
         //Destroy context
         if (context != null) {
@@ -248,18 +279,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         }
 
         // clean up the EL caches after each request
-        ELContextStore elStore = ELContextStore.getInstance(false);
+        final ELContextStore elStore = ELContextStore.getInstance(false);
         if (elStore != null) {
             elStore.destroyELContextStore();
         }
 
         //Clear thread locals
-        conversationContext.set(null);
-        conversationContext.remove();
-        sessionContext.set(null);
-        sessionContext.remove();
-        requestContext.set(null);
-        requestContext.remove();
+        removeThreadLocals();
 
         RequestScopedBeanInterceptorHandler.removeThreadLocals();
     }
@@ -317,7 +343,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     private SessionContext newSessionContext(final HttpSession session) {
-        final String classname = ThreadSingletonServiceImpl.sessionContextClass();
+        final String classname = SystemInstance.get().getComponent(ThreadSingletonService.class).sessionContextClass();
         if (classname != null) {
             try {
                 final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(classname);
@@ -356,7 +382,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             sessionContext.remove();
 
             //Remove session from manager
-            sessionCtxManager.destroySessionContextWithSessionId(session.getId());
+            sessionCtxManager.removeSessionContextWithSessionId(session.getId());
         }
     }
 
@@ -506,5 +532,29 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     public void updateSessionIdMapping(final String oldId, final String newId) {
         sessionCtxManager.updateSessionIdMapping(oldId, newId);
+    }
+
+    public State saveState() {
+        return new State(requestContext.get(), sessionContext.get(), conversationContext.get());
+    }
+
+    public State restoreState(final State state) {
+        final State old = saveState();
+        requestContext.set(state.request);
+        sessionContext.set(state.session);
+        conversationContext.set(state.conversation);
+        return old;
+    }
+
+    public static class State {
+        private final RequestContext request;
+        private final SessionContext session;
+        private final ConversationContext conversation;
+
+        public State(final RequestContext request, final SessionContext session, final ConversationContext conversation) {
+            this.request = request;
+            this.session = session;
+            this.conversation = conversation;
+        }
     }
 }

@@ -266,6 +266,8 @@ public class JaxbJavaee {
     public static class JavaeeNamespaceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
+        private boolean ignore = false;
+
         public JavaeeNamespaceFilter(XMLReader xmlReader) {
             super(xmlReader);
         }
@@ -281,12 +283,38 @@ public class JaxbJavaee {
 
         @Override
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
-            super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
+            if (ignore) {
+                return;
+            }
+
+            if (uri != null && (uri.startsWith("http://jboss.org") || uri.startsWith("urn:java:"))) { // ignore it to be able to read beans.xml with weld config for instances
+                ignore = true;
+            } else {
+                super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
+            }
+        }
+
+        @Override
+        public void characters(final char ch[], final int start, final int length) throws SAXException {
+            if (!ignore) {
+                super.characters(ch, start, length);
+            }
+        }
+
+        @Override
+        public void ignorableWhitespace(final char ch[], final int start, final int length) throws SAXException {
+            if (!ignore) {
+                super.ignorableWhitespace(ch, start, length);
+            }
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
+            if (uri != null && (uri.startsWith("http://jboss.org") || uri.startsWith("urn:java:"))) { // ignore it
+                ignore = false;
+            } else if (!ignore) {
+                super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
+            }
         }
     }
     

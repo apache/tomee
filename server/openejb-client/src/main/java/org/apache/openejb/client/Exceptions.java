@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.client;
 
-import javax.naming.NamingException;
-import javax.naming.AuthenticationException;
-import javax.transaction.RollbackException;
 import javax.ejb.EJBException;
+import javax.naming.AuthenticationException;
+import javax.naming.NamingException;
+import javax.transaction.RollbackException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 
@@ -30,66 +30,62 @@ public class Exceptions {
 
     /**
      * Removes the need for a cast when using initCause
-     * @param t
-     * @param cause
-     * @return
+     *
+     * @param t     T
+     * @param cause Throwable
+     * @return T extends Throwable
      */
-    public static <T extends Throwable> T initCause(T t, Throwable cause) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> T initCause(final T t, final Throwable cause) {
         return (T) t.initCause(cause);
     }
 
-
-    public static IOException newIOException(String message, Throwable cause){
+    public static IOException newIOException(final String message, final Throwable cause) {
         return initCause(new IOException(message), cause);
     }
 
-    public static IOException newIOException(Throwable cause){
+    public static IOException newIOException(final Throwable cause) {
         return initCause(new IOException(), cause);
     }
 
-    public static NamingException newNamingException(String message, Throwable cause){
+    public static NamingException newNamingException(final String message, final Throwable cause) {
         return initCause(new NamingException(message), cause);
     }
 
-    public static NamingException newNamingException(Throwable cause){
+    public static NamingException newNamingException(final Throwable cause) {
         return initCause(new NamingException(), cause);
     }
 
-
-    public static RollbackException newRollbackException(String message, Throwable cause){
+    public static RollbackException newRollbackException(final String message, final Throwable cause) {
         return initCause(new RollbackException(message), cause);
     }
 
-    public static RollbackException newRollbackException(Throwable cause){
+    public static RollbackException newRollbackException(final Throwable cause) {
         return initCause(new RollbackException(), cause);
     }
 
-
-    public static AuthenticationException newAuthenticationException(String message, Throwable cause){
+    public static AuthenticationException newAuthenticationException(final String message, final Throwable cause) {
         return initCause(new AuthenticationException(message), cause);
     }
 
-    public static AuthenticationException newAuthenticationException(Throwable cause){
+    public static AuthenticationException newAuthenticationException(final Throwable cause) {
         return initCause(new AuthenticationException(), cause);
     }
 
-
-    public static EJBException newEJBException(String message, Throwable cause){
+    public static EJBException newEJBException(final String message, final Throwable cause) {
         return initCause(new EJBException(message), cause);
     }
 
-    public static EJBException newEJBException(Throwable cause){
+    public static EJBException newEJBException(final Throwable cause) {
         return initCause(new EJBException(), cause);
     }
 
-
-    public static NotSerializableException newNotSerializableException(String message, Throwable cause){
+    public static NotSerializableException newNotSerializableException(final String message, final Throwable cause) {
         return initCause(new NotSerializableException(message), cause);
     }
 
-    public static NotSerializableException newNotSerializableException(Throwable cause){
+    public static NotSerializableException newNotSerializableException(final Throwable cause) {
         return initCause(new NotSerializableException(), cause);
     }
-
 
 }

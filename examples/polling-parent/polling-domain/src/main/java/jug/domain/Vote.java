@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class Vote {
+
     @Id
     @GeneratedValue
     private long id;

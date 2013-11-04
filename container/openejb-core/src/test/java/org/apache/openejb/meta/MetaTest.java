@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.FinderFactory;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -163,6 +164,9 @@ public @interface MetaTest {
                 }
 
                 final AppModule app = factory.loadApplication(this.getClass().getClassLoader(), "test", files);
+                for (final EjbModule ejbModule : app.getEjbModules()) {
+                    ejbModule.getProperties().setProperty(FinderFactory.FORCE_LINK, Boolean.TRUE.toString());
+                }
 
                 OpenEjbConfiguration conf = factory.getOpenEjbConfiguration();
 
@@ -249,7 +253,9 @@ public @interface MetaTest {
             OpenejbJar openejbJar = new OpenejbJar();
             openejbJar.addEjbDeployment(ejbJar.getEnterpriseBeans()[0]).setContainerId("foo");
 
-            return new EjbModule(ejbJar, openejbJar);
+            final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+            ejbModule.getProperties().setProperty(FinderFactory.FORCE_LINK, Boolean.TRUE.toString());
+            return ejbModule;
         }
 
         private <T> T newBean(Class<T> beanType, Class ejbClass) {

@@ -260,7 +260,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         }
     }
 
-    private void bindResource(String name, Object value, String type) {
+    private void bindResource(final String name, final Object value, final String type) {
         Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         try {
             assembler.getContainerSystem().getJNDIContext().lookup(Assembler.OPENEJB_RESOURCE_JNDI_PREFIX + name);
@@ -269,7 +269,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
             // no-op: OK
         }
 
-        ResourceInfo resourceInfo = new ResourceInfo();
+        final ResourceInfo resourceInfo = new ResourceInfo();
         resourceInfo.id = name;
         resourceInfo.service = "Resource";
         resourceInfo.types.add(type);

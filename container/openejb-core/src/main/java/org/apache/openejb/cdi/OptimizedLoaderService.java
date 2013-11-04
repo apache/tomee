@@ -23,6 +23,9 @@ import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
 
 import javax.enterprise.inject.spi.Extension;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -73,29 +76,73 @@ public class OptimizedLoaderService implements LoaderService {
         return list;
     }
 
-    private <T> List<T> loadWebBeansPlugins(ClassLoader loader) {
-        String[] knownPlugins = {
+    private <T> List<T> loadWebBeansPlugins(final ClassLoader loader) {
+        final String[] knownPlugins = {
                 "org.apache.openejb.cdi.CdiPlugin",
-                "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin",
-                "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin",
+                "org.apache.geronimo.openejb.cdi.GeronimoWebBeansPlugin"
+        };
+        final String[] loaderAwareKnownPlugins = {
+                "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
         };
 
         List<T> list = new ArrayList<T>();
-        for (String name : knownPlugins) {
-            Class<T> clazz;
+        for (final String name : knownPlugins) {
+            final Class<T> clazz;
             try {
                 clazz = (Class<T>) loader.loadClass(name);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // ignore
                 continue;
             }
 
             try {
                 list.add(clazz.newInstance());
-            } catch (Exception e) {
+            } catch (final Exception e) {
+                log.error("Unable to load OpenWebBeansPlugin: " + name);
+            }
+        }
+        for (final String name : loaderAwareKnownPlugins) {
+            final Class<T> clazz;
+            try {
+                clazz = (Class<T>) loader.loadClass(name);
+            } catch (final ClassNotFoundException e) {
+                // ignore
+                continue;
+            }
+
+            try {
+                list.add((T) Proxy.newProxyInstance(loader, new Class<?>[]{ OpenWebBeansPlugin.class }, new ClassLoaderAwareHandler(clazz.getSimpleName(), clazz.newInstance(), loader)));
+            } catch (final Exception e) {
                 log.error("Unable to load OpenWebBeansPlugin: " + name);
             }
         }
         return list;
+    }
+
+    private static class ClassLoaderAwareHandler implements InvocationHandler {
+        private final Object delegate;
+        private final ClassLoader loader;
+        private final String toString;
+
+        private ClassLoaderAwareHandler(final String toString, final Object delegate, final ClassLoader loader) {
+            this.delegate = delegate;
+            this.loader = loader;
+            this.toString = toString;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            if (method.getName().equals("toString")) {
+                return toString;
+            }
+
+            final ClassLoader old = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(loader);
+            try {
+                return method.invoke(delegate, args);
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
+            }
+        }
     }
 }

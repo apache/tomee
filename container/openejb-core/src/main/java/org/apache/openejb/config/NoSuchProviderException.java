@@ -22,18 +22,9 @@ import org.apache.openejb.OpenEJBException;
  * @version $Rev$ $Date$
  */
 public class NoSuchProviderException extends OpenEJBException {
-    public NoSuchProviderException() {
-    }
 
     public NoSuchProviderException(String message) {
         super(message);
     }
 
-    public NoSuchProviderException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
-
-    public NoSuchProviderException(Throwable rootCause) {
-        super(rootCause);
-    }
 }

@@ -37,6 +37,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class DynamicUserDaoTest {
+
     private static UserDao dao;
     private static Util util;
 
@@ -163,6 +164,7 @@ public class DynamicUserDaoTest {
 
     @Stateless
     public static class Util {
+
         @PersistenceContext
         private EntityManager em;
 

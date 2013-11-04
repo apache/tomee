@@ -27,15 +27,13 @@ import org.apache.openejb.util.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
-import java.util.Map;
-import java.util.concurrent.*;
 
 public class PersistenceBuilder {
+
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, PersistenceBuilder.class);
 
     /**
@@ -43,12 +41,12 @@ public class PersistenceBuilder {
      */
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
 
-    public PersistenceBuilder(PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
+    public PersistenceBuilder(final PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
     }
 
-    public ReloadableEntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
-        PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
+    public ReloadableEntityManagerFactory createEntityManagerFactory(final PersistenceUnitInfo info, final ClassLoader classLoader) throws Exception {
+        final PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
         unitInfo.setId(info.id);
@@ -67,7 +65,7 @@ public class PersistenceBuilder {
 
         unitInfo.setLazilyInitialized(info.webappName != null);
 
-        Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+        final Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
 
         // JTA Datasource
         String jtaDataSourceId = info.jtaDataSource;
@@ -75,14 +73,14 @@ public class PersistenceBuilder {
         if (jtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
 
-                String initialJndiName = jtaDataSourceId;
+                final String initialJndiName = jtaDataSourceId;
                 try {
                     if (!jtaDataSourceId.startsWith("java:openejb/Resource/")
-                            && !jtaDataSourceId.startsWith("openejb/Resource/")) {
-                        jtaDataSourceId = "openejb/Resource/"+jtaDataSourceId;
+                        && !jtaDataSourceId.startsWith("openejb/Resource/")) {
+                        jtaDataSourceId = "openejb/Resource/" + jtaDataSourceId;
                     }
 
-                    DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
+                    final DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 } catch (NamingException e) {
                     try {
@@ -107,15 +105,15 @@ public class PersistenceBuilder {
         unitInfo.setPersistenceXMLSchemaVersion(info.persistenceXMLSchemaVersion);
 
         // Second-level cache mode for the persistence unit
-        SharedCacheMode sharedCacheMode = Enum.valueOf(SharedCacheMode.class, info.sharedCacheMode);
+        final SharedCacheMode sharedCacheMode = Enum.valueOf(SharedCacheMode.class, info.sharedCacheMode);
         unitInfo.setSharedCacheMode(sharedCacheMode);
 
         // The validation mode to be used for the persistence unit
-        ValidationMode validationMode = Enum.valueOf(ValidationMode.class, info.validationMode);
+        final ValidationMode validationMode = Enum.valueOf(ValidationMode.class, info.validationMode);
         unitInfo.setValidationMode(validationMode);
 
         // Persistence Unit Transaction Type
-        PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, info.transactionType);
+        final PersistenceUnitTransactionType type = Enum.valueOf(PersistenceUnitTransactionType.class, info.transactionType);
         unitInfo.setTransactionType(type);
 
         // Non JTA Datasource
@@ -123,11 +121,13 @@ public class PersistenceBuilder {
         unitInfo.setNonJtaDataSourceName(nonJtaDataSourceId);
         if (nonJtaDataSourceId != null) {
             if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
-                String initialJndiName = nonJtaDataSourceId;
+                final String initialJndiName = nonJtaDataSourceId;
                 try {
-                    if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) nonJtaDataSourceId = "java:openejb/Resource/"+nonJtaDataSourceId;
+                    if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) {
+                        nonJtaDataSourceId = "java:openejb/Resource/" + nonJtaDataSourceId;
+                    }
 
-                    DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
+                    final DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 } catch (NamingException e) {
                     try {
@@ -143,14 +143,14 @@ public class PersistenceBuilder {
         unitInfo.setRootUrlAndJarUrls(info.persistenceUnitRootUrl, info.jarFiles);
 
         // create the persistence provider
-        String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
+        final String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();
         unitInfo.setPersistenceProviderClassName(persistenceProviderClassName);
 
         final EntityManagerFactoryCallable callable = new EntityManagerFactoryCallable(persistenceProviderClassName, unitInfo, classLoader);
         return new ReloadableEntityManagerFactory(classLoader, callable, unitInfo);
     }
 
-    public static String getOpenEJBJndiName(String unit) {
+    public static String getOpenEJBJndiName(final String unit) {
         return Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unit;
     }
 }

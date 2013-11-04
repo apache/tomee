@@ -16,20 +16,22 @@
  */
 package jug.dao;
 
-import java.util.Collection;
+import jug.domain.Subject;
+import jug.domain.Value;
+import jug.domain.Vote;
+
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import jug.domain.Subject;
-import jug.domain.Value;
-import jug.domain.Vote;
+import java.util.Collection;
 
 @Singleton
 @Lock(LockType.READ)
 public class SubjectDao {
+
     @PersistenceContext(unitName = "polling")
     private EntityManager em;
 
@@ -71,9 +73,9 @@ public class SubjectDao {
 
     private int subjectVoteNumber(final String subjectName, final Value value) {
         return em.createNamedQuery(Subject.COUNT_VOTE, Number.class)
-                    .setParameter("name", subjectName)
-                    .setParameter("value", value)
-                    .getSingleResult().intValue();
+                 .setParameter("name", subjectName)
+                 .setParameter("value", value)
+                 .getSingleResult().intValue();
     }
 
     private <T> T retrieve(final T object, final Class<T> clazz, long id) {
@@ -105,7 +107,9 @@ public class SubjectDao {
     @Lock(LockType.READ)
     @PersistenceContext(name = "polling")
     public static interface ReadSubjectDao {
+
         Subject findByName(final String name);
+
         Collection<Subject> findAll();
     }
 }

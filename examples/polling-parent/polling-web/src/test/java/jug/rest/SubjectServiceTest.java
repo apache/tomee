@@ -38,6 +38,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 
 public class SubjectServiceTest {
+
     private static EJBContainer container;
 
     @Inject
@@ -69,10 +70,10 @@ public class SubjectServiceTest {
     @Test
     public void createVote() throws IOException {
         final Response response = WebClient.create("http://localhost:4204/polling/")
-                                    .path("api/subject/create")
-                                    .accept("application/json")
-                                    .query("name", "TOMEE_JUG_JSON")
-                                    .post("was it cool?");
+                                           .path("api/subject/create")
+                                           .accept("application/json")
+                                           .query("name", "TOMEE_JUG_JSON")
+                                           .post("was it cool?");
         final String output = IO.slurp((InputStream) response.getEntity());
         assertTrue("output doesn't contain TOMEE_JUG_JSON '" + output + "'", output.contains("TOMEE_JUG_JSON"));
     }

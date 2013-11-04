@@ -42,13 +42,13 @@ public class BodyContent$JAXB
 
     public static BodyContent parseBodyContent(XoXMLStreamReader reader, RuntimeContext context, String value)
             throws Exception {
-        if ("tagdependent".equals(value)) {
+        if ("tagdependent".equalsIgnoreCase(value)) {
             return BodyContent.TAGDEPENDENT;
-        } else if ("JSP".equals(value)) {
+        } else if ("JSP".equalsIgnoreCase(value)) {
             return BodyContent.JSP;
-        } else if ("empty".equals(value)) {
+        } else if ("empty".equalsIgnoreCase(value)) {
             return BodyContent.EMPTY;
-        } else if ("scriptless".equals(value)) {
+        } else if ("scriptless".equalsIgnoreCase(value)) {
             return BodyContent.SCRIPTLESS;
         } else {
             context.unexpectedEnumValue(reader, BodyContent.class, value, "tagdependent", "JSP", "empty", "scriptless");

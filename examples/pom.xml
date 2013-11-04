@@ -23,7 +23,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>examples</artifactId>
@@ -36,6 +36,7 @@
     <module>application-composer</module>
     <module>applicationexception</module>
     <module>async-methods</module>
+    <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
@@ -90,6 +91,7 @@
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
+    <module>myfaces-codi-demo</module>
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
     <module>polling-parent</module>
@@ -100,6 +102,7 @@
     <module>resources-declared-in-webapp</module>
     <module>rest-applicationcomposer-mockito</module>
     <module>rest-applicationcomposer</module>
+    <module>rest-jaas</module>
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
@@ -148,6 +151,7 @@
     <module>webservice-handlerchain</module>
     <module>webservice-holder</module>
     <module>moviefun</module>
+    <module>moviefun-rest</module>
   </modules>
   <profiles>
     <profile>

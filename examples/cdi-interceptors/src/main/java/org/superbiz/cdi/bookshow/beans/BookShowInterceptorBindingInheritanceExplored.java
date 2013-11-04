@@ -25,6 +25,7 @@ import java.util.List;
 
 @Stateful
 public class BookShowInterceptorBindingInheritanceExplored implements Serializable {
+
     private static final long serialVersionUID = 6350400892234496909L;
 
     public List<String> getMoviesList() {

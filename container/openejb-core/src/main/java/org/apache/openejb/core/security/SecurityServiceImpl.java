@@ -88,7 +88,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
      */
     @Override
     public void logout(UUID securityIdentity) throws LoginException {
-        LoginContext context = contexts.get(securityIdentity);
+        LoginContext context = contexts.remove(securityIdentity);
         if (null == context) {
             throw new IllegalStateException("Unable to logout. Can not recover LoginContext.");
         }

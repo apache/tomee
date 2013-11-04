@@ -28,6 +28,7 @@ import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.ListenerInfo;
 import org.apache.openejb.assembler.classic.ParamValueInfo;
+import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class LightweightWebAppBuilder implements WebAppBuilder {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
@@ -184,7 +186,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                         }
 
                         final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
-                        for (String mapping: annotation.urlPatterns()) {
+                        for (String mapping : annotation.urlPatterns()) {
                             try {
                                 addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
                                 deployedWebObjects.filterMappings.add(mapping);
@@ -194,6 +196,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                         }
                     }
                 }
+            }
+
+            final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+            for (final PortInfo port : webAppInfo.portInfos) {
+                ports.put(port.serviceLink, port);
             }
 
             // register servlets
@@ -220,7 +227,12 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                             // no-op
                         }
                     }
-                } // else let the user manage itself a rest servlet etc...
+                }
+
+                // If POJO web services, it will be overriden with WsServlet
+                if (ports.containsKey(info.servletName) || ports.containsKey(info.servletClass)) {
+                    continue;
+                }
 
                 // deploy
                 for (String mapping : info.mappings) {
@@ -232,13 +244,14 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     }
                 }
             }
+
             for (ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
                 for (String servletPath : info.list) {
                     final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, servletPath);
                     final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
                     if (annotation != null) {
-                        for (String mapping: annotation.urlPatterns()) {
+                        for (String mapping : annotation.urlPatterns()) {
                             try {
                                 addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
                                 deployedWebObjects.mappings.add(mapping);
@@ -253,8 +266,15 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     }
 
     private static Class<?> loadFromUrls(final ClassLoader loader, final String url, final String path) throws ClassNotFoundException {
+        final String classname;
+        if ("jar:file://!/WEB-INF/classes/".equals(url) && path.contains("classes/")) {
+            classname = path.substring(path.lastIndexOf("classes/") + "classes/".length());
+        } else {
+            classname = path.substring(url.length());
+        }
+
         try { // in WEB-INF/classes
-            return loader.loadClass(className(path.substring(url.length())));
+            return loader.loadClass(className(classname));
         } catch (ClassNotFoundException cnfe) { // in a dependency (jar)
             return loader.loadClass(className(path.substring(path.indexOf("!") + 2)));
         }

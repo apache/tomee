@@ -346,6 +346,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.")) return true;
         if (name.startsWith("sun.")) return true;
+        if (name.startsWith("com.sun.crypto.")) return true;
 
         if (name.startsWith("org.")) {
             final String org = name.substring("org.".length());

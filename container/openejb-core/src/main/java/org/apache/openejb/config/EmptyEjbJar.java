@@ -22,8 +22,6 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.Interceptor;
 
 public class EmptyEjbJar extends EjbJar {
-    private static final EnterpriseBean[] EMPTY_BEANS = new EnterpriseBean[0];
-
     @Override
     public void setAssemblyDescriptor(final AssemblyDescriptor value) {
         // no-op
@@ -36,11 +34,14 @@ public class EmptyEjbJar extends EjbJar {
 
     @Override
     public EnterpriseBean[] getEnterpriseBeans() {
-        return EMPTY_BEANS;
+        return super.getEnterpriseBeans();
     }
 
     @Override
     public <T extends EnterpriseBean> T addEnterpriseBean(final T bean){
+        if (CompManagedBean.class.isInstance(bean)) {
+            super.addEnterpriseBean(bean);
+        }
         return bean;
     }
 

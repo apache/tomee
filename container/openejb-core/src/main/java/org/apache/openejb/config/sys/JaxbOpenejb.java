@@ -184,51 +184,8 @@ public abstract class JaxbOpenejb {
         SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         final ServicesJar servicesJar1 = new ServicesJar();
-        final PropertiesAdapter propertiesAdapter = new PropertiesAdapter();
 
-        parser.parse(inputSource, new DefaultHandler() {
-            private ServiceProvider provider;
-            private StringBuilder content;
-
-            public void startDocument() throws SAXException {
-            }
-
-            public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
-                if (!localName.equals("ServiceProvider")) return;
-
-                provider = new ServiceProvider();
-                provider.setId(att.getValue("","id"));
-                provider.setService(att.getValue("", "service"));
-                provider.setFactoryName(att.getValue("", "factory-name"));
-                provider.setConstructor(att.getValue("", "constructor"));
-                provider.setClassName(att.getValue("", "class-name"));
-                provider.setParent(att.getValue("", "parent"));
-                String typesString = att.getValue("", "types");
-                if (typesString != null){
-                    final ListAdapter listAdapter = new ListAdapter();
-                    final List<String> types = listAdapter.unmarshal(typesString);
-                    provider.getTypes().addAll(types);
-                }
-                servicesJar1.getServiceProvider().add(provider);
-            }
-
-            public void characters(char ch[], int start, int length) throws SAXException {
-                if (content == null) content = new StringBuilder();
-                content.append(ch, start, length);
-            }
-
-            public void endElement(String uri, String localName, String qName) throws SAXException {
-                if (provider == null || content == null) return;
-
-                try {
-                    provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));
-                } catch (Exception e) {
-                    throw new SAXException(e);
-                }
-                provider = null;
-                content = null;
-            }
-        });
+        parser.parse(inputSource, new OpenEJBHandler(servicesJar1));
         ServicesJar servicesJar = servicesJar1;
         return servicesJar;
     }
@@ -245,6 +202,11 @@ public abstract class JaxbOpenejb {
             } else {
                 in = IO.read(new File(configFile));
             }
+
+            if (configFile.endsWith(".json")) {
+                return JSonConfigReader.read(Openejb.class, in);
+            }
+
             return readConfig(new InputSource(in));
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve location " + configFile, e);
@@ -438,5 +400,56 @@ public abstract class JaxbOpenejb {
 
     public static TransactionManager createTransactionManager() {
         return new TransactionManager();
+    }
+
+    private static class OpenEJBHandler extends DefaultHandler {
+        private final PropertiesAdapter propertiesAdapter = new PropertiesAdapter();
+        private final ServicesJar servicesJar;
+
+        private ServiceProvider provider;
+        private StringBuilder content;
+
+        public OpenEJBHandler(final ServicesJar servicesJar1) {
+            this.servicesJar = servicesJar1;
+        }
+
+        public void startDocument() throws SAXException {
+        }
+
+        public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+            if (!localName.equals("ServiceProvider")) return;
+
+            provider = new ServiceProvider();
+            provider.setId(att.getValue("","id"));
+            provider.setService(att.getValue("", "service"));
+            provider.setFactoryName(att.getValue("", "factory-name"));
+            provider.setConstructor(att.getValue("", "constructor"));
+            provider.setClassName(att.getValue("", "class-name"));
+            provider.setParent(att.getValue("", "parent"));
+            String typesString = att.getValue("", "types");
+            if (typesString != null){
+                final ListAdapter listAdapter = new ListAdapter();
+                final List<String> types = listAdapter.unmarshal(typesString);
+                provider.getTypes().addAll(types);
+            }
+            servicesJar.getServiceProvider().add(provider);
+        }
+
+        public void characters(char ch[], int start, int length) throws SAXException {
+            if (content == null) content = new StringBuilder();
+            content.append(ch, start, length);
+        }
+
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (provider == null || content == null) return;
+
+            try {
+                provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));
+            } catch (Exception e) {
+                throw new SAXException(e);
+            }
+            provider = null;
+            content = null;
+        }
     }
 }

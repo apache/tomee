@@ -27,13 +27,15 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.catalina.cluster.TomEEClusterListener;
+import org.apache.tomee.catalina.remote.TomEERemoteWebapp;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -43,6 +45,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class GlobalListenerSupport implements PropertyChangeListener, LifecycleListener {
+    private static final boolean REMOTE_SUPPORT = SystemInstance.get().getOptions().get("tomee.remote.support", true);
 
     /**
      * The LifecycleEvent type for the "component init" event.
@@ -128,6 +131,11 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             String type = event.getType();
             if (Lifecycle.PERIODIC_EVENT.equals(type)) {
                 contextListener.checkHost(standardHost);
+            } else if (Lifecycle.AFTER_START_EVENT.equals(type) && REMOTE_SUPPORT) {
+                final TomEERemoteWebapp child = new TomEERemoteWebapp();
+                if (!hasChild(standardHost, child.getName())) {
+                    standardHost.addChild(child);
+                } // else old tomee webapp surely
             }
         } else if (StandardServer.class.isInstance(source)) {
             StandardServer standardServer = (StandardServer) source;
@@ -146,6 +154,17 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.afterStop(standardServer);
             }
         }
+    }
+
+    private static boolean hasChild(final StandardHost host, final String name) {
+        for (final Container child : host.findChildren()) {
+            // the TomEERemoteWebapp path = "/" + name
+            if (name.equals(child.getName())
+                || (StandardContext.class.isInstance(child) && ("/" + name).equals(StandardContext.class.cast(child).getPath()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -368,8 +387,9 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
     }
 
-    //Hashmap for monitoring children of engine and host
-    public static class MoniterableHashMap extends HashMap<Object, Object> {
+    //Hashmap for monitoring children of engine and host, linked because:
+    // 1) deterministic, 2) avoid to handle the prop in application.xml
+    public static class MoniterableHashMap extends LinkedHashMap<Object, Object> {
 
         private final Object source;
         private final String propertyName;
@@ -377,6 +397,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
 
         public MoniterableHashMap(Map<Object, Object> m, Object source, String propertyName, PropertyChangeListener listener) {
             super(m);
+
             this.source = source;
             this.propertyName = propertyName;
             this.listener = listener;

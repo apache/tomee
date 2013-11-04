@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,6 +65,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected transient Object primaryKey;
 
+    protected transient JNDIContext.AuthenticationInfo authenticationInfo;
+
     /**
      * The EJB spec requires that a different set of exceptions
      * be thrown for the legacy EJBObject and EJBHome interfaces
@@ -75,16 +78,21 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         remote = false;
     }
 
-    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
         this.ejb = ejb;
         this.server = server;
         this.client = client;
+        this.authenticationInfo = auth;
         final Class remoteInterface = ejb.getRemoteInterfaceClass();
         remote = remoteInterface != null && (EJBObject.class.isAssignableFrom(remoteInterface) || EJBHome.class.isAssignableFrom(remoteInterface));
     }
 
-    public EJBInvocationHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
-        this(ejb, server, client);
+    public EJBInvocationHandler(final EJBMetaDataImpl ejb,
+                                final ServerMetaData server,
+                                final ClientMetaData client,
+                                final Object primaryKey,
+                                final JNDIContext.AuthenticationInfo auth) {
+        this(ejb, server, client, auth);
         this.primaryKey = primaryKey;
     }
 
@@ -110,7 +118,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             return c.getMethod(method, params);
         } catch (NoSuchMethodException nse) {
             throw new IllegalStateException("Cannot find method: " + c.getName() + "." + method, nse);
-
+        } catch (java.lang.ExceptionInInitializerError eiie) {
+            throw new IllegalStateException("Invalid parameters for method: " + c.getName() + "." + method + " : " + Arrays.toString(params), eiie);
         }
     }
 
@@ -172,8 +181,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static void invalidateAllHandlers(final Object key) {
 
         final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.remove(key);
-        if (set == null)
+        if (set == null) {
             return;
+        }
 
         final ReentrantLock l = lock;
         l.lock();
@@ -198,8 +208,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             set = new HashSet<WeakReference<EJBInvocationHandler>>();
             final Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
             // someone else added the set
-            if (current != null)
+            if (current != null) {
                 set = current;
+            }
         }
 
         final ReentrantLock l = lock;

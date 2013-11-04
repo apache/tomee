@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.arquillian.webapp;
 
+import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.IO;
 import org.apache.openejb.arquillian.common.Setup;
@@ -25,12 +26,14 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -96,9 +99,9 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
                 System.setProperty("catalina.home", openejbHome.getAbsolutePath());
                 System.setProperty("catalina.base", openejbHome.getAbsolutePath());
 
-                System.setProperty("openejb.deploymentId.format", "{appId}/{ejbJarId}/{ejbName}");
+                System.setProperty("openejb.deploymentId.format", System.getProperty("openejb.deploymentId.format", "{appId}/{ejbJarId}/{ejbName}"));
 
-                Paths paths = new Paths(webapp);
+                final Paths paths = new Paths(webapp);
                 installer = new Installer(paths, true);
                 if (!configuration.isUseInstallerServlet()) {
                     installer.installAll();
@@ -123,7 +126,7 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             }
 
             if (configuration.isRemoveUnusedWebapps()) {
-                Setup.removeUselessWebapps(openejbHome);
+                Setup.removeUselessWebapps(openejbHome, "tomee");
             }
 
             if (logger.isLoggable(Level.FINE)) {
@@ -138,29 +141,40 @@ public class TomEEWebappContainer extends TomEEContainer<TomEEWebappConfiguratio
             if (!wereOpenejbHomeSet && configuration.isUseInstallerServlet()) {
                 // instead of calling the Installer, let's just do like users do
                 // call the servlet installer instead
-                String baseUrl = "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/installer";
+                final String baseUrl = "http://" + configuration.getHost() + ":" + configuration.getHttpPort() + "/tomee/installer";
 
                 assert installer != null;
                 installer.addTomEEAdminConfInTomcatUsers(true);
 
-                RemoteServer tmpContainer = new RemoteServer();
+                final RemoteServer tmpContainer = new RemoteServer();
                 tmpContainer.start();
 
-                URL url = new URL(baseUrl);
-                URLConnection uc = url.openConnection();
-                // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
-                String authorizationString = "Basic dG9tZWU6dG9tZWU=";
-                uc.setRequestProperty ("Authorization", authorizationString);
-                InputStream is = uc.getInputStream();
-                org.apache.openejb.loader.IO.slurp(is);
-                is.close();
+                final URL url = new URL(baseUrl);
+                logger.info("Calling TomEE Installer Servlet on " + url);
+
+                for (int i = 0; i < 3; i++) {
+                    final URLConnection uc = url.openConnection();
+                    // dG9tZWU6dG9tZWU= --> Base64 of tomee:tomee
+                    final String authorizationString = "Basic dG9tZWU6dG9tZWU=";
+                    uc.setRequestProperty ("Authorization", authorizationString);
+                    try {
+                        final InputStream is = uc.getInputStream();
+                        org.apache.openejb.loader.IO.slurp(is);
+                        is.close();
+                        break;
+                    } catch (final Exception e) {
+                        logger.warning(e.getMessage());
+                        Thread.sleep(1000);
+                    }
+                }
 
                 tmpContainer.stop();
                 tmpContainer.getServer().waitFor();
             }
 
             container = new RemoteServer();
-            container.start();
+            container.start(Arrays.asList("-Dorg.apache.openejb.servlet.filters=" + ArquillianFilterRunner.class.getName() + "=" + ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING), "start", true);
+            container.killOnExit();
         } catch (Exception e) {
             throw new LifecycleException("Unable to start remote container", e);
         }

@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ConfigurableClasspathArchive extends CompositeArchive {
+
     private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
     private static final String SCAN_XML = "META-INF/scan.xml";
 
@@ -82,7 +83,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive {
             if (packageArchive != null && classesArchive != null) {
                 return new CompositeArchive(classesArchive, packageArchive);
             } else if (packageArchive != null) {
-                return  packageArchive;
+                return packageArchive;
             }
             return classesArchive;
         } catch (IOException e) {
@@ -157,6 +158,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive {
     }
 
     public static final class ScanHandler extends DefaultHandler {
+
         private final Set<String> classes = new HashSet<String>();
         private final Set<String> packages = new HashSet<String>();
         private Set<String> current = null;

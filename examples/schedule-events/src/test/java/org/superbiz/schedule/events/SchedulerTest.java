@@ -42,15 +42,14 @@ public class SchedulerTest {
     public void test() throws Exception {
 
         final ScheduleExpression schedule = new ScheduleExpression()
-                .hour("*")
-                .minute("*")
-                .second("*/5");
+                                                .hour("*")
+                                                .minute("*")
+                                                .second("*/5");
 
         scheduler.scheduleEvent(schedule, new TestEvent("five"));
 
         Assert.assertTrue(events.await(1, TimeUnit.MINUTES));
     }
-
 
     @AccessTimeout(value = 1, unit = TimeUnit.MINUTES)
     public void observe(@Observes TestEvent event) {
@@ -60,6 +59,7 @@ public class SchedulerTest {
     }
 
     public static class TestEvent {
+
         private final String message;
 
         public TestEvent(String message) {

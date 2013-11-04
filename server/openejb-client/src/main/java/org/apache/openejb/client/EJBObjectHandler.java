@@ -17,6 +17,7 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.proxy.ProxyManager;
+import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.apache.openejb.client.util.ClassLoaderUtil;
 
 import javax.ejb.EJBException;
@@ -45,6 +46,9 @@ import java.util.logging.Logger;
 @SuppressWarnings("NullArgumentToVariableArgMethod")
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
+    public static final String OPENEJB_CLIENT_INVOKER_THREADS = "openejb.client.invoker.threads";
+    public static final String OPENEJB_CLIENT_INVOKER_QUEUE = "openejb.client.invoker.queue";
+
     protected static final Method GETEJBHOME = getMethod(EJBObject.class, "getEJBHome", null);
     protected static final Method GETHANDLE = getMethod(EJBObject.class, "getHandle", null);
     protected static final Method GETPRIMARYKEY = getMethod(EJBObject.class, "getPrimaryKey", null);
@@ -54,8 +58,8 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     protected static final Method CANCEL = getMethod(Future.class, "cancel", boolean.class);
 
     //TODO figure out how to configure and manage the thread pool on the client side, this will do for now...
-    private static final int threads = Integer.parseInt(System.getProperty("openejb.client.invoker.threads", "10"));
-    private static final int queue = Integer.parseInt(System.getProperty("openejb.client.invoker.queue", "2"));
+    private static final int threads = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_INVOKER_THREADS, "10"));
+    private static final int queue = Integer.parseInt(System.getProperty(OPENEJB_CLIENT_INVOKER_QUEUE, "2"));
     private static final LinkedBlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
 
     protected static final ThreadPoolExecutor executorService;
@@ -135,37 +139,45 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     public EJBObjectHandler() {
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client) {
-        super(ejb, server, client);
+    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, null, auth);
     }
 
-    public EJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
-        super(ejb, server, client, primaryKey);
+    public EJBObjectHandler(final EJBMetaDataImpl ejb,
+                            final ServerMetaData server,
+                            final ClientMetaData client,
+                            final Object primaryKey,
+                            final JNDIContext.AuthenticationInfo auth) {
+        super(ejb, server, client, primaryKey, auth);
     }
 
     protected void setEJBHomeProxy(final EJBHomeProxy ejbHome) {
         this.ejbHome = ejbHome;
     }
 
-    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb, final ServerMetaData server, final ClientMetaData client, final Object primaryKey) {
+    public static EJBObjectHandler createEJBObjectHandler(final EJBMetaDataImpl ejb,
+                                                          final ServerMetaData server,
+                                                          final ClientMetaData client,
+                                                          final Object primaryKey,
+                                                          final JNDIContext.AuthenticationInfo auth) {
 
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
 
-                return new EntityEJBObjectHandler(ejb, server, client, primaryKey);
+                return new EntityEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATEFUL:
 
-                return new StatefulEJBObjectHandler(ejb, server, client, primaryKey);
+                return new StatefulEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.STATELESS:
 
-                return new StatelessEJBObjectHandler(ejb, server, client, primaryKey);
+                return new StatelessEJBObjectHandler(ejb, server, client, primaryKey, auth);
 
             case EJBMetaDataImpl.SINGLETON:
 
-                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey);
+                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey, auth);
         }
 
         throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
@@ -212,51 +224,43 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
             if (m.getDeclaringClass().equals(Object.class)) {
 
-                if (m.equals(TOSTRING))
+                if (m.equals(TOSTRING)) {
                     return "proxy=" + this;
-
-                else if (m.equals(EQUALS))
+                } else if (m.equals(EQUALS)) {
                     return equals(m, a, p);
-
-                else if (m.equals(HASHCODE))
+                } else if (m.equals(HASHCODE)) {
                     return this.hashCode();
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else if (m.getDeclaringClass() == EJBObjectProxy.class) {
 
-                if (m.equals(GETHANDLER))
+                if (m.equals(GETHANDLER)) {
                     return this;
-
-                else if (m.getName().equals("writeReplace"))
+                } else if (m.getName().equals("writeReplace")) {
                     return new EJBObjectProxyHandle(this);
-
-                else if (m.getName().equals("readResolve"))
+                } else if (m.getName().equals("readResolve")) {
                     return null;
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else if (m.getDeclaringClass() == javax.ejb.EJBObject.class) {
 
-                if (m.equals(GETHANDLE))
+                if (m.equals(GETHANDLE)) {
                     return getHandle(m, a, p);
-
-                else if (m.equals(GETPRIMARYKEY))
+                } else if (m.equals(GETPRIMARYKEY)) {
                     return getPrimaryKey(m, a, p);
-
-                else if (m.equals(ISIDENTICAL))
+                } else if (m.equals(ISIDENTICAL)) {
                     return isIdentical(m, a, p);
-
-                else if (m.equals(GETEJBHOME))
+                } else if (m.equals(GETEJBHOME)) {
                     return getEJBHome(m, a, p);
-
-                else if (m.equals(REMOVE))
+                } else if (m.equals(REMOVE)) {
                     return remove(m, a, p);
-
-                else
+                } else {
                     throw new UnsupportedOperationException("Unkown method: " + m);
+                }
 
             } else {
 
@@ -286,12 +290,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             }
         } catch (Throwable throwable) {
             if (remote) {
-                if (throwable instanceof RemoteException)
+                if (throwable instanceof RemoteException) {
                     throw throwable;
+                }
                 throw new RemoteException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage(), getCause(throwable));
             } else {
-                if (throwable instanceof EJBException)
+                if (throwable instanceof EJBException) {
                     throw throwable;
+                }
                 throw new EJBException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage()).initCause(getCause(throwable));
             }
         }
@@ -299,7 +305,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     protected Object getEJBHome(final Method method, final Object[] args, final Object proxy) throws Throwable {
         if (ejbHome == null) {
-            ejbHome = EJBHomeHandler.createEJBHomeHandler(ejb, server, client).createEJBHomeProxy();
+            ejbHome = EJBHomeHandler.createEJBHomeHandler(ejb, server, client, authenticationInfo).createEJBHomeProxy();
         }
         return ejbHome;
     }
@@ -334,16 +340,18 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     }
 
     private Object _businessMethod(final Method method, final Object[] args, final Object proxy, final String requestId) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey, client.getSerializer());
 
         //Currently, we only set the requestId while the asynchronous invocation is called
-        req.getBody().setRequestId(requestId);
+        final EJBRequest.Body body = req.getBody();
+        body.setRequestId(requestId);
+        body.setAuthentication(this.authenticationInfo);
         final EJBResponse res = request(req);
         return _handleBusinessMethodResponse(res);
     }
 
     private Object _businessMethod(final Method method, final Object[] args, final Object proxy, final String requestId, final EJBResponse response) throws Throwable {
-        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+        final EJBRequest req = new EJBRequest(RequestMethodCode.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey, client.getSerializer());
 
         //Currently, we only set the request while the asynchronous invocation is called
         req.getBody().setRequestId(requestId);
@@ -354,16 +362,25 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     private Object _handleBusinessMethodResponse(final EJBResponse res) throws Throwable {
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
-                throw new SystemError((ThrowableArtifact) res.getResult());
+                throw new SystemError((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_SYS_EXCEPTION:
-                throw new SystemException((ThrowableArtifact) res.getResult());
+                throw new SystemException((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_APP_EXCEPTION:
-                throw new ApplicationException((ThrowableArtifact) res.getResult());
+                throw new ApplicationException((ThrowableArtifact) getResult(res));
             case ResponseCodes.EJB_OK:
-                return res.getResult();
+                return getResult(res);
             default:
                 throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
         }
+    }
+
+    private Object getResult(final EJBResponse res) throws ClassNotFoundException {
+        final Object result = res.getResult();
+        if (client.getSerializer() != null && SerializationWrapper.class.isInstance(result)) {
+            final SerializationWrapper wrapper = SerializationWrapper.class.cast(result);
+            return client.getSerializer().deserialize(wrapper.getData(), Thread.currentThread().getContextClassLoader().loadClass(wrapper.getClassname()));
+        }
+        return res.getResult();
     }
 
     private class AsynchronousCall implements Callable {
@@ -451,15 +468,22 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     if (lastMayInterruptIfRunningValue.getAndSet(mayInterruptIfRunning) == mayInterruptIfRunning) {
                         return false;
                     }
-                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL, ejb, CANCEL, new Object[]{Boolean.valueOf(mayInterruptIfRunning)}, primaryKey);
+                    final EJBRequest req = new EJBRequest(RequestMethodCode.FUTURE_CANCEL,
+                                                          ejb,
+                                                          CANCEL,
+                                                          new Object[]{Boolean.valueOf(mayInterruptIfRunning)},
+                                                          primaryKey,
+                                                          client.getSerializer());
                     req.getBody().setRequestId(requestId);
                     try {
                         final EJBResponse res = request(req);
                         if (res.getResponseCode() != ResponseCodes.EJB_OK) {
                             //TODO how do we notify the user that we fail to configure the value ?
+                            Logger.getLogger(this.getClass().getName()).info("Unexpected response on cancel: " + res);
                         }
                     } catch (Exception e) {
                         //TODO how to handle
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Unexpected error on cancel", e);
                         return false;
                     }
                 }

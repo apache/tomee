@@ -28,7 +28,7 @@ public class ClusterMetaDataUpdated {
     private final ClusterMetaData clusterMetaData;
     private final ClusterMetaData previousClusterMetaData;
 
-    public ClusterMetaDataUpdated(ServerMetaData serverMetaData, ClusterMetaData clusterMetaData, ClusterMetaData previousClusterMetaData) {
+    public ClusterMetaDataUpdated(final ServerMetaData serverMetaData, final ClusterMetaData clusterMetaData, final ClusterMetaData previousClusterMetaData) {
         this.serverMetaData = serverMetaData;
         this.clusterMetaData = clusterMetaData;
         this.previousClusterMetaData = previousClusterMetaData;
@@ -49,9 +49,9 @@ public class ClusterMetaDataUpdated {
     @Override
     public String toString() {
         return "ClusterMetaDataUpdated{" +
-                "provider=" + serverMetaData.getLocation() +
-                ", version=" + clusterMetaData.getVersion() +
-                ", uris=" + clusterMetaData.getLocations().length +
-                '}';
+               "provider=" + serverMetaData.getLocation() +
+               ", version=" + clusterMetaData.getVersion() +
+               ", uris=" + clusterMetaData.getLocations().length +
+               '}';
     }
 }

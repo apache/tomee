@@ -17,13 +17,28 @@
 package org.apache.openejb.client;
 
 import org.apache.openejb.client.event.RemoteInitialContextCreated;
+import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.omg.CORBA.ORB;
 
-import javax.naming.*;
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
 import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.net.ConnectException;
 import java.net.URI;
@@ -41,6 +56,8 @@ import java.util.Properties;
 public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
+    public static final String SERIALIZER = "openejb.ejbd.serializer";
+    public static final String AUTHENTICATE_WITH_THE_REQUEST = "openejb.ejbd.authenticate-with-request";
 
     private String tail = "/";
     private ServerMetaData server;
@@ -48,6 +65,8 @@ public class JNDIContext implements InitialContextFactory, Context {
     private Hashtable env;
     private String moduleId;
     private ClientInstance clientIdentity;
+
+    private AuthenticationInfo authenticationInfo = null;
 
     public JNDIContext() {
     }
@@ -90,6 +109,8 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         final String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
         String providerUrl = (String) env.get(Context.PROVIDER_URL);
+        final String serializer = (String) env.get(SERIALIZER);
+        final boolean authWithRequest = "true".equalsIgnoreCase(String.class.cast(env.get(AUTHENTICATE_WITH_THE_REQUEST)));
         moduleId = (String) env.get("openejb.client.moduleId");
 
         final URI location;
@@ -97,7 +118,12 @@ public class JNDIContext implements InitialContextFactory, Context {
             providerUrl = addMissingParts(providerUrl);
             location = new URI(providerUrl);
         } catch (URISyntaxException e) {
-            throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage()).initCause(e);
+            throw (ConfigurationException) new ConfigurationException("Property value for " +
+                                                                      Context.PROVIDER_URL +
+                                                                      " invalid: " +
+                                                                      providerUrl +
+                                                                      " - " +
+                                                                      e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
 
@@ -112,9 +138,22 @@ public class JNDIContext implements InitialContextFactory, Context {
         //TODO:1: Either aggressively initiate authentication or wait for the
         //        server to send us an authentication challange.
         if (userID != null) {
-            authenticate(userID, psswrd);
-        } else {
+            if (!authWithRequest) {
+                authenticate(userID, psswrd);
+            } else {
+                authenticationInfo = new AuthenticationInfo(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd.toCharArray());
+            }
+        }
+        if (client == null) {
             client = new ClientMetaData();
+        }
+
+        if (serializer != null) {
+            try {
+                client.setSerializer(EJBDSerializer.class.cast(Thread.currentThread().getContextClassLoader().loadClass(serializer).newInstance()));
+            } catch (final Exception e) {
+                // no-op
+            }
         }
 
         return this;
@@ -155,12 +194,9 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     public void authenticate(final String userID, final String psswrd) throws AuthenticationException {
 
-        // May be null
-        final String realmName = (String) env.get("openejb.authentication.realmName");
+        final AuthenticationRequest req = new AuthenticationRequest(String.class.cast(env.get("openejb.authentication.realmName")), userID, psswrd);
 
-        final AuthenticationRequest req = new AuthenticationRequest(realmName, userID, psswrd);
         final AuthenticationResponse res;
-
         try {
             res = requestAuthorization(req);
         } catch (RemoteException e) {
@@ -181,7 +217,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     public EJBHomeProxy createEJBHomeProxy(final EJBMetaDataImpl ejbData) {
-        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
+        final EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client, authenticationInfo);
         final EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
 
@@ -193,21 +229,22 @@ public class JNDIContext implements InitialContextFactory, Context {
         final EJBMetaDataImpl ejb = (EJBMetaDataImpl) result;
         final Object primaryKey = ejb.getPrimaryKey();
 
-        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey);
+        final EJBObjectHandler handler = EJBObjectHandler.createEJBObjectHandler(ejb, server, client, primaryKey, authenticationInfo);
         return handler.createEJBObjectProxy();
     }
 
     @Override
     public Object lookup(String name) throws NamingException {
 
-        if (name == null)
+        if (name == null) {
             throw new InvalidNameException("The name cannot be null");
-        else if (name.equals(""))
+        } else if (name.equals("")) {
             return new JNDIContext(this);
-        else if (name.startsWith("java:"))
+        } else if (name.startsWith("java:")) {
             name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/"))
+        } else if (!name.startsWith("/")) {
             name = tail + name;
+        }
 
         final String prop = name.replaceFirst("comp/env/", "");
         String value = System.getProperty(prop);
@@ -250,8 +287,9 @@ public class JNDIContext implements InitialContextFactory, Context {
 
             case ResponseCodes.JNDI_CONTEXT:
                 final JNDIContext subCtx = new JNDIContext(this);
-                if (!name.endsWith("/"))
+                if (!name.endsWith("/")) {
                     name += '/';
+                }
                 subCtx.tail = name;
                 return subCtx;
 
@@ -336,10 +374,12 @@ public class JNDIContext implements InitialContextFactory, Context {
         final String driver = uri.getScheme();
         final String url = uri.getSchemeSpecificPart();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null)
+        if (classLoader == null) {
             getClass().getClassLoader();
-        if (classLoader == null)
+        }
+        if (classLoader == null) {
             ClassLoader.getSystemClassLoader();
+        }
         try {
             final Class<?> clazz = Class.forName(driver, true, classLoader);
             final Constructor<?> constructor = clazz.getConstructor(String.class);
@@ -373,12 +413,13 @@ public class JNDIContext implements InitialContextFactory, Context {
     @SuppressWarnings("unchecked")
     @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-        if (name == null)
+        if (name == null) {
             throw new InvalidNameException("The name cannot be null");
-        else if (name.startsWith("java:"))
+        } else if (name.startsWith("java:")) {
             name = name.replaceFirst("^java:", "");
-        else if (!name.startsWith("/"))
+        } else if (!name.startsWith("/")) {
             name = tail + name;
+        }
 
         final JNDIRequest req = new JNDIRequest(RequestMethodCode.JNDI_LIST, name);
         req.setModuleId(moduleId);
@@ -462,8 +503,9 @@ public class JNDIContext implements InitialContextFactory, Context {
         @Override
         public synchronized Object getObject() {
             if (super.getObject() == null) {
-                if (failed != null)
+                if (failed != null) {
                     throw failed;
+                }
                 try {
                     super.setObject(context.lookup(getName()));
                 } catch (NamingException e) {
@@ -612,5 +654,30 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
+    public static class AuthenticationInfo implements Serializable {
+
+        private static final long serialVersionUID = -8898613532355280735L;
+        private String realm;
+        private String user;
+        private char[] password;
+
+        public AuthenticationInfo(final String realm, final String user, final char[] password) {
+            this.realm = realm;
+            this.user = user;
+            this.password = password;
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public char[] getPassword() {
+            return password;
+        }
+    }
 }
 

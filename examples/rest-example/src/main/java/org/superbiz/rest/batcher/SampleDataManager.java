@@ -16,7 +16,12 @@
  */
 package org.superbiz.rest.batcher;
 
-import java.util.logging.Logger;
+import org.superbiz.rest.dao.CommentDAO;
+import org.superbiz.rest.dao.PostDAO;
+import org.superbiz.rest.dao.UserDAO;
+import org.superbiz.rest.model.Post;
+import org.superbiz.rest.model.User;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.Lock;
@@ -27,17 +32,14 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.superbiz.rest.dao.CommentDAO;
-import org.superbiz.rest.dao.PostDAO;
-import org.superbiz.rest.dao.UserDAO;
-import org.superbiz.rest.model.Post;
-import org.superbiz.rest.model.User;
+import java.util.logging.Logger;
 
 @Startup
-@DependsOn({ "CommentDAO", "PostDAO", "UserDAO" })
+@DependsOn({"CommentDAO", "PostDAO", "UserDAO"})
 @Singleton
 @Lock(LockType.READ)
 public class SampleDataManager {
+
     private static final Logger LOGGER = Logger.getLogger(SampleDataManager.class.getName());
 
     @PersistenceContext(unitName = "blog")

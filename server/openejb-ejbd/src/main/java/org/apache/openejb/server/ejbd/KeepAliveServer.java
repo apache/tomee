@@ -84,12 +84,14 @@ public class KeepAliveServer implements ServerService {
         }
 
         final BlockingQueue<Runnable> queue = this.getQueue();
-        if (queue == null)
+        if (queue == null) {
             return;
+        }
 
         int backlog = queue.size();
-        if (backlog <= 0)
+        if (backlog <= 0) {
             return;
+        }
 
         final long now = System.currentTimeMillis();
 
@@ -119,8 +121,9 @@ public class KeepAliveServer implements ServerService {
                 }
             }
 
-            if (backlog <= 0)
+            if (backlog <= 0) {
                 return;
+            }
         }
     }
 

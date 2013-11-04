@@ -27,6 +27,7 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.cdi.CdiEjbBean;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
@@ -259,6 +260,7 @@ public class StatefulContainer implements RpcContainer {
 
     @Override
     public void start(final BeanContext beanContext) throws OpenEJBException {
+        // no-op
     }
 
     @Override
@@ -338,20 +340,6 @@ public class StatefulContainer implements RpcContainer {
         }
 
         beanContext.set(EJBContext.class, this.sessionContext);
-    }
-
-    /**
-     * @deprecated use invoke signature without 'securityIdentity' argument.
-     */
-    @Deprecated
-    @Override
-    public Object invoke(final Object deployID, final Method callMethod, final Object[] args, final Object primKey, final Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
-    }
-
-    @Override
-    public Object invoke(final Object deployID, final Class callInterface, final Method callMethod, final Object[] args, final Object primKey) throws OpenEJBException {
-        return invoke(deployID, null, callInterface, callMethod, args, primKey);
     }
 
     @Override
@@ -481,9 +469,12 @@ public class StatefulContainer implements RpcContainer {
         if (primKey == null)
             throw new NullPointerException("primKey is null");
 
-        final Class scope = beanContext.get(CdiEjbBean.class).getScope();
-        if (callMethod.getDeclaringClass() != BeanContext.Removable.class && scope != Dependent.class) {
-            throw new UnsupportedOperationException("Can not call EJB Stateful Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
+        final CdiEjbBean cdiEjbBean = beanContext.get(CdiEjbBean.class);
+        if (cdiEjbBean != null) {
+            final Class scope = cdiEjbBean.getScope();
+            if (callMethod.getDeclaringClass() != BeanContext.Removable.class && scope != Dependent.class) {
+                throw new UnsupportedOperationException("Can not call EJB Stateful Bean Remove Method without scoped @Dependent.  Found scope: @" + scope.getSimpleName());
+            }
         }
 
         final boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();
@@ -560,6 +551,11 @@ public class StatefulContainer implements RpcContainer {
                     final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
 
                     // Invoke
+                    final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
+                    if (bean != null) { // TODO: see if it should be called before or after next call
+                        bean.getInjectionTarget().preDestroy(instance.bean);
+                    }
+
                     if (args == null) {
                         returnValue = interceptorStack.invoke();
                     } else {
@@ -629,6 +625,7 @@ public class StatefulContainer implements RpcContainer {
     protected Object businessMethod(final BeanContext beanContext, final Object primKey, final Class callInterface, final Method callMethod, final Object[] args, final InterfaceType interfaceType) throws OpenEJBException {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
             // Security check
             checkAuthorization(callMethod, interfaceType);
@@ -665,6 +662,10 @@ public class StatefulContainer implements RpcContainer {
                 final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
 
+                if (currentCreationalContext != null) {
+                    currentCreationalContext.set(instance.creationalContext);
+                }
+
                 // Initialize interceptor stack
                 final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                 final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
@@ -683,6 +684,9 @@ public class StatefulContainer implements RpcContainer {
             return returnValue;
         } finally {
             ThreadContext.exit(oldCallContext);
+            if (currentCreationalContext != null) {
+                currentCreationalContext.remove();
+            }
         }
     }
 

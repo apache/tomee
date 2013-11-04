@@ -263,7 +263,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public StringBuffer getRequestURL() {
-        return new StringBuffer(getRequestURI());
+        return new StringBuffer(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + uri.getPath());
     }
 
     @Override
@@ -359,7 +359,7 @@ public class HttpRequestImpl implements HttpRequest {
         if (log.isDebugEnabled()) {
             final StringBuilder builder = new StringBuilder();
             builder.append("******************* REQUEST ******************\n");
-            builder.append(method + " " + uri).append("\n");
+            builder.append(method).append(" ").append(uri).append("\n");
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 builder.append(entry).append("\n");
             }
@@ -411,13 +411,20 @@ public class HttpRequestImpl implements HttpRequest {
         String token;
         try {
             token = lineParts.nextToken();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IOException("Could not parse the HTTP Request Method :"
                     + e.getClass().getName()
                     + " : "
                     + e.getMessage());
         }
 
+        // in JAXRS you can create your own method
+        try { // to control the case
+            method = Method.valueOf(token.toUpperCase(Locale.ENGLISH)).name();
+        } catch (final Exception e) {
+            method = token;
+        }
+        /*
         if (token.equalsIgnoreCase("GET")) {
             method = Method.GET.name();
         } else if (token.equalsIgnoreCase("POST")) {
@@ -428,10 +435,15 @@ public class HttpRequestImpl implements HttpRequest {
             method = Method.DELETE.name();
         } else if (token.equalsIgnoreCase("HEAD")) {
             method = Method.HEAD.name();
-        }  else {
+        } else if (token.equalsIgnoreCase("OPTIONS")) {
+            method = Method.HEAD.name();
+        } else if (token.equalsIgnoreCase("PATCH")) {
+            method = Method.PATCH.name();
+        } else {
             method = Method.UNSUPPORTED.name();
             throw new IOException("Unsupported HTTP Request Method :" + token);
         }
+        */
     }
 
     /**
@@ -570,7 +582,8 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     private boolean hasBody() {
-        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name()) && !method.equals(Method.HEAD.name());
+        return !method.equals(Method.GET.name()) && !method.equals(Method.DELETE.name())
+            && !method.equals(Method.HEAD.name()) && !method.equals(Method.OPTIONS.name());
     }
     /**
      * reads the body from the data input passed in
@@ -586,7 +599,8 @@ public class HttpRequestImpl implements HttpRequest {
 
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
-        if (hasBody() && FORM_URL_ENCODED.equals(contentType)) {
+        final boolean hasBody = hasBody();
+        if (hasBody && FORM_URL_ENCODED.equals(contentType)) {
             String rawParams;
 
             try {
@@ -622,7 +636,7 @@ public class HttpRequestImpl implements HttpRequest {
                 formParams.put(name, value);
                     //System.out.println(name + ": " + value);
             }
-        } else if (hasBody() && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
+        } else if (hasBody && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -646,7 +660,7 @@ public class HttpRequestImpl implements HttpRequest {
             } catch (Exception e) {
                 throw (IOException)new IOException("Unable to read chunked body").initCause(e);
             }
-        } else if (hasBody()){
+        } else if (hasBody){
             // TODO This really is terrible
             body = readContent(in);
             this.in = new ServletByteArrayIntputStream(body);

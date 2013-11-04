@@ -50,4 +50,8 @@
     appName =
     factory =
   </ServiceProvider>
+  <ServiceProvider id="Default Executor Service" parent="org.apache.openejb:Default Executor Service" />
+  <ServiceProvider id="Default Scheduled Executor Service" parent="org.apache.openejb:Default Scheduled Executor Service" />
+  <ServiceProvider id="Default Managed Thread Factory" parent="org.apache.openejb:Default Managed Thread Factory" />
+  <ServiceProvider id="Default Context Service" parent="org.apache.openejb:Default Context Service" />
 </ServiceJar>

@@ -27,33 +27,34 @@ import javax.xml.ws.handler.PortInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class ClientHandlerResolverImpl implements HandlerResolver {
+
     private final List<HandlerChainMetaData> handlerChains;
     private final List<Injection> injections;
     private final Context context;
     private final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<ClientInjectionProcessor<Handler>>();
 
-    public ClientHandlerResolverImpl(List<HandlerChainMetaData> handlerChains, List<Injection> injections, Context context) {
+    public ClientHandlerResolverImpl(final List<HandlerChainMetaData> handlerChains, final List<Injection> injections, final Context context) {
         this.handlerChains = handlerChains;
         this.injections = injections;
         this.context = context;
     }
 
     public void destroyHandlers() {
-        List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<ClientInjectionProcessor<Handler>>(this.handlerInstances);
+        final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<ClientInjectionProcessor<Handler>>(this.handlerInstances);
         this.handlerInstances.clear();
-        for (ClientInjectionProcessor<Handler> handlerInstance : handlerInstances) {
+        for (final ClientInjectionProcessor<Handler> handlerInstance : handlerInstances) {
             handlerInstance.preDestroy();
         }
     }
 
-    public List<Handler> getHandlerChain(javax.xml.ws.handler.PortInfo portInfo) {
+    @Override
+    public List<Handler> getHandlerChain(final javax.xml.ws.handler.PortInfo portInfo) {
         List<Handler> chain = new ArrayList<Handler>();
-        for (HandlerChainMetaData handlerChain : handlerChains) {
+        for (final HandlerChainMetaData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
             handlers = sortHandlers(handlers);
             chain.addAll(handlers);
@@ -62,19 +63,24 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         return chain;
     }
 
-    private List<Handler> buildHandlers(javax.xml.ws.handler.PortInfo portInfo, HandlerChainMetaData handlerChain) {
-        if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) || !matchPortName(portInfo, handlerChain.getPortNamePattern()) || !matchBinding(portInfo, handlerChain.getProtocolBindings())) {
+    private List<Handler> buildHandlers(final javax.xml.ws.handler.PortInfo portInfo, final HandlerChainMetaData handlerChain) {
+        if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) || !matchPortName(portInfo, handlerChain.getPortNamePattern()) || !matchBinding(portInfo,
+                                                                                                                                                              handlerChain.getProtocolBindings())) {
             return Collections.emptyList();
         }
 
-        List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
-        for (HandlerMetaData handler : handlerChain.getHandlers()) {
+        final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
+        for (final HandlerMetaData handler : handlerChain.getHandlers()) {
             try {
-                Class<? extends Handler> handlerClass = loadClass(handler.getHandlerClass()).asSubclass(Handler.class);
-                ClientInjectionProcessor<Handler> processor = new ClientInjectionProcessor<Handler>(handlerClass, injections, handler.getPostConstruct(), handler.getPreDestroy(), context);
+                final Class<? extends Handler> handlerClass = loadClass(handler.getHandlerClass()).asSubclass(Handler.class);
+                final ClientInjectionProcessor<Handler> processor = new ClientInjectionProcessor<Handler>(handlerClass,
+                                                                                                          injections,
+                                                                                                          handler.getPostConstruct(),
+                                                                                                          handler.getPreDestroy(),
+                                                                                                          context);
                 processor.createInstance();
                 processor.postConstruct();
-                Handler handlerInstance = processor.getInstance();
+                final Handler handlerInstance = processor.getInstance();
 
                 handlers.add(handlerInstance);
                 handlerInstances.add(processor);
@@ -85,30 +91,29 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         return handlers;
     }
 
-    private boolean matchServiceName(PortInfo info, QName namePattern) {
+    private boolean matchServiceName(final PortInfo info, final QName namePattern) {
         return match((info == null ? null : info.getServiceName()), namePattern);
     }
 
-    private boolean matchPortName(PortInfo info, QName namePattern) {
+    private boolean matchPortName(final PortInfo info, final QName namePattern) {
         return match((info == null ? null : info.getPortName()), namePattern);
     }
 
-    private boolean matchBinding(PortInfo info, List bindings) {
+    private boolean matchBinding(final PortInfo info, final List bindings) {
         return match((info == null ? null : info.getBindingID()), bindings);
     }
 
-    private boolean match(String binding, List bindings) {
+    private boolean match(final String binding, final List bindings) {
         if (binding == null) {
             return (bindings == null || bindings.isEmpty());
         } else {
             if (bindings == null || bindings.isEmpty()) {
                 return true;
             } else {
-                String actualBindingURI = getBindingURI(binding);
-                Iterator iter = bindings.iterator();
-                while (iter.hasNext()) {
-                    String bindingToken = (String) iter.next();
-                    String bindingURI = getBindingURI(bindingToken);
+                final String actualBindingURI = getBindingURI(binding);
+                for (final Object o : bindings) {
+                    final String bindingToken = (String) o;
+                    final String bindingURI = getBindingURI(bindingToken);
                     if (actualBindingURI.equals(bindingURI)) {
                         return true;
                     }
@@ -121,7 +126,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
     /**
      * Performs basic localName matching
      */
-    private boolean match(QName name, QName namePattern) {
+    private boolean match(final QName name, final QName namePattern) {
         if (name == null) {
             return (namePattern == null || namePattern.getLocalPart().equals("*"));
         } else {
@@ -150,14 +155,14 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
      * sorts the handlers into correct order. All of the logical handlers first
      * followed by the protocol handlers
      *
-     * @param handlers
+     * @param handlers List
      * @return sorted list of handlers
      */
-    private List<Handler> sortHandlers(List<Handler> handlers) {
-        List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
-        List<Handler> protocolHandlers = new ArrayList<Handler>();
+    private List<Handler> sortHandlers(final List<Handler> handlers) {
+        final List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
+        final List<Handler> protocolHandlers = new ArrayList<Handler>();
 
-        for (Handler handler : handlers) {
+        for (final Handler handler : handlers) {
             if (handler instanceof LogicalHandler) {
                 logicalHandlers.add((LogicalHandler) handler);
             } else {
@@ -165,7 +170,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
             }
         }
 
-        List<Handler> sortedHandlers = new ArrayList<Handler>();
+        final List<Handler> sortedHandlers = new ArrayList<Handler>();
         sortedHandlers.addAll(logicalHandlers);
         sortedHandlers.addAll(protocolHandlers);
         return sortedHandlers;
@@ -181,10 +186,10 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         BINDING_MAP.put("##XML_HTTP", "http://www.w3.org/2004/08/wsdl/http");
     }
 
-    private static String getBindingURI(String token) {
+    private static String getBindingURI(final String token) {
         if (token != null) {
             if (token.startsWith("##")) {
-                String uri = BINDING_MAP.get(token);
+                final String uri = BINDING_MAP.get(token);
                 if (uri == null) {
                     throw new IllegalArgumentException("Unsupported binding token: " + token);
                 }
@@ -195,8 +200,8 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         return BINDING_MAP.get("##SOAP11_HTTP");
     }
 
-    private Class<?> loadClass(String name) throws ClassNotFoundException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private Class<?> loadClass(final String name) throws ClassNotFoundException {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader != null) {
             return classLoader.loadClass(name);
         }

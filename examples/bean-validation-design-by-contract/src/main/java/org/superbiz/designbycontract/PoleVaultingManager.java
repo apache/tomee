@@ -21,5 +21,6 @@ import javax.validation.constraints.Min;
 
 @Local
 public interface PoleVaultingManager {
+
     int points(@Min(120) int centimeters);
 }

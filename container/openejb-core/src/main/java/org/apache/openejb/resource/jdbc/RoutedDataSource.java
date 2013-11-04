@@ -16,21 +16,18 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.logging.Logger;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.router.Router;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.reflection.Reflections;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 public class RoutedDataSource implements DataSource {
     private static final String OPENEJB_RESOURCE_PREFIX = "openejb:Resource/";
@@ -46,20 +43,15 @@ public class RoutedDataSource implements DataSource {
     }
 
     public void setRouter(String router) {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-        Object o = null;
-        Context ctx = containerSystem.getJNDIContext();
+        Object o;
         try {
-            o = ctx.lookup(OPENEJB_RESOURCE_PREFIX + router);
-
+            o = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(OPENEJB_RESOURCE_PREFIX + router);
         } catch (NamingException e) {
             throw new IllegalArgumentException("Can't find router [" + router + "]", e);
         }
 
-        if (o instanceof Router) {
-            delegate = (Router) o;
-
+        if (Router.class.isInstance(o)) {
+            delegate = Router.class.cast(o);
         } else {
             throw new IllegalArgumentException(o + " is not a router");
         }

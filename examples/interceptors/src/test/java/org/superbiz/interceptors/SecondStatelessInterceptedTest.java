@@ -45,7 +45,7 @@ public class SecondStatelessInterceptedTest extends TestCase {
     @Test
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         SecondStatelessInterceptedLocal bean =
-                (SecondStatelessInterceptedLocal) initCtx.lookup("SecondStatelessInterceptedBeanLocal");
+            (SecondStatelessInterceptedLocal) initCtx.lookup("SecondStatelessInterceptedBeanLocal");
 
         assert bean != null;
 

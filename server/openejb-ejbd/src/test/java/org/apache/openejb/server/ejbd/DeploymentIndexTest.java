@@ -40,14 +40,28 @@ public class DeploymentIndexTest {
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null, null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, null, false);
+        beanContext = new BeanContext("aDeploymentId",
+                                      null,
+                                      new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), null, null, null, false), null, null),
+                                      DeploymentIndexTest.class,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      false);
         deploymentIndex = new DeploymentIndex(new BeanContext[]{beanContext, beanContext});
     }
 
     @Test
     public void testGetDeploymentEJBRequest() throws RemoteException {
         final EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null, null);
-        final EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadataWithId, method, null, null, null);
         final BeanContext info = deploymentIndex.getDeployment(request);
 
         Assert.assertEquals(beanContext, info);
@@ -58,7 +72,7 @@ public class DeploymentIndexTest {
     public void testGetDeploymentEJBRequestRemoteException() throws RemoteException {
         // 0 causes DeploymentIndex to move further
         final EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, InterfaceType.BUSINESS_REMOTE, null, null);
-        final EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null);
+        final EJBRequest request = new EJBRequest(null, ejbMetadata, method, null, null, null);
         deploymentIndex.getDeployment(request);
     }
 

@@ -22,16 +22,16 @@ import javax.persistence.EntityManagerFactory;
 /**
  * @version $Rev$ $Date$
  */
-public class PersistenceUnitReference extends Reference{
+public class PersistenceUnitReference extends Reference {
 
-	private EntityManagerFactory emf;
-	
-	public PersistenceUnitReference(EntityManagerFactory emf) {
-		this.emf = emf;		
-	}
+    private EntityManagerFactory emf;
 
-	public Object getObject() throws NamingException {
-	    return emf;		
-	}
+    public PersistenceUnitReference(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+
+    public Object getObject() throws NamingException {
+        return emf;
+    }
 
 }

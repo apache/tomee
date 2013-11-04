@@ -22,11 +22,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee</artifactId>
-  <version>1.6.0</version>
+  <version>1.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE</name>
 
@@ -38,6 +38,7 @@
     <module>tomee-mojarra</module>
     <module>tomee-jdbc</module>
     <module>tomee-webapp</module>
+    <module>tomee-webaccess</module>
     <module>tomee-plus-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
@@ -45,6 +46,7 @@
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
+    <module>tomee-static-content</module>
   </modules>
 
   <repositories>
@@ -194,7 +196,7 @@
   </profiles>
 
   <properties>
-    <openejb.version>4.6.0</openejb.version>
+    <openejb.version>4.6.0-SNAPSHOT</openejb.version>
   </properties>
 </project>
 

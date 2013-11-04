@@ -17,8 +17,10 @@
 package org.apache.openejb.resource.jdbc.managed.local;
 
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
-import javax.sql.DataSource;
+import javax.sql.CommonDataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
@@ -35,7 +37,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ManagedConnection implements InvocationHandler {
-    private static final Map<DataSource, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<DataSource, Map<Transaction, Connection>>();
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.OPENEJB_RESOURCE_JDBC,ManagedConnection.class);
+
+    private static final Map<Integer, Map<Transaction, Connection>> CONNECTION_BY_TX_BY_DS = new ConcurrentHashMap<Integer, Map<Transaction, Connection>>();
 
     private final TransactionManager transactionManager;
     private final LocalXAResource xaResource;
@@ -45,12 +49,12 @@ public class ManagedConnection implements InvocationHandler {
 
     private final Map<Transaction, Connection> connectionByTx;
 
-    public ManagedConnection(final DataSource ds, final Connection connection, final TransactionManager txMgr) {
+    public ManagedConnection(final CommonDataSource ds, final Connection connection, final TransactionManager txMgr) {
         delegate = connection;
         transactionManager = txMgr;
         closed = false;
         xaResource = new LocalXAResource(delegate);
-        connectionByTx = CONNECTION_BY_TX_BY_DS.get(ds);
+        connectionByTx = CONNECTION_BY_TX_BY_DS.get(ds.hashCode());
     }
 
     public XAResource getXAResource() throws SQLException {
@@ -82,7 +86,7 @@ public class ManagedConnection implements InvocationHandler {
             // if we have a tx check it is the same this connection is linked to
             if (currentTransaction != null) {
                 if (isUnderTransaction(currentTransaction.getStatus())) {
-                    if (currentTransaction != transaction) {
+                    if (!currentTransaction.equals(transaction)) {
                         throw new SQLException("Connection can not be used while enlisted in another transaction");
                     }
                     return invokeUnderTransaction(delegate, method, args);
@@ -113,7 +117,16 @@ public class ManagedConnection implements InvocationHandler {
 
                         transaction.registerSynchronization(new ClosingSynchronization(delegate, connectionByTx));
 
-                        delegate.setAutoCommit(false);
+                        try {
+                            delegate.setAutoCommit(false);
+                        } catch (final SQLException xae) { // we are alreay in a transaction so this can't be called from a user perspective - some XA DataSource prevents it in their code
+                            final String message = "Can't set auto commit to false cause the XA datasource doesn't support it, this is likely an issue";
+                            if (LOGGER.isDebugEnabled()) { // we don't want to print the exception by default
+                                LOGGER.warning(message, xae);
+                            } else {
+                                LOGGER.warning(message);
+                            }
+                        }
                     }
                 }
 
@@ -177,12 +190,12 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    public static void pushDataSource(final DataSource ds) {
-        CONNECTION_BY_TX_BY_DS.put(ds, new ConcurrentHashMap<Transaction, Connection>());
+    public static void pushDataSource(final CommonDataSource ds) {
+        CONNECTION_BY_TX_BY_DS.put(ds.hashCode(), new ConcurrentHashMap<Transaction, Connection>());
     }
 
-    public static void cleanDataSource(final DataSource ds) {
-        final Map<Transaction, Connection> map = CONNECTION_BY_TX_BY_DS.remove(ds);
+    public static void cleanDataSource(final CommonDataSource ds) {
+        final Map<Transaction, Connection> map = CONNECTION_BY_TX_BY_DS.remove(ds.hashCode());
         if (map != null) {
             map.clear();
         }

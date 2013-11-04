@@ -22,6 +22,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class IllegalArgumentExceptionMapper implements ExceptionMapper<java.lang.IllegalArgumentException> {
+
     @Override
     public Response toResponse(final java.lang.IllegalArgumentException throwable) {
         return Response.ok(throwable.getMessage()).build();

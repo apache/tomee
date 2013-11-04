@@ -16,10 +16,9 @@
  */
 package org.apache.openejb.client;
 
-import java.net.URI;
-
 import junit.framework.TestCase;
 
+import java.net.URI;
 
 public class ServerMetaDataTest extends TestCase {
 
@@ -30,5 +29,5 @@ public class ServerMetaDataTest extends TestCase {
         ServerMetaData server2 = new ServerMetaData(uri2, uri1);
         assertEquals(server1.buildHash(), server2.buildHash());
     }
-    
+
 }

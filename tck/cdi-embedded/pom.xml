@@ -19,13 +19,13 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI Embedded</name>
-  <version>1.6.0</version>
+  <version>1.6.0-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -81,14 +81,6 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <systemPropertyVariables>
-            <!--<org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>-->
-            <!--<org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>-->
-            <!--<org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>-->
-            <!--<org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>-->
-            <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
-            <!--<deleteArtifacts>true</deleteArtifacts>-->
-          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

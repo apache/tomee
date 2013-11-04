@@ -16,10 +16,6 @@
  */
 package org.superbiz.moviefun;
 
-import java.util.List;
-
-import javax.ejb.embeddable.EJBContainer;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,50 +23,53 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ejb.embeddable.EJBContainer;
+import java.util.List;
+
 public class MoviesTest {
 
-	private static EJBContainer ejbContainer;
+    private static EJBContainer ejbContainer;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
-		ejbContainer = EJBContainer.createEJBContainer();
-	}
+    @BeforeClass
+    public static void setUp() throws Exception {
+        ejbContainer = EJBContainer.createEJBContainer();
+    }
 
-	@AfterClass
-	public static void tearDown() {
-		if (ejbContainer != null) {
-			ejbContainer.close();
-		}
-	}
+    @AfterClass
+    public static void tearDown() {
+        if (ejbContainer != null) {
+            ejbContainer.close();
+        }
+    }
 
-	@Before
-	@After
-	public void clean() throws Exception {
-		MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun/MoviesBean!org.superbiz.moviefun.MoviesBean");
-		movies.clean();
-	}
+    @Before
+    @After
+    public void clean() throws Exception {
+        MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun/MoviesBean!org.superbiz.moviefun.MoviesBean");
+        movies.clean();
+    }
 
-	@Test
-	public void testShouldAddAMovie() throws Exception {
-		MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun/MoviesBean!org.superbiz.moviefun.MoviesBean");
-		
-		Movie movie = new Movie();
-		movie.setDirector("Michael Bay");
-		movie.setGenre("Action");
-		movie.setRating(9);
-		movie.setTitle("Bad Boys");
-		movie.setYear(1995);
-		movies.addMovie(movie);
+    @Test
+    public void testShouldAddAMovie() throws Exception {
+        MoviesBean movies = (MoviesBean) ejbContainer.getContext().lookup("java:global/moviefun/MoviesBean!org.superbiz.moviefun.MoviesBean");
 
-		Assert.assertEquals(1, movies.countAll());
-		List<Movie> moviesFound = movies.findRange("title", "Bad Boys", 0, 10);
+        Movie movie = new Movie();
+        movie.setDirector("Michael Bay");
+        movie.setGenre("Action");
+        movie.setRating(9);
+        movie.setTitle("Bad Boys");
+        movie.setYear(1995);
+        movies.addMovie(movie);
 
-		Assert.assertEquals(1, moviesFound.size());
-		Assert.assertEquals("Michael Bay", moviesFound.get(0).getDirector());
-		Assert.assertEquals("Action", moviesFound.get(0).getGenre());
-		Assert.assertEquals(9, moviesFound.get(0).getRating());
-		Assert.assertEquals("Bad Boys", moviesFound.get(0).getTitle());
-		Assert.assertEquals(1995, moviesFound.get(0).getYear());
-	}
+        Assert.assertEquals(1, movies.countAll());
+        List<Movie> moviesFound = movies.findRange("title", "Bad Boys", 0, 10);
+
+        Assert.assertEquals(1, moviesFound.size());
+        Assert.assertEquals("Michael Bay", moviesFound.get(0).getDirector());
+        Assert.assertEquals("Action", moviesFound.get(0).getGenre());
+        Assert.assertEquals(9, moviesFound.get(0).getRating());
+        Assert.assertEquals("Bad Boys", moviesFound.get(0).getTitle());
+        Assert.assertEquals(1995, moviesFound.get(0).getYear());
+    }
 
 }

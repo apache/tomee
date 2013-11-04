@@ -17,7 +17,7 @@
 
 name := "scala-basic"
 
-version := "1.1.0"
+version := "1.1.0-SNAPSHOT"
 
 scalaVersion := "2.9.1"
 
@@ -27,8 +27,8 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-    "org.apache.openejb" % "javaee-api" % "6.0-5",
-    "org.apache.openejb" % "openejb-core" % "4.6.0" % "test",
+    "org.apache.openejb" % "javaee-api" % "6.0-4",
+    "org.apache.openejb" % "openejb-core" % "4.5.1-SNAPSHOT" % "test",
     "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 )
 

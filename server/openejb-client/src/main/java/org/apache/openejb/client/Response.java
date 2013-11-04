@@ -23,6 +23,13 @@ import java.io.ObjectOutput;
 
 public interface Response extends Externalizable {
 
+    /**
+     * Set the protocol metadata that can be used for version checking
+     *
+     * @param metaData ProtocolMetaData
+     */
+    public void setMetaData(final ProtocolMetaData metaData);
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 

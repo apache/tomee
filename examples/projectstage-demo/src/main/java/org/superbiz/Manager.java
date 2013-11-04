@@ -17,6 +17,7 @@
 package org.superbiz;
 
 public class Manager {
+
     private final String name;
 
     public Manager(String name) {

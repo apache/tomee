@@ -26,7 +26,7 @@ public class RemoteInitialContextCreated {
 
     private final URI providerUri;
 
-    public RemoteInitialContextCreated(URI providerUri) {
+    public RemoteInitialContextCreated(final URI providerUri) {
         this.providerUri = providerUri;
     }
 
@@ -37,7 +37,7 @@ public class RemoteInitialContextCreated {
     @Override
     public String toString() {
         return "RemoteInitialContextCreated{" +
-                "providerUri=" + providerUri +
-                '}';
+               "providerUri=" + providerUri +
+               '}';
     }
 }

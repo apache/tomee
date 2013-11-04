@@ -18,6 +18,8 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
@@ -26,8 +28,12 @@ import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
+import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.assembler.classic.util.ServiceInfos;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
@@ -38,12 +44,22 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class CxfEndpoint {
     public static final String CXF_JAXWS_PREFIX = "cxf.jaxws.";
+
+    // to be able to switch off logs we don't want
+    protected static final Logger FACTORY_BEAN_LOG = LogUtils.getLogger(ReflectionServiceFactoryBean.class);
+    private static final Logger SERVER_IMPL_LOGGER = LogUtils.getL7dLogger(ServerImpl.class);
+
     protected Bus bus;
 
 	protected PortData port;
@@ -77,6 +93,17 @@ public abstract class CxfEndpoint {
         this.serviceConfiguration = configuration;
 		this.bus.setExtension(this, CxfEndpoint.class);
 	}
+
+    protected Service doServiceCreate() {
+        final Level level = FACTORY_BEAN_LOG.getLevel();
+        FACTORY_BEAN_LOG.setLevel(Level.SEVERE);
+        try {
+            service = serviceFactory.create();
+        } finally {
+            FACTORY_BEAN_LOG.setLevel(level);
+        }
+        return service;
+    }
 
 	protected Class getImplementorClass() {
 		return this.implementor.getClass();
@@ -157,6 +184,20 @@ public abstract class CxfEndpoint {
         svrFactory.setDestinationFactory(httpTransportFactory);
         svrFactory.setServiceClass(serviceFactory.getServiceClass());
 
+        final Properties beanConfig = serviceConfiguration.getProperties();
+
+        // endpoint properties
+        if (beanConfig != null) {
+            final String schemaLocations = beanConfig.getProperty(CXF_JAXWS_PREFIX + "schema-locations");
+            if (schemaLocations != null) {
+                svrFactory.setSchemaLocations(Arrays.asList(schemaLocations.split(",")));
+            }
+            final String wsdlLocation = beanConfig.getProperty(CXF_JAXWS_PREFIX + "wsdl-location");
+            if (wsdlLocation != null) {
+                svrFactory.setWsdlLocation(wsdlLocation);
+            }
+        }
+
         // look for bean info if exists
         CxfUtil.configureEndpoint(svrFactory, serviceConfiguration, CXF_JAXWS_PREFIX);
 
@@ -164,12 +205,15 @@ public abstract class CxfEndpoint {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");
 		}
 
-		server = svrFactory.create();
+        final Level level = SERVER_IMPL_LOGGER.getLevel();
+        SERVER_IMPL_LOGGER.setLevel(Level.SEVERE);
+        try {
+		    server = svrFactory.create();
+        } finally {
+            SERVER_IMPL_LOGGER.setLevel(level);
+        }
 
-		init();
-
-		// todo do we need to call this?
-		getEndpoint();
+        init();
 
 		if (getBinding() instanceof SOAPBinding) {
 			((SOAPBinding) getBinding()).setMTOMEnabled(port.isMtomEnabled());
@@ -207,4 +251,33 @@ public abstract class CxfEndpoint {
 			this.server.stop();
 		}
 	}
+
+    protected static JaxWsServiceFactoryBean configureService(final JaxWsServiceFactoryBean serviceFactory, final ServiceConfiguration configuration, final String prefix) {
+        final Properties beanConfig = configuration.getProperties();
+        if (beanConfig == null || beanConfig.isEmpty()) {
+            return serviceFactory;
+        }
+
+        final Collection<ServiceInfo> availableServices = configuration.getAvailableServices();
+
+        // databinding
+        final String databinding = beanConfig.getProperty(prefix + CxfUtil.DATABINDING);
+        if (databinding != null && !databinding.trim().isEmpty()) {
+            Object instance = ServiceInfos.resolve(availableServices, databinding);
+            if (instance == null) {  // maybe id == classname
+                try {
+                    instance = Thread.currentThread().getContextClassLoader().loadClass(databinding).newInstance();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            if (!DataBinding.class.isInstance(instance)) {
+                throw new OpenEJBRuntimeException(instance + " is not a " + DataBinding.class.getName()
+                        + ", please check configuration of service [id=" + databinding + "]");
+            }
+            serviceFactory.setDataBinding((DataBinding) instance);
+        }
+
+        return serviceFactory;
+    }
 }

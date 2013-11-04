@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 @EnableServices(value = "jaxrs")
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
+
     @Module
     @Classes(GreetingService.class)
     public WebApp app() {

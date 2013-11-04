@@ -25,7 +25,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.6.0</version>
+    <version>4.6.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core</artifactId>
@@ -33,7 +33,6 @@
   <name>OpenEJB :: Container :: Core</name>
   <properties>
     <openejb.osgi.import.pkg>
-      javassist.util.proxy,
       javax.annotation;version="[1.1.0,2.0.0)",
       javax.annotation.security;version="[1.1.0,2.0.0)",
       javax.annotation.sql;version="[1.1.0,2.0.0)",
@@ -91,11 +90,11 @@
       javax.ws.rs,
       javax.ws.rs.core,
       javax.ws.rs.ext,
-      javax.wsdl,
-      javax.wsdl.extensions.http,
-      javax.wsdl.extensions.soap,
-      javax.wsdl.factory,
-      javax.wsdl.xml,
+      javax.wsdl;resolution:=optional,,
+      javax.wsdl.extensions.http;resolution:=optional,,
+      javax.wsdl.extensions.soap;resolution:=optional,,
+      javax.wsdl.factory;resolution:=optional,,
+      javax.wsdl.xml;resolution:=optional,,
       javax.xml.bind,
       javax.xml.bind.annotation,
       javax.xml.bind.annotation.adapters,
@@ -192,8 +191,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm;version="[3.1,4)",
-      org.apache.xbean.asm.commons;version="[3.1,4)",
+      org.apache.xbean.asm4;version="[3.1,4)",
+      org.apache.xbean.asm4.commons;version="[3.1,4)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",
@@ -241,7 +240,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -347,7 +345,7 @@
             </manifest>
             <manifestEntries>
               <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
-                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm-shaded-${xbeanVersion}.jar
+                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm4-shaded-${xbeanVersion}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory
@@ -468,6 +466,12 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>activemq-broker</artifactId>
+          <groupId>org.apache.activemq</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -489,7 +493,7 @@
     <!-- End: JavaMail -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm-shaded</artifactId>
+      <artifactId>xbean-asm4-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -524,6 +528,12 @@
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-pool</groupId>
+          <artifactId>commons-pool</artifactId>
+        </exclusion>
+      </exclusions>	  
     </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
@@ -541,6 +551,7 @@
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
@@ -604,18 +615,15 @@
       <artifactId>openwebbeans-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
-    </dependency>
-    <!--<dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-    </dependency>-->
-    <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openjpa-asm-shaded</artifactId>
-      <version>2.2.0</version>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+    </dependency>
+    -->
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-core</artifactId>

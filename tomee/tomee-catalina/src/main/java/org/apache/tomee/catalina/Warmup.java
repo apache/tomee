@@ -44,7 +44,6 @@ public class Warmup {
         final String[] classes = {
                 "java.util.concurrent.TimeUnit",
                 "java.util.concurrent.atomic.AtomicLong",
-                "javassist.util.proxy.ProxyFactory",
                 "javax.el.ExpressionFactory",
                 "javax.faces.component.UIViewRoot",
                 "javax.imageio.ImageIO",
@@ -187,7 +186,7 @@ public class Warmup {
         tld.setDaemon(true);
         tld.start();
 
-        final int part = (int) Math.round(classes.length * 1. / permits);
+        final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
         for (int i = 0; i < permits; i++) {
             final int offset = i * part;
             final Thread thread = new Thread() {

@@ -21,12 +21,12 @@ package org.apache.openejb.client;
 
 import junit.framework.TestCase;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 
 public class ThrowableArtifactTest extends TestCase {
 
@@ -85,6 +85,7 @@ public class ThrowableArtifactTest extends TestCase {
     }
 
     public static class BadException extends Exception {
+
         private final Object data = new NotSerializableObject();
 
         public BadException(String message, Throwable throwable) {
@@ -93,5 +94,6 @@ public class ThrowableArtifactTest extends TestCase {
     }
 
     public static class NotSerializableObject {
+
     }
 }

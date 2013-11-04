@@ -34,6 +34,7 @@ import java.util.List;
 @Path("/api/user")
 @Produces({"text/xml", "application/json"})
 public class UserService {
+
     @EJB
     private UserDAO dao;
 

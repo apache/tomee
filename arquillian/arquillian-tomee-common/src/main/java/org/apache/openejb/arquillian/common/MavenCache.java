@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import org.apache.openejb.loader.*;
-import org.apache.openejb.resolver.Resolver;
+import org.apache.openejb.loader.ProvisioningUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.logging.Logger;
 
@@ -30,7 +33,7 @@ public class MavenCache {
         LOGGER.info("Downloading " + artifactInfo + " please wait...");
 
         try {
-            return new File(new Resolver().resolve(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo));
+            return new File(ProvisioningUtil.realLocation(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo));
         } catch (Exception e) {
             // ignored
         }

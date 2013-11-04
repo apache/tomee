@@ -1,0 +1,143 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.prime.com.tr/ui"
+    >
+
+<f:view contentType="text/html">
+
+  <h:head>
+    <title>Apache TomEE/MyFaces-Stack Demo</title>
+    <h:outputStylesheet library="styles" name="base.css"/>
+    <h:outputStylesheet library="styles" name="theme.css"/>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  </h:head>
+  <h:body>
+    <div id="header">
+      <h:form id="topMenuForm" prependId="false">
+        <div id="top_menu">
+          <div id="top_menu_container">
+            <h:panelGroup rendered="#{infoBean.infoPage}">
+              <div class="date">Apache TomEE/MyFaces-Stack <b>Demo-App</b> #{infoBean.applicationVersion}</div>
+            </h:panelGroup>
+            <div id="projectStage" class="date">[#{infoBean.projectStage}]</div>
+            <ul>
+              <li>
+                <h:commandLink id="lnkLogin" value="#{i18n.lnkLogin}" action="#{menuBean.login}"/>
+              </li>
+              <li>
+                <a href="http://www.apache.org" target="_blank">Apache</a>
+              </li>
+              <li>
+                <a href="http://myfaces.apache.org" target="_blank">MyFaces</a>
+              </li>
+            </ul>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </h:form>
+      <div id="header_bottom">
+        <div id="logo_banner_container">
+          <div id="logo">
+            <a href="http://myfaces.apache.org/">
+              <h:graphicImage library="images" name="myfaces_logo.jpg" alt="MyFaces logo"/>
+            </a>
+          </div>
+          <div id="banner">
+            <a href="http://myfaces.apache.org/extensions/cdi/index.html">
+              <h:graphicImage library="images" name="codi_logo.png" alt="CODI logo"/>
+            </a>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="main_container">
+      <div id="left_column">
+        <h:form id="menuForm" prependId="false">
+          <div class="left_menu_top">
+            <div class="left_menu_bottom">
+              <h5>#{i18n.lblLeftMenuTitle}</h5>
+
+              <div class="content">
+                <ul class="left_menu">
+                  <ui:include src="menu.xhtml"/>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </h:form>
+
+        <div class="clear"></div>
+
+        <h:form id="leftMenuForm" prependId="false">
+
+          <div class="left_menu_top">
+            <div class="left_menu_bottom">
+              <h5>#{i18n.menuMisc}</h5>
+
+              <div class="content">
+                <ul class="left_menu">
+                  <li class="none">
+                    <h:commandLink id="menuAbout" value="#{i18n.menuAbout}" action="#{menuBean.about}"/>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </h:form>
+        <div class="clear"></div>
+      </div>
+      <div id="body_column">
+        <div>
+          <div class="section">
+
+            <ui:insert name="header"><h2>Apache TomEE/MyFaces-Stack Demo-App</h2></ui:insert>
+
+            <div class="main_content">
+              <h:form id="mainForm" prependId="false">
+                <ui:insert name="content"><p>No content available.</p></ui:insert>
+              </h:form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <p:growl sticky="false"/>
+    <div id="footer">
+      <div class="copyright">
+        <p>&#169; The Apache Software Foundation
+        </p>
+      </div>
+    </div>
+  </h:body>
+</f:view>
+</html>

@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
@@ -40,7 +39,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     public static final String TOMEE_WEBAPP_FIRST = "tomee.webapp-first";
 
     private boolean restarting = false;
-    private volatile Context relatedContext;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer = null;
 
@@ -61,7 +59,7 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public void stop() throws LifecycleException {
         // in our destroyapplication method we need a valid classloader to TomcatWebAppBuilder.afterStop()
-        if (forceStopPhase && (restarting || TomcatContextUtil.isReloading(relatedContext))) {
+        if (forceStopPhase && restarting) {
             internalStop();
         }
     }
@@ -74,19 +72,22 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
                 || "org.apache.openejb.eclipselink.JTATransactionController".equals(name)
                 || "org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             // don't load them from system classloader (breaks all in embedded mode and no sense in other cases)
-            synchronized (system) {
+            synchronized (this) {
                 final ClassLoader old = system;
                 system = NoClassClassLoader.INSTANCE;
+                final boolean delegate = getDelegate();
+                setDelegate(false);
                 try {
                     return super.loadClass(name);
                 } finally {
                     system = old;
+                    setDelegate(delegate);
                 }
             }
         }
 
         // avoid to redefine classes from server in this classloader is it not already loaded
-        if (URLClassLoaderFirst.shouldSkip(name) || (name.startsWith("javax.faces.") && URLClassLoaderFirst.shouldSkipJsf(this, name))) {
+        if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name);
             } catch (ClassNotFoundException e) {
@@ -94,8 +95,28 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
             } catch (NoClassDefFoundError ncdfe) {
                 return super.loadClass(name);
             }
+        } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf.")) {
+            final boolean delegate = getDelegate();
+            synchronized (this) {
+                setDelegate(false);
+                try {
+                    return super.loadClass(name);
+                } finally {
+                    setDelegate(delegate);
+                }
+            }
         }
         return super.loadClass(name);
+    }
+
+    @Override
+    protected boolean validate(final String name) { // static validation, mainly container stuff
+        return !URLClassLoaderFirst.shouldSkip(name);
+    }
+
+    @Override
+    protected boolean filter(final String name) {
+        return !"org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name) && URLClassLoaderFirst.shouldSkip(name);
     }
 
     public void internalStop() throws LifecycleException {
@@ -175,10 +196,6 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return true;
     }
 
-    public void setRelatedContext(final Context standardContext) {
-        relatedContext = standardContext;
-    }
-
     public static boolean isDelegate() {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
@@ -186,6 +203,11 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return other != null && ClassLoader.class.isInstance(other) && hashCode() == other.hashCode();
     }
 
     @Override
