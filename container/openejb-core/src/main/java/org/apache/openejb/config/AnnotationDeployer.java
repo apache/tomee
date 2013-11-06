@@ -1232,6 +1232,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private static void addRestApplicationIfPossible(final WebModule webModule, final Class<? extends Application> app) {
+            if (Modifier.isAbstract(app.getModifiers())) {
+                return;
+            }
+
             if (app.getConstructors().length == 0) {
                 webModule.getRestApplications().add(app.getName());
             } else {
@@ -2007,6 +2011,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBException("Unable to load Application class: " + application, e);
                         }
+                        if (Modifier.isAbstract(clazz.getModifiers())) {
+                            continue;
+                        }
+
                         try {
                             Application app = Application.class.cast(clazz.newInstance());
                             try {
@@ -2021,9 +2029,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 }
                                 // if app depends on cdi no need to do it
                             }
-                        } catch (InstantiationException e) {
+                        } catch (final InstantiationException e) {
                             throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
-                        } catch (IllegalAccessException e) {
+                        } catch (final IllegalAccessException e) {
                             throw new OpenEJBException("Unable to access Application class: " + application, e);
                         }
                     }
