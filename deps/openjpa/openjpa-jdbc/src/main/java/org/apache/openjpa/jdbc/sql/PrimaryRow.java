@@ -338,9 +338,9 @@ public class PrimaryRow
             if (prev == NULL)
                 prev = null;
             if (!rowValueEquals(prev, val)) {
-            	if (isDefaultValue(prev) || allowsUpdate(col, prev, val)) {
+            	if (allowsUpdate(col, prev, val)) {
             		super.setObject(col, val, metaType, overrideDefault);
-            	} else if (!isDefaultValue(prev)) {
+            	} else if (!isDefaultValue(val)) {
             		throw new InvalidStateException(_loc.get("diff-values",
             				new Object[]{ col.getFullDBIdentifier().getName(),
                             (prev == null) ? null : prev.getClass(), prev,
