@@ -574,6 +574,17 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>openjpa</id>
+      <name>Patched Apache OpenJPA 2.3.0 staging epository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-102/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <!--<repository>-->
     <!--<id>apache-incubating-repository</id>-->
     <!--<name>Apache Incubating Repository</name>-->
