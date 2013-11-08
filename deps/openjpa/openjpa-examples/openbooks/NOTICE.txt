@@ -1,9 +1,0 @@
-
-Apache OpenJPA Example - OpenBooks
-Copyright 2010 The Apache Software Foundation
-
-This product includes software developed by
-The Apache Software Foundation (http://www.apache.org/).
-
-Apache, the Apache feather logo and OpenJPA are trademarks of The Apache Software Foundation.
-

@@ -168,7 +168,6 @@
         <module>openjpa-jest</module>
         <module>openjpa</module>
         <module>openjpa-project</module>
-        <module>openjpa-examples</module>
         <module>openjpa-integration</module>
         <module>openjpa-all</module>
         <module>openjpa-tools</module>
