@@ -94,7 +94,7 @@
     <tomee.version>1.6.0</tomee.version>
 
     <openjpa.version>2.3.0-nonfinal-r1539950</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.1-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.2.1</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -556,6 +556,17 @@
       <id>xbean</id>
       <name>Apache XBean 3.15 staging repository</name>
       <url>https://repository.apache.org/content/repositories/orgapachegeronimo-086/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>openwebbeans</id>
+      <name>Apache OpenWebBeans 1.2.1 staging epository</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-091/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
