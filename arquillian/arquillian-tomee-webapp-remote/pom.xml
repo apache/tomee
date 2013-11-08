@@ -203,7 +203,7 @@
         </exclusion>
         <exclusion>
           <artifactId>openjpa</artifactId>
-          <groupId>org.apache.openjpa</groupId>
+          <groupId>org.apache.openejb.deps</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openwebbeans-web</artifactId>

@@ -25,12 +25,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.openjpa</groupId>
+        <groupId>org.apache.openejb.deps</groupId>
         <artifactId>openjpa-tools</artifactId>
         <version>@pom.version@</version>
     </parent>
 
-    <groupId>org.apache.openjpa.tools.openjpa-maven-plugin.testing</groupId>
+    <groupId>org.apache.openejb.deps.tools.openjpa-maven-plugin.testing</groupId>
     <artifactId>enhance</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
@@ -51,17 +51,17 @@
 
 
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.deps</groupId>
             <artifactId>openjpa-kernel</artifactId>
             <version>@pom.version@</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.deps</groupId>
             <artifactId>openjpa-jdbc</artifactId>
             <version>@pom.version@</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.deps</groupId>
             <artifactId>openjpa-persistence</artifactId>
             <version>@pom.version@</version>
         </dependency>
@@ -82,7 +82,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.openjpa</groupId>
+                <groupId>org.apache.openejb.deps</groupId>
                 <artifactId>openjpa-maven-plugin</artifactId>
                 <version>@pom.version@</version>
                 <executions>

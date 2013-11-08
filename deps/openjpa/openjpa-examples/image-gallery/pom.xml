@@ -25,12 +25,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-      <groupId>org.apache.openjpa</groupId>
+      <groupId>org.apache.openejb.deps</groupId>
       <artifactId>openjpa-examples</artifactId>
-      <version>2.3.0-SNAPSHOT</version>
+      <version>2.3.0-nonfinal-r1539950</version>
   </parent>
 
-  <groupId>org.apache.openjpa.openjpa-examples</groupId>
+  <groupId>org.apache.openejb.deps.openjpa-examples</groupId>
   <artifactId>image-gallery</artifactId>
   <packaging>jar</packaging>
 
@@ -47,7 +47,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openjpa</groupId>
+      <groupId>org.apache.openejb.deps</groupId>
       <artifactId>openjpa-all</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -83,7 +83,7 @@
     <plugins>
       <plugin>
           <!-- Use the openjpa maven plugin to enhance the domain model classes -->
-          <groupId>org.apache.openjpa</groupId>
+          <groupId>org.apache.openejb.deps</groupId>
           <artifactId>openjpa-maven-plugin</artifactId>
           <configuration>
             <includes>org/apache/openjpa/examples/gallery/model/*.class</includes>
@@ -102,7 +102,7 @@
           </executions>
           <dependencies>
             <dependency>
-              <groupId>org.apache.openjpa</groupId>
+              <groupId>org.apache.openejb.deps</groupId>
               <artifactId>openjpa-all</artifactId>
               <version>${project.version}</version>
             </dependency>

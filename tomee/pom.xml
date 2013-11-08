@@ -118,7 +118,7 @@
           <version>${openejb.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>org.apache.openjpa</groupId>
+              <groupId>org.apache.openejb.deps</groupId>
               <artifactId>openjpa</artifactId>
             </exclusion>
             <exclusion>

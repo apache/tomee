@@ -35,12 +35,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.openjpa</groupId>
+        <groupId>org.apache.openejb.deps</groupId>
         <artifactId>openjpa-integration</artifactId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.3.0-nonfinal-r1539950</version>
     </parent>
 
-    <groupId>org.apache.openjpa</groupId>
+    <groupId>org.apache.openejb.deps</groupId>
     <artifactId>openjpa-integration-examples</artifactId>
     <packaging>pom</packaging>
     <name>OpenJPA Integration Tests - Examples</name>
@@ -98,7 +98,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
+            <groupId>org.apache.openejb.deps</groupId>
             <artifactId>openjpa-all</artifactId>
             <version>${project.version}</version>
         </dependency>
