@@ -29,6 +29,5 @@
 
   <modules>
     <module>mbean-annotation-api</module>
-    <module>openjpa</module>
   </modules>
 </project>
