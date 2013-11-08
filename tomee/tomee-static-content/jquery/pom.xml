@@ -22,10 +22,10 @@
   <parent>
     <groupId>org.apache.openejb.staticweb</groupId>
     <artifactId>tomee-static-content</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0</version>
   </parent>
   <artifactId>static-tomee-jquery</artifactId>
-  <version>1.6.0-SNAPSHOT</version>
+  <version>1.6.0</version>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: static-tomee-content :: jquery</name>
   <description>Contains jquery 2.0.3</description>
