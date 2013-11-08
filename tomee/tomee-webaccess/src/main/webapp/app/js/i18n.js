@@ -28,6 +28,7 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         'source': 'Source Code',
         'output': 'Output',
         'execute': 'Execute',
+        'clean.execute': 'Clean and execute',
         'groovy': 'Groovy',
         'javascript': 'JavaScript',
         'log.files': 'Log Files',

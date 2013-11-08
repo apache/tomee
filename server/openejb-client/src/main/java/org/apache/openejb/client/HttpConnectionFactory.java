@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.client;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
@@ -63,6 +66,16 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
+            }
+
+            if (params.containsKey("sslKeyStore") || params.containsKey("sslTrustStore")) {
+                try {
+                    ( (HttpsURLConnection) httpURLConnection ).setSSLSocketFactory(new SSLContextBuilder(params).build().getSocketFactory());
+                } catch (NoSuchAlgorithmException e) {
+                    throw new ClientRuntimeException(e.getMessage(), e);
+                } catch (KeyManagementException e) {
+                    throw new ClientRuntimeException(e.getMessage(), e);
+                }
             }
 
             httpURLConnection.connect();
@@ -127,4 +140,5 @@ public class HttpConnectionFactory implements ConnectionFactory {
             return inputStream;
         }
     }
+
 }

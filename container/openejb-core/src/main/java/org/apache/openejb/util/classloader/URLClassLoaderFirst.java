@@ -52,6 +52,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static final String SLF4J_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+    private static final String CLASS_EXT = ".class";
+    public static final ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
 
     public static void reloadConfig() {
         list(FORCED_SKIP, "openejb.classloader.forced-skip");
@@ -202,7 +204,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("javax.faces.")) return false;
         if (name.startsWith("javax.mail.")) return false;
         if (name.startsWith("javax.")) return isInServer(name);
-        if (name.startsWith("sun.")) return true;
+        if (name.startsWith("sun.")) return isInJvm(name);
 
         // can be provided in the webapp
         if (name.startsWith("javax.servlet.jsp.jstl")) return false;
@@ -323,7 +325,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 if (swizzle.startsWith("Grep.class") || swizzle.startsWith("Lexer.class")) return true;
                 return false;
             }
-            if (org.startsWith("w3c.dom")) return true;
+            if (org.startsWith("w3c.dom")) {
+                return isInJvm(name);
+            }
             if (org.startsWith("quartz")) return true;
             if (org.startsWith("eclipse.jdt.")) return true;
 
@@ -334,15 +338,14 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // other packages
-        if (name.startsWith("com.sun.")) {
-            final String sun = name.substring("com.sun.".length());
-            if (sun.startsWith("org.apache.")) return true;
-            if (sun.startsWith("crypto.")) return true;
-            return false;
-        }
+        if (name.startsWith("com.sun.")) return isInJvm(name);
         if (name.startsWith("serp.bytecode")) return true;
 
         return false;
+    }
+
+    private static boolean isInJvm(final String name) {
+        return SYSTEM_CLASS_LOADER.getResource(name.replace('.', '/') + CLASS_EXT) != null;
     }
 
     private static boolean isInServer(final String name) {

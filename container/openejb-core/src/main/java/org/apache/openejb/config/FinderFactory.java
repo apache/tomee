@@ -96,10 +96,11 @@ public class FinderFactory {
             } else {
                 finder = newFinder(new DebugArchive(new ConfigurableClasspathArchive(module.getClassLoader(), url)));
             }
-            if ("true".equals(module.getProperties().getProperty(FORCE_LINK, "false"))) {
+            if ("true".equals(SystemInstance.get().getProperty(FORCE_LINK, module.getProperties().getProperty(FORCE_LINK, "false")))) {
                 finder.link();
             } else {
-                enableFinderOptions(finder);
+                finder.enableMetaAnnotations(); // needed to stay compliant
+                enableSubclassing(finder);
             }
         } else {
             finder = new AnnotationFinder(new ClassesArchive());
@@ -147,13 +148,17 @@ public class FinderFactory {
         if (annotationFinder.hasMetaAnnotations()) {
             annotationFinder.enableMetaAnnotations();
         }
+        enableSubclassing(annotationFinder);
+
+        return annotationFinder;
+    }
+
+    private static void enableSubclassing(AnnotationFinder annotationFinder) {
         if (enableFindSubclasses()) {
             // for @HandleTypes we need interface impl, impl of abstract classes too
             annotationFinder.enableFindSubclasses();
             annotationFinder.enableFindImplementations();
         }
-
-        return annotationFinder;
     }
 
     private static boolean enableFindSubclasses() {
