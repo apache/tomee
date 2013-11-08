@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<entity-mappings xmlns="http://www.apache.org/openjpa/ns/orm/extendable" 
+	xmlns:openjpa="http://www.apache.org/openjpa/ns/orm" 
+	xmlns:orm="http://java.sun.com/xml/ns/persistence/orm" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	version="2.0">
+
+	<openjpa:openjpa-version version="1.0"/>
+	
+	<entity class="org.apache.openjpa.persistence.jdbc.annotations.MultiColumnVersionPC"
+		metadata-complete="true">
+		<table name="MCV"/>
+		<attributes>
+			<id name="id">
+				<orm:generated-value/>
+			</id>
+			<basic name="id"/>
+			<basic name="name"/>
+		</attributes>
+		<openjpa:entity version-strategy="version-numbers">
+			<openjpa:version-columns>
+				<openjpa:version-column name="v1"/>
+				<openjpa:version-column name="v2"/>
+				<openjpa:version-column name="v3"
+					column-definition="FLOAT"
+					scale="3"
+					precision="10"/>
+			</openjpa:version-columns>	
+		</openjpa:entity>
+	</entity>
+	<entity class="org.apache.openjpa.persistence.jdbc.annotations.MultiColumnSecondaryVersionPC"
+		metadata-complete="true">
+		<table name="MCSV"/>
+		<secondary-table name="MCSV1">
+			<orm:primary-key-join-column name="ID"/>
+		</secondary-table>
+		<secondary-table name="MCSV2">
+			<orm:primary-key-join-column name="ID"/>
+		</secondary-table>
+		<attributes>
+			<id name="id">
+				<orm:generated-value/>
+			</id>
+			<basic name="name"/>
+			<basic name="s1">
+				<orm:column table="MCSV1"/>
+			</basic>
+			<basic name="s2">
+				<orm:column table="MCSV2"/>
+			</basic>
+		</attributes>
+		<openjpa:entity version-strategy="version-numbers">
+			<openjpa:version-columns>
+				<openjpa:version-column name="v11" table="MCSV1"/>
+				<openjpa:version-column name="v12" table="MCSV1"/>
+				<openjpa:version-column name="v21" table="MCSV2"/>
+				<openjpa:version-column name="v01"/>
+			</openjpa:version-columns>
+		</openjpa:entity>
+	</entity>
+	
+</entity-mappings>

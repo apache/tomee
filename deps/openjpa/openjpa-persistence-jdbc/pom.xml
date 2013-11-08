@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<!--
+    Maven release plugin requires the project tag to be on a single line.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-parent</artifactId>
+        <version>2.3.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.openjpa</groupId>
+    <artifactId>openjpa-persistence-jdbc</artifactId>
+    <packaging>jar</packaging>
+    <name>OpenJPA Persistence JDBC</name>
+    <description>OpenJPA Persistence JDBC</description>
+
+    <profiles>
+        <!-- Profile for testing with test-dynamic-enhancer -->
+        <profile>
+            <id>test-dynamic-enhancer</id>
+
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <build.enhance>false</build.enhance>
+                <openjpa.DynamicEnhancementAgent>true</openjpa.DynamicEnhancementAgent>
+                <surefire.jvm.args>-Dopenjpa.RuntimeUnenhancedClasses=unsupported ${test.jvm.arguments}</surefire.jvm.args>
+            </properties>
+            <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>org/apache/openjpa/persistence/enhance/DynamicEnhancementSuite.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+          </plugins>
+          </build>
+        </profile>
+
+        <!-- Profile for testing with HSQL DB -->
+        <profile>
+            <id>test-hsqldb</id>
+            <activation>
+                <property>
+                    <name>test-hsqldb</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>${hsqldb.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>org.hsqldb.jdbcDriver</connection.driver.name>
+                <!--<connection.url>jdbc:hsqldb:target/database/openjpa-hsqldb-database;create=true</connection.url>-->
+                <connection.url>jdbc:hsqldb:mem:openjpa20-hsqldb-database</connection.url>
+                <connection.username>sa</connection.username>
+                <connection.password />
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with MySQL DB -->
+        <profile>
+            <id>test-mysql</id>
+            <activation>
+                <property>
+                    <name>test-mysql</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>${mysql.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>com.mysql.jdbc.Driver</connection.driver.name>
+                <!--<connection.url>jdbc:mysql://localhost/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.mysql.url}</connection.url>
+                <connection.username>${openjpa.mysql.username}</connection.username>
+                <connection.password>${openjpa.mysql.password}</connection.password>
+                <jdbc.DBDictionary />
+                <!-- DBCP overrides for MySQL testing -->
+                <dbcp.maxIdle>0</dbcp.maxIdle>
+                <dbcp.minIdle>0</dbcp.minIdle>
+            </properties>
+        </profile>
+        
+        <!-- Profile for testing with MariaDB DB -->
+        <profile>
+            <id>test-mariadb</id>
+            <activation>
+                <property>
+                    <name>test-mariadb</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>mariadb</groupId>
+                    <artifactId>mariadb-connector-java</artifactId>
+                    <version>${mariadb.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>org.mariadb.jdbc.Driver</connection.driver.name>
+                <!--<connection.url>jdbc:mysql://localhost/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.mariadb.url}</connection.url>
+                <connection.username>${openjpa.mariadb.username}</connection.username>
+                <connection.password>${openjpa.mariadb.password}</connection.password>
+                <jdbc.DBDictionary />
+                <!-- DBCP overrides for MariaDB testing -->
+                <dbcp.maxIdle>0</dbcp.maxIdle>
+                <dbcp.minIdle>0</dbcp.minIdle>
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with PostgreSQL DB -->
+        <profile>
+            <id>test-postgresql</id>
+            <activation>
+                <property>
+                    <name>test-postgresql</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>${postgresql.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>org.postgresql.Driver</connection.driver.name>
+                <!--<connection.url>jdbc:postgresql://localhost/openjpa</connection.url>-->
+                <connection.url>${openjpa.postgresql.url}</connection.url>
+                <connection.username>${openjpa.postgresql.username}</connection.username>
+                <connection.password>${openjpa.postgresql.password}</connection.password>
+                <jdbc.DBDictionary />
+                <!-- DBCP overrides -->
+                <dbcp.maxIdle>0</dbcp.maxIdle>
+                <dbcp.minIdle>0</dbcp.minIdle>
+                <dbcp.maxActive>20</dbcp.maxActive>
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with SQLServer DB using MS JDBC driver -->
+        <profile>
+            <!--
+                Example MS SQL profile. You can use this profile if you:
+                1) have the MS SQL artifacts installed in a local repo and
+                supply the URL:
+                    -Dmssql.maven.repo=http://my.local.repo
+                2) have a copy of the MS SQL JDBC driver from:
+                    http://msdn.microsoft.com/en-us/data/aa937724.aspx
+                and run the following commands :
+                    mvn install:install-file -Dfile=${path to sqljdbc.jar} \
+                                             -DgroupId=com.microsoft.sqlserver \
+                                             -DartifactId=sqljdbc \
+                                             -Dversion=2.0 \
+                                             -Dpackaging=jar
+
+                You must also set the following properties:
+                    -Dopenjpa.mssql.url=jdbc:sqlserver://<HOST>:<PORT>;\
+                    	DataBaseName=<DBNAME>
+                    -Dopenjpa.mssql.username=<mssql_uid>
+                    -Dopenjpa.mssql.password=<mssql_pwd>
+
+                Optionally, you can override the default groupId and version
+                by also supplying the following properties:
+                    -Dmssql.groupid=com.microsoft.sqlserver
+                    -Dmssql.version=2.0
+                If you are using Java SE 6 or later, you will need to use:
+                    -Dmssql.artifactid=sqljdbc4
+            -->
+            <id>test-mssql</id>
+            <activation>
+                <property>
+                    <name>test-mssql</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${mssql.groupid}</groupId>
+                    <artifactId>${mssql.artifactid}</artifactId>
+                    <version>${mssql.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <mssql.maven.repo>http://not.real.repository</mssql.maven.repo>
+                <mssql.groupid>com.microsoft.sqlserver</mssql.groupid>
+                <mssql.artifactid>sqljdbc</mssql.artifactid>
+                <mssql.version>2.0</mssql.version>
+                <connection.driver.name>com.microsoft.sqlserver.jdbc.SQLServerDriver</connection.driver.name>
+                <!--<connection.url>jdbc:sqlserver://localhost/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.mssql.url}</connection.url>
+                <connection.username>${openjpa.mssql.username}</connection.username>
+                <connection.password>${openjpa.mssql.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>mssql.repository</id>
+                    <name>MSSQL Repository</name>
+                    <url>${mssql.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+        <!-- Profile for testing with SQLServer DB using the jTDS driver -->
+        <profile>
+            <id>test-sqlserver</id>
+            <activation>
+                <property>
+                    <name>test-sqlserver</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>net.sourceforge.jtds</groupId>
+                    <artifactId>jtds</artifactId>
+                    <version>${jtds.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <jtds.version>1.2</jtds.version>
+                <connection.driver.name>net.sourceforge.jtds.jdbc.Driver</connection.driver.name>
+                <!--<connection.url>jdbc:jtds:sqlserver://localhost:1433/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.sqlserver.url}</connection.url>
+                <connection.username>${openjpa.sqlserver.username}</connection.username>
+                <connection.password>${openjpa.sqlserver.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with Sybase DB using the jTDS driver -->
+        <profile>
+            <id>test-sybase</id>
+            <activation>
+                <property>
+                    <name>test-sybase</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>net.sourceforge.jtds</groupId>
+                    <artifactId>jtds</artifactId>
+                    <version>${jtds.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <jtds.version>1.2</jtds.version>
+                <connection.driver.name>net.sourceforge.jtds.jdbc.Driver</connection.driver.name>
+                <!--<connection.url>jdbc:jtds:sybase://localhost/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.sybase.url}</connection.url>
+                <connection.username>${openjpa.sybase.username}</connection.username>
+                <connection.password>${openjpa.sybase.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with Sybase DB using the jConnect driver -->
+        <profile>
+            <id>test-sybase-jconnect</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${jconnect.groupId}</groupId>
+                    <artifactId>${jconnect.artifactId}</artifactId>
+                    <version>${jconnect.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>com.sybase.jdbc3.jdbc.SybDriver</connection.driver.name>
+                <!--<connection.url>jdbc:sybase:Tds:localhost:7100/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.sybase.url}</connection.url>
+                <connection.username>${openjpa.sybase.username}</connection.username>
+                <connection.password>${openjpa.sybase.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with Ingres DB -->
+        <profile>
+            <id>test-ingres</id>
+            <activation>
+                <property>
+                    <name>test-ingres</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.ingres.jdbc</groupId>
+                    <artifactId>iijdbc</artifactId>
+                    <version>${ingres.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <ingres.version>9.2-3.4.8</ingres.version>
+                <connection.driver.name>com.ingres.jdbc.IngresDriver</connection.driver.name>
+                <!--<connection.url>jdbc:ingres://localhost/OPENJPA</connection.url>-->
+                <connection.url>${openjpa.ingres.url}</connection.url>
+                <connection.username>${openjpa.ingres.username}</connection.username>
+                <connection.password>${openjpa.ingres.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with a custom DB using a system jar -->
+        <!--
+            For example, to test with Oracle, you might run:
+        mvn test -Dtest=TestPersistence -Ptest-custom \
+          -Dopenjpa.custom.driverjar=$(pwd)/drivers/jdbc-oracle-10_2_0_1_0.jar \
+          -Dopenjpa.custom.driverclass=oracle.jdbc.driver.OracleDriver \
+          -Dopenjpa.custom.url=jdbc:oracle:thin:@HOST:PORT:DBNAME \
+          -Dopenjpa.custom.username=USERNAME \
+          -Dopenjpa.custom.password=PASSWORD
+        -->
+        <profile>
+            <id>test-custom</id>
+            <activation>
+                <property>
+                    <name>test-custom</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>openjpa.customdriver</groupId>
+                    <artifactId>openjpa.customdriver</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${openjpa.custom.driverjar}</systemPath>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>${openjpa.custom.driverclass}</connection.driver.name>
+                <connection.url>${openjpa.custom.url}</connection.url>
+                <connection.username>${openjpa.custom.username}</connection.username>
+                <connection.password>${openjpa.custom.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+
+        <!-- Profile for testing with a custom DB using two system jars.
+             Some databases (DB2) use more than one jar for their JDBC provider.
+             Functionally this is identical to the previous profile, with a
+             second system dependency added.
+          -->
+        <!--
+            For example, to test with DB2, you might run:
+        mvn test -Dtest=TestPersistence -Ptest-custom2 \
+          -Dopenjpa.custom.driverjar1=$(pwd)/drivers/db2jcc.jar \
+          -Dopenjpa.custom.driverjar2=$(pwd)/drviers/db2jcc_license_cu.jar \
+          -Dopenjpa.custom.driverclass=com.ibm.db2.jcc.DB2Driver \
+          -Dopenjpa.custom.url=jdbc:db2://HOST:PORT/DBNAME \
+          -Dopenjpa.custom.username=USERNAME \
+          -Dopenjpa.custom.password=PASSWORD
+        -->
+        <profile>
+            <id>test-custom2</id>
+            <activation>
+                <property>
+                    <name>test-custom2</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>openjpa.customdriver1</groupId>
+                    <artifactId>openjpa.customdriver1</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${openjpa.custom.driverjar1}</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>openjpa.customdriver2</groupId>
+                    <artifactId>openjpa.customdriver2</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${openjpa.custom.driverjar2}</systemPath>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>${openjpa.custom.driverclass}</connection.driver.name>
+                <connection.url>${openjpa.custom.url}</connection.url>
+                <connection.username>${openjpa.custom.username}</connection.username>
+                <connection.password>${openjpa.custom.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+
+        <!--
+            The test-custom2 profile does not work very well when used with a
+            continuous build system. As a convenience I've added profiles for
+            some of the proprietary databases to make testing easier.
+          -->
+        <profile>
+            <!--
+                Example db2 profile. You can use this profile if you:
+                1) have the DB2 artifacts installed in a local repo and supply
+                the URL:
+	            -Ddb2.maven.repo=http://my.local.repo
+                2) have a copy of the DB2 JCC driver and run the following
+                commands :
+                    mvn install:install-file -Dfile=${path to db2jcc.jar} \
+                                             -DgroupId=com.ibm.db2 \
+                                             -DartifactId=jcc-driver \
+                                             -Dversion=9.5 \
+                                             -Dpackaging=jar
+
+                    mvn install:install-file -Dfile=${path to db2jcc_license.jar} \
+                                             -DgroupId=com.ibm.db2 \
+                                             -DartifactId=jcc-license \
+                                             -Dversion=9.5 \
+                                             -Dpackaging=jar
+
+                You must also set the following properties:
+                    -Dopenjpa.db2.url=jdbc:db2://<HOST>:<PORT>/<DBNAME>
+                    -Dopenjpa.db2.username=<db2_uid>
+                    -Dopenjpa.db2.password=<db2_pwd>
+
+                Optionally, you can override the default DB2 groupId,
+                artifactIds and version by also supplying the following
+                properties:
+                    -Ddb2.groupid=com.ibm.db2
+                    -Dids.driver.artifactid=jcc-driver
+                    -Dids.license.artifactid=jcc-license
+                    -Ddb2.version=9.5
+            -->
+            <id>test-db2-jcc</id>
+            <activation>
+                <property>
+                    <name>test-db2-jcc</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${db2.groupid}</groupId>
+                    <artifactId>${db2.driver.artifactid}</artifactId>
+                    <version>${db2.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>${db2.groupid}</groupId>
+                    <artifactId>${db2.license.artifactid}</artifactId>
+                    <version>${db2.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db2.maven.repo>http://not.a.real.repository</db2.maven.repo>
+                <db2.groupid>com.ibm.db2</db2.groupid>
+                <db2.driver.artifactid>jcc-driver</db2.driver.artifactid>
+                <db2.license.artifactid>jcc-license</db2.license.artifactid>
+                <db2.version>9.5</db2.version>
+                <connection.driver.name>com.ibm.db2.jcc.DB2Driver</connection.driver.name>
+                <!--<connection.url>jdbc:db2://localhost/openjpa</connection.url>-->
+                <connection.url>${openjpa.db2.url}</connection.url>
+                <connection.username>${openjpa.db2.username}</connection.username>
+                <connection.password>${openjpa.db2.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>db2.repository</id>
+                    <name>DB2 Repository</name>
+                    <url>${db2.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+        <!-- Profile for testing Apache Derby with the DB2 JCC driver -->
+        <profile>
+            <id>test-derbyjcc</id>
+            <activation>
+                <property>
+                    <name>test-derbyjcc</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${db2.groupid}</groupId>
+                    <artifactId>${db2.driver.artifactid}</artifactId>
+                    <version>${db2.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>${db2.groupid}</groupId>
+                    <artifactId>${db2.license.artifactid}</artifactId>
+                    <version>${db2.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db2.maven.repo>http://not.a.real.repository</db2.maven.repo>
+                <db2.groupid>com.ibm.db2</db2.groupid>
+                <db2.driver.artifactid>jcc-driver</db2.driver.artifactid>
+                <db2.license.artifactid>jcc-license</db2.license.artifactid>
+                <db2.version>9.5</db2.version>
+                <!--
+                    Note: DB must be created before using this profile,
+                    which can be done by running:
+                        mvn test -Dtest=<testcase> -Ptest-derbynet
+                -->
+                <openjpa.derbyjcc.url>jdbc:db2://localhost:1527/openjpa20</openjpa.derbyjcc.url>
+                <!-- Note: commons-dbcp requires dummy values for uid/pwd -->
+                <openjpa.derbyjcc.username>uid</openjpa.derbyjcc.username>
+                <openjpa.derbyjcc.password>pwd</openjpa.derbyjcc.password>
+                <connection.driver.name>com.ibm.db2.jcc.DB2Driver</connection.driver.name>
+                <connection.url>${openjpa.derbyjcc.url}</connection.url>
+                <connection.username>${openjpa.derbyjcc.username}</connection.username>
+                <connection.password>${openjpa.derbyjcc.password}</connection.password>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>db2.repository</id>
+                    <name>DB2 Repository</name>
+                    <url>${db2.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+        <!-- Profile for testing Informix with the DB2 JCC driver -->
+        <profile>
+            <!--
+                Example Informix JCC profile. You can use this profile if you:
+                1a) have the DB2 JCC artifacts installed in a local repo and
+                supply the URL:
+	            -Dids.maven.repo=http://my.local.repo
+                1b) or have a copy of the DB2 JCC driver and run the commands
+                listed above in the test-db2-jcc profile.
+		2) have the DRDA service enabled on the IDS server, which
+                is usually port 9089
+
+                You must also set the following properties:
+                    -Dopenjpa.ids.url=jdbc:ids://<HOST>:<PORT>/<DBNAME>
+                    -Dopenjpa.ids.username=<ids_uid>
+                    -Dopenjpa.ids.password=<ids_pwd>
+
+                Optionally, you can override the default DB2 JCC groupId,
+                artifactIds and version by also supplying the following
+                properties:
+                    -Dids.groupid=com.ibm.db2
+                    -Dids.driver.artifactid=jcc-driver
+                    -Dids.license.artifactid=jcc-license
+                    -Dids.version=9.5
+            -->
+            <id>test-ids-jcc</id>
+            <activation>
+                <property>
+                    <name>test-ids-jcc</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${ids.groupid}</groupId>
+                    <artifactId>${ids.driver.artifactid}</artifactId>
+                    <version>${ids.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>${ids.groupid}</groupId>
+                    <artifactId>${ids.license.artifactid}</artifactId>
+                    <version>${ids.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <ids.maven.repo>http://not.a.real.repository</ids.maven.repo>
+                <ids.groupid>com.ibm.db2</ids.groupid>
+                <ids.driver.artifactid>jcc-driver</ids.driver.artifactid>
+                <ids.license.artifactid>jcc-license</ids.license.artifactid>
+                <ids.version>9.5</ids.version>
+                <connection.driver.name>com.ibm.db2.jcc.DB2Driver</connection.driver.name>
+                <connection.url>${openjpa.ids.url}</connection.url>
+                <connection.username>${openjpa.ids.username}</connection.username>
+                <connection.password>${openjpa.ids.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>ids.repository</id>
+                    <name>Informix Repository</name>
+                    <url>${ids.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+        <!-- Profile for testing Informix with the Informix JDBC Driver -->
+        <profile>
+            <!--
+                Example Informix profile. You can use this profile if you:
+                1) have the Informix JDBC artifacts installed in a local repo and 
+                supply the URL:
+                  -Dids.maven.repo=http://my.local.repo
+                2) have a copy of the Informix driver and run the following
+                commands :
+                    mvn install:install-file -Dfile=${path to ifxjdbc.jar} \
+                                             -DgroupId=com.informix \
+                                             -DartifactId=informix-driver \ 
+                                             -Dversion=3.70 \
+                                             -Dpackaging=jar
+
+                You must also set the following properties:
+                    -Dopenjpa.ids.url=jdbc:informix-sqli://<HOST>:<PORT>:informixserver=<INFORMIXSERVER>;database=<DBNAME>
+                    -Dopenjpa.ids.username=<ids_uid>
+                    -Dopenjpa.ids.password=<ids_pwd>
+
+                Optionally, you can override the default Informix groupId,
+                artifactIds and version by also supplying the following
+                properties:
+                    -Dids.groupid=com.informix
+                    -Dids.driver.artifactid=informix-driver
+                    -Dids.version=3.70
+            -->
+            <id>test-ids-informix</id>
+            <activation>
+                <property>
+                    <name>test-ids-informix</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${ids.groupid}</groupId>
+                    <artifactId>${ids.driver.artifactid}</artifactId>
+                    <version>${ids.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <ids.maven.repo>http://not.a.real.repository</ids.maven.repo>
+                <ids.groupid>com.informix</ids.groupid>
+                <ids.driver.artifactid>informix-driver</ids.driver.artifactid>
+                <ids.version>3.70</ids.version>
+                <connection.driver.name>com.informix.jdbc.IfxDriver</connection.driver.name>
+                <connection.url>${openjpa.ids.url}</connection.url>
+                <connection.username>${openjpa.ids.username}</connection.username>
+                <connection.password>${openjpa.ids.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>ids.repository</id>
+                    <name>Informix Repository</name>
+                    <url>${ids.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+        
+        <!-- Profile for testing with Oracle DB -->
+        <profile>
+            <!--
+                Example oracle profile. You can use this profile if you:
+                1) have the Oracle artifacts installed in a local repo and
+                supply the URL:
+	            -Doracle.maven.repo=http://my.local.repo
+                2) have a copy of the Oracle driver and run the following
+                command:
+                    mvn install:install-file -Dfile=${path to ojdbc.jar} \
+                                             -DgroupId=com.oracle \
+                                             -DartifactId=jdbc-driver \
+                                             -Dversion=10g \
+                                             -Dpackaging=jar
+
+                You must also set the following properties:
+                    -Dopenjpa.oracle.url
+                    -Dopenjpa.oracle.username
+                    -Dopenjpa.oracle.password
+
+                Optionally, you can override the default Oracle groupId and
+                version by also supplying the following properties:
+                    -Doracle.groupid=com.oracle
+                    -Doracle.version=10g
+            -->
+            <id>test-oracle</id>
+            <activation>
+                <property>
+                    <name>test-oracle</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${oracle.groupid}</groupId>
+                    <artifactId>${oracle.artifactid}</artifactId>
+                    <version>${oracle.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <oracle.maven.repo>http://not.a.real.repository</oracle.maven.repo>
+                <oracle.groupid>com.oracle</oracle.groupid>
+                <oracle.artifactid>jdbc-driver</oracle.artifactid>
+                <oracle.version>11.2.0.1-jdbc6</oracle.version>
+                <connection.driver.name>oracle.jdbc.driver.OracleDriver</connection.driver.name>
+                <!--<connection.url>jdbc:oracle:thin:@localhost:1521:OPENJPA</connection.url>-->
+                <connection.url>${openjpa.oracle.url}</connection.url>
+                <connection.username>${openjpa.oracle.username}</connection.username>
+                <connection.password>${openjpa.oracle.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>oracle.repository</id>
+                    <name>Oracle Repository</name>
+                    <url>${oracle.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+        <!-- Profile for testing IBM SolidDB -->
+        <profile>
+            <id>test-soliddb</id>
+            <activation>
+                <property>
+                    <name>test-soliddb</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${soliddb.groupid}</groupId>
+                    <artifactId>${soliddb.driver.artifactid}</artifactId>
+                    <version>${soliddb.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <soliddb.maven.repo>http://not.a.real.repository</soliddb.maven.repo>
+                <soliddb.groupid>com.ibm.soliddb</soliddb.groupid>
+                <soliddb.driver.artifactid>soliddb</soliddb.driver.artifactid>
+                <soliddb.version>6.5</soliddb.version>
+                <connection.driver.name>solid.jdbc.SolidDriver</connection.driver.name>
+                <!--<connection.url>jdbc:solid://localhost:2315</connection.url>-->
+                <connection.url>${openjpa.soliddb.url}</connection.url>
+                <connection.username>${openjpa.soliddb.username}</connection.username>
+                <connection.password>${openjpa.soliddb.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+            <repositories>
+                <repository>
+                    <id>soliddb.repository</id>
+                    <name>SolidDB Repository</name>
+                    <url>${soliddb.maven.repo}</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>ignore</checksumPolicy>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta-regexp</groupId>
+            <artifactId>jakarta-regexp</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Required for org.apache.openjpa.persistence.xmlmapping tests -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>simple-jndi</groupId>
+            <artifactId>simple-jndi</artifactId>
+            <version>0.11.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="src/main/ant/enhancer.xml" target="enhance" inheritRefs="true">
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="test" value="${test}" />
+                                    <property name="outdir" value="${project.build.outputDirectory}" />
+                                    <property name="project.build.testOutputDirectory" value="${project.build.testOutputDirectory}" />
+                                    <property name="openjpa.Log" value="${openjpa.Log}" />
+                                    <property name="build.enhance" value="${build.enhance}" />
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${surefire.jvm.args}</argLine>
+                    <excludes>
+                        <!-- exclude classes that end with 'Test'; these
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*Test.java</exclude>
+
+                        <!-- exclude classes that include a $; inner classes
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*$*.class</exclude>
+                        <exclude>org/apache/openjpa/**/*.*.class</exclude>
+
+                        <!-- exclude "no xsd" test until a workaround is figured out (OPENJPA-513)  -->
+                        <exclude>org/apache/openjpa/persistence/xml/TestPersistenceUnitWithoutXSD.java</exclude>
+
+                        <!-- exclude new tests that aren't passing yet -->
+                        <exclude>org/apache/openjpa/persistence/kernel/TestOpenResultsCommit.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/query/TestQuotedNumbersInFilters2.java</exclude>
+
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBEmbedded.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestAdvAnnot.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestDDCallbackMethods.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestEJBEmbedded.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestEntityListenerAnnot.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestEntityOrderBy.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestPropertyAccess.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/annotations/TestVersion.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/querycache/TestQueryCache.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/conf/TestOpenJPAConfiguration.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestCacheMultiThreadedLoad.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestConcurrentDataCache.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestDistributedKodoDataCache.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestFlushDataCache.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestJPQL2Queries.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestJPQL2ResultsAndResultClasses.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestJPQLRelationProjections.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestLocalCache.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestMutableParameters.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestPCParametersInQueries.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestQueryResultTypes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestResultShapes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/datacache/TestUniteratedQueryResult.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/enhance/TestClone.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/enhance/TestDynamicStorageGenerator.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/enhance/TestNoNoArgs.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/enhance/TestSubclassedBehavior.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/entityoperation/TestCascades.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestEvents.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestFakeRemoteEvents.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestLifecycleEventManager.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestLocalRemoteEvents.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestOrphanedKeyAction.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestTCPRemoteClassChanges.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestTCPRemoteEvents.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestTCPRemoteEventsDuration.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestTCPRemoteRecovery.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/event/TestTCPRemoteRecoveryTransmitAdds.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestByteArrayAppId.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestCircularFK.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestDataStoreTrips.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestEfficientAttach.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestEJBAutoIncrement.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestEmbeddedPessimisticLocking.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestIncrementalJDBCFlushes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestOperationOrderUpdateManager.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestPagingResultObjectProvider.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestRawSQL.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestSQLListenerTestCase.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/kernel/TestUnknownSubclass.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/mapping/TestCompositeIdTraversalInSQLMapping.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/mapping/TestNativeQueries.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestBuildSchema.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestDFG.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEagerDistinct.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEagerOuterToManyJoins.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBByteArray.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBColumnIOMappings.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBConstantJoinOnSameRefTable.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBDateVersion.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBEager.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestEJBOuterJoinValues.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestIntermediate.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestIrregularJoins.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestJDBCType.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestJoinToBaseClass.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestLocators.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestLRSProxies.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestMappedByKeyMaps.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestMetaDataValueIndicator.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestMultiDFG.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestMultiTableMappings.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestMultiTableSelfCollection.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestNoClassColumn.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestRawField.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/TestStateImage.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/horizontal/TestLockGroupsWithHorizontalBaseType.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/horizontal/TestQueryAgainstEntireMappedHierarchy.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/tableperclass/TestUnionPlaceholderTypes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/vertical/TestJoinSubclasses.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/vertical/TestSubclassJoinExtent.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/vertical/TestSubclassJoinGetObjectById.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/meta/vertical/TestSubclassJoinRelations.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/query/TestEJBQLSelectNPlusOne.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/query/TestNamedSQLQueries.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/query/TestSQLQueries.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/query/TestStringFunctions.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestClassDBSequenceFactory.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestDBSequenceFactory.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestDynamicSchemaFactory.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestJDBCListener.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestLazySchemaFactory.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestPerClassSequenceFactory.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestSchema.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestSchemaClone.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestSequenceGeneratorEnsureCapacityCall.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestXMLSchemaParser.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jdbc/schema/TestXMLSchemaSerializer.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jpql/clauses/TestBulkUpdate.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/jpql/expressions/TestEJBQLCondExpression.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/Test2EJBConcurrency.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestAbstractMappedAppIdSuper.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestArrayValues2.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestBigDecimals.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestBrokerFactoryPooling.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestConnectionRetainMode.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestDependentFields2.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestDetachedStateManager.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBIncrementalFlushes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBNoPersistentFields.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBObjectCollections.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBRetainValues.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBTransactions.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestFetchGroupsExtent.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestFetchPlan.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestFieldRange.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestFieldRange2.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestGetObjectsById.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestIncrementalFlushes.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestInstanceCallbacks.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestMultiThreaded.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestNTW.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestOptimisticLockGroups.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestPersistenceManager.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestPersistenceManagerFactoryImpl.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestPersistentMaps.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestRestoreValues.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestRetainValuesInOptimistic.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSavepointEmbedded.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSavepointEmbeddedPreFlush.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSecondClassValues.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSerialize.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSpecialNumbers.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/kernel/TestSpecialNumbers2.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestClassMetaData.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestFieldDeclarationOrder.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestNonPersistentFields.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestOrderBy.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestPersistentClasses.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestSequenceAssigned.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestValueStrategies.java</exclude>
+                        <exclude>org/apache/openjpa/persistence/meta/TestXMLPersistenceMetaDataSerializer.java</exclude>
+                        <!-- TestPMMemory creates heapdumps etc and there's no real asserts within the test.  -->
+                        <exclude>org/apache/openjpa/persistence/kernel/TestPMMemory.java</exclude>
+
+                        <exclude>org/apache/openjpa/persistence/meta/TestExternalValues.java</exclude>
+
+                        <!-- Exclude subclassing tests   -->
+                        <exclude>org/apache/openjpa/**/TestUnenhanced*.java</exclude>
+
+                        <!-- Exclude tests that fail due to the dynamic enhancer -->
+                        <exclude>org/apache/openjpa/enhance/TestEnhancementConfiguration.java</exclude>
+                        <exclude>org/apache/openjpa/enhance/TestRelationToUnlistedClass.java</exclude>
+                        <exclude>org/apache/openjpa/kernel/TestDynamicClassRegistration.java</exclude>
+
+                        <!-- TestEJBTransactionalClass tests nothing -->
+                        <exclude>org/apache/openjpa/persistence/kernel/TestEJBTransactionalClass.java</exclude>
+                        <!-- Exclude JEST tests for now -->
+                        <exclude>org/apache/openjpa/persistence/jest/Test*.java</exclude>
+                        <!-- Exclude TestAudit OPENJPA-2232 -->
+                        <exclude>org/apache/openjpa/audit/TestAudit.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

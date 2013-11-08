@@ -1,0 +1,1568 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *  
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.   
+ */
+
+/**
+ *  An JP QL grammar parser.
+ * 
+ *  Samples:
+ *	  SELECT COUNT(p) FROM Person AS p
+ *	  SELECT OBJECT(identifier) FROM schema identifier
+ *	  SELECT identifier FROM schema AS identifier
+ *	
+ *	@author Patrick Linskey
+ *	@author Marc Prud'hommeaux
+ */
+options {
+	NODE_PREFIX = "JPQL";
+	NODE_PACKAGE = "org.apache.openjpa.kernel.jpql";
+	MULTI = false;
+	NODE_DEFAULT_VOID = true;
+	JAVA_UNICODE_ESCAPE = true;
+	STATIC = false;
+	NODE_USES_PARSER = true;
+
+	LOOKAHEAD = 1;
+
+
+	// debugging variables
+	// DEBUG_PARSER = true; 		// simple parser debug
+	// DEBUG_TOKEN_MANAGER = true; 	// more verbose token manager debug
+	// DEBUG_LOOKAHEAD = true; 		// more verbose lookahead debug
+
+	SANITY_CHECK = true; // check for left-recursion, etc (must always be true)
+
+
+	// FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(JPQL)
+package org.apache.openjpa.kernel.jpql;
+
+import java.io.*;
+
+
+
+/**
+ *	@nojavadoc
+ */
+public class JPQL
+{
+	String jpql;
+	boolean inEnumPath;
+
+
+	public JPQL (String jpql)
+	{
+		this (new StringReader (jpql));
+
+		this.jpql = jpql;
+	}
+
+
+	public static void main (String[] args)
+		throws Exception
+	{
+		if (args.length > 0)
+		{
+			for (int i = 0; i < args.length; i++)
+			{
+				JPQL parser = new JPQL (args[i]);
+				SimpleNode ast = (SimpleNode) parser.parseQuery ();
+				ast.dump (System.out, "");
+			}
+		}
+		else
+		{
+			JPQL parser = new JPQL (System.in);
+			while (true)
+			{
+				System.out.print ("Enter Expression: ");
+				System.out.flush ();
+				try
+				{
+					SimpleNode ast = (SimpleNode) parser.parseQuery ();
+					if (ast == null)
+						return;
+					else
+						ast.dump (System.out, "");
+				}
+				catch (Throwable x)
+				{
+					x.printStackTrace ();
+					return;
+				}
+			}
+		}
+	}
+}
+
+PARSER_END(JPQL)
+
+
+SKIP :
+{
+ 	" "
+    | "\n"
+	| "\r"
+	| "\t"
+}
+
+
+TOKEN [ IGNORE_CASE ]: /* basics */
+{
+	< COMMA: "," >
+
+	|	< DOT: "." >
+
+	|	< EQ: "=" >
+	|	< NE: "<>" >
+	|	< GT: ">" >
+	|	< GE: ">=" >
+	|	< LT: "<" >
+	|	< LE: "<=" >
+
+	|	< PLUS: "+" >
+	|	< MINUS: "-" >
+
+	|	< TIMES: "*" >
+	|	< DIV: "/" >
+
+	|	< NEW: "NEW" >
+
+	|	< ALL: "ALL" >
+	|	< ANY: "ANY" >
+	|	< EXISTS: "EXISTS" >
+	|	< SOME: "SOME" >
+	|	< EMPTY: "EMPTY" >
+
+	|	< ASC: "ASC" >
+	|	< DESC: "DESC" >
+	|	< ORDER: "ORDER" >
+	|	< BY: "BY" >
+
+	|	< IS: "IS" >
+	|	< MEMBER: "MEMBER" >
+	|	< OF: "OF" >
+	|	< LIKE: "LIKE" >
+	|	< ESCAPE: "ESCAPE" >
+	|	< BETWEEN: "BETWEEN" >
+
+	|	< NULL: "NULL" >
+	|	< KEY: "KEY" >
+	|	< VALUE: "VALUE" >
+	|	< TYPE: "TYPE" >
+	|	< ENTRY: "ENTRY" >
+}
+
+TOKEN [ IGNORE_CASE ]: /* aggregates */
+{
+	< AVG: "AVG" >
+	|	< MIN: "MIN" >
+	|	< MAX: "MAX" >
+	|	< SUM: "SUM" >
+	|	< COUNT: "COUNT" >
+}
+
+TOKEN [ IGNORE_CASE ]: /* boolean arithmetic */
+{
+	< OR: "OR" >
+	|	< AND: "AND" >
+	|	< NOT: "NOT" >
+}
+
+TOKEN [ IGNORE_CASE ]: /* functions returning strings */
+{
+	< CONCAT: "CONCAT" >
+	|	< SUBSTRING: "SUBSTRING" >
+	|	< TRIM: "TRIM" >
+	|	< LOWER: "LOWER" >
+	|	< UPPER: "UPPER" >
+}
+
+TOKEN [ IGNORE_CASE ]: /* trim specification */
+{
+	< LEADING: "LEADING" >
+	|	< TRAILING: "TRAILING" >
+	|	< BOTH: "BOTH" >
+}
+
+
+TOKEN [ IGNORE_CASE ]: /* functions returning numerics */
+{
+	< LENGTH: "LENGTH" >
+	|	< LOCATE: "LOCATE" >
+	|	< ABS: "ABS" >
+	|	< SQRT: "SQRT" >
+	|	< MOD: "MOD" >
+	|	< SIZE: "SIZE" >
+	|	< INDEX: "INDEX" >
+}
+
+
+TOKEN [ IGNORE_CASE ]: /* functions returning datetime */
+{
+	< CURRENT_DATE: "CURRENT_DATE" >
+	|	< CURRENT_TIME: "CURRENT_TIME" >
+	|	< CURRENT_TIMESTAMP: "CURRENT_TIMESTAMP" >
+}
+
+TOKEN [ IGNORE_CASE ]: /* type of query */
+{
+	< SELECT: "SELECT" >
+	|	< DISTINCT: "DISTINCT" >
+	|	< FROM: "FROM" >
+
+	|	< UPDATE: "UPDATE" >
+	|	< DELETE: "DELETE" >
+
+	|	< WHERE: "WHERE" >
+	|	< GROUP: "GROUP" >
+	|	< HAVING: "HAVING" >
+
+	|	< AS: "AS" >
+	|	< LEFT: "LEFT" >
+	|	< OUTER: "OUTER" >
+	|	< INNER: "INNER" >
+	|	< JOIN: "JOIN" >
+	|	< FETCH: "FETCH" >
+	|	< IN: "IN" >
+	|	< SET: "SET" >
+
+	|	< OBJECT: "OBJECT" >
+
+	|	< CASE: "CASE" >
+	|	< WHEN: "WHEN" >
+	|	< ELSE: "ELSE" >
+	|	< THEN: "THEN" >
+	|	< END: "END" >
+	|	< NULLIF: "NULLIF" >
+	|	< COALESCE: "COALESCE" >
+	|	< CLASS: "CLASS" >
+}
+
+
+/* inspired by the Java 1.0.2 specification */
+/* ### should we limit this to the length that is valid in java? */
+TOKEN : /* literals */
+{
+	< INTEGER_LITERAL: ((["0"-"9"])+) (["l","L"])? >
+	| < DECIMAL_LITERAL:
+		(((["0"-"9"])* "." (["0"-"9"])+) (<EXPONENT>)? (["f","F","d","D"])?
+		| ((["0"-"9"])+ ".") (<EXPONENT>)? (["f","F","d","D"])?
+		| ((["0"-"9"])+) (<EXPONENT>) (["f","F","d","D"])?
+		| ((["0"-"9"])+) (<EXPONENT>)? (["f","F","d","D"])?) >
+	| < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+	| < STRING_LITERAL: "'"
+	  (("''" | ~["'"])
+		/*
+	  (("''" | ~["'","\\","\n","\r"])
+		| ("\\"
+			( ["n","t","b","r","f","\\","'"]
+			| ["0"-"7"] ( ["0"-"7"] )?
+			| ["0"-"3"] ["0"-"7"] ["0"-"7"]
+			)
+		  )
+		*/
+	  )*
+	  "'"
+	>
+    // Double quoted string
+    | < STRING_LITERAL2: "\"" ( (~["\""]) )* "\""
+    >
+	| < CHARACTER_LITERAL: "'"
+	  (   (~["'","\\","\n","\r"])
+		| ("\\"
+			( ["n","t","b","r","f","\\","'"]
+			| ["0"-"7"] ( ["0"-"7"] )?
+			| ["0"-"3"] ["0"-"7"] ["0"-"7"]
+			)
+		  )
+	  )
+	  "'"
+	>
+	| < DATE_LITERAL: "{d '" (["0"-"9", "-"])* "'}" 
+	>
+	| < TIME_LITERAL: "{t '" (["0"-"9", ":"])* "'}" 
+	>
+	| < TIMESTAMP_LITERAL: "{ts '" (["0"-"9", "-", ":", " ", "."])* "'}" 
+	>
+}
+
+TOKEN [ IGNORE_CASE ]: /* boolean literals can be case-insensitive */
+{
+	< BOOLEAN_LITERAL: "TRUE" | "FALSE" >
+}
+
+/* From the Java 1.0.2 specification */
+TOKEN : /* IDENTIFIERS */
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+	|
+  < #LETTER:
+	  [
+	   "\u0024", 			// $
+	   "\u0041"-"\u005a", 	// A-Z
+	   "\u005f", 			// _
+	   "\u0061"-"\u007a", 	// a-z
+	   "\u00c0"-"\u00d6",
+	   "\u00d8"-"\u00f6",
+	   "\u00f8"-"\u00ff",
+	   "\u0100"-"\u1fff",
+	   "\u3040"-"\u318f",
+	   "\u3300"-"\u337f",
+	   "\u3400"-"\u3d2d",
+	   "\u4e00"-"\u9fff",
+	   "\uf900"-"\ufaff"
+	  ]
+  >
+	|
+  < #DIGIT:
+	  [
+	   "\u0030"-"\u0039", 	// 0-9
+	   "\u0660"-"\u0669",
+	   "\u06f0"-"\u06f9",
+	   "\u0966"-"\u096f",
+	   "\u09e6"-"\u09ef",
+	   "\u0a66"-"\u0a6f",
+	   "\u0ae6"-"\u0aef",
+	   "\u0b66"-"\u0b6f",
+	   "\u0be7"-"\u0bef",
+	   "\u0c66"-"\u0c6f",
+	   "\u0ce6"-"\u0cef",
+	   "\u0d66"-"\u0d6f",
+	   "\u0e50"-"\u0e59",
+	   "\u0ed0"-"\u0ed9",
+	   "\u1040"-"\u1049"
+	  ]
+  >
+}
+
+
+Node parseQuery() : { }
+{
+	(select_statement() | update_statement() | delete_statement()) <EOF>
+	{
+		return jjtree.rootNode();
+	}
+}
+
+
+void select_statement() #SELECT : { }
+{
+	select_clause()
+		from_clause()
+		[where_clause()]
+		[groupby_clause()]
+		[having_clause()]
+		[orderby_clause()]
+}
+
+
+void update_statement() #UPDATE : { }
+{
+	update_clause() [ where_clause() ]
+}
+
+
+void delete_statement() #DELETE : { }
+{
+	<DELETE> <FROM> (from_item() #FROM) [where_clause()]
+}
+
+
+void from_clause() #FROM : { }
+{
+	<FROM> identification_variable_declaration()
+	(LOOKAHEAD(1) <COMMA> (LOOKAHEAD(collection_member_declaration()) collection_member_declaration() | LOOKAHEAD(identification_variable_declaration())identification_variable_declaration()))*
+}
+
+
+void identification_variable_declaration(): { }
+{
+	from_item() (LOOKAHEAD(fetch_join()) fetch_join() | LOOKAHEAD(inner_join()) inner_join() | LOOKAHEAD(outer_join()) outer_join())*
+}
+
+
+void from_item() #FROMITEM : { }
+{
+	abstract_schema_name() [LOOKAHEAD(1)<AS>] [LOOKAHEAD(identification_variable())identification_variable()]
+}
+
+
+void subquery_from_clause() #FROM : { }
+{
+	<FROM> subquery_from_item()
+		( LOOKAHEAD(1) <COMMA> subquery_from_item() )*
+}
+
+
+void subselect_identification_variable_declaration(): { }
+{
+	from_item() (LOOKAHEAD(inner_join()) inner_join() | LOOKAHEAD(outer_join()) outer_join())*
+}
+
+void subquery_from_item() : { }
+{
+    LOOKAHEAD(collection_member_declaration()) collection_member_declaration()
+	| LOOKAHEAD(subselect_identification_variable_declaration()) subselect_identification_variable_declaration()
+}
+
+void inner_join() #INNERJOIN : { }
+{
+	[<INNER>] <JOIN> path() [<AS>] identification_variable()
+}
+
+
+void collection_member_declaration() #INNERJOIN : { }
+{
+	// synonymous with "INNER JOIN path AS identifier" (InnerJoin)
+	<IN> "(" (LOOKAHEAD(path()) path()
+		| LOOKAHEAD(qualified_path()) qualified_path()) ")" [ LOOKAHEAD(1)<AS>] identification_variable()
+}
+
+void outer_join() #OUTERJOIN : { }
+{
+	<LEFT> [ <OUTER>] <JOIN> path() [ LOOKAHEAD(1)<AS>] identification_variable()
+}
+
+
+void fetch_join() : { }
+{
+	outer_fetch_join() | inner_fetch_join()
+}
+
+
+void outer_fetch_join() #OUTERFETCHJOIN : { }
+{
+	<LEFT> [<OUTER>] <JOIN> <FETCH> path()
+}
+
+
+void inner_fetch_join() #INNERFETCHJOIN : { }
+{
+	[<INNER>] <JOIN> <FETCH> path()
+}
+
+
+void path() #PATH : { }
+{
+	// a path is any dot-separated path expression starting with a
+	// non-reserved word
+	identification_variable() (LOOKAHEAD(2) <DOT> path_component())+
+}
+
+
+void update_clause() : { }
+{
+	<UPDATE> from_item() #FROM set_clause()
+}
+
+
+void set_clause() : { }
+{
+	<SET> update_item() (<COMMA> update_item())*
+}
+
+
+void update_item() #UPDATEITEM : { }
+{
+	path() EQ() new_value()
+}
+
+
+void new_value() #UPDATEVALUE : { }
+{
+    LOOKAHEAD(case_expression()) case_expression() |
+	LOOKAHEAD(arithmetic_expression()) arithmetic_expression() |
+	LOOKAHEAD(string_primary()) string_primary() |
+	LOOKAHEAD(datetime_primary()) datetime_primary() |
+	LOOKAHEAD(boolean_primary()) boolean_primary() |
+	LOOKAHEAD(enum_primary()) enum_primary() |
+	LOOKAHEAD(simple_entity_expression()) simple_entity_expression() |
+	<NULL>
+}
+
+
+void simple_entity_expression() : { }
+{
+	identification_variable() | input_parameter()
+}
+
+
+void select_clause() #SELECTCLAUSE : { }
+{
+	<SELECT> [distinct()] select_expressions()
+}
+
+
+void simple_select_clause() #SELECTCLAUSE : { }
+{
+	<SELECT> [distinct()] subselect_expressions() 
+}
+
+
+void select_expressions() #SELECTEXPRESSIONS : { }
+{
+	select_expression() (<COMMA> select_expression())*
+}
+
+
+void select_expression() #SELECTEXPRESSION : { }
+{
+	(LOOKAHEAD(scalar_expression()) scalar_expression()
+		| LOOKAHEAD(aggregate_select_expression()) aggregate_select_expression()
+		| LOOKAHEAD(path()) path()
+		| LOOKAHEAD(qualified_path()) qualified_path()
+		| LOOKAHEAD(qualified_identification_variable()) qualified_identification_variable()
+		| LOOKAHEAD(identification_variable()) identification_variable()
+		| <OBJECT> "(" identification_variable() ")"
+		| constructor_expression()
+		| LOOKAHEAD(entity_type_expression()) entity_type_expression()
+		| LOOKAHEAD(select_extension()) select_extension() 
+	) [ LOOKAHEAD(1)[<AS>] identification_variable()] 
+}
+
+
+void select_extension() #SELECTEXTENSION : { }
+{
+    scalar_function()
+}
+
+
+void subselect_expressions() #SELECTEXPRESSIONS : { }
+{
+	subselect_expression() (<COMMA> subselect_expression())*
+}
+
+
+void subselect_expression() #SELECTEXPRESSION : { }
+{
+	LOOKAHEAD(scalar_expression()) scalar_expression()
+		| LOOKAHEAD(path()) path() 
+		| LOOKAHEAD(qualified_path()) qualified_path()
+		| LOOKAHEAD(qualified_identification_variable()) qualified_identification_variable()
+		| LOOKAHEAD(aggregate_select_expression()) aggregate_select_expression()  
+		| LOOKAHEAD(identification_variable()) identification_variable() 
+}
+
+
+void constructor_expression() #CONSTRUCTOR : { }
+{
+	<NEW> classname() constructor_parameters()
+}
+
+
+void classname() #CLASSNAME :
+{ Token t; }
+{
+	identification_variable() (<DOT> identification_variable())*
+}
+
+
+void constructor_parameters() #CONSTRUCTORPARAMS : { }
+{
+	"(" (constructor_parameter()) (<COMMA> (constructor_parameter()))* ")" 
+}
+
+
+void constructor_parameter() #CONSTRUCTORPARAM : { }
+{
+	LOOKAHEAD(scalar_expression()) scalar_expression()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(qualified_identification_variable()) qualified_identification_variable()
+	| LOOKAHEAD(path()) path()
+	| LOOKAHEAD(aggregate_select_expression()) aggregate_select_expression()
+	| LOOKAHEAD(identification_variable()) identification_variable()
+}
+
+
+/* rewritten to reduce lookaheads */
+void aggregate_select_expression() #AGGREGATE : { }
+{
+	(avg() | max() | min() | sum() | count())
+}
+
+
+void distinct() #DISTINCT : { }
+{
+	<DISTINCT>
+}
+
+
+void aggregate_path() : { }
+{
+	"(" (
+		LOOKAHEAD(arithmetic_expression()) arithmetic_expression() |
+		LOOKAHEAD(distinct_path()) distinct_path() |
+		LOOKAHEAD(path()) path() |
+		LOOKAHEAD(qualified_path()) qualified_path() |
+		LOOKAHEAD(identification_variable()) identification_variable()
+	) ")"
+}
+
+
+void distinct_path() #DISTINCTPATH : { }
+{
+	<DISTINCT> (
+		LOOKAHEAD(path()) path() |
+		LOOKAHEAD(qualified_path()) qualified_path() |
+		LOOKAHEAD(qualified_identification_variable()) qualified_identification_variable() |
+		LOOKAHEAD(identification_variable()) identification_variable()
+	 )
+}
+
+
+void count() #COUNT : { }
+{
+	<COUNT> aggregate_path()
+}
+
+
+void avg() #AVERAGE : { }
+{
+	<AVG> aggregate_path()
+}
+
+
+void max() #MAX : { }
+{
+	<MAX> aggregate_path()
+}
+
+
+void min() #MIN : { }
+{
+	<MIN> aggregate_path()
+}
+
+
+void sum() #SUM : { }
+{
+	<SUM> aggregate_path()
+}
+
+
+void where_clause() #WHERE : { }
+{
+	<WHERE> conditional_expression() 
+}
+
+
+void groupby_clause() #GROUPBY : { }
+{
+	<GROUP> <BY> groupby_item()
+		(LOOKAHEAD(2) <COMMA> (groupby_item()))* 
+}
+
+
+void groupby_item() : { }
+{
+	LOOKAHEAD(path()) path()
+	| LOOKAHEAD(groupby_extension()) groupby_extension()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(general_identification_variable()) general_identification_variable()
+	| LOOKAHEAD(identification_variable()) identification_variable()
+}
+
+
+void groupby_extension() #GROUPBYEXTENSION : { }
+{
+    scalar_function()
+}
+
+
+void having_clause() #HAVING : { }
+{
+	<HAVING> conditional_expression() 
+}
+
+
+void subquery() #SUBSELECT : { }
+{
+	simple_select_clause()
+		subquery_from_clause() 
+		[LOOKAHEAD(where_clause()) where_clause()] 
+		[LOOKAHEAD(groupby_clause()) groupby_clause()] 
+		[LOOKAHEAD(having_clause()) having_clause()] 
+}
+
+
+/* changed to eliminate left recursion */
+void conditional_expression() : { }
+{
+	conditional_term() (LOOKAHEAD(2) <OR> (conditional_expression() #OR(2)))*
+}
+
+
+/* changed to eliminate left recursion */
+void conditional_term() : { }
+{
+	conditional_factor() (LOOKAHEAD(2) <AND> (conditional_term() #AND(2)))*
+}
+
+
+void conditional_factor() : { }
+{
+	LOOKAHEAD(<NOT> conditional_primary())
+	(<NOT> conditional_primary() #NOT) | conditional_primary()
+}
+
+
+void conditional_primary() : { }
+{
+	LOOKAHEAD(simple_cond_expression())
+	simple_cond_expression() | "(" conditional_expression() ")" 
+}
+
+
+void simple_cond_expression() : { }
+{
+	//LOOKAHEAD(all_or_any_expression()) all_or_any_expression() |
+	LOOKAHEAD(exists_expression()) exists_expression() |
+	LOOKAHEAD(comparison_expression()) comparison_expression() | 
+	LOOKAHEAD(between_expression()) between_expression() | 
+	LOOKAHEAD(like_expression()) like_expression() | 
+	LOOKAHEAD(in_expression()) in_expression() | 
+	LOOKAHEAD(null_comparison_expression()) null_comparison_expression() | 
+	LOOKAHEAD(empty_collection_comparison_expression()) empty_collection_comparison_expression() | 
+	LOOKAHEAD(collection_member_expression()) collection_member_expression()
+}
+
+
+void between_expression() #BETWEEN : { }
+{
+	LOOKAHEAD(6) arithmetic_expression()
+		[<NOT> { jjtThis.not = true; }] <BETWEEN> arithmetic_expression()
+		<AND> arithmetic_expression()
+	| LOOKAHEAD(6) string_expression()
+		[<NOT> { jjtThis.not = true; }] <BETWEEN> string_expression() <AND> string_expression()
+	| LOOKAHEAD(6) datetime_expression()
+		[<NOT> { jjtThis.not = true; }] <BETWEEN> datetime_expression() <AND> datetime_expression()
+}
+
+
+void in_expression() #IN : { }
+{
+	(path() | scalar_function() | type_discriminator()) [ LOOKAHEAD(1) <NOT> { jjtThis.not = true; }] <IN>
+		("(" (literal_or_param()
+			(<COMMA> (literal_or_param()))* | subquery())
+		 ")"  
+		| collection_valued_input_parameter()
+		)
+}
+
+void entity_type_literal() #TYPELITERAL : { }
+{
+    identification_variable()
+}
+
+void literal_or_param() : { }
+{
+	(numeric_literal()
+	| string_literal()
+	| string_literal2()
+	| boolean_literal()
+	| input_parameter()
+	| entity_type_literal())
+}
+
+
+void like_expression() #LIKE : { }
+{
+	string_expression() [<NOT> { jjtThis.not = true; }] <LIKE> pattern_value() 
+}
+
+
+void null_comparison_expression() #ISNULL : { }
+{
+	(input_parameter()
+	 | LOOKAHEAD(path()) path() 
+	 | LOOKAHEAD(qualified_path()) qualified_path()
+	 | <VALUE> "(" identification_variable() ")"
+	 | LOOKAHEAD(aggregate_select_expression()) aggregate_select_expression()
+	) <IS> [<NOT> { jjtThis.not = true; }] <NULL> 
+}
+
+
+void empty_collection_comparison_expression() #ISEMPTY : { }
+{
+	(LOOKAHEAD(path()) path() | LOOKAHEAD(qualified_path()) qualified_path())
+	<IS> [<NOT> { jjtThis.not = true; }] <EMPTY> 
+}
+
+
+void collection_member_expression() #MEMBEROF : { }
+{
+	(LOOKAHEAD(path()) path() | input_parameter() | LOOKAHEAD(literal()) literal() | path_component()) 
+	[<NOT> { jjtThis.not = true; }] <MEMBER> [<OF>]
+	(LOOKAHEAD(path()) path() | LOOKAHEAD(qualified_path()) qualified_path())
+}
+
+
+void exists_expression() #EXISTS : { }
+{
+	[<NOT> { jjtThis.not = true; }] <EXISTS> "(" subquery() ")" 
+}
+
+
+void all_or_any_expression() : { }
+{
+	any_expression() | some_expression() | all_expression()
+}
+
+
+void any_expression() #ANY : { }
+{
+	<ANY> "(" subquery() ")" 
+}
+
+
+void some_expression() #ANY : { }
+{
+	// SOME and ANY are synonymous
+	<SOME> "(" subquery() ")" 
+}
+
+
+void all_expression() #ALL : { }
+{
+	<ALL> "(" subquery() ")" 
+}
+
+
+void comparison_expression() : { }
+{
+	// comparison_expression ::= string_value comparison_operator {string_expression | all_or_any_expression} | boolean_value { =|<>} {boolean_expression | all_or_any_expression} | datetime_primary comparison_operator {datetime_expression | all_or_any_expression} | entity_bean_value { = | <> } {entity_bean_expression | all_or_any_expression} | arithmetic_value comparison_operator {arithmetic_expression | all_or_any_expression
+
+	LOOKAHEAD(arithmetic_comp()) arithmetic_comp() |
+	LOOKAHEAD(string_comp()) string_comp() |
+	LOOKAHEAD(boolean_comp()) boolean_comp() | 
+	LOOKAHEAD(enum_comp()) enum_comp() | 
+	LOOKAHEAD(datetime_comp()) datetime_comp() |
+	LOOKAHEAD(entity_comp()) entity_comp() |
+	LOOKAHEAD(entity_type_comp()) entity_type_comp()
+}
+
+
+void string_comp() : { }
+{
+	string_expression() (
+		(<EQ> (string_expression()|all_or_any_expression()) #EQUALS(2))
+		| (<NE> (string_expression()|all_or_any_expression()) #NOTEQUALS(2))
+		| (<GT> (string_expression() | all_or_any_expression()) #GREATERTHAN(2))
+		| (<GE> (string_expression() | all_or_any_expression()) #GREATEROREQUAL(2))
+		| (<LT> (string_expression() | all_or_any_expression()) #LESSTHAN(2))
+		| (<LE> (string_expression() | all_or_any_expression()) #LESSOREQUAL(2))
+		)
+}
+
+
+void boolean_comp() : { }
+{
+	boolean_expression() (
+	(<EQ> (boolean_expression() | all_or_any_expression()) #EQUALS(2))
+	| (<NE> (boolean_expression() | all_or_any_expression()) #NOTEQUALS(2))
+	)
+}
+
+void enum_comp() : { }
+{
+	enum_expression() (
+	(<EQ> (enum_expression() | all_or_any_expression()) #EQUALS(2))
+	| (<NE> (enum_expression() | all_or_any_expression()) #NOTEQUALS(2))
+	)
+}
+
+void entity_comp() : { }
+{
+	entity_bean_expression() (
+	(<EQ> ((LOOKAHEAD(all_or_any_expression()) all_or_any_expression() | entity_bean_expression()) #EQUALS(2)))
+	| (<NE> ((LOOKAHEAD(all_or_any_expression()) all_or_any_expression() | entity_bean_expression()) #NOTEQUALS(2)))
+	)
+}
+
+
+void arithmetic_comp() : { }
+{
+	// arithmetic_value() (
+	arithmetic_expression() (
+	(<EQ> (arithmetic_expression() | all_or_any_expression()) #EQUALS(2))
+	| (<GT> (arithmetic_expression() | all_or_any_expression()) #GREATERTHAN(2))
+	| (<GE> (arithmetic_expression() | all_or_any_expression()) #GREATEROREQUAL(2))
+	| (<LT> (arithmetic_expression() | all_or_any_expression()) #LESSTHAN(2))
+	| (<LE> (arithmetic_expression() | all_or_any_expression()) #LESSOREQUAL(2))
+	| (<NE> (arithmetic_expression() | all_or_any_expression()) #NOTEQUALS(2))
+	)
+}
+
+
+void datetime_comp() : { }
+{
+	datetime_expression() (
+	(<EQ> (datetime_expression() | all_or_any_expression()) #EQUALS(2))
+	| (<GT> (datetime_expression() | all_or_any_expression()) #GREATERTHAN(2))
+	| (<GE> (datetime_expression() | all_or_any_expression()) #GREATEROREQUAL(2))
+	| (<LT> (datetime_expression() | all_or_any_expression()) #LESSTHAN(2))
+	| (<LE> (datetime_expression() | all_or_any_expression()) #LESSOREQUAL(2))
+	| (<NE> (datetime_expression() | all_or_any_expression()) #NOTEQUALS(2))
+	)
+}
+
+void scalar_function() : { }
+{
+    functions_returning_numerics()
+        | functions_returning_datetime()
+        | functions_returning_strings()
+}
+
+void arithmetic_value() : { }
+{
+	path() | functions_returning_numerics() | "(" subquery() ")"
+}
+
+
+/* changed to eliminate left recursion */
+void arithmetic_expression() : { }
+{
+	arithmetic_term()
+		((<PLUS> arithmetic_expression() #ADD(2))
+		| (<MINUS> arithmetic_expression() #SUBTRACT(2)))*
+}
+
+
+/* changed to eliminate left recursion */
+void arithmetic_term() : { }
+{
+	arithmetic_factor()
+		((<TIMES> arithmetic_term() #MULTIPLY(2))
+		| (<DIV> arithmetic_term() #DIVIDE(2)))*
+}
+
+
+void arithmetic_factor() : { }
+{
+	numeric_literal() | 
+	input_parameter() | 
+	LOOKAHEAD(path()) path() |
+	LOOKAHEAD(qualified_path()) qualified_path() |
+	LOOKAHEAD(general_identification_variable()) general_identification_variable() |
+	LOOKAHEAD(identification_variable()) identification_variable() |
+	LOOKAHEAD("("  arithmetic_expression()) "("  arithmetic_expression() ")" | 
+	LOOKAHEAD(functions_returning_numerics()) functions_returning_numerics() | 
+	LOOKAHEAD(aggregate_select_expression()) aggregate_select_expression() |	
+	LOOKAHEAD(case_expression()) case_expression() |
+	LOOKAHEAD("(" subquery()) "(" subquery() ")"
+}
+
+
+void qualified_path() #QUALIFIEDPATH : { }
+{
+    ( <KEY> "(" identification_variable() ")" #KEY(1)
+    | <VALUE> "(" identification_variable() ")"
+    ) (LOOKAHEAD(2) <DOT> path_component())+
+}
+
+void qualified_identification_variable() #QUALIFIEDIDENTIFIER : { }
+{
+    ( <KEY> "(" identification_variable() ")" #KEY(1)
+    | <VALUE> "(" identification_variable() ")" #VALUE(1)
+    | <ENTRY> "(" identification_variable() ")" #ENTRY(1)
+    )
+}
+
+void general_identification_variable() #GENERALIDENTIFIER : { }
+{
+    ( <KEY> "(" identification_variable() ")" #KEY(1)
+    | <VALUE> "(" identification_variable() ")" #VALUE(1)
+    )
+}
+
+void entity_type_comp() : { }
+{
+    (entity_type_expression() | entity_type_literal())
+	( <EQ> (entity_type_expression() | entity_type_literal()) #EQUALS(2)
+	| <NE> (entity_type_expression() | entity_type_literal()) #NOTEQUALS(2)
+	)
+}
+
+void type_discriminator() #TYPE : { }
+{
+    <TYPE> "(" (LOOKAHEAD(path()) path()
+               | LOOKAHEAD(qualified_path()) qualified_path()
+               | LOOKAHEAD(general_identification_variable()) general_identification_variable()
+               | LOOKAHEAD(identification_variable()) identification_variable()
+               | LOOKAHEAD(input_parameter()) input_parameter())
+            ")"
+}
+
+void entity_type_expression(): { }
+{
+    type_discriminator() |
+    input_parameter()
+}
+
+void scalar_expression() #SCALAREXPRESSION : { }
+{
+    LOOKAHEAD(arithmetic_expression()) arithmetic_expression() |
+    LOOKAHEAD(case_expression()) case_expression() |
+    LOOKAHEAD(string_primary()) string_primary() |
+    LOOKAHEAD(datetime_primary()) datetime_primary() |
+    LOOKAHEAD(enum_primary()) enum_primary() |
+    LOOKAHEAD(boolean_primary()) boolean_primary() |
+    LOOKAHEAD(entity_type_expression()) entity_type_expression()
+}
+
+void case_expression() #CASE : { }
+{
+	<CASE>
+	    ( LOOKAHEAD(general_case_expression()) general_case_expression()
+        | LOOKAHEAD(simple_case_expression()) simple_case_expression()
+        ) |
+    <COALESCE> coalesce_expression() |
+    <NULLIF> nullif_expression()
+}
+
+void general_case_expression() #GENERALCASE : { }
+{
+    (when_clause())+
+    <ELSE> (LOOKAHEAD(2) scalar_expression() | entity_type_literal())
+    <END>
+}
+
+void when_clause() #WHEN : { }
+{
+    <WHEN> conditional_expression()
+    <THEN> (LOOKAHEAD(2) scalar_expression() | entity_type_literal())
+}
+
+void simple_case_expression() #SIMPLECASE : { }
+{
+    (LOOKAHEAD(type_discriminator()) type_discriminator() | LOOKAHEAD(path()) path())
+    (simple_when_clause())+
+    <ELSE> (LOOKAHEAD(2) scalar_expression() | entity_type_literal())
+    <END>
+}
+
+void simple_when_clause() #WHENSCALAR : { }
+{
+    <WHEN> (LOOKAHEAD(2) scalar_expression() | entity_type_literal())
+    <THEN> (LOOKAHEAD(2) scalar_expression() | entity_type_literal())
+}
+
+void coalesce_expression() #COALESCE : { }
+{
+    // COALESCE(e1,e2) => CASE WHEN e1 IS NOT NULL THEN e1 ELSE e2 END
+    // COALESCE(e1,e2,...,eN) => CASE WHEN e1 IS NOT NULL THEN e1 ELSE COALESCE(e2,...eN) END
+    "(" scalar_expression() (<COMMA> scalar_expression())+ ")"
+}
+
+void nullif_expression() #NULLIF : { }
+{
+    // NULLIF(e1,e2) => CASE WHEN e1=e2 THEN NULL ELSE e1 END
+    "(" scalar_expression() <COMMA> scalar_expression() ")"
+}
+
+void negative() #NEGATIVE : { }
+{
+	<MINUS>
+}
+
+
+void string_value() : { }
+{
+	path() | functions_returning_strings() | "(" subquery() ")"
+}
+
+
+void string_expression() : { }
+{
+	input_parameter() | string_primary()
+}
+
+
+void string_primary() : { }
+{
+	string_literal() | string_literal2() | LOOKAHEAD(path()) path() |
+	LOOKAHEAD(qualified_path()) qualified_path() |	
+	LOOKAHEAD(general_identification_variable()) general_identification_variable() |
+	LOOKAHEAD(identification_variable()) identification_variable() |
+	LOOKAHEAD("(" string_expression()) "(" string_expression() ")" | 
+	functions_returning_strings() | LOOKAHEAD("(" subquery()) "(" subquery() ")"
+	| case_expression()
+}
+
+
+void datetime_expression() : { }
+{
+	datetime_primary() | "(" subquery() ")"
+}
+
+
+void datetime_primary() : { }
+{
+    date_literal() | time_literal() | timestamp_literal() |
+	LOOKAHEAD(path()) path() | functions_returning_datetime() | input_parameter() | aggregate_select_expression()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(general_identification_variable()) general_identification_variable()
+	| LOOKAHEAD(identification_variable()) identification_variable()
+	| case_expression()
+}
+
+
+void boolean_value() : { }
+{
+	path() | "(" subquery() ")"
+}
+
+
+void boolean_expression() : { }
+{
+	boolean_primary() | "(" subquery() ")"
+}
+
+
+void boolean_primary() : { }
+{
+	LOOKAHEAD(path()) path() | boolean_literal() | input_parameter()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(general_identification_variable()) general_identification_variable()
+	| LOOKAHEAD(identification_variable()) identification_variable()
+	| case_expression()
+}
+
+
+void enum_expression() : { }
+{
+	enum_primary() | "(" subquery() ")"
+}
+
+
+void enum_primary() : { }
+{
+	LOOKAHEAD(2) path()
+	| LOOKAHEAD(enum_literal()) enum_literal()
+	| LOOKAHEAD(input_parameter()) input_parameter()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(general_identification_variable()) general_identification_variable()
+	| LOOKAHEAD(identification_variable()) identification_variable()
+	| case_expression()
+}
+
+
+void enum_literal() : { }
+{
+	{ inEnumPath = true; }
+	path()
+	{ inEnumPath = false; }
+}
+
+
+void entity_bean_value() : { }
+{
+	LOOKAHEAD(path()) path()
+	| LOOKAHEAD(qualified_path()) qualified_path()
+	| LOOKAHEAD(path_component()) path_component()
+}
+
+
+void entity_bean_expression() : { }
+{
+	input_parameter() | entity_bean_value()
+}
+
+
+void functions_returning_strings() : { }
+{
+	concat() | substring() | trim() | lower() | upper()
+}
+
+
+void concat() #CONCAT : { }
+{
+	<CONCAT> "(" string_expression() <COMMA> string_expression() [ <COMMA> string_expression() ] ")"
+}
+
+
+void substring() #SUBSTRING : { }
+{
+	<SUBSTRING> "(" string_expression() <COMMA> arithmetic_expression() [ <COMMA> arithmetic_expression() ] ")"
+}
+
+
+void trim() #TRIM : { }
+{
+	<TRIM> "(" [LOOKAHEAD(2)[trim_specification()] [trim_character()] <FROM>]
+		string_expression() ")"
+}
+
+
+void lower() #LOWER : { }
+{
+	<LOWER> "(" string_expression() ")"
+}
+
+
+void upper() #UPPER : { }
+{
+	<UPPER> "(" string_expression() ")"
+}
+
+
+
+void trim_specification() : { }
+{
+	LOOKAHEAD(2) (<LEADING> #TRIMLEADING) | (<TRAILING> #TRIMTRAILING) | (<BOTH> #TRIMBOTH)
+}
+
+
+void functions_returning_numerics() : { }
+{
+	length() | locate() | abs() | sqrt() | mod() | size() | index()
+}
+
+
+void length() #LENGTH : { }
+{
+	<LENGTH> "(" string_expression() ")"
+
+}
+
+
+void locate() #LOCATE : { }
+{
+	<LOCATE> "(" string_expression() <COMMA> string_expression()
+		[<COMMA> arithmetic_expression()] ")"
+
+}
+
+
+void abs() #ABS : { }
+{
+	<ABS> "(" arithmetic_expression() ")"
+
+}
+
+
+void sqrt() #SQRT : { }
+{
+	<SQRT> "(" arithmetic_expression() ")"
+
+}
+
+
+void mod() #MOD : { }
+{
+	<MOD> "(" arithmetic_expression() <COMMA> arithmetic_expression() ")"
+
+}
+
+
+void size() #SIZE : { }
+{
+	<SIZE> "(" (LOOKAHEAD(path()) path() |
+		LOOKAHEAD(qualified_path()) qualified_path()) ")"
+}
+
+void index() #INDEX : { }
+{
+    <INDEX> "(" identification_variable() ")"
+}
+
+void functions_returning_datetime() : { }
+{
+	(<CURRENT_DATE> #CURRENTDATE)
+	| (<CURRENT_TIME> #CURRENTTIME)
+	| (<CURRENT_TIMESTAMP> #CURRENTTIMESTAMP)
+}
+
+
+void orderby_clause() #ORDERBY : { }
+{
+	<ORDER> <BY> orderby_item() (<COMMA> orderby_item())* 
+}
+
+
+void orderby_item() #ORDERBYITEM : { }
+{
+	(LOOKAHEAD(path()) path() | LOOKAHEAD(qualified_path()) qualified_path()
+	 | LOOKAHEAD(general_identification_variable()) general_identification_variable()
+	 | orderby_extension() | identification_variable()
+	 )
+	    [ <ASC> #ASCENDING | <DESC> #DESCENDING ]
+}
+
+
+void orderby_extension() #ORDERBYEXTENSION : { }
+{
+    aggregate_select_expression()
+}
+
+
+void abstract_schema_name() #ABSTRACTSCHEMANAME : { }
+{
+	path_component() (<DOT> path_component())*
+}
+
+
+void tok() #TOK :
+{ Token t; }
+{
+	t = <IDENTIFIER> { jjtThis.setToken (t); }
+}
+
+
+void identification_variable() #IDENTIFIER :
+{ Token t; }
+{
+	t = <IDENTIFIER> { jjtThis.setToken (t); }
+}
+
+
+void path_component() #IDENTIFICATIONVARIABLE :
+{ Token t; }
+{
+	// unlike the identifier(), the path_component() *can* be a
+	// reserved word. E.g., Order.group.length is a perfectly
+	// valid path expression
+	(
+	t = <NEW>
+	| t = <ALL>
+	| t = <ANY>
+	| t = <EXISTS>
+	| t = <SOME>
+	| t = <EMPTY>
+	| t = <ASC>
+	| t = <DESC>
+	| t = <ORDER>
+	| t = <IS>
+	| t = <MEMBER>
+	| t = <OF>
+	| t = <LIKE>
+	| t = <ESCAPE>
+	| t = <BETWEEN>
+	| t = <NULL>
+	| t = <AVG>
+	| t = <MIN>
+	| t = <MAX>
+	| t = <SUM>
+	| t = <COUNT>
+	| t = <OR>
+	| t = <AND>
+	| t = <NOT>
+	| t = <CONCAT>
+	| t = <SUBSTRING>
+	| t = <TRIM>
+	| t = <LOWER>
+	| t = <UPPER>
+	| t = <LEADING>
+	| t = <TRAILING>
+	| t = <BOTH>
+	| t = <LENGTH>
+	| t = <LOCATE>
+	| t = <ABS>
+	| t = <SQRT>
+	| t = <MOD>
+	| t = <SIZE>
+	| t = <CURRENT_DATE>
+	| t = <CURRENT_TIME>
+	| t = <CURRENT_TIMESTAMP>
+	| t = <SELECT>
+	| t = <DISTINCT>
+	| t = <FROM>
+	| t = <UPDATE>
+	| t = <DELETE>
+	| t = <WHERE>
+	| t = <GROUP>
+	| t = <BY>
+	| t = <HAVING>
+	| t = <AS>
+	| t = <LEFT>
+	| t = <OUTER>
+	| t = <INNER>
+	| t = <JOIN>
+	| t = <FETCH>
+	| t = <IN>
+	| t = <SET>
+	| t = <OBJECT>
+	| t = <IDENTIFIER>
+	| t = <CASE>
+	| t = <COALESCE>
+	| t = <NULLIF>
+	| t = <WHEN>
+	| t = <THEN>
+	| t = <ELSE>
+	| t = <END>
+	| t = <KEY>
+	| t = <VALUE>
+	| t = <ENTRY>
+	| t = <INDEX>
+	| t = <TYPE>
+	| t = <CLASS>
+    ) { jjtThis.setToken (t); }
+}
+
+
+void literal() : { }
+{
+	numeric_literal() | boolean_literal() | string_literal() | string_literal2() | enum_literal() | date_literal() |
+	time_literal() | timestamp_literal()
+}
+
+
+void numeric_literal() : { }
+{
+	LOOKAHEAD(decimal_literal()) decimal_literal() | integer_literal()
+}
+
+
+void integer_literal() #INTEGERLITERAL :
+{ Token t; }
+{
+	[<PLUS> | negative()] t = <INTEGER_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void decimal_literal() #DECIMALLITERAL :
+{ Token t; }
+{
+	 [<PLUS> | negative()] t = <DECIMAL_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void boolean_literal() #BOOLEANLITERAL :
+{ Token t; }
+{
+	t = <BOOLEAN_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void string_literal() #STRINGLITERAL :
+{ Token t; }
+{
+	t = <STRING_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void string_literal2() #STRINGLITERAL2 :
+{ Token t; }
+{
+	t = <STRING_LITERAL2> { jjtThis.setToken (t); }
+}
+
+void date_literal() #DATELITERAL :
+{ Token t; }
+{
+	t = <DATE_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void time_literal() #TIMELITERAL :
+{ Token t; }
+{
+	t = <TIME_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void timestamp_literal() #TIMESTAMPLITERAL :
+{ Token t; }
+{
+	t = <TIMESTAMP_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void input_parameter() : { }
+{
+	named_input_parameter() | positional_input_parameter()
+}
+
+
+void collection_valued_input_parameter() #COLLECTIONPARAMETER: { }
+{
+	named_input_parameter() | positional_input_parameter()
+}
+
+
+void named_input_parameter() #NAMEDINPUTPARAMETER : { }
+{
+	":" path_component()
+}
+
+
+void positional_input_parameter() #POSITIONALINPUTPARAMETER :
+{ Token t; }
+{
+	"?" t = <INTEGER_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void pattern_value() #PATTERNVALUE : { }
+{
+	(input_parameter() | string_literal() | string_literal2())
+	[(<ESCAPE> escape_character() #ESCAPECHARACTER)]
+}
+
+
+void escape_character() #ESCAPECHARACTER :
+{ Token t; }
+{
+	t = <STRING_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void trim_character() #TRIMCHARACTER :
+{ Token t; }
+{
+	t = <STRING_LITERAL> { jjtThis.setToken (t); }
+}
+
+
+void EQ() #EQUALS : { }
+{
+	<EQ>
+}
+
+
+void NE() #NOTEQUALS : { }
+{
+	<NE>
+}
+
+
+void GT() #GREATERTHAN : { }
+{
+	<GT>
+}
+
+
+void GE() #GREATEROREQUAL : { }
+{
+	<GE>
+}
+
+
+void LT() #LESSTHAN : { }
+{
+	<LT>
+}
+
+
+void LE() #LESSOREQUAL : { }
+{
+	<LE>
+}

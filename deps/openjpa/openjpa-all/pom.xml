@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<!-- 
+    Please keep the project tag on one line to avoid confusing 
+    the release plugin.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-parent</artifactId>
+        <version>2.3.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.openjpa</groupId>
+    <artifactId>openjpa-all</artifactId>
+    <packaging>jar</packaging>
+    <name>OpenJPA Aggregate Jar with Dependencies</name>
+
+    <build>
+        <plugins>
+            <!-- disable creating javadoc for this module -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- disable creating source jars for this module -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <attach>false</attach>
+                </configuration>
+            </plugin>
+
+            <!--
+                 Need to disable jar plugin here, as it overwrites the shade
+                 plugin created binary jar.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create our aggregate all JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <createSourcesJar>${createSources}</createSourcesJar>
+                            <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <!-- 
+                                 Have to do this again here, as these settings
+                                 from shaded openjpa.jar get lost in the shading
+                            -->
+                            <transformers>
+                                <!-- Need to concatinate the services resources:
+                                 org.apache.openjpa.lib.conf.ProductDerivation
+                                 javax.persistence.spi.PersistenceProvider
+                                 org.apache.openjpa.kernel.exps.ExpressionParser
+                                -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <!-- Need to add some MANIFEST.MF metadata -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>org.apache.openjpa.conf.OpenJPAVersion</Main-Class>
+                                        <Premain-Class>org.apache.openjpa.enhance.PCEnhancerAgent</Premain-Class>
+                                        <Agent-Class>org.apache.openjpa.enhance.InstrumentationFactory</Agent-Class>
+                                        <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                                        <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                                        <Implementation-Title>Apache OpenJPA Aggregate JAR with dependencies</Implementation-Title>
+                                        <Specification-Title>JSR-317 Java Persistence</Specification-Title>
+                                        <Specification-Vendor>Sun Microsystems, Inc.</Specification-Vendor>
+                                        <Specification-Version>2.0</Specification-Version>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!--
+            Start with openjpa.jar and let the maven-shade-plugin
+            determine the transitive dependencies to include from it.
+        -->
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- other includes -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+        <!-- bean validation includes -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-validation_1.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bval</groupId>
+            <artifactId>org.apache.bval.bundle</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+    </dependencies>
+</project>

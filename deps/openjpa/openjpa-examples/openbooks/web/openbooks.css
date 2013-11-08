@@ -1,0 +1,159 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+ */
+
+/* ---------------------------------------------------------------------------- 
+  Cascaded Style Sheet for OpenBooks pages.
+  
+  The page is divided into 4 divisions.
+  A fixed header and footer.
+  A left menu.
+  A central content section.
+  
+  All divisions are referred by id in HTML <div> tag.
+  -------------------------------------------------------------------------- */
+  
+body {
+	font-size:14pt;
+}
+
+#header {
+  position:fixed;
+  
+  top:0;
+  
+  width: 100%;
+  height: 1.5em;
+  margin: 0.0em;
+  padding: 0.0em;
+
+  background: #FFFFFF;
+  
+  z-index: 100;
+
+  border-bottom: 1px solid #999;
+  
+  text-align: left;
+  float:left;
+}
+
+#left {
+	position: fixed;
+	
+	top: 5em;
+	
+	width: 10em;
+	margin-left:0.5em;
+    text-align: left;
+    float:left;
+}
+
+#content {
+  top: 5em; 
+  
+  width:60em;
+  height:20em;
+  
+  margin-left: 10em;
+  margin-right: 15em;
+  margin-top:1.5em;
+  padding: 0.5em 0.5em;
+  
+}
+#help {
+  position: fixed;
+  
+  width: 25em;
+  right: 0.75em;
+  top: 3em;
+  margin-left:1em;
+  padding-left:1em;
+/*  outline: 1px solid #000; */
+  border-left-style:solid;
+  float:right;
+}
+
+#footer {
+  position: fixed;
+  
+  width: 100%;
+  height: 3em;
+  
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  bottom: 0;
+  z-index: 100;
+  background: #fff;
+  text-align: left;
+  border-top: 1px solid #000;
+  float:left;
+}
+
+table {
+  border-spacing:0;
+  font-size:14pt;
+}
+
+caption {
+	background-color:#006295;
+	color:#FFFFFF;
+	font-weight:bold;
+}
+
+th {
+	background-color:#BD2031;
+	text-align:center;
+	color:#FFFFFF;
+}
+
+
+tr.even {
+	background-color:#9BE1FB;
+}
+
+tr.odd {
+	background-color:#C5EFFD;
+}
+td {
+	margin-right :0.5em;
+    padding-right:1em;
+    
+	margin-left :1em;
+    padding-left:1em;
+    
+	margin-top:0.1em;
+	padding-top:0.1em;
+	
+	margin-bottom:0.1em;
+    padding-bottom:0.1em;
+    
+    text-align:center;
+}
+
+/**
+ * The links that point to source code uses special marker
+ */ 
+a[href^="generated-html/"] {
+	color:red;
+    padding-right: 2.0em;
+    background-image: url(images/java_link.png);
+    background-position: right !important;
+    background-repeat: no-repeat;
+}
+
+}

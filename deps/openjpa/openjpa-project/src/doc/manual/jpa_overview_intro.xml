@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_intro">
+    <title>
+        Introduction
+    </title>
+    <para>
+    <indexterm>
+        <primary>
+            EJB3 Persistence
+        </primary>
+        <see>
+            JPA
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            JPA
+        </primary>
+    </indexterm>
+The Java Persistence 2.0 API (JPA 2.0) is a specification
+for the persistence of Java objects to any relational
+datastore. This document provides an overview of JPA 2.0. Unless
+otherwise noted, the information presented applies to all JPA implementations.
+    </para>
+    <note>
+        <para>
+For coverage of OpenJPA's many extensions to the JPA specification,
+see the <link linkend="ref_guide_intro">Reference Guide</link>.
+        </para>
+    </note>
+    <section id="jpa_overview_intro_audience">
+        <title>
+            Intended Audience
+        </title>
+        <para>
+This document is intended for developers who want to learn about JPA
+in order to use it in their applications. It assumes that you have a strong
+knowledge of object-oriented concepts and Java, including annotations and
+generics. It also assumes some experience with relational databases and the
+Structured Query Language (SQL).
+        </para>
+    </section>
+    <section id="jpa_overview_intro_transpers">
+        <title>
+            Lightweight Persistence
+        </title>
+        <indexterm zone="jpa_overview_intro_transpers">
+            <primary>
+                lightweight persistence
+            </primary>
+        </indexterm>
+        <para>
+        <indexterm>
+            <primary>
+                persistent data
+            </primary>
+        </indexterm>
+<emphasis>Persistent data</emphasis> is information that can outlive the program
+that creates it. The majority of complex programs use persistent data: GUI
+applications need to store user preferences across program invocations, web
+applications track user movements and orders over long periods of time, etc.
+        </para>
+        <para>
+<emphasis>Lightweight persistence</emphasis> is the storage and retrieval of
+persistent data with little or no work from you, the developer. For example,
+Java serialization
+        <indexterm>
+            <primary>
+                serialization
+            </primary>
+        </indexterm>
+is a form of lightweight persistence because it can be used to persist Java
+objects directly to a file with very little effort. Serialization's capabilities
+as a lightweight persistence mechanism pale in comparison to those provided by
+JPA, however. The next chapter compares JPA to serialization and other available
+persistence mechanisms.
+        </para>
+    </section>
+</chapter>

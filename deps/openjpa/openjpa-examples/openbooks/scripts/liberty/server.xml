@@ -1,0 +1,24 @@
+<server description="new server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jsp-2.2</feature>
+        <feature>jpa-2.0</feature>
+        <feature>jdbc-4.0</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="localhost"
+                  httpPort="9080"
+                  httpsPort="9443" />
+    
+    <jdbcDriver id="DerbyEmbedded" libraryRef="DerbyLib" /> 
+    <library id="DerbyLib" filesetRef="DerbyFileset" /> 
+    <fileset id="DerbyFileset" dir="${derbyInstallDir}/lib" includes="derby.jar"/>
+    <dataSource id="OpenBooks" jndiName="jdbc/OpenBooks" jdbcDriverRef="DerbyEmbedded">
+        <properties databaseName="OpenBooks" createDatabase="create" /> 
+    </dataSource>
+    <dataSource id="OpenBooksNoTx" jndiName="jdbc/NonTxOpenBooks" jdbcDriverRef="DerbyEmbedded">
+        <properties databaseName="OpenBooks" createDatabase="create" /> 
+    </dataSource>
+</server>

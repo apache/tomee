@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--   Ant build script for JEE version of OpenBooks for                    -->
+<!--   WebSphere Application Server with Liberty Profile                    -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<project name="OpenBooks.JEE.Liberty">
+    
+    <!-- Location of WebSphere Application Server Liberty Profile home/install dir -->
+    <property name="liberty.home" value="/was8.5/gm1216.05/WebSphere/AppServer/wlp"/>
+    
+    <!-- WebSphere Liberty Server name (IP name or address) -->
+    <property name="liberty.server" value=""/>
+    
+    <!-- Location of WebSphere Application Server Liberty Profile bin dir -->
+    <property name="liberty.bin" value="${liberty.home}/bin"/>
+    
+    <!-- WebSphere Liberty Server dropins directory -->
+    <property name="liberty.dropins" value="${liberty.home}/usr/servers/${liberty.server}/dropins"/>
+
+    <target name="pre-package">
+       <echo message="In Liberty pre-package"/>
+       <copy file="${rsrc.dir}/META-INF/persistence.jee.liberty.xml" tofile="${classes.dir}/META-INF/persistence.xml"/>
+    </target>
+        
+    <target name="uninstall"
+        description="Uninstall OpenBooks from the WebSphere Application Server, Liberty Profile">
+        <echo message="Uninstall is a no-op in Liberty, just copy in a new war during the install process..."/>
+    </target>
+    
+    <target name="install"
+        description="Deploy OpenBooks as a WAR application in WebSphere Application Server, Liberty Profile">
+        <condition property="default.deploy">
+           <length string="${liberty.server}" length="0"/>
+        </condition>
+        <antcall target="liberty.deploy"/>
+        <antcall target="liberty.deploy.server"/>
+   </target>
+
+   <!-- Default simple deployment if Liberty server is not specified -->
+   <target name="liberty.deploy" if="default.deploy">
+    <echo>
+         --------------------------------------------
+         Creating Derby JDBC provider and data source
+         WAS Liberty Home: ${liberty.home}
+         WAS Liberty Server: ${liberty.server}
+         
+         Nothing to do since "liberty.server" is not set...
+    </echo>
+   </target>
+
+   <!-- Target for installation and deployment of the application when a       -->
+   <!-- Liberty server IP name is provided.  This type of deployment           -->
+   <!-- requires server IP name liberty.home, liberty.server, liberty.dropins, -->
+   <!-- to be provided.                                                        -->
+   
+   <target name="liberty.deploy.server" unless="default.deploy">
+    <echo>
+         -------------------------------------------
+         Creating Derby JDBC Provider and DataSource
+         WAS Home: ${liberty.home}
+         WAS Server: ${liberty.server}
+         
+         Have to figure out how to configure datasources in server.xml...
+    </echo>
+    <echo>
+         -------------------------------------
+         Deploying OpenBooks demo application
+         
+         Copying openbooks.war to dropins directory...
+         Liberty server ${liberty.server} should automatically restart application...
+    </echo>
+    <copy file="${target.dir}/openbooks.war" todir="${liberty.dropins}/"/>
+    <exec osfamily="windows" dir="${liberty.bin}" executable="cmd">
+        <arg line="/c server.bat start ${liberty.server}"/>
+    </exec>
+    <exec osfamily="unix" dir="${liberty.bin}" executable="server">
+        <arg line="start ${liberty.server}"/>
+    </exec>
+   
+    <echo>
+         -------------------------------------
+         Start OpenBooks via http://localhost:9080/openbooks
+    </echo>
+   </target>
+</project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+        http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ibm.websphere</groupId>
+    <artifactId>websphere_uow_api</artifactId>
+    <version>0.0.1</version>
+    <name>WebSphere UOW API</name>
+    <packaging>jar</packaging>
+    <licenses>
+        <license>
+            <!-- 
+                The contents of license.txt are included here in the 
+                comments tag. The full text file may be found in the
+                websphere_uow_api jar file in the root directory.
+
+                As I understand it the jar file may only be distributed
+                with Apache OpenJPA (ie OpenJPA is the application mentioned
+                below)
+              -->
+            <comments>
+            You may use or redistribute the files or modules contained in this
+            jar subject to the following terms:  
+
+The WebSphere Application Server files or modules contained in this jar 
+may be redistrubuted as provided by IBM to you, and only as part of Your 
+application distribution.  
+
+You may not use IBM's name or trademarks in connection with the marketing 
+of Your applications without IBM's prior written consent.  
+
+IBM PROVIDES THESE FILES OR MODULES ON AN "AS IS" BASIS AND IBM DISCLAIMS 
+ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE 
+WARRANTY OF NON-INFRINGEMENT AND THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+OR FITNESS FOR A PARTICULAR PURPOSE.  IBM SHALL NOT BE LIABLE FOR ANY 
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT 
+OF THE USE OR OPERATION OF THE FILES OR MODULES .  IBM HAS NO OBLIGATION 
+TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS OR MODIFICATIONS TO 
+THE FILES OR MODULES .
+            </comments>
+        </license>
+    </licenses>
+</project>

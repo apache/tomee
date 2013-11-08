@@ -1,0 +1,68 @@
+ ------
+ Enhance
+ ------
+ Mark Struberg
+ <struberg@yahoo.de>
+ ------
+ Dezember, 7th, 2011
+ ------
+
+Running openjpa-maven-plugin with different OpenJPA verions
+
+  The openjpa-maven-plugin by default uses OpenJPA with exactly the same version
+  as the plugin itself. If you like to use an older OpenJPA version (which doesn't
+  have an org.apache.openjpa:openjpa-maven-plugin), you can just override the
+  plugin dependencies
+
+-------------------
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>2.2.0</version>
+        <executions>
+          <execution>
+            <id>enhancer</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+          </execution>
+
+          <!-- Use your own openjpa dependencies -->
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa-kernel</artifactId>
+              <version>${oldopenjpa.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa-jdbc</artifactId>
+                <version>${oldopenjpa.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa-persistence</artifactId>
+              <version>${oldopenjpa.version}</version>
+            </dependency>
+            <dependency>
+              <!-- needed for db specific hooks -->
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa-persistence-jdbc</artifactId>
+              <version>${oldopenjpa.version}</version>
+            </dependency>
+          </dependencies>
+        </executions>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
+-------------------

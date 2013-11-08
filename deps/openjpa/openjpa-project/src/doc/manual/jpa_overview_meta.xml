@@ -1,0 +1,4204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_meta">
+    <title>
+        Metadata
+    </title>
+    <indexterm zone="jpa_overview_meta">
+        <primary>
+            metadata
+        </primary>
+    </indexterm>
+    <indexterm zone="jpa_overview_meta">
+        <primary>
+            JPA
+        </primary>
+        <secondary>
+            metadata
+        </secondary>
+        <seealso>
+            metadata
+        </seealso>
+    </indexterm>
+    <para>
+JPA requires that you accompany each persistent class with persistence metadata.
+This metadata serves three primary purposes:
+    </para>
+    <orderedlist>
+        <listitem>
+            <para>
+To identify persistent classes.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+To override default JPA behavior.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+To provide the JPA implementation with information that it cannot glean from
+simply reflecting on the persistent class.
+            </para>
+        </listitem>
+    </orderedlist>
+    <para>
+    <indexterm>
+        <primary>
+            annotations
+        </primary>
+    </indexterm>
+Persistence metadata is specified using either the Java annotations defined in
+the <literal>javax.persistence</literal> package, XML mapping files, or a
+mixture of both. In the latter case, XML declarations override conflicting
+annotations. If you choose to use XML metadata, the XML files must be available
+at development and runtime, and must be discoverable via either of two
+strategies:
+    </para>
+    <orderedlist>
+        <listitem>
+            <para>
+In a resource named <filename>orm.xml</filename> placed in a <filename>
+META-INF</filename> directory within a directory in your classpath or within a 
+jar archive containing your persistent classes.
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+Declared in your <link linkend="jpa_overview_persistence_xml"><filename>
+persistence.xml</filename></link> configuration file. In this case, each XML
+metadata file must be listed in a <literal>mapping-file</literal> element whose
+content is either a path to the given file or a resource location available to
+the class' class loader.
+            </para>
+        </listitem>
+    </orderedlist>
+    <para>
+We describe the standard metadata annotations and XML equivalents throughout
+this chapter. The full schema for XML mapping files is available in
+<xref linkend="jpa_overview_meta_xml"/>. JPA also standardizes relational
+mapping metadata and named query metadata, which we discuss in
+<xref linkend="jpa_overview_mapping"/> and
+<xref linkend="jpa_overview_query_named"/> respectively.
+    </para>
+    <note>
+        <para>
+OpenJPA defines many useful annotations beyond the standard set. See
+<xref linkend="ref_guide_meta_jpa"/> and
+<xref linkend="ref_guide_meta_ext"/>
+in the Reference Guide for details. There are currently no XML equivalents for
+these extension annotations.
+        </para>
+    </note>
+    <note>
+        <para>
+Persistence metadata may be used to validate the contents of your entities prior to communicating
+with the database. This differs from mapping meta data which is primarily used for schema generation.
+For example if you indicate that a relationship is not optional (e.g. @Basic(optional=false)) OpenJPA
+will validate that the variable in your entity is not null <emphasis>before</emphasis> inserting a row 
+in the database. 
+        </para>
+    </note>
+    <mediaobject>
+        <imageobject>
+            <!-- PNG image data, 553 x 580 (see README) -->
+            <imagedata fileref="img/jpa-meta-model.png" width="369"/>
+            
+        </imageobject>
+    </mediaobject>
+    <para>
+Through the course of this chapter, we will create the persistent object model
+above.
+    </para>
+    <section id="jpa_overview_meta_class">
+        <title>
+            Class Metadata
+        </title>
+        <para>
+The following metadata annotations and XML elements apply to persistent class
+declarations.
+        </para>
+        <section id="jpa_overview_meta_entity">
+            <title>
+                Entity
+            </title>
+            <indexterm zone="jpa_overview_meta_entity">
+                <primary>
+                    Entity
+                </primary>
+                <secondary>
+                    annotation
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_entity">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Entity
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_entity">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Entity
+                </secondary>
+            </indexterm>
+            <para>
+The <classname>Entity</classname> annotation denotes an entity class. All entity
+classes must have this annotation. The <classname>Entity</classname> annotation
+takes one optional property:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: Name used to refer to the entity in queries.
+Must not be a reserved literal in JPQL. Defaults to the unqualified name of the
+entity class.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>entity</literal>. It has the following
+attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>class</literal>: The entity class. This attribute is required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>name</literal>: Named used to refer to the class in queries. See the
+name property above.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>access</literal>: The access type to use for the class. Must either be
+<literal>FIELD</literal> or <literal>PROPERTY</literal>. For details on access
+types, see <xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+OpenJPA uses a process called <emphasis>enhancement</emphasis> to modify the
+bytecode of entities for transparent lazy loading and immediate dirty tracking.
+See <xref linkend="ref_guide_pc_enhance"/> in the Reference Guide for
+details on enhancement.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_meta_idclass">
+            <title>
+                Id Class
+            </title>
+            <indexterm zone="jpa_overview_meta_idclass">
+                <primary>
+                    IdClass
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_idclass">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    IdClass
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_idclass">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    IdClass
+                </secondary>
+            </indexterm>
+            <para>
+As we discussed in <xref linkend="jpa_overview_pc_identitycls"/>,
+entities with multiple identity fields must use an <emphasis> identity class
+</emphasis> to encapsulate their persistent identity. The <classname>IdClass
+</classname> annotation specifies this class. It accepts a single <classname>
+java.lang.Class</classname> value.
+            </para>
+            <para>
+The equivalent XML element is <literal>id-class</literal>, which has a single
+attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>class</literal>: Set this required attribute to the name of the
+identity class.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_embeddablesuper">
+            <title>
+                Mapped Superclass
+            </title>
+            <indexterm zone="jpa_overview_meta_embeddablesuper">
+                <primary>
+                    MappedSuperclass
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embeddablesuper">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    MappedSuperclass
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embeddablesuper">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    MappedSuperclass
+                </secondary>
+            </indexterm>
+            <para>
+A <emphasis>mapped superclass</emphasis> is a non-entity class that can define
+persistent state and mapping information for entity subclasses. Mapped
+superclasses are usually abstract. Unlike true entities, you cannot query a
+mapped superclass, pass a mapped superclass instance to any <classname>
+EntityManager</classname> or <classname>Query</classname> methods, or declare a
+persistent relation with a mapped superclass target. You denote a mapped
+superclass with the <classname>MappedSuperclass</classname> marker annotation.
+            </para>
+            <para>
+The equivalent XML element is <literal>mapped-superclass</literal>. It expects
+the following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>class</literal>: The entity class. This attribute is required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>access</literal>: The access type to use for the class. Must either be
+<literal>FIELD</literal> or <literal>PROPERTY</literal>. For details on access
+types, see <xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+OpenJPA allows you to query on mapped superclasses. A query on a mapped
+superclass will return all matching subclass instances. OpenJPA also allows you
+to declare relations to mapped superclass types; however, you cannot query
+across these relations.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_meta_embeddable">
+            <title>
+                Embeddable
+            </title>
+            <indexterm zone="jpa_overview_meta_embeddable">
+                <primary>
+                    Embeddable
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embeddable">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Embeddable
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embeddable">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Embeddable
+                </secondary>
+            </indexterm>
+            <para>
+The <classname>Embeddable</classname> annotation designates an embeddable
+persistent class. Embeddable instances are stored as part of the record of their
+owning instance. All embeddable classes must have this annotation.
+            </para>
+            <para>
+A persistent class can either be an entity or an embeddable class, but not both.
+            </para>
+            <para>
+The equivalent XML element is <literal>embeddable</literal>. It understands the
+following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>class</literal>: The entity class. This attribute is required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>access</literal>: The access type to use for the class. Must either be
+<literal>FIELD</literal> or <literal>PROPERTY</literal>. For details on access
+types, see <xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+OpenJPA allows a persistent class to be both an entity and an embeddable class.
+Instances of the class will act as entities when persisted explicitly or assigned
+to non-embedded fields of entities. Instances will act as embedded values when
+assigned to embedded fields of entities.
+                </para>
+                <para>
+To signal that a class is both an entity and an embeddable class in OpenJPA,
+simply add both the <literal>@Entity</literal> and the <literal>@Embeddable
+</literal> annotations to the class.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_meta_entity_listeners">
+            <title>
+                EntityListeners
+            </title>
+            <indexterm zone="jpa_overview_meta_entity_listeners">
+                <primary>
+                    EntityListeners
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_entity_listeners">
+                <primary>
+                    entity-listeners
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_entity_listeners">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    EntityListeners
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_entity_listeners">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    EntityListeners
+                </secondary>
+            </indexterm>
+            <para>
+An entity may list its lifecycle event listeners in the <classname>
+EntityListeners</classname> annotation. This value of this annotation is an
+array of the listener <classname>Class</classname> es for the entity. The
+equivalent XML element is <literal>entity-listeners</literal>. For more details
+on entity listeners, see <xref linkend="jpa_overview_pc_callbacks"/>.
+            </para>
+        </section>
+        <section id="jpa_overview_meta_classex">
+            <title>
+                Example
+            </title>
+            <para>
+Here are the class declarations for our persistent object model, annotated with
+the appropriate persistence metadata. Note that <classname>Magazine</classname>
+declares an identity class, and that <classname>Document</classname> and
+<classname>Address</classname> are a mapped superclass and an embeddable class,
+respectively. <classname>LifetimeSubscription</classname> and <classname>
+TrialSubscription</classname> override the default entity name to supply a
+shorter alias for use in queries.
+            </para>
+            <example id="jpa_overview_meta_classlisting">
+                <title>
+                    Class Metadata
+                </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+public class Magazine {
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+public class Article {
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+public class Company {
+    ...
+}
+
+@Entity
+public class Author {
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+    ...
+}
+
+@Entity
+public class Contract
+    extends Document {
+    ...
+}
+
+@Entity
+public class Subscription {
+    ...
+
+    @Entity
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+                <para>
+The equivalent declarations in XML:
+                </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        ...
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;id-class class="org.mag.Magazine$MagazineId"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Contract"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LineItem"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;embeddable class="org.mag.pub.Address"&gt;
+        ...
+    &lt;/embeddable&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="jpa_overview_meta_field">
+        <title>
+            Field and Property Metadata
+        </title>
+        <para>
+The persistence implementation must be able to retrieve and set the persistent
+state of your entities, mapped superclasses, and embeddable types. JPA offers
+two modes of persistent state access: <emphasis>field access</emphasis>, and
+<emphasis>property access</emphasis>.  The access type of a persistent attribute
+can be either set explicitly on a class or attribute level, inherited, or 
+determined by the provider. 
+        </para>
+        <para>
+Under field access, the implementation injects state directly into your 
+persistent fields, and retrieves changed state from your fields as well. To 
+declare field access on an entire entity with XML metadata, set the 
+<literal>access</literal> attribute of your <literal>entity</literal> XML 
+element to <literal>FIELD</literal>. To use field access for an entire entity 
+using annotation metadata, simply place your metadata and mapping annotations 
+on your field declarations:
+        </para>
+<programlisting>
+@ManyToOne
+private Company publisher;
+</programlisting>
+        <para>
+        <indexterm>
+            <primary>
+                metadata
+            </primary>
+            <secondary>
+                property access
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                persistent classes
+            </primary>
+            <secondary>
+                property access
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                persistent properties
+            </primary>
+            <seealso>
+                persistent fields
+            </seealso>
+        </indexterm>
+Property access, on the other hand, retrieves and loads state through JavaBean
+"getter" and "setter" methods. For a property <literal>p</literal> of type
+<literal>T</literal>, you must define the following getter method:
+        </para>
+<programlisting>
+T getP();
+</programlisting>
+        <para>
+For boolean properties, this is also acceptable:
+        </para>
+<programlisting>
+boolean isP();
+</programlisting>
+        <para>
+You must also define the following setter method:
+        </para>
+<programlisting>
+void setP(T value);
+</programlisting>
+        <para>
+To implicitly use property access for an entire class by default, set your 
+<literal>entity</literal> element's <literal> access</literal> attribute to 
+<literal>PROPERTY</literal>, or place your metadata and mapping annotations on 
+the getter method:
+        </para>
+<programlisting>
+@ManyToOne
+private Company getPublisher() { ... }
+
+private void setPublisher(Company publisher) { ... }
+</programlisting>
+    <section id="jpa_overview_explicit_access">
+        <title>
+            Explicit Access
+        </title>
+        <para>
+            <indexterm>
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    explicit access
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    explicit access
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    persistent attributes
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+                <seealso>
+                    persistent properties
+                </seealso>
+            </indexterm>
+The access type of a class or individual persistent attributes can be specified 
+explicitly using the <literal>@Access</literal> annotation or <literal>access
+</literal> attribute on the XML elements used to define persistent attributes.  
+When explicitly defining access, specify the explicit access type for the class 
+and then apply the <literal>@Access</literal> annotation or <literal>access
+</literal>XML attribute to individual fields or properties.  If explicit 
+<literal>FIELD</literal> or <literal>PROPERTY</literal> is specified at the 
+class level, all eligible non-transient fields or properties will be persistent.
+If using class level <literal>FIELD</literal> access, non-persistent fields must 
+be <literal>transient</literal> or annotated with <literal>@Transient</literal>.
+If using class level <literal>PROPERTY</literal> access, non-persistent 
+properties must be annotated <literal>@Transient</literal> or excluded using
+the <literal>transient</literal> XML attribute.  Refer to the JPA specification
+for specific rules regarding the use of explicit access with embeddables and
+within an inheritance hierarchy.
+        </para>
+        <para>
+This entity definitions shows how multiple access types may be specified
+on an entity:
+        </para>
+<programlisting>
+@Entity
+@Access(AccessType.FIELD)
+public class PaymentContract {
+
+    @Id
+    private String id;
+
+    @Temporal(TemporalType.DATE)
+    private String contractDate;
+    
+    @Transient
+    private String terms;
+    
+    @Version
+    private int version;
+    
+    @Lob
+    @Access(AccessType.PROPERTY)
+    public String getContractTerms() {
+        return terms;
+    }
+    
+    public void setContractTerms(String terms) {
+        // Format string before persisting
+        this.terms = formatTerms(terms);
+    }
+    ... 
+}
+</programlisting>
+                <para>
+The equivalent declarations in XML:
+                </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd"
+    version="2.0"&gt;
+    &lt;entity class="org.xyz.PaymentContract" access="FIELD"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+             &lt;basic name="contractTerms" access="PROPERTY"&gt; 
+                &lt;lob/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="contractDate"&gt;
+                &lt;temporal>DATE&lt;/temporal&gt;
+            &lt;/basic>
+            &lt;version name="version"/&gt;
+            &lt;transient name="terms"/&gt;
+       &lt;/attributes&gt;
+    &lt;/entity&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+    </section>
+        <warning>
+            <para>
+When using property access, only the getter and setter method for a property
+should ever access the underlying persistent field directly. Other methods,
+including internal business methods in the persistent class, should go through
+the getter and setter methods when manipulating persistent state.
+            </para>
+            <para>
+Also, take care when adding business logic to your getter and setter methods.
+Consider that they are invoked by the persistence implementation to load and
+retrieve all persistent state; other side effects might not be desirable.
+            </para>
+        </warning>
+        <para>
+The remainder of this document uses the term "persistent field" to refer to
+either a persistent field or a persistent property.
+        </para>
+        <section id="jpa_overview_meta_transient">
+            <title>
+                Transient
+            </title>
+            <indexterm zone="jpa_overview_meta_transient">
+                <primary>
+                    Transient
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_transient">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Transient
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_transient">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Transient
+                </secondary>
+            </indexterm>
+            <para>
+The <classname>Transient</classname> annotation specifies that a field is
+non-persistent. Use it to exclude fields from management that would otherwise be
+persistent. <classname>Transient</classname> is a marker annotation only; it
+has no properties.
+            </para>
+            <para>
+The equivalent XML element is <literal>transient</literal>. It has a single
+attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The transient field or property name. This attribute
+is required.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_id">
+            <title>
+                Id
+            </title>
+            <indexterm zone="jpa_overview_meta_id">
+                <primary>
+                    Id
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_id">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Id
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_id">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Id
+                </secondary>
+            </indexterm>
+            <para>
+Annotate your simple identity fields with <classname>Id</classname>. This
+annotation has no properties. We explore entity identity and identity fields in
+<xref linkend="jpa_overview_pc_id"/>.
+            </para>
+            <para>
+The equivalent XML element is <literal>id</literal>. It has one required
+attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the identity field or property.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_gen">
+            <title>
+                Generated Value
+            </title>
+            <indexterm zone="jpa_overview_meta_gen">
+                <primary>
+                    GeneratedValue
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_gen">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    GeneratedValue
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_gen">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    GeneratedValue
+                </secondary>
+            </indexterm>
+            <para>
+The previous section showed you how to declare your identity fields with the
+<classname>Id</classname> annotation. It is often convenient to allow the
+persistence implementation to assign a unique value to your identity fields
+automatically. JPA includes the <classname>GeneratedValue</classname>
+annotation for this purpose. It has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>GenerationType strategy</literal>: Enum value specifying how to
+auto-generate the field value. The <classname>GenerationType</classname> enum
+has the following values:
+                    </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+<literal>GeneratorType.AUTO</literal>: The default. Assign the field a
+generated value, leaving the details to the JPA vendor.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>GenerationType.IDENTITY</literal>: The database will assign an
+identity value on insert.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>GenerationType.SEQUENCE</literal>: Use a datastore sequence to
+generate a field value.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>GenerationType.TABLE</literal>: Use a sequence table to generate a
+field value.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String generator</literal>: The name of a generator defined in mapping
+metadata. We show you how to define named generators in
+<xref linkend="jpa_overview_mapping_sequence"/>. If the <classname>
+GenerationType</classname> is set but this property is unset, the JPA
+implementation uses appropriate defaults for the selected generation type.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>generated-value</literal>, which
+includes the following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>strategy</literal>: One of <literal> TABLE</literal>, <literal>
+SEQUENCE</literal>, <literal> IDENTITY</literal>, or <literal>AUTO</literal>,
+defaulting to <literal>AUTO</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>generator</literal>: Equivalent to the generator property listed
+above.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+OpenJPA allows you to use the <classname>GeneratedValue</classname> annotation
+on any field, not just identity fields. Before using the <literal>IDENTITY
+</literal> generation strategy, however, read
+<xref linkend="ref_guide_pc_oid_pkgen_autoinc"/> in the Reference Guide.
+                </para>
+                <para>
+OpenJPA also offers additional generator strategies for non-numeric fields,
+which you can access by setting <literal>strategy</literal> to <literal>AUTO
+</literal> (the default), and setting the <literal>generator</literal> string
+to:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                        <indexterm>
+                            <primary>
+                                mapping metadata
+                            </primary>
+                            <secondary>
+                                uuid-string
+                            </secondary>
+                        </indexterm>
+                        <indexterm>
+                            <primary>
+                                uuid-string
+                            </primary>
+                        </indexterm>
+<literal>uuid-string</literal>: OpenJPA will generate a 128-bit type 1 UUID
+unique within the network, represented as a 16-character string. For more
+information on UUIDs, see the IETF UUID draft specification at:
+<ulink url="http://www.ics.uci.edu/~ejw/authoring/uuid-guid/">
+http://www.ics.uci.edu/~ejw/authoring/uuid-guid/</ulink>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                        <indexterm>
+                            <primary>
+                                mapping metadata
+                            </primary>
+                            <secondary>
+                                uuid-hex
+                            </secondary>
+                        </indexterm>
+                        <indexterm>
+                            <primary>
+                                uuid-hex
+                            </primary>
+                        </indexterm>
+<literal>uuid-hex</literal>: Same as <literal> uuid-string</literal>, but
+represents the type 1 UUID as a 32-character hexadecimal string.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                        <indexterm>
+                            <primary>
+                                mapping metadata
+                            </primary>
+                            <secondary>
+                                uuid-type4-string
+                            </secondary>
+                        </indexterm>
+                        <indexterm>
+                            <primary>
+                                uuid-type4-string
+                            </primary>
+                        </indexterm>
+<literal>uuid-type4-string</literal>: OpenJPA will generate a 128-bit type 4
+pseudo-random UUID, represented as a 16-character string. For more
+information on UUIDs, see the IETF UUID draft specification at:
+<ulink url="http://www.ics.uci.edu/~ejw/authoring/uuid-guid/">
+http://www.ics.uci.edu/~ejw/authoring/uuid-guid/</ulink>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                        <indexterm>
+                            <primary>
+                                mapping metadata
+                            </primary>
+                            <secondary>
+                                uuid-type4-hex
+                            </secondary>
+                        </indexterm>
+                        <indexterm>
+                            <primary>
+                                uuid-type4-hex
+                            </primary>
+                        </indexterm>
+<literal>uuid-type4-hex</literal>: Same as <literal> uuid-type4-string</literal>
+, but represents the type 4 UUID as a 32-character hexadecimal string.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+These string constants are defined in
+<ulink url="../javadoc/org/apache/openjpa/persistence/Generator.html">
+<classname>org.apache.openjpa.persistence.Generator</classname></ulink>.
+                </para>
+                 <para>
+If the entities are mapped to the same table name but with different schema 
+name within one <literal>PersistenceUnit</literal> intentionally, and the 
+strategy of <literal>GeneratedType.AUTO</literal> is used to generate the ID 
+for each entity, a schema name for each entity must be explicitly declared 
+either through the annotation or the mapping.xml file. Otherwise, the mapping 
+tool only creates the tables for those entities with the schema names under 
+each schema. In addition, there will be only one 
+<literal>OPENJPA_SEQUENCE_TABLE</literal> created for all the entities within 
+the <literal>PersistenceUnit</literal> if the entities are not identified 
+with the schema name. Read <xref linkend="ref_guide_sequence"/> and 
+<xref linkend="ref_guide_schema_def"/> in the Reference Guide.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_meta_embedid">
+            <title>
+                Embedded Id
+            </title>
+            <indexterm zone="jpa_overview_meta_embedid">
+                <primary>
+                    EmbeddedId
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embedid">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    EmbeddedId
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embedid">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    EmbeddedId
+                </secondary>
+            </indexterm>
+            <para>
+If your entity has multiple identity values, you may declare multiple <literal>
+@Id</literal> fields, or you may declare a single <literal>@EmbeddedId</literal>
+field. The type of a field annotated with <classname>EmbeddedId</classname> must
+be an embeddable entity class. The fields of this embeddable class are
+considered the identity values of the owning entity. We explore entity identity
+and identity fields in <xref linkend="jpa_overview_pc_id"/>.
+            </para>
+            <para>
+The <classname>EmbeddedId</classname> annotation has no properties.
+            </para>
+            <para>
+The equivalent XML element is <literal>embedded-id</literal>. It has one
+required attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the identity field or property.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_version">
+            <title>
+                Version
+            </title>
+            <indexterm zone="jpa_overview_meta_version">
+                <primary>
+                    Version
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_version">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Version
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_version">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Version
+                </secondary>
+            </indexterm>
+            <para>
+Use the <classname>Version</classname> annotation to designate a version field.
+<xref linkend="jpa_overview_pc_version"/> explained the importance of
+version fields to JPA. This is a marker annotation; it has no properties.
+            </para>
+            <para>
+The equivalent XML element is <literal>version</literal>, which has a single
+attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the version field or property. This
+attribute is required.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_basic">
+            <title>
+                Basic
+            </title>
+            <indexterm zone="jpa_overview_meta_basic">
+                <primary>
+                    Basic
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_basic">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Basic
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_basic">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Basic
+                </secondary>
+            </indexterm>
+            <para>
+<classname>Basic</classname> signifies a standard value persisted as-is to the
+datastore. You can use the <classname>Basic</classname> annotation on persistent
+fields of the following types: primitives, primitive wrappers, <classname>
+java.lang.String</classname>, <classname>byte[]</classname>, <classname>
+Byte[]</classname>, <classname>char[]</classname>, <classname>
+Character[]</classname>, <classname>java.math.BigDecimal</classname>, 
+<classname>java.math.BigInteger</classname>, <classname>
+java.util.Date</classname>, <classname>java.util.Calendar</classname>, 
+<classname>java.sql.Date</classname>, <classname>java.sql.Timestamp</classname>,
+<classname>Enum</classname>s, and <classname>Serializable</classname> types.
+            </para>
+            <para>
+<classname>Basic</classname> declares these properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>FetchType fetch</literal>: Whether to load the field eagerly 
+(<literal>FetchType.EAGER</literal>) or lazily (<literal>
+FetchType.LAZY</literal>). Defaults to <literal>FetchType.EAGER</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean optional</literal>: Whether the datastore allows null values.
+Defaults to true.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>basic</literal>. It has the following
+attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>fetch</literal>: One of <literal>EAGER</literal> or <literal>LAZY
+</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>optional</literal>: Boolean indicating whether the field value may be
+null.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <section id="jpa_overview_meta_fetch">
+                <title>
+                    Fetch Type
+                </title>
+                <indexterm zone="jpa_overview_meta_fetch">
+                    <primary>
+                        eager fetching
+                    </primary>
+                    <secondary>
+                        FetchType
+                    </secondary>
+                </indexterm>
+                <indexterm zone="jpa_overview_meta_fetch">
+                    <primary>
+                        FetchType
+                    </primary>
+                    <seealso>
+                        eager fetching
+                    </seealso>
+                </indexterm>
+                <indexterm zone="jpa_overview_meta_fetch">
+                    <primary>
+                        metadata
+                    </primary>
+                    <secondary>
+                        FetchType
+                    </secondary>
+                </indexterm>
+                <para>
+Many metadata annotations in JPA have a <literal>fetch</literal> property. This
+property can take on one of two values: <literal>FetchType.EAGER</literal> or
+<literal>FetchType.LAZY</literal>. <literal>FetchType.EAGER</literal> means that
+the field is loaded by the JPA implementation before it returns the persistent
+object to you. Whenever you retrieve an entity from a query or from the
+<classname>EntityManager</classname>, you are guaranteed that all of its eager
+fields are populated with datastore data.
+                </para>
+                <para>
+<literal>FetchType.LAZY</literal> is a hint to the JPA runtime that you want to
+defer loading of the field until you access it. This is called <emphasis>lazy
+loading</emphasis>. Lazy loading is completely transparent; when you attempt to
+read the field for the first time, the JPA runtime will load the value from the
+datastore and populate the field automatically. Lazy loading is only a hint and
+not a directive because some JPA implementations cannot lazy-load certain field
+types.
+                </para>
+                <para>
+With a mix of eager and lazily-loaded fields, you can ensure that commonly-used
+fields load efficiently, and that other state loads transparently when accessed.
+As you will see in <xref linkend="jpa_overview_emfactory_perscontext"/>,
+you can also use eager fetching to ensure that entities have all needed data
+loaded before they become <emphasis>detached</emphasis> at the end of a
+persistence context.
+                </para>
+                <note>
+                    <para>
+OpenJPA can lazy-load any field type. OpenJPA also allows you to dynamically
+change which fields are eagerly or lazily loaded at runtime. See
+<xref linkend="ref_guide_fetch"/> in the Reference Guide for details.
+                    </para>
+                    <para>
+The Reference Guide details OpenJPA's eager fetching behavior in
+<xref linkend="ref_guide_perfpack_eager"/>.
+                    </para>
+                </note>
+            </section>
+        </section>
+        <section id="jpa_overview_meta_embedded">
+            <title>
+                Embedded
+            </title>
+            <indexterm zone="jpa_overview_meta_embedded">
+                <primary>
+                    Embedded
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embedded">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    Embedded
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_embedded">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    Embedded
+                </secondary>
+            </indexterm>
+            <para>
+Use the <classname>Embedded</classname> marker annotation on embeddable field
+types. Embedded fields are mapped as part of the datastore record of the
+declaring entity. In our sample model, <classname>Author</classname> and
+<classname>Company</classname> each embed their <classname>Address</classname>,
+rather than forming a relation to an <classname>Address</classname> as a
+separate entity.
+            </para>
+            <para>
+The equivalent XML element is <literal>embedded</literal>, which expects a
+single attribute:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_manytoone">
+            <title>
+                Many To One
+            </title>
+            <indexterm zone="jpa_overview_meta_manytoone">
+                <primary>
+                    ManyToOne
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_manytoone">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    ManyToOne
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_manytoone">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    ManyToOne
+                </secondary>
+            </indexterm>
+            <para>
+When an entity <literal>A</literal> references a single entity <literal>
+B</literal>, and other <literal>A</literal>s might also reference the same
+<literal>B</literal>, we say there is a <emphasis>many to one</emphasis>
+relation from <literal>A</literal> to <literal>B</literal>. In our sample
+model, for example, each magazine has a reference to its publisher. Multiple
+magazines might have the same publisher. We say, then, that the <literal>
+Magazine.publisher</literal> field is a many to one relation from magazines to
+publishers.
+            </para>
+            <para>
+JPA indicates many to one relations between entities with the <classname>
+ManyToOne</classname> annotation. This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>Class targetEntity</literal>: The class of the related entity type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>CascadeType[] cascade</literal>: Array of enum values defining cascade
+behavior for this field. We explore cascades below. Defaults to an empty array.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>FetchType fetch</literal>: Whether to load the field eagerly 
+(<literal>FetchType.EAGER</literal>) or lazily 
+(<literal>FetchType.LAZY</literal>). Defaults to <literal>
+FetchType.EAGER</literal>. See <xref linkend="jpa_overview_meta_fetch"/> above 
+for details on fetch types.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean optional</literal>: Whether the related object must exist. If
+<literal>false</literal>, this field cannot be null. Defaults to <literal>
+true</literal>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>many-to-one</literal>. It accepts the
+following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>target-entity</literal>: The class of the related type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>fetch</literal>: One of <literal>EAGER</literal> or <literal>
+LAZY</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>optional</literal>: Boolean indicating whether the field value may be
+null.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <section id="jpa_overview_meta_cascade">
+                <title>
+                    Cascade Type
+                </title>
+                <indexterm zone="jpa_overview_meta_cascade">
+                    <primary>
+                        CascadeType
+                    </primary>
+                </indexterm>
+                <indexterm zone="jpa_overview_meta_cascade">
+                    <primary>
+                        metadata
+                    </primary>
+                    <secondary>
+                        CascadeType
+                    </secondary>
+                </indexterm>
+                <para>
+We introduce the JPA <classname>EntityManager</classname> in
+<xref linkend="jpa_overview_em"/>. The <classname>EntityManager
+</classname> has APIs to persist new entities, remove (delete) existing
+entities, refresh entity state from the datastore, and merge <emphasis>detached
+</emphasis> entity state back into the persistence context. We explore all of
+these APIs in detail later in the overview.
+                </para>
+                <para>
+When the <classname>EntityManager</classname> is performing the above
+operations, you can instruct it to automatically cascade the operation to the
+entities held in a persistent field with the <literal>cascade</literal> property
+of your metadata annotation. This process is recursive. The <literal>cascade
+</literal> property accepts an array of <classname>CascadeType</classname> enum
+values.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>CascadeType.PERSIST</literal>: When persisting an entity, also persist
+the entities held in this field. We suggest liberal application of this cascade
+rule, because if the <classname>EntityManager</classname> finds a field that
+references a new entity during flush, and the field does not use <literal>
+CascadeType.PERSIST</literal>, it is an error.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>CascadeType.REMOVE</literal>: When deleting an entity, also delete the
+entities held in this field.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>CascadeType.REFRESH</literal>: When refreshing an entity, also refresh
+the entities held in this field.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>CascadeType.MERGE</literal>: When merging entity state, also merge the
+entities held in this field.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <note>
+                	<para>
+OpenJPA offers enhancements to JPA's CascadeType.REMOVE functionality,
+including additional annotations to control how and when dependent fields will
+be removed.  See <xref linkend="dependent"/> for more details.
+                	</para>
+                </note>
+                <para>
+<classname>CascadeType</classname> defines one additional value, <literal>
+CascadeType.ALL</literal>, that acts as a shortcut for all of the values above.
+The following annotations are equivalent:
+                </para>
+<programlisting>
+@ManyToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE,
+    CascadeType.REFRESH,CascadeType.MERGE})
+private Company publisher;
+</programlisting>
+<programlisting>
+@ManyToOne(cascade=CascadeType.ALL)
+private Company publisher;
+</programlisting>
+                <para>
+In XML, these enumeration constants are available as child elements of the
+<literal>cascade</literal> element. The <literal>cascade</literal> element is
+itself a child of <literal>many-to-one</literal>. The following examples are
+equivalent:
+                </para>
+<programlisting>
+&lt;many-to-one name="publisher"&gt;
+    &lt;cascade&gt;
+        &lt;cascade-persist/&gt;
+        &lt;cascade-merge/&gt;
+        &lt;cascade-remove/&gt;
+        &lt;cascade-refresh/&gt;
+    &lt;/cascade&gt;
+&lt;/many-to-one&gt;
+</programlisting>
+<programlisting>
+&lt;many-to-one name="publisher"&gt;
+    &lt;cascade&gt;
+        &lt;cascade-all/&gt;
+    &lt;/cascade&gt;
+&lt;/many-to-one&gt;
+</programlisting>
+            </section>
+        </section>
+        <section id="jpa_overview_meta_onetomany">
+            <title>
+                One To Many
+            </title>
+            <indexterm zone="jpa_overview_meta_onetomany">
+                <primary>
+                    OneToMany
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_onetomany">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    OneToMany
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_onetomany">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    OneToMany
+                </secondary>
+            </indexterm>
+            <para>
+When an entity <literal>A</literal> references multiple <literal>B</literal>
+entities, and no two <literal>A</literal>s reference the same <literal>
+B</literal>, we say there is a <emphasis>one to many</emphasis> relation from
+<literal>A</literal> to <literal>B</literal>.
+            </para>
+            <para>
+One to many relations are the exact inverse of the many to one relations we
+detailed in the preceding section. In that section, we said that the <literal>
+Magazine.publisher</literal> field is a many to one relation from magazines to
+publishers. Now, we see that the <literal>Company.mags</literal> field is the
+inverse - a one to many relation from publishers to magazines. Each company may
+publish multiple magazines, but each magazine can have only one publisher.
+            </para>
+            <para>
+JPA indicates one to many relations between entities with the <classname>
+OneToMany</classname> annotation. This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>Class targetEntity</literal>: The class of the related entity type.
+This information is usually taken from the parameterized collection or map
+element type. You must supply it explicitly, however, if your field isn't a
+parameterized type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String mappedBy</literal>: Names the many to one field in the related
+entity that maps this bidirectional relation. We explain bidirectional relations
+below. Leaving this property unset signals that this is a standard
+unidirectional relation.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>CascadeType[] cascade</literal>: Array of enum values defining cascade
+behavior for the collection elements. We explore cascades above in
+<xref linkend="jpa_overview_meta_cascade"/>. Defaults to an empty array.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>FetchType fetch</literal>: Whether to load the field eagerly 
+(<literal>FetchType.EAGER</literal>) or lazily 
+(<literal>FetchType.LAZY</literal>). Defaults to <literal>
+FetchType.LAZY</literal>. See <xref linkend="jpa_overview_meta_fetch"/> above 
+for details on fetch types.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>one-to-many</literal>, which includes
+the following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>target-entity</literal>: The class of the related type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>fetch</literal>: One of <literal>EAGER</literal> or <literal>
+LAZY</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>mapped-by</literal>: The name of the field or property that owns the
+relation. See <xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+You may also nest the <literal>cascade</literal> element within a <literal>
+one-to-many</literal> element.
+            </para>
+            <section id="jpa_overview_meta_mappedby">
+                <title>
+                    Bidirectional Relations
+                </title>
+                <indexterm zone="jpa_overview_meta_mappedby">
+                    <primary>
+                        bidirectional relations
+                    </primary>
+                </indexterm>
+                <indexterm zone="jpa_overview_meta_mappedby">
+                    <primary>
+                        mappedBy
+                    </primary>
+                    <seealso>
+                        mapping metadata
+                    </seealso>
+                </indexterm>
+                <indexterm zone="jpa_overview_meta_mappedby">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <seealso>
+                        mappedBy property
+                    </seealso>
+                </indexterm>
+                <para>
+When two fields are logical inverses of each other, they form a <emphasis>
+bidirectional relation</emphasis>. Our model contains two bidirectional
+relations: <literal>Magazine.publisher</literal> and <literal>Company.mags
+</literal> form one bidirectional relation, and <literal>Article.authors
+</literal> and <literal>Author.articles</literal> form the other. In both cases,
+there is a clear link between the two fields that form the relationship. A
+magazine refers to its publisher while the publisher refers to all its published
+magazines. An article refers to its authors while each author refers to her
+written articles.
+                </para>
+                <para>
+When the two fields of a bidirectional relation share the same datastore
+mapping, JPA formalizes the connection with the <literal>mappedBy</literal>
+property. Marking <literal>Company.mags</literal> as <literal>mappedBy</literal>
+<literal>Magazine.publisher</literal> means two things:
+                </para>
+                <orderedlist>
+                    <listitem>
+                        <para>
+<literal>Company.mags</literal> uses the datastore mapping for <literal>
+Magazine.publisher</literal>, but inverses it. In fact, it is illegal to
+specify any additional mapping information when you use the <literal>mappedBy
+</literal> property. All mapping information is read from the referenced field.
+We explore mapping in depth in <xref linkend="jpa_overview_mapping"/>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>Magazine.publisher</literal> is the "owner" of the relation. The field
+that specifies the mapping data is always the owner. This means that changes to
+the <literal>Magazine.publisher</literal> field are reflected in the datastore,
+while changes to the <literal>Company.mags</literal> field alone are not.
+Changes to <literal>Company.mags</literal> may still affect the JPA
+implementation's cache, however. Thus, it is very important that you keep your
+object model consistent by properly maintaining both sides of your bidirectional
+relations at all times.
+                        </para>
+                    </listitem>
+                </orderedlist>
+                <para>
+You should always take advantage of the <literal>mappedBy</literal> property
+rather than mapping each field of a bidirectional relation independently.
+Failing to do so may result in the JPA implementation trying to update the
+database with conflicting data. Be careful to only mark one side of the relation
+as <literal>mappedBy</literal>, however. One side has to actually do the
+mapping!
+                </para>
+                <note>
+                    <para>
+You can configure OpenJPA to automatically synchronize both sides of a
+bidirectional relation, or to perform various actions when it detects
+inconsistent relations. See <xref linkend="ref_guide_inverses"/> in the
+Reference Guide for details.
+                    </para>
+                </note>
+            </section>
+        </section>
+        <section id="jpa_overview_meta_onetoone">
+            <title>
+                One To One
+            </title>
+            <indexterm zone="jpa_overview_meta_onetoone">
+                <primary>
+                    OneToOne
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_onetoone">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    OneToOne
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_onetoone">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    OneToOne
+                </secondary>
+            </indexterm>
+            <para>
+When an entity <literal>A</literal> references a single entity <literal>
+B</literal>, and no other <literal>A</literal>s can reference the same <literal>
+B</literal>, we say there is a <emphasis>one to one</emphasis> relation between
+<literal>A</literal> and <literal>B</literal>. In our sample model, <classname>
+Magazine</classname> has a one to one relation to <classname>Article</classname>
+through the <literal>Magazine.coverArticle</literal> field. No two magazines can
+have the same cover article.
+            </para>
+            <para>
+JPA indicates one to one relations between entities with the <classname>
+OneToOne</classname> annotation. This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>Class targetEntity</literal>: The class of the related entity type.
+This information is usually taken from the field type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String mappedBy</literal>: Names the field in the related entity that
+maps this bidirectional relation. We explain bidirectional relations in
+<xref linkend="jpa_overview_meta_mappedby"/> above. Leaving this property
+unset signals that this is a standard unidirectional relation.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>CascadeType[] cascade</literal>: Array of enum values defining cascade
+behavior for this field. We explore cascades in
+<xref linkend="jpa_overview_meta_cascade"/> above. Defaults to an empty
+array.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>FetchType fetch</literal>: Whether to load the field eagerly 
+(<literal>FetchType.EAGER</literal>) or lazily 
+(<literal>FetchType.LAZY</literal>). Defaults to <literal>
+FetchType.EAGER</literal>. See <xref linkend="jpa_overview_meta_fetch"/> above 
+for details on fetch types.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean optional</literal>: Whether the related object must exist. If
+<literal>false</literal>, this field cannot be null. Defaults to <literal>
+true</literal>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>one-to-one</literal> which understands
+the following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>target-entity</literal>: The class of the related type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>fetch</literal>: One of <literal>EAGER</literal> or <literal>
+LAZY</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>mapped-by</literal>: The field that owns the relation. See
+<xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+You may also nest the <literal>cascade</literal> element within a <literal>
+one-to-one</literal> element.
+            </para>
+        </section>
+        <section id="jpa_overview_meta_manytomany">
+            <title>
+                Many To Many
+            </title>
+            <indexterm zone="jpa_overview_meta_manytomany">
+                <primary>
+                    ManyToMany
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_manytomany">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    ManyToMany
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_manytomany">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    ManyToMany
+                </secondary>
+            </indexterm>
+            <para>
+When an entity <literal>A</literal> references multiple <literal>B</literal>
+entities, and other <literal>A</literal>s might reference some of the same
+<literal>B</literal>s, we say there is a <emphasis>many to many</emphasis>
+relation between <literal>A</literal> and <literal>B</literal>. In our sample
+model, for example, each article has a reference to all the authors that
+contributed to the article. Other articles might have some of the same authors.
+We say, then, that <classname>Article</classname> and <classname>Author
+</classname> have a many to many relation through the <literal>Article.authors
+</literal> field.
+            </para>
+            <para>
+JPA indicates many to many relations between entities with the <classname>
+ManyToMany</classname> annotation. This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>Class targetEntity</literal>: The class of the related entity type.
+This information is usually taken from the parameterized collection or map
+element type. You must supply it explicitly, however, if your field isn't a
+parameterized type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String mappedBy</literal>: Names the many to many field in the related
+entity that maps this bidirectional relation. We explain bidirectional relations
+in <xref linkend="jpa_overview_meta_mappedby"/> above. Leaving this
+property unset signals that this is a standard unidirectional relation.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>CascadeType[] cascade</literal>: Array of enum values defining cascade
+behavior for the collection elements. We explore cascades above in
+<xref linkend="jpa_overview_meta_cascade"/>. Defaults to an empty array.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>FetchType fetch</literal>: Whether to load the field eagerly 
+(<literal>FetchType.EAGER</literal>) or lazily 
+(<literal>FetchType.LAZY</literal>). Defaults to <literal>
+FetchType.LAZY</literal>. See <xref linkend="jpa_overview_meta_fetch"/> above 
+for details on fetch types.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>many-to-many</literal>. It accepts the
+following attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field or property. This attribute is
+required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>target-entity</literal>: The class of the related type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>fetch</literal>: One of <literal>EAGER</literal> or <literal>
+LAZY</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>mapped-by</literal>: The field that owns the relation. See
+<xref linkend="jpa_overview_meta_field"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+You may also nest the <literal>cascade</literal> element within a <literal>
+many-to-many</literal> element.
+            </para>
+        </section>
+        <section id="jpa_overview_meta_orderby">
+            <title>
+                Order By
+            </title>
+            <indexterm zone="jpa_overview_meta_orderby">
+                <primary>
+                    OrderBy
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_orderby">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    OrderBy
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_orderby">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    OrderBy
+                </secondary>
+            </indexterm>
+            <para>
+Datastores such as relational databases do not preserve the order of records.
+Your persistent <classname>List</classname> fields might be ordered one way the
+first time you retrieve an object from the datastore, and a completely different
+way the next. To ensure consistent ordering of collection fields, you must use
+the <classname>OrderBy</classname> annotation. The <classname>OrderBy
+</classname> annotation's value is a string defining the order of the collection
+elements. An empty value means to sort on the identity value(s) of the elements
+in ascending order. Any other value must be of the form:
+            </para>
+<programlisting>
+&lt;field name&gt;[ ASC|DESC][, ...]
+</programlisting>
+            <para>
+Each <literal>&lt;field name&gt;</literal> is the name of a persistent field in
+the collection's element type. You can optionally follow each field by the
+keyword <literal>ASC</literal> for ascending order, or <literal>DESC</literal>
+for descending order. If the direction is omitted, it defaults to ascending.
+            </para>
+            <para>
+The equivalent XML element is <literal>order-by</literal> which can be listed as
+a sub-element of the <literal>one-to-many</literal> or <literal>many-to-many
+</literal> elements. The text within this element is parsed as the order by
+string.
+            </para>
+        </section>
+        <section id="jpa_overview_meta_mapkey">
+            <title>
+                Map Key
+            </title>
+            <indexterm zone="jpa_overview_meta_mapkey">
+                <primary>
+                    MapKey
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_mapkey">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    MapKey
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_meta_mapkey">
+                <primary>
+                    annotations
+                </primary>
+                <secondary>
+                    MapKey
+                </secondary>
+            </indexterm>
+            <para>
+JPA supports persistent <classname>Map</classname> fields through either a
+<link linkend="jpa_overview_meta_onetomany"><classname> OneToMany</classname>
+</link> or <link linkend="jpa_overview_meta_manytomany"><classname>ManyToMany
+</classname></link> association. The related entities form the map values. JPA
+derives the map keys by extracting a field from each entity value. The
+<classname>MapKey</classname> annotation designates the field that is used as
+the key. It has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of a field in the related entity class
+to use as the map key. If no name is given, defaults to the identity field of
+the related entity class.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The equivalent XML element is <literal>map-key</literal> which can be listed as
+a sub-element of the <literal>one-to-many</literal> or <literal>many-to-many
+</literal> elements. The <literal>map-key</literal> element has the following
+attributes:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>: The name of the field in the related entity class to
+use as the map key.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_meta_fielddefaults">
+            <title>
+                Persistent Field Defaults
+            </title>
+            <para>
+In the absence of any of the annotations above, JPA defines the following
+default behavior for declared fields:
+            </para>
+            <orderedlist>
+                <listitem>
+                    <para>
+Fields declared <literal>static, transient</literal>, or <literal>final
+</literal> default to non-persistent.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Fields of any primitive type, primitive wrapper type, <classname>
+java.lang.String</classname>, <classname>byte[]</classname>, <classname>
+Byte[]</classname>, <classname>char[]</classname>, <classname>
+Character[]</classname>, <classname>java.math.BigDecimal</classname>, 
+<classname>java.math.BigInteger</classname>, <classname>
+java.util.Date</classname>, <classname> java.util.Calendar</classname>, 
+<classname>java.sql.Date</classname>, <classname>java.sql.Timestamp</classname>,
+or any <classname>Serializable</classname> type default to persistent, as if 
+annotated with <link linkend="jpa_overview_meta_basic"><literal>
+@Basic</literal></link>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Fields of an embeddable type default to persistent, as if annotated with
+<link linkend="jpa_overview_meta_embedded"><literal>@Embedded</literal></link>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+All other fields default to non-persistent.
+                    </para>
+                </listitem>
+            </orderedlist>
+            <para>
+Note that according to these defaults, all relations between entities must be
+annotated explicitly. Without an annotation, a relation field will default to
+serialized storage if the related entity type is serializable, or will default
+to being non-persistent if not.
+            </para>
+        </section>
+    </section>
+    <section id="jpa_overview_meta_xml">
+        <title>
+            XML Schema
+        </title>
+        <indexterm>
+            <primary>
+                metadata
+            </primary>
+            <secondary>
+                XSD
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                JPA
+            </primary>
+            <secondary>
+                metadata
+            </secondary>
+            <tertiary>
+                XML
+            </tertiary>
+            <seealso>
+                metadata
+            </seealso>
+        </indexterm>
+        <para>
+The latest revision of the version 2.0 orm schema is presented below.  Version
+2.0 of the schema must be used if JPA 2.0 elements are specified as XML
+metadata.  Many of the elements in the schema relate to object/relational
+mapping rather than metadata; these elements are discussed in
+<xref linkend="jpa_overview_mapping"/>.  Version 1.0 of the orm schema can be
+found at <ulink url="http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"/>.
+        </para>
+<programlisting>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;!-- Java Persistence API object/relational mapping file schema --&gt;
+&lt;xsd:schema targetNamespace="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:orm="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    version="2.0"&gt;
+
+    &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;
+            @(#)orm_2_0.xsd 2.0 October 1 2009
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+  &lt;xsd:annotation&gt;
+    &lt;xsd:documentation&gt;
+
+          DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+          Copyright 2005-2009 Sun Microsystems, Inc. All rights reserved.
+
+          The contents of this file are subject to the terms of either the
+          GNU General Public License Version 2 only ("GPL") or the Common
+          Development and Distribution License("CDDL") (collectively, the
+          "License").  You may not use this file except in compliance with
+          the License. You can obtain a copy of the License at
+          https://glassfish.dev.java.net/public/CDDL+GPL.html or
+          glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+          specific language governing permissions and limitations under the
+          License.
+
+          When distributing the software, include this License Header
+          Notice in each file and include the License file at
+          glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+          particular file as subject to the "Classpath" exception as
+          provided by Sun in the GPL Version 2 section of the License file
+          that accompanied this code.  If applicable, add the following
+          below the License Header, with the fields enclosed by brackets []
+          replaced by your own identifying information:
+          "Portions Copyrighted [year] [name of copyright owner]"
+
+          Contributor(s):
+
+          If you wish your version of this file to be governed by only the
+          CDDL or only the GPL Version 2, indicate your decision by adding
+          "[Contributor] elects to include this software in this
+          distribution under the [CDDL or GPL Version 2] license."  If you
+          don't indicate a single choice of license, a recipient has the
+          option to distribute your version of this file under either the
+          CDDL, the GPL Version 2 or to extend the choice of license to its
+          licensees as provided above.  However, if you add GPL Version 2
+          code and therefore, elected the GPL Version 2 license, then the
+          option applies only if the new code is made subject to such
+          option by the copyright holder.
+
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+    &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;
+        &lt;![CDATA[
+            This is the XML Schema for the persistence object/relational
+            mapping file.
+            The file may be named "META-INF/orm.xml" in the persistence
+            archive or it may be named some other name which would be
+            used to locate the file as resource on the classpath.
+            Object/relational mapping files must indicate the object/relational
+            mapping file schema by using the persistence namespace:
+            http://java.sun.com/xml/ns/persistence
+            and indicate the version of the schema by
+            using the version element as shown below:
+            &lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+            http://java.sun.com/xml/ns/persistence/orm/orm_2_0.xsd"
+            version="2.0"&gt;
+            ...
+            &lt;/entity-mappings&gt;
+        ]]&gt;
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+    &lt;xsd:complexType name="emptyType" /&gt;
+    &lt;xsd:simpleType name="versionType"&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:pattern value="[0-9]+(\.[0-9]+)*" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:element name="entity-mappings"&gt;
+        &lt;xsd:complexType&gt;
+            &lt;xsd:annotation&gt;
+                &lt;xsd:documentation&gt;
+                    The entity-mappings element is the root element of a mapping
+                    file. It contains the following four types of elements:
+                    1. The persistence-unit-metadata element contains metadata
+                    for the entire persistence unit. It is undefined if this element
+                    occurs in multiple mapping files within the same
+                    persistence unit.
+                    2. The package, schema, catalog and access elements apply to all of
+                    the entity, mapped-superclass and embeddable
+                    elements defined in
+                    the same file in which they occur.
+                    3. The sequence-generator, table-generator, named-query,
+                    named-native-query and sql-result-set-mapping
+                    elements are global
+                    to the persistence unit. It is undefined to have more than one
+                    sequence-generator or table-generator of the same
+                    name in the same
+                    or different mapping files in a persistence unit. It is also
+                    undefined to have more than one named-query,
+                    named-native-query, or
+                    result-set-mapping of the same name in the same or different mapping
+                    files in a persistence unit.
+                    4. The entity, mapped-superclass and embeddable elements each define
+                    the mapping information for a managed persistent
+                    class. The mapping
+                    information contained in these elements may be complete or it may
+                    be partial.
+                &lt;/xsd:documentation&gt;
+            &lt;/xsd:annotation&gt;
+            &lt;xsd:sequence&gt;
+                &lt;xsd:element name="description" type="xsd:string"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="persistence-unit-metadata"
+                    type="orm:persistence-unit-metadata" minOccurs="0" /&gt;
+                &lt;xsd:element name="package" type="xsd:string"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="schema" type="xsd:string"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="catalog" type="xsd:string"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="access" type="orm:access-type"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="sequence-generator" type="orm:sequence-generator"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="table-generator" type="orm:table-generator"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="named-query" type="orm:named-query"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="named-native-query" type="orm:named-native-query"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="sql-result-set-mapping"
+                    type="orm:sql-result-set-mapping" minOccurs="0"
+                    maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="mapped-superclass" type="orm:mapped-superclass"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="entity" type="orm:entity"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="embeddable" type="orm:embeddable"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;/xsd:sequence&gt;
+            &lt;xsd:attribute name="version" type="orm:versionType"
+                fixed="2.0" use="required" /&gt;
+        &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="persistence-unit-metadata"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                Metadata that applies to the persistence unit and not just to
+                the mapping file in which it is contained.
+                If the xml-mapping-metadata-complete element is specified,
+                the complete set of mapping metadata for the persistence unit
+                is contained in the XML mapping files for the persistence unit.
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="xml-mapping-metadata-complete"
+                type="orm:emptyType" minOccurs="0" /&gt;
+            &lt;xsd:element name="persistence-unit-defaults"
+                type="orm:persistence-unit-defaults" minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="persistence-unit-defaults"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                These defaults are applied to the persistence unit as a whole
+                unless they are overridden by local annotation or XML
+                element settings.
+                schema - Used as the schema for all tables, secondary tables, join
+                tables, collection tables, sequence generators, and table
+                generators that apply to the persistence unit
+                catalog - Used as the catalog for all tables, secondary tables, join
+                tables, collection tables, sequence generators, and
+                table generators that apply to the persistence unit
+                delimited-identifiers - Used to treat database identifiers as
+                delimited identifiers.
+                access - Used as the access type for all managed classes in
+                the persistence unit
+                cascade-persist - Adds cascade-persist to the set of cascade options
+                in all entity relationships of the persistence unit
+                entity-listeners - List of default entity listeners to be invoked
+                on each entity in the persistence unit.
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="schema" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="catalog" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="delimited-identifiers" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="access" type="orm:access-type"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-persist" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="entity-listeners" type="orm:entity-listeners"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="entity"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                Defines the settings and mappings for an entity. Is allowed to be
+                sparsely populated and used in conjunction with the annotations.
+                Alternatively, the metadata-complete attribute can be
+                used to
+                indicate that no annotations on the entity class (and its fields
+                or properties) are to be processed. If this is the case then
+                the defaulting rules for the entity and its subelements will
+                be recursively applied.
+                @Target(TYPE) @Retention(RUNTIME)
+                public @interface Entity {
+                String name() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="table" type="orm:table"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="secondary-table" type="orm:secondary-table"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="primary-key-join-column"
+                type="orm:primary-key-join-column" minOccurs="0"
+                maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="id-class" type="orm:id-class"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="inheritance" type="orm:inheritance"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="discriminator-value" type="orm:discriminator-value"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="discriminator-column" type="orm:discriminator-column"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="sequence-generator" type="orm:sequence-generator"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="table-generator" type="orm:table-generator"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="named-query" type="orm:named-query"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="named-native-query" type="orm:named-native-query"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="sql-result-set-mapping" type="orm:sql-result-set-mapping"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="exclude-default-listeners"
+                type="orm:emptyType" minOccurs="0" /&gt;
+            &lt;xsd:element name="exclude-superclass-listeners"
+                type="orm:emptyType" minOccurs="0" /&gt;
+            &lt;xsd:element name="entity-listeners" type="orm:entity-listeners"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-persist" type="orm:pre-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-persist" type="orm:post-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-remove" type="orm:pre-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-remove" type="orm:post-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-update" type="orm:pre-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-update" type="orm:post-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-load" type="orm:post-load"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="attribute-override" type="orm:attribute-override"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="association-override" type="orm:association-override"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="attributes" type="orm:attributes"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="cacheable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="metadata-complete" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="access-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                This element determines how the persistence provider accesses the
+                state of an entity or embedded object.
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="PROPERTY" /&gt;
+            &lt;xsd:enumeration value="FIELD" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="association-override"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface AssociationOverride {
+                String name();
+                JoinColumn[] joinColumns() default{};
+                JoinTable joinTable() default @JoinTable;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string" minOccurs="0" /&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="join-column" type="orm:join-column"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="join-table" type="orm:join-table"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="attribute-override"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface AttributeOverride {
+                String name();
+                Column column();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="column" type="orm:column" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="attributes"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                This element contains the entity field or property mappings.
+                It may be sparsely populated to include only a subset of the
+                fields or properties. If metadata-complete for the entity is true
+                then the remainder of the attributes will be defaulted according
+                to the default rules.
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="id" type="orm:id"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="embedded-id" type="orm:embedded-id"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="basic" type="orm:basic"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="version" type="orm:version"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="many-to-one" type="orm:many-to-one"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="one-to-many" type="orm:one-to-many"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="one-to-one" type="orm:one-to-one"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="many-to-many" type="orm:many-to-many"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="element-collection" type="orm:element-collection"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="embedded" type="orm:embedded"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="transient" type="orm:transient"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="basic"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Basic {
+                FetchType fetch() default EAGER;
+                boolean optional() default true;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="column" type="orm:column"
+                minOccurs="0" /&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="lob" type="orm:lob"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="temporal" type="orm:temporal"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="enumerated" type="orm:enumerated"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="optional" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="cascade-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH,
+                DETACH};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="cascade-all" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-persist" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-merge" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-remove" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-refresh" type="orm:emptyType"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade-detach" type="orm:emptyType"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="collection-table"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface CollectionTable {
+                String name() default "";
+                String catalog() default "";
+                String schema() default "";
+                JoinColumn[] joinColumns() default {};
+                UniqueConstraint[] uniqueConstraints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="join-column" type="orm:join-column"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="unique-constraint" type="orm:unique-constraint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Column {
+                String name() default "";
+                boolean unique() default false;
+                boolean nullable() default true;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                String table() default "";
+                int length() default 255;
+                int precision() default 0; // decimal precision
+                int scale() default 0; // decimal scale
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="unique" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="nullable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="insertable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="updatable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="table" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="length" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="precision" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="scale" type="xsd:int" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="column-result"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({}) @Retention(RUNTIME)
+                public @interface ColumnResult {
+                String name();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="discriminator-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface DiscriminatorColumn {
+                String name() default "DTYPE";
+                DiscriminatorType discriminatorType() default STRING;
+                String columnDefinition() default "";
+                int length() default 31;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="discriminator-type" type="orm:discriminator-type" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="length" type="xsd:int" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="discriminator-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum DiscriminatorType { STRING, CHAR, INTEGER };
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="STRING" /&gt;
+            &lt;xsd:enumeration value="CHAR" /&gt;
+            &lt;xsd:enumeration value="INTEGER" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="discriminator-value"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface DiscriminatorValue {
+                String value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:string" /&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="element-collection"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface ElementCollection {
+                Class targetClass() default void.class;
+                FetchType fetch() default LAZY;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="order-by" type="orm:order-by"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="order-column" type="orm:order-column"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="map-key" type="orm:map-key"
+                    minOccurs="0" /&gt;
+                &lt;xsd:sequence&gt;
+                    &lt;xsd:element name="map-key-class" type="orm:map-key-class"
+                        minOccurs="0" /&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-temporal"
+                            type="orm:temporal" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-enumerated"
+                            type="orm:enumerated" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-attribute-override"
+                            type="orm:attribute-override" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-column"
+                            type="orm:map-key-column" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-join-column"
+                            type="orm:map-key-join-column" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                &lt;/xsd:sequence&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:sequence&gt;
+                    &lt;xsd:element name="column" type="orm:column"
+                        minOccurs="0" /&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="temporal" type="orm:temporal"
+                            minOccurs="0" /&gt;
+                        &lt;xsd:element name="enumerated" type="orm:enumerated"
+                            minOccurs="0" /&gt;
+                        &lt;xsd:element name="lob" type="orm:lob"
+                            minOccurs="0" /&gt;
+                    &lt;/xsd:choice&gt;
+                &lt;/xsd:sequence&gt;
+                &lt;xsd:sequence&gt;
+                    &lt;xsd:element name="attribute-override"
+                        type="orm:attribute-override" minOccurs="0"
+                        maxOccurs="unbounded" /&gt;
+                    &lt;xsd:element name="association-override"
+                        type="orm:association-override" minOccurs="0"
+                        maxOccurs="unbounded" /&gt;
+                &lt;/xsd:sequence&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="collection-table" type="orm:collection-table"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="target-class" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="embeddable"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                Defines the settings and mappings for embeddable objects. Is
+                allowed to be sparsely populated and used in conjunction with
+                the annotations. Alternatively, the metadata-complete attribute
+                can be used to indicate that no annotations are to be processed
+                in the class. If this is the case then the defaulting rules will
+                be recursively applied.
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface Embeddable {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="attributes" type="orm:embeddable-attributes"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="metadata-complete" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="embeddable-attributes"&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="basic" type="orm:basic"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="many-to-one" type="orm:many-to-one"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="one-to-many" type="orm:one-to-many"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="one-to-one" type="orm:one-to-one"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="many-to-many" type="orm:many-to-many"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="element-collection" type="orm:element-collection"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="embedded" type="orm:embedded"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="transient" type="orm:transient"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="embedded"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Embedded {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="attribute-override" type="orm:attribute-override"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="association-override" type="orm:association-override"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="embedded-id"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface EmbeddedId {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="attribute-override" type="orm:attribute-override"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="entity-listener"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                Defines an entity listener to be invoked at lifecycle events
+                for the entities that list this listener.
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-persist" type="orm:pre-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-persist" type="orm:post-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-remove" type="orm:pre-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-remove" type="orm:post-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-update" type="orm:pre-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-update" type="orm:post-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-load" type="orm:post-load"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="entity-listeners"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface EntityListeners {
+                Class[] value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="entity-listener" type="orm:entity-listener"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="entity-result"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({}) @Retention(RUNTIME)
+                public @interface EntityResult {
+                Class entityClass();
+                FieldResult[] fields() default {};
+                String discriminatorColumn() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="field-result" type="orm:field-result"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="entity-class" type="xsd:string"
+            use="required" /&gt;
+        &lt;xsd:attribute name="discriminator-column" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="enum-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum EnumType {
+                ORDINAL,
+                STRING
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="ORDINAL" /&gt;
+            &lt;xsd:enumeration value="STRING" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="enumerated"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Enumerated {
+                EnumType value() default ORDINAL;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="orm:enum-type" /&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="fetch-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum FetchType { LAZY, EAGER };
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="LAZY" /&gt;
+            &lt;xsd:enumeration value="EAGER" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="field-result"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({}) @Retention(RUNTIME)
+                public @interface FieldResult {
+                String name();
+                String column();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="column" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="generated-value"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface GeneratedValue {
+                GenerationType strategy() default AUTO;
+                String generator() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="strategy" type="orm:generation-type" /&gt;
+        &lt;xsd:attribute name="generator" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="generation-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum GenerationType { TABLE, SEQUENCE, IDENTITY, AUTO };
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="TABLE" /&gt;
+            &lt;xsd:enumeration value="SEQUENCE" /&gt;
+            &lt;xsd:enumeration value="IDENTITY" /&gt;
+            &lt;xsd:enumeration value="AUTO" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="id"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Id {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="column" type="orm:column"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="generated-value" type="orm:generated-value"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="temporal" type="orm:temporal"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="table-generator" type="orm:table-generator"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="sequence-generator" type="orm:sequence-generator"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="id-class"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface IdClass {
+                Class value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="inheritance"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface Inheritance {
+                InheritanceType strategy() default SINGLE_TABLE;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="strategy" type="orm:inheritance-type" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="inheritance-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum InheritanceType
+                { SINGLE_TABLE, JOINED, TABLE_PER_CLASS};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="SINGLE_TABLE" /&gt;
+            &lt;xsd:enumeration value="JOINED" /&gt;
+            &lt;xsd:enumeration value="TABLE_PER_CLASS" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="join-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface JoinColumn {
+                String name() default "";
+                String referencedColumnName() default "";
+                boolean unique() default false;
+                boolean nullable() default true;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                String table() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="referenced-column-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="unique" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="nullable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="insertable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="updatable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="table" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="join-table"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface JoinTable {
+                String name() default "";
+                String catalog() default "";
+                String schema() default "";
+                JoinColumn[] joinColumns() default {};
+                JoinColumn[] inverseJoinColumns() default {};
+                UniqueConstraint[] uniqueConstraints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="join-column" type="orm:join-column"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="inverse-join-column" type="orm:join-column"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="unique-constraint" type="orm:unique-constraint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="lob"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Lob {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="lock-mode-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum LockModeType { READ, WRITE, OPTIMISTIC,
+                OPTIMISTIC_FORCE_INCREMENT, PESSIMISTIC_READ,
+                PESSIMISTIC_WRITE,
+                PESSIMISTIC_FORCE_INCREMENT, NONE};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="READ" /&gt;
+            &lt;xsd:enumeration value="WRITE" /&gt;
+            &lt;xsd:enumeration value="OPTIMISTIC" /&gt;
+            &lt;xsd:enumeration value="OPTIMISTIC_FORCE_INCREMENT" /&gt;
+            &lt;xsd:enumeration value="PESSIMISTIC_READ" /&gt;
+            &lt;xsd:enumeration value="PESSIMISTIC_WRITE" /&gt;
+            &lt;xsd:enumeration value="PESSIMISTIC_FORCE_INCREMENT" /&gt;
+            &lt;xsd:enumeration value="NONE" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="many-to-many"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface ManyToMany {
+                Class targetEntity() default void.class;
+                CascadeType[] cascade() default {};
+                FetchType fetch() default LAZY;
+                String mappedBy() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="order-by" type="orm:order-by"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="order-column" type="orm:order-column"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="map-key" type="orm:map-key"
+                    minOccurs="0" /&gt;
+                &lt;xsd:sequence&gt;
+                    &lt;xsd:element name="map-key-class" type="orm:map-key-class"
+                        minOccurs="0" /&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-temporal"
+                            type="orm:temporal" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-enumerated"
+                            type="orm:enumerated" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-attribute-override"
+                            type="orm:attribute-override" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-column"
+                            type="orm:map-key-column" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-join-column"
+                            type="orm:map-key-join-column" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                &lt;/xsd:sequence&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="join-table" type="orm:join-table"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="cascade" type="orm:cascade-type"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="target-entity" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="mapped-by" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="many-to-one"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface ManyToOne {
+                Class targetEntity() default void.class;
+                CascadeType[] cascade() default {};
+                FetchType fetch() default EAGER;
+                boolean optional() default true;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="join-column" type="orm:join-column"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="join-table" type="orm:join-table"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="cascade" type="orm:cascade-type"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="target-entity" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="optional" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="maps-id" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="id" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="map-key"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface MapKey {
+                String name() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="map-key-class"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface MapKeyClass {
+                Class value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="map-key-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface MapKeyColumn {
+                String name() default "";
+                boolean unique() default false;
+                boolean nullable() default false;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                String table() default "";
+                int length() default 255;
+                int precision() default 0; // decimal precision
+                int scale() default 0; // decimal scale
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="unique" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="nullable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="insertable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="updatable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="table" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="length" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="precision" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="scale" type="xsd:int" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="map-key-join-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface MapKeyJoinColumn {
+                String name() default "";
+                String referencedColumnName() default "";
+                boolean unique() default false;
+                boolean nullable() default false;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                String table() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="referenced-column-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="unique" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="nullable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="insertable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="updatable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="table" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="mapped-superclass"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                Defines the settings and mappings for a mapped superclass. Is
+                allowed to be sparsely populated and used in conjunction with
+                the annotations. Alternatively, the metadata-complete attribute
+                can be used to indicate that no annotations are to be processed
+                If this is the case then the defaulting rules will be recursively
+                applied.
+                @Target(TYPE) @Retention(RUNTIME)
+                public @interface MappedSuperclass{}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="id-class" type="orm:id-class"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="exclude-default-listeners"
+                type="orm:emptyType" minOccurs="0" /&gt;
+            &lt;xsd:element name="exclude-superclass-listeners"
+                type="orm:emptyType" minOccurs="0" /&gt;
+            &lt;xsd:element name="entity-listeners" type="orm:entity-listeners"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-persist" type="orm:pre-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-persist" type="orm:post-persist"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-remove" type="orm:pre-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-remove" type="orm:post-remove"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="pre-update" type="orm:pre-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-update" type="orm:post-update"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="post-load" type="orm:post-load"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="attributes" type="orm:attributes"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="class" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="metadata-complete" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="named-native-query"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface NamedNativeQuery {
+                String name();
+                String query();
+                QueryHint[] hints() default {};
+                Class resultClass() default void.class;
+                String resultSetMapping() default ""; //named SqlResultSetMapping
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="query" type="xsd:string" /&gt;
+            &lt;xsd:element name="hint" type="orm:query-hint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="result-class" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="result-set-mapping" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="named-query"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface NamedQuery {
+                String name();
+                String query();
+                LockModeType lockMode() default NONE;
+                QueryHint[] hints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="query" type="xsd:string" /&gt;
+            &lt;xsd:element name="lock-mode" type="orm:lock-mode-type"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="hint" type="orm:query-hint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="one-to-many"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface OneToMany {
+                Class targetEntity() default void.class;
+                CascadeType[] cascade() default {};
+                FetchType fetch() default LAZY;
+                String mappedBy() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="order-by" type="orm:order-by"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="order-column" type="orm:order-column"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="map-key" type="orm:map-key"
+                    minOccurs="0" /&gt;
+                &lt;xsd:sequence&gt;
+                    &lt;xsd:element name="map-key-class" type="orm:map-key-class"
+                        minOccurs="0" /&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-temporal"
+                            type="orm:temporal" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-enumerated"
+                            type="orm:enumerated" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-attribute-override"
+                            type="orm:attribute-override" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                    &lt;xsd:choice&gt;
+                        &lt;xsd:element name="map-key-column"
+                            type="orm:map-key-column" minOccurs="0" /&gt;
+                        &lt;xsd:element name="map-key-join-column"
+                            type="orm:map-key-join-column" minOccurs="0"
+                            maxOccurs="unbounded" /&gt;
+                    &lt;/xsd:choice&gt;
+                &lt;/xsd:sequence&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="join-table" type="orm:join-table"
+                    minOccurs="0" /&gt;
+                &lt;xsd:element name="join-column" type="orm:join-column"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="cascade" type="orm:cascade-type"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="target-entity" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="mapped-by" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="orphan-removal" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="one-to-one"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface OneToOne {
+                Class targetEntity() default void.class;
+                CascadeType[] cascade() default {};
+                FetchType fetch() default EAGER;
+                boolean optional() default true;
+                String mappedBy() default "";
+                boolean orphanRemoval() default false;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:choice&gt;
+                &lt;xsd:element name="primary-key-join-column"
+                    type="orm:primary-key-join-column" minOccurs="0"
+                    maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="join-column" type="orm:join-column"
+                    minOccurs="0" maxOccurs="unbounded" /&gt;
+                &lt;xsd:element name="join-table" type="orm:join-table"
+                    minOccurs="0" /&gt;
+            &lt;/xsd:choice&gt;
+            &lt;xsd:element name="cascade" type="orm:cascade-type"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="target-entity" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="fetch" type="orm:fetch-type" /&gt;
+        &lt;xsd:attribute name="optional" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+        &lt;xsd:attribute name="mapped-by" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="orphan-removal" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="maps-id" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="id" type="xsd:boolean" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="order-by"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface OrderBy {
+                String value() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:string" /&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="order-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface OrderColumn {
+                String name() default "";
+                boolean nullable() default true;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="nullable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="insertable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="updatable" type="xsd:boolean" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="post-load"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PostLoad {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="post-persist"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PostPersist {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="post-remove"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PostRemove {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="post-update"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PostUpdate {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="pre-persist"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PrePersist {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="pre-remove"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PreRemove {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="pre-update"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD}) @Retention(RUNTIME)
+                public @interface PreUpdate {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="method-name" type="xsd:string"
+            use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="primary-key-join-column"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface PrimaryKeyJoinColumn {
+                String name() default "";
+                String referencedColumnName() default "";
+                String columnDefinition() default "";
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="referenced-column-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="column-definition" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="query-hint"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({}) @Retention(RUNTIME)
+                public @interface QueryHint {
+                String name();
+                String value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="value" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="secondary-table"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface SecondaryTable {
+                String name();
+                String catalog() default "";
+                String schema() default "";
+                PrimaryKeyJoinColumn[] pkJoinColumns() default {};
+                UniqueConstraint[] uniqueConstraints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="primary-key-join-column"
+                type="orm:primary-key-join-column" minOccurs="0"
+                maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="unique-constraint" type="orm:unique-constraint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="sequence-generator"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface SequenceGenerator {
+                String name();
+                String sequenceName() default "";
+                String catalog() default "";
+                String schema() default "";
+                int initialValue() default 1;
+                int allocationSize() default 50;
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="sequence-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="initial-value" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="allocation-size" type="xsd:int" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="sql-result-set-mapping"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface SqlResultSetMapping {
+                String name();
+                EntityResult[] entities() default {};
+                ColumnResult[] columns() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="entity-result" type="orm:entity-result"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;xsd:element name="column-result" type="orm:column-result"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="table"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE}) @Retention(RUNTIME)
+                public @interface Table {
+                String name() default "";
+                String catalog() default "";
+                String schema() default "";
+                UniqueConstraint[] uniqueConstraints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="unique-constraint" type="orm:unique-constraint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="table-generator"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface TableGenerator {
+                String name();
+                String table() default "";
+                String catalog() default "";
+                String schema() default "";
+                String pkColumnName() default "";
+                String valueColumnName() default "";
+                String pkColumnValue() default "";
+                int initialValue() default 0;
+                int allocationSize() default 50;
+                UniqueConstraint[] uniqueConstraints() default {};
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="description" type="xsd:string"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="unique-constraint" type="orm:unique-constraint"
+                minOccurs="0" maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="table" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="catalog" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="schema" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="pk-column-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="value-column-name" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="pk-column-value" type="xsd:string" /&gt;
+        &lt;xsd:attribute name="initial-value" type="xsd:int" /&gt;
+        &lt;xsd:attribute name="allocation-size" type="xsd:int" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="temporal"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Temporal {
+                TemporalType value();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="orm:temporal-type" /&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="temporal-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum TemporalType {
+                DATE, // java.sql.Date
+                TIME, // java.sql.Time
+                TIMESTAMP // java.sql.Timestamp
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="DATE" /&gt;
+            &lt;xsd:enumeration value="TIME" /&gt;
+            &lt;xsd:enumeration value="TIMESTAMP" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="transient"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Transient {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="unique-constraint"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({}) @Retention(RUNTIME)
+                public @interface UniqueConstraint {
+                String name() default "";
+                String[] columnNames();
+                }
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="column-name" type="xsd:string"
+                maxOccurs="unbounded" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" /&gt;
+    &lt;/xsd:complexType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:complexType name="version"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface Version {}
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:sequence&gt;
+            &lt;xsd:element name="column" type="orm:column"
+                minOccurs="0" /&gt;
+            &lt;xsd:element name="temporal" type="orm:temporal"
+                minOccurs="0" /&gt;
+        &lt;/xsd:sequence&gt;
+        &lt;xsd:attribute name="name" type="xsd:string" use="required" /&gt;
+        &lt;xsd:attribute name="access" type="orm:access-type" /&gt;
+    &lt;/xsd:complexType&gt;
+&lt;/xsd:schema&gt;
+</programlisting>
+    </section>
+    <section id="jpa_overview_meta_complete">
+        <title>
+            Conclusion
+        </title>
+        <para>
+That exhausts persistence metadata annotations. We present the class definitions
+for our sample model below:
+        </para>
+        <example id="jpa_overview_meta_complete_ex">
+            <title>
+                Complete Metadata
+            </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+public class Magazine {
+
+    @Id private String isbn;
+    @Id private String title;
+    @Version private int version;
+
+    private double price;   // defaults to @Basic
+    private int copiesSold; // defaults to @Basic
+
+    @OneToOne(fetch=FetchType.LAZY, 
+        cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    private Article coverArticle;
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @OrderBy
+    private Collection&lt;Article&gt; articles;
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+    private Company publisher; 
+
+    @Transient private byte[] data;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+public class Article {
+
+    @Id private long id;
+    @Version private int version;
+    
+    private String title;   // defaults to @Basic
+    private byte[] content; // defaults to @Basic
+
+    @ManyToMany(cascade=CascadeType.PERSIST)
+    @OrderBy("lastName, firstName")
+    private Collection&lt;Author&gt; authors;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+public class Company {
+
+    @Id private long id;
+    @Version private int version;
+
+    private String name;     // defaults to @Basic
+    private double revenue;  // defaults to @Basic
+    private Address address; // defaults to @Embedded
+    
+    @OneToMany(mappedBy="publisher", cascade=CascadeType.PERSIST)
+    private Collection&lt;Magazine&gt; mags;
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    private Collection&lt;Subscription&gt; subscriptions;
+
+    ...
+}
+
+@Entity
+public class Author {
+
+    @Id private long id;
+    @Version private int version;
+
+    private String firstName; // defaults to @Basic
+    private double lastName;  // defaults to @Basic
+    private Address address;  // defaults to @Embedded
+    
+    @ManyToMany(mappedBy="authors", cascade=CascadeType.PERSIST)
+    private Collection&lt;Article&gt; arts;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+
+    private String street; // defaults to @Basic
+    private String city;   // defaults to @Basic
+    private String state;  // defaults to @Basic
+    private String zip;    // defaults to @Basic
+
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id private long id;
+    @Version private int version;
+
+    ...
+}
+
+@Entity
+public class Contract
+    extends Document {
+
+    private String terms; // defaults to @Basic
+
+    ...
+}
+
+@Entity
+public class Subscription {
+
+    @Id private long id;
+    @Version private int version;
+
+    private Date startDate; // defaults to @Basic
+    private double payment; // defaults to @Basic
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @MapKey(name="num")
+    private Map&lt;Long,LineItem&gt; lineItems;
+
+    ...
+
+    @Entity
+    public static class LineItem
+        extends Contract {
+
+        private String comments; // defaults to @Basic
+        private double price;    // defaults to @Basic
+        private long num;        // defaults to @Basic
+
+        @ManyToOne
+        private Magazine magazine;
+
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+
+    @Basic(fetch=FetchType.LAZY)
+    private boolean getEliteClub() { ... }
+    public void setEliteClub(boolean elite) { ... }
+
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+
+    public Date getEndDate() { ... }
+    public void setEndDate(Date end) { ... }
+
+    ...
+}
+</programlisting>
+            <para>
+The same metadata declarations in XML:
+            </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;!-- declares a default access type for all entities --&gt;
+    &lt;access-type&gt;FIELD&lt;/access-type&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            &lt;version name="version"/&gt;
+        &lt;/attributes&gt;
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;id-class="org.mag.Magazine$MagazineId"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="isbn"/&gt;
+            &lt;id name="title"/&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="copiesSold"/&gt;
+            &lt;version name="version"/&gt;
+            &lt;many-to-one name="publisher" fetch="LAZY"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/many-to-one&gt;
+            &lt;one-to-many name="articles"&gt;
+                &lt;order-by/&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+            &lt;one-to-one name="coverArticle" fetch="LAZY"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-one&gt;
+            &lt;transient name="data"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+            &lt;basic name="title"/&gt;
+            &lt;basic name="content"/&gt;
+            &lt;version name="version"/&gt;
+            &lt;many-to-many name="articles"&gt;
+                &lt;order-by&gt;lastName, firstName&lt;/order-by&gt;
+            &lt;/many-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="revenue"/&gt;
+            &lt;version name="version"/&gt;
+            &lt;one-to-many name="mags" mapped-by="publisher"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+            &lt;one-to-many name="subscriptions"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+            &lt;basic name="firstName"/&gt;
+            &lt;basic name="lastName"/&gt;
+            &lt;version name="version"/&gt;
+            &lt;many-to-many name="arts" mapped-by="authors"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/many-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="terms"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+            &lt;basic name="payment"/&gt;
+            &lt;basic name="startDate"/&gt;
+            &lt;version name="version"/&gt;
+            &lt;one-to-many name="items"&gt;
+                &lt;map-key name="num"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="comments"/&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="num"/&gt;
+            &lt;many-to-one name="magazine"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"
+        access="PROPERTY"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="eliteClub" fetch="LAZY"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="endDate"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;embeddable class="org.mag.pub.Address"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="street"/&gt;
+            &lt;basic name="city"/&gt;
+            &lt;basic name="state"/&gt;
+            &lt;basic name="zip"/&gt;
+        &lt;/attributes&gt;
+    &lt;/embeddable&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+        </example>
+        <para>
+<xref linkend="jpa_overview_mapping"/> will show you how to map your
+persistent classes to the datastore using additional annotations and XML markup.
+First, however, we turn to the JPA runtime APIs.
+        </para>
+    </section>
+</chapter>

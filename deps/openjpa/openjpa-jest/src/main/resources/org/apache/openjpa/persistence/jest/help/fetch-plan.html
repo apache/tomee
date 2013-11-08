@@ -1,0 +1,51 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<html>
+<link href="help.css" type="text/css" rel="stylesheet">
+<body>
+<h3>Dynamic Fetch Plan</h3>
+
+Specify one or more named fetch plan. Separate multiple names with comma, e.g.
+<p align="center">
+myPlanA, mYPlanB 
+</p> 
+There are two pre-defined plans named: <b>default</b> and <b>all</b>. The <b>default</b> plan that fetches
+all properties of basic type (i.e. <tt>String, int, Date</tt> etc.) and uni-cardinality relations, are 
+active by default. As the plans are additive, to exclude the default plan, you can specify
+<p align="center">
+myPlanA, -default
+</p> 
+
+
+Fetch Plan determines which properties will be fetched when an entity instance is accessed from the data store.
+A plan can traverse relationship path into other entities at arbitrary depth. By default, when an entity
+is fetched, all properties of basic type (i.e. <tt>String, int, Date</tt> etc.) and uni-cardinality relations are
+fetched. 
+<br>
+JPA specification allows <tt>@Fetch.LAZY</tt> and <tt>@Fetch.EAGER</tt> annotation on persistent properties to control 
+fetch behavior. But only <em>statically</em> i.e. at class definition. 
+<p>
+OpenJPA, on the other hand, provides a far richer syntax and semantics to its user to define the
+properties to be fetched through its dynamic Fetch Plan facility. And, more importantly, these
+fetch plans can be modified <em>dynamically</em> per use case basis.
+<p>
+To learn more aboout Fetch Plan, Refer <a href="http://openjpa.apache.org/documentation.html">OpenJPA documentation</a>.
+</body>
+</html>

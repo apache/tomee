@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--   Ant build script for JEE version of OpenBooks                        -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+                    
+<project name="OpenBooks.JEE" default="package">
+	
+	<target name="package"
+		description="Build, package and deploy OpenBooks as a WAR application in an Application Server">
+
+	   <condition property="app.server" value="" else=".${appserver}">		 
+			<equals arg1="${appserver}" arg2="" casesensitive="true" trim="true"/>			
+		</condition>
+		<antcall target="jee.uninstall"/>
+		<mkdir dir="${classes.dir}/META-INF"/>
+		<antcall target="jee.pre-package"/>
+		<war destfile="${target.dir}/openbooks.war" webxml="${rsrc.dir}/META-INF/web.xml" filesonly="true">
+			<fileset dir="${web.dir}"/>
+			<classes dir="${classes.dir}">
+				<include name="META-INF/persistence.xml"/>
+				<include name="openbook/domain/**"/>
+				<include name="openbook/server/**"/>
+				<include name="openbook/util/**"/>
+				<include name="META-INF/persistence.xml"/>
+			</classes>
+			<fileset dir="${rsrc.dir}">
+				<include name="images/Add2Cart.jpg"/>
+				<include name="images/OpenBooks.jpg"/>
+				<include name="images/openjpa-logo-small.png"/>
+				<include name="images/*.gif"/>
+				<include name="images/java_link.png"/>
+			</fileset>
+			<fileset dir="${target.dir}">
+				<include name="generated-html/**"/>
+			</fileset>
+		</war>
+		<antcall target="jee.install"/>
+	</target>
+
+   <target name="jee.uninstall"
+      description="AppServer specific installation">
+   		<subant antfile="build.${build.mode}${app.server}.xml" 
+			    target="uninstall" 
+			    inheritrefs="true" 
+			    inheritall="true"
+			    buildpath="${basedir}"/>
+   </target>
+
+   <target name="uninstall"
+      description="Default app uninstall">
+		<delete file="${deploy.dir}/openbook.war" failonerror="false"/>
+   </target>
+
+   <target name="jee.pre-package"
+      description="AppServer specific pre-packaging.  Occurs before war packaging.">
+   		<subant antfile="build.${build.mode}${app.server}.xml" 
+			    target="pre-package" 
+			    inheritrefs="true" 
+			    inheritall="true"
+			    buildpath="${basedir}"/>
+   </target>
+
+   <target name="pre-package"
+      description="Default application pre-packaging">
+		<copy file="${rsrc.dir}/META-INF/persistence.xml" todir="${classes.dir}/META-INF"/>   
+   </target>
+
+   <target name="jee.install"
+      description="AppServer selective installation.">
+   		<subant antfile="build.${build.mode}${app.server}.xml" 
+			    target="install" 
+			    inheritrefs="true" 
+			    inheritall="true"
+			    buildpath="${basedir}"/>
+   </target>
+   
+   <target name="install"
+      description="Default application installation">
+		<move file="${target.dir}/openbooks.war" todir="${deploy.dir}" overwrite="true"/>
+	</target>
+
+	<target name="compile"
+		description="Compile classes.">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true">
+			<classpath refid="compile.classpath" />
+			<exclude name="jpa/tools/**/*.java"/>
+			<exclude name="openbook/tools/**/*.java"/>
+			<exclude name="openbook/client/**/*.java"/>
+		</javac>
+	</target>
+	
+	<target name="generate-source-with-options">
+		<java2html 
+			sourcepath="${src.dir}" 
+			destDir="${generated.html.dir}" 
+			extension=".html"
+			addLineBreak="false"
+			addExplicitSpace="false"
+			verbose="false">
+			<exclude name="openbook/tools/**/*.java"/>
+			<exclude name="jpa/**/*.java"/>
+			<exclude name="openbook/util/*.java"/>
+		</java2html>
+		<java2html 
+			sourcepath="${generated.src.dir}" 
+			destDir="${generated.html.dir}" 
+			extension=".html"
+			addLineBreak="false"
+			addExplicitSpace="false"
+			verbose="false">
+		</java2html>
+
+	</target>
+	
+</project>

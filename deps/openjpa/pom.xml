@@ -1,0 +1,1173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<!--
+    Maven release plugin requires the project tag to be on a single line.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+      <groupId>org.apache</groupId>
+      <artifactId>apache</artifactId>
+      <version>13</version>
+    </parent>
+
+    <groupId>org.apache.openjpa</groupId>
+    <artifactId>openjpa-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>OpenJPA Parent POM</name>
+    <description>Apache OpenJPA implementation of JSR-317 JPA 2.0</description>
+
+    <!--
+        Changing this version needs to also be done in all children poms
+        See: http://jira.codehaus.org/browse/MNG-624
+    -->
+    <version>2.3.0-SNAPSHOT</version>
+
+    <properties>
+        <java.class.version>1.6</java.class.version>
+        <java.testclass.version>1.6</java.testclass.version>
+
+        <openjpa.version>${project.version}</openjpa.version>
+        <openjpa.Log>DefaultLevel=INFO</openjpa.Log>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <checkstyle.config.location>${project.basedir}${file.separator}..${file.separator}openjpa-project${file.separator}checkstyle.xml</checkstyle.config.location>
+        <checkstyle.suppressions.location>${project.basedir}${file.separator}..${file.separator}openjpa-project${file.separator}suppressions.xml</checkstyle.suppressions.location>
+        
+        <site.deploy.url>scp://people.apache.org/home/${site.deploy.user.name}/public_html/openjpa/${project.version}/staging-site</site.deploy.url>
+        <!-- the test settings can be overridden my specific profiles -->
+        <test.jvm.maxpermsize>512m</test.jvm.maxpermsize>
+        <test.jvm.maxheapsize>1024m</test.jvm.maxheapsize>
+        <test.jvm.arguments>-Xmx${test.jvm.maxheapsize} -XX:MaxPermSize=${test.jvm.maxpermsize} -XX:+HeapDumpOnOutOfMemoryError</test.jvm.arguments>
+        <surefire.jvm.args>${test.jvm.arguments}</surefire.jvm.args>
+        <!-- Setting for openjpa.DynamicEnhancementAgent usage -->
+        <openjpa.DynamicEnhancementAgent>false</openjpa.DynamicEnhancementAgent>
+        <!-- Commons DBCP settings passed in as openjpa.ConnectionProperties -->
+        <dbcp.maxActive>10</dbcp.maxActive>
+        <dbcp.maxIdle>5</dbcp.maxIdle>
+        <dbcp.minIdle>2</dbcp.minIdle>
+        <dbcp.maxWait>10000</dbcp.maxWait>
+        <dbcp.args>MaxActive=${dbcp.maxActive},MaxIdle=${dbcp.maxIdle},MinIdle=${dbcp.minIdle},MaxWait=${dbcp.maxWait}</dbcp.args>
+        <derby.locks.waitTimeout>10</derby.locks.waitTimeout>
+        <derby.locks.deadlockTimeout>5</derby.locks.deadlockTimeout>
+        <!-- Testcase @AllowFailure options:  ignore = silently skip test,
+             log = execute test and log results but don't fail the test,
+             anything else allows the test to execute normally
+        -->
+        <tests.openjpa.allowfailure>ignore</tests.openjpa.allowfailure>
+        <!--turn on sources.jar generation by setting to verify and true -->
+        <createSource>none</createSource>
+        <createSources>false</createSources>
+        <!-- common JDBC driver versions -->
+        <derby.version>10.8.2.2</derby.version>
+        <hsqldb.version>1.8.0.10</hsqldb.version>
+        <mysql.version>5.1.12</mysql.version>
+        <postgresql.version>8.4-701.jdbc3</postgresql.version>
+        <!-- other common versions -->
+        <slf4jVersion>1.6.1</slf4jVersion>
+        <!-- Compile Java source/target class level -->
+        <compile.class.source>${java.class.version}</compile.class.source>
+        <compile.class.target>${java.class.version}</compile.class.target>
+        <compile.testclass.source>${java.testclass.version}</compile.testclass.source>
+        <compile.testclass.target>${java.testclass.version}</compile.testclass.target>
+
+        <maven.javadoc.version>2.9.1</maven.javadoc.version>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache Software License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://www.apache.org</url>
+    </organization>
+
+    <url>http://openjpa.apache.org</url>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/OPENJPA</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://builds.apache.org/job/OpenJPA-trunk-deploy/</url>
+    </ciManagement>
+
+    <inceptionYear>2006</inceptionYear>
+
+    <mailingLists>
+        <mailingList>
+            <name>OpenJPA Developer List</name>
+            <subscribe>dev-subscribe@openjpa.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@openjpa.apache.org</unsubscribe>
+            <post>dev@openjpa.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openjpa-dev/</archive>
+        </mailingList>
+        <mailingList>
+            <name>OpenJPA Users List</name>
+            <subscribe>users-subscribe@openjpa.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@openjpa.apache.org</unsubscribe>
+            <post>users@openjpa.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openjpa-users/</archive>
+        </mailingList>
+        <mailingList>
+            <name>OpenJPA Commits List</name>
+            <subscribe>commits-subscribe@openjpa.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@openjpa.apache.org</unsubscribe>
+            <post>commits@openjpa.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/openjpa-commits/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <distributionManagement>
+      <site>
+        <id>people.apache.org</id>
+            <url>${site.deploy.url}</url>
+      </site>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/openjpa/branches/2.3.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/openjpa/branches/2.3.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/openjpa/branches/2.3.x</url>
+    </scm>
+
+    <modules>
+        <module>openjpa-lib</module>
+        <module>openjpa-kernel</module>
+        <module>openjpa-jdbc</module>
+        <module>openjpa-persistence</module>
+        <module>openjpa-persistence-jdbc</module>
+        <module>openjpa-persistence-locking</module>
+        <module>openjpa-xmlstore</module>
+        <module>openjpa-slice</module>
+        <module>openjpa-jest</module>
+        <module>openjpa</module>
+        <module>openjpa-project</module>
+        <module>openjpa-examples</module>
+        <module>openjpa-integration</module>
+        <module>openjpa-all</module>
+        <module>openjpa-tools</module>
+    </modules>
+
+    <profiles>
+        <!-- ================ -->
+        <!--  Build Profiles  -->
+        <!-- ================ -->
+
+        <!-- Override some release settings inherited from apache-7.pom -->
+        <profile>
+            <id>apache-release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                </property>
+            </activation>
+            <properties>
+                <!--turn on sources.jar generation -->
+                <createSource>verify</createSource>
+                <createSources>true</createSources>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.rat</groupId>
+                        <artifactId>apache-rat-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <excludeSubProjects>false</excludeSubProjects>
+                            <numUnapprovedLicenses>0</numUnapprovedLicenses>
+                            <excludes>
+                                <!-- comments are usupported in services files -->
+                                <exclude>**/javax.persistence.spi.PersistenceProvider</exclude>
+                                <exclude>**/javax.annotation.processing.Processor</exclude>
+                                <!-- comments are usupported by our rsrc parser -->
+                                <exclude>**/*.rsrc</exclude>
+                                <!-- comments are usupported in these files -->
+                                <exclude>**/org.apache.openjpa.revision.properties</exclude>
+                                <exclude>scripts/*.list</exclude>
+                                <exclude>scripts/*.options</exclude>
+                                <exclude>scripts/*.dict</exclude>
+                                <!-- generated content -->
+                                <exclude>**/.*/**</exclude>
+                                <exclude>**/target/**/*</exclude>
+                                <exclude>**/dependency-reduced-pom.xml</exclude>
+                                <exclude>**/*.log</exclude>
+                                <exclude>**/maven-eclipse.xml</exclude>
+                                <exclude>**/rat.txt</exclude>
+                                <exclude>release.properties</exclude>
+                                <exclude>DEPENDENCIES</exclude>
+                                <!-- Exclude internal build-only repository -->
+                                <exclude>**/internal-repository/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>sign-release</id>
+            <activation>
+                <property>
+                    <name>sign-release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            Generate the documentation using the YDoc UML generation plugin.
+            Assumes you have the YDoc libraries locally, as well as a valid
+            YDoc license file. Example usage for building the docs:
+
+            mvn process-classes -Pydoc-profile,javadoc-profile -Dydoc.home=${HOME}/.m2/privaterepos/ydoc/ydoc-2.2_04-jdk1.5 -Dydoc.license=${HOME}/.m2/privaterepos/ydoc/ydoc.license
+        -->
+        <profile>
+            <id>ydoc-profile</id>
+            <properties>
+                <javadoc.additionalparam>
+                    -generic
+                    -umlautogen
+                    -tag param
+                    -tag return
+                    -tag see
+                    -ytag y.uml
+                    -license ${ydoc.license}
+                    -filter ydoc.filters.ExcludeFilter
+                    -filterpath ${ydoc.home}/lib/ydoc.jar
+                    -doclet ydoc.doclets.YStandard
+                    -docletpath ${ydoc.home}/lib/ydoc.jar${path.separator}${ydoc.home}/lib/class2svg.jar${path.separator}${ydoc.home}/resources
+                    ${ydoc.params}
+                </javadoc.additionalparam>
+            </properties>
+        </profile>
+
+        <profile>
+            <!--
+                Javadoc profile. Docs can be built by running:
+                    mvn process-resources -Dtest=false -Pjavadoc-profile
+            -->
+            <id>javadoc-profile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+            <activation>
+                <property>
+                    <name>builddocs</name>
+                    <value>true</value>
+                </property>
+            </activation>
+        </profile>
+
+        <!-- =============== -->
+        <!--  Test Profiles  -->
+        <!-- =============== -->
+        <profile>
+            <id>debug</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <test.jvm.arguments>-Xmx${test.jvm.maxheapsize} -XX:MaxPermSize=${test.jvm.maxpermsize} -agentlib:jdwp=transport=dt_socket,server=y,address=8000</test.jvm.arguments>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>enable-security</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <test.env>-Dtest.basedir=${basedir}/..</test.env>
+                <policy.file>${basedir}/../openjpa-persistence-jdbc/src/test/resources/j2.security.test.policy</policy.file>
+                <surefire.jvm.args>-Djava.security.manager -Djava.security.policy=${policy.file} ${test.env} ${test.jvm.arguments}</surefire.jvm.args>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>test-dynamic-enhancer</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <test.env>-Dtest.basedir=${basedir}/..</test.env>
+                <policy.file>${basedir}/../openjpa-persistence-jdbc/src/test/resources/j2.security.test.policy</policy.file>
+                <surefire.jvm.args>-Djava.security.manager -Djava.security.policy=${policy.file} ${test.env} ${test.jvm.arguments}</surefire.jvm.args>
+            </properties>
+            <build>
+                <plugins>
+                   <plugin>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-surefire-plugin</artifactId>
+                       <configuration>
+                           <argLine>${surefire.jvm.args}</argLine>
+                           <includes>
+                               <include />
+                           </includes>
+                       </configuration>
+                   </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Default profile for testing with an embedded Apache Derby DB -->
+        <profile>
+            <!--
+                Optionally, you can override the following properties:
+                    -Dderby.version=10.2.2.0
+            -->
+            <id>test-derby</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            <property>
+                <name>test-derby</name>
+            </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                    <version>${derby.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>org.apache.derby.jdbc.EmbeddedDriver</connection.driver.name>
+                <connection.url>jdbc:derby:target/database/openjpa-derby-database;create=true</connection.url>
+                <connection.username />
+                <connection.password />
+                <!-- Tests are much faster without shutting derby down at the end of each test. -->
+                <jdbc.DBDictionary>ShutdownOnClose=false</jdbc.DBDictionary>
+                <!-- TCK specific properties -->
+                <tck.db.name>derby</tck.db.name>
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with an In-Memory Apache Derby DB -->
+        <profile>
+            <!--
+                Optionally, you can override the following properties:
+                    -Dderby.version=10.5.3.0_1
+            -->
+            <id>test-derbymem</id>
+            <activation>
+                <property>
+                    <name>test-derbymem</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                    <version>${derby.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <connection.driver.name>org.apache.derby.jdbc.EmbeddedDriver</connection.driver.name>
+                <connection.url>jdbc:derby:memory:openjpa-derby-inmem-database;create=true</connection.url>
+                <connection.username />
+                <connection.password />
+                <!-- Tests are much faster without shutting derby down at the end of each test. -->
+                <jdbc.DBDictionary>ShutdownOnClose=false</jdbc.DBDictionary>
+            </properties>
+        </profile>
+
+        <!-- Profile for testing with Apache Derby DB network server -->
+        <profile>
+            <!--
+                Example Derby Network Server profile.
+                You must manually start a Derby network server instance and
+                also set the following properties:
+                    -Dopenjpa.derbynet.url=jdbc:derby://<HOST>:<PORT>/<DBNAME>;\
+                        create=true
+
+                Optionally, you can override the following properties:
+                    -Dopenjpa.derbynet.driver=org.apache.derby.jdbc.ClientXADataSource
+                    -Dopenjpa.derbynet.username=
+                    -Dopenjpa.derbynet.password=
+                    -Dderby.version=10.2.2.0
+            -->
+            <id>test-derbynet</id>
+            <activation>
+                <property>
+                    <name>test-derbynet</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derbyclient</artifactId>
+                    <version>${derby.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <openjpa.derbynet.url>jdbc:derby://localhost:1527/openjpa20;create=true;traceDirectory=target;traceFile=derby.log</openjpa.derbynet.url>
+                <openjpa.derbynet.driver>org.apache.derby.jdbc.ClientDriver</openjpa.derbynet.driver>
+                <!-- Note: commons-dbcp requires dummy values for uid/pwd -->
+                <openjpa.derbynet.username>uid</openjpa.derbynet.username>
+                <openjpa.derbynet.password>pwd</openjpa.derbynet.password>
+                <connection.driver.name>${openjpa.derbynet.driver}</connection.driver.name>
+                <connection.url>${openjpa.derbynet.url}</connection.url>
+                <connection.username>${openjpa.derbynet.username}</connection.username>
+                <connection.password>${openjpa.derbynet.password}</connection.password>
+                <jdbc.DBDictionary />
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- default versions for dependencies that child modules may include -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-pool</groupId>
+                <artifactId>commons-pool</artifactId>
+                <version>1.5.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.serp</groupId>
+                <artifactId>serp</artifactId>
+                <version>1.14.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-validation_1.0_spec</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.bval</groupId>
+                <artifactId>org.apache.bval.bundle</artifactId>
+                <version>0.3-incubating</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.8.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta-regexp</groupId>
+                <artifactId>jakarta-regexp</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4jVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock-junit3</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>3.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+
+        <pluginManagement>
+            <plugins>
+                <!-- apache-7.pom default of 2.0.2 fails for JDK5 testing -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${compile.class.source}</source>
+                        <target>${compile.class.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <argLine>${surefire.jvm.args}</argLine>
+                        <useFile>false</useFile>
+                        <trimStackTrace>false</trimStackTrace>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                    <systemProperties>
+                        <property>
+                            <name>openjpa.Log</name>
+                            <value>${openjpa.Log}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.DynamicEnhancementAgent</name>
+                            <value>${openjpa.DynamicEnhancementAgent}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.ConnectionDriverName</name>
+                            <value>${connection.driver.name}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.ConnectionURL</name>
+                            <value>${connection.url}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.ConnectionUserName</name>
+                            <value>${connection.username}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.ConnectionPassword</name>
+                            <value>${connection.password}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.jdbc.DBDictionary</name>
+                            <value>${jdbc.DBDictionary}</value>
+                        </property>
+                        <property>
+                            <name>derby.stream.error.file</name>
+                            <value>target/derby.log</value>
+                        </property>
+                        <property>
+                            <name>derby.locks.deadlockTimeout</name>
+                            <value>${derby.locks.deadlockTimeout}</value>
+                        </property>
+                        <property>
+                            <name>derby.locks.waitTimeout</name>
+                            <value>${derby.locks.waitTimeout}</value>
+                        </property>
+                        <property>
+                            <name>openjpa.ConnectionProperties</name>
+                            <value>${dbcp.args}</value>
+                        </property>
+                        <property>
+                            <name>tests.openjpa.allowfailure</name>
+                            <value>${tests.openjpa.allowfailure}</value>
+                        </property>
+                    </systemProperties>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.0-beta-4</version>
+                    <configuration>
+                        <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                        <revisionOnScmFailure>offline</revisionOnScmFailure>
+                        <useLastCommittedRevision>true</useLastCommittedRevision>
+                        <timestampFormat>{0,date,long} at {0,time,short}</timestampFormat>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <!-- inherited from apache-7.pom, but need config updates -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.4.2</version>
+                    <configuration>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <goals>deploy javadoc:aggregate site site-deploy</goals>
+                        <arguments>-Papache-release,docbook-profile,test-derby,bval</arguments>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-jsch</artifactId>
+                            <version>1.7.1</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>ant-contrib</groupId>
+                            <artifactId>ant-contrib</artifactId>
+                            <version>1.0b3</version>
+                            <!-- tries to pull in older ant-1.5.jar -->
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>ant</groupId>
+                                    <artifactId>ant</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>taglist-maven-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>ianal-maven-plugin</artifactId>
+                    <version>1.0-alpha-1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>verify-legal-files</goal>
+                            </goals>
+                            <configuration>
+                                <!-- Fail the build if any artifacts are missing legal files -->
+                                <strict>true</strict>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>2.6</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-velocity</artifactId>
+                            <version>1.1.5</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.1</version>
+                    <executions>
+                        <execution>
+                            <id>default-jar</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                       <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    </manifest>
+                                    <manifestEntries>
+                                        <Implementation-Build>${buildNumber}</Implementation-Build>
+                                        <Implementation-Date>${timestamp}</Implementation-Date>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>attach-tests</id>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>2.0.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <instructions>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Bundle-DocURL>${project.url}</Bundle-DocURL>
+                        </instructions>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <additionalparam>
+                            ${javadoc.additionalparam}
+                        </additionalparam>
+                        <subpackages>org.apache.openjpa</subpackages>
+                        <verbose>false</verbose>
+                        <maxmemory>512m</maxmemory>
+                        <links>
+                            <link>http://download.oracle.com/javase/6/docs/api/</link>
+                            <link>http://download.oracle.com/javaee/6/api/</link>
+                            <link>http://commons.apache.org/collections/api-release/</link>
+                        </links>
+                    </configuration>
+                </plugin>
+                <!-- Newer versions of plugin will cause PDF build failures -->
+                <plugin>
+                    <groupId>com.agilejava.docbkx</groupId>
+                    <artifactId>docbkx-maven-plugin</artifactId>
+                    <version>2.0.13</version>
+                </plugin>
+                
+                <!-- Ignore/Execute plugin execution -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+
+                                <!--checkstyle plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-checkstyle-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>checkstyle</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--enforcer plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--javadoc plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-javadoc-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>javadoc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--maven plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>buildnumber-maven-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>create</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--javacc plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>javacc-maven-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>jjtree-javacc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--maven-antrun plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--enhance plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.openjpa</groupId>
+                                        <artifactId>openjpa-maven-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>enhance</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--test-enhance plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.openjpa</groupId>
+                                        <artifactId>openjpa-maven-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>test-enhance</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+
+                                <!--unpack plugin -->
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>unpack</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test-source-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <source>${compile.testclass.source}</source>
+                            <target>${compile.testclass.target}</target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>ianal-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                        <configuration>
+                            <failsOnError>true</failsOnError>
+                            <consoleOutput>true</consoleOutput>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <excludes>**/*_.java</excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[2.2.1,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.6,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludeSubProjects>false</excludeSubProjects>
+                    <numUnapprovedLicenses>0</numUnapprovedLicenses>
+                    <excludes>
+                        <!-- generated content -->
+                        <exclude>**/.*/**</exclude>
+                        <exclude>**/target/**/*</exclude>
+                    </excludes>
+                    <includes>
+                        <!-- only check common source files -->
+                        <include>**/src/**/*.bat</include>
+                        <include>**/src/**/*.css</include>
+                        <include>**/src/**/*.html</include>
+                        <include>**/src/**/*.java</include>
+                        <include>**/src/**/*.js</include>
+                        <include>**/src/**/*.jsp</include>
+                        <include>**/src/**/*.properties</include>
+                        <include>**/src/**/*.sh</include>
+                        <include>**/src/**/*.txt</include>
+                        <include>**/src/**/*.vm</include>
+                        <include>**/src/**/*.xml</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.version}</version>
+                <configuration>
+                    <show>package</show>
+                    <quiet>true</quiet>
+                    <source>${java.class.version}</source>
+                    <links>
+                        <link>http://download.oracle.com/javase/6/docs/api/</link>
+                        <link>http://download.oracle.com/javaee/6/api/</link>
+                        <link>http://commons.apache.org/collections/api-release/</link>
+                    </links>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>

@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="ref_guide_slice">
+  <title>
+    Slice: Distributed Persistence
+  </title>
+  <para>
+  The standard JPA runtime environment works with a <emphasis>single</emphasis>
+  database instance. <emphasis>Slice</emphasis> is a plug-in module for OpenJPA  
+  to work with <emphasis>multiple</emphasis> databases within the same  
+  transaction. Following sections describe the features and usage of Slice for 
+  distributed database environment.
+  </para>
+  
+  <section id="slice_overview">
+    <title>Overview</title>
+    <para>
+    Enterprise applications are increasingly deployed in distributed database
+    environment. A distributed, horizontally-partitioned 
+    database environment can be an effective scaling strategy for growing data 
+	volume, to support multiple clients on a multi-tenant hosting platform and 
+	many other practical scenarios that can benefit from data partitioning.
+    </para>
+    
+    <para>
+    Any JPA-based user application has to address demanding technical and 
+    conceptual challenges to interact with multiple physical databases
+    within a single transaction. 
+    OpenJPA Slice encapsulates the complexity of distributed database environment 
+    via the abstraction of <emphasis>virtual</emphasis> database which internally 
+    manages multiple physical database instances referred  
+    as <emphasis>slice</emphasis>. 
+    <emphasis>Virtualization</emphasis> of distributed databases makes OpenJPA 
+	object management kernel and the user application to work in the same way as 
+	in the case of a single physical database.
+    </para>
+  </section>
+  
+    <section id="features_and_limitations">
+       <title>Salient Features</title>
+         <section><title>Transparency</title>
+            <para>
+			  The primary design objective for Slice is to make the user 
+			  application transparent to the change in storage strategy where 
+			  data resides in multiple (possibly heterogeneous) databases instead
+			  of a single database. Slice achieves this transparency by 
+			  virtualization of multiple databases as a single database such 
+			  that OpenJPA object management kernel continues to interact in
+			  exactly the same manner with storage layer. Similarly, 
+              the existing application or the persistent domain model requires 
+              <emphasis>no change</emphasis> to upgrade from a single database 
+              to a distributed database environment. 
+            </para>
+			<para>
+			  An existing application developed for a single database can be 
+			  adapted to work with multiple databases purely by configuring
+			  a persistence unit via <classname>META-INF/persistence.xml</classname>. 
+			</para>
+         </section>
+         
+		<section><title>Scaling</title>
+			<para>
+			The primary performance characteristics for Slice is to scale against
+			growing data volume by <emphasis>horizontal</emphasis> partitioning data 
+			across many databases.  
+			</para>
+			<para>
+			Slice executes the database operations such as query or flush <emphasis>in
+			parallel</emphasis> across each physical database. Hence, scaling characteristics 
+			against data volume are bound by the size of the maximum data 
+			partition instead of the size of the entire data set. The use cases
+			where the data is naturally amenable to horizontal partitions, 
+			for example, by temporal interval (e.g. Purchase Orders per month) 
+			or by geographical regions (e.g. Customer by Zip Code) can derive
+			significant performance benefit and favorable scaling behavior by 
+			using Slice.     
+			</para>
+		</section>
+		
+        <section><title>Distributed Query</title>
+            <para>
+            The queries are executed in parallel across one or more slices and the 
+			individual query results are merged into a single list before being
+			returned to the caller application. The <emphasis>merge</emphasis> operation is
+			more complex for the queries that involve sorting and/or specify a 
+			range. Slice supports both sorting and range queries. 
+            </para>
+			<para>
+            Slice also supports aggregate queries where the aggregate operation 
+			is <emphasis>commutative</emphasis> to partitioning such as 
+			<classname>COUNT()</classname> or <classname>MAX()</classname> but not <classname>AVG()</classname>. 
+            </para>
+         
+            <para>
+            By default, any query is executed against all available slices. 
+			However, the application can target the query only to a subset of 
+			slices by setting <emphasis>hint</emphasis> on <classname>javax.persistence.Query</classname>. 
+			The hint key is  <classname>openjpa.hint.slice.Target</classname> and 
+            hint value is an array of slice identifiers. The following 
+            example shows how to target a query only to a pair of slices 
+			with logical identifier <classname>"One"</classname> and <classname>"Two"</classname>.
+                          
+            <programlisting>
+              <![CDATA[EntityManager em = ...;
+              em.getTransaction().begin();
+              String hint = "openjpa.hint.slice.Target";
+              Query query = em.createQuery("SELECT p FROM PObject")
+				              .setHint(hint, new String[]{"One", "Two"});
+              List result = query.getResultList();
+              // verify that each instance is originating from the hinted slices
+              for (Object pc : result) {
+                 String sliceOrigin = SlicePersistence.getSlice(pc);
+                 assertTrue ("One".equals(sliceOrigin) || "Two".equals(sliceOrigin));
+              }
+              ]]>
+            </programlisting> 
+            </para>
+            
+            <para>
+            To confine queries to a subset of slices via setting query hints can be considered
+            intrusive to existing application. The alternative means of targeting queries is to 
+            configure a <emphasis>Query Target Policy</emphasis>. This policy is configured 
+            via plug-in property <classname>openjpa.slice.QueryTargetPolicy</classname>. The
+            plug-in property is fully-qualified class name of an implementation
+            for <classname>org.apache.openjpa.slice.QueryTargetPolicy</classname> interface.
+            This interface contract allows a user application to target a query to a subset 
+            of slices based on the query and its bound parameters. The query target policy is consulted
+            only when no explicit target hint is set on the query. By default, the policy 
+            executes a query on all available slices.  
+            </para>
+            
+            <para>
+            A similar policy interface <classname>org.apache.openjpa.slice.FinderTargetPolicy</classname>
+            is available to target queries that originate from <classname>find()</classname>
+            by primary key. This finder target policy is consulted
+            only when no explicit target hint is set on the current fetch plan. By default, the policy 
+            executes a query on all available slices to find an instance by its primary key.    
+            </para>
+         </section>
+		
+         <section><title>Data Distribution</title>
+            <para>
+             The user application decides how the newly persistent instances be 
+             distributed across the slices. The user application specifies the 
+			 data distribution policy by implementing  
+             <classname>org.apache.openjpa.slice.DistributionPolicy</classname>.
+			
+			 The  <classname>DistributionPolicy</classname> interface
+			 is simple with a single method. The complete listing of the
+			 documented interface follows:
+		   <programlisting> 
+		   <![CDATA[ 
+			public interface DistributionPolicy {
+			/**
+			 * Gets the name of the slice where the given newly persistent 
+			 * instance will be stored.
+			 *  
+			 * @param pc The newly persistent or to-be-merged object. 
+			 * @param slices name of the configured slices.
+			 * @param context persistence context managing the given instance.
+			 * 
+			 * @return identifier of the slice. This name must match one of the
+			 * configured slice names. 
+			 * @see DistributedConfiguration#getSliceNames()
+			 */
+			String distribute(Object pc, List<String> slices, Object context);
+			}
+		]]>
+       </programlisting>
+        </para>
+			 
+		 <para>
+			 Slice runtime invokes this user-supplied method for the newly
+			 persistent instance that is explicit argument of the 
+			 <classname>javax.persistence.EntityManager.persist(Object pc)</classname>
+			 method. The user application must return a valid slice name from
+			 this method to designate the target slice for the given instance.
+			 The data distribution policy may be based on the attribute 
+			 of the data itself. For example, all Customer whose first name 
+			 begins with character 'A' to 'M' will be stored in one slice 
+			 while names beginning with 'N' to 'Z' will be stored in another 
+			 slice. The noteworthy aspect of such policy implementation is 
+			 the attribute values that participate in 
+			 the distribution policy logic should be set before invoking 
+			 <classname>EntityManager.persist()</classname> method.
+		 </para>
+             
+		<para>
+			The user application needs to specify the target slice <emphasis>only</emphasis>
+			for the <emphasis>root</emphasis> instance i.e. the explicit argument for the
+			<classname>EntityManager.persist(Object pc)</classname> method. Slice computes
+			the transitive closure of the graph i.e. the set of all instances 
+			directly or indirectly reachable from the root instance and stores
+			them in the same target slice.  
+		</para>
+			
+		 <para> 
+		 Slice tracks the original database for existing instances. When
+		 an application issues a query, the resultant instances can be loaded 
+		 from different slices. As Slice tracks the original slice for each
+		 instance, any subsequent update to an instance is committed to the 
+		 appropriate original database slice. 
+		</para>
+            
+            <note>
+            <para>
+            You can find the original slice of an instance <classname>pc</classname> by 
+            the static utility method  
+            <methodname>SlicePersistence.getSlice(pc)</methodname>.
+            This method returns the slice identifier associated with the
+            given <emphasis>managed</emphasis> instance. If the instance is not
+            being managed then the method return null because any unmanaged or
+            detached instance is not associated with any slice. 
+            </para>
+            </note>
+         </section>
+         
+		<section><title>Data Replication</title>
+			<para>
+			While Slice ensures that the transitive closure is stored in the 
+			same slice, there can be data elements that are commonly referred by
+			many instances such as Country or Currency code. Such quasi-static 
+			master data can be stored as identical copies in multiple slices. 
+			The user application must enumerate the replicated entity type names in
+			<classname>openjpa.slice.ReplicatedTypes</classname> as a comma-separated list
+			and implement a <classname>org.apache.openjpa.slice.ReplicationPolicy</classname> 
+			interface. The <classname>ReplicationPolicy</classname> interface 
+			is quite similar to <classname>DistributionPolicy</classname> 
+			interface except it returns an array of target slice names instead
+			of a single slice. 
+			<programlisting> 
+           <![CDATA[  
+			 String[] replicate(Object pc, List<String> slices, Object context);
+        ]]>
+       </programlisting>
+		</para>
+			<para>
+				The default implementation assumes that replicated instances are
+				stored in all available slices. If any such replicated instance
+				is modified then the modification is updated to all target slices
+				to maintain the critical assumption that the state of a replicated 
+				instance is identical across all its target slices. 
+			</para>
+		</section>
+		
+         <section><title>Heterogeneous Database</title>
+            <para> 
+              Each slice can be configured independently with its own JDBC 
+              driver and other connection parameters. Hence the target database 
+              environment can constitute of heterogeneous databases. 
+            </para>
+        </section>         
+         
+         <section><title>Distributed Transaction</title>
+            <para> 
+            The database slices participate in a global transaction provided
+            each slice is configured with a XA-compliant JDBC driver, even
+            when the persistence unit is configured for <classname>RESOURCE_LOCAL</classname>
+            transaction.
+            </para>
+            <para>
+            <warning>
+            If any of the configured slices is not XA-compliant <emphasis>and</emphasis> 
+            the persistence unit is configured for <classname>RESOURCE_LOCAL</classname>
+            transaction then each slice is committed without any two-phase
+            commit protocol. If commit on any slice fails, then atomic nature of
+            the transaction is not ensured.
+            </warning>
+            </para>
+          </section>
+        
+         <section id="collocation_constraint"><title>Collocation Constraint</title>
+            <para> 
+            No relationship can exist across database slices. In O-R mapping parlance,
+            this condition translates to the limitation that the transitive closure of an object graph must be 
+            <emphasis>collocated</emphasis> in the same database.
+            For example, consider a domain model where Person relates to Address.
+            Person X refers to Address A while Person Y refers to Address B. 
+            Collocation Constraint means that <emphasis>both</emphasis> X and A 
+            must be stored in the same
+            database slice. Similarly Y and B must be stored in a single slice.
+            </para>
+            <para>
+            Slice, however, helps to maintain collocation constraint automatically.
+            The instances in the closure set of any newly persistent instance 
+            reachable via cascaded relationship is stored in the same slice.
+            The user-defined distribution policy requires to supply the slice 
+            for the root instance only.
+            </para>
+         </section>
+    </section>
+  
+  <section id="slice_configuration">
+    <title>Usage</title>
+    <para>
+     Slice is activated via the following property settings:
+    </para>
+    <section>
+      <title>How to activate Slice Runtime?</title>
+      <para>
+       The basic configuration property is 
+       <programlisting> 
+        <![CDATA[ <property name="openjpa.BrokerFactory" value="slice"/>]]>
+       </programlisting> 
+       This critical configuration activates a specialized object management 
+	   kernel that can work against multiple databases.  
+      </para>
+    </section> 
+    
+    <section>
+      <title>How to configure each database slice?</title>
+      <para>
+      Each database slice is identified by a logical name unique within a
+      persistent unit. The list of the slices is specified by 
+      <classname>openjpa.slice.Names</classname> property.
+      For example, specify three slices named <classname>"One"</classname>, 
+      <classname>"Two"</classname> and <classname>"Three"</classname> as follows:
+      <programlisting>
+      <![CDATA[ <property name="openjpa.slice.Names" value="One, Two, Three"/>]]>
+      </programlisting>
+      </para>
+      <para>
+      This property is not mandatory. If this property is not specified then
+      the configuration is scanned for logical slice names. Any property
+      <classname>"abc"</classname> of the form <classname>openjpa.slice.XYZ.abc</classname> will 
+      register a slice with logical
+      name <classname>"XYZ"</classname>.
+      </para>
+      <para>
+      The order of the names is significant when no <classname>openjpa.slice.Master</classname> 
+      property is not specified. The persistence unit is then scanned to find
+      all configured slice names and they are ordered alphabetically.  
+      </para>
+      
+      <para>
+       Each database slice properties can be configured independently. 
+       For example, the
+       following configuration will register two slices with logical name 
+       <classname>One</classname> and <classname>Two</classname>.
+       <programlisting> 
+        <![CDATA[<property name="openjpa.slice.One.ConnectionURL" value="jdbc:mysql:localhost//slice1"/>
+        <property name="openjpa.slice.Two.ConnectionURL" value="jdbc:mysql:localhost//slice2"/>]]>
+       </programlisting> 
+      </para>
+      
+      <para>
+       Any OpenJPA specific property can be configured per slice basis. 
+       For example, the following configuration will use two different JDBC 
+       drivers for slice <classname>One</classname> and <classname>Two</classname>.
+       <programlisting> 
+        <![CDATA[<property name="openjpa.slice.One.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
+        <property name="openjpa.slice.Two.ConnectionDriverName" value="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource"/>]]>
+       </programlisting> 
+      </para>
+      
+      <para>
+        Any property if unspecified for a particular slice will be defaulted by
+        corresponding OpenJPA property. For example, consider following three slices
+        <programlisting> 
+         <![CDATA[<property name="openjpa.slice.One.ConnectionURL"          value="jdbc:mysql:localhost//slice1"/>
+         <property name="openjpa.slice.Two.ConnectionURL"          value="jdbc:mysql:localhost//slice2"/>
+         <property name="openjpa.slice.Three.ConnectionURL"        value="jdbc:oracle:localhost//slice3"/>
+
+         <property name="openjpa.ConnectionDriverName"     value="com.mysql.jdbc.Driver"/>
+         <property name="openjpa.slice.Three.ConnectionDriverName" value="oracle.jdbc.Driver"/>]]>
+        </programlisting> 
+        In this example, <classname>Three</classname> will use slice-specific
+        <classname>oracle.jdbc.Driver</classname> driver while slice
+        <classname>One</classname> and <classname>Two</classname> will use
+        the driver <classname>com.mysql.jdbc.Driver</classname> as 
+        specified by <classname>openjpa.ConnectionDriverName</classname> 
+        property value.
+    </para>
+
+        <para>
+            A connection pool may also be used with Slice by using the <literal>openjpa.ConnectionProperties</literal> property.
+            For example to use commons-dbcp with Derby you might use the following properties : 
+            <programlisting> 
+                <![CDATA[<property name="openjpa.BrokerFactory" value="slice"/>
+                <property name="openjpa.ConnectionDriverName" value="org.apache.commons.dbcp.BasicDataSource"/>
+                <property name="openjpa.slice.Names" value="One,Two"/>
+                <property name="openjpa.slice.Master" value="Two"/>
+ 
+                <property name="openjpa.slice.One.ConnectionProperties" value="Url=jdbc:derby:target/database/openjpa-slice1;create=true, DriverClassName=org.apache.derby.jdbc.EmbeddedDriver"/>
+                <property name="openjpa.slice.Two.ConnectionProperties" value="Url=jdbc:derby:target/database/openjpa-slice2;create=true, DriverClassName=org.apache.derby.jdbc.EmbeddedDriver"/>
+ 
+                <property name="openjpa.jdbc.DBDictionary" value="derby"/>]]>
+            </programlisting>
+            <note>
+                <para>
+                    Be aware that you need to set the DBDictionary when using commons-dbcp.
+                </para>
+            </note>
+        </para>
+    </section>
+     
+    <section id="distribution_policy">
+       <title>Implement DistributionPolicy interface</title>
+       <para>
+        Slice needs to determine which slice will persist a new instance. 
+        The application can only decide this policy (for example, 
+        all PurchaseOrders before April 30 goes to slice <classname>One</classname>,
+        all the rest goes to slice <classname>Two</classname>). This is why
+        the application has to implement 
+        <classname>org.apache.openjpa.slice.DistributionPolicy</classname> and
+        specify the implementation class in configuration
+        <programlisting> 
+         <![CDATA[ <property name="openjpa.slice.DistributionPolicy" value="com.acme.foo.MyOptimialDistributionPolicy"/>]]>
+        </programlisting>
+       </para>
+       
+       <para>
+        The interface <classname>org.apache.openjpa.slice.DistributionPolicy</classname>
+        is simple with a single method. The complete listing of the
+        documented interface follows:
+       <programlisting> 
+       <![CDATA[ 
+public interface DistributionPolicy {
+    /**
+     * Gets the name of the slice where a given instance will be stored.
+     *  
+     * @param pc The newly persistent or to-be-merged object. 
+     * @param slices name of the configured slices.
+     * @param context persistence context managing the given instance.
+     * 
+     * @return identifier of the slice. This name must match one of the
+     * configured slice names. 
+     * @see DistributedConfiguration#getSliceNames()
+     */
+    String distribute(Object pc, List<String> slices, Object context);
+}
+]]>
+       </programlisting>
+        </para>
+        
+        <para>
+        While implementing a distribution policy the most important thing to
+        remember is <link linkend="collocation_constraint">collocation constraint</link>.
+        Because Slice can not establish or query any cross-database relationship, all the
+        related instances must be stored in the same database slice. 
+ 
+        Slice can determine the closure of a root object by traversal of 
+        cascaded relationships. Hence user-defined policy has to only decide the
+        database for the root instance that is the explicit argument to 
+        <methodname>EntityManager.persist()</methodname> call.
+        Slice will ensure that all other related instances that get persisted by cascade
+        are assigned to the same database slice as that of the root instance.
+        However, the user-defined distribution policy must return the
+        same slice identifier for the instances that are logically related but
+        not cascaded for persist. 
+        </para>
+    </section>
+    
+    <section id="replication_policy">
+       <title>Implement ReplicationPolicy interface</title>
+		<para>
+			The entities that are enumerated in <classname>openjpa.slice.ReplicatedTypes</classname>
+			property can be stored in multiple slices as identical copies.
+        Specify the implementation class of <classname>ReplicationPolicy</classname> in configuration as
+        <programlisting> 
+         <![CDATA[ <property name="openjpa.slice.ReplicationPolicy" value="com.acme.foo.MyReplicationPolicy"/>]]>
+        </programlisting>
+		</para>
+    </section>
+  </section>
+	
+	
+  <section>
+  <title>Configuration Properties</title>
+    <para>
+    The properties to configure Slice can be classified in two broad groups.
+The <emphasis>global</emphasis> properties apply to all the slices, for example,
+the thread pool used to execute the queries in parallel or the transaction 
+manager used to coordinate transaction across multiple slices. 
+The <emphasis>per-slice</emphasis> properties apply to individual slice, for example,
+the JDBC connection URL of a slice.
+   </para>
+   
+   <section>
+     <title>Global Properties</title>
+     
+     <section>
+        <title>openjpa.slice.DistributionPolicy</title>
+        <para>
+         This <emphasis>mandatory</emphasis> plug-in property determines how newly
+         persistent instances are distributed across individual slices. 
+         The value of this property is a fully-qualified class name that implements
+         <ulink url="../javadoc/org/apache/openjpa/slice/DistributionPolicy.html">
+         <classname>org.apache.openjpa.slice.DistributionPolicy</classname>
+         </ulink> interface.
+        </para>
+     </section>
+     
+     <section><title>openjpa.slice.Lenient</title>
+      <para>
+        This boolean plug-in property controls the behavior when one or more slice 
+        can not be connected or unavailable for some other reasons.
+        If <classname>true</classname>, the unreachable slices are ignored. If 
+        <classname>false</classname> then any unreachable slice will raise an exception
+        during startup.
+        </para>
+        <para>
+        By default this value is set to <classname>false</classname> i.e. all configured
+        slices must be available.
+        </para> 
+     </section>
+
+     <section>
+      <title>openjpa.slice.Master</title>
+		 <para>
+			 The user application often directs OpenJPA to generate primary keys 
+			 for persistence instances automatically or from a specific database 
+			 sequence. For such primary key value generation strategy where 
+			 a database instance is required, Slice uses a designated slice 
+			 referred to as <emphasis>master</emphasis> slice. 
+		 </para>
+         <para>
+			 The master slice can be specified explicitly via 
+			 <classname>openjpa.slice.Master</classname> property and whose value is one
+			 of the configured slice names. If this property is not explicitly
+			 specified then, by default, the master slice is the first slice 
+			 in the list of configured slice names. 
+       </para>
+       <para>
+              <warning>
+              Currently, there is no provision to use sequence from 
+              multiple slices.
+              </warning>
+       </para>
+     </section>
+    
+     <section>
+        <title>openjpa.slice.Names</title>
+        <para>
+         This plug-in property can be used to register the logical slice names.
+         The value of this property is comma-separated list of slice names. 
+         The ordering of the names in this list is 
+         <emphasis>significant</emphasis> because 
+         <link linkend="distribution_policy">DistributionPolicy</link> and
+		<link linkend="replication_policy">ReplicationPolicy</link> receive
+         the input argument of the slice names in the same order.
+        </para>
+        <para>
+        If logical slice names are not registered explicitly via this property,
+        then all logical slice names available in the persistence unit are 
+        registered. The ordering of the slice names in this case is alphabetical.  
+        </para>
+        <para>
+        If logical slice names are registered explicitly via this property, then
+        any logical slice that is available in the persistence unit but excluded
+        from this list is ignored. 
+        </para>
+     </section>
+    
+     <section>
+        <title>openjpa.slice.ThreadingPolicy</title>
+        <para>
+        This plug-in property determines the nature of thread pool being used 
+        for database operations such as query or flush on individual slices. 
+        The value of the property is a 
+        fully-qualified class name that implements 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html">
+        <classname>java.util.concurrent.ExecutorService</classname>
+        </ulink> interface.  
+        Two pre-defined pools can be chosen via their aliases namely 
+        <classname>fixed</classname> or <classname>cached</classname>.
+        </para>
+        <para>
+        The pre-defined alias <classname>cached</classname> activates a 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executors.html#newCachedThreadPool()">cached thread pool</ulink>. 
+        A cached thread pool creates new threads as needed, but will reuse 
+        previously constructed threads when they are available. This pool 
+        is suitable in scenarios that execute many short-lived asynchronous tasks.
+        The way Slice uses the thread pool to execute database operations is 
+        akin to such scenario and hence <classname>cached</classname> is the default 
+        value for this plug-in property.  
+        </para>
+        <para>
+        The <classname>fixed</classname> alias activates a 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executors.html#newFixedThreadPool(int)">fixed thread pool</ulink>.
+        The fixed thread pool can be further parameterized with 
+        <classname>CorePoolSize</classname>, <classname>MaximumPoolSize</classname>, 
+        <classname>KeepAliveTime</classname> and <classname>RejectedExecutionHandler</classname>. 
+        The meaning of these parameters are described in 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadPoolExecutor.html">JavaDoc</ulink>.
+        The users can exercise finer control on thread pool behavior via these
+        parameters.
+        By default, the core pool size is <classname>10</classname>, maximum pool size is
+        also <classname>10</classname>, keep alive time is <classname>60</classname> seconds and 
+        rejected execution is 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadPoolExecutor.AbortPolicy.html">aborted</ulink>.
+        </para>
+        <para>
+        Both of the pre-defined aliases can be parameterized with a fully-qualified
+        class name that implements 
+        <ulink url="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadFactory.html">
+        <classname>java.util.concurrent.ThreadFactory</classname>
+        </ulink> interface.
+        </para>
+     </section>
+      
+     <section>
+      <title>openjpa.slice.TransactionPolicy</title>
+      <para>
+      This plug-in property determines the policy for transaction commit 
+      across multiple slices. The value of this property is a fully-qualified 
+      class name that implements 
+      <ulink url="http://download.oracle.com/javaee/6/api/javax/transaction/TransactionManager.html">
+      <classname>javax.transaction.TransactionManager</classname> 
+      </ulink> interface. 
+      </para>
+      <para>
+      Three pre-defined policies can be chosen
+      by their aliases namely <classname>default</classname>,
+      <classname>xa</classname> and <classname>jndi</classname>. 
+      </para>
+      <para>
+      The <classname>default</classname> policy employs 
+      a Transaction Manager that commits or rolls back transaction on individual
+      slices <emphasis>without</emphasis> a two-phase commit protocol. 
+      It does <emphasis>not</emphasis>
+      guarantee atomic nature of transaction across all the slices because if
+      one or more slice fails to commit, there is no way to rollback the transaction
+      on other slices that committed successfully.
+      </para>
+      <para>
+      The <classname>xa</classname> policy employs a Transaction Manager that that commits 
+      or rolls back transaction on individual
+      slices using a two-phase commit protocol. The prerequisite to use this scheme
+      is, of course, that all the slices must be configured to use
+      XA-compliant JDBC driver. 
+      </para>
+      <para>
+      The <classname>jndi</classname> policy employs a Transaction Manager by looking up the
+      JNDI context. The prerequisite to use this transaction
+      manager is, of course, that all the slices must be configured to use
+      XA-compliant JDBC driver. 
+      <warning>This JNDI based policy is not available currently.</warning>
+      </para>
+    </section>
+   </section>
+   
+   <section>
+     <title>Per-Slice Properties</title>
+     <para>
+     Any OpenJPA property can be configured for each individual slice. The property name
+     is of the form <classname>openjpa.slice.[Logical slice name].[OpenJPA Property Name]</classname>.
+     For example, <classname>openjpa.slice.One.ConnectionURL</classname> where <classname>One</classname>
+     is the logical slice name and <classname>ConnectionURL</classname> is an OpenJPA property
+     name. 
+     </para>
+     <para>
+     If a property is not configured for a specific slice, then the value for
+     the property equals to the corresponding <classname>openjpa.*</classname> property.
+     </para>
+   </section>
+      
+  </section>
+
+</chapter>
+  

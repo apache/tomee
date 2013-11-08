@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<project name="ExecSQL" default="create-sql" basedir=".">
+
+    <target name="create-sql">
+    
+        <echo>Creating OpenJPA specific sql for JPA 2.0 TCK tests</echo>
+        <!-- Use tsant force to change the working directory to @{dir}. -->
+        <tsant dir="${tck.dir}/bin" buildfile="${basedir}/sql/create.openjpa.sql.xml" target="exec-sql"/>
+        <echo>Create TCK specific database tables returned result=${tsant.result}</echo>
+        
+    </target>
+
+    <target name="exec-sql">
+    
+        <echo>databaseName=${databaseName}</echo>
+        <antcall target="init.${databaseName}"/>
+        
+    </target>
+
+    <target name="init.common">
+    
+        <sql driver="${database.driver}"
+             url="${database.url}"
+             userid="${database.user}"
+             password="${database.passwd}"
+             classpath="${jdbc.lib.classpath}"
+             delimiter="${db.delimiter}"
+             autocommit="true"
+             onerror="continue" >
+             <transaction src="../../../../sql/${databaseName}.sql"/>
+        </sql>
+        
+    </target>
+
+    <target name="init.derby">
+        <antcall target="init.common">
+            <param name="db.delimiter" value=";"/>
+        </antcall>
+    </target>
+
+    <target name="init.db2">
+        <antcall target="init.common">
+            <param name="db.delimiter" value="!"/>
+        </antcall>
+    </target>
+
+</project>

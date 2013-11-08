@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.   
+-->
+<project name="enhance" basedir=".">
+    <!--
+        This build file executes the PCEnhancer on the test entities. It's in a
+        separate file instead of nested in pom.xml to make some conditional 
+        processing easier.
+        
+        Test classes will not be compiled if maven is invoked with 
+        -Dmaven.test.skip=true. 
+    -->
+
+    <condition property="maven.test.skip.istrue">
+        <istrue value="${maven.test.skip}" />
+    </condition>
+
+	<condition property="skip.enhance">
+		<or>
+        <equals arg1="${test}" arg2="false" />
+			<equals arg1="${build.enhance}" arg2="false" />
+			<istrue value="${maven.test.skip}" />
+			<istrue value="${skipTests}" />
+        </or>
+    </condition>
+
+    <!-- ================================= 
+          target: enhance              
+         ================================= -->
+    <target name="enhance"
+            description="--> run the enhancer unless test=false"
+            unless="skip.enhance">
+        <antcall target="enhance.all.entities"
+                 inheritall="true"
+                 inheritrefs="true" />
+    </target>
+
+    <!-- ================================= 
+          target: enhance.all.entities              
+         ================================= -->
+    <target name="enhance.all.entities"
+            description="--> enhance the test entities"
+            unless="skip.enhance">
+        <echo> running enhancer</echo>
+        <!-- 
+            Inherited references won't be present until the task is called. 
+            Therefore the path definition needs to stay inside the task.
+          -->
+        <path id="cp">
+            <path refid="maven.test.classpath" />
+        </path>
+
+        <taskdef name="openjpac"
+                 classname="org.apache.openjpa.ant.PCEnhancerTask">
+            <classpath refid="cp" />
+        </taskdef>
+
+        <fileset id="enhance.path.ref"
+                 dir="${project.build.testOutputDirectory}">
+            <include name="**/*.class" />
+            <exclude name="**/Test*.class" />
+        </fileset>
+        <openjpac>
+            <classpath refid="cp" />
+            <fileset refid="enhance.path.ref" />
+            <config log="${openjpa.Log}" />
+        </openjpac>
+    </target>
+</project>

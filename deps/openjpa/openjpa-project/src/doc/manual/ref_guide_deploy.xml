@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="ref_guide_deploy">
+    <title>
+        Deployment
+    </title>
+    <para>
+OpenJPA deployment includes choosing a factory deployment strategy, and in a
+managed environment, optionally integrating with your application server's
+managed and XA transactions. This chapter examines each aspect of deployment in
+turn.
+    </para>
+    <section id="ref_guide_deploy_factory">
+        <title>
+            Factory Deployment
+        </title>
+        <para>
+OpenJPA offers two <classname>EntityManagerFactory</classname>
+deployment options.
+        </para>
+        <section id="ref_guide_deploy_factory_standalone">
+            <title>
+                Standalone Deployment
+            </title>
+            <indexterm zone="ref_guide_deploy_factory_standalone">
+                <primary>
+                    deployment
+                </primary>
+                <secondary>
+                    standalone
+                </secondary>
+                <seealso>
+                    Persistence
+                </seealso>
+            </indexterm>
+            <para>
+The JPA Overview describes the <classname>javax.persistence.Persistence
+</classname> class. You can use <classname>Persistence</classname> to obtain
+<classname>EntityManagerFactory</classname> instances, as demonstrated in
+<xref linkend="jpa_overview_persistence"/>. OpenJPA also extends
+<classname>Persistence</classname> to add additional <classname>
+EntityManagerFactory</classname> creation methods. The <classname>
+org.apache.openjpa.persistence.OpenJPAPersistence</classname> class
+<ulink url="../javadoc/org/apache/openjpa/persistence/OpenJPAPersistence.html">
+Javadoc</ulink> details these extensions.
+            </para>
+            <para>
+After obtaining the factory, you can cache it for all <classname>
+EntityManager</classname> creation duties.  OpenJPA factories support being 
+bound to JNDI as well.
+            </para>
+        </section>
+        <section id="ref_guide_deploy_inject">
+            <title>
+                EntityManager Injection
+            </title>
+            <para>
+Java EE application servers allow you to <emphasis>inject</emphasis> 
+entity managers into your session beans using the <literal>PersistenceContext
+</literal> annotation.  See your application server documentation for details.
+            </para>
+        </section>
+    </section>
+	<section id="ref_guide_enterprise_trans">
+		<title>
+            Integrating with the Transaction Manager
+        </title>
+		<indexterm zone="ref_guide_enterprise_trans">
+			<primary>
+                transactions
+            </primary>
+			<secondary>
+                managed
+            </secondary>
+		</indexterm>
+		<indexterm zone="ref_guide_enterprise_trans">
+			<primary>
+                TransactionManager
+            </primary>
+			<secondary>
+                integration
+            </secondary>
+		</indexterm>
+		<indexterm>
+			<primary>
+                managed transactions
+            </primary>
+			<see>
+                transactions
+            </see>
+		</indexterm>
+		<indexterm>
+            <primary>
+                TransactionMode
+            </primary>
+        </indexterm>
+		<para>
+OpenJPA <classname>EntityManager</classname>s have the ability to automatically
+synchronize their transactions with an external transaction manager.  Whether 
+or not <classname>EntityManager</classname>s from a given <classname>
+EntityManagerFactory</classname> exhibit this behavior by default depends on 
+the transaction type you set for the factory's persistence unit in
+your <filename>persistence.xml</filename> file.  OpenJPA uses the given
+transaction type internally to set the
+<link linkend="openjpa.TransactionMode"><literal>openjpa.TransactionMode
+</literal></link> configuration property.  This property accepts the following
+modes:
+        </para>
+		<itemizedlist> 
+			<listitem>
+				<para>
+<literal>local</literal>: Perform transaction operations locally.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+<literal>managed</literal>: Integrate with the application server's managed 
+global transactions.  
+				</para>
+			</listitem>
+		</itemizedlist> 
+        <para>
+You can override the global transaction mode setting when you obtain an
+<classname>EntityManager</classname> using the 
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/EntityManagerFactory.html">
+<classname>EntityManagerFactory</classname></ulink>'s
+<methodname>createEntityManager(Map props)</methodname> method.  Simply set the
+<literal>openjpa.TransactionMode</literal> key of the given <classname>Map
+</classname> to the desired value.  
+		</para>
+        <note>
+            <para>
+You can also override the <literal>openjpa.ConnectionUserName</literal>,
+<literal>openjpa.ConnectionPassword</literal>, and <literal>
+openjpa.ConnectionRetainMode</literal> settings using the given <classname>
+Map</classname>. 
+            </para>
+        </note>
+		<para>
+<indexterm><primary>ManagedRuntime</primary></indexterm>
+In order to use global transactions, OpenJPA must be able to access the 
+application server's <classname>
+javax.transaction.TransactionManager</classname>.  OpenJPA can automatically 
+discover the transaction manager for most major application servers.  
+Occasionally, however, you might have to point OpenJPA to the transaction 
+manager for an unrecognized or non-standard application server setup.  This is 
+accomplished through the <link linkend="openjpa.ManagedRuntime"><literal>
+openjpa.ManagedRuntime</literal></link> configuration property.  This
+property describes an 
+<ulink url="../javadoc/org/apache/openjpa/ee/ManagedRuntime.html"><classname>
+org.apache.openjpa.ee.ManagedRuntime</classname></ulink> implementation to use
+for transaction manager discovery.  You can specify your own implementation, 
+or use one of the built-ins:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+<literal>auto</literal>: This is the default.  It is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/ee/AutomaticManagedRuntime.html">
+<classname>org.apache.openjpa.ee.AutomaticManagedRuntime</classname></ulink>
+class.  This managed runtime is able to automatically integrate with several 
+common application servers.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+<literal>invocation</literal>: An alias for the 
+<ulink url="../javadoc/org/apache/openjpa/ee/InvocationManagedRuntime.html">
+<classname>org.apache.openjpa.ee.InvocationManagedRuntime</classname></ulink>
+class.  You can configure this runtime to invoke any static
+method in order to obtain the appserver's transaction manager.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+<literal>jndi</literal>: An alias for the 
+<ulink url="../javadoc/org/apache/openjpa/ee/JNDIManagedRuntime.html">
+<classname>org.apache.openjpa.ee.JNDIManagedRuntime</classname></ulink>
+class.  You can configure this runtime to look up the transaction manager at 
+any JNDI location.
+				</para>
+			</listitem>
+		</itemizedlist>
+		<para>
+See the Javadoc for of each class for details on the bean properties 
+you can pass to these plugins in your configuration string.  
+		</para>
+		<example id="ref_guide_enterprise_transex">
+			<title>Configuring Transaction Manager Integration</title>
+<programlisting>
+<![CDATA[<property name="openjpa.TransactionMode" value="managed"/>
+<property name="openjpa.ManagedRuntime" value="jndi(TransactionManagerName=java:/TransactionManager)"/>]]>
+</programlisting>
+		</example>
+	</section>
+    <section id="ref_guide_enterprise_xa">
+        <title>
+            XA Transactions
+        </title>
+        <indexterm zone="ref_guide_enterprise_xa">
+            <primary>
+                transactions
+            </primary>
+            <secondary>
+                XA
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                XA transactions
+            </primary>
+            <see>
+                transactions
+            </see>
+        </indexterm>
+        <para>
+The X/Open Distributed Transaction Processing (X/Open DTP) model, designed by
+<ulink url="http://www.opengroup.org/">The Open Group</ulink> (a vendor consortium),
+defines a standard communication architecture that provides the following:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+Concurrent execution of applications on shared resources.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Coordination of transactions across applications.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Components, interfaces, and protocols that define the architecture and provide
+portability of applications.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Atomicity of transaction systems.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Single-thread control and sequential function-calling.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The X/Open DTP XA standard defines the application programming interfaces that a
+resource manager uses to communicate with a transaction manager. The XA
+interfaces enable resource managers to join transactions, to perform two-phase
+commit, and to recover in-doubt transactions following a failure.
+        </para>
+        <section id="ref_guide_enterprise_xa_req">
+            <title>
+                Using OpenJPA with XA Transactions
+            </title>
+            <para>
+OpenJPA supports XA-compliant transactions when used in a properly configured
+managed environment. The following components are required:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+A managed environment that provides an XA compliant transaction manager.
+Examples of this are application servers such as WebLogic or JBoss.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Instances of a <classname>javax.sql.XADataSource</classname> for each of the
+<classname>DataSource</classname>s that OpenJPA will use.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+Given these components, setting up OpenJPA to participate in distributed
+transactions is a simple two-step process:
+            </para>
+            <orderedlist>
+				<listitem>
+					<para>
+Integrate OpenJPA with your application server's transaction manager, as 
+detailed in <xref linkend="ref_guide_enterprise_trans"/> above.
+					</para>
+				</listitem>
+                <listitem>
+                    <para>
+Point OpenJPA at an enlisted <classname>XADataSource</classname>, and configure
+a second non-enlisted data source. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/>.
+                    </para>
+                </listitem>
+            </orderedlist>
+        </section>
+    </section>
+</chapter>

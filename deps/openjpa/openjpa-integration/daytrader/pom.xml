@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<!-- 
+    Maven release plugin requires the project tag to be on a single line. 
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-integration</artifactId>
+        <version>2.3.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>openjpa-integration-daytrader</artifactId>
+    <packaging>jar</packaging>
+    <name>OpenJPA Integration Tests - Daytrader</name>
+    <description>OpenJPA Integration Tests - Daytrader</description>
+
+    <properties>
+        <daytrader.version>2.2-SNAPSHOT</daytrader.version>
+        <dbcp.maxActive>10</dbcp.maxActive>
+        <dbcp.maxIdle>5</dbcp.maxIdle>
+        <dbcp.minIdle>2</dbcp.minIdle>
+        <dbcp.maxWait>10000</dbcp.maxWait>
+        <dbcp.args>MaxActive=${dbcp.maxActive},MaxIdle=${dbcp.maxIdle},MinIdle=${dbcp.minIdle},MaxWait=${dbcp.maxWait}</dbcp.args>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Maybe one day we can used published artifacts for this...
+        <dependency>
+            <groupId>org.apache.geronimo.daytrader.modules</groupId>
+            <artifactId>daytrader-web</artifactId>
+            <version>${daytrader.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.daytrader.modules</groupId>
+            <artifactId>daytrader-entities</artifactId>
+            <version>${daytrader.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence-jdbc</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta-regexp</groupId>
+            <artifactId>jakarta-regexp</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Collect the common test support files from o-p-j-persistence-jdbc.tests.jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.openjpa</groupId>
+                                    <artifactId>openjpa-persistence-jdbc</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>test-jar</type>
+                                    <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                                    <includes>org/apache/openjpa/persistence/test/*.class</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- old way of using antrun to enhance classes
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <tasks>                           
+                                <ant antfile="src/main/ant/enhancer.xml" target="enhance" inheritRefs="true">
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="test" value="${test}" />
+                                    <property name="outdir" value="${project.build.outputDirectory}" />
+                                    <property name="project.build.testOutputDirectory" value="${project.build.testOutputDirectory}" />
+                                    <property name="openjpa.Log" value="${openjpa.Log}" />
+                                    <property name="build.enhance" value="${build.enhance}" />
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+
+            <!-- new way of using openjpa-maven-plugin to enhance classes -->
+            <plugin>
+                <groupId>org.apache.openjpa</groupId>
+                <artifactId>openjpa-maven-plugin</artifactId>
+                <configuration>
+                    <includes>org/apache/openjpa/integration/daytrader/*Bean.class</includes>
+                    <excludes>org/apache/openjpa/persistence/**/*.class</excludes>
+                    <addDefaultConstructor>true</addDefaultConstructor>
+                    <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>enhancer</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>test-enhance</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!-- use o-p-j instead of openjpa to avoid cyclical dependency in maven graph -->
+                    <dependency>
+                        <groupId>org.apache.openjpa</groupId>
+                        <artifactId>openjpa-persistence-jdbc</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${surefire.jvm.args}</argLine>
+                    <excludes>
+                        <!-- exclude classes that end with 'Test'; these 
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*Test.java</exclude>
+
+                        <!-- exclude classes that include a $; inner classes
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*$*.class</exclude>
+                        <exclude>org/apache/openjpa/**/*.*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

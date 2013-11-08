@@ -1,0 +1,355 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+ */
+/**
+ * The stylesheet for OpenTrader sample application.
+ * 
+**/
+
+/**
+ *  GWT Widgets have pre-defined style names. These pre-defined style names
+ *  can be redecorated for a specific application.
+ *
+**/
+.gwt-Label {
+   font-family: "Palatino Linotype";
+}
+
+.gwt-PopupPanel {
+   font-family: "Palatino Linotype";
+   border: 10px;
+}
+
+.gwt-PopupPanel .popupContent {
+   font-family: "Palatino Linotype";
+   border: 50px;
+}
+
+/**
+ * LoginDialog is a specialized PopupPanel that organizes its content in a FlexTable.
+ * The CSS styles apply to the table cells.
+**/
+.login {
+   color:white;
+   font-weight:bold;
+   border: 10px;
+   background-color:#005B9A;
+   cell-spacing:10px;
+   cell-padding:10px;
+}
+
+/**
+ * A special style apply to the caption of the login dialog -- which is the first row
+ * of the FlexTable that the LoginDialog wraps in a PopupPanel.
+**/
+.login-caption {
+   font-family: "Palatino Linotype";
+   font-size:20pt;
+   font-weight:bold;
+   color: white;
+}
+
+/** ---------------------------------------------------------------------------
+ *                  CSS Styles used in ScrollableTable.
+ *  ---------------------------------------------------------------------------
+**/
+
+.cbg-RP { 
+   background-color:#005B9A;
+   border-color: #005B9A;
+}
+
+.table-caption {
+  background-color:#005B9A;
+  font-size:1.1em;
+  font-weight:bold;
+  color:#FFFFFF;
+  font-family: "Palatino Linotype";
+}
+
+.column-header {
+  background-color:#74C2E1;
+  font-weight:bold;
+  font-family: "Palatino Linotype";
+  color:#838984;
+}
+.row-even {
+  background-color:#FFFFFF;
+}
+.row-odd {
+  background-color:#CCCCCC;
+}
+
+.progressMonitor-caption {
+  background-color:#005B9A;
+   font-family: "Palatino Linotype";
+   font-size:14pt;
+   font-weight:bold;
+   color: white;
+}
+
+.openjpa-MessageBox {
+   align:center;
+   background-color:#EEEEEE;
+   width:300px;
+   height:150px;
+}
+
+
+
+.header {
+  font-size: 20pt;
+  font-weight: bold;
+  color: #005B9A;
+   font-family: "Palatino Linotype";
+}
+.hello {
+  float:right;
+  text-align:right;
+  margin-right:1em;
+  
+}
+.error-message {
+   color:red;
+   font-weight:plain;
+   word-wrap:word-spacing;
+}
+
+.table-header {
+	color:blue;
+	background-color:green;
+   font-family: "Palatino Linotype";
+}
+
+
+#LogoPanel {
+  position: absolute;
+  top:0px;
+  left:10px;
+  width: 800px;
+  height: 40px;
+  border-style:double;
+  font-size: 20pt;
+  font-weight: bold;
+  color: #0000FF;
+/*  vertical-align:-25%; */
+}
+/** Panel on top-right corner displays current Trader details **/ 
+#TraderPanel {
+  position: absolute;
+  top:10px;
+  right:10px;
+  width: 300px;
+  height: 30px;
+  border-style:double;
+}
+/** Stock Panel displays the current stock prices that are being regularly refreshed **/
+#StockPanel {
+  position: absolute;
+  top:60px;
+  left:100px;
+  width: 400px;
+  height:800px;
+  border-style:double;
+}
+
+/** Ask Panel controls placing an offer to sell a stock **/
+#AskPanel {
+  position: absolute;
+  top:60px;
+  left:500px;
+  width: 400px;
+  height: 200px;
+  border-style:double;
+}
+/** Bid Panel controls placing an offer to buy a stock **/
+#BidPanel {
+  position: absolute;
+  top:60px;
+  left:1000px;
+  width: 400px;
+  height:200px;
+  border-style:double;
+}
+/** Trade Panel controls commit to buy/sell a stock **/
+#TradePanel {
+  position: absolute;
+  top:300px;
+  left:500px;
+  width: 900px;
+  height:300px;
+  border-style:double;
+}
+
+#TradeHistoryPanel {
+  position: absolute;
+  top:60px;
+  left:1440px;
+  width: 460px;
+  height:540px;
+  border-style:double;
+}
+
+#ServerPanel {
+  position: absolute;
+  top:620px;
+  left:500px;
+  width: 1400px;
+  height:300px;
+  border-style:double;
+}
+#FooterPanel {
+  position: absolute;
+  top:1000px;
+  left:10px;
+  width: 1400px;
+  height:40px;
+  border-style:double;
+}
+
+/* stock list flex table */
+.StockTable {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+}
+
+/* stock list header row */
+.StockTableHeader {
+  background-color: #2062B8;
+  color: white;
+  font-weight: bold;
+  text-align:center;
+}
+
+.NumericColumn {
+  text-align: right;
+  width:8em;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+.sql-select {
+  color:#005B9A;
+  font-family: "Courier New";
+  font-size:small;
+}
+.sql-insert {
+  color:#31B96E;
+  font-family: "Courier New";
+  font-size:small;
+  font-weight:bold;
+}
+.sql-update {
+  color:#C73B0B;
+  font-family: "Courier New";
+  font-size:small;
+}
+.sql-delete {
+  color:#FF0000;
+  font-family: "Courier New";
+  font-size:small;
+}
+
+
+
+
+
+h2 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #777777;
+/**  margin: 40px 0px 70px; **/
+  text-align: left;
+  vertical-align:top;
+}
+
+.sendButton {
+  display: block;
+  font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.ErrorDialog {
+  top:400px;
+  left:400px;
+  width: 800px;
+}
+.gwt-DialogBox .Caption {
+  color:red;
+  font-weight:bold;
+  font-size:16pt;
+}
+
+.gwt-DialogBox .dialogContent {
+  margin : 2px;
+}
+
+.dialogVPanel {
+  width: 800px;
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+  margin: 15px 6px 6px;
+}
+
+
+
+.TradeOrderWindow {
+  font-size:0.8em;
+  font-weight:bold;
+  color:#FFFFFF;
+  background-color:#0191C8;
+  width:40px;
+  height:25px;
+  margin: 4 10 4 10;
+}
+
+body, table td, select {
+  font-family: "Palatino Linotype";
+  font-size:small;
+}
+
+.gwt-Button {
+  margin: 0;
+  background-color:#74C2E1;
+  padding: 3px 5px;
+  text-decoration: none;
+   font-family: "Palatino Linotype";
+  font-size: small;
+  cursor: pointer;
+  cursor: hand;
+  background: url("images/hborder.png") repeat-x 0px -27px;
+  border: 1px outset #333;
+}
+.gwt-Anchor {
+   color:#FFFFFF;
+}
+

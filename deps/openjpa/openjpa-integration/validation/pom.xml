@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<!--
+    Maven release plugin requires the project tag to be on a single line.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-integration</artifactId>
+        <version>2.3.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.openjpa</groupId>
+    <artifactId>openjpa-integration-validation</artifactId>
+    <packaging>jar</packaging>
+    <name>OpenJPA Integration Tests - Bean Validation</name>
+    <description>OpenJPA Integration Tests - Bean Validation</description>
+
+    <profiles>
+        <!-- Default profile for testing with Apache BVAL provider -->
+        <!-- See http://incubator.apache.org/projects/beanvalidation.html -->
+        <profile>
+            <id>bval</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>bval</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- use openjpa-all which includes Apache BVal and depends -->
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa-all</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- Profile for testing with Hibernate Bean Validation RI -->
+        <profile>
+            <id>hibernate</id>
+            <activation>
+                <property>
+                    <name>hibernate</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                    <version>${project.version}</version>
+                    <!-- allow profiles to decide which validation spec to use -->
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.geronimo.specs</groupId>
+                            <artifactId>geronimo-validation_1.0_spec</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                    <version>1.0.0.GA</version>
+                    <scope>test</scope>
+                </dependency>
+                <!-- Hibernate that implements 1.0.0.GA -->
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                    <version>4.0.2.GA</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <!-- force usage of the geronimo-jpa_2.0_spec -->
+                        <exclusion>
+                            <groupId>org.hibernate.java-persistence</groupId>
+                            <artifactId>jpa-api</artifactId>
+                        </exclusion>
+                        <!-- force usage of the RI API level above -->
+                        <exclusion>
+                            <groupId>javax.validation</groupId>
+                            <artifactId>validation-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>1.5.6</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <version>1.5.6</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <repositories>
+                <repository>
+                    <id>repository.jboss.org</id>
+                    <name>JBoss Nexus Repository</name>
+                    <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>${project.version}</version>
+            <!-- allow profiles to decide which validation spec to use -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-validation_1.0_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence-jdbc</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta-regexp</groupId>
+            <artifactId>jakarta-regexp</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bval</groupId>
+            <artifactId>org.apache.bval.bundle</artifactId>
+            <version>0.3-incubating</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4jVersion}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Extract the common test support files from o-p-j-tests.jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.openjpa</groupId>
+                                    <artifactId>openjpa-persistence-jdbc</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>test-jar</type>
+                                    <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                                    <includes>org/apache/openjpa/persistence/test/*.class</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="src/main/ant/enhancer.xml" target="enhance" inheritRefs="true">
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="test" value="${test}" />
+                                    <property name="outdir" value="${project.build.outputDirectory}" />
+                                    <property name="project.build.testOutputDirectory" value="${project.build.testOutputDirectory}" />
+                                    <property name="openjpa.Log" value="${openjpa.Log}" />
+                                    <property name="build.enhance" value="${build.enhance}" />
+                                </ant>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- exclude classes that end with 'Test'; these
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*Test.java</exclude>
+
+                        <!-- exclude classes that include a $; inner classes
+                             are not test cases per OpenJPA standards -->
+                        <exclude>org/apache/openjpa/**/*$*.class</exclude>
+                        <exclude>org/apache/openjpa/**/*.*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

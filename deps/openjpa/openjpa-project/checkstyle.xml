@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<!DOCTYPE module PUBLIC
+  "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+  "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<!-- This is a temporary file. As we get closer to enforcing the OpenJPA 
+	style to be like the default Sun Microsystems Definition default file, then 
+	we can remove this file and remove the reference from the pom.xml -->
+
+<module name="Checker">
+	<module name="NewlineAtEndOfFile" />
+	<module name="TreeWalker">
+		<module name="FileContentsHolder" />
+		<module name="LineLength">
+			<property name="max" value="120" />
+		</module>
+		<module name="RegexpSinglelineJava">
+			<property name="format" value="System\.(out|err)\.print(ln)?\(" />
+			<property name="ignoreComments" value="true" />
+		</module>
+	</module>
+	<module name="SuppressionCommentFilter">
+		<property name="offCommentFormat" value="// START - ALLOW PRINT STATEMENTS" />
+		<property name="onCommentFormat" value="// STOP - ALLOW PRINT STATEMENTS" />
+	</module>
+
+	<!-- File location is specified in root pom.xml via ${checkstyle.suppressions.location} -->
+	<module name="SuppressionFilter"/>
+</module>

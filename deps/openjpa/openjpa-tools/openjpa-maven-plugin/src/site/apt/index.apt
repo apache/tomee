@@ -1,0 +1,47 @@
+ ------
+ Introduction
+ ------
+ Rahul Thakur, Mark Struberg
+ ------
+ November 29, 2010
+ ------
+ 
+OpenJPA Maven Plugin
+
+  This plugin provides useful tasks for building and maintaining
+  an OpenJPA project with maven. All goals work on a given set of 
+  JPA entities. 
+
+* Goals Overview
+
+  * {{{enhance-mojo.html}openjpa:enhance}} Enhance the entity classes with persistence functionality.
+  
+  * {{{sql-mojo.html}openjpa:sql}} Create a file with SQL statements, with e.g. CREATE TABLE statements
+   
+  * {{{schema-mojo.html}openjpa:schema}} Create a file which contains the schema mapping XML
+
+  * {{{test-enhance-mojo.html}openjpa:test-enhance}} Enhance the entity classes in the test classpath with persistence functionality.
+
+  []
+
+
+* Usage
+
+  Instructions on how to use the OpenJPA Maven Plugin can be found on the {{{usage.html}usage page}}.
+
+
+* Examples
+
+  * {{{examples/enhance.html}  JPA enhancement example.}}
+
+  * {{{examples/sql.html} SQL maintenance strategies.}}
+
+  * {{{examples/schema.html} Schema mapping example.}}
+  
+  * {{{examples/testenhance.html} JPA enhancement for test classes example.}}
+
+  * {{{examples/credentials.html} Manually setting.the credentials for accessing the database at build time }}
+
+  []
+
+ 

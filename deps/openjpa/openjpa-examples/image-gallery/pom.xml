@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<!--
+    Please keep the project tag on one line to avoid confusing
+    the release plugin.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa-examples</artifactId>
+      <version>2.3.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.apache.openjpa.openjpa-examples</groupId>
+  <artifactId>image-gallery</artifactId>
+  <packaging>jar</packaging>
+
+  <name>OpenJPA Examples - image-gallery</name>
+  <description>Apache OpenJPA Examples - image-gallery</description>
+
+  <properties>
+    <checkstyle.config.location>${project.basedir}${file.separator}..${file.separator}..${file.separator}openjpa-project${file.separator}checkstyle.xml</checkstyle.config.location>
+    <test.jvm.maxpermsize>256m</test.jvm.maxpermsize>
+    <test.jvm.maxheapsize>1024m</test.jvm.maxheapsize>
+    <test.jvm.arguments>-Xmx${test.jvm.maxheapsize} -XX:MaxPermSize=${test.jvm.maxpermsize}</test.jvm.arguments>
+    <surefire.jvm.args>${test.jvm.arguments}</surefire.jvm.args>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa-all</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4jVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4jVersion}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- The surefire plugin is used to run the jUnit tests -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <argLine>${surefire.jvm.args}</argLine>
+            <useFile>false</useFile>
+            <trimStackTrace>false</trimStackTrace>
+            <useSystemClassLoader>true</useSystemClassLoader>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+          <!-- Use the openjpa maven plugin to enhance the domain model classes -->
+          <groupId>org.apache.openjpa</groupId>
+          <artifactId>openjpa-maven-plugin</artifactId>
+          <configuration>
+            <includes>org/apache/openjpa/examples/gallery/model/*.class</includes>
+            <addDefaultConstructor>true</addDefaultConstructor>
+            <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+            <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml</persistenceXmlFile>
+          </configuration>
+          <executions>
+            <execution>
+              <id>enhancer</id>
+              <phase>process-test-classes</phase>
+              <goals>
+                <goal>test-enhance</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa-all</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,113 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<html>
+<head>
+<style type="text/css">
+code {
+	color: brown;
+	font-family: "Courier New";
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid black;
+	background: lightgray;
+}
+tt {
+	color: green;
+	font-family: "Courier New";
+	font-weight: bold;
+}
+.warn {
+  color:red;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+  <h3>Instructions to build, deploy and run JEST demo</h3>
+  <hr>
+  
+  <dl>
+  <dt><b>Step 1: Download OpenJPA binary</b></dt> 
+  <dd> OpenJPA binaries are available from OpenJPA 
+       <a href="http://openjpa.apache.org/downloads.html" target="_blank">download site</a>.
+       The nightly snapshots of version <tt>2.2.0</tt> that includes JEST are ready for 
+       <a href="https://repository.apache.org/snapshots/org/apache/openjpa/apache-openjpa/2.2.0-SNAPSHOT/" 
+       target="_blank">download</a> at lower half of the page. 
+  </dd> 
+  <br>
+  <dt><b>Step 2: Get the JEST demo application</b></dt>
+  <dd> A simple servlet based application is used to demonstrate JEST usage. This simple
+       application merely defines a persistent unit with two persistent classes: <tt>Actor</tt>
+       and <tt>Movie</tt>. The source code, persistence unit descriptor 
+       <tt>META-INF/persistence.xml</tt>, deployment descriptor <tt>WEB-INF/web.xml</tt>
+       and Ant-based build script are available from OpenJPA svn repository.<br>
+       Checkout these source files from the repository to a local directory.
+       The following command:<br>
+       <code>$ svn co https://svn.apache.org/repos/asf/openjpa/trunk/openjpa-examples/jest .</code><br>
+       will bring the code to the current directory, for example.
+  </dd>
+  <br>
+  <dt><b>Step 3: Configure for your environment</b></dt>
+  <dd>
+      The persistence unit descriptor <tt>META-INF/persistence.xml</tt> for the example application
+      needs to be configured with database details. By default, it is configured for a MySQL database. 
+      <br>
+      The build script requires the location of openjpa library and servlet API library jar. 
+      Edit <tt>build.properties</tt> file to set the variables to locations appropriate for
+      your environment. 
+  </dd>
+  <br>
+  <dt><b>Step 4: Build the application</b></dt>
+  <dd>
+      Just run good old Ant.<br>
+      <code> $ ant</code> </br>
+      The build script <tt>buid.xml</tt> will compile few Java classes of the application, enhance
+      the persistent classes and package them into a web archive <tt>demo.war</tt> for deployment.
+      <br>
+      The deployment descriptor <tt>WEB-INF/web.xml</tt> for this web archive specifies two servlets:
+      one for this simple application and the other is JEST servlet. It may be instructive to take a
+      look at the <tt>WEB-INF/web.xml</tt> to see how JEST is deployed.
+      <br>
+      The web archive packages the openjpa library as well in <tt>WEB-INF/lib</tt>. You may prefer
+      other deployment options such as placing openjpa library in a shared library of your favorite
+      application server or servlet container. You do need to modify the build script in that case.
+  </dd>
+  <br>
+  <dt><b>Step 5: Deploy the web archive</b></dt>
+  <dd>
+      Once the web archive is ready, deploy it in an application server or servlet container by
+      following standard practice. Needless to say, the database driver specified in 
+      <tt>META-INF/persistence.xml</tt> should also be available in the deployment environment.
+  </dd>
+  <br>
+  <dt><b>Step 6: Browse with JEST</b></dt>
+  <dd>
+      Once the web archive has been deployed, you can verify by visiting the home page (and the only page)
+      of the sample application in your browser<br>
+		<code>http://localhost:8080/demo/</code>  <br>
+      The context path of the deployed servlet is <tt>demo</tt> as you may have noticed in <tt>WEB-INF/web.xml</tt>. 
+      The JEST servlet is just next door at<br>
+		<code>http://localhost:8080/demo/jest/</code>  <br>
+	  <span class="warn">notice the trailing forward slash in the URL above</span><br>
+	  Now you should see JEST home page with colorful icons. Enjoy browsing!
+	  
+  </dd>
+  </dl>
+</body>
+</html>

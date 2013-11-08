@@ -1,0 +1,39 @@
+
+Apache OpenJPA binary assembly
+Copyright 2006-2010 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+The OpenJPA binary assembly and openjpa-all includes software developed by the:
+    Apache Commons Beanutils project
+    Apache Commons Collections project
+    Apache Commons DBCP project
+    Apache Commons Lang project
+    Apache Commons Logging project
+    Apache Commons Pool project
+    Apache Derby project
+    Apache Geronimo project
+        Java EE Specs - JMS 1.1, JTA 1.1, Bean Validation 1.0 and JPA 2.0
+    Apache Incubtor - Bean Validation project
+    SERP project
+
+
+The following copyright notice(s) were affixed to portions of this code
+with which this file is now or was at one time distributed.
+
+OpenJPA includes software developed by the SERP project
+Copyright (c) 2002-2006, A. Abram White. All rights reserved.
+
+OpenJPA includes the persistence and orm schemas from the JPA specifications.
+Copyright 2005-2009 Sun Microsystems, Inc. All rights reserved.
+OpenJPA elects to include this software in this distribution under the
+CDDL license.  You can obtain a copy of the License at:
+    https://glassfish.dev.java.net/public/CDDL+GPL.html
+The source code is available at:
+    https://glassfish.dev.java.net/source/browse/glassfish/
+
+OpenJPA includes software written by Miroslav Nachev.
+
+OpenJPA uses test code written by Charles Tillman.
+

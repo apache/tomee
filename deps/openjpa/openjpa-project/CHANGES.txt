@@ -1,0 +1,273 @@
+Apache OpenJPA 2.3.0
+Licensed under Apache License 2.0 - http://www.apache.org/licenses/LICENSE-2.0
+--------------------------------------------------------------------------------
+
+Content
+-------
+   * Overview
+   * License
+   * Notices
+   * Prerequisites
+   * Documentation
+   * Getting Involved
+   * Included Changes
+     * Sub-tasks
+     * Bugs
+     * Improvements
+     * New Features
+     * Test
+
+
+Overview
+--------
+   The Apache OpenJPA community is proud to release a SNAPSHOT distribution of
+   OpenJPA 2.3.0. This distribution is based on the final JSR 317 Java 
+   Persistence API, Version 2.0 specification and passes the JPA 2.0 TCK,
+   while remaining backwards compatible with prior releases based on the
+   Java Persistence API (JPA 1.0) part of Java Community Process JSR-220
+   (Enterprise JavaBeans 3.0).
+   
+   Additional information on the OpenJPA project may be found at the project
+   web site:
+      http://openjpa.apache.org
+
+
+License
+-------
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements. See the NOTICE file distributed with this
+   work for additional information regarding copyright ownership. The ASF
+   licenses this file to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance with the
+   License. You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+   License for the specific language governing permissions and limitations
+   under the License.
+
+   The license may also be found in LICENSE.txt included in each assembly.
+
+
+Notices
+-------
+   Copyright 2006,2013 The Apache Software Foundation.
+   Apache, the Apache feather logo and OpenJPA are trademarks of
+   The Apache Software Foundation.
+
+   This product includes software developed at
+   The Apache Software Foundation (http://www.apache.org/).
+
+   OpenJPA includes the persistence and orm schemas from the JPA specifications.
+   Copyright 2005-2009 Sun Microsystems, Inc. All rights reserved.
+   OpenJPA elects to include this software in this distribution under the
+   CDDL license.  You can obtain a copy of the License at:
+       https://glassfish.dev.java.net/public/CDDL+GPL.html
+   The source code is available at:
+       http://java.net/projects/glassfish
+
+   The complete list of notices can be found in NOTICE.txt included in each
+   assembly.
+
+
+Prerequisites
+-------------
+   OpenJPA requires Java SE 6 or higher and a relational 
+   database of some sort.
+
+
+Documentation
+-------------
+   If you have questions about OpenJPA, a good source of information is the
+   online product manual. You can find the manual for the current release as
+   well as older releases of OpenJPA at
+       http://openjpa.apache.org/documentation.html
+
+   If you can't find what you are looking for in the manual or would like more
+   clarification, please post to the OpenJPA development mailing list.
+   Information on all of the OpenJPA mailing lists may be found here:
+       http://openjpa.apache.org/mailing-lists.html
+
+
+Getting Involved
+----------------
+   The Apache OpenJPA project is being built by the open source community for
+   the open source community - we welcome your input and contributions!
+
+   What we are looking for
+        * Source code and fixes contributions
+        * Documentation assistance
+        * Product and feature suggestions
+        * Detailed and constructive feedback
+        * Articles and whitepapers
+
+   How do I contribute?
+        * To discuss Apache OpenJPA topics check out the mailing lists.
+        * Informal discussion also occurs on the #openjpa IRC channel on
+          freenode.net.
+        * Bugs and other issues can be posted on the issue tracker at
+          https://issues.apache.org/jira/browse/OPENJPA
+
+
+Included Changes in OpenJPA 2.3.0
+---------------------------------
+
+Sub-task
+
+    [OPENJPA-2168] - Do not go through LifeCycleEventManager overhead if the Entity has declared to be excluded
+
+Bug
+
+    [OPENJPA-696] - Cache TransactionSynchronizationRegistry per EMF (vs JVM)
+    [OPENJPA-1794] - Result of aggregate function MAX is 0 on empty table (instead of NULL).
+    [OPENJPA-1819] - ORDER BY will append additional column to the SELECT clause which may potentialy cause ORA-00979 error
+    [OPENJPA-1901] - QueryCacheStoreQuery$CachedObjectId that is not Serializable
+    [OPENJPA-1979] - Regression for non-standard joins with constant column values
+    [OPENJPA-1993] - Deadlock Potential with ORM XML Processing
+    [OPENJPA-2018] - Cannot bind String[] to ParameterExpression for path.in(parameter)
+    [OPENJPA-2067] - A 'length' of '-1' passed to PreparedStatement.setBinaryStream can cause an exception on some, but not all, JDBC drivers.
+    [OPENJPA-2072] - InvalidStateException deleting an instance with a timestamp in its primary key
+    [OPENJPA-2095] - Unhandled exception thrown from within an Externalizer method causes incorrect/incomplete SQL to be generated/executed.
+    [OPENJPA-2102] - URLs which contains spaces are not properly handled by OpenJPA.
+    [OPENJPA-2110] - Abstract entity causes standard openjpa collection proxies to be injected even if custom collections are used.
+    [OPENJPA-2118] - Prepared SQL query does not handle collection-valued parameter where collection is empty
+    [OPENJPA-2123] - Minor performance improvements for Connection and ResultSet processing
+    [OPENJPA-2131] - Missing IN or OUT parameter exception with OracleDictionary
+    [OPENJPA-2132] - Traversal of a OneToMany relationship returns an empty list when InheritanceType.JOINED or SINGLE_TABLE is used.
+    [OPENJPA-2133] - OpenJPA doesn't find custom mappings with an applicable class loader
+    [OPENJPA-2136] - NPE when using LiteAutoDetach
+    [OPENJPA-2140] - Locking tests issue many warnings about the use of a duplicate pu name
+    [OPENJPA-2142] - Merge of a new object does not handle Entity Id field
+    [OPENJPA-2145] - Missing ASM depending jar in binary zip
+    [OPENJPA-2146] - StateManager for Embeddable may throw Exception while initializing
+    [OPENJPA-2149] - Criteria.function adds wrong casts to parameters making it unsuable
+    [OPENJPA-2153] - NoSuchMethodException of DBCPDriverDataSource.newInstance()
+    [OPENJPA-2154] - test-dynamic-enhancer profile failed for module more than one level deep
+    [OPENJPA-2156] - Fix bug in org.apache.openjpa.persistence.util.SourceCode to correctly generate imports.
+    [OPENJPA-2158] - LiteAutoDetach + DetachProxyFields=false can lead to Broker concurrency exceptions
+    [OPENJPA-2161] - Make some members of StateManagerImpl protected to allow for greater extensability
+    [OPENJPA-2163] - Lifecycle event callback occurs more often than expect
+    [OPENJPA-2170] - Multiple INSERT of the same row in batch update manager
+    [OPENJPA-2172] - openjpa-all jar is missing slf4j runtime dependency
+    [OPENJPA-2174] - Result set mapping was not looked up when retrieving column data from a NamedNativeQuery
+    [OPENJPA-2178] - PostgresDictionary
+    [OPENJPA-2180] - OpenJPA build broken in java7 / jdk-1.7
+    [OPENJPA-2187] - metamodel generation with default package creates invalid class
+    [OPENJPA-2191] - QueryCache don't allow for misconfigurations
+    [OPENJPA-2196] - Create Sequence Postgres 9.1
+    [OPENJPA-2197] - MethodComparator in AnnotationPersistenceMetaDataParser should also compare parameters
+    [OPENJPA-2199] - Constraint violation exception when removing relationship using (orphanRemoval = true)
+    [OPENJPA-2204] - NPE in JDBCStoreManager with Trace turned on
+    [OPENJPA-2221] - Use of AbstractValueHandler map() causes exception on find()
+    [OPENJPA-2227] - OpenJPA doesn't find custom SequenceGenerators
+    [OPENJPA-2228] - QuerySQLCache broken for Entities with @EmbeddedId
+    [OPENJPA-2229] - Persistence entities not recognized when deploying on JBoss AS 7.1
+    [OPENJPA-2230] - Event Listener detection didn't work with MappedSuperClasses or Entity heirarchies
+    [OPENJPA-2234] - EntityManager instance creation needs TX activity
+    [OPENJPA-2235] - "READ_UNCOMMITTED" setting for the fetch plan isolation level is ignored in DB2Dictionary
+    [OPENJPA-2236] - Trace of connection info can cause class transform/enhancement to fail
+    [OPENJPA-2238] - IllegalAccessError when trying to proxy a default scoped Class
+    [OPENJPA-2240] - JVMVRFY012 when using openjpa together with hyperjaxb3
+    [OPENJPA-2244] - Nested classpath ignored in mapping tool ant task
+    [OPENJPA-2245] - NotSerializableException when using a remote QueryCache and the Criteria API
+    [OPENJPA-2247] - JoinColumn annotation is ignored when mapping a unidirectional owned OneToOne that is in a SecondaryTable
+    [OPENJPA-2253] - Memory leak in Audit feature
+    [OPENJPA-2255] - Couldn't load the referencedColumn definition when create the JoinTable
+    [OPENJPA-2257] - Concurreny in org.apache.openjpa.persistence.EntityManagerImpl.getProperties leads to NullPointer and ConcurrentModificationException
+    [OPENJPA-2260] - Parenthesis-augmented parameters are improperly processed at EM level
+    [OPENJPA-2261] - Query SQL Cache issue with NULL parameters
+    [OPENJPA-2267] - native query select with null result causes NullPointerException
+    [OPENJPA-2269] - Duplicate key exception in sequence table on multithreaded initialization
+    [OPENJPA-2271] - Old <ciManagement/> info on root POM
+    [OPENJPA-2282] - ESCAPE '\' is appended to the like clause unexpectedly
+    [OPENJPA-2284] - NPE occurs when <cascade-persist/> is added to a <persistence-unit-defaults> in an orm.
+    [OPENJPA-2288] - MetaDataRepository should be able to filter classes from other app ClassLoaders in JEE Env
+    [OPENJPA-2289] - Additional SQL alias generated for query with subquery causes incorrect # of rows returned - Oracle only
+    [OPENJPA-2298] - VerifyError/Stack underflow due to extra 'return' statements generated by PCEnhancer.
+    [OPENJPA-2304] - Thread deadlock in CriteriaBuilder
+    [OPENJPA-2305] - Canonical MetaModel class generation should not use inhertence
+    [OPENJPA-2318] - Left outer join is not generated when specifien using Criteria API
+    [OPENJPA-2320] - CriteriaBuilder predicate construction deadlocks in multi-core VM due to static initializer
+    [OPENJPA-2321] - Synchronizing logging output stream causes deadlock when used some JDK LogManger derivative
+    [OPENJPA-2325] - MappedSuperClass without an @Id causes wrong identity type for the inherited types
+    [OPENJPA-2326] - Updates in TCK execution configuration
+    [OPENJPA-2328] - NPE caused by one too many calls on the iterator inside the library.
+    [OPENJPA-2330] - Stackoverflow due to endless recursive calls
+    [OPENJPA-2334] - OpenJPA must support processing puRoot & jar-file URLs as jar-formatted InputStreams
+    [OPENJPA-2335] - Constrained foreign key column value setting needs to be flexible
+    [OPENJPA-2336] - Relax Join column name comparison based on database dictionary schema case setting
+    [OPENJPA-2343] - Version field returns null when explicity projected from a JOIN in SELECT clause
+    [OPENJPA-2355] - CONCAT() function must support more than two arguments
+    [OPENJPA-2357] - @..ToMany(optional=false) throws InvalidStateException: [...] the metadata for this field specifies that nulls are illegal.
+    [OPENJPA-2377] - Metamodel.managedType returns wrong result for Embeddable
+    [OPENJPA-2378] - TestHandlerStrategy.testIssue_OPENJPA2328 failed with Oracle
+    [OPENJPA-2384] - Rendering criteria query to JPQL-like string ignores multiple GROUP BY clauses
+    [OPENJPA-2390] - HSQLDB SELECT NEXT VALUE FOR Sequence will skip 1 sequence value if allocation size is 1
+    [OPENJPA-2391] - HSQLDB v2.2.9
+    [OPENJPA-2400] - Support MariaDB
+    [OPENJPA-2405] - EntityManager.merge does not work for entity that is managed by another EntityManager
+    [OPENJPA-2409] - allow the openjpa-maven-plugin to use a persistence.xml from resources and not only from files
+    [OPENJPA-2414] - FinderCache does not consider active Fetch Groups/FetchPlan added Fields
+    [OPENJPA-2418] - Cannot build 2.2.x due to NullPointerException in maven-checkstyle-plugin
+    [OPENJPA-2421] - Slices: Can't setting up FinderTargetPolicy
+    [OPENJPA-2425] - SELECT fields with @ExternalValues defined returns datastore values instead of unmapped fields
+    [OPENJPA-2432] - MySQL dictionary can't be found from a valid connection
+    [OPENJPA-2435] - Version field in a projection always returned as an Integer.
+    [OPENJPA-2437] - transactional listeners added too late to observe begin event
+    [OPENJPA-2440] - foreign key drop leaks jdbc connections
+    [OPENJPA-2443] - InvalidStateException while merging a new Entity with a GeneratedValue id
+    [OPENJPA-2444] - ReverseMappingTool creates orm.xml files in the current working directory
+
+Improvement
+
+    [OPENJPA-2120] - Add new option to eliminate reflection calls from enhancer generated IdClass PC copy operations
+    [OPENJPA-2134] - Do not close Connections when ConnectionRetainMode is set to "always"
+    [OPENJPA-2137] - Make some members of StateManagerImpl protected to allow for greater extensibility
+    [OPENJPA-2143] - Reduce lock contention on LifecycleEventManager
+    [OPENJPA-2151] - Improve the performance of StateManagerImpl.initialize
+    [OPENJPA-2152] - Don't process query hints when LockModeType == NONE
+    [OPENJPA-2159] - Add support for no rounding of Date
+    [OPENJPA-2162] - Avoid delimited identifier processing if it's not required by application
+    [OPENJPA-2164] - Don't setPCState if field requested is already loaded
+    [OPENJPA-2167] - Misc changes to improve flush() path performance
+    [OPENJPA-2171] - asm should be optional
+    [OPENJPA-2189] - Update OpenBooks example to build, install, and execute in the WAS Liberty Profile
+    [OPENJPA-2208] - Add additional Java 2 Security doPriv function
+    [OPENJPA-2209] - MetaDataRepository preload configuration should be more inclusive
+    [OPENJPA-2220] - Persistent field fetching statistic tool
+    [OPENJPA-2231] - jest TokenReplacedStream use Reader instead of Inputstream
+    [OPENJPA-2264] - Upcast PreparedStatementManagerImpl.logSQLWarnings to take a Statement rather than a PreparedStatement
+    [OPENJPA-2275] - Extending SchemaTool
+    [OPENJPA-2292] - Reduce object allocations
+    [OPENJPA-2293] - Reduce LifecycleEventManager
+    [OPENJPA-2324] - Option to express literal in query string directly into generate SQL
+    [OPENJPA-2332] - Update message when unable to resolve datasource configuration
+    [OPENJPA-2342] - Consider modifying PCEnhancer.run to use serp.bytecode.BCClass.getDeclaredInterfaceNames instead of getDeclaredInterfaceTypes.
+    [OPENJPA-2346] - Optimize MetaDataRepository.getMetaDataInternal
+    [OPENJPA-2347] - Make StateManagerImpl more extensible
+    [OPENJPA-2348] - Cache calculated hashCode in OpenJPAId
+    [OPENJPA-2353] - Reduce object allocations
+    [OPENJPA-2354] - Removed synchronized from enhancer added pcReplaceStateManager method
+    [OPENJPA-2368] - Move www.apache.org/openjpa/ns/orm to openjpa.apache.org/ns/orm
+    [OPENJPA-2410] - Build time detection of System.out/err.print(ln) in source files
+
+New Feature
+
+    [OPENJPA-2283] - Upgrade to ASM 4 dependency
+    [OPENJPA-2295] - speed up query metadata lookup
+    [OPENJPA-2366] - provide option to exclude schema name from generated @Table annotation for generated entities
+
+Question
+
+    [OPENJPA-1532] - Should the <shared-cache-mode> element in a persistence unit definition automatically turn on the data cache?
+
+Task
+
+    [OPENJPA-2388] - support new xbean asm4 shade
+
+Test
+
+    [OPENJPA-2169] - TestOracleXmlColumn test failed using Oracle 11.2 driver

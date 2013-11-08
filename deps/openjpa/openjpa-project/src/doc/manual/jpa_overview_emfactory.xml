@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_emfactory">
+    <title>
+        EntityManagerFactory
+    </title>
+    <indexterm zone="jpa_overview_emfactory">
+        <primary>
+            EntityManagerFactory
+        </primary>
+    </indexterm>
+    <mediaobject>
+        <imageobject>
+            <!-- PNG image data, 418 x 274 (see README) -->
+            <imagedata fileref="img/entitymanagerfactory.png" width="279px"/>
+            
+        </imageobject>
+    </mediaobject>
+    <para>
+The <classname>EntityManagerFactory</classname> creates <classname>
+EntityManager</classname> instances for application use.
+    </para>
+    <note>
+        <para>
+OpenJPA extends the standard <classname>EntityManagerFactory</classname>
+interface with the
+<ulink url="../javadoc/org/apache/openjpa/persistence/OpenJPAEntityManagerFactory.html">
+<classname>OpenJPAEntityManagerFactory</classname></ulink> to provide additional
+functionality.
+        </para>
+    </note>
+    <section id="jpa_overview_emfactory_obtain">
+        <title>
+            Obtaining an EntityManagerFactory
+        </title>
+        <indexterm zone="jpa_overview_emfactory_obtain">
+            <primary>
+                EntityManagerFactory
+            </primary>
+            <secondary>
+                construction
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                Java Connector Architecture
+            </primary>
+            <see>
+                JCA
+            </see>
+        </indexterm>
+        <indexterm>
+            <primary>
+                JCA
+            </primary>
+        </indexterm>
+        <para>
+Within a container, you will typically use <emphasis>injection</emphasis> to
+access an <classname>EntityManagerFactory</classname>. There are, however,
+alternative mechanisms for <classname>EntityManagerFactory</classname>
+construction.
+        </para>
+        <para>
+Some vendors may supply public constructors for their <classname>
+EntityManagerFactory</classname> implementations, but we recommend using the
+Java Connector Architecture (JCA) in a managed environment, or the <classname>
+Persistence</classname> class' <methodname>createEntityManagerFactory
+</methodname> methods in an unmanaged environment, as described in
+<xref linkend="jpa_overview_persistence"/>. These strategies allow
+vendors to pool factories, cutting down on resource utilization.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                JNDI
+            </primary>
+        </indexterm>
+JPA allows you to create and configure an <classname>
+EntityManagerFactory</classname>, then store it in a Java Naming and Directory 
+Interface (JNDI) tree for later retrieval and use.
+        </para>
+    </section>
+    <section id="jpa_overview_emfactory_em">
+        <title>
+            Obtaining EntityManagers
+        </title>
+        <indexterm zone="jpa_overview_emfactory_em">
+            <primary>
+                EntityManager
+            </primary>
+            <secondary>
+                obtaining
+            </secondary>
+            <seealso>
+                EntityManagerFactory
+            </seealso>
+        </indexterm>
+        <indexterm zone="jpa_overview_emfactory_em">
+            <primary>
+                EntityManagerFactory
+            </primary>
+            <secondary>
+                obtaining EntityManagers
+            </secondary>
+        </indexterm>
+<programlisting>
+public EntityManager createEntityManager();
+public EntityManager createEntityManager(Map map);
+</programlisting>
+        <para>
+The two <methodname>createEntityManager</methodname> methods above create a new
+<classname>EntityManager</classname> each time they are invoked. The optional
+<classname>Map</classname> is used to supply vendor-specific settings. If you
+have configured your implementation for JTA transactions and a JTA transaction
+is active, the returned <classname>EntityManager</classname> will be 
+synchronized with that transaction.
+        </para>
+        <note>
+            <para>
+OpenJPA recognizes the following string keys in the map supplied to <methodname>
+createEntityManager</methodname>:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>openjpa.ConnectionUserName</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>openjpa.ConnectionPassword</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>openjpa.ConnectionRetainMode</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>openjpa.TransactionMode</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>openjpa.&lt;property&gt;</literal>, where <emphasis>&lt;property&gt;
+</emphasis> is any JavaBean property of the
+<ulink url="../javadoc/org/apache/openjpa/persistence/OpenJPAEntityManager.html">
+<classname>
+org.apache.openjpa.persistence.OpenJPAEntityManager</classname></ulink>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The last option uses reflection to configure any property of OpenJPA's
+<classname>EntityManager</classname> implementation with the value supplied in
+your map. The first options correspond exactly to the same-named OpenJPA
+configuration keys described in <xref linkend="ref_guide_conf"/> of the
+Reference Guide.
+            </para>
+        </note>
+    </section>
+    <section id="jpa_overview_emfactory_perscontext">
+        <title>
+            Persistence Context
+        </title>
+        <indexterm zone="jpa_overview_emfactory_perscontext">
+            <primary>
+                persistence context
+            </primary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                PersistenceContextType
+            </primary>
+            <see>
+                persistence context
+            </see>
+        </indexterm>
+        <para>
+A persistence context is a set of entities such that for any persistent identity
+there is a unique entity instance. Within a persistence context, entities are
+<emphasis>managed</emphasis>. The <classname> EntityManager</classname> controls
+their lifecycle, and they can access datastore resources.
+        </para>
+        <para>
+When a persistence context ends, previously-managed entities become <emphasis>
+detached</emphasis>. A detached entity is no longer under the control of the
+<classname>EntityManager</classname>, and no longer has access to datastore
+resources. We discuss detachment in detail in
+<xref linkend="jpa_overview_em_lifecycle"/>. For now, it is sufficient to
+know that detachment has two obvious consequences:
+        </para>
+        <orderedlist>
+            <listitem>
+                <para>
+The detached entity cannot load any additional persistent state.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+The <classname>EntityManager</classname> will not return the detached entity
+from <methodname>find</methodname>, nor will queries include the detached
+entity in their results. Instead, <methodname>find</methodname> method
+invocations and query executions that would normally incorporate the detached
+entity will create a new managed entity with the same identity.
+                </para>
+            </listitem>
+        </orderedlist>
+        <note>
+            <para>
+OpenJPA offers several features related to detaching entities. See
+<xref linkend="ref_guide_detach"/> in the Reference Guide.
+<xref linkend="ref_guide_detach_graph"/> in particular describes how to
+use the <literal>DetachState</literal> setting to boost the performance of
+merging detached entities.
+            </para>
+        </note>
+        <para>
+Injected <classname>EntityManager</classname>s have a <emphasis>transaction
+</emphasis> persistence context,
+while <classname> EntityManager</classname>s obtained through the
+<classname>EntityManagerFactory</classname> have an <emphasis>extended
+</emphasis> persistence context. We describe these persistence context types
+below.
+        </para>
+        <section id="jpa_overview_emfactory_perscontext_trans">
+            <title>
+                Transaction Persistence Context
+            </title>
+            <para>
+Under the transaction persistence context model, an <classname> EntityManager
+</classname> begins a new persistence context with each transaction, and ends
+the context when the transaction commits or rolls back. Within the transaction,
+entities you retrieve through the <classname>EntityManager</classname> or via
+<classname>Queries</classname> are managed entities. They can access datastore
+resources to lazy-load additional persistent state as needed, and only one
+entity may exist for any persistent identity.
+            </para>
+            <para>
+When the transaction completes, all entities lose their association with the
+<classname>EntityManager</classname> and become detached. Traversing a
+persistent field that wasn't already loaded now has undefined results. And using
+the <classname> EntityManager</classname> or a <classname>Query</classname> to
+retrieve additional objects may now create new instances with the same
+persistent identities as detached instances.
+            </para>
+            <para>
+If you use an <classname>EntityManager</classname> with a transaction
+persistence context model outside of an active transaction, each method
+invocation creates a new persistence context, performs the method action, and
+ends the persistence context. For example, consider using the <methodname>
+EntityManager.find</methodname> method outside of a transaction. The <classname>
+EntityManager</classname> will create a temporary persistence context, perform
+the find operation, end the persistence context, and return the detached result
+object to you. A second call with the same id will return a second detached
+object.
+            </para>
+            <para>
+When the next transaction begins, the <classname>EntityManager</classname> will
+begin a new persistence context, and will again start returning managed
+entities. As you'll see in <xref linkend="jpa_overview_em"/>, you can
+also merge the previously-detached entities back into the new persistence
+context.
+            </para>
+            <example id="jpa_overview_emfactory_perscontext_transex">
+                <title>
+                    Behavior of Transaction Persistence Context
+                </title>
+                <para>
+The following code illustrates the behavior of entities under an <classname>
+EntityManager</classname> using a transaction persistence context.
+                </para>
+<programlisting>
+EntityManager em; // injected
+...
+
+// outside a transaction:
+
+// each operation occurs in a separate persistence context, and returns 
+// a new detached instance
+Magazine mag1 = em.find(Magazine.class, magId);
+Magazine mag2 = em.find(Magazine.class, magId);
+assertTrue(mag2 != mag1);
+...
+
+// transaction begins:
+
+// within a transaction, a subsequent lookup doesn't return any of the
+// detached objects.  however, two lookups within the same transaction
+// return the same instance, because the persistence context spans the
+// transaction
+Magazine mag3 = em.find(Magazine.class, magId);
+assertTrue(mag3 != mag1 &amp;&amp; mag3 != mag2);
+Magazine mag4 = em.find(Magazine.class, magId);
+assertTrue(mag4 == mag3);
+...
+
+// transaction commits:
+
+// once again, each operation returns a new instance
+Magazine mag5 = em.find(Magazine.class, magId);
+assertTrue(mag5 != mag3);
+</programlisting>
+            </example>
+        </section>
+        <section id="jpa_overview_emfactory_perscontext_extend">
+            <title>
+                Extended Persistence Context
+            </title>
+            <para>
+An <classname>EntityManager</classname> using an extended persistence context
+maintains the same persistence context for its entire lifecycle. Whether inside
+a transaction or not, all entities returned from the <classname>EntityManager
+</classname> are managed, and the <classname>EntityManager</classname> never
+creates two entity instances to represent the same persistent identity. Entities
+only become detached when you finally close the <classname>EntityManager
+</classname> (or when they are serialized).
+            </para>
+            <example id="jpa_overview_emfactory_perscontext_extendex">
+                <title>
+                    Behavior of Extended Persistence Context
+                </title>
+                <para>
+The following code illustrates the behavior of entities under an <classname>
+EntityManager</classname> using an extended persistence context.
+                </para>
+<programlisting>
+EntityManagerFactory emf = ...
+EntityManager em = emf.createEntityManager();
+
+// persistence context active for entire life of EM, so only one entity
+// for a given persistent identity
+Magazine mag1 = em.find(Magazine.class, magId);
+Magazine mag2 = em.find(Magazine.class, magId);
+assertTrue(mag2 == mag1);
+
+em.getTransaction().begin();
+
+// same persistence context active within the transaction
+Magazine mag3 = em.find(Magazine.class, magId);
+assertTrue(mag3 == mag1);
+Magazine mag4 = em.find(Magazine.class, magId);
+assertTrue(mag4 == mag1);
+
+em.getTransaction.commit();
+
+// when the transaction commits, instance still managed
+Magazine mag5 = em.find(Magazine.class, magId);
+assertTrue(mag5 == mag1);
+
+// instance finally becomes detached when EM closes
+em.close();
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="jpa_overview_emf_properties">
+		<title>
+			Retrieving Properties Information
+		</title>
+		<indexterm zone="jpa_overview_emf_properties">
+            <primary>
+                EntityManagerFactory
+            </primary>
+            <secondary>
+                properties information
+            </secondary>
+        </indexterm>
+        &properties_info.xml;
+    </section>
+    <section id="jpa_overview_emfactory_close">
+        <title>
+            Closing the EntityManagerFactory
+        </title>
+        <indexterm zone="jpa_overview_emfactory_close">
+            <primary>
+                EntityManagerFactory
+            </primary>
+            <secondary>
+                closing
+            </secondary>
+        </indexterm>
+<programlisting>
+public boolean isOpen();
+public void close();
+</programlisting>
+        <para>
+<classname>EntityManagerFactory</classname> instances are heavyweight objects.
+Each factory might maintain a metadata cache, object state cache, <classname>
+EntityManager</classname> pool, connection pool, and more. If your application
+no longer needs an <classname>EntityManagerFactory</classname>, you should
+close it to free these resources. When an <classname>EntityManagerFactory
+</classname> closes, all <classname>EntityManager</classname>s from that
+factory, and by extension all entities managed by those <classname>
+EntityManager</classname>s, become invalid. Attempting to close an <classname>
+EntityManagerFactory</classname> while one or more of its <classname>
+EntityManager</classname>s has an active transaction may result in an
+<classname>IllegalStateException</classname>.
+        </para>
+        <para>
+Closing an <classname>EntityManagerFactory</classname> should not be taken
+lightly. It is much better to keep a factory open for a long period of time than
+to repeatedly create and close new factories. Thus, most applications will never
+close the factory, or only close it when the application is exiting. Only
+applications that require multiple factories with different configurations have
+an obvious reason to create and close multiple <classname>EntityManagerFactory
+</classname> instances. Once a factory is closed, all methods except
+<methodname>isOpen</methodname> throw an <classname>
+IllegalStateException</classname>.
+        </para>
+    </section>
+
+
+    <section id="jpa_overview_emfactory_puutil">
+        <title>
+            PersistenceUnitUtil
+        </title>
+        <indexterm zone="jpa_overview_emfactory_puutil">
+            <primary>
+                EntityManagerFactory
+            </primary>
+            <secondary>
+                util
+            </secondary>
+        </indexterm>
+<programlisting>
+public PersistenceUnitUtil getPersistenceUnitUtil();
+</programlisting>
+        <para>
+The <classname>EntityManagerFactory</classname> method 
+<methodname>getPersistenceUnitUtil</methodname> provides access to a 
+<classname>PersistenceUnitUtil</classname> utility. <classname>PersistenceUnitUtil</classname>
+can be used to obtain the identity of a managed object and determine the load
+state of the entity or one of its attributes.  If the object is not
+managed by one of the entity managers created from the entity manager factory 
+from which the utility was obtained, the <methodname>getIdentifier</methodname> method will
+return null and the <methodname>isLoaded</methodname> methods will return false.
+<programlisting>
+EntityManagerFactory emf = Persistence.createEntityManagerFactory();
+PersistenceUnitUtil puUtil = emf.getPersistenceUnitUtil();
+
+if (puUtil.getIdentifier(deptEntity) == null) {
+    throw new Exception("Identity is not valid.");
+}
+if (!puUtil.isLoaded(deptEntity, "employees")) {
+    throw new Exception("Employees not loaded.");
+}
+</programlisting>
+        </para>
+    </section>
+
+</chapter>

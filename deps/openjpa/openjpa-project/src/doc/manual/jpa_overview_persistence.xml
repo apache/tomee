@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_persistence">
+    <title>
+        Persistence
+    </title>
+    <indexterm zone="jpa_overview_persistence">
+        <primary>
+            Persistence
+        </primary>
+    </indexterm>
+    <indexterm zone="jpa_overview_persistence">
+        <primary>
+            EntityManagerFactory
+        </primary>
+        <secondary>
+            construction
+        </secondary>
+    </indexterm>
+    <indexterm zone="jpa_overview_persistence">
+        <primary>
+            Persistence
+        </primary>
+        <secondary>
+            getEntityManagerFactory
+        </secondary>
+    </indexterm>
+    <indexterm zone="jpa_overview_persistence">
+        <primary>
+            getEntityManagerFactory
+        </primary>
+        <seealso>
+            Persistence
+        </seealso>
+    </indexterm>
+    <mediaobject>
+        <imageobject>
+            <!-- PNG image data, 427 x 121 (see README) -->
+            <imagedata fileref="img/persistence.png" width="285px"/>
+        </imageobject>
+    </mediaobject>
+    <note>
+        <para>
+OpenJPA also includes the
+<ulink url="../javadoc/org/apache/openjpa/persistence/OpenJPAPersistence.html">
+<classname>OpenJPAPersistence</classname></ulink> helper class to provide
+additional utility methods.
+        </para>
+    </note>
+    <para>
+Within a container, you will typically use <emphasis>injection</emphasis> to
+access an <classname>EntityManagerFactory</classname>. Applications operating
+outside of a container, however, can use the
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/Persistence.html">
+<classname>Persistence</classname></ulink> class to obtain <classname>
+EntityManagerFactory</classname> objects in a vendor-neutral fashion.
+    </para>
+<programlisting>
+public static EntityManagerFactory createEntityManagerFactory(String name);
+public static EntityManagerFactory createEntityManagerFactory(String name, Map props);
+public static PersistenceUtil getPersistenceUtil();
+</programlisting>
+    <para>
+Each <methodname>createEntityManagerFactory</methodname> method searches the
+system for an <classname>EntityManagerFactory</classname> definition with the
+given name. Use <literal>null</literal> for an unnamed factory. The optional map
+contains vendor-specific property settings used to further configure the
+factory.
+    </para>
+    <para>
+<filename>persistence.xml</filename> files define <classname>
+EntityManagerFactories</classname>. The <methodname>createEntityManagerFactory
+</methodname> methods search for <filename>persistence.xml</filename> files
+within the <filename>META-INF</filename> directory of any <literal>CLASSPATH
+</literal> element. For example, if your <literal>CLASSPATH</literal> contains
+the <filename>conf</filename> directory, you could place an <classname>
+EntityManagerFactory</classname> definition in <filename>
+conf/META-INF/persistence.xml</filename>.
+    </para>
+    <para>
+The <methodname>getPersistenceUtil</methodname> method returns a PersistenceUtil
+interface that can be used to determine whether an entity or attribute of an
+entity is loaded.  
+</para>
+<programlisting>
+PersistenceUtil pUtil = Persistence.getPersistenceUtil();
+
+if (!pUtil.isLoaded(myEntity)) {
+    loadEntity(myEntity);
+}
+</programlisting>
+    <section id="jpa_overview_persistence_xml">
+        <title>
+            persistence.xml
+        </title>
+        <para>
+With the introduction of JPA 2.0, there are two versions of the
+<filename>persistence.xml</filename>.  The most current revision of the
+2.0 persistence schema is presented below.  Version 1.0 of the persistence
+schema can be found at 
+<ulink url="http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"/>.
+        </para>
+<programlisting>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;!-- persistence.xml schema --&gt;
+&lt;xsd:schema targetNamespace="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:persistence="http://java.sun.com/xml/ns/persistence"
+    elementFormDefault="qualified" attributeFormDefault="unqualified"
+    version="2.0"&gt;
+
+    &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;
+            @(#)persistence_2_0.xsd 1.0 October 1 2009
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+    &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;
+
+          DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+          Copyright 2005-2009 Sun Microsystems, Inc. All rights reserved.
+
+          The contents of this file are subject to the terms of either the
+          GNU General Public License Version 2 only ("GPL") or the Common
+          Development and Distribution License("CDDL") (collectively, the
+          "License").  You may not use this file except in compliance with
+          the License. You can obtain a copy of the License at
+          https://glassfish.dev.java.net/public/CDDL+GPL.html or
+          glassfish/bootstrap/legal/LICENSE.txt.  See the License for the
+          specific language governing permissions and limitations under the
+          License.
+
+          When distributing the software, include this License Header
+          Notice in each file and include the License file at
+          glassfish/bootstrap/legal/LICENSE.txt.  Sun designates this
+          particular file as subject to the "Classpath" exception as
+          provided by Sun in the GPL Version 2 section of the License file
+          that accompanied this code.  If applicable, add the following
+          below the License Header, with the fields enclosed by brackets []
+          replaced by your own identifying information:
+          "Portions Copyrighted [year] [name of copyright owner]"
+
+          Contributor(s):
+
+          If you wish your version of this file to be governed by only the
+          CDDL or only the GPL Version 2, indicate your decision by adding
+          "[Contributor] elects to include this software in this
+          distribution under the [CDDL or GPL Version 2] license."  If you
+          don't indicate a single choice of license, a recipient has the
+          option to distribute your version of this file under either the
+          CDDL, the GPL Version 2 or to extend the choice of license to its
+          licensees as provided above.  However, if you add GPL Version 2
+          code and therefore, elected the GPL Version 2 license, then the
+          option applies only if the new code is made subject to such
+          option by the copyright holder.
+
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+    &lt;xsd:annotation&gt;
+        &lt;xsd:documentation&gt;
+        &lt;![CDATA[
+            This is the XML Schema for the persistence configuration file.
+            The file must be named "META-INF/persistence.xml" in the
+            persistence archive.
+            Persistence configuration files must indicate
+            the persistence schema by using the persistence namespace:
+            http://java.sun.com/xml/ns/persistence
+            and indicate the version of the schema by
+            using the version element as shown below:
+            &lt;persistence xmlns="http://java.sun.com/xml/ns/persistence"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+            http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+            version="2.0"&gt;
+            ...
+            &lt;/persistence&gt;
+        ]]&gt;
+        &lt;/xsd:documentation&gt;
+    &lt;/xsd:annotation&gt;
+
+    &lt;xsd:simpleType name="versionType"&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:pattern value="[0-9]+(\.[0-9]+)*" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:element name="persistence"&gt;
+        &lt;xsd:complexType&gt;
+            &lt;xsd:sequence&gt;
+                &lt;!-- **************************************************** --&gt;
+                &lt;xsd:element name="persistence-unit"
+                    minOccurs="1" maxOccurs="unbounded"&gt;
+                    &lt;xsd:complexType&gt;
+                        &lt;xsd:annotation&gt;
+                            &lt;xsd:documentation&gt;
+                                Configuration of a persistence unit.
+                            &lt;/xsd:documentation&gt;
+                        &lt;/xsd:annotation&gt;
+                        &lt;xsd:sequence&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="description"
+                                type="xsd:string" minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        Description of this persistence unit.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="provider"
+                                type="xsd:string" minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        Provider class that supplies EntityManagers for this
+                                        persistence unit.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="jta-data-source"
+                                type="xsd:string" minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        The container-specific name of the JTA datasource to use.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="non-jta-data-source"
+                                type="xsd:string" minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        The container-specific name of a non-JTA datasource to use.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="mapping-file"
+                                type="xsd:string" minOccurs="0"
+                                maxOccurs="unbounded"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        File containing mapping information. Loaded as a resource
+                                        by the persistence provider.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="jar-file"
+                                type="xsd:string" minOccurs="0"
+                                maxOccurs="unbounded"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        Jar file that is to be scanned for managed classes.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="class" type="xsd:string"
+                                minOccurs="0" maxOccurs="unbounded"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        Managed class to be included in the persistence unit and
+                                        to scan for annotations. It should be annotated
+                                        with either @Entity, @Embeddable or @MappedSuperclass.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="exclude-unlisted-classes"
+                                type="xsd:boolean" default="true"
+                                minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        When set to true then only listed classes and jars will
+                                        be scanned for persistent classes, otherwise the
+                                        enclosing jar or directory will also be scanned.
+                                        Not applicable to Java SE persistence units.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="shared-cache-mode"
+                                type="persistence:persistence-unit-caching-type"
+                                minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        Defines whether caching is enabled for the
+                                        persistence unit if caching is supported by the
+                                        persistence provider. When set to ALL, all entities
+                                        will be cached. When set to NONE, no entities will
+                                        be cached. When set to ENABLE_SELECTIVE, only entities
+                                        specified as cacheable will be cached. When set to
+                                        DISABLE_SELECTIVE, entities specified as not cacheable
+                                        will not be cached. When not specified or when set to
+                                        UNSPECIFIED, provider defaults may apply.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="validation-mode"
+                                type="persistence:persistence-unit-validation-mode-type"
+                                minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        The validation mode to be used for the persistence unit.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                            &lt;/xsd:element&gt;
+                            &lt;!-- **************************************************** --&gt;
+                            &lt;xsd:element name="properties"
+                                minOccurs="0"&gt;
+                                &lt;xsd:annotation&gt;
+                                    &lt;xsd:documentation&gt;
+                                        A list of standard and vendor-specific properties
+                                        and hints.
+                                    &lt;/xsd:documentation&gt;
+                                &lt;/xsd:annotation&gt;
+                                &lt;xsd:complexType&gt;
+                                    &lt;xsd:sequence&gt;
+                                        &lt;xsd:element name="property"
+                                            minOccurs="0" maxOccurs="unbounded"&gt;
+                                            &lt;xsd:annotation&gt;
+                                                &lt;xsd:documentation&gt;
+                                                    A name-value pair.
+                                                &lt;/xsd:documentation&gt;
+                                            &lt;/xsd:annotation&gt;
+                                            &lt;xsd:complexType&gt;
+                                                &lt;xsd:attribute
+                                                    name="name" type="xsd:string"
+                                                    use="required" /&gt;
+                                                &lt;xsd:attribute
+                                                    name="value" type="xsd:string"
+                                                    use="required" /&gt;
+                                            &lt;/xsd:complexType&gt;
+                                        &lt;/xsd:element&gt;
+                                    &lt;/xsd:sequence&gt;
+                                &lt;/xsd:complexType&gt;
+                            &lt;/xsd:element&gt;
+                        &lt;/xsd:sequence&gt;
+                        &lt;!-- **************************************************** --&gt;
+                        &lt;xsd:attribute name="name" type="xsd:string"
+                            use="required"&gt;
+                            &lt;xsd:annotation&gt;
+                                &lt;xsd:documentation&gt;
+                                    Name used in code to reference this persistence unit.
+                                &lt;/xsd:documentation&gt;
+                            &lt;/xsd:annotation&gt;
+                        &lt;/xsd:attribute&gt;
+                        &lt;!-- **************************************************** --&gt;
+                        &lt;xsd:attribute name="transaction-type"
+                            type="persistence:persistence-unit-transaction-type"&gt;
+                            &lt;xsd:annotation&gt;
+                                &lt;xsd:documentation&gt;
+                                    Type of transactions used by EntityManagers from this
+                                    persistence unit.
+                                &lt;/xsd:documentation&gt;
+                            &lt;/xsd:annotation&gt;
+                        &lt;/xsd:attribute&gt;
+                    &lt;/xsd:complexType&gt;
+                &lt;/xsd:element&gt;
+            &lt;/xsd:sequence&gt;
+            &lt;xsd:attribute name="version" type="persistence:versionType"
+                fixed="2.0" use="required" /&gt;
+        &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="persistence-unit-transaction-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum PersistenceUnitTransactionType {JTA, RESOURCE_LOCAL};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="JTA" /&gt;
+            &lt;xsd:enumeration value="RESOURCE_LOCAL" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="persistence-unit-caching-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum SharedCacheMode { ALL, NONE, ENABLE_SELECTIVE,
+                DISABLE_SELECTIVE, UNSPECIFIED};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="ALL" /&gt;
+            &lt;xsd:enumeration value="NONE" /&gt;
+            &lt;xsd:enumeration value="ENABLE_SELECTIVE" /&gt;
+            &lt;xsd:enumeration value="DISABLE_SELECTIVE" /&gt;
+            &lt;xsd:enumeration value="UNSPECIFIED" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+    &lt;!-- **************************************************** --&gt;
+    &lt;xsd:simpleType name="persistence-unit-validation-mode-type"&gt;
+        &lt;xsd:annotation&gt;
+            &lt;xsd:documentation&gt;
+                public enum ValidationMode { AUTO, CALLBACK, NONE};
+            &lt;/xsd:documentation&gt;
+        &lt;/xsd:annotation&gt;
+        &lt;xsd:restriction base="xsd:token"&gt;
+            &lt;xsd:enumeration value="AUTO" /&gt;
+            &lt;xsd:enumeration value="CALLBACK" /&gt;
+            &lt;xsd:enumeration value="NONE" /&gt;
+        &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+&lt;/xsd:schema&gt;
+</programlisting>
+        <para>
+The root element of a <filename>persistence.xml</filename> file is <literal>
+persistence</literal>, which then contains one or more <literal>
+persistence-unit</literal> definitions. The root element should include the
+version attribute with the appropriate version, <literal>1.0</literal> for a
+version 1.0 file and <literal>2.0</literal> for a version 2.0 file.  Each
+persistence unit describes the configuration for the entity managers created by
+the persistence unit's entity manager factory. The persistence unit can specify 
+these elements and attributes.
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>name</literal>: This is the name you pass to the <methodname>
+Persistence.createEntityManagerFactory</methodname> methods described above. The
+name attribute is required.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>transaction-type</literal>: Whether to use managed
+(<literal>JTA</literal>) or local (<literal>RESOURCE_LOCAL</literal>)
+transaction management.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>provider</literal>: If you are using a third-party JPA vendor, this
+element names its implementation of the
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/spi/PersistenceProvider.html">
+<classname>PersistenceProvider</classname></ulink> bootstrapping interface.
+                </para>
+                <note>
+                    <para>
+Set the <literal>provider</literal> to <classname>
+org.apache.openjpa.persistence.PersistenceProviderImpl</classname> to use
+OpenJPA.
+                    </para>
+                </note>
+            </listitem>
+            <listitem>
+                <para>
+<literal>jta-data-source</literal>: The JNDI name of a JDBC <classname>
+DataSource</classname> that is automatically enlisted in JTA transactions. This
+may be an XA <classname>DataSource</classname>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>non-jta-data-source</literal>: The JNDI name of a JDBC <classname>
+DataSource</classname> that is not enlisted in JTA transactions.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>mapping-file</literal>*: The resource names of XML mapping files for
+entities and embeddable classes. You can also specify mapping information in an
+<filename>orm.xml</filename> file in your <filename>META-INF</filename>
+directory. If present, the <filename>orm.xml</filename> mapping file will be
+read automatically.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>jar-file</literal>*: The names of jar files containing entities and
+embeddable classes. The implementation will scan the jar for annotated classes.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>class</literal>*: The class names of entities and embeddable classes.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>properties</literal>: This element contains nested <literal>property
+</literal> elements used to specify vendor-specific settings. Each <literal>
+property</literal> has a name attribute and a value attribute.
+                </para>
+                <note>
+                    <para>
+The Reference Guide's <xref linkend="ref_guide_conf"/> describes OpenJPA's
+configuration properties.
+                    </para>
+                </note>
+            </listitem>
+        </itemizedlist>
+        <para>
+Here is a typical <filename>persistence.xml</filename> file for a non-EE
+environment:
+        </para>
+        <example id="jpa_overview_persistence_xmlex">
+            <title>
+                persistence.xml
+            </title>
+<programlisting>
+&lt;?xml version="1.0"?&gt;
+&lt;persistence version="1.0"&gt;
+  &lt;persistence-unit name="openjpa"&gt;
+    &lt;provider&gt;org.apache.openjpa.persistence.PersistenceProviderImpl&lt;/provider&gt;
+    &lt;class&gt;tutorial.Animal&lt;/class&gt;
+    &lt;class&gt;tutorial.Dog&lt;/class&gt;
+    &lt;class&gt;tutorial.Rabbit&lt;/class&gt;
+    &lt;class&gt;tutorial.Snake&lt;/class&gt;
+    &lt;properties&gt;
+      &lt;property name="openjpa.ConnectionURL" value="jdbc:hsqldb:tutorial_database"/&gt;
+      &lt;property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbcDriver"/&gt;
+      &lt;property name="openjpa.ConnectionUserName" value="sa"/&gt;
+      &lt;property name="openjpa.ConnectionPassword" value=""/&gt;
+      &lt;property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/&gt;
+    &lt;/properties&gt;
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="jpa_overview_persistence_use">
+        <title>
+            Non-EE Use
+        </title>
+        <para>
+The example below demonstrates the <classname>Persistence</classname> class in
+action. You will typically execute code like this on application startup, then
+cache the resulting factory for future use. This bootstrapping code is only
+necessary in non-EE environments; in an EE environment <classname>
+EntityManagerFactories</classname> are typically injected.
+        </para>
+        <example id="jpa_overview_persistence_getemfactory">
+            <title>
+                Obtaining an EntityManagerFactory
+            </title>
+<programlisting>
+// if your persistence.xml file does not contain all settings already, you
+// can add vendor settings to a map
+Properties props = new Properties();
+...
+
+// create the factory defined by the "openjpa" entity-manager entry
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("openjpa", props);
+</programlisting>
+        </example>
+    </section>
+</chapter>

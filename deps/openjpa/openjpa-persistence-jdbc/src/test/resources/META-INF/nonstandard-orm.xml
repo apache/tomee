@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<entity-mappings xmlns="http://www.apache.org/openjpa/ns/orm/extendable" 
+	xmlns:openjpa="http://www.apache.org/openjpa/ns/orm" 
+	xmlns:orm="http://java.sun.com/xml/ns/persistence/orm" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	version="2.0">
+	
+	<openjpa:openjpa-version version="1.0"/>
+	
+	<entity class="org.apache.openjpa.persistence.jdbc.annotations.ExtensionsEntity"
+		metadata-complete="true">
+		<table name="ExtensionsEntityXML"/>
+		<attributes>
+			<basic name="uuid">
+				<orm:column name="UUID_HEX"></orm:column>
+				<openjpa:basic>
+					<openjpa:generated-value generator="uuid-hex"/>
+				</openjpa:basic>
+			</basic>
+			<basic name="uuidString">
+				<orm:column name="UUID_STRING"></orm:column>
+				<openjpa:basic>
+					<openjpa:generated-value generator="uuid-string"/>
+				</openjpa:basic>
+			</basic>
+			<basic name="uuidT4Hex">
+				<orm:column name="UUIDT4_HEX"></orm:column>
+				<openjpa:basic>
+					<openjpa:generated-value generator="uuid-type4-hex"/>
+				</openjpa:basic>
+			</basic>
+			<basic name="uuidT4String">
+				<orm:column name="UUIDT4_STRING"></orm:column>
+				<openjpa:basic>
+					<openjpa:generated-value generator="uuid-type4-string"/>
+				</openjpa:basic>
+			</basic>
+			<basic name="seq" fetch="LAZY">
+				<openjpa:basic>
+					<openjpa:read-only/>
+					<openjpa:generated-value strategy="SEQUENCE" generator="system"/>
+				</openjpa:basic>
+			</basic>
+			<basic name="externalValues">
+				<openjpa:basic type="int.class">
+					<openjpa:external-values>
+						<openjpa:external-value java-value="M" datastore-value="1"/>
+						<openjpa:external-value java-value="F" datastore-value="2"/>
+					</openjpa:external-values>
+				</openjpa:basic>
+			</basic>
+			<many-to-one name="rel" fetch="LAZY">
+				<orm:join-column name="REL_ID" referenced-column-name="ID"/>
+				<openjpa:many-to-one dependent="false" inverse-logical="owner"/>
+			</many-to-one>
+			<many-to-one name="owner">
+				<orm:join-column name="OWNER_ID" referenced-column-name="ID"/>
+			</many-to-one>
+			<many-to-many name="lrs">
+				<openjpa:many-to-many lrs="true"/>
+			</many-to-many>
+			<many-to-many name="eager">
+				<openjpa:many-to-many 
+					eager-fetch-mode="JOIN"
+					element-dependent="true"
+					element-class-criteria="true"/>
+			</many-to-many>
+			<openjpa:attributes>
+				<openjpa:persistent name="externalizer"
+					externalizer="getName"
+					factory="Class.forName"/>
+			</openjpa:attributes>
+		</attributes>
+		<openjpa:entity version-strategy="state-comparison">
+			<openjpa:fetch-group name="detail">
+				<openjpa:fetch-attribute name="rel" recursion-depth="-1"/>
+				<openjpa:fetch-attribute name="seq"/>
+			</openjpa:fetch-group>
+			<openjpa:data-cache enabled="false"/>
+			<openjpa:data-store-id strategy="SEQUENCE" generator="system"/>
+		</openjpa:entity>
+	</entity>
+	<entity class="org.apache.openjpa.persistence.jdbc.annotations.NonstandardMappingEntity">
+		<table name="NONSTD_ENTITY"/>
+		<discriminator-column name="DISCRIM" length="128"/>
+		<attributes>
+			<openjpa:attributes>
+				<openjpa:persistent name="custom"
+					strategy="org.apache.openjpa.persistence.jdbc.annotations.PointHandler">
+					<openjpa:columns>
+						<openjpa:column name="X_COL"/>
+						<openjpa:column name="Y_COL"/>
+					</openjpa:columns>
+					<openjpa:index name="PNT_IDX"/>
+				</openjpa:persistent>
+			</openjpa:attributes>
+		</attributes>
+		<openjpa:entity discriminator-strategy="class-name">
+			<openjpa:data-store-id-column name="OID"/>
+		</openjpa:entity>
+		
+	</entity>
+	
+</entity-mappings>

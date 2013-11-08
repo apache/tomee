@@ -1,0 +1,1373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_pc">
+    <title>
+        Entity
+    </title>
+    <indexterm zone="jpa_overview_pc">
+        <primary>
+            persistent classes
+        </primary>
+    </indexterm>
+    <indexterm zone="jpa_overview_pc">
+        <primary>
+            Entity
+        </primary>
+        <seealso>
+            persistent classes
+        </seealso>
+    </indexterm>
+    <indexterm>
+        <primary>
+            class
+        </primary>
+        <secondary>
+            persistent
+        </secondary>
+        <see>
+            persistent classes
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            persistence capable
+        </primary>
+        <see>
+            Entity
+        </see>
+    </indexterm>
+    <para>
+JPA recognizes two types of persistent classes: <emphasis>entity</emphasis>
+classes and <emphasis>embeddable</emphasis> classes. Each persistent instance of
+an entity class - each <emphasis>entity</emphasis> - represents a unique
+datastore record. You can use the <classname>EntityManager</classname> to find
+an entity by its persistent identity (covered later in this chapter), or use a
+<classname>Query</classname> to find entities matching certain criteria.
+    </para>
+    <para>
+An instance of an embeddable class, on the other hand, is only stored as part of
+a separate entity. Embeddable instances have no persistent identity, and are
+never returned directly from the <classname>EntityManager</classname> or from a
+<classname>Query</classname> unless the query uses a projection on owning class 
+to the embedded instance. For example, if <classname>Address</classname> is 
+embedded in <classname>Company</classname>, then 
+a query <classname>"SELECT a FROM Address a"</classname> will never return the 
+embedded <classname>Address</classname> of <classname>Company</classname>; 
+but a projection query such as 
+<classname>"SELECT c.address FROM Company c"</classname> will.
+    </para>
+    <para>
+Despite these differences, there are few distinctions between entity classes and
+embeddable classes. In fact, writing either type of persistent class is a lot
+like writing any other class. There are no special parent classes to
+extend from, field types to use, or methods to write. This is one important way
+in which JPA makes persistence transparent to you, the developer.
+    </para>
+    <note>
+        <para>
+JPA supports both fields and JavaBean properties as persistent state. For
+simplicity, however, we will refer to all persistent state as persistent fields,
+unless we want to note a unique aspect of persistent properties.
+        </para>
+    </note>
+    <example id="jpa_overview_pc_pcclass">
+        <title>
+            Persistent Class
+        </title>
+<programlisting>
+package org.mag;
+
+/**
+ * Example persistent class.  Notice that it looks exactly like any other
+ * class.  JPA makes writing persistent classes completely transparent.
+ */
+public class Magazine {
+
+    private String isbn;
+    private String title;
+    private Set articles = new HashSet();
+    private Article coverArticle;
+    private int copiesSold;
+    private double price;
+    private Company publisher;
+    private int version;
+
+    protected Magazine() {
+    }
+
+    public Magazine(String title, String isbn) {
+        this.title = title;
+        this.isbn = isbn;
+    }
+
+    public void publish(Company publisher, double price) {
+        this.publisher = publisher;
+        publisher.addMagazine(this);
+        this.price = price;
+    }
+    
+    public void sell() {
+        copiesSold++;
+        publisher.addRevenue(price);
+    }
+
+    public void addArticle(Article article) {
+        articles.add(article);
+    }
+
+    // rest of methods omitted
+}
+</programlisting>
+    </example>
+    <section id="jpa_overview_pc_restrict">
+        <title>
+            Restrictions on Persistent Classes
+        </title>
+        <indexterm zone="jpa_overview_pc_restrict">
+            <primary>
+                persistent classes
+            </primary>
+            <secondary>
+                restrictions on
+            </secondary>
+        </indexterm>
+        <para>
+There are very few restrictions placed on persistent classes. Still, it never
+hurts to familiarize yourself with exactly what JPA does and does not support.
+        </para>
+        <section id="jpa_overview_pc_no_arg">
+            <title>
+                Default or No-Arg Constructor
+            </title>
+            <indexterm zone="jpa_overview_pc_no_arg">
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    no-arg constructor requirement
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    constructor
+                </primary>
+                <secondary>
+                    no-arg constructor requirement
+                </secondary>
+            </indexterm>
+            <para>
+The JPA specification requires that all persistent classes have a no-arg
+constructor. This constructor may be public or protected. Because the compiler
+automatically creates a default no-arg constructor when no other constructor is
+defined, only classes that define constructors must also include a no-arg
+constructor.
+            </para>
+            <note>
+                <para>
+OpenJPA's <emphasis>enhancer</emphasis> will automatically add a protected
+no-arg constructor to your class when required. Therefore, this restriction does
+not apply when using the enhancer. See <xref linkend="ref_guide_pc_enhance"/>
+of the Reference Guide for details.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_pc_final">
+            <title>
+                Final
+            </title>
+            <para>
+Entity classes may not be final. No method of an entity class can be final.
+            </para>
+            <note>
+                <para>
+OpenJPA supports final classes and final methods.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_pc_id">
+            <title>
+                Identity Fields
+            </title>
+            <indexterm zone="jpa_overview_pc_id">
+                <primary>
+                    identity fields
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_pc_id">
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    JPA id requirement
+                </secondary>
+            </indexterm>
+            <para>
+All entity classes must declare one or more fields which together form the
+persistent identity of an instance. These are called <emphasis>identity
+</emphasis> or <emphasis>primary key</emphasis> fields. In our <classname>
+Magazine</classname> class, <literal>isbn</literal> and <literal>title</literal>
+are identity fields, because no two magazine records in the datastore can have
+the same <literal>isbn</literal> and <literal>title</literal> values.
+<xref linkend="jpa_overview_meta_id"/> will show you how to denote your
+identity fields in JPA metadata. <xref linkend="jpa_overview_pc_identity"/>
+below examines persistent identity.
+            </para>
+            <note>
+                <para>
+OpenJPA fully supports identity fields, but does not require them. See
+<xref linkend="ref_guide_pc_oid"/> of the Reference Guide for details.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_pc_version">
+            <title>
+                Version Field
+            </title>
+            <indexterm zone="jpa_overview_pc_version">
+                <primary>
+                    version fields
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_pc_version">
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    JPA version requirement
+                </secondary>
+            </indexterm>
+            <para>
+The <literal>version</literal> field in our <classname>Magazine</classname>
+class may seem out of place. JPA uses a version field in your entities to detect
+concurrent modifications to the same datastore record. When the JPA runtime
+detects an attempt to concurrently modify the same record, it throws an
+exception to the transaction attempting to commit last. This prevents
+overwriting the previous commit with stale data.
+            </para>
+            <para>
+A version field is not required, but without one concurrent threads or
+processes might succeed in making conflicting changes to the same record at the
+same time. This is unacceptable to most applications.
+<xref linkend="jpa_overview_meta_version"/> shows you how to designate a
+version field in JPA metadata.
+            </para>
+            <para>
+The version field must be an integral type (<classname> int</classname>,
+<classname>Long</classname>, etc) or a <classname>
+java.sql.Timestamp</classname>. You should consider version fields immutable. 
+Changing the field value has undefined results.
+            </para>
+            <note>
+                <para>
+OpenJPA fully supports version fields, but does not require them within the actual entity for concurrency
+detection. OpenJPA can maintain surrogate version values or use state
+comparisons to detect concurrent modifications. See
+<xref linkend="ref_guide_mapping_jpa"/> in the Reference Guide.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_pc_restrict_inheritance">
+            <title>
+                Inheritance
+            </title>
+            <indexterm zone="jpa_overview_pc_restrict_inheritance">
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    inheritance of
+                </secondary>
+                <seealso>
+                    inheritance
+                </seealso>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    inheritance
+                </primary>
+                <secondary>
+                    of persistent classes
+                </secondary>
+            </indexterm>
+            <para>
+JPA fully supports inheritance in persistent classes. It allows persistent
+classes to inherit from non-persistent classes, persistent classes to inherit
+from other persistent classes, and non-persistent classes to inherit from
+persistent classes. It is even possible to form inheritance hierarchies in which
+persistence skips generations. There are, however, a few important limitations:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+Persistent classes cannot inherit from certain natively-implemented system
+classes such as <classname>java.net.Socket</classname> and <classname>
+java.lang.Thread</classname>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+If a persistent class inherits from a non-persistent class, the fields of the
+non-persistent superclass cannot be persisted.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+All classes in an inheritance tree must use the same identity type. We cover
+entity identity in <xref linkend="jpa_overview_pc_identity"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_pc_restrict_fields">
+            <title>
+                Persistent Fields
+            </title>
+            <indexterm zone="jpa_overview_pc_restrict_fields">
+                <primary>
+                    persistent classes
+                </primary>
+                <secondary>
+                    field restrictions
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    field
+                </primary>
+                <secondary>
+                    persistent
+                </secondary>
+                <see>
+                    persistent fields
+                </see>
+            </indexterm>
+            <indexterm zone="jpa_overview_pc_restrict_fields">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    restrictions on
+                </secondary>
+            </indexterm>
+            <para>
+JPA manages the state of all persistent fields. Before you access persistent
+state, the JPA runtime makes sure that it has been loaded from the datastore.
+When you set a field, the runtime records that it has changed so that the new
+value will be persisted. This allows you to treat the field in exactly the same
+way you treat any other field - another aspect of JPA's transparency.
+            </para>
+            <para>
+JPA does not support static or final fields. It does, however, include built-in
+support for most common field types. These types can be roughly divided into
+three categories: immutable types, mutable types, and relations.
+            </para>
+            <para>
+            <indexterm>
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    immutable types
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    immutable
+                </primary>
+                <secondary>
+                    persistent field types
+                </secondary>
+            </indexterm>
+<emphasis>Immutable</emphasis> types, once created, cannot be changed. The only
+way to alter a persistent field of an immutable type is to assign a new value to
+the field. JPA supports the following immutable types:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+All primitives (<classname>int, float, byte</classname>, etc)
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+All primitive wrappers (<classname>java.lang.Integer, java.lang.Float,
+java.lang.Byte</classname>, etc)
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.lang.String</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.math.BigInteger</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.math.BigDecimal</classname>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+JPA also supports <classname>byte[]</classname>, <classname>Byte[]</classname>,
+<classname>char[]</classname>, and <classname>Character[]</classname> as 
+immutable types. That is, you can persist fields of these types,
+but you should not manipulate individual array indexes without resetting the
+array into the persistent field.
+            </para>
+            <para>
+            <indexterm>
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    mutable types
+                </secondary>
+                <seealso>
+                    proxies
+                </seealso>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    mutable
+                </primary>
+                <secondary>
+                    persistent field types
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+                <seealso>
+                    proxies
+                </seealso>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    user-defined types
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    user-defined
+                </primary>
+                <secondary>
+                    persistent field types
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+Persistent fields of <emphasis>mutable</emphasis> types can be altered without
+assigning the field a new value. Mutable types can be modified directly through
+their own methods. The JPA specification requires that implementations support
+the following mutable field types:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<classname>java.util.Date</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.util.Calendar</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.sql.Date</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.sql.Timestamp</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.sql.Time</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Enums
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Entity types (relations between entities)
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Embeddable types
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.util.Collection</classname>s of entities
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.util.Set</classname>s of entities
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.util.List</classname>s of entities
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>java.util.Map</classname>s in which each entry maps the value of one
+of a related entity's fields to that entity.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+Collection and map types may be parameterized.
+            </para>
+            <para>
+            <indexterm>
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    of unknown types
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    Object
+                </primary>
+                <secondary>
+                    as persistent field type
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+Most JPA implementations also have support for persisting serializable values as
+binary data in the datastore. <xref linkend="jpa_overview_meta"/> has more
+information on persisting serializable types.
+            </para>
+            <note>
+                <para>
+OpenJPA also supports arrays, <classname>java.lang.Number</classname>,
+<classname>java.util.Locale</classname>, all JDK 1.2 <classname>Set</classname>,
+<classname>List</classname>, and <classname>Map</classname> types, 
+and many other mutable and immutable field types. OpenJPA also allows you to
+plug in support for custom types.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_pc_restrict_conclusion">
+            <title>
+                Conclusions
+            </title>
+            <para>
+This section detailed all of the restrictions JPA places on persistent classes.
+While it may seem like we presented a lot of information, you will seldom find
+yourself hindered by these restrictions in practice. Additionally, there are
+often ways of using JPA's other features to circumvent any limitations you run
+into.
+            </para>
+        </section>
+    </section>
+    <section id="jpa_overview_pc_identity">
+        <title>
+            Entity Identity
+        </title>
+        <indexterm zone="jpa_overview_pc_identity">
+            <primary>
+                JPA
+            </primary>
+            <secondary>
+                identity
+            </secondary>
+            <seealso>
+                identity
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                entity identity
+            </primary>
+            <see>
+                identity
+            </see>
+        </indexterm>
+        <indexterm zone="jpa_overview_pc_identity">
+            <primary>
+                identity
+            </primary>
+            <secondary>
+                JPA
+            </secondary>
+        </indexterm>
+        <para>
+        <indexterm>
+            <primary>
+                identity
+            </primary>
+            <secondary>
+                numeric
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                identity
+            </primary>
+            <secondary>
+                qualitative
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                numeric identity
+            </primary>
+            <seealso>
+                identity
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                qualitative identity
+            </primary>
+            <seealso>
+                identity
+            </seealso>
+        </indexterm>
+Java recognizes two forms of object identity: numeric identity and qualitative
+identity. If two references are <emphasis>numerically</emphasis> identical, then
+they refer to the same JVM instance in memory. You can test for this using the
+<literal>==</literal> operator. <emphasis>Qualitative</emphasis> identity, on
+the other hand, relies on some user-defined criteria to determine whether two
+objects are "equal". You test for qualitative identity using the <methodname>
+equals</methodname> method. By default, this method simply relies on numeric
+identity.
+        </para>
+        <para>
+JPA introduces another form of object identity, called <emphasis>entity
+identity</emphasis> or <emphasis>persistent identity</emphasis>. Entity
+identity tests whether two persistent objects represent the same state in the
+datastore.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                persistent fields
+            </primary>
+            <secondary>
+                id
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                id
+            </primary>
+            <secondary>
+                fields
+            </secondary>
+            <seealso>
+                persistent fields
+            </seealso>
+        </indexterm>
+The entity identity of each persistent instance is encapsulated in its
+<emphasis>identity field(s)</emphasis>. If two entities of the same type have
+the same identity field values, then the two entities represent the same state
+in the datastore. Each entity's identity field values must be unique among all
+other entities of the same type.
+        </para>
+        <para>
+Identity fields must be primitives, primitive wrappers, <classname>
+String</classname>s, <classname>Date</classname>s, <classname>
+Timestamp</classname>s, or embeddable types.
+        </para>
+        <note>
+            <para>
+OpenJPA supports entities as identity fields, as the Reference Guide discusses
+in <xref linkend="ref_guide_pc_oid_entitypk"/>.  For legacy schemas with binary
+primary key columns, OpenJPA also supports using identity fields of type 
+<classname>byte[]</classname>. When you use a <classname>byte[]</classname> 
+identity field, you must create an identity class.  Identity classes are 
+covered below.
+            </para>
+        </note>
+        <warning>
+            <para>
+Changing the fields of an embeddable instance while it is assigned to an
+identity field has undefined results. Always treat embeddable identity instances
+as immutable objects in your applications.
+            </para>
+        </warning>
+        <para>
+        <indexterm>
+            <primary>
+                identity
+            </primary>
+            <secondary>
+                uniqueness requirement
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                uniquness requirement
+            </primary>
+            <seealso>
+                identity
+            </seealso>
+        </indexterm>
+If you are dealing with a single persistence context (see
+<xref linkend="jpa_overview_emfactory_perscontext"/>), then you do not
+have to compare identity fields to test whether two entity references represent
+the same state in the datastore. There is a much easier way: the <literal>==
+</literal> operator. JPA requires that each persistence context maintain only
+one JVM object to represent each unique datastore record. Thus, entity identity
+is equivalent to numeric identity within a persistence context. This is referred
+to as the <emphasis>uniqueness requirement</emphasis>.
+        </para>
+        <para>
+The uniqueness requirement is extremely important - without it, it would be
+impossible to maintain data integrity. Think of what could happen if two
+different objects in the same transaction were allowed to represent the same
+persistent data. If you made different modifications to each of these objects,
+which set of changes should be written to the datastore? How would your
+application logic handle seeing two different "versions" of the same data?
+Thanks to the uniqueness requirement, these questions do not have to be
+answered.
+        </para>
+        <section id="jpa_overview_pc_identitycls">
+            <title>
+                Identity Class
+            </title>
+            <para>
+            <indexterm zone="jpa_overview_pc_identitycls">
+                <primary>
+                    identity class
+                </primary>
+                <seealso>
+                    identity
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_pc_identitycls">
+                <primary>
+                    identity
+                </primary>
+                <secondary>
+                    class requirements
+                </secondary>
+            </indexterm>
+If your entity has only one identity field, you can use the value of that field
+as the entity's identity object in all <link linkend="jpa_overview_em">
+<classname>EntityManager</classname></link> APIs. Otherwise, you must supply an
+identity class to use for identity objects. Your identity class must meet the
+following criteria:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+The class must be public.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The class must be serializable.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The class must have a public no-args constructor.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The names of the non-static fields or properties of the class must be the same
+as the names of the identity fields or properties of the corresponding entity
+class, and the types must be identical.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The <methodname>equals</methodname> and <methodname>hashCode</methodname>
+methods of the class must use the values of all fields or properties
+corresponding to identity fields or properties in the entity class.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+If the class is an inner class, it must be <literal>static</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+All entity classes related by inheritance must use the same identity class, or
+else each entity class must have its own identity class whose inheritance
+hierarchy mirrors the inheritance hierarchy of the owning entity classes (see
+<xref linkend="jpa_overview_pc_identity_hierarchy"/>).
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+Though you may still create identity classes by hand, OpenJPA provides the
+<classname>appidtool</classname> to automatically generate proper identity
+classes based on your identity fields. See
+<xref linkend="ref_guide_pc_oid_application"/> of the Reference Guide.
+                </para>
+            </note>
+            <example id="jpa_overview_pc_identity_appidcode">
+                <title>
+                    Identity Class
+                </title>
+                <para>
+This example illustrates a proper identity class for an entity with multiple
+identity fields.
+                </para>
+<programlisting>
+/**
+ * Persistent class using application identity.
+ */
+public class Magazine {
+
+    private String isbn;    // identity field
+    private String title;   // identity field
+
+    // rest of fields and methods omitted
+
+
+    /**
+     * Application identity class for Magazine.
+     */
+    public static class MagazineId {
+
+        // each identity field in the Magazine class must have a
+        // corresponding field in the identity class
+        public String isbn;
+        public String title;
+
+        /**
+         * Equality must be implemented in terms of identity field
+         * equality, and must use instanceof rather than comparing 
+         * classes directly (some JPA implementations may subclass the
+         * identity class).
+         */
+        public boolean equals(Object other) {
+            if (other == this)
+                return true;
+            if (!(other instanceof MagazineId))
+                return false;
+    
+            MagazineId mi = (MagazineId) other;
+            return (isbn == mi.isbn
+                || (isbn != null &amp;&amp; isbn.equals(mi.isbn)))
+                &amp;&amp; (title == mi.title
+                || (title != null &amp;&amp; title.equals(mi.title)));
+        }
+     
+        /**
+         * Hashcode must also depend on identity values.
+         */
+        public int hashCode() {
+            return ((isbn == null) ? 0 : isbn.hashCode())
+                ^ ((title == null) ? 0 : title.hashCode());
+        } 
+
+        public String toString() {
+            return isbn + ":" + title;
+        }
+    }
+}
+</programlisting>
+            </example>
+            <section id="jpa_overview_pc_identity_hierarchy">
+                <title>
+                    Identity Hierarchies
+                </title>
+                <indexterm zone="jpa_overview_pc_identity_hierarchy">
+                    <primary>
+                        identity
+                    </primary>
+                    <secondary>
+                        hierarchy
+                    </secondary>
+                </indexterm>
+                <mediaobject>
+                    <imageobject>
+                        <!-- PNG image data, 320 x 267 (see README) -->
+                        <imagedata fileref="img/appid-hierarchy.png" width="213px"/>
+                        
+                    </imageobject>
+                </mediaobject>
+                <para>
+An alternative to having a single identity class for an entire inheritance
+hierarchy is to have one identity class per level in the inheritance hierarchy.
+The requirements for using a hierarchy of identity classes are as follows:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+The inheritance hierarchy of identity classes must exactly mirror the hierarchy
+of the persistent classes that they identify. In the example pictured above,
+abstract class <classname>Person</classname> is extended by abstract class
+<classname>Employee</classname>, which is extended by non-abstract class
+<classname> FullTimeEmployee</classname>, which is extended by non-abstract
+class <classname>Manager</classname>. The corresponding identity classes, then,
+are an abstract <classname>PersonId</classname> class, extended by an abstract
+<classname>EmployeeId</classname> class, extended by a non-abstract <classname>
+FullTimeEmployeeId</classname> class, extended by a non-abstract <classname>
+ManagerId</classname> class.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+Subclasses in the identity hierarchy may define additional identity fields until
+the hierarchy becomes non-abstract. In the aforementioned example, <classname>
+Person</classname> defines an identity field <literal>ssn</literal>, <classname>
+Employee</classname> defines additional identity field <literal>userName
+</literal>, and <classname>FullTimeEmployee</classname> adds a final identity
+field, <literal>empId</literal>. However, <classname>Manager</classname> may not
+define any additional identity fields, since it is a subclass of a non-abstract
+class. The hierarchy of identity classes, of course, must match the identity
+field definitions of the persistent class hierarchy.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+It is not necessary for each abstract class to declare identity fields. In the
+previous example, the abstract <classname>Person</classname> and <classname>
+Employee</classname> classes could declare no identity fields, and the first
+concrete subclass <classname>FullTimeEmployee</classname> could define one or
+more identity fields.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+All subclasses of a concrete identity class must be <methodname>equals
+</methodname> and <methodname>hashCode</methodname>-compatible with the
+concrete superclass. This means that in our example, a <classname>ManagerId
+</classname> instance and a <classname>FullTimeEmployeeId</classname> instance
+with the same identity field values should have the same hash code, and should
+compare equal to each other using the <methodname>equals</methodname> method of
+either one. In practice, this requirement reduces to the following coding
+practices:
+                        </para>
+                        <orderedlist>
+                            <listitem>
+                                <para>
+Use <literal>instanceof</literal> instead of comparing <classname>Class
+</classname> objects in the <methodname>equals</methodname> methods of your
+identity classes.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+An identity class that extends another non-abstract identity class should not
+override <methodname>equals</methodname> or <methodname>hashCode</methodname>.
+                                </para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                </itemizedlist>
+            </section>
+        </section>
+    </section>
+    <section id="jpa_overview_pc_callbacks">
+        <title>
+            Lifecycle Callbacks
+        </title>
+        <indexterm zone="jpa_overview_pc_callbacks">
+            <primary>
+                lifecycle callbacks
+            </primary>
+        </indexterm>
+        <indexterm zone="jpa_overview_pc_callbacks">
+            <primary>
+                persistent classes
+            </primary>
+            <secondary>
+                lifecycle callbacks
+            </secondary>
+            <seealso>
+                lifecycle callbacks
+            </seealso>
+        </indexterm>
+        <para>
+It is often necessary to perform various actions at different stages of a
+persistent object's lifecycle. JPA includes a variety of callbacks methods for
+monitoring changes in the lifecycle of your persistent objects. These callbacks
+can be defined on the persistent classes themselves and on non-persistent
+listener classes.
+        </para>
+        <section id="jpa_overview_pc_callbacks_methods">
+            <title>
+                Callback Methods
+            </title>
+            <indexterm zone="jpa_overview_pc_callbacks_methods">
+                <primary>
+                    lifecycle callbacks
+                </primary>
+                <secondary>
+                    callback methods
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_pc_callbacks_methods">
+                <primary>
+                    entity
+                </primary>
+                <secondary>
+                    callback methods
+                </secondary>
+            </indexterm>
+            <para>
+Every persistence event has a corresponding callback method marker. These
+markers are shared between persistent classes and their listeners. You can use
+these markers to designate a method for callback either by annotating that
+method or by listing the method in the XML mapping file for a given class. The
+lifecycle events and their corresponding method markers are:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PrePersist
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PrePersist.html">
+<classname>PrePersist</classname></ulink>: Methods marked with this annotation
+will be invoked before an object is persisted. This could be used for assigning
+primary key values to persistent objects. This is equivalent to the XML element
+tag <literal>pre-persist</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PostPersist
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PostPersist.html">
+<classname>PostPersist</classname></ulink>: Methods marked with this annotation
+will be invoked after an object has transitioned to the persistent state. You
+might want to use such methods to update a screen after a new row is added. This
+is equivalent to the XML element tag <literal>post-persist</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PostLoad
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PostLoad.html">
+<classname>PostLoad</classname></ulink>: Methods marked with this annotation
+will be invoked after all eagerly fetched fields of your class have been loaded
+from the datastore. No other persistent fields can be accessed in this method.
+This is equivalent to the XML element tag <literal>post-load</literal>.
+                    </para>
+                    <para>
+<classname>PostLoad</classname> is often used to initialize non-persistent
+fields whose values depend on the values of persistent fields, such as a complex
+data structure.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PreUpdate
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PreUpdate.html">
+<classname>PreUpdate</classname></ulink>: Methods marked with this annotation
+will be invoked just the persistent values in your objects are flushed to the
+datastore. This is equivalent to the XML element tag <literal>
+pre-update</literal>.
+                    </para>
+                    <para>
+<classname>PreUpdate</classname> is the complement to <classname>PostLoad
+</classname>. While methods marked with <classname>PostLoad</classname> are most
+often used to initialize non-persistent values from persistent data, methods
+annotated with <classname>PreUpdate</classname> is normally used to set
+persistent fields with information cached in non-persistent data.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PostUpdate
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PostUpdate.html">
+<classname>PostUpdate</classname></ulink>: Methods marked with this annotation
+will be invoked after changes to a given instance have been stored to the
+datastore. This is useful for clearing stale data cached at the application
+layer. This is equivalent to the XML element tag <literal>post-update</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PreRemove
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PreRemove.html">
+<classname>PreRemove</classname></ulink>: Methods marked with this annotation
+will be invoked before an object transactions to the deleted state. Access to
+persistent fields is valid within this method. You might use this method to
+cascade the deletion to related objects based on complex criteria, or to perform
+other cleanup. This is equivalent to the XML element tag <literal>
+pre-remove</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            PostRemove
+                        </primary>
+                        <seealso>
+                            lifecycle callbacks
+                        </seealso>
+                    </indexterm>
+<ulink url="http://download.oracle.com/javaee/6/api/javax/persistence/PostRemove.html">
+<classname>PostRemove</classname></ulink>: Methods marked with this annotation
+will be invoked after an object has been marked as to be deleted. This is
+equivalent to the XML element tag <literal>post-remove</literal>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_callbacks_using">
+            <title>
+                Using Callback Methods
+            </title>
+            <para>
+When declaring callback methods on a persistent class, any method may be used
+which takes no arguments and is not shared with any property access fields.
+Multiple events can be assigned to a single method as well.
+            </para>
+            <para>
+Below is an example of how to declare callback methods on persistent classes:
+            </para>
+<programlisting>
+/**
+ * Example persistent class declaring our entity listener.
+ */
+@Entity
+public class Magazine {
+
+    @Transient 
+    private byte[][] data;
+
+    @ManyToMany
+    private List&lt;Photo&gt; photos;
+
+    @PostLoad
+    public void convertPhotos() {
+        data = new byte[photos.size()][];
+        for (int i = 0; i &lt; photos.size(); i++)
+            data[i] = photos.get(i).toByteArray();
+    }
+
+    @PreDelete
+    public void logMagazineDeletion() {
+        getLog().debug("deleting magazine containing" + photos.size() 
+            + " photos.");
+    }
+}
+
+</programlisting>
+            <para>
+In an XML mapping file, we can define the same methods without annotations:
+            </para>
+<programlisting>
+&lt;entity class="Magazine"&gt;
+    &lt;pre-remove&gt;logMagazineDeletion&lt;/pre-remove&gt;
+    &lt;post-load&gt;convertPhotos&lt;/post-load&gt;
+&lt;/entity&gt;
+</programlisting>
+            <note>
+                <para>
+We fully explore persistence metadata annotations and XML in
+<xref linkend="jpa_overview_meta"/>.
+                </para>
+            </note>
+        </section>
+        <section id="jpa_overview_entity_listeners_using">
+            <title>
+                Using Entity Listeners
+            </title>
+            <para>
+Mixing lifecycle event code into your persistent classes is not always ideal. It
+is often more elegant to handle cross-cutting lifecycle events in a
+non-persistent listener class. JPA allows for this, requiring only that listener
+classes have a public no-arg constructor. Like persistent classes, your listener
+classes can consume any number of callbacks. The callback methods must take in a
+single <classname>java.lang.Object</classname> argument which represents the
+persistent object that triggered the event.
+            </para>
+            <para>
+Entities can enumerate listeners using the <classname>EntityListeners
+</classname> annotation. This annotation takes an array of listener classes as
+its value.
+            </para>
+            <para>
+Below is an example of how to declare an entity and its corresponding listener
+classes.
+            </para>
+<programlisting>
+/**
+ * Example persistent class declaring our entity listener.
+ */
+@Entity
+@EntityListeners({ MagazineLogger.class, ... })
+public class Magazine {
+
+    // ... //
+}
+
+
+/**
+ * Example entity listener.
+ */
+public class MagazineLogger {
+
+    @PostPersist
+    public void logAddition(Object pc) {
+        getLog().debug("Added new magazine:" + ((Magazine) pc).getTitle());
+    }
+
+
+    @PreRemove
+    public void logDeletion(Object pc) {
+        getLog().debug("Removing from circulation:" + 
+            ((Magazine) pc).getTitle());
+    }
+}
+</programlisting>
+            <para>
+In XML, we define both the listeners and their callback methods as so:
+            </para>
+<programlisting>
+&lt;entity class="Magazine"&gt;
+    &lt;entity-listeners&gt;
+        &lt;entity-listener class="MagazineLogger"&gt;
+            &lt;post-persist&gt;logAddition&lt;/post-persist&gt;
+            &lt;pre-remove&gt;logDeletion&lt;/pre-remove&gt;
+        &lt;/entity-listener&gt;
+    &lt;/entity-listeners&gt;
+&lt;/entity&gt;
+</programlisting>
+        </section>
+        <section id="jpa_overview_entity_listeners_exclude">
+            <title>
+                Entity Listeners Hierarchy
+            </title>
+            <indexterm zone="jpa_overview_entity_listeners_exclude">
+                <primary>
+                    lifecycle listeners
+                </primary>
+                <secondary>
+                    hierarchy
+                </secondary>
+            </indexterm>
+            <para>
+Entity listener methods are invoked in a specific order when a given event is
+fired. So-called <emphasis>default</emphasis> listeners are invoked first: these
+are listeners which have been defined in a package annotation or in the root
+element of XML mapping files. Next, entity listeners are invoked in the order of
+the inheritance hierarchy, with superclass listeners being invoked before
+subclass listeners. Finally, if an entity has multiple listeners for the same
+event, the listeners are invoked in declaration order.
+            </para>
+            <para>
+You can exclude default listeners and listeners defined in superclasses from the
+invocation chain through the use of two class-level annotations:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<classname>ExcludeDefaultListeners</classname>: This annotation indicates that
+no default listeners will be invoked for this class, or any of its subclasses.
+The XML equivalent is the empty <literal>exclude-default-listeners</literal>
+element.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<classname>ExcludeSuperclassListeners</classname>: This annotation will cause
+OpenJPA to skip invoking any listeners declared in superclasses. The XML
+equivalent is the empty <literal>exclude-superclass-listeners</literal> element.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+    </section>
+    <section id="jpa_overview_pc_conclusion">
+        <title>
+            Conclusions
+        </title>
+        <para>
+This chapter covered everything you need to know to write persistent class
+definitions in JPA. JPA cannot use your persistent classes, however, until you
+complete one additional step: you must define the persistence metadata. The next
+chapter explores metadata in detail.
+        </para>
+    </section>
+</chapter>

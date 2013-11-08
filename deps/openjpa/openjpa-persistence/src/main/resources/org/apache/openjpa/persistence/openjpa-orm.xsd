@@ -1,0 +1,1189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.apache.org/openjpa/ns/orm" 
+	xmlns:openjpa-orm="http://www.apache.org/openjpa/ns/orm"
+	xmlns:extendable-orm="http://www.apache.org/openjpa/ns/orm/extendable" 
+	xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified"
+	version="1.0">
+	
+	<xsd:import namespace="http://www.apache.org/openjpa/ns/orm/extendable"/>
+	<xsd:import namespace="http://java.sun.com/xml/ns/persistence/orm"/>
+	
+	<!-- **************************************************** -->
+	<xsd:element name="openjpa-version" substitutionGroup="extendable-orm:ext-version"
+		type="openjpa-orm:version-type"/>
+	
+	<xsd:complexType name="version-type">
+    	<xsd:attribute name="version" type="orm:versionType"
+    		fixed="1.0" use="required"/>
+    </xsd:complexType> 
+    <!-- **************************************************** -->
+	<xsd:element name="entity" substitutionGroup="extendable-orm:ext-entity"
+		type="openjpa-orm:entity-type"/>
+
+	<xsd:complexType name="entity-type">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="fetch-group" type="openjpa-orm:fetch-group-type"
+					minOccurs="0" />
+				<xsd:element name="fetch-groups" type="openjpa-orm:fetch-groups-type"
+					minOccurs="0" />
+			</xsd:choice>
+			<xsd:element name="data-cache" type="openjpa-orm:data-cache-type"
+				minOccurs="0" />
+			<xsd:element name="data-store-id" type="openjpa-orm:data-store-id-type"
+				minOccurs="0" />
+			<xsd:element name="data-store-id-column" type="openjpa-orm:data-store-id-column-type"
+				minOccurs="0" />
+			<xsd:choice>
+				<xsd:element name="version-column" type="openjpa-orm:version-column-type"
+					minOccurs="0" />
+				<xsd:element name="version-columns" type="openjpa-orm:version-columns-type"
+					minOccurs="0" />
+			</xsd:choice>
+			<!-- not implemented -->
+			<xsd:element name="managed-interface" type="openjpa-orm:managed-interface-type"
+				minOccurs="0" />
+		</xsd:sequence>
+		<!-- not tested -->
+		<xsd:attribute name="strategy" type="xsd:string" />
+		<xsd:attribute name="version-strategy" type="xsd:string" />
+		<xsd:attribute name="discriminator-strategy" type="xsd:string" />
+		<!-- not tested -->
+		<xsd:attribute name="subclass-fetch-mode" type="openjpa-orm:fetch-mode-type" />
+	</xsd:complexType>	
+	<!-- **************************************************** -->
+	<!-- incomplete -->
+	<xsd:element name="mapped-superclass" substitutionGroup="extendable-orm:ext-mapped-superclass"
+		type="openjpa-orm:mapped-superclass-type"/>
+
+	<xsd:complexType name="mapped-superclass-type">
+		<xsd:sequence>
+			<!-- not implemented -->
+			<xsd:element name="managed-interface" type="openjpa-orm:managed-interface-type"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- incomplete -->
+	<xsd:element name="embeddable" substitutionGroup="extendable-orm:ext-embeddable"
+		type="openjpa-orm:embeddable-type"/>
+
+	<xsd:complexType name="embeddable-type">
+		<xsd:sequence>
+			<!-- not implemented -->
+			<xsd:element name="managed-interface" type="openjpa-orm:managed-interface-type"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:element name="attributes" substitutionGroup="extendable-orm:ext-attributes"
+		type="openjpa-orm:attributes-type"/>
+		
+	<xsd:complexType name="attributes-type">
+		<xsd:sequence>
+			<xsd:element name="persistent" type="openjpa-orm:persistent-type"
+				minOccurs="0"/>
+			<!-- not implemented -->
+			<xsd:element name="persistent-collection" type="openjpa-orm:persistent-collection-type"
+				minOccurs="0"/>
+			<!-- not implemented -->
+			<xsd:element name="persistent-map" type="openjpa-orm:persistent-map-type"
+				minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>			
+	<!-- **************************************************** -->
+	<xsd:element name="basic" substitutionGroup="extendable-orm:ext-basic"
+		type="openjpa-orm:basic-type"/>
+	
+	<!-- incomplete -->
+	<xsd:complexType name="basic-type">
+		<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:element name="external-values" type="openjpa-orm:external-values-type"
+						minOccurs="0"/>
+					<!-- not tested -->
+					<xsd:element name="foreign-key" type="openjpa-orm:foreign-key-type"
+						minOccurs="0"/>
+					<xsd:element name="generated-value" type="orm:generated-value"
+                		minOccurs="0" />
+				</xsd:sequence>
+				<xsd:attribute name="type" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>	
+	<!-- **************************************************** -->
+	<xsd:complexType name="common-type">
+		<xsd:sequence>
+			<!-- only tested for basic type -->
+			<xsd:element name="read-only" type="openjpa-orm:read-only-type"
+				minOccurs="0"/>
+		</xsd:sequence>
+		<!-- only tested for basic type -->
+		<xsd:attribute name="load-fetch-group" type="xsd:string"/>
+		<!-- only tested for persistent type -->
+		<xsd:attribute name="externalizer" type="xsd:string"/>
+		<!-- only tested for persistent type -->
+		<xsd:attribute name="factory" type="xsd:string"/>
+		<!-- only tested for persistent type -->
+		<xsd:attribute name="strategy" type="xsd:string"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:element name="embedded" substitutionGroup="extendable-orm:ext-embedded"
+		type="openjpa-orm:embedded-type"/>
+	
+	<!-- incomplete -->
+	<xsd:complexType name="embedded-type">
+		<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:choice>
+						<!-- not implemented -->
+						<xsd:element name="mapping-override" type="openjpa-orm:mapping-override-type"
+							minOccurs="0"/>
+						<!-- not implemented -->
+						<xsd:element name="mapping-overrides" type="openjpa-orm:mapping-overrides-type"
+							minOccurs="0"/>
+						<!-- not implemented -->
+						<xsd:element name="embedded-mapping" type="openjpa-orm:embedded-mapping-type"
+							minOccurs="0"/>
+					</xsd:choice>
+				</xsd:sequence>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>	
+	<!-- **************************************************** -->
+	<xsd:element name="element-collection" substitutionGroup="extendable-orm:ext-element-collection"
+		type="openjpa-orm:element-collection-type"/>
+	
+	<!-- incomplete -->
+	<xsd:complexType name="element-collection-type">
+		<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<!-- not implemented -->
+					<xsd:element name="element-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-type" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="lrs" type="xsd:boolean"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>	
+	<!-- **************************************************** -->
+	<xsd:element name="many-to-one" substitutionGroup="extendable-orm:ext-many-to-one"
+		type="openjpa-orm:many-to-one-type"/>
+	
+	<!-- incomplete -->
+    <xsd:complexType name="many-to-one-type">
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:choice>
+						<!-- not implemented -->
+						<xsd:element name="x-join-columns" type="openjpa-orm:x-join-columns-type"
+                			minOccurs="0"/>
+               			<!-- not implemented -->
+						<xsd:element name="x-join-column" type="openjpa-orm:x-join-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:element name="foreign-key" type="openjpa-orm:foreign-key-type"
+						minOccurs="0"/>
+					<!-- not implemented -->
+					<xsd:element name="index" type="openjpa-orm:index-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested for many-to-one -->
+				<xsd:attribute name="type" type="xsd:string"/>
+				<!-- not implemented -->
+				<xsd:attribute name="nonpolymorphic" type="openjpa-orm:nonpolymorphic-type"/>
+				<xsd:attribute name="inverse-logical" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:element name="one-to-one" substitutionGroup="extendable-orm:ext-one-to-one"
+		type="openjpa-orm:one-to-one-type"/>
+    
+    <!-- incomplete -->
+    <xsd:complexType name="one-to-one-type">
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:choice>
+						<!-- not implemented -->
+						<xsd:element name="x-join-columns" type="openjpa-orm:x-join-columns-type"
+                			minOccurs="0"/>
+               			<!-- not implemented -->
+						<xsd:element name="x-join-column" type="openjpa-orm:x-join-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<!-- not tested -->
+					<xsd:element name="foreign-key" type="openjpa-orm:foreign-key-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<!-- not tested -->
+				<xsd:attribute name="inverse-logical" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested for one-to-one -->
+				<xsd:attribute name="type" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:element name="one-to-many" substitutionGroup="extendable-orm:ext-one-to-many"
+		type="openjpa-orm:one-to-many-type"/>
+    
+    <!-- incomplete -->
+    <xsd:complexType name="one-to-many-type">
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:choice>
+						<!-- not implemented -->
+						<xsd:element name="x-join-columns" type="openjpa-orm:x-join-columns-type"
+                			minOccurs="0"/>
+               			<!-- not implemented -->
+						<xsd:element name="x-join-column" type="openjpa-orm:x-join-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:choice>
+						<!-- not implemented -->
+						<xsd:element name="key-columns" type="openjpa-orm:key-columns-type"
+                			minOccurs="0"/>
+               			<!-- not implemented -->
+						<xsd:element name="key-column" type="openjpa-orm:key-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<!-- not implemented -->
+					<xsd:element name="element-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+					<!-- TODO: code - make sure not specified with order-by -->
+					<!-- not tested -->
+					<xsd:element name="order-column" type="openjpa-orm:order-column"
+						minOccurs="0"/>						
+				</xsd:sequence>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-type" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-type" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="lrs" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="inverse-logical" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-class-criteria" type="xsd:boolean"/>
+			</xsd:extension>
+		</xsd:complexContent>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:element name="many-to-many" substitutionGroup="extendable-orm:ext-many-to-many"
+		type="openjpa-orm:many-to-many-type"/>
+    
+    <!-- incomplete -->
+    <xsd:complexType name="many-to-many-type">
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<!-- not implemented -->
+					<xsd:element name="element-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<xsd:attribute name="element-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-type" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-type" type="xsd:string"/>
+				<xsd:attribute name="lrs" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="inverse-logical" type="xsd:string" />
+				<xsd:attribute name="eager-fetch-mode" type="openjpa-orm:fetch-mode-type"/>
+				<xsd:attribute name="element-class-criteria" type="xsd:boolean"/>
+			</xsd:extension>
+		</xsd:complexContent>
+    </xsd:complexType>
+    <!-- **************************************************** -->		
+	<xsd:complexType name="fetch-groups-type">
+		<xsd:sequence>
+			<xsd:element name="fetch-group" type="openjpa-orm:fetch-group-type"
+				minOccurs="1" maxOccurs="unbounded">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="fetch-group-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				String name() default "";
+    			boolean postLoad() default false;
+    			FetchAttribute[] attributes() default {};
+    			String[] fetchGroups() default {};
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="fetch-attribute" type="openjpa-orm:fetch-attribute-type"
+				minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="referenced-fetch-group" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="post-load" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="fetch-attribute-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				String name() default "";
+    			int recursionDepth() default Integer.MIN_VALUE;
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="recursion-depth" type="xsd:int" default="-1"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="data-cache-type">
+		<xsd:annotation>
+            <xsd:documentation>
+                @Target({ TYPE }) @Retention(RUNTIME)
+                public @interface DataCache {
+    				boolean enabled() default true;
+    				String name() default "";
+    				int timeout() default Integer.MIN_VALUE;
+				}
+            </xsd:documentation>
+        </xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="timeout" type="xsd:int" default="-1"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="read-only-type">
+		<xsd:annotation> 
+			<xsd:documentation>
+				@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+				UpdateAction value() default UpdateAction.RESTRICT;
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="update-action" type="openjpa-orm:update-action-type" default="RESTRICT"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:simpleType name="update-action-type">
+		<xsd:restriction base="xsd:token">
+            <xsd:enumeration value="IGNORE" />
+            <xsd:enumeration value="RESTRICT" />
+        </xsd:restriction>
+	</xsd:simpleType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="external-values-type">
+		<xsd:sequence>
+			<xsd:element name="external-value" type="openjpa-orm:external-value-type"
+				minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="external-value-type">
+		<xsd:attribute name="java-value" type="xsd:string" use="required"/>
+		<xsd:attribute name="datastore-value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="data-store-id-column-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				@Target({ TYPE })@Retention(RUNTIME)
+				String name() default "";
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+			    int precision() default 0; // decimal precision
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string"
+			default=""/>
+		<xsd:attribute name="insertable" type="xsd:boolean"
+			default="true"/>
+		<xsd:attribute name="updatable" type="xsd:boolean"
+			default="true"/>
+		<xsd:attribute name="column-definition" type="xsd:string"
+			default=""/>
+		<xsd:attribute name="precision" type="xsd:int"
+			default="0"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="version-columns-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				@Target({ TYPE }) @Retention(RUNTIME)
+				VersionColumn[] value() default {};
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="version-column" type="openjpa-orm:version-column-type"
+				minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="version-column-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				@Target({ TYPE }) @Retention(RUNTIME)
+				String name() default "";
+			    boolean nullable() default true;
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+			    int length() default 255;
+			    int precision() default 0; // decimal precision
+			    int scale() default 0; // decimal scale
+			    String table() default  "";
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string"
+			default=""/>
+		<xsd:attribute name="nullable" type="xsd:boolean"
+			default="true"/>
+		<xsd:attribute name="insertable" type="xsd:boolean"
+			default="true"/>
+		<xsd:attribute name="updatable" type="xsd:boolean"
+			default="true"/>
+		<xsd:attribute name="column-definition" type="xsd:string"
+			default=""/>
+		<xsd:attribute name="length" type="xsd:int"
+			default="255"/>
+		<xsd:attribute name="precision" type="xsd:int"
+			default="0"/>
+		<xsd:attribute name="scale" type="xsd:int"
+			default="0"/>
+		<xsd:attribute name="table" type="xsd:string"
+			default=""/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="columns-type">
+		<xsd:sequence>
+			<xsd:element name="column" type="orm:column"
+				minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- TODO: add to other types such as association-override? -->
+	<!-- not implemented -->
+	<xsd:complexType name="x-join-columns-type">
+		<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+    			XJoinColumn[] value() default {};
+    		</xsd:documentation>
+    	</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="x-join-column" type="openjpa-orm:x-join-column-type"
+				minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- not implemented -->
+    <xsd:complexType name="x-join-column-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    String referencedColumnName() default "";
+			    String referencedAttributeName() default "";
+			    boolean unique() default false;
+			    boolean nullable() default true;
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+			    String table() default "";    			
+    		</xsd:documentation>
+    	</xsd:annotation>
+        <xsd:attribute name="name" type="xsd:string" default=""/>
+        <xsd:attribute name="referenced-column-name" type="xsd:string" default=""/>
+        <xsd:attribute name="referenced-attribute-name" type="xsd:string" default=""/>
+        <xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+        <xsd:attribute name="nullable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="column-definition" type="xsd:string" default=""/>
+        <xsd:attribute name="table" type="xsd:string" default=""/>
+    </xsd:complexType>	
+    <!-- **************************************************** -->
+    <xsd:complexType name="persistent-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+				@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String mappedBy() default "";
+			    CascadeType[] cascade() default {};
+			    boolean optional() default true;
+			    boolean embedded() default false;
+			    FetchType fetch() default FetchType.EAGER;    		
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<!-- not tested -->
+					<xsd:element name="cascade" type="orm:cascade-type"
+                		minOccurs="0" />
+               		<!-- not tested -->
+                	<xsd:element name="enumerated" type="orm:enumerated"
+                		minOccurs="0"/>
+                	<xsd:choice>
+						<xsd:element name="columns" type="openjpa-orm:columns-type"
+							minOccurs="0"/>
+						<xsd:element name="column" type="orm:column" 
+							minOccurs="0"/>
+					</xsd:choice>
+					<!-- not implemented -->
+					<xsd:element name="index" type="openjpa-orm:index-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<!-- TODO: Are these 2 mutually exclusive? Make check in code. -->
+				<!-- not implemented -->
+				<xsd:attribute name="mapped-by" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="inverse-logical" type="xsd:string"/>
+				<!-- not implemented -->
+				<xsd:attribute name="optional" type="xsd:boolean"/>
+				<!-- not implemented -->
+				<xsd:attribute name="embedded" type="xsd:boolean"/>
+				<!-- not implemented -->
+				<xsd:attribute name="fetch" type="orm:fetch-type"/>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested for persistent type -->
+				<xsd:attribute name="type" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- not implemented -->
+    <xsd:complexType name="persistent-collection-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String mappedBy() default "";
+			    Class elementType() default void.class;
+			    CascadeType[] elementCascade() default {};
+			    boolean elementEmbedded() default false;
+			    FetchType fetch() default FetchType.LAZY;
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:element name="element-cascade" type="orm:cascade-type"
+                		minOccurs="0" />
+               		<!-- not implemented -->
+                	<xsd:element name="key-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+					<!-- not implemented -->
+					<xsd:element name="element-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+					<xsd:element name="container-table" type="openjpa-orm:container-table-type"
+						minOccurs="0"/>
+					<xsd:choice>
+						<xsd:element name="element-columns" type="openjpa-orm:element-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="element-column" type="openjpa-orm:element-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:choice>
+						<xsd:element name="element-join-columns" type="openjpa-orm:element-join-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="element-join-column" type="openjpa-orm:element-join-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:choice>
+						<xsd:element name="key-columns" type="openjpa-orm:key-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="key-column" type="openjpa-orm:key-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:choice>
+						<xsd:element name="x-mapping-override" type="openjpa-orm:x-mapping-override-type"
+							minOccurs="0"/>
+						<xsd:element name="x-mapping-overrides" type="openjpa-orm:x-mapping-overrides-type"
+							minOccurs="0"/>
+					</xsd:choice>
+					<xsd:element name="element-embedded-mapping" type="openjpa-orm:element-embedded-mapping-type"
+						minOccurs="0"/>
+					<xsd:element name="element-index" type="openjpa-orm:element-index-type"
+						minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<xsd:attribute name="mapped-by" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="inverse-logical" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-type" type="xsd:string"/>
+				<xsd:attribute name="element-embedded" type="xsd:boolean"/>
+				<xsd:attribute name="fetch" type="orm:fetch-type"/>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-dependent" type="xsd:boolean"/>
+				<xsd:attribute name="lrs" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-nonpolymorphic" type="openjpa-orm:nonpolymorphic-type"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- not implemented -->
+    <xsd:complexType name="persistent-map-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    Class keyType() default void.class;
+			    Class elementType() default void.class;
+			    CascadeType[] keyCascade() default {};
+			    CascadeType[] elementCascade() default {};
+			    boolean keyEmbedded() default false;
+			    boolean elementEmbedded() default false;
+			    FetchType fetch() default FetchType.LAZY;
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:complexContent>
+			<xsd:extension base="openjpa-orm:common-type">
+				<xsd:sequence>
+					<xsd:element name="element-cascade" type="orm:cascade-type"
+                		minOccurs="0" />
+                	<xsd:element name="key-cascade" type="orm:cascade-type"
+                		minOccurs="0" />
+                	<xsd:element name="element-foreign-key" type="openjpa-orm:collection-foreign-key-type"
+						minOccurs="0"/>
+					<xsd:element name="container-table" type="openjpa-orm:container-table-type"
+						minOccurs="0"/>
+					<xsd:choice>
+						<xsd:element name="key-columns" type="openjpa-orm:key-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="key-column" type="openjpa-orm:key-column-type"
+                			minOccurs="0"/>
+                	</xsd:choice>
+               		<xsd:choice>
+						<xsd:element name="element-columns" type="openjpa-orm:element-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="element-column" type="openjpa-orm:element-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:choice>
+						<xsd:element name="key-join-columns" type="openjpa-orm:key-join-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="key-join-column" type="openjpa-orm:key-join-column-type"
+                			minOccurs="0"/>
+                	</xsd:choice>
+                	<xsd:choice>
+						<xsd:element name="element-join-columns" type="openjpa-orm:element-join-columns-type"
+                			minOccurs="0"/>
+						<xsd:element name="element-join-column" type="openjpa-orm:element-join-column-type"
+                			minOccurs="0"/>
+					</xsd:choice>
+					<xsd:element name="key-index" type="openjpa-orm:key-index-type"
+						minOccurs="0"/>
+					<xsd:element name="element-index" type="openjpa-orm:element-index-type"
+						minOccurs="0"/>
+					<xsd:element name="order-column" type="openjpa-orm:order-column"
+						minOccurs="0"/>	
+				</xsd:sequence>
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<!-- not tested -->
+				<xsd:attribute name="element-type" type="xsd:string"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-type" type="xsd:string"/>
+				<xsd:attribute name="element-embedded" type="xsd:boolean"/>
+				<xsd:attribute name="key-embedded" type="xsd:boolean"/>
+				<xsd:attribute name="fetch" type="orm:fetch-type"/>
+				<!-- not tested -->
+				<xsd:attribute name="dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="element-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="key-dependent" type="xsd:boolean"/>
+				<!-- not tested -->
+				<xsd:attribute name="lrs" type="xsd:boolean"/>
+				<xsd:attribute name="key-nonpolymorphic" type="openjpa-orm:nonpolymorphic-type"/>
+				<xsd:attribute name="element-nonpolymorphic" type="openjpa-orm:nonpolymorphic-type"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>	
+	<!-- **************************************************** -->
+	<xsd:complexType name="index-type">
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="foreign-key-type">
+		<xsd:sequence>
+			<xsd:element name="fk-column-names" type="openjpa-orm:fk-column-names"
+				minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="default" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="delete-action" type="openjpa-orm:foreign-key-action-type"
+			default="RESTRICT"/>
+		<xsd:attribute name="update-action" type="openjpa-orm:foreign-key-action-type"
+			default="RESTRICT"/>
+		<xsd:attribute name="specified" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="implicit" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<!-- notimplemented -->
+	<xsd:complexType name="collection-foreign-key-type">
+		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="default" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="delete-action" type="openjpa-orm:foreign-key-action-type"
+			default="RESTRICT"/>
+		<xsd:attribute name="update-action" type="openjpa-orm:foreign-key-action-type"
+			default="RESTRICT"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:simpleType name="foreign-key-action-type">
+        <xsd:annotation>
+            <xsd:documentation>
+                public enum ForeignKeyAction {
+                RESTRICT,
+                CASCADE,
+                NULL,
+                DEFAULT
+                }
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:token">
+            <xsd:enumeration value="RESTRICT" />
+            <xsd:enumeration value="CASCADE" />
+            <xsd:enumeration value="NULL" />
+            <xsd:enumeration value="DEFAULT" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="element-join-columns-type">
+    	<xsd:sequence>
+    		<xsd:element name="element-join-column" type="openjpa-orm:element-join-column-type"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="element-join-column-type">
+        <xsd:annotation>
+            <xsd:documentation>
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface ElementJoinColumn {
+                String name() default "";
+                String referencedColumnName() default "";
+                boolean unique() default false;
+                boolean nullable() default true;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                }
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="name" type="xsd:string" default=""/>
+        <xsd:attribute name="referenced-column-name" type="xsd:string" default=""/>
+        <xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+        <xsd:attribute name="nullable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="column-definition" type="xsd:string" />
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->	
+    <xsd:complexType name="mapping-overrides-type">
+    	<xsd:sequence>
+    		<xsd:element name="mapping-override" type="openjpa-orm:mapping-override-type"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->
+    <xsd:complexType name="mapping-override-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ TYPE }) @Retention(RUNTIME)
+			    String name() default "";
+			    Column[] columns() default {};
+			    XJoinColumn[] joinColumns() default {};
+			    ElementJoinColumn[] elementJoinColumns() default {};
+			    ContainerTable containerTable() default @ContainerTable(specified = false);
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+   			<xsd:element name="columns" type="openjpa-orm:columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="join-columns" type="openjpa-orm:x-join-columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="element-join-columns" type="openjpa-orm:element-join-columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="container-table" type="openjpa-orm:container-table-type"
+   				minOccurs="0"/>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" default=""/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->
+    <xsd:complexType name="container-table-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    String catalog() default "";
+			    String schema() default "";
+			    XJoinColumn[] joinColumns() default {};
+			    ForeignKey joinForeignKey() default @ForeignKey(specified = false);
+			    Index joinIndex() default @Index(specified = false);
+			    boolean specified() default true;
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="join-columns" type="openjpa-orm:x-join-columns-type"
+    			minOccurs="0"/>
+			<xsd:element name="join-foreign-key" type="openjpa-orm:foreign-key-type"
+				minOccurs="0"/>
+			<xsd:element name="join-index"  type="openjpa-orm:index-type"/>  			
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string"/>
+    	<xsd:attribute name="catalog" type="xsd:string"/>
+    	<xsd:attribute name="schema" type="xsd:string"/>
+    	<xsd:attribute name="specified" type="xsd:boolean" default="true"/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->
+    <xsd:complexType name="embedded-mapping-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String nullIndicatorColumnName() default "";
+			    String nullIndicatorAttributeName() default "";
+			    MappingOverride[] overrides() default {};
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="overrides" type="openjpa-orm:mapping-overrides-type"
+    			minOccurs="0"/>
+    	</xsd:sequence>
+    	<xsd:attribute name="null-indicator-column-name" type="xsd:string"
+    		default=""/>
+    	<xsd:attribute name="null-indicator-attribute-name" type="xsd:string"
+    		default=""/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->
+    <xsd:complexType name="element-embedded-mapping-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String nullIndicatorColumnName() default "";
+			    String nullIndicatorAttributeName() default "";
+			    XMappingOverride[] overrides() default {};
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="overrides" type="openjpa-orm:x-mapping-overrides-type"
+    			minOccurs="0"/>
+    	</xsd:sequence>
+    	<xsd:attribute name="null-indicator-column-name" type="xsd:string"
+    		default=""/>
+    	<xsd:attribute name="null-indicator-attribute-name" type="xsd:string"
+    		default=""/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <!-- not implemented -->
+    <xsd:complexType name="x-embedded-mapping-type">
+    	<xsd:sequence>
+    		<xsd:element name="overrides" type="openjpa-orm:x-mapping-overrides-type"
+    			minOccurs="0"/>
+    	</xsd:sequence>
+    	<xsd:attribute name="null-indicator-column-name" type="xsd:string"/>
+    	<xsd:attribute name="null-indicator-attribute-name" type="xsd:string"/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="element-columns-type">
+    	<xsd:sequence>
+    		<xsd:element name="element-column" type="openjpa-orm:element-column-type"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+
+    <xsd:complexType name="element-column-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+			    @Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    boolean unique() default false;
+			    boolean nullable() default true;
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+			    int length() default 255;
+			    int precision() default 0; // decimal precision
+			    int scale() default 0; // decimal scale    		
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:attribute name="name" type="xsd:string" default=""/>
+    	<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+    	<xsd:attribute name="nullable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="column-definition" type="xsd:string"/>
+    	<xsd:attribute name="length" type="xsd:int" default="255"/>
+    	<xsd:attribute name="precision" type="xsd:int" default="0"/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="key-columns-type">
+    	<xsd:sequence>
+    		<xsd:element name="key-column" type="openjpa-orm:key-column-type"
+    			minOccurs="0" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="key-column-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    boolean unique() default false;
+			    boolean nullable() default true;
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+			    int length() default 255;
+			    int precision() default 0; // decimal precision
+			    int scale() default 0; // decimal scale
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:attribute name="name" type="xsd:string" default=""/>
+    	<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+    	<xsd:attribute name="nullable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="column-definition" type="xsd:string"/>
+    	<xsd:attribute name="length" type="xsd:int" default="255"/>
+    	<xsd:attribute name="precision" type="xsd:int" default="0"/>
+    	<xsd:attribute name="scale" type="xsd:int" default="0"/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="key-join-columns-type">
+    	<xsd:sequence>
+    		<xsd:element name="key-join-column" type="openjpa-orm:key-join-column-type"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="key-join-column-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+	    		@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    String referencedColumnName() default "";
+			    String referencedAttributeName() default "";
+			    boolean unique() default false;
+			    boolean nullable() default true;
+			    boolean insertable() default true;
+			    boolean updatable() default true;
+			    String columnDefinition() default "";
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:attribute name="name" type="xsd:string" default=""/>
+    	<xsd:attribute name="referenced-column-name" type="xsd:string" default=""/>
+    	<xsd:attribute name="referenced-attribute-name" type="xsd:string" default=""/>
+    	<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+    	<xsd:attribute name="nullable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+    	<xsd:attribute name="column-definition" type="xsd:string" default=""/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="x-mapping-overrides-type">
+    	<xsd:sequence>
+    		<xsd:element name="x-mapping-override" type="openjpa-orm:x-mapping-override-type"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="x-mapping-override-type">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    			@Target({ TYPE }) @Retention(RUNTIME)
+			    String name() default "";
+			    Column[] columns() default {};
+			    XJoinColumn[] joinColumns() default {};
+			    ElementColumn[] elementColumns() default {};
+			    ElementJoinColumn[] elementJoinColumns() default {};
+			    KeyColumn[] keyColumns() default {};
+			    KeyJoinColumn[] keyJoinColumns() default {};
+			    ContainerTable containerTable() default @ContainerTable(specified = false);
+    		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="columns" type="openjpa-orm:columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="join-columns" type="openjpa-orm:x-join-columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="element-columns" type="openjpa-orm:element-columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="element-join-columns" type="openjpa-orm:element-join-columns-type"
+   				minOccurs="0"/>
+   			<xsd:element name="key-columns" type="openjpa-orm:key-columns-type"
+   				minOccurs="0"/>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" default=""/>
+    </xsd:complexType>			
+	<!-- **************************************************** -->
+	<xsd:simpleType name="nonpolymorphic-type">
+		<xsd:restriction base="xsd:token">
+            <xsd:enumeration value="EXACT"/>
+            <xsd:enumeration value="JOINABLE"/>
+            <xsd:enumeration value="FALSE"/>
+        </xsd:restriction>
+	</xsd:simpleType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="element-index-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    boolean enabled() default true;
+			    boolean unique() default false;
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="key-index-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+			    String name() default "";
+			    boolean enabled() default true;
+			    boolean unique() default false;
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="unique" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="managed-interface-type"/>
+	<!-- **************************************************** -->
+	<xsd:complexType name="data-store-id-type">
+		<xsd:annotation>
+            <xsd:documentation>
+                @Target({ TYPE }) @Retention(RUNTIME)
+                public @interface DataStoreId {
+    			GenerationType strategy() default GenerationType.AUTO;
+    			String generator() default "";
+				}
+            </xsd:documentation>
+        </xsd:annotation>
+		<xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="strategy" type="orm:generation-type" default="AUTO"/>
+		<xsd:attribute name="generator" type="xsd:string" default=""/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="unique-type">
+		<xsd:annotation>
+			<xsd:documentation>
+			@Target({ METHOD, FIELD }) @Retention(RUNTIME)
+		    String name() default "";
+		    boolean enabled() default true;
+		    boolean deferred() default false;
+		    String[] columnNames() default {};
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="column-names" type="openjpa-orm:fk-column-names"
+				minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" default=""/>
+		<xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="deferred" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<!-- **************************************************** -->
+	<xsd:simpleType name="fetch-mode-type">
+		<xsd:restriction base="xsd:token">
+            <xsd:enumeration value="NONE" />
+            <xsd:enumeration value="JOIN" />
+            <xsd:enumeration value="PARALLEL" />
+        </xsd:restriction>
+	</xsd:simpleType>
+	<!-- **************************************************** -->
+	<xsd:complexType name="order-column">
+        <xsd:annotation>
+            <xsd:documentation>
+                @Target({METHOD, FIELD}) @Retention(RUNTIME)
+                public @interface OrderColumn {
+                String name() default "";
+                boolean enabled() default true;
+                boolean insertable() default true;
+                boolean updatable() default true;
+                String columnDefinition() default "";
+                int precision() default 0;
+                }
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="name" type="xsd:string" default=""/>
+        <xsd:attribute name="enabled" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="insertable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="updatable" type="xsd:boolean" default="true"/>
+        <xsd:attribute name="column-definition" type="xsd:string"/>
+        <xsd:attribute name="precision" type="xsd:integer" default="0"/>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+    <xsd:complexType name="fk-column-names">
+    	<xsd:sequence>
+    		<xsd:element name="fk-column-name" type="xsd:string"
+    			minOccurs="1" maxOccurs="unbounded"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- **************************************************** -->
+</xsd:schema>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="samples_guide">
+    <title>
+        OpenJPA Sample Code
+    </title>
+    <para>
+The OpenJPA distribution comes with a number of examples that illustrate the
+usage of various features.
+    </para>
+<!--
+This is information on the sample application. It will be included
+in the documentation (see doc/openjpa/samples-guide.xml). It will also
+automatically be converted into a README.txt file in this directory
+in the "release.openjpa.releasedocs" build target phase of the release.
+-->
+    <section id="samples_guide_interop">
+        <title>
+            JDO - JPA Persistence Interoperability
+        </title>
+        <para>
+This sample demonstrates how to combine JDO and JPA in a single application. The
+<filename>MachineMain.java</filename> program uses both <classname>
+EntityManager</classname>s and <classname>PersistenceManager</classname>s in a
+single transaction including persist, delete and query operations.
+        </para>
+        <para>
+The sample includes both annotated persistent classes as well as JDOR metadata
+information. The application can switch to either system simply by changing the
+bootstrap mechanism. Depending on which configuration system you use, OpenJPA
+will read the corresponding metadata format. You can override some or all of
+this behavior using OpenJPA's configuration options, such as
+<link linkend="openjpa.MetaDataFactory">openjpa.MetaDataFactory</link>.
+        </para>
+        <para>
+To use this sample, you should ensure that either a <filename>jdo.properties
+</filename> or <filename>persistence.xml</filename> are in the <filename>
+META-INF</filename> directory in your <envar>CLASSPATH</envar>. The rest of the
+files for this sample are located in the <filename>samples/mixed</filename>
+directory of the OpenJPA installation. This tutorial requires JDK 5. To run this
+tutorial:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+Ensure that your environment is set properly as described in the README and that
+your current path is in the mixed sample directory.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+You may want to edit <literal>ConnectionURL</literal> to point to an absolute
+URL (e.g. <filename>C:/openjpa/mixed-sample-db</filename>) if using a
+file-based database like <literal>HSQL</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Include the list of persistent classes in your configuration file. For JPA, you
+will want to add the following lines to <filename>persistence.xml</filename>
+before the <literal>&lt;property&gt;</literal> lines:
+                </para>
+<programlisting>
+&lt;class&gt;samples.mixed.Machine&lt;/class&gt;
+&lt;class&gt;samples.mixed.Crane&lt;/class&gt;
+&lt;class&gt;samples.mixed.Bulldozer&lt;/class&gt;
+&lt;class&gt;samples.mixed.Operator&lt;/class&gt;
+</programlisting>
+                <para>
+If you are using JDO, point the metadata factory at the <filename>.jdo
+</filename> resource containing your persistent classes:
+                </para>
+<programlisting>
+openjpa.MetaDataFactory: Resources=samples/mixed/package.jdo
+</programlisting>
+            </listitem>
+            <listitem>
+                <para>
+Compile the classes:
+                </para>
+                <para>
+<userinput>javac *.java</userinput>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+You should then proceed to pass in the configuration file you are using to the
+enhancer: (Optional)
+                </para>
+                <para>
+<userinput>java org.apache.openjpa.enhance.PCEnhancer -p persistence.xml Machine.java Crane.java Bulldozer.java
+Operator.java</userinput>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Similarly, you should pass in the same argument to <literal>org.apache.openjpa.jdbc.meta.MappingTool</literal>:
+                </para>
+                <para>
+<userinput>java org.apache.openjpa.jdbc.meta.MappingTool -p persistence.xml -a buildSchema Machine.java
+Crane.java Bulldozer.java Operator.java</userinput>
+                </para>
+                <para>
+or
+                </para>
+                <para>
+<userinput>java org.apache.openjpa.jdbc.meta.MappingTool -p jdo.properties -a buildSchema Machine.java Crane.java
+Bulldozer.java Operator.java</userinput>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+You can now run the sample application. The first argument is which operation
+you want the program to run. The second argument tells the application which
+bootstrap system to use:
+                </para>
+                <para>
+<userinput>java samples.mixed.MachineMain &lt;create | delete&gt; &lt;jdo |
+jpa&gt;</userinput>
+                </para>
+            </listitem>
+        </itemizedlist>
+    </section>
+    <section id="samples_guide_jpadiv">
+        <title>
+            JPA
+        </title>
+<!--
+This is information on the sample application. It will be included
+in the documentation (see doc/openjpa/samples-guide.xml). It will also
+automatically be converted into a README.txt file in this directory
+in the "release.jdo.releasedocs" build target phase of the release.
+-->
+        <section id="samples_guide_model_humres_jpa">
+            <title>
+                Sample Human Resources Model
+            </title>
+            <para>
+The files for this sample are located in the <filename>
+samples/persistence/models/humres</filename> directory of the OpenJPA
+installation. This sample demonstrates the mapping of an example "Human
+Resources" schema. The following concepts are illustrated in this sample:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+Value Mappings
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+One to One Mappings
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+One to Many Mappings (with and without inverses)
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+    </section>
+</chapter>

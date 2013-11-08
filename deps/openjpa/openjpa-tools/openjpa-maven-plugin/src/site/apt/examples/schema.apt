@@ -1,0 +1,54 @@
+ ------
+ Schema
+ ------
+ Mark Struberg
+ <struberg@yahoo.de>
+ ------
+ November 29, 2010
+ ------
+
+Schema
+
+  The following build configuration shows how to use the OpenJPA
+  MappingTool for generating the schema mapping XML file.
+  Please consult the OpenJPA documentation for more
+  details on the schema mapping XML syntax and usage.
+
+  The {{{../schema-mojo.html}openjpa:schema}} mojo will typically
+  be called manually, so there is no <<<executions>>> section.
+  
+-------------------
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>1.2</version>
+        <schemaAction></schemaAction>    
+        <schemaFile>target/myschema.xml</schemaFile>    
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
+-------------------
+  
+  
+  * If no <<<schemaFile>>> is set this will default to <<<target/schema.xml>>>
+  
+  * If no <<<schemaAction>>> is set it will default to <<<add>>>
+  
+  Possible values for <<<schemaAction>>> are:
+  <<<add>>>,
+  <<<refresh>>>,
+  <<<drop>>>,
+  <<<buildSchema>>>,
+  <<<import>>>,
+  <<<export>>>,
+  <<<validate>>>
+    

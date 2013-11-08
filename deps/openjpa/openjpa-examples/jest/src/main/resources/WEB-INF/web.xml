@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+
+<web-app version="2.4" 
+         xmlns="http://java.sun.com/xml/ns/j2ee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  <display-name>Demo Application with JEST Servlet</display-name>  
+  <welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <description>
+    An example of deploying a simple web application with JEST servlet.
+    This descriptor specifies the Demo Application servlet as well as JEST servlet.
+  </description>
+  
+   	<servlet>
+   		<description> 
+   		This is the Demo Application Servlet.
+   		The servlet is mapped to URL pattern /app/* so this servlet can be accessed as
+   		                  http://host:port/demo/app/ 
+   		where "demo" is the name of the deployed web application.
+   		                  
+   		Assume that the Demo Application Servlet is using a persistence unit named 
+   		'jestdemo'. The JEST Servlet will require the persistence unit name to
+   		browse the Demo Application.                  
+   		</description>
+   		
+		<servlet-name>demo</servlet-name>
+		<servlet-class>demo.SimpleApp</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>demo</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+  
+    <!-- Deployment descriptor for JESTServlet.                                           -->
+  	<servlet>
+  		<description>
+  		This is the JEST servlet. 
+  		JEST Servlet needs to know the name of the persistence unit used by the Demo Application.
+  		The unit name is specified by mandatory "persistence.unit" parameter during initialization.
+  		
+  		The JEST servlet is mapped to URL pattern /jest/* in servlet mapping section. So to access
+  		JEST servlet, use the following URI
+  		    http://host:port/demo/jest/
+  		Notice the trailing forward slash character is significant.     
+  		</description>
+		<servlet-name>jest</servlet-name>
+		<servlet-class>org.apache.openjpa.persistence.jest.JESTServlet</servlet-class>
+		<init-param>
+			<param-name>persistence.unit</param-name>
+			<param-value>jestdemo</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>jest</servlet-name>
+		<url-pattern>/jest/*</url-pattern>
+	</servlet-mapping>
+  
+</web-app>

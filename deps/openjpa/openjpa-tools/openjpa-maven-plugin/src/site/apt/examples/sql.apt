@@ -1,0 +1,47 @@
+ ------
+ SQL
+ ------
+ Mark Struberg
+ <struberg@yahoo.de>
+ ------
+ November 29, 2010
+ ------
+
+SQL
+
+  The following build configuration shows how to use the OpenJPA
+  MappingTool for generating the SQL file for creating a fresh database.
+  Please consult the OpenJPA documentation for more
+  details on the SQL file creation.
+
+  The {{{../sql-mojo.html}openjpa:sql}} mojo will typically
+  be called manually, so there is no <<<executions>>> section.
+  
+-------------------
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>1.2</version>
+        <sqlAction>build</sqlAction>    
+        <sqlFile>src/main/sql/create.sql</sqlFile>    
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
+-------------------
+  
+  
+  * If no <<<sqlFile>>> is set this will default to <<<target/database.sql>>>
+  
+  * If no <<<sqlAction>>> is set it will default to <<<build>>>
+  
+  Please consult the OpenJPA documentation for a list of valid <<<sqlAction>>>s.
+  

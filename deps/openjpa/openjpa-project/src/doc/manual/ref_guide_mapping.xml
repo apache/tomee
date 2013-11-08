@@ -1,0 +1,3669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<chapter id="ref_guide_mapping">
+    <title>
+        Mapping
+    </title>
+    <indexterm zone="ref_guide_mapping">
+        <primary>
+            mapping metadata
+        </primary>
+    </indexterm>
+    <para>
+The JPA Overview's <xref linkend="jpa_overview_mapping"/> explains
+object-relational mapping under JPA. This chapter reviews the mapping utilities
+OpenJPA provides and examines OpenJPA features that go beyond the JPA
+specification.
+    </para>
+    <section id="ref_guide_mapping_mappingtool">
+        <title>
+            Forward Mapping
+        </title>
+        <indexterm zone="ref_guide_mapping_mappingtool">
+            <primary>
+                forward mapping
+            </primary>
+        </indexterm>
+        <indexterm zone="ref_guide_mapping_mappingtool">
+            <primary>
+                mapping tool
+            </primary>
+            <seealso>
+                forward mapping
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                forward mapping
+            </secondary>
+            <see>
+                forward mapping
+            </see>
+        </indexterm>
+        <para>
+<emphasis>Forward mapping</emphasis> is the process of creating mappings and
+their corresponding database schema from your object model. OpenJPA supports
+forward mapping through the <emphasis>mapping tool</emphasis>. The next section
+presents several common mapping tool use cases. You can invoke the tool through
+its Java class,
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/MappingTool"><classname>
+org.apache.openjpa.jdbc.meta.MappingTool</classname></ulink>.
+        </para>
+        <note>
+            <para>
+<xref linkend="ref_guide_integration_mappingtool"/> describes the mapping
+tool Ant task.
+            </para>
+        </note>
+        <example id="ref_guide_mapping_mappingtool_typical">
+            <title>
+                Using the Mapping Tool
+            </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool Magazine.java
+</programlisting>
+        </example>
+        <para>
+In addition to the universal flags of the
+<link linkend="ref_guide_conf_devtools">configuration framework</link>, the
+mapping tool accepts the following command line arguments:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>-schemaAction/-sa &lt;add | refresh | drop | build | retain | reflect | createDB | dropDB | import | export | none&gt;
+</literal>: The action to take on the schema. These options correspond to the
+same-named actions on the schema tool described in
+<xref linkend="ref_guide_schema_schematool"/>. Actions can be composed in a
+comma-separated list. Unless you are running the mapping tool on all of
+your persistent types at once or dropping a mapping, we strongly
+recommend you use the default <literal>add</literal> action or the
+<literal>build</literal> action. Otherwise you may end up inadvertently
+dropping schema components that are used by classes you are not
+currently running the tool over.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-schemaFile/-sf &lt;stdout | output file&gt;</literal>: Use this
+option to write the planned schema to an XML document rather than modify the
+database. The document can then be manipulated and committed to the database
+with the <link linkend="ref_guide_schema_schematool"> schema tool</link>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-sqlFile/-sql &lt;stdout | output file&gt;</literal>: Use this option
+to write the planned schema modifications to a SQL script rather than modify the
+database. Combine this with a <literal>schemaAction</literal> of <literal>build
+</literal> to generate a script that recreates the schema for the current
+mappings, even if the schema already exists.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-sqlEncode/-se &lt;encoding&gt;</literal>: Use this option
+with <literal>-sqlFile</literal> to write the SQL script in a different
+Java character set encoding than the default JVM locale, such as
+<literal>-sqlTerminator/-st &lt;terminal&gt;</literal>: Use this option
+with <literal>-sqlFile</literal> to write the SQL terminating with a 
+different character instead of a semicolon.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-dropTables/-dt &lt;true/t | false/f&gt;</literal>: Corresponds to the
+same-named option on the schema tool.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-dropSequences/-dsq &lt;true/t | false/f&gt;</literal>: Corresponds to
+the same-named option on the schema tool.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-openjpaTables/-ot &lt;true/t | false/f&gt;</literal>: Corresponds to
+the same-named option on the schema tool.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-ignoreErrors/-i &lt;true/t | false/f&gt;</literal>: Corresponds to
+the same-named option on the schema tool.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-schemas/-s &lt;schema and table names&gt;</literal>: Corresponds to
+the same-named option on the schema tool. This option is ignored if <literal>
+readSchema</literal> is not set to <literal>true</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-readSchema/-rs &lt;true/t | false/f&gt;</literal>: Set this option to
+<literal>true</literal> to read the entire existing schema when the tool runs.
+Reading the existing schema ensures that OpenJPA does not generate any mappings
+that use table, index, primary key, or foreign key names that conflict with
+existing names. Depending on the JDBC driver, though, it can be a slow process
+for large schemas.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-primaryKeys/-pk &lt;true/t | false/f&gt;</literal>: Whether to read
+and manipulate primary key information of existing tables. Defaults to false.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-foreignKeys/-fk &lt;true/t | false/f&gt;</literal>: Whether to read
+and manipulate foreign key information of existing tables. Defaults to false.
+This means that to add any new foreign keys to a class that has already been
+mapped, you must explicitly set this flag to true.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-indexes/-ix &lt;true/t | false/f&gt;</literal>: Whether to read and
+manipulate index information of existing tables. Defaults to false. This means
+that to add any new indexes to a class that has already been mapped once, you
+must explicitly set this flag to true.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-sequences/-sq &lt;true/t | false/f&gt;</literal>: Whether to
+manipulate sequences. Defaults to true.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-meta/-m &lt;true/t | false/f&gt;</literal>: Whether the given action
+applies to metadata rather than or in addition to mappings.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The mapping tool also uses an <literal>-action/-a</literal> argument to specify
+the action to take on each class. The available actions are:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>buildSchema</literal>: This is the default action. It
+makes the database schema match your existing mappings. If your provided
+mappings conflict with your class definitions, OpenJPA will fail with an
+informative exception.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>validate</literal>: Ensure that the mappings for the given classes are
+valid and that they match the schema. No mappings or tables will be changed. An
+exception is thrown if any mappings are invalid.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+Each additional argument to the tool should be one of:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+The full name of a persistent class.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+The .java file for a persistent class.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+The <filename>.class</filename> file of a persistent class.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+If you do not supply any arguments to the mapping tool, it will run on the
+classes in your persistent classes list (see
+<xref linkend="ref_guide_pc_pcclasses"/>).
+        </para>
+        <para>
+The mappings generated by the mapping tool are stored by the system <emphasis>
+mapping factory</emphasis>. <xref linkend="ref_guide_mapping_factory"/>
+discusses your mapping factory options.
+        </para>
+        <section id="ref_guide_mapping_mappingtool_examples">
+            <title>
+                Using the Mapping Tool
+            </title>
+            <indexterm zone="ref_guide_mapping_mappingtool_examples">
+                <primary>
+                    mapping tool
+                </primary>
+                <secondary>
+                    use cases
+                </secondary>
+            </indexterm>
+            <para>
+The JPA specification defines a comprehensive set of defaults for missing
+mapping information. Thus, forward mapping in JPA is virtually automatic. After
+using the mapping annotations covered in <xref linkend="jpa_overview_mapping"/>
+of the JPA Overview to override any unsatisfactory defaults, run the
+mapping tool on your persistent classes.  The default <literal>buildSchema
+</literal> mapping tool action manipulates the database schema to
+match your mappings. It fails if any of your mappings don't match your object
+model.
+            </para>
+            <example id="ref_guide_mapping_mappingtool_buildschema">
+                <title>
+                    Creating the Relational Schema from Mappings
+                </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool Magazine.java
+</programlisting>
+            </example>
+            <para>
+To drop the schema for a persistent class, set the mapping tool's <literal>
+schemaAction</literal> to <literal>drop</literal>.
+            </para>
+            <example id="ref_guide_mapping_mappingtool_cleanup_tables">
+                <title>
+                    Refreshing entire schema and cleaning out tables
+                </title>
+	            <indexterm zone="ref_guide_mapping_mappingtool_cleanup_tables">
+    	            <primary>
+        	            testing
+            	    </primary>
+                	<secondary>
+                    	Rebuild mappings and clean tables
+	                </secondary>
+    	        </indexterm>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -schemaAction add,deleteTableContents
+</programlisting>
+            </example>
+            <example id="ref_guide_mapping_mappingtool_dropschema">
+                <title>
+                    Dropping Mappings and Association Schema
+                </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -schemaAction drop Magazine.java
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_ddl_examples">
+            <title>
+                Generating DDL SQL
+            </title>
+            <indexterm zone="ref_guide_ddl_examples">
+                <primary>
+                    mapping tool
+                </primary>
+                <secondary>
+                    DDL generation
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_ddl_examples">
+                <primary>
+                    DDL
+                </primary>
+                <secondary>
+                    with mapping tool
+                </secondary>
+            </indexterm>
+            <para>
+The examples below show how to use the mapping tool to generate DDL SQL scripts,
+rather than modifying the database directly.
+            </para>
+            <example id="ref_guid_mapping_ddl_full_ddl">
+                <title>
+                    Create DDL for Current Mappings
+                </title>
+                <para>
+This example uses your existing mappings to determine the needed schema, then
+writes the SQL to create that schema to <filename>create.sql</filename>.
+                </para>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -schemaAction build -sql create.sql Magazine.java
+</programlisting>
+            </example>
+            <example id="ref_guid_mapping_ddl_part_ddl">
+                <title>
+                    Create DDL to Update Database for Current Mappings
+                </title>
+                <para>
+This example uses your existing mappings to determine the needed schema. It then
+writes the SQL to add any missing tables and columns to the current schema to
+<filename>update.sql</filename>.
+                </para>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -sql update.sql Magazine.java
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_mapping_synch">
+            <title>
+                Runtime Forward Mapping
+            </title>
+            <indexterm zone="ref_guide_mapping_synch">
+                <primary>
+                    forward mapping
+                </primary>
+                <secondary>
+                    automatic runtime mapping
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_synch">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    automatic runtime mapping
+                </secondary>
+            </indexterm>
+            <para>
+You can configure OpenJPA to automatically run the mapping tool at runtime
+through the <link linkend="openjpa.jdbc.SynchronizeMappings"><literal>
+openjpa.jdbc.SynchronizeMappings</literal></link> configuration property. Using
+this property saves you the trouble of running the mapping tool manually, and is
+meant for use during rapid test/debug cycles.
+            </para>
+            <para>
+In order to enable automatic runtime mapping, you must first list all your
+persistent classes as described in <xref linkend="ref_guide_pc_pcclasses"/>.
+            </para>
+            <para>
+OpenJPA will run the mapping tool on these classes when your application obtains
+its first <classname>EntityManager</classname>.
+            </para>
+            <para>
+The <literal>openjpa.jdbc.SynchronizeMappings</literal> property is a plugin
+string (see <xref linkend="ref_guide_conf_plugins"/>) where the class
+name is the mapping tool action to invoke, and the properties are the
+<classname>MappingTool</classname> class' JavaBean properties. These properties
+correspond go the long versions of the tool's command line flags.
+            </para>
+            <example id="ref_guide_mapping_synchex">
+                <title>
+                    Configuring Runtime Forward Mapping
+                </title>
+<programlisting>
+&lt;property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/&gt;
+</programlisting>
+                <para>
+The setting above corresponds to running the following command:
+                </para>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -action buildSchema -foreignKeys true
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="ref_guide_pc_reverse">
+        <title>
+            Reverse Mapping
+        </title>
+        <indexterm zone="ref_guide_pc_reverse">
+            <primary>
+                reverse mapping
+            </primary>
+        </indexterm>
+        <indexterm zone="ref_guide_pc_reverse">
+            <primary>
+                reverse mapping tool
+            </primary>
+            <seealso>
+                reverse mapping
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                reverse mapping
+            </secondary>
+            <see>
+                reverse mapping
+            </see>
+        </indexterm>
+        <para>
+OpenJPA includes a <emphasis>reverse mapping</emphasis> tool for generating
+persistent class definitions, complete with metadata, from an existing database
+schema. You do not have to use the reverse mapping tool to access an existing
+schema; you are free to write your classes and mappings yourself, as described
+in <xref linkend="ref_guide_mapping_middle"/>. The reverse mapping tool,
+however, can give you an excellent starting point from which to grow your
+persistent classes.
+        </para>
+        <para>
+To use the reverse mapping tool, follow the steps below:
+        </para>
+        <orderedlist>
+            <listitem>
+                <para>
+Use the <link linkend="ref_guide_schema_schematool"> schema tool</link> to
+export your current schema to an XML schema file. You can skip this step and the
+next step if you want to run the reverse mapping tool directly against the
+database.
+                </para>
+                <example id="ref_guide_pc_reverse_schemagen">
+                    <title>
+                        Reflection with the Schema Tool
+                    </title>
+<programlisting>
+java org.apache.openjpa.jdbc.schema.SchemaTool -a reflect -f schema.xml
+</programlisting>
+                </example>
+            </listitem>
+            <listitem>
+                <para>
+Examine the generated schema file. JDBC drivers often provide incomplete or
+faulty metadata, in which case the file will not exactly match the actual
+schema. Alter the XML file to match the true schema. The XML format for the
+schema file is described in <xref linkend="ref_guide_schema_xml"/>.
+                </para>
+                <para>
+After fixing any errors in the schema file, modify the XML to include foreign
+keys between all relations. The schema tool will have automatically detected
+existing foreign key constraints; many schemas, however, do not employ database
+foreign keys for every relation. By manually adding any missing foreign keys,
+you will give the reverse mapping tool the information it needs to generate the
+proper relations between the persistent classes it creates.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Run the reverse mapping tool on the finished schema file. If you do not supply
+the schema file to reverse map, the tool will run directly against the schema in
+the database. The tool can be run via its Java class,
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/ReverseMappingTool">
+<classname>org.apache.openjpa.jdbc.meta.ReverseMappingTool</classname></ulink>.
+                </para>
+                <example id="ref_guide_pc_reverse_reversemappingtool">
+                    <title>
+                        Using the Reverse Mapping Tool
+                    </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.ReverseMappingTool -pkg com.xyz -d ~/src -cp customizer.properties schema.xml
+</programlisting>
+                </example>
+                <para>
+In addition to OpenJPA's <link linkend="ref_guide_conf_devtools">standard
+configuration flags</link>, including
+<link linkend="ref_guide_conf_devtools_format">code formatting options</link>,
+the reverse mapping tool recognizes the following command line arguments:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>-schemas/-s &lt;schema and table names&gt;</literal>: A
+comma-separated list of schema and table names to reverse map, if no XML schema
+file is supplied. Each element of the list must follow the naming conventions
+for the <literal>openjpa.jdbc.Schemas</literal> property described in
+<xref linkend="ref_guide_schema_info_list"/>. In fact, if this flag is
+omitted, it defaults to the value of the <literal>Schemas</literal> property. If
+the <literal>Schemas</literal> property is not defined, all schemas will be
+reverse-mapped.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-package/-pkg &lt;package name&gt;</literal>: The package name of the
+generated classes. If no package name is given, the generated code will not
+contain package declarations.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-directory/-d &lt;output directory&gt;</literal>: All generated code
+and metadata will be written to the directory at this path. If the path does not
+match the package of a class, the package structure will be created beneath this
+directory. Defaults to the current directory.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-metadata/-md &lt;class | package | none&gt;</literal>: Specify the
+level the metadata should be generated at. Defaults to generating a single
+package-level metadata file. Set to <literal>none</literal> to disable orm.xml
+generation.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-annotations/-ann &lt;true/t | false/f&gt;</literal>: Set to
+<literal>true</literal> to
+generate JPA annotations in generated Java classes.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-accessType/-access &lt;field | property&gt;</literal>: Change access
+type for generated annotations. Defaults to field access.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useSchemaName/-sn &lt;true/t | false/f&gt;</literal>: Set this flag
+to <literal>true</literal> to include the schema as well as table name in the
+name of each generated class. This can be useful when dealing with multiple
+schemas with same-named tables.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useSchemaElement/-se &lt;true/t | false/f&gt;</literal>: Set this
+flag to <literal>false</literal> to exclude the schema name from the 
+<literal>@Table</literal> annotation in the generated class for each table.
+If set to <literal>false</literal>, the schema name will also be removed from
+the corresponding XML mapping files (orm.xml) that are generated by the tool.
+The initialized value is true (in order to preserve backwards compatibility).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useForeignKeyName/-fkn &lt;true/t | false/f&gt;</literal>: Set this
+flag to <literal>true</literal> if you would like field names for relations to
+be based on the database foreign key name. By default, relation field names are
+derived from the name of the related class.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-nullableAsObject/-no &lt;true/t | false/f&gt;</literal>: By default,
+all non-foreign key columns are mapped to primitives. Set this flag to <literal>
+true</literal> to generate primitive wrapper fields instead for columns that
+allow null values.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-blobAsObject/-bo &lt;true/t | false/f&gt;</literal>: By default, all
+binary columns are mapped to <classname>byte[]</classname> fields. Set this flag
+to <literal>true</literal> to map them to <classname>Object</classname> fields
+instead. Note that when mapped this way, the column is presumed to contain a
+serialized Java object.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-primaryKeyOnJoin/-pkj &lt;true/t | false/f&gt;</literal>: The
+standard reverse mapping tool behavior is to map all tables with primary keys to
+persistent classes. If your schema has primary keys on many-many join tables as
+well, set this flag to <literal>true</literal> to avoid creating classes for
+those tables.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-inverseRelations/-ir &lt;true/t | false/f&gt;</literal>: Set to
+<literal>false</literal> to prevent the creation of inverse 1-many/1-1 relations
+for every many-1/1-1 relation detected.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useGenericCollections/-gc &lt;true/t | false/f&gt;</literal>: Set to
+true to use generic collections on OneToMany and ManyToMany relations.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useDatastoreIdentity/-ds &lt;true/t | false/f&gt;</literal>: Set to
+<literal>true</literal> to use datastore identity for tables that have single
+numeric primary key columns. The tool typically uses application identity for
+all generated classes.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-useBuiltinIdentityClass/-bic &lt;true/t | false/f&gt;</literal>: Set
+to <literal>false</literal> to prevent the tool from using built-in application
+identity classes when possible. This will force the tool to create custom
+application identity classes even when there is only one primary key column.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-innerIdentityClasses/-inn &lt;true/t | false/f&gt;</literal>: Set to
+<literal>true</literal> to have any generated application identity classes be
+created as static inner classes within the persistent classes. Defaults to
+<literal>false</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-identityClassSuffix/-is &lt;suffix&gt;</literal>: Suffix to append to
+class names to form application identity class names, or for inner identity
+classes, the inner class name. Defaults to <literal>Id</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-typeMap/-typ &lt;type mapping&gt;</literal>: A string that specifies
+the default Java classes to generate for each SQL type that is seen in the
+schema. The format is <literal> SQLTYPE1=JavaClass1,SQLTYPE2=JavaClass2
+</literal>. The SQL type name first looks for a customization based on <literal>
+SQLTYPE(SIZE,PRECISION)</literal>, then <literal>SQLTYPE(SIZE)</literal>, then
+<literal>SQLTYPE</literal>. So if a column whose type name is
+<literal>CHAR</literal> is found, it will first look for the <literal>
+CHAR(50,0)</literal> type name specification, then it will look for <literal>
+CHAR(50)</literal>, and finally it will just look for <literal>CHAR</literal>.
+For example, to generate a char array for every <literal>CHAR</literal> column
+whose size is exactly 50, and to generate a <literal>short</literal> for every
+type name of <literal>INTEGER</literal>, you might specify: <literal>
+CHAR(50)=char[],INTEGER=short</literal>. Note that since various databases
+report different type names differently, one database's type name specification
+might not work for another database. Enable <literal>TRACE</literal> level
+logging on the <literal>MetaData</literal> channel to track which type names
+OpenJPA is examining.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-customizerClass/-cc &lt;class name&gt;</literal>: The full class name
+of a
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/ReverseCustomizer.html">
+<classname>org.apache.openjpa.jdbc.meta.ReverseCustomizer</classname></ulink>
+customization plugin. If you do not specify a reverse customizer of your own,
+the system defaults to a
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/PropertiesReverseCustomizer.html">
+<classname>PropertiesReverseCustomizer</classname></ulink>. This customizer
+allows you to specify simple customization options in the properties file given
+with the <literal>-customizerProperties</literal> flag below. We present the
+available property keys <link linkend="ref_guide_pc_reverse_custom">
+below</link>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-customizerProperties/-cp &lt;properties file or resource&gt;</literal>
+: The path or resource name of a properties file to pass to the reverse
+customizer on initialization.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>-customizer./-c.&lt;property name&gt; &lt;property value&gt;</literal>
+: The given property name will be matched with the corresponding Java bean
+property in the specified reverse customizer, and set to the given value.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+Running the tool will generate <filename>.java</filename> files for each
+generated class (and its application identity class, if applicable), along with
+JPA annotations (if enabled by setting <literal>-annotations true</literal>),
+or an <filename>orm.xml</filename> file (if not disabled with <literal>
+-metadata none</literal>) containing the corresponding persistence metadata.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+Examine the generated class, metadata, and mapping information, and modify it as
+necessary. Remember that the reverse mapping tool only provides a starting
+point, and you are free to make whatever modifications you like to the code it
+generates.
+                </para>
+                <para>
+After you are satisfied with the generated classes and their mappings, you
+should first compile the classes with <literal>javac</literal>, <literal>
+jikes</literal>, or your favorite Java compiler. Make sure the classes are
+located in the directory corresponding to the <literal>-package</literal> flag
+you gave the reverse mapping tool.  Next, if you have generated an <filename>
+orm.xml</filename>, move that file to a <filename>META-INF</filename> directory
+within a directory in your classpath.  Finally, enhance the classes
+if necessary (see <xref linkend="ref_guide_pc_enhance"/>).
+                </para>
+            </listitem>
+        </orderedlist>
+        <para>
+Your persistent classes are now ready to access your existing schema.
+        </para>
+        <section id="ref_guide_pc_reverse_custom">
+            <title>
+                Customizing Reverse Mapping
+            </title>
+            <para>
+The <classname>org.apache.openjpa.jdbc.meta.ReverseCustomizer</classname> plugin
+interface allows you to customize the reverse mapping process. See the class
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/ReverseCustomizer.html">
+Javadoc</ulink> for details on the hooks that this interface provides. Specify
+the concrete plugin implementation to use with the <literal>
+-customizerClass/-cc</literal> command-line flag, described in the preceding
+section.
+            </para>
+            <para>
+By default, the reverse mapping tool uses a
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/PropertiesReverseCustomizer.html">
+<classname>org.apache.openjpa.jdbc.meta.PropertiesReverseCustomizer</classname>
+</ulink>. This customizer allows you to perform relatively simple
+customizations through the properties file named with the <literal>
+-customizerProperties</literal> tool flag. The customizer recognizes the
+following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>&lt;table name&gt;.table-type &lt;type&gt;</literal>: Override the
+default type of the table with name <literal>&lt;table name&gt;</literal>.
+Legal values are:
+                    </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+<literal>base</literal>: Primary table for a base class.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>secondary</literal>: Secondary table for a class. The table must have
+a foreign key joining to a class table.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>secondary-outer</literal>: Outer-joined secondary table for a class.
+The table must have a foreign key joining to a class table.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>association</literal>: Association table. The table must have two
+foreign keys to class tables.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>collection</literal>: Collection table. The table must have one
+foreign key to a class table and one data column.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>subclass</literal>: A joined subclass table. The table must have a
+foreign key to the superclass' table.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+<literal>none</literal>: The table should not be reverse-mapped.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;class name&gt;.rename &lt;new class name&gt;</literal>: Override
+the given tool-generated name <literal>&lt;class name&gt;</literal> with a new
+value. Use full class names, including package. You are free to rename a class
+to a new package. Specify a value of <literal>none</literal> to reject the class
+and leave the corresponding table unmapped.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;table name&gt;.class-name &lt;new class name&gt;</literal>: Assign
+the given fully-qualified class name to the type created from the table with
+name <literal>&lt;table name&gt;</literal>. Use a value of <literal>none
+</literal> to prevent reverse mapping this table. This property can be used in
+place of the <literal>rename</literal> property.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;class name&gt;.identity &lt;datastore | builtin | identity class
+name&gt;</literal>: Set this property to <literal>datastore</literal> to use
+datastore identity for the class <literal>&lt;class name&gt;</literal>,
+<literal>builtin</literal> to use a built-in identity class, or the desired
+application identity class name. Give full class names, including package. You
+are free to change the package of the identity class this way. If the persistent
+class has been renamed, use the new class name for this property key. Remember
+that datastore identity requires a table with a single numeric primary key
+column, and built-in identity requires a single primary key column of any type.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;class name&gt;.&lt;field name&gt;.rename &lt;new field name&gt;
+</literal>: Override the tool-generated <literal>&lt;field name&gt;</literal> in
+class <literal>&lt;class name&gt;</literal> with the given name. Use the field
+owner's full class name in the property key. If the field owner's class was
+renamed, use the new class name. The property value should be the new field
+name, without the preceding class name. Use a value of <literal>none</literal>
+to reject the generated mapping and remove the field from the class.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;table name&gt;.&lt;column name&gt;.field-name &lt;new field
+name&gt;</literal>: Set the generated field name for the <literal>&lt;table
+name&gt;</literal> table's <literal>&lt;column name&gt;</literal> column. If
+this is a multi-column mapping, any of the columns can be used. Use a value of
+<literal>none</literal> to prevent the column and its associated columns from
+being reverse-mapped.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;class name&gt;.&lt;field name&gt;.type &lt;field type&gt;</literal>
+: The type to give the named field. Use full class names. If the field or the
+field's owner class has been renamed, use the new name.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>&lt;class name&gt;.&lt;field name&gt;.value</literal>: The initial
+value for the named field. The given string will be placed as-is in the
+generated Java code, so be sure it is valid Java. If the field or the field's
+owner class has been renamed, use the new name.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+All property keys are optional; if not specified, the customizer keeps the
+default value generated by the reverse mapping tool.
+            </para>
+            <example id="ref_guide_pc_reverse_custom_ex">
+                <title>
+                    Customizing Reverse Mapping with Properties
+                </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.ReverseMappingTool -pkg com.xyz -cp custom.properties schema.xml
+</programlisting>
+                <para>
+Example <filename>custom.properties</filename>:
+                </para>
+<programlisting>
+com.xyz.TblMagazine.rename:             com.xyz.Magazine
+com.xyz.TblArticle.rename:              com.xyz.Article
+com.xyz.TblPubCompany.rename:           com.xyz.pub.Company
+com.xyz.TblSysInfo.rename:              none
+
+com.xyz.Magazine.allArticles.rename:    articles
+com.xyz.Magazine.articles.type:         java.util.Collection
+com.xyz.Magazine.articles.value:        new TreeSet()
+com.xyz.Magazine.identity:              datastore
+
+com.xyz.pub.Company.identity:           com.xyz.pub.CompanyId
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="ref_guide_mapping_middle">
+        <title>
+            Meet-in-the-Middle Mapping
+        </title>
+        <indexterm zone="ref_guide_pc_reverse">
+            <primary>
+                meet-in-the-middle mapping
+            </primary>
+        </indexterm>
+        <indexterm zone="ref_guide_pc_reverse">
+            <primary>
+                reverse mapping tool
+            </primary>
+            <seealso>
+                reverse mapping
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                meet-in-the-middle mapping
+            </secondary>
+            <see>
+                meet-in-the-middle mapping
+            </see>
+        </indexterm>
+        <para>
+In the <emphasis>meet-in-the-middle</emphasis>
+mapping approach, you control both the relational model and the object model. It
+is up to you to define the mappings between these models.  The mapping
+tool's <literal>validate</literal> action is useful to meet-in-the-middle
+mappers. This action verifies that the mapping information for a class matches
+the class definition and the existing schema. It throws an informative exception
+when your mappings are incorrect.
+        </para>
+        <example id="ref_guide_mapping_mappingtool_validate">
+            <title>
+                Validating Mappings
+            </title>
+<programlisting>
+java org.apache.openjpa.jdbc.meta.MappingTool -action validate Magazine.java
+</programlisting>
+        </example>
+        <para>
+The <literal>buildSchema</literal> action we discussed in
+<xref linkend="ref_guide_mapping_mappingtool"/> is also somewhat useful
+during meet-in-the-middle mapping. Unlike the <literal>validate</literal>
+action, which throws an exception if your mapping data does not match the
+existing schema, the <literal>buildSchema</literal> action assumes your mapping
+data is correct, and modifies the schema to match your mappings. This lets you
+modify your mapping data manually, but saves you the hassle of using your
+database's tools to bring the schema up-to-date.
+        </para>
+    </section>
+    <section id="ref_guide_mapping_defaults">
+        <title>
+            Mapping Defaults
+        </title>
+        <indexterm zone="ref_guide_mapping_defaults">
+            <primary>
+                MappingDefaults
+            </primary>
+        </indexterm>
+        <indexterm zone="ref_guide_mapping_defaults">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                defaults
+            </secondary>
+            <see>
+                MappingDefaults
+            </see>
+        </indexterm>
+        <para>
+The previous sections showed how to use the mapping tool to generate default
+mappings. But how does the mapping tool know what mappings to generate? The
+answer lies in the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/MappingDefaults.html">
+<classname>org.apache.openjpa.jdbc.meta.MappingDefaults</classname></ulink>
+interface. OpenJPA uses an instance of this interface to decide how to name
+tables and columns, where to put foreign keys, and generally how to create a
+schema that matches your object model.
+        </para>
+        <important>
+            <para>
+OpenJPA relies on foreign key constraint information at runtime to order SQL
+appropriately. Be sure to set your mapping defaults to reflect your existing
+database constraints, set the schema factory to reflect on the database for
+constraint information (see <xref linkend="ref_guide_schema_info_factory"/>),
+or use explicit foreign key mappings as described in
+<xref linkend="ref_guide_mapping_jpa_fk"/>.
+            </para>
+        </important>
+        <para>
+The <link linkend="openjpa.jdbc.MappingDefaults"><literal>
+openjpa.jdbc.MappingDefaults</literal></link> configuration property controls
+the <classname>MappingDefaults</classname> interface implementation in use. This
+is a plugin property (see <xref linkend="ref_guide_conf_plugins"/>), so
+you can substitute your own implementation or configure the existing ones.
+OpenJPA includes the following standard implementations:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>jpa</literal>: Provides defaults in compliance with the JPA standard.
+This is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/PersistenceMappingDefaults.html">
+<classname>org.apache.openjpa.persistence.jdbc.PersistenceMappingDefaults
+</classname></ulink> class. This class extends the <classname>
+MappingDefaultsImpl</classname> class described below, so it has all the same
+properties (though with different default values), as well as:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>PrependFieldNameToJoinTableInverseJoinColumns</literal>: Whether to
+prepend the owning field name to the names of inverse join columns in join
+tables.  Defaults to true per the JPA specification.  Set to false for
+compatibility with older OpenJPA versions which did not prepend the field name.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+<literal>default</literal>: This is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/MappingDefaultsImpl.html">
+<classname>org.apache.openjpa.jdbc.meta.MappingDefaultsImpl</classname></ulink>
+class. This default implementation is highly configurable. It has the following
+properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>DefaultMissingInfo</literal>: Whether to default missing column and
+table names rather than throw an exception. If set to false, full explicit
+mappings are required at runtime and when using mapping tool actions like
+<literal>buildSchema</literal> and <literal>validate</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<indexterm><primary>Hungarian notation</primary></indexterm>
+<literal>RemoveHungarianNotation</literal>: Switches on/off removal of
+Hungarian notation when generating column names.
+Fields such as <literal>mFoobar</literal> and <literal>strBarFoo</literal>
+would become columns named <literal>foobar</literal> and
+<literal>barfoo</literal> respectively. OpenJPA will search for the first
+instance of a uppercase character in the field name and then truncate the
+column name to remove anything before it.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>BaseClassStrategy</literal>: The default mapping strategy for base
+classes. You can specify a built-in strategy alias or the full class name of a
+<link linkend="ref_guide_mapping_custom_class">custom class strategy</link>.
+You can also use OpenJPA's plugin format (see
+<xref linkend="ref_guide_conf_plugins"/>) to pass arguments to the
+strategy instance. See the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/strats/package-summary.html">
+<literal>org.apache.openjpa.jdbc.meta.strats</literal></ulink> package for
+available strategies.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>SubclassStrategy</literal>: The default mapping strategy for
+subclasses. You can specify a builtin strategy alias or the full class name of a
+<link linkend="ref_guide_mapping_custom_class"> custom class strategy</link>.
+You can also use OpenJPA's plugin format (see
+<xref linkend="ref_guide_conf_plugins"/>) to pass arguments to the
+strategy instance. Common strategies are <literal>vertical</literal> and
+<literal>flat</literal>, the default. See the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/strats/package-summary.html">
+<literal>org.apache.openjpa.jdbc.meta.strats</literal></ulink> package for all
+available strategies.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>VersionStrategy</literal>: The default version strategy for classes
+without a version field. You can specify a builtin strategy alias or the full
+class name of a <link linkend="ref_guide_mapping_custom_versdiscrim"> custom
+version strategy</link>. You can also use OpenJPA's plugin format (see
+<xref linkend="ref_guide_conf_plugins"/>) to pass arguments to the
+strategy instance. Common strategies are <literal>none</literal>, <literal>
+state-comparison</literal>, <literal> timestamp</literal>, and <literal>
+version-number</literal>, the default. See the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/strats/package-summary.html">
+<literal>org.apache.openjpa.jdbc.meta.strats</literal></ulink> package for all
+available strategies.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>DiscriminatorStrategy</literal>: The default discriminator strategy
+when no discriminator value is given. You can specify a builtin strategy alias
+or the full class name of a
+<link linkend="ref_guide_mapping_custom_versdiscrim"> custom discriminator
+strategy</link>. You can also use OpenJPA's plugin format (see
+<xref linkend="ref_guide_conf_plugins"/>) to pass arguments to the
+strategy instance. Common strategies are <literal>final</literal> for a base
+class without subclasses, <literal>none</literal> to use joins to subclass
+tables rather than a discriminator column, and <literal> class-name</literal>,
+the default. See the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/strats/package-summary.html">
+<literal>org.apache.openjpa.jdbc.meta.strats</literal></ulink> package for all
+available strategies.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>FieldStrategies</literal>: This property associates field types with
+custom strategies. The format of this property is similar to that of plugin
+strings (see <xref linkend="ref_guide_conf_plugins"/> ), without the class
+name. It is a comma-separated list of key/value pairs, where each key is a
+possible field type, and each value is itself a plugin string describing the
+strategy for that type. We present an example below. See
+<xref linkend="ref_guide_mapping_custom_field"/> for information on custom
+field strategies.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>ForeignKeyDeleteAction</literal>: The default delete action of foreign
+keys representing relations to other objects. Recognized values include
+<literal>restrict</literal>, <literal>cascade</literal>, <literal>null</literal>
+, <literal>default</literal>. These values correspond exactly to the standard
+database foreign key actions of the same names.
+                        </para>
+                        <para>
+The value <literal>none</literal> tells OpenJPA not to create database foreign
+keys on relation columns. This is the default.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>JoinForeignKeyDeleteAction</literal>: The default delete action of
+foreign keys that join secondary, collection, map, or subclass tables to
+the primary table. Accepts the same values as the <literal>
+ForeignKeyDeleteAction</literal> property above.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>DeferConstraints</literal>: Whether to use deferred database
+constraints if possible. Defaults to false.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>IndexLogicalForeignKeys</literal>: Boolean property controlling
+whether to create indexes on logical foreign keys. Logical foreign keys are
+columns that represent a link between tables, but have been configured through
+the <literal>ForeignKey</literal> properties above not to use a physical
+database foreign key. Defaults to true.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>DataStoreIdColumnName</literal>: The default name of datastore
+identity columns.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>DiscriminatorColumnName</literal>: The default name of discriminator
+columns.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>IndexDiscriminator</literal>: Whether to index the discriminator
+column. Defaults to true.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>VersionColumnName</literal>: The default name of version columns.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>IndexVersion</literal>: Whether to index the version column. Defaults
+to false.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>AddNullIndicator</literal>: Whether to create a synthetic null
+indicator column for embedded mappings. The null indicator column allows OpenJPA
+to distinguish between a null embedded object and one with default values for
+all persistent fields.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>NullIndicatorColumnName</literal>: The default name of synthetic null
+indicator columns for embedded objects.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>OrderLists</literal>: Whether to create a database ordering column for
+maintaining the order of persistent lists and arrays.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>OrderColumnName</literal>: The default name of collection and array
+ordering columns.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>StoreEnumOrdinal</literal>: Set to true to store enum fields as
+numeric ordinal values in the database. The default is to store the enum value
+name as a string, which is more robust if the Java enum declaration might be
+rearranged.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>StoreUnmappedObjectIdString</literal>: Set to true to store the
+stringified identity of related objects when the declared related type is
+unmapped. By default, OpenJPA stores the related object's primary key value(s).
+However, this breaks down if different subclasses of the related type use
+incompatible primary key structures. In that case, stringifying the identity
+value is the better choice.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+        </itemizedlist>
+        <para>
+The example below turns on foreign key generation during schema creation and
+associates the <classname>org.mag.data.InfoStruct</classname> field type with
+the custom <classname>org.mag.mapping.InfoStructHandler</classname> value
+handler.
+        </para>
+        <example id="ref_guide_mapping_defaults_conf">
+            <title>
+                Configuring Mapping Defaults
+            </title>
+<programlisting>
+&lt;property name="openjpa.jdbc.MappingDefaults"
+    value="ForeignKeyDeleteAction=restrict,
+    FieldStrategies='org.mag.data.InfoStruct=org.mag.mapping.InfoStructHandler'"/&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="ref_guide_mapping_factory">
+        <title>
+            Mapping Factory
+        </title>
+        <indexterm zone="ref_guide_mapping_factory">
+            <primary>
+                MappingFactory
+            </primary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                loading and storing
+            </secondary>
+            <see>
+                MappingFactory
+            </see>
+        </indexterm>
+        <para>
+An important decision in the object-relational mapping process is how and where
+to store the data necessary to map your persistent classes to the database
+schema.
+        </para>
+        <para>
+<xref linkend="ref_guide_meta_factory"/> introduced OpenJPA's <classname>
+MetaDataFactory</classname> interface. OpenJPA uses this same interface to
+abstract the storage and retrieval of mapping information. OpenJPA includes the
+built-in mapping factories below, and you can create your own factory if you
+have custom needs. You control which mapping factory OpenJPA uses with the
+<link linkend="openjpa.jdbc.MappingFactory"><literal>
+openjpa.jdbc.MappingFactory</literal></link> configuration property.
+        </para>
+        <para>
+The bundled mapping factories are:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>-</literal>: Leaving the <literal> openjpa.jdbc.MappingFactory
+</literal> property unset allows your metadata factory to take over mappings as
+well.  If you are using the default <literal>jpa</literal> metadata factory,
+OpenJPA will read mapping information from your annotations and
+<filename>orm.xml</filename> when you leave the mapping factory unspecified.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <example id="ref_guide_mapping_factory_jpa">
+            <title>
+                Standard JPA Configuration
+            </title>
+            <para>
+In the standard JPA configuration, the mapping factory is left unset.
+            </para>
+<programlisting>
+&lt;property name="openjpa.MetaDataFactory" value="jpa"/&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="ref_guide_mapping_notes_nonstdjoins">
+        <title>
+            Non-Standard Joins
+        </title>
+        <indexterm zone="ref_guide_mapping_notes_nonstdjoins">
+            <primary>
+                joins
+            </primary>
+            <secondary>
+                non-standard
+            </secondary>
+        </indexterm>
+        <para>
+The JPA Overview's <xref linkend="jpa_overview_mapping"/> explains join
+mapping. All of the examples in that document, however, use "standard" joins, in
+that there is one foreign key column for each primary key column in the target
+table. OpenJPA supports additional join patterns, including partial primary key
+joins, non-primary key joins, and joins using constant values.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                joins
+            </primary>
+            <secondary>
+                partial primary key
+            </secondary>
+        </indexterm>
+In a partial primary key join, the source table only has foreign key columns for
+a subset of the primary key columns in the target table. So long as this subset
+of columns correctly identifies the proper row(s) in the referenced table,
+OpenJPA will function properly. There is no special syntax for expressing a
+partial primary key join - just do not include column definitions for missing
+foreign key columns.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                joins
+            </primary>
+            <secondary>
+                non-primary key
+            </secondary>
+        </indexterm>
+In a non-primary key join, at least one of the target columns is not a primary
+key. Once again, OpenJPA supports this join type with the same syntax as a
+primary key join. There is one restriction, however: each non-primary key column
+you are joining to must be controlled by a field mapping that implements the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/Joinable.html"><classname>
+org.apache.openjpa.jdbc.meta.Joinable</classname></ulink> interface. All built
+in basic mappings implement this interface, including basic fields of embedded
+objects. OpenJPA will also respect any custom mappings that implement this
+interface. See <xref linkend="ref_guide_mapping_custom"/> for an
+examination of custom mappings.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                joins
+            </primary>
+            <secondary>
+                constant
+            </secondary>
+        </indexterm>
+Not all joins consist of only links between columns. In some cases you might
+have a schema in which one of the join criteria is that a column in the source
+or target table must have some constant value. OpenJPA calls joins involving
+constant values <emphasis>constant joins</emphasis>.
+        </para>
+        <para>
+To form a constant join in JPA mapping, first set the <literal>JoinColumn
+</literal>'s <literal>name</literal> attribute to the name of the column. If the
+column with the constant value is the target of the join, give its fully
+qualified name in the form <literal>&lt;table name&gt;.&lt;column name&gt;
+</literal>. Next, set the <literal>referencedColumnName</literal> attribute to
+the constant value. If the constant value is a string, place it in single quotes
+to differentiate it from a column name.
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 427 x 211 (see README) -->
+                <imagedata fileref="img/joins-constant.png" width="285px"/>
+
+            </imageobject>
+        </mediaobject>
+        <para>
+Consider the tables above. First, we want to join row <literal>T1.R1</literal>
+to row <literal>T2.R1</literal>. If we just join column <literal>T1.FK</literal>
+to <literal>T2.PK1</literal>, we will wind up matching both <literal>T2.R1
+</literal> and <literal> T2.R2</literal>. So in addition to joining <literal>
+T1.FK</literal> to <literal>T2.PK1</literal>, we also have to specify that
+<literal>T2.PK2</literal> has the value <literal>a</literal>. Here is how we'd
+accomplish this in mapping metadata.
+        </para>
+<programlisting>
+@Entity
+@Table(name="T1")
+public class ...  {
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name="FK" referencedColumnName="PK1"),
+        @JoinColumn(name="T2.PK2" referencedColumnName="'a'")
+    });
+    private ...;
+}
+</programlisting>
+        <para>
+Notice that we had to fully qualify the name of column <literal>PK2</literal>
+because it is in the target table. Also notice that we put single quotes around
+the constant value so that it won't be confused with a column name. You do not
+need single quotes for numeric constants. For example, the syntax to join
+<literal>T1.R2</literal> to <literal>T2.R4</literal> is:
+        </para>
+<programlisting>
+@Entity
+@Table(name="T1")
+public class ...  {
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name="FK" referencedColumnName="PK2"),
+        @JoinColumn(name="T2.PK1" referencedColumnName="2")
+    });
+    private ...;
+}
+</programlisting>
+        <para>
+Finally, from the inverse direction, these joins would look like this:
+        </para>
+<programlisting>
+@Entity
+@Table(name="T2")
+public class ...  {
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name="T1.FK" referencedColumnName="PK1"),
+        @JoinColumn(name="PK2" referencedColumnName="'a'")
+    });
+    private ...;
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name="T1.FK" referencedColumnName="PK2"),
+        @JoinColumn(name="PK1" referencedColumnName="2")
+    });
+    private ...;
+}
+</programlisting>
+    </section>
+    <section id="ref_guide_mapping_jpa">
+        <title>
+            Additional JPA Mappings
+        </title>
+        <indexterm zone="ref_guide_mapping_jpa">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                JPA additions
+            </secondary>
+        </indexterm>
+        <para>
+OpenJPA supports many persistence strategies beyond those of the JPA
+specification. <xref linkend="ref_guide_meta_jpa"/> covered the logical
+metadata for OpenJPA's additional persistence strategies. We now demonstrate how
+to map entities using these strategies to the database.
+        </para>
+        <section id="ref_guide_mapping_jpa_datastoreid">
+            <title>
+                Datastore Identity Mapping
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_datastoreid">
+                <primary>
+                    datastore identity
+                </primary>
+                <secondary>
+                    mapping
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_datastoreid">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    datastore identity
+                </secondary>
+                <seealso>
+                    identity
+                </seealso>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_datastoreid">
+                <primary>
+                    DataStoreIdColumn
+                </primary>
+                <seealso>
+                    mapping metadata
+                </seealso>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    primary key
+                </primary>
+            </indexterm>
+            <para>
+<xref linkend="ref_guide_pc_oid"/> describes how to use datastore identity
+in JPA. OpenJPA requires a single numeric primary key column to hold datastore
+identity values. The
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/DataStoreIdColumn.html">
+<classname>org.apache.openjpa.persistence.jdbc.DataStoreIdColumn</classname>
+</ulink> annotation customizes the datastore identity column. This annotation
+has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: Defaults to <literal>ID</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>int precision</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String columnDefinition</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean insertable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean updatable</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+All properties correspond exactly to the same-named properties on the standard
+<classname>Column</classname> annotation, described in
+<xref linkend="jpa_overview_mapping_column"/>.
+            </para>
+            <example id="ref_guide_mapping_jpa_datastoreidex">
+                <title>
+                    Datastore Identity Mapping
+                </title>
+<programlisting>
+import org.apache.openjpa.persistence.*;
+import org.apache.openjpa.persistence.jdbc.*;
+
+@Entity
+@Table(name="LOGS")
+@DataStoreIdColumn(name="ENTRY")
+public class LogEntry {
+
+    @Lob
+    private String content;
+
+    ...
+}
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_mapping_jpa_version">
+            <title>
+                Surrogate Version Mapping
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_datastoreid">
+                <primary>
+                    version
+                </primary>
+                <secondary>
+                    mapping
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_version">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    version
+                </secondary>
+                <seealso>
+                    version
+                </seealso>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_version">
+                <primary>
+                    VersionColumn
+                </primary>
+                <seealso>
+                    mapping metadata
+                </seealso>
+            </indexterm>
+            <para>
+OpenJPA supports version fields as defined by the JPA specification, but allows
+you to use a surrogate version column in place of a version field if you like.
+You map the surrogate version column with the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/VersionColumn.html">
+<classname>org.apache.openjpa.persistence.jdbc.VersionColumn</classname></ulink>
+annotation. You can also use the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/VersionColumns.html">
+<classname>org.apache.openjpa.persistence.jdbc.VersionColumns</classname>
+</ulink> annotation to declare an array of <classname>VersionColumn</classname>
+values. Each <classname>VersionColumn</classname> has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: Defaults to <literal>VERSN</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String table</literal>                     
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>int length</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>int precision</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>int scale</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String columnDefinition</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean nullable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean insertable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean updatable</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+All properties correspond exactly to the same-named properties on the standard
+<classname>Column</classname> annotation, described in
+<xref linkend="jpa_overview_mapping_column"/>.
+            </para>
+            <para>
+By default, OpenJPA assumes that surrogate versioning uses a version number
+strategy. You can choose a different strategy with the <classname>
+VersionStrategy</classname> annotation described in
+<xref linkend="version-strategy"/>.
+            </para>
+            <para>
+If multiple columns are used for surrogate versioning, then each column,
+by default, uses a version number. But column definition for each version 
+column can be set independently to other numeric types. The version values are
+compared to detect optimistic concurrent modification. Such comparison must
+determine whether a version value <literal>v1</literal> represents an earlier,
+later or same with respect to another version value <literal>v2</literal>. While
+result of such comparison is obvious for a single numeric column that 
+monotonically increases on each update, the same is not true when version value
+is an array of numbers. By default, OpenJPA compares a version 
+<literal>v1</literal> as later than another version <literal>v2</literal>, 
+if any array element of <literal>v1</literal> is 
+later than the corresponding element of <literal>v2</literal>. 
+<literal>v1</literal> is equal to <literal>v2</literal> if every array element
+is equal and <literal>v1</literal> is earlier to <literal>v1</literal> if some
+elements of <literal>v1</literal> are earlier and rest are equal to corresponding
+element of <literal>v2</literal>.
+        </para>
+        <para>
+Multiple surrogate version columns can be spread across primary and secondary
+tables. For example, following example shows 3 version columns 
+<literal>v01, v11, v12, v21</literal> defined across the primary and secondary tables of 
+a persistent entity       
+        </para>
+        <programlisting>
+@Entity
+@Table(name="PRIMARY")
+@SecondaryTables({ 
+    @SecondaryTable(name = "SECONDARY_1"),
+    @SecondaryTable(name = "SECONDARY_2") 
+})
+@VersionStrategy("version-numbers")
+@VersionColumns({ 
+    @VersionColumn(name = "v01") // default is the PRIMARY table
+    @VersionColumn(name = "v11", table="SECONDARY_1", columnDefinition="FLOAT", scale=3, precision=10), 
+    @VersionColumn(name = "v12", table="SECONDARY_1"), 
+    @VersionColumn(name = "v21", table="SECONDARY_2"),
+})
+</programlisting>
+
+        </section>
+        <section id="ref_guide_mapping_jpa_columns">
+            <title>
+                Multi-Column Mappings
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_columns">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    column
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_columns">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    multi-column mappings
+                </secondary>
+            </indexterm>
+            <indexterm zone="ref_guide_mapping_jpa_columns">
+                <primary>
+                    Columns
+                </primary>
+                <seealso>
+                    mapping metadata
+                </seealso>
+            </indexterm>
+            <para>
+OpenJPA makes it easy to create multi-column
+<link linkend="ref_guide_mapping_custom_field">custom mappings</link>. The JPA
+specification includes a <classname>Column</classname> annotation, but is
+missing a way to declare multiple columns for a single field. OpenJPA remedies
+this with the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Columns.html">
+<classname>org.apache.openjpa.persistence.jdbc.Columns</classname></ulink>
+annotation, which contains an array of <classname>Column</classname> values.
+            </para>
+            <para>
+Remember to annotate custom field types with <classname>Persistent</classname>,
+as described in <xref linkend="ref_guide_meta_jpa_persistent"/>.
+            </para>
+        </section>
+        <section id="ref_guide_mapping_jpa_fieldjoin">
+            <title>
+                Join Column Attribute Targets
+            </title>
+            <para>
+<xref linkend="jpa_overview_mapping_rel"/> in the JPA Overview introduced
+you to the <classname>JoinColumn</classname> annotation. A <classname>
+JoinColumn</classname>'s <literal> referencedColumnName</literal> property
+declares which column in the table of the related type this join column links
+to. Suppose, however, that the related type is unmapped, or that it is part of a
+table-per-class inheritance hierarchy. Each subclass that might be assigned to
+the field could reside in a different table, and could use entirely different
+names for its primary key columns. It becomes impossible to supply a single
+<literal>referencedColumnName</literal> that works for all subclasses.
+            </para>
+            <para>
+OpenJPA rectifies this by allowing you to declare which <emphasis>attribute
+</emphasis> in the related type each join column links to, rather than which
+column. If the attribute is mapped differently in various subclass tables,
+OpenJPA automatically forms the proper join for the subclass record at hand. The
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/XJoinColumn.html">
+<classname>org.apache.openjpa.persistence.jdbc.XJoinColumn</classname></ulink>
+annotation has all the same properties as the standard <classname>JoinColumn
+</classname> annotation, but adds an additional <literal>
+referencedAttributeName</literal> property for this purpose. Simply use a
+<classname>XJoinColumn</classname> in place of a <classname>JoinColumn
+</classname> whenever you need to access this added functionality.
+            </para>
+            <para>
+For compound keys, use the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/XJoinColumns.html">
+<classname>org.apache.openjpa.persistence.jdbc.XJoinColumns</classname></ulink>
+annotation. The value of this annotation is an array of individual <classname>
+XJoinColumn</classname>s.
+            </para>
+        </section>
+        <section id="ref_guide_mapping_jpa_embed">
+            <title>
+                Embedded Mapping
+            </title>
+            <para>
+JPA uses the <classname>AttributeOverride</classname> annotation to override the
+default mappings of an embeddable class. The JPA Overview details this process
+in <xref linkend="jpa_overview_mapping_embed"/>. <classname>
+AttributeOverride</classname>s suffice for simple mappings, but do not allow
+you to override complex mappings. Also, JPA has no way to differentiate between
+a null embedded object and one with default values for all of its fields.
+            </para>
+            <para>
+OpenJPA overcomes these shortcomings with the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/EmbeddedMapping.html">
+<classname>org.apache.openjpa.persistence.jdbc.EmbeddedMapping</classname>
+</ulink> annotation. This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String nullIndicatorColumnName</literal>: If the named column's value
+is <literal>NULL</literal>, then the embedded object is assumed to be null. If
+the named column has a non- <literal>NULL</literal> value, then the embedded
+object will get loaded and populated with data from the other embedded fields.
+This property is entirely optional. By default, OpenJPA always assumes the
+embedded object is non-null, just as in standard JPA mapping.
+                    </para>
+                    <para>
+If the column you name does not belong to any fields of the embedded object,
+OpenJPA will create a synthetic null-indicator column with this name. In fact,
+you can specify a value of <literal>true</literal> to simply indicate that you
+want a synthetic null-indicator column, without having to come up with a name
+for it. A value of <literal>false</literal> signals that you explicitly do not
+want a null-indicator column created for this mapping (in case you have
+configured your <link linkend="ref_guide_mapping_defaults">mapping defaults
+</link> to create one by default).
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String nullIndicatorFieldName</literal>: Rather than name a null
+indicator column, you can name a field of the embedded type. OpenJPA will use
+the column of this field as the null-indicator column.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>MappingOverride[] overrides</literal>: This array allows you to
+override any mapping of the embedded object.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The <classname>EmbeddedMapping</classname>'s <literal>overrides</literal> array
+serves the same purpose as standard JPA's <classname>AttributeOverride
+</classname>s and <classname>AssociationOverride</classname> s. In fact, you can
+also use the <classname>MappingOverride</classname> annotation on an entity
+class to override a complex mapping of its mapped superclass, just as you can
+with <classname> AttributeOverride</classname> and <classname>
+AssociationOverride</classname> s. The <classname>MappingOverrides</classname>
+annotation, whose value is an array of <classname>MappingOverride</classname> s,
+allows you to override multiple mapped superclass mappings.
+            </para>
+            <para>
+Each
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/MappingOverride.html">
+<classname>org.apache.openjpa.persistence.jdbc.MappingOverride</classname>
+</ulink> annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of the field that is being overridden.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>Column[] columns</literal>: Columns for the new field mapping.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>XJoinColumn[] joinColumns</literal>: Join columns for the new field
+mapping, if it is a relation field.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>ContainerTable containerTable</literal>: Table for the new collection
+or map field mapping. We cover collection mappings in
+<xref linkend="ref_guide_mapping_jpa_coll"/>, and map mappings in
+<xref linkend="ref_guide_mapping_jpa_map"/>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>ElementJoinColumn[] elementJoinColumns</literal>: Element join columns
+for the new collection or map field mapping. You will see how to use element
+join columns in <xref linkend="ref_guide_mapping_jpa_coll_joincols"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The following example defines an embeddable <classname> PathCoordinate
+</classname> class with a custom mapping of a <classname>java.awt.Point
+</classname> field to two columns. It then defines an entity which embeds a
+<classname> PointCoordinate</classname> and overrides the default mapping for
+the point field. The entity also declares that if the <classname>PathCoordinate
+</classname>'s <literal>siteName</literal> field column is null, it means that
+no <classname>PathCoordinate</classname> is stored in the embedded record; the
+owning field will load as null.
+            </para>
+            <example id="ref_guide_mapping_jpa_embedex">
+                <title>
+                    Overriding Complex Mappings
+                </title>
+<programlisting>
+import org.apache.openjpa.persistence.jdbc.*;
+
+@Embeddable
+public class PathCoordinate {
+
+    private String siteName;
+
+    @Persistent
+    @Strategy("com.xyz.openjpa.PointValueHandler")
+    private Point point;
+
+    ...
+}
+
+@Entity
+public class Path {
+
+    @Embedded
+    @EmbeddedMapping(nullIndicatorFieldName="siteName", overrides={
+        @MappingOverride(name="siteName", columns=@Column(name="START_SITE")),
+        @MappingOverride(name="point", columns={
+            @Column(name="START_X"),
+            @Column(name="START_Y")
+        })
+    })
+    private PathCoordinate start;
+
+    ...
+}
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_mapping_jpa_coll">
+            <title>
+                Collections
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_coll">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    collections
+                </secondary>
+            </indexterm>
+            <para>
+In <xref linkend="ref_guide_meta_jpa_persistent_coll"/>, we explored the
+<classname>PersistentCollection</classname> annotation for persistent collection
+fields that aren't a standard <literal>OneToMany</literal> or <literal>
+ManyToMany</literal> relation. To map these non-standard collections, combine
+OpenJPA's <classname>ContainerTable</classname> annotation with
+<classname>ElementJoinColumn</classname>s.
+We explore the annotations below.
+            </para>
+            <section id="ref_guide_mapping_jpa_coll_table">
+                <title>
+                    Container Table
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_coll_table">
+                    <primary>
+                        ContainerTable
+                    </primary>
+                    <seealso>
+                        mapping metadata
+                    </seealso>
+                </indexterm>
+                <para>
+The
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ContainerTable.html">
+<classname>org.apache.openjpa.persistence.jdbc.ContainerTable</classname>
+</ulink> annotation describes a database table that holds collection (or map)
+elements. This annotation has the following properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>String name</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String catalog</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String schema</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>XJoinColumn[] joinColumns</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>ForeignKey joinForeignKey</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>Index joinIndex</literal>
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+The <literal>name</literal>, <literal>catalog</literal>, <literal>schema
+</literal>, and <literal>joinColumns</literal> properties describe the container
+table and how it joins to the owning entity's table. These properties correspond
+to the same-named properties on the standard <classname> JoinTable</classname>
+annotation, described in <xref linkend="jpa_overview_mapping_assoccoll"/>
+. If left unspecified, the name of the table defaults to the first five
+characters of the entity table name, plus an underscore, plus the field name.
+The <literal>joinForeignKey</literal> and <literal> joinIndex</literal>
+properties override default foreign key and index generation for the join
+columns. We explore foreign keys and indexes later in this chapter.
+                </para>
+                <para>
+You may notice that the container table does not define how to store the
+collection elements. That is left to separate annotations, which are the subject
+of the next sections.
+                </para>
+            </section>
+            <section id="ref_guide_mapping_jpa_coll_joincols">
+                <title>
+                    Element Join Columns
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_coll_joincols">
+                    <primary>
+                        ElementJoinColumn
+                    </primary>
+                    <seealso>
+                        mapping metadata
+                    </seealso>
+                </indexterm>
+                <para>
+Element join columns are equivalent to standard JPA join columns, except that
+they represent a join to a collection or map element entity rather than a direct
+relation. You represent an element join column with OpenJPA's
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementJoinColumn.html">
+<classname>org.apache.openjpa.persistence.jdbc.ElementJoinColumn</classname>
+</ulink> annotation. To declare a compound join, enclose an array of <classname>
+ElementJoinColumn</classname>s in the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementJoinColumns.html">
+<classname>org.apache.openjpa.persistence.jdbc.ElementJoinColumns</classname>
+</ulink> annotation.
+                </para>
+                <para>
+An <classname>ElementJoinColumn</classname> always resides in a container table,
+so it does not have the <literal> table</literal> property of a standard
+<classname> JoinColumn</classname>. Like <classname> XJoinColumn</classname>s
+above, <classname> ElementJoinColumn</classname>s can reference a linked
+attribute rather than a static linked column. Otherwise, the <classname>
+ElementJoinColumn</classname> and standard <classname>JoinColumn</classname>
+annotations are equivalent. See <xref linkend="jpa_overview_mapping_rel"/>
+in the JPA Overview for a review of the <classname>JoinColumn</classname>
+annotation.
+                </para>
+            </section>
+            <section id="ref_guide_mapping_jpa_coll_order">
+                <title>
+                    Order Column
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_coll_order">
+                    <primary>
+                        OrderColumn
+                    </primary>
+                    <seealso>
+                        mapping metadata
+                    </seealso>
+                </indexterm>
+                <para>
+Relational databases do not guarantee that records are returned in insertion
+order. If you want to make sure that your collection elements are loaded in the
+same order they were in when last stored, you must declare an order column. An
+order column can be declared using OpenJPA's 
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/OrderColumn">
+<classname>org.apache.openjpa.persistence.jdbc.OrderColumn</classname></ulink>
+annotation or the JPA 2.0 <classname>javax.persistence.OrderColumn</classname>
+annotation or <literal>order-column</literal> orm element as defined in
+<xref linkend="jpa_overview_meta_xml"/>.
+OpenJPA's
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/OrderColumn">
+<classname>org.apache.openjpa.persistence.jdbc.OrderColumn</classname></ulink>
+annotation has the following properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>String name</literal>: Defaults to <literal>the name of the
+relationship property or field of the entity or embeddable 
+class + _ORDER</literal>.  To use the JPA 1.0 default order column
+name <literal>ORDR</literal>, set the <xref linkend="openjpa.Compatibility"/>
+option <literal>UseJPA2DefaultOrderColumnName</literal> to <literal>
+false</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean enabled</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>int precision</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String columnDefinition</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean insertable</literal>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean updatable</literal>
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+Order columns are always in the container table. You can explicitly turn off
+ordering (if you have enabled it by default via your
+<link linkend="ref_guide_mapping_defaults"> mapping defaults</link>) by setting
+the <literal>enabled</literal> property to <literal>false</literal>. All other
+properties correspond exactly to the same-named properties on the standard
+<classname>Column</classname> annotation, described in
+<xref linkend="jpa_overview_mapping_column"/>.
+                </para>
+            </section>
+        </section>
+        <section id="ref_guide_mapping_jpa_onemany">
+            <title>
+                One-Sided One-Many Mapping
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_onemany">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    collections
+                </secondary>
+                <tertiary>
+                    JPA one-sided one-many
+                </tertiary>
+            </indexterm>
+            <para>
+The previous section covered the use of <classname>ElementJoinColumn</classname>
+annotations in conjunction with a <classname>ContainerTable</classname> for
+mapping collections to dedicate tables. <classname>ElementJoinColumn</classname>
+s, however, have one additional use: to create a one-sided one-many mapping.
+Standard JPA supports <classname>OneToMany</classname> fields without a
+<literal>mappedBy</literal> inverse, but only by mapping these fields to a
+<classname>JoinTable</classname> (see
+<xref linkend="jpa_overview_mapping_assoccoll"/> in the JPA Overview for
+details). Often, you'd like to create a one-many association based on an inverse
+foreign key (logical or actual) in the table of the related type.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 392 x 192 (see README) -->
+                    <imagedata fileref="img/inv-key-coll.png" width="261"/>
+
+                </imageobject>
+            </mediaobject>
+            <para>
+Consider the model above. <classname>Subscription</classname> has a collection
+of <classname>LineItem</classname> s, but <classname>LineItem</classname> has
+no inverse relation to <classname>Subscription</classname>. To retrieve all of
+the <classname>LineItem</classname> records for a <classname>Subscription
+</classname>, we join the <literal>SUB_ID</literal> inverse foreign key column
+in the <literal>LINE_ITEM</literal> table to the primary key column of the
+<literal>SUB</literal> table. The example below shows how to represent this
+model in mapping annotations. Note that OpenJPA automatically assumes an inverse
+foreign key mapping when element join columns are given, but no container or
+join table is given.
+            </para>
+            <example id="ref_guide_mapping_jpa_onemanyex">
+                <title>
+                    One-Sided One-Many Mapping
+                </title>
+<programlisting>
+package org.mag.subscribe;
+
+import org.apache.openjpa.persistence.jdbc.*;
+
+@Entity
+@Table(name="LINE_ITEM", schema="CNTRCT")
+public class LineItem {
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+public class Subscription {
+
+    @Id private long id;
+
+    @OneToMany
+    @ElementJoinColumn(name="SUB_ID", referencedColumnName="ID")
+    private Collection&lt;LineItem&gt; items;
+
+    ...
+}
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_mapping_jpa_map">
+            <title>
+                Maps
+            </title>
+            <indexterm zone="ref_guide_mapping_jpa_map">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    maps
+                </secondary>
+            </indexterm>
+            <para>
+We detailed the <literal>ContainerTable</literal> annotation in
+<xref linkend="ref_guide_mapping_jpa_coll_table"/>. Custom map mappings may
+also use this annotation to represent a map table.
+            </para>
+    <section id="ref_guide_mapping_jpa_map_keycols">
+        <title>Key Columns</title>
+        <indexterm zone="ref_guide_mapping_jpa_map_keycols">
+            <primary>KeyColumn</primary>
+            <seealso>mapping metadata</seealso>
+        </indexterm>
+        <para>
+        Key columns serve the same role for map keys as the element
+        join columns described in
+        <xref linkend="ref_guide_mapping_jpa_coll_joincols"/> serve for
+        collection elements.  OpenJPA's
+        <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/KeyColumn.html">
+        <classname>org.apache.openjpa.persistence.jdbc.KeyColumn</classname>
+        </ulink> annotation represents a map key.  To map custom
+        multi-column keys, use the
+        <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/KeyColumns.html">
+        <classname>org.apache.openjpa.persistence.jdbc.KeyColumns</classname>
+        </ulink> annotation, whose value is an array of <classname>KeyColumn</classname>s.
+        </para>
+        <para>
+        A <classname>KeyColumn</classname> always resides in
+        a container table, so it does not have the <literal>table</literal>
+        property of a standard <classname>Column</classname>.  Otherwise, the
+        <classname>KeyColumn</classname> and standard <classname>Column</classname>
+        annotations are equivalent.  See
+        <xref linkend="jpa_overview_mapping_column"/> in the JPA
+        Overview for a review of the <classname>Column</classname> annotation.
+        </para>
+    </section>
+    <section id="ref_guide_mapping_jpa_map_keyjoincols">
+        <title>Key Join Columns</title>
+        <indexterm zone="ref_guide_mapping_jpa_map_keyjoincols">
+            <primary>KeyJoinColumn</primary>
+            <seealso>mapping metadata</seealso>
+        </indexterm>
+        <para>
+        Key join columns are equivalent to standard JPA
+        join columns, except that they represent a join to a map key entity rather than a direct relation.  You represent
+        a key join column with OpenJPA's
+        <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/KeyJoinColumn.html">
+        <classname>org.apache.openjpa.persistence.jdbc.KeyJoinColumn</classname></ulink> annotation.  To declare a compound join, enclose an
+        array of <classname>KeyJoinColumn</classname>s in the
+        <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/KeyJoinColumns.html">
+        <classname>org.apache.openjpa.persistence.jdbc.KeyJoinColumns</classname>
+        </ulink> annotation.
+        </para>
+        <para>
+        A <classname>KeyJoinColumn</classname> always resides in
+        a container table, so it does not have the <literal>table</literal> property
+        of a standard <classname>JoinColumn</classname>.  Like <classname>XJoinColumn</classname>s above,
+        <classname>KeyJoinColumn</classname>s can reference a linked field
+        rather than a static linked column.  Otherwise, the <classname>KeyJoinColumn</classname>
+        and standard <classname>JoinColumn</classname> annotations are equivalent.  See
+        <xref linkend="jpa_overview_mapping_rel"/> in the JPA
+        Overview for a review of the <classname>JoinColumn</classname> annotation.
+        </para>
+    </section>
+    <section id="ref_guide_mapping_jpa_map_embedkey">
+        <title>Key Embedded Mapping</title>
+        <indexterm zone="ref_guide_mapping_jpa_map_embedkey">
+            <primary>KeyEmbeddedMapping</primary>
+            <seealso>mapping metadata</seealso>
+        </indexterm>
+        <para>
+        The
+        <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/KeyEmbeddedMapping.html">
+        <classname>org.apache.openjpa.persistence.jdbc.KeyEmbeddedMapping</classname>
+        </ulink> annotation allows you to map your map field's embedded
+        key type to your container table.  This annotation has exactly
+        the same properties as the
+        <classname>EmbeddedMapping</classname> annotation described
+        <link linkend="ref_guide_mapping_jpa_embed">above</link>.
+        </para>
+    </section>
+    <section id="ref_guide_mapping_jpa_map_ex">
+        <title>Examples</title>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 410 x 266 (see README) -->
+                <imagedata fileref="img/string-rel-map.png" width="273px"/>
+            </imageobject>
+        </mediaobject>
+        <para>
+        Map mapping in OpenJPA uses the same principles you saw in
+        collection mapping.  The example below maps the <literal>
+        Article.authors</literal> map according to the diagram above.
+        </para>
+        <example id="ref_guide_mapping_jpa_map_stringrelmap">
+            <title>String Key, Entity Value Map Mapping</title>
+<programlisting>
+package org.mag.pub;
+
+import org.apache.openjpa.persistence.*;
+import org.apache.openjpa.persistence.jdbc.*;
+
+@Entity
+@Table(name="AUTH")
+@DataStoreIdColumn(name="AID", columnDefinition="INTEGER64")
+public class Author {
+    ...
+}
+
+package org.mag;
+
+@Entity
+@Table(name="ART")
+public class Article {
+    @Id private long id;
+
+    @PersistentMap
+    @ContainerTable(name="ART_AUTHS", joinColumns=@XJoinColumn(name="ART_ID"))
+    @KeyColumn(name="LNAME")
+    @ElementJoinColumn(name="AUTH_ID")
+    private Map&lt;String,Author&gt; authors;
+
+    ...
+}
+</programlisting>
+                </example>
+            </section>
+        </section>
+        <section id="ref_guide_mapping_jpa_constraints">
+            <title>
+                Indexes and Constraints
+            </title>
+            <para>
+OpenJPA uses index information during schema generation to index the proper
+columns. OpenJPA uses foreign key and unique constraint information during
+schema creation to generate the proper database constraints, and also at runtime
+to order SQL statements to avoid constraint violations while maximizing SQL
+batch size.
+            </para>
+            <para>
+OpenJPA assumes certain columns have indexes or constraints based on your
+mapping defaults, as detailed in <xref linkend="ref_guide_mapping_defaults"/>.
+You can override the configured defaults on individual joins, field
+values, collection elements, map keys, or map values using the annotations
+presented in the following sections.
+            </para>
+            <section id="ref_guide_mapping_jpa_index">
+                <title>
+                    Indexes
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_index">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        indexes
+                    </secondary>
+                </indexterm>
+                <indexterm zone="ref_guide_mapping_jpa_index">
+                    <primary>
+                        indexes
+                    </primary>
+                </indexterm>
+                <para>
+The <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Index.html">
+<classname>org.apache.openjpa.persistence.jdbc.Index</classname></ulink>
+annotation represents an index on the columns of a field. It is also used within
+the <link linkend="ref_guide_mapping_jpa_coll_table"><classname>ContainerTable
+</classname></link> annotation to index join columns.
+To index the columns of a collection element, use the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementIndex.html">
+<classname> org.apache.openjpa.persistence.jdbc.ElementIndex</classname></ulink>
+annotation. These annotations have the following properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>boolean enabled</literal>: Set this property to <literal>false
+</literal> to explicitly tell OpenJPA not to index these columns, when OpenJPA
+would otherwise do so.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String name</literal>: The name of the index. OpenJPA will choose a
+name if you do not provide one.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean unique</literal>: Whether to create a unique index. Defaults
+to false.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section id="ref_guide_mapping_jpa_fk">
+                <title>
+                    Foreign Keys
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_fk">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        foreign keys
+                    </secondary>
+                </indexterm>
+                <indexterm zone="ref_guide_mapping_jpa_fk">
+                    <primary>
+                        foreign keys
+                    </primary>
+                </indexterm>
+                <para>
+The <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ForeignKey.html">
+<classname>org.apache.openjpa.persistence.jdbc.ForeignKey</classname></ulink>
+annotation represents a foreign key on the columns of a field. It is also used
+within the <link linkend="ref_guide_mapping_jpa_coll_table"><classname>
+ContainerTable</classname></link> annotation to set a database foreign key on
+join columns.  To set a constraint to the columns of a collection element, use
+the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementForeignKey.html">
+<classname> org.apache.openjpa.persistence.jdbc.ElementForeignKey</classname>
+</ulink> annotation. These annotations have the following properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>boolean enabled</literal>: Set this property to <literal>false
+</literal> to explicitly tell OpenJPA not to set a foreign key on these columns,
+when OpenJPA would otherwise do so.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String name</literal>: The name of the foreign key. OpenJPA will
+choose a name if you do not provide one, or will create an anonymous key.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean deferred</literal>: Whether to create a deferred key if
+supported by the database.
+                        </para>
+                    </listitem>
+                    <listitem>
+                    <para>
+<literal>boolean implicit</literal>: Whether to mark a relation field value as 
+implicitly referring to a related entity. This property can be used, for 
+example, when a field value represents primary key field of a related
+entity, but for legacy or other logistic reasons, the field is declared as the
+same type of the primary key of the related entity instead of a reference to
+the entity itself. Hence no actual mapping can be defined on the field itself.
+If this implicit property is set, then no other property on
+the ForeignKey annotation can be set to their non-default value. This setting
+does not manifest as a database foreign key constraint.                      
+                    </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>ForeignKeyAction deleteAction</literal>: Value from the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ForeignKeyAction.html">
+<classname>org.apache.openjpa.persistence.jdbc.ForeignKeyAction</classname>
+</ulink> enum identifying the desired delete action. Defaults to <literal>
+RESTRICT</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>ForeignKeyAction updateAction</literal>: Value from the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ForeignKeyAction.html">
+<classname>org.apache.openjpa.persistence.jdbc.ForeignKeyAction</classname>
+</ulink> enum identifying the desired update action. Defaults to <literal>
+RESTRICT</literal>.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+Keep in mind that OpenJPA uses foreign key information at runtime to avoid
+constraint violations; it is important, therefore, that your
+<link linkend="ref_guide_mapping_defaults">mapping defaults</link> and foreign
+key annotations combine to accurately reflect your existing database
+constraints, or that  you configure OpenJPA to reflect on your database schema
+to discover existing foreign keys (see
+<xref linkend="ref_guide_schema_info_factory"/>).
+                </para>
+            </section>
+            <section id="ref_guide_mapping_jpa_unique">
+                <title>
+                    Unique Constraints
+                </title>
+                <indexterm zone="ref_guide_mapping_jpa_unique">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        unique constraints
+                    </secondary>
+                </indexterm>
+                <indexterm zone="ref_guide_mapping_jpa_unique">
+                    <primary>
+                        unique constraints
+                    </primary>
+                </indexterm>
+                <para>
+The <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Unique.html">
+<classname>org.apache.openjpa.persistence.jdbc.Unique</classname></ulink>
+annotation represents a unique constraint on the columns of a field. It is more
+convenient than using the <literal>uniqueConstraints</literal> property of
+standard JPA <classname>Table</classname> and <classname>SecondaryTable
+</classname> annotations, because you can apply it directly to the constrained
+field. The <classname>Unique</classname> annotation has the following
+properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>boolean enabled</literal>: Set this property to <literal>false
+</literal> to explicitly tell OpenJPA not to constrain these columns, when
+OpenJPA would otherwise do so.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>String name</literal>: The name of the constraint. OpenJPA will choose
+a name if you do not provide one, or will create an anonymous constraint.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>boolean deferred</literal>: Whether to create a deferred constraint if
+supported by the database.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+        </section>
+        <section id="ref_guide_xmlmapping">
+		    <title>
+              XML Column Mapping
+            </title>
+              <indexterm zone="ref_guide_xmlmapping">
+                  <primary>
+                      mapping metadata
+                  </primary>
+                  <secondary>
+                      xml column mapping
+                  </secondary>
+              </indexterm>
+              <indexterm zone="ref_guide_xmlmapping">
+                  <primary>
+                      xml mapping column
+                  </primary>
+              </indexterm>
+              <para>
+Some databases support XML column types and
+XPath queries and indexes over these columns. OpenJPA supports mapping of an
+entity property mapped to an XML column on the following databases and their
+minimum versions.
+              </para>
+              <itemizedlist>
+                  <listitem>
+                      <para>
+DB2 9
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+MySQL 5.1.30
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+Oracle 9
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+PostgreSQL 8.3 (XML support must be compiled in, the minimum JDBC driver
+version is 8.3-603)
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+SQL Server 2005
+                      </para>
+                  </listitem>
+              </itemizedlist>
+              <para>
+See <xref linkend="supported_databases"/> for possible database-specific
+restrictions.
+              </para>
+              <para>
+Annotate the entity property using the XMLValueHandler strategy:
+		      </para>
+<programlisting>
+@Persistent
+@Strategy(&quot;org.apache.openjpa.jdbc.meta.strats.XMLValueHandler&quot;)
+</programlisting>
+              <para>
+The default fetch type is EAGER but can be changed to LAZY by using:
+              </para>
+<programlisting>
+@Persistence(fetch=FetchType.LAZY)
+</programlisting>
+              <para>
+The entity property class is required to have
+JAXB binding annotations. You can generate property class from an XML schema by using
+the <literal>xjc</literal> generator from the
+<ulink url="http://jaxb.java.net/">JAXB reference implementation</ulink>.
+The <literal>xjc</literal> will generate the
+class along with the required annotations. Ensure that <classname>@XmlRootElement</classname>
+appears in the root class. In some cases this annotation needs to be added manually.
+              </para>
+              <para>
+The entity property class is required to have getter and setter methods for all its
+fields. By default, the <literal>xjc</literal> will not generate setter
+methods for collections but you can force it to do so by using the
+<ulink url="http://confluence.highsource.org/display/J2B/Setters+Plugin">
+setters plugin</ulink>
+or collection setter injector plugin.
+              </para>
+              <para>
+The JAXB jar files must be on the application classpath (jaxb-api.jar,
+jaxb-impl.jar, jsr173_1.0_api.jar or equivalent).
+              </para>
+              <para>
+JPQL path expressions can navigate into the mapped class and its
+subfields to any level.
+              </para>
+              <para>
+The path expression is rewritten into an equivalent XPath expression using SQL
+XML functions.
+              </para>
+              <para>
+The path expression must be single-valued. Path expressions over XML
+mapped classes can only be used in the WHERE clause as an operand to a simple predicate
+(=  &lt;&gt;  &lt;  &gt;  &gt;=  &lt;=).
+              </para>
+              <para>
+Path expressions over XML mapped fields can not be:
+              </para>
+		      <itemizedlist>
+                  <listitem>
+                      <para>
+an input to a JPQL scalar function
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+an operand of BETWEEN,  IS NULL, LIKE or IN predicate
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+used to project out subfields in the SELECT clause
+                      </para>
+                  </listitem>
+                  <listitem>
+                      <para>
+used in the FROM, GROUP BY, HAVING, ORDER BY clauses
+                      </para>
+                  </listitem>
+              </itemizedlist>
+              <para>
+XML schema must not contain namespace declarations. The JPQL path
+expressions can not refer to Java fields generated from XML ANY type or
+XML mixed element types.
+              </para>
+              <para>
+The data type generated by JAXB must be a valid type
+to use the property in a JPQL predicate.
+              </para>
+              <para>
+Shown below is a sample XML schema <link linkend="ref_guide_xmlmapping_myaddress">myaddress.xsd</link>,
+in which the JPA entity Order has <classname>shipAddress</classname> persistent field that maps to an XML column.
+		      </para>
+              <example id="ref_guide_xmlmapping_myaddress">
+                   <title>
+                       myaddress.xsd
+                   </title>
+<programlisting>
+&lt;?xml version=&quot;1.0&quot; ?&gt;
+&lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; &gt;
+
+&lt;xs:complexType name=&quot;Address&quot;&gt;
+ &lt;xs:sequence&gt;
+  &lt;xs:element name=&quot;Name&quot; type=&quot;xs:string&quot; /&gt;
+  &lt;xs:element name=&quot;Street&quot; type=&quot;xs:string&quot;
+  	minOccurs=&quot;1&quot; maxOccurs=&quot;3&quot; /&gt;
+  &lt;xs:element name=&quot;City&quot; type=&quot;xs:string&quot; /&gt;
+&lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name=&quot;CAN_Address&quot;&gt;
+ &lt;xs:complexContent&gt;
+  &lt;xs:extension base=&quot;Address&quot;&gt;
+   &lt;xs:sequence&gt;
+    &lt;xs:element name=&quot;Province&quot; type=&quot;xs:string&quot; /&gt;
+    &lt;xs:element name=&quot;PostalCode&quot; type=&quot;xs:string&quot; /&gt;
+   &lt;/xs:sequence&gt;
+  &lt;/xs:extension&gt;
+&lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:simpleType name=&quot;USPS_ZIP&quot;&gt;
+ &lt;xs:restriction base=&quot;xs:integer&quot;&gt;
+  &lt;xs:minInclusive value=&quot;01000&quot; /&gt;
+  &lt;xs:maxInclusive value=&quot;99999&quot; /&gt;
+ &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;xs:complexType name=&quot;USA_Address&quot;&gt;
+ &lt;xs:complexContent&gt;
+  &lt;xs:extension base=&quot;Address&quot;&gt;
+   &lt;xs:sequence&gt;
+    &lt;xs:element name=&quot;State&quot; type=&quot;xs:string&quot; /&gt;
+    &lt;xs:element name=&quot;ZIP&quot; type=&quot;USPS_ZIP&quot; /&gt;
+   &lt;/xs:sequence&gt;
+  &lt;/xs:extension&gt;
+ &lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:element name=&quot;MailAddress&quot; type=&quot;Address&quot; /&gt;
+&lt;xs:element name=&quot;AddrCAN&quot; type=&quot;CAN_Address&quot;
+   substitutionGroup=&quot;MailAddress&quot; /&gt;
+&lt;xs:element name=&quot;AddrUSA&quot; type=&quot;USA_Address&quot;
+   substitutionGroup=&quot;MailAddress&quot; /&gt;
+&lt;/xs:schema&gt;
+</programlisting>
+              </example>
+              <para>
+Java classes <link linkend="ref_guide_xmlmapping_address">Address</link>,
+<link linkend="ref_guide_xmlmapping_usaaddress">USAAddress</link> and
+<link linkend="ref_guide_xmlmapping_canaddress">CANAddress</link>
+are produced from <literal>myaddress</literal> schema by using the
+<literal>xjc</literal> generator.
+              </para>
+              <example id="ref_guide_xmlmapping_address">
+                  <title>
+                       Address.java
+                  </title>
+<programlisting>
+    ...
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = &quot;Address&quot;, propOrder = {
+    &quot;name&quot;,
+    &quot;street&quot;,
+    &quot;city&quot;
+})
+public class Address {
+    @XmlElement(name = &quot;Name&quot;, required = true)
+    protected String name;
+    @XmlElement(name = &quot;Street&quot;, required = true)
+    protected List&lt;String&gt; street;
+    @XmlElement(name = &quot;City&quot;, required = true)
+    protected String city;
+
+   /**
+     * Getter and Setter methods.
+     *
+     */
+     ...
+}
+</programlisting>
+            </example>
+            <example id="ref_guide_xmlmapping_usaaddress">
+                <title>
+                    USAAddress.java
+                </title>
+<programlisting>
+    ...
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = &quot;USA_Address&quot;, propOrder = {
+    &quot;state&quot;,
+    &quot;zip&quot;
+})
+public class USAAddress
+    extends Address
+{
+
+    @XmlElement(name = &quot;State&quot;)
+    protected String state;
+    @XmlElement(name = &quot;ZIP&quot;)
+    protected int zip;
+
+   /**
+     * Getter and Setter methods.
+     *
+     */
+     ...
+}
+</programlisting>
+            </example>
+            <example id="ref_guide_xmlmapping_canaddress">
+                <title>
+                    CANAddress.java
+                </title>
+<programlisting>
+     ...
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = &quot;CAN_Address&quot;, propOrder = {
+    &quot;province&quot;,
+    &quot;postalCode&quot;
+})
+public class CANAddress
+    extends Address
+{
+
+    @XmlElement(name = &quot;Province&quot;)
+    protected String province;
+    @XmlElement(name = &quot;PostalCode&quot;)
+    protected String postalCode;
+
+   /**
+     * Getter and Setter methods.
+     *
+     */
+     ...
+}
+</programlisting>
+            </example>
+            <example id="ref_guide_xmlmapping_annorder">
+                <title>
+                    Showing annotated Order entity with XML mapping strategy
+                </title>
+<programlisting>
+@Entity
+public class Order {
+    @Id  private into id;
+    @Persistent
+    @Strategy (&quot;org.apache.openjpa.jdbc.meta.strats.XMLValueHandler&quot;)
+    private Address shipAddress;
+    ...
+}
+</programlisting>
+            </example>
+            <example id="ref_guide_xmlmapping_createorder">
+             <title>
+                 Showing creation of Order entity having shipAddress mapped to XML column
+             </title>
+<programlisting>
+...
+myaddress.ObjectFactory addressFactory = new myaddress.ObjectFactory();
+Customer c1 = new Customer();
+c1.setCid( new Customer.CustomerKey(&quot;USA&quot;, 1) );
+c1.setName(&quot;Harry's Auto&quot;);
+Order o1 = new Order( 850, false, c1);
+USAAddress addr1 = addressFactory.createUSAAddress();
+addr1.setCity(&quot;San Jose&quot;);
+addr1.setState(&quot;CA&quot;);
+addr1.setZIP(new Integer(&quot;95141&quot;));
+addr1.getStreet().add(&quot;12500 Monterey&quot;);
+addr1.setName( c1.getName());
+o1.setShipAddress(addr1);
+em.persist(o1);
+...
+</programlisting>
+            </example>
+            <example id="ref_guide_xmlmapping_jpqlquery">
+                <title>
+                    Sample JPQL queries for XML column mapping
+                </title>
+<programlisting>
+. select o from Order o where o.shipAddress.city = &quot;San Jose&quot; or
+			      o.shipAddress.city = &quot;San Francisco&quot;  (OK)
+
+. select o.shipaAddress from Order o  (OK)
+
+. select o.shipAddress.city from Order o  (INVALID)
+
+. select o from Order o where o.shipAddress.street = &quot;San Jose&quot;  (INVALID multi-valued)
+</programlisting>
+            </example>
+        </section>
+        <section id="ref_guide_streamsupport">
+            <title>
+                LOB Streaming
+            </title>
+            <indexterm zone="ref_guide_streamsupport">
+                <primary>
+                    lob streaming
+                </primary>
+            </indexterm>
+            <para>
+In addition to handling LOBs in a standard JPA manner
+(<classname>LOB</classname> annotation and <literal>lob</literal> XML element),
+OpenJPA supports LOB streaming. This feature
+makes it possible to stream large amounts of data into and out of persistent
+field without ever holding all the data in memory at the same time.
+            </para>
+            <para>
+LOB streaming is supported on the following databases.
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+MySQL
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Oracle
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+PostgreSQL
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+SQL Server
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+DB2
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+See <xref linkend="supported_databases"/> for possible database-specific
+restrictions.
+            </para>
+            <para>
+To persist a stream, apply the 
+<ulink url="../javadoc/org/apache/openjpa/persistence/Persistent.html">
+<classname>org.apache.openjpa.persistence.Persistent</classname></ulink> 
+annotation to either <classname>java.io.InputStream</classname> or
+<classname>java.io.Reader</classname> field.
+            </para>
+            <example id="ref_guide_streamsupport_example">
+                <title>
+                    Annotated InputStream and Reader
+                </title>
+<programlisting>
+@Entity
+public class Employee {
+    ...
+    @Persistent
+    private InputStream photoStream;
+
+    @Persistent
+    private Reader photoDescription;
+    ...
+} 
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="ref_guide_mapping_limits">
+        <title>
+            Mapping Limitations
+        </title>
+        <indexterm zone="ref_guide_mapping_limits">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                limitations
+            </secondary>
+        </indexterm>
+        <para>
+The following sections outline the limitations OpenJPA places on specific
+mapping strategies.
+        </para>
+        <section id="ref_guide_mapping_limits_tpc">
+            <title>
+                Table Per Class
+            </title>
+            <indexterm zone="ref_guide_mapping_limits">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    limitations
+                </secondary>
+                <tertiary>
+                    table-per-class
+                </tertiary>
+            </indexterm>
+            <para>
+Table-per-class inheritance mapping has the following limitations:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+You cannot traverse polymorphic relations to non-leaf classes in a
+table-per-class inheritance hierarchy in queries.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+You cannot map a one-sided polymorphic relation to a non-leaf class in a
+table-per-class inheritance hierarchy using an inverse foreign key.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+You cannot use an order column in a polymorphic relation to a non-leaf class in
+a table-per-class inheritance hierarchy mapped with an inverse foreign key.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Table-per-class hierarchies impose limitations on eager fetching. See
+<xref linkend="ref_guide_perfpack_eager_consider"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+Non-polymorphic relations do not suffer from these limitations. You can declare
+a non-polymorphic relation using the extensions described in
+<xref linkend="nonpolymorphic"/>.
+                </para>
+            </note>
+        </section>
+    </section>
+    <section id="ref_guide_mapping_ext">
+        <title>
+            Mapping Extensions
+        </title>
+        <para>
+Mapping extensions allow you to access OpenJPA-specific functionality from your
+mappings. Note that all extensions below are specific to mappings. If you store
+your mappings separately from your persistence metadata, these extensions must
+be specified along with the mapping information, not the persistence metadata
+information.
+        </para>
+        <section id="ref_guide_mapping_ext_cls">
+            <title>
+                Class Extensions
+            </title>
+            <para>
+OpenJPA recognizes the following class extensions.
+            </para>
+            <section id="subclass-fetch-mode">
+                <title>
+                    Subclass Fetch Mode
+                </title>
+                <indexterm zone="subclass-fetch-mode">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        subclass fetch mode
+                    </tertiary>
+                    <seealso>
+                        eager fetching
+                    </seealso>
+                </indexterm>
+                <para>
+This extension specifies how to eagerly fetch subclass state. It overrides the
+global <link linkend="openjpa.jdbc.SubclassFetchMode"><literal>
+openjpa.jdbc.SubclassFetchMode</literal></link> property. Set the OpenJPA
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/SubclassFetchMode.html">
+<classname>org.apache.openjpa.persistence.jdbc.SubclassFetchMode</classname>
+</ulink> annotation to a value from the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/FetchMode.html">
+<classname>org.apache.openjpa.persistence.jdbc.FetchMode</classname>
+</ulink> enum: <literal>JOIN</literal>, <literal>PARALLEL</literal>, or
+<literal>NONE</literal>. See <xref linkend="ref_guide_perfpack_eager"/>
+ for a discussion of eager fetching.
+                </para>
+            </section>
+            <section id="class-strategy">
+                <title>
+                    Strategy
+                </title>
+                <indexterm zone="strategy">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        strategy
+                    </tertiary>
+                    <seealso>
+                        custom mapping
+                    </seealso>
+                </indexterm>
+                <para>
+The <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Strategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.Strategy</classname></ulink>
+class annotation allows you to specify a custom mapping strategy for your class.
+See <xref linkend="ref_guide_mapping_custom"/> for information on custom
+mappings.
+                </para>
+            </section>
+            <section id="discriminator-strategy">
+                <title>
+                    Discriminator Strategy
+                </title>
+                <indexterm zone="strategy">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        discriminator strategy
+                    </tertiary>
+                    <seealso>
+                        custom mapping
+                    </seealso>
+                </indexterm>
+                <para>
+The
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/DiscriminatorStrategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.DiscriminatorStrategy</classname>
+</ulink> class annotation allows you to specify a custom discriminator strategy.
+See <xref linkend="ref_guide_mapping_custom"/> for information on custom
+mappings.
+                </para>
+            </section>
+            <section id="version-strategy">
+                <title>
+                    Version Strategy
+                </title>
+                <indexterm zone="strategy">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        version strategy
+                    </tertiary>
+                    <seealso>
+                        custom mapping
+                    </seealso>
+                </indexterm>
+                <para>
+The
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/VersionStrategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.VersionStrategy</classname>
+</ulink> class annotation allows you to specify a custom version strategy. See
+<xref linkend="ref_guide_mapping_custom"/> for information on custom
+mappings.
+                </para>
+            </section>
+        </section>
+        <section id="ref_guide_mapping_ext_field">
+            <title>
+                Field Extensions
+            </title>
+            <para>
+OpenJPA recognizes the following field extensions.
+            </para>
+            <section id="eager-fetch-mode">
+                <title>
+                    Eager Fetch Mode
+                </title>
+                <indexterm zone="eager-fetch-mode">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        eager fetch mode
+                    </tertiary>
+                    <seealso>
+                        eager fetching
+                    </seealso>
+                </indexterm>
+                <para>
+This extension specifies how to eagerly fetch related objects. It overrides the
+global <link linkend="openjpa.jdbc.EagerFetchMode"><literal>
+openjpa.jdbc.EagerFetchMode</literal></link> property. Set the OpenJPA
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/EagerFetchMode.html">
+<classname>org.apache.openjpa.persistence.jdbc.EagerFetchMode</classname>
+</ulink> annotation to a value from the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/FetchMode.html">
+<classname>org.apache.openjpa.persistence.jdbc.FetchMode</classname>
+</ulink> enum: <literal>JOIN</literal>, <literal>PARALLEL</literal>, or
+<literal>NONE</literal>. See <xref linkend="ref_guide_perfpack_eager"/>
+ for a discussion of eager fetching.
+                </para>
+            </section>
+            <section id="nonpolymorphic">
+                <title>
+                    Nonpolymorphic
+                </title>
+                <indexterm zone="nonpolymorphic">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        nonpolymorphic
+                    </tertiary>
+                </indexterm>
+                <para>
+All fields in Java are polymorphic. If you declare a field of type <literal>T
+</literal>, you can assign any subclass of <literal>T</literal> to the field as
+well. This is very convenient, but can make relation traversal very inefficient
+under some inheritance strategies. It can even make querying across the field
+impossible. Often, you know that certain fields do not need to be entirely
+polymorphic. By telling OpenJPA about such fields, you can improve the
+efficiency of your relations.
+                </para>
+                <note>
+                    <para>
+OpenJPA also includes the <literal>type</literal> metadata extension for
+narrowing the declared type of a field. See <xref linkend="type"/>.
+                    </para>
+                </note>
+                <para>
+OpenJPA defines the following extensions for nonpolymorphic values:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Nonpolymorphic.html">
+<classname>org.apache.openjpa.persistence.jdbc.Nonpolymorphic</classname>
+</ulink>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementNonpolymorphic.html">
+<classname>org.apache.openjpa.persistence.jdbc.ElementNonpolymorphic</classname>
+</ulink>
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+The value of these extensions is a constant from the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/NonpolymorphicType.html">
+<classname>org.apache.openjpa.persistence.jdbc.NonpolymorphicType</classname>
+</ulink> enumeration. The default value, <literal>EXACT</literal>, indicates
+that the relation will always be of the exact declared type. A value of
+<literal>JOINABLE</literal>, on the other hand, means that the relation might
+be to any joinable subclass of the declared type. This value only excludes
+table-per-class subclasses.
+                </para>
+            </section>
+            <section id="class-criteria">
+                <title>
+                    Class Criteria
+                </title>
+                <indexterm zone="eager-fetch-mode">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        class criteria
+                    </tertiary>
+                    <seealso>
+                        joins
+                    </seealso>
+                </indexterm>
+                <indexterm zone="eager-fetch-mode">
+                    <primary>
+                        joins
+                    </primary>
+                    <secondary>
+                        class criteria
+                    </secondary>
+                </indexterm>
+                <para>
+This family of boolean extensions determines whether OpenJPA will use the
+expected class of related objects as criteria in the SQL it issues to load a
+relation field. Typically, this is not needed. The foreign key values uniquely
+identify the record for the related object. Under some rare mappings, however,
+you may need to consider both foreign key values and the expected class of the
+related object - for example, if you have an inverse relation that shares the
+foreign key with another inverse relation to an object of a different subclass.
+In these cases, set the proper class criteria extension to <literal>true
+</literal> to force OpenJPA to append class criteria to its select SQL.
+                </para>
+                <para>
+OpenJPA defines the following class criteria annotations for field relations and
+array or collection element relations, respectively:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ClassCriteria.html">
+<classname>org.apache.openjpa.persistence.jdbc.ClassCriteria</classname></ulink>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/ElementClassCriteria.html">
+<classname>org.apache.openjpa.persistence.jdbc.ElementClassCriteria</classname>
+</ulink>
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section id="strategy">
+                <title>
+                    Strategy
+                </title>
+                <indexterm zone="strategy">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        extensions
+                    </secondary>
+                    <tertiary>
+                        strategy
+                    </tertiary>
+                    <seealso>
+                        custom mapping
+                    </seealso>
+                </indexterm>
+                <para>
+OpenJPA's
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Strategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.Strategy</classname></ulink>
+extension allows you to specify a custom mapping
+strategy or value handler for a field. See
+<xref linkend="ref_guide_mapping_custom"/> for information on custom
+mappings.
+                </para>
+            </section>
+        </section>
+    </section>
+    <section id="ref_guide_mapping_custom">
+        <title>
+            Custom Mappings
+        </title>
+        <indexterm zone="ref_guide_mapping_custom">
+            <primary>
+                custom mapping
+            </primary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                custom mapping
+            </secondary>
+            <see>
+                custom mapping
+            </see>
+        </indexterm>
+        <para>
+In OpenJPA, you are not limited to the set of standard mappings defined by the
+specification. OpenJPA allows you to define custom class, discriminator,
+version, and field mapping strategies with all the power of OpenJPA's built-in
+strategies.
+        </para>
+        <section id="ref_guide_mapping_custom_class">
+            <title>
+                Custom Class Mapping
+            </title>
+            <para>
+To create a custom class mapping, write an implementation of the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/ClassStrategy.html">
+<classname>org.apache.openjpa.jdbc.meta.ClassStrategy</classname></ulink>
+interface. You will probably want to extend one of the existing abstract or
+concrete strategies in the <literal>org.apache.openjpa.jdbc.meta.strats
+</literal> package.
+            </para>
+            <para>
+The <ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Strategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.Strategy</classname></ulink>
+annotation allows you to declare a custom class mapping strategy in JPA mapping
+metadata. Set the value of the annotation to the full class name of your custom
+strategy. You can configure your strategy class' bean properties using
+OpenJPA's plugin syntax, detailed in <xref linkend="ref_guide_conf_plugins"/>.
+            </para>
+        </section>
+        <section id="ref_guide_mapping_custom_versdiscrim">
+            <title>
+                Custom Discriminator and Version Strategies
+            </title>
+            <para>
+To define a custom discriminator or version strategy, implement the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/DiscriminatorStrategy.html">
+<classname>org.apache.openjpa.jdbc.meta.DiscriminatorStrategy</classname>
+</ulink> or
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/VersionStrategy.html">
+<classname>org.apache.openjpa.jdbc.meta.VersionStrategy</classname></ulink>
+interface, respectively. You might extend one of the existing abstract or
+concrete strategies in the <literal>org.apache.openjpa.jdbc.meta.strats
+</literal> package.
+            </para>
+            <para>
+OpenJPA includes the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/DiscriminatorStrategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.DiscriminatorStrategy</classname>
+</ulink> and
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/VersionStrategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.VersionStrategy</classname>
+</ulink> class annotations for declaring a custom discriminator or version
+strategy in JPA mapping metadata. Set the string value of these annotations to
+the full class name of your implementation, or to the class name or alias of an
+existing OpenJPA implementation.
+            </para>
+            <para>
+As with custom class mappings, you can configure your strategy class' bean
+properties using OpenJPA's plugin syntax, detailed in
+<xref linkend="ref_guide_conf_plugins"/>.
+            </para>
+        </section>
+        <section id="ref_guide_mapping_custom_field">
+            <title>
+                Custom Field Mapping
+            </title>
+            <indexterm zone="ref_guide_mapping_custom_field">
+                <primary>
+                    custom mapping
+                </primary>
+                <secondary>
+                    field mapping
+                </secondary>
+            </indexterm>
+            <para>
+While custom class, discriminator, and version mapping can be useful, custom
+field mappings are far more common. OpenJPA offers two types of custom field
+mappings: value handlers, and full custom field strategies. The following
+sections examine each.
+            </para>
+            <section id="ref_guide_mapping_custom_vhandler">
+                <title>
+                    Value Handlers
+                </title>
+                <indexterm zone="ref_guide_mapping_custom_fieldstrat">
+                    <primary>
+                        custom mapping
+                    </primary>
+                    <secondary>
+                        field mapping
+                    </secondary>
+                    <tertiary>
+                        value handler
+                    </tertiary>
+                </indexterm>
+                <para>
+Value handlers make it trivial to map any type that you can break down into one
+or more simple values. All value handlers implement the <classname>
+org.apache.openjpa.jdbc.meta.ValueHandler</classname> interface; see its
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/ValueHandler.html"> Javadoc
+</ulink> for details.  Also, examine the built-in handlers in the <filename>
+src/openjpa/jdbc/meta/strats</filename> directory of your OpenJPA source
+distribution.  Use these functional implementations as examples when you
+create your own value handlers.
+                </para>
+            </section>
+            <section id="ref_guide_mapping_custom_fieldstrat">
+                <title>
+                    Field Strategies
+                </title>
+                <indexterm zone="ref_guide_mapping_custom_fieldstrat">
+                    <primary>
+                        custom mapping
+                    </primary>
+                    <secondary>
+                        field mapping
+                    </secondary>
+                    <tertiary>
+                        field strategy
+                    </tertiary>
+                </indexterm>
+                <para>
+OpenJPA interacts with persistent fields through the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/FieldStrategy"><classname>
+org.apache.openjpa.jdbc.meta.FieldStrategy</classname></ulink> interface. You
+can implement this interface yourself to create a custom field strategy, or
+extend one of the existing abstract or concrete strategies in the <literal>
+org.apache.openjpa.jdbc.meta.strats</literal> package. Creating a custom field
+strategy is more difficult than writing a custom value handler, but gives you
+more freedom in how you interact with the database.
+                </para>
+            </section>
+            <section id="ref_guide_mapping_custom_field_conf">
+                <title>
+                    Configuration
+                </title>
+                <indexterm zone="ref_guide_mapping_custom_field_conf">
+                    <primary>
+                        custom mapping
+                    </primary>
+                    <secondary>
+                        field mapping
+                    </secondary>
+                    <tertiary>
+                        configuration
+                    </tertiary>
+                </indexterm>
+                <para>
+OpenJPA gives you two ways to configure your custom field mappings. The
+<literal>FieldStrategies</literal> property of the built-in <classname>
+MappingDefaults</classname> implementations allows you to globally associate
+field types with their corresponding custom value handler or strategy. OpenJPA
+will automatically use your custom strategies when it encounters a field of the
+associated type. OpenJPA will use your custom value handlers whenever it
+encounters a field of the associated type.
+<xref linkend="ref_guide_mapping_defaults"/> described mapping
+defaults in detail.
+                </para>
+                <para>
+Your other option is to explicitly install a custom value handler or strategy on
+a particular field. To do so, specify the full name of your implementation class
+in the proper mapping metadata extension. OpenJPA includes the
+<ulink url="../javadoc/org/apache/openjpa/persistence/jdbc/Strategy.html">
+<classname>org.apache.openjpa.persistence.jdbc.Strategy</classname></ulink>
+annotation. You can configure the named strategy or handler's bean
+properties in these extensions using OpenJPA's plugin format (see
+<xref linkend="ref_guide_conf_plugins"/>).
+                </para>
+            </section>
+        </section>
+    </section>
+    <section id="ref_guide_orphan">
+        <title>
+            Orphaned Keys
+        </title>
+        <para>
+Unless you apply database foreign key constraints extensively, it is possible to
+end up with orphaned keys in your database. For example, suppose <classname>
+Magazine</classname> <literal>m</literal> has a reference to <classname>Article
+</classname><literal>a</literal>. If you delete <literal>a</literal> without
+nulling <literal>m</literal>'s reference, <literal>m</literal>'s database
+record will wind up with an orphaned key to the non-existent <literal>a
+</literal> record.
+        </para>
+        <note>
+            <para>
+One way of avoiding orphaned keys is to use <emphasis>dependent</emphasis>
+fields.
+            </para>
+        </note>
+        <para>
+OpenJPA's <link linkend="openjpa.OrphanedKeyAction"><literal>
+openjpa.OrphanedKeyAction</literal></link> configuration property controls what
+action to take when OpenJPA encounters an orphaned key. You can set this plugin
+string (see <xref linkend="ref_guide_conf_plugins"/>) to a custom
+implementation of the
+<ulink url="../javadoc/org/apache/openjpa/event/OrphanedKeyAction.html">
+<classname> org.apache.openjpa.event.OrphanedKeyAction</classname></ulink>
+interface, or use one of the built-in options:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>log</literal>: This is the default setting. This option logs a message
+for each orphaned key. It is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/event/LogOrphanedKeyAction.html">
+<classname>org.apache.openjpa.event.LogOrphanedKeyAction</classname></ulink>
+class, which has the following additional properties:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>Channel</literal>: The channel to log to. Defaults to <literal>
+openjpa.Runtime</literal>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>Level</literal>: The level to log at. Defaults to <literal>WARN
+</literal>.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </listitem>
+            <listitem>
+                <para>
+<literal>exception</literal>: Throw an <classname>
+EntityNotFoundException</classname> when OpenJPA discovers an
+orphaned key. This is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/event/ExceptionOrphanedKeyAction.html">
+<classname>org.apache.openjpa.event.ExceptionOrphanedKeyAction</classname>
+</ulink> class.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>none</literal>: Ignore orphaned keys. This is an alias for the
+<ulink url="../javadoc/org/apache/openjpa/event/NoneOrphanedKeyAction.html">
+<classname>org.apache.openjpa.event.NoneOrphanedKeyAction</classname></ulink>
+class.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <example id="ref_guide_orphan_logex">
+            <title>
+                Custom Logging Orphaned Keys
+            </title>
+<programlisting>
+&lt;property name="openjpa.OrphanedKeyAction" value="log(Channel=Orphans, Level=DEBUG)"/&gt;
+</programlisting>
+        </example>
+    </section>
+</chapter>

@@ -1,0 +1,93 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<html>
+<head>
+<style type="text/css">
+p {margin-left:20px;}
+body {background-image:url("images/back40.gif");
+.tag {
+  color:green;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+  <h1>DNA: Do-Nothing Application</h1>  
+  <hr>
+  <span style="font-size:1.2em;color:green;font-weight:bold">DNA application is used to demonstrate </span> 
+  <A HREF="./jest/">JEST</A>.
+  <br>
+  DNA application is deployed as a HTTP Servlet.<br>
+  
+  The servlet creates an OpenJPA persistence unit at initialization.<br>
+  
+  It does nothing else, other than serving this single web page you are reading now.
+  The fact that you are reading this page means the persistence unit has been initialized. 
+  <p>
+  
+  
+  <h2>Requirement for enabling JEST</h2>
+  
+  The requirements for an application to enable JEST are
+  
+  <p>
+  &#9658; JEST Servlet must be <A href="#web.xml">deployed</A> within the same module scope of the application.  <br>
+  &#9658; The unit name of the persistence unit used by the application must be known to JEST Servlet  <br>
+  &#9658; The persistence unit must be configured with <br>
+  &nbsp;&nbsp; <span style="color:green;font-weight:bold;text-align:center;background-color: #EEEEEE"><tt>openjpa.EntityManagerFactoryPool=true</tt></span> 
+  <p>
+  Once JEST servlet knows the name of the persistence unit, it can <br>
+  
+  &#9658; browse the domain model<br>
+  &#9658; execute query <br>
+  from any web browser in a <em>meta-data driven</em>, <em>generic</em> fashion 
+  i.e. without knowing anything further about he application. 
+  <p>
+  <p>
+  <hr>
+  <a name="web.xml"></a>
+  <h5>WEB-INF/web.xml : Deployment Descriptor for JEST-enabled Application</h5>
+  <div style="border:1px solid black; width:700px;background-color:#EEEEEE">
+  <pre>
+ <span style="color:gray;font-weight:bold;">&lt;servlet></span>
+   <span style="color:gray;font-weight:bold;">&lt;servlet-name></span><span style="color:blue;">demo</span><span style="color:gray;font-weight:bold;">&lt;/servlet-name>
+   &lt;servlet-class></span><span style="color:blue;">demo.SimpleApp</span><span style="color:gray;font-weight:bold;">&lt;/servlet-class>
+ &lt;/servlet>
+   &lt;servlet-mapping>
+   &lt;servlet-name></span><span style="color:blue;">demo</span><span style="color:gray;font-weight:bold;">&lt;/servlet-name>
+ &lt;url-pattern></span><span style="color:blue;">/*</span><span style="color:gray;font-weight:bold;">&lt;/url-pattern>
+ &lt;/servlet-mapping>
+  
+ <span style="color:green;font-weight:bold;">&lt;!-- Deployment descriptor for JESTServlet. --></span>
+ &lt;servlet>
+   &lt;servlet-name></span><span style="color:red;">jest</span><span style="color:gray;font-weight:bold;">&lt;/servlet-name>
+   &lt;servlet-class></span><span style="color:red;font-weight:bold;">org.apache.openjpa.persistence.jest.JESTServlet</span><span style="color:gray;font-weight:bold;">&lt;/servlet-class>
+   &lt;init-param>
+     &lt;param-name></span><span style="color:red;">persistence.unit</span><span style="color:gray;font-weight:bold;">&lt;/param-name>
+     &lt;param-value></span><span style="color:red;font-weight:bold;">jestdemo</span><span style="color:gray;font-weight:bold;">&lt;/param-value>
+   &lt;/init-param>
+ &lt;/servlet>
+ &lt;servlet-mapping>
+   &lt;servlet-name></span><span style="color:red;">jest</span><span style="color:gray;font-weight:bold;">&lt;/servlet-name>
+   &lt;url-pattern></span><span style="color:red;font-weight:bold;">/jest/*</span><span style="color:gray;font-weight:bold;">&lt;/url-pattern>
+ &lt;/servlet-mapping></span>
+</pre>
+  </div>
+</body>
+</html>

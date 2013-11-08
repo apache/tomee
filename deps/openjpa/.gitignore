@@ -1,0 +1,7 @@
+.settings
+.project
+.classpath
+target
+velocity.log
+derby.log
+*.iml

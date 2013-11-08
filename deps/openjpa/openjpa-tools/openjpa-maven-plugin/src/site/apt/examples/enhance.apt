@@ -1,0 +1,50 @@
+ ------
+ Enhance
+ ------
+ Mark Struberg
+ <struberg@yahoo.de>
+ ------
+ November 29, 2010
+ ------
+
+Enhance
+
+  The following build configuration shows how to enhance JPA entities
+  at compile time. Please consult the OpenJPA documentation for more
+  details on compiletime enhancement versus runtime enhancement.
+  
+  The {{{../enhance-mojo.html}openjpa:enhance}} mojo will typically be 
+  called in the <<<process-classes>>> phase.
+
+  Please note that the tmpClassLoader defaults to <<<false>>> to make
+  sure that classes in depending artifacts (like enums in interfaces)
+  can be parsed by the PCEnhancer.  
+  
+-------------------
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>enhancer</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+          </execution>
+        </executions> 
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
+-------------------
+ 

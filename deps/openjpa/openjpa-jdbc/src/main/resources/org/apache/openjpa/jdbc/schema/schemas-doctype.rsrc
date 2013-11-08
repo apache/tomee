@@ -1,0 +1,47 @@
+<!DOCTYPE schemas [
+	<!ELEMENT schemas (schema)*>
+	<!ELEMENT schema (table|sequence)*>
+	<!ATTLIST schema name CDATA #IMPLIED>
+	<!ELEMENT table (column|index|pk|fk|unique)+>
+	<!ATTLIST table name CDATA #REQUIRED>
+	<!ELEMENT column EMPTY>
+	<!ATTLIST column name CDATA #REQUIRED> 
+ 	<!ATTLIST column type (array|bigint|binary|bit|blob|char|clob|date|decimal|distinct|double|float|integer|java_object|longvarbinary|longvarchar|null|numeric|other|real|ref|smallint|struct|time|timestamp|tinyint|varbinary|varchar) #REQUIRED>
+	<!ATTLIST column type-name CDATA #IMPLIED>
+	<!ATTLIST column not-null (true|false) #IMPLIED>
+	<!ATTLIST column auto-assign (true|false) #IMPLIED>
+	<!ATTLIST column auto-increment (true|false) #IMPLIED> <!-- deprecated -->
+	<!ATTLIST column default CDATA #IMPLIED>
+	<!ATTLIST column size CDATA #IMPLIED>
+	<!ATTLIST column decimal-digits CDATA #IMPLIED>
+	<!ELEMENT index (on)*>
+	<!ATTLIST index name CDATA #REQUIRED>
+	<!ATTLIST index column CDATA #IMPLIED>
+	<!ATTLIST index unique (true|false) #IMPLIED>
+	<!ELEMENT pk (on)*>
+	<!ATTLIST pk name CDATA #IMPLIED>
+	<!ATTLIST pk logical (true|false) #IMPLIED>
+	<!ATTLIST pk column CDATA #IMPLIED>
+	<!ELEMENT on EMPTY>
+	<!ATTLIST on column CDATA #REQUIRED>
+	<!ELEMENT fk (join)*>
+	<!ATTLIST fk name CDATA #IMPLIED>
+	<!ATTLIST fk deferred (true|false) #IMPLIED>
+	<!ATTLIST fk to-table CDATA #REQUIRED>
+	<!ATTLIST fk column CDATA #IMPLIED>
+	<!ATTLIST fk delete-action (cascade|default|restrict|exception|none|null) #IMPLIED>
+	<!ATTLIST fk update-action (cascade|default|restrict|exception|none|null) #IMPLIED>
+	<!ELEMENT join EMPTY>
+	<!ATTLIST join column CDATA #IMPLIED>
+	<!ATTLIST join to-column CDATA #IMPLIED>
+	<!ATTLIST join value CDATA #IMPLIED>
+	<!ELEMENT unique (on)*>
+	<!ATTLIST unique name CDATA #IMPLIED>
+	<!ATTLIST unique column CDATA #IMPLIED>
+	<!ATTLIST unique deferred (true|false) #IMPLIED>
+	<!ELEMENT sequence EMPTY>
+	<!ATTLIST sequence name CDATA #REQUIRED>
+	<!ATTLIST sequence initial-value CDATA #IMPLIED>
+	<!ATTLIST sequence increment CDATA #IMPLIED>
+	<!ATTLIST sequence allocate CDATA #IMPLIED>
+]>

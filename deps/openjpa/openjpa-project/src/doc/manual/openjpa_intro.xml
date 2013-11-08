@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="openjpa_intro">
+    <title>
+        About
+    </title>
+    <indexterm zone="openjpa_intro">
+        <primary>
+            About
+        </primary>
+    </indexterm>
+    <para>
+OpenJPA is Apache's implementation of Java Persistence 2.0 API 
+(JSR-317 JPA 2.0) specification for the transparent persistence of Java objects.
+This document provides an overview of the JPA standard and technical
+details on the use of OpenJPA.
+    </para>
+<!-- 
+### TUTORIAL
+    <para>
+To quickly get started with OpenJPA, you may want to begin at
+<xref linkend="jpa_tutorial"/>. If you would prefer to start with an
+introduction to the JPA specification, begin with
+<xref linkend="jpa_overview_intro"/>.
+    </para>
+-->
+<!--
+    <section id="openjpa_intro_about">
+        <title>
+            About This Document
+        </title>
+-->
+        <para>
+This document is intended for OpenJPA users. It is divided into several parts:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+The <link linkend="jpa_overview_intro">JPA Overview</link> describes the
+fundamentals of the JPA specification.
+                </para>
+            </listitem>
+<!-- 
+### TUTORIAL
+            <listitem>
+                <para>
+In the <link linkend="tutorials">OpenJPA Tutorials</link> you will develop 
+simple persistent applications using OpenJPA. Through the
+tutorials' hands-on approach, you will become comfortable with the core tools
+and development processes under OpenJPA.
+                </para>
+            </listitem>
+-->
+            <listitem>
+                <para>
+The <link linkend="ref_guide_intro">OpenJPA Reference Guide</link> contains 
+detailed documentation on all aspects of OpenJPA.  Browse through this guide 
+to familiarize yourself with the many advanced features and customization 
+opportunities OpenJPA provides. Later, you can use the guide when you need 
+details on a specific aspect of OpenJPA.
+                </para>
+            </listitem>
+            <listitem>
+            	<para>
+            	Appendices
+            	<itemizedlist>
+            		<listitem>
+            			<para>
+            			The appendix <link linkend="jpa_resources">JPA Resources
+            			</link> provides links to other resources.
+            			</para>
+            		</listitem>
+            		<listitem>
+            			<para>
+            			The appendix <link linkend="supported_databases">
+            			Supported Databases</link> provides information on
+            			databases supported by OpenJPA.
+            			</para>
+            		</listitem>
+            		<listitem>
+            			<para>
+            			The appendix <link linkend="migration_considerations">
+            			Migration Considerations</link> provides information
+            			related to migration to a different release.
+            			</para>
+            		</listitem>
+            	</itemizedlist>
+            	</para>
+            </listitem>
+        </itemizedlist>
+<!--
+    </section>
+-->
+</chapter>

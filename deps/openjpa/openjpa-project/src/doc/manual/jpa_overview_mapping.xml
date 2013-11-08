@@ -1,0 +1,4861 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_mapping">
+    <title>
+        Mapping Metadata
+    </title>
+    <indexterm zone="jpa_overview_mapping">
+        <primary>
+            mapping metadata
+        </primary>
+    </indexterm>
+    <indexterm>
+        <primary>
+            entities
+        </primary>
+        <secondary>
+            mapping to database
+        </secondary>
+        <see>
+            mapping metadata
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            metadata
+        </primary>
+        <secondary>
+            mapping metadata
+        </secondary>
+        <see>
+            mapping metadata
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            ORM
+        </primary>
+        <seealso>
+            mapping metadata
+        </seealso>
+    </indexterm>
+    <indexterm zone="jpa_overview_mapping">
+        <primary>
+            JPA
+        </primary>
+        <secondary>
+            object-relational mapping
+        </secondary>
+        <seealso>
+            mapping metadata
+        </seealso>
+    </indexterm>
+    <para>
+<emphasis>Object-relational mapping</emphasis> is the process of mapping
+entities to relational database tables. In JPA, you perform
+object/relational mapping through <emphasis>mapping metadata</emphasis>.
+Mapping metadata uses annotations to describe how to link your object model to
+your relational model.
+    </para>
+    <note>
+        <para>
+OpenJPA offers tools to automate mapping and schema creation. See
+<xref linkend="ref_guide_mapping"/> in the Reference Guide.
+        </para>
+    </note>
+    <para>
+Throughout this chapter, we will draw on the object model introduced in
+<xref linkend="jpa_overview_meta"/>. We present that model again below.
+As we discuss various aspects of mapping metadata, we will zoom in on specific
+areas of the model and show how we map the object layer to the relational layer.
+    </para>
+    <mediaobject>
+        <imageobject>
+            <!-- PNG image data, 553 x 580 (see README) -->
+            <imagedata fileref="img/jpa-meta-model.png" width="369px"/>
+            
+        </imageobject>
+    </mediaobject>
+    <para>
+All mapping metadata is optional. Where no explicit mapping metadata is given,
+JPA uses the defaults defined by the specification. As we present
+each mapping throughout this chapter, we also describe the defaults that apply
+when the mapping is absent.
+    </para>
+    <note>
+        <para>
+Mapping metadata is used primarily with schema generation. This metadata should not
+be relied upon for validation prior to communicating with the database. 
+For example using the @Column(nullable=false) annotation does not do up front validation
+that the value in the entity is correct. 
+        </para>
+    </note>
+    <section id="jpa_overview_mapping_table">
+        <title>
+            Table
+        </title>
+        <indexterm zone="jpa_overview_mapping_table">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                class
+            </secondary>
+            <tertiary>
+                table attribute
+            </tertiary>
+        </indexterm>
+        <para>
+The <classname>Table</classname> annotation specifies the table for an entity
+class. If you omit the <classname>Table</classname> annotation, base entity
+classes default to a table with their unqualified class name. The default table
+of an entity subclass depends on the inheritance strategy, as you will see in
+<xref linkend="jpa_overview_mapping_inher"/>.
+        </para>
+        <para>
+<classname>Table</classname>s have the following properties:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>String name</literal>: The name of the table. Defaults to the
+unqualified entity class name.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>String schema</literal>: The table's schema. If you do not name a
+schema, JPA uses the default schema for the database connection.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>String catalog</literal>: The table's catalog. If you do not name a
+catalog, JPA uses the default catalog for the database connection.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>UniqueConstraint[] uniqueConstraints</literal>: An array of unique
+constraints to place on the table. We cover unique constraints below. Defaults
+to an empty array.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The equivalent XML element is <literal>table</literal>. It has the following
+attributes, which correspond to the annotation properties above:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>name</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>schema</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>catalog</literal>
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The <literal>table</literal> element also accepts nested <literal>
+unique-constraint</literal> elements representing unique constraints. We will
+detail unique constraints shortly.
+        </para>
+        <para>
+Sometimes, some of the fields in a class are mapped to secondary tables. In that
+case, use the class' <classname>Table</classname> annotation to name what you
+consider the class' primary table. Later, we will see how to map certain fields
+to other tables.
+        </para>
+        <para>
+The example below maps classes to tables to separate schemas. The
+<literal>CONTRACT</literal>, <literal>SUB</literal>, and <literal>LINE_ITEM
+</literal> tables are in the <literal>CNTRCT</literal> schema; all other tables
+are in the default schema.
+        </para>
+        <example id="jpa_overview_mapping_classex">
+            <title>
+                Mapping Classes
+            </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+public class Magazine {
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART")
+public class Article {
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+public class Contract
+    extends Document {
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+public class Subscription {
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+            <para>
+The same mapping information expressed in XML:
+            </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        ...
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;table name="MAG"/&gt;
+        &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;table name="ART"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;table name="COMP"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;table name="AUTH"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;table schema="CNTRCT"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;table name="SUB" schema="CNTRCT"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;embeddable class="org.mag.pub.Address"&gt;
+        ...
+    &lt;/embeddable&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="jpa_overview_mapping_unq">
+        <title>
+            Unique Constraints
+        </title>
+        <indexterm zone="jpa_overview_mapping_unq">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                unique constraints
+            </secondary>
+            <seealso>
+                unique constraints
+            </seealso>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_unq">
+            <primary>
+                unique constraints
+            </primary>
+        </indexterm>
+        <para>
+Unique constraints ensure that the data in a column or combination of columns is
+unique for each row. A table's primary key, for example, functions as an
+implicit unique constraint. In JPA, you represent other unique
+constraints with an array of <classname> UniqueConstraint</classname>
+annotations within the table annotation. The unique constraints you define are
+used during table creation to generate the proper database constraints, and may
+also be used at runtime to order <literal>INSERT</literal>, <literal>UPDATE
+</literal>, and <literal>DELETE</literal> statements. For example, suppose there
+is a unique constraint on the columns of field <literal>F</literal>. In the
+same transaction, you remove an object <literal>A</literal> and persist a new
+object <literal>B</literal>, both with the same <literal>F</literal> value. The
+JPA runtime must ensure that the SQL deleting <literal>A</literal>
+is sent to the database before the SQL inserting <literal>B</literal> to avoid a
+unique constraint violation.
+        </para>
+        <para>
+<classname>UniqueConstraint</classname> has these properties:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>String name</literal>: The name of the constraint. OpenJPA will choose
+a name if you do not provide one, or will create an anonymous constraint.
+                </para>
+            </listitem>            
+            <listitem>
+                <para>
+<literal>String[] columnNames</literal>: The names of the columns the
+constraint spans.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+In XML, unique constraints are represented by nesting <literal>
+unique-constraint</literal> elements within the <literal> table</literal>
+element. Each <literal>unique-constraint</literal> element in turn nests
+<literal>column-name</literal> text elements to enumerate the constraint's
+columns.
+        </para>
+        <example id="jpa_overview_mapping_unq_attrex">
+            <title>
+                Defining a Unique Constraint
+            </title>
+            <para>
+The following defines a unique constraint on the <literal> TITLE</literal>
+column of the <literal>ART</literal> table:
+            </para>
+<programlisting>
+@Entity
+@Table(name="ART", uniqueConstraints=@UniqueConstraint(name="TITLE_CNSTR", columnNames="TITLE"))
+public class Article {
+    ...
+}
+</programlisting>
+            <para>
+The same metadata expressed in XML form:
+            </para>
+<programlisting>
+&lt;entity class="org.mag.Article"&gt;
+    &lt;table name="ART"&gt;
+        &lt;unique-constraint&gt;
+            &lt;name&gt;TITLE_CNSTR&lt;/name&gt;
+            &lt;column-name&gt;TITLE&lt;/column-name&gt;
+        &lt;/unique-constraint&gt;
+    &lt;/table&gt;
+    ...
+&lt;/entity&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="jpa_overview_mapping_column">
+        <title>
+            Column
+        </title>
+        <indexterm zone="jpa_overview_mapping_column">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                Column
+            </secondary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_column">
+            <primary>
+                Column
+            </primary>
+            <secondary>
+                in mapping metadata
+            </secondary>
+            <seealso>
+                mapping metadata
+            </seealso>
+        </indexterm>
+        <para>
+In the previous section, we saw that a <classname>UniqueConstraint</classname>
+uses an array of column names. Field mappings, however, use full-fledged
+<classname>Column</classname> annotations. Column annotations have the following
+properties:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        name property
+                    </tertiary>
+                </indexterm>
+<literal>String name</literal>: The column name. Defaults to the field name.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        columnDefinition property
+                    </tertiary>
+                </indexterm>
+<literal>String columnDefinition</literal>: The database-specific column type
+name. This property is only used by vendors that support creating tables from
+your mapping metadata. During table creation, the vendor will use the value of
+the <literal>columnDefinition</literal> as the declared column type. If no
+<literal>columnDefinition</literal> is given, the vendor will choose an
+appropriate default based on the field type combined with the column's length,
+precision, and scale.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        length property
+                    </tertiary>
+                </indexterm>
+<literal>int length</literal>: The column length. This property is typically
+only used during table creation, though some vendors might use it to validate
+data before flushing. <literal>CHAR</literal> and <literal>VARCHAR</literal>
+columns typically default to a length of 255; other column types use the
+database default.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        precision property
+                    </tertiary>
+                </indexterm>
+<literal>int precision</literal>: The precision of a numeric column. This
+property is often used in conjunction with <literal>scale</literal> to form the
+proper column type name during table creation.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        scale property
+                    </tertiary>
+                </indexterm>
+<literal>int scale</literal>: The number of decimal digits a numeric column can
+hold. This property is often used in conjunction with <literal>precision
+</literal> to form the proper column type name during table creation.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        nullable property
+                    </tertiary>
+                </indexterm>
+<literal>boolean nullable</literal>: Whether the column can store null values.
+Vendors may use this property both for table creation and at runtime; however,
+it is never required. Defaults to <literal>true</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        insertable property
+                    </tertiary>
+                </indexterm>
+<literal>boolean insertable</literal>: By setting this property to <literal>
+false</literal>, you can omit the column from SQL <literal>INSERT</literal>
+statements. Defaults to <literal>true</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        updatable property
+                    </tertiary>
+                </indexterm>
+<literal>boolean updatable</literal>: By setting this property to <literal>
+false</literal>, you can omit the column from SQL <literal>UPDATE</literal>
+statements. Defaults to <literal>true</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        Column
+                    </secondary>
+                    <tertiary>
+                        table property
+                    </tertiary>
+                </indexterm>
+<literal>String table</literal>: Sometimes you will need to map fields to
+tables other than the primary table. This property allows you specify that the
+column resides in a secondary table. We will see how to map fields to secondary
+tables later in the chapter.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The equivalent XML element is <literal>column</literal>. This element has
+attributes that are exactly equivalent to the <classname> Column</classname>
+annotation's properties described above:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>name</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>column-definition</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>length</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>precision</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>scale</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>insertable</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>updatable</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>table</literal>
+                </para>
+            </listitem>
+        </itemizedlist>
+    </section>
+    <section id="jpa_overview_mapping_id">
+        <title>
+            Identity Mapping
+        </title>
+        <indexterm zone="jpa_overview_mapping_id">
+            <primary>
+                Id
+            </primary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_id">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                identity
+            </secondary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_id">
+            <primary>
+                identity
+            </primary>
+            <secondary>
+                mapping
+            </secondary>
+        </indexterm>
+        <para>
+With our new knowledge of columns, we can map the identity fields of our
+entities. The diagram below now includes primary key columns for our model's
+tables. The primary key column for <classname>Author</classname> uses
+nonstandard type <literal> INTEGER64</literal>, and the <literal>Magazine.isbn
+</literal> field is mapped to a <literal>VARCHAR(9)</literal> column instead of
+a <literal>VARCHAR(255)</literal> column, which is the default for string
+fields. We do not need to point out either one of these oddities to the JPA
+implementation for runtime use. If, however, we want to use the JPA
+implementation to create our tables for us, it needs to know about
+any desired non-default column types. Therefore, the example following the
+diagram includes this data in its encoding of our mappings.
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 513 x 410 (see README) -->
+                <imagedata fileref="img/jpa-mapping-identity.png" width="341px"/>
+                
+            </imageobject>
+        </mediaobject>
+        <para>
+Note that many of our identity fields do not need to specify column information,
+because they use the default column name and type.
+        </para>
+        <example id="jpa_overview_mapping_identityex">
+            <title>
+                Identity Mapping
+            </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+public class Article {
+
+    @Id private long id;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Column(name="AID", columnDefinition="INTEGER64")
+    @Id private long id;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+public class Contract
+    extends Document {
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+public class Subscription {
+
+    @Id private long id;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+            <para>
+The same metadata for <literal>Magazine</literal> and <literal>Company</literal>
+expressed in XML form:
+            </para>
+<programlisting>
+&lt;entity class="org.mag.Magazine"&gt;
+    &lt;id-class class="org.mag.Magazine.Magazine.MagazineId"/&gt;
+    &lt;table name="MAG"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="isbn"&gt;
+            &lt;column length="9"/&gt;
+        &lt;/id&gt;
+        &lt;id name="title"/&gt;
+      ...  
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.pub.Company"&gt;
+    &lt;table name="COMP"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"&gt;
+            &lt;column name="CID"/&gt;
+        &lt;/id&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="jpa_overview_mapping_sequence">
+        <title>
+            Generators
+        </title>
+        <indexterm zone="jpa_overview_mapping_sequence">
+            <primary>
+                generators
+            </primary>
+            <secondary>
+                mapping metadata
+            </secondary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_sequence">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                generators
+            </secondary>
+            <seealso>
+                TableGenerator
+            </seealso>
+            <seealso>
+                SequenceGenerator
+            </seealso>
+        </indexterm>
+        <para>
+One aspect of identity mapping not covered in the previous section is JPA's
+ability to automatically assign a value to your numeric identity fields using
+<emphasis>generators</emphasis>. We discussed the available generator types in
+<xref linkend="jpa_overview_meta_id"/>. Now we show you how to define
+named generators.
+        </para>
+        <section id="jpa_overview_mapping_sequence_seqgen">
+            <title>
+                Sequence Generator
+            </title>
+            <indexterm zone="jpa_overview_mapping_sequence_seqgen">
+                <primary>
+                    generators
+                </primary>
+                <secondary>
+                    SequenceGenerator
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_sequence_seqgen">
+                <primary>
+                    SequenceGenerator
+                </primary>
+            </indexterm>
+            <para>
+Most databases allow you to create native sequences. These are database
+structures that generate increasing numeric values. The <classname>
+SequenceGenerator</classname> annotation represents a named database sequence.
+You can place the annotation on any package, entity class, persistent field
+declaration (if your entity uses field access), or getter method for a
+persistent property (if your entity uses property access). <classname>
+SequenceGenerator</classname> has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            SequenceGenerator
+                        </primary>
+                        <secondary>
+                            name property
+                        </secondary>
+                    </indexterm>
+<literal>String name</literal>: The generator name. This property is required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            SequenceGenerator
+                        </primary>
+                        <secondary>
+                            sequenceName property
+                        </secondary>
+                    </indexterm>
+<literal>String sequenceName</literal>: The name of the database sequence. If
+you do not specify the database sequence, your vendor will choose an appropriate
+default.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            SequenceGenerator
+                        </primary>
+                        <secondary>
+                            initialValue property
+                        </secondary>
+                    </indexterm>
+<literal>int initialValue</literal>: The initial sequence value.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            SequenceGenerator
+                        </primary>
+                        <secondary>
+                            allocationSize property
+                        </secondary>
+                    </indexterm>
+<literal>int allocationSize</literal>: The number of values to allocate in
+memory for each trip to the database. Allocating values in memory allows the JPA
+runtime to avoid accessing the database for every sequence request.
+This number also specifies the amount that the sequence value is incremented
+each time the sequence is accessed. Defaults to 50.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            SequenceGenerator
+                        </primary>
+                        <secondary>
+                            schema property
+                        </secondary>
+                    </indexterm>
+                <literal>String schema</literal>: The sequence's schema. If you do not name a
+schema, JPA uses the default schema for the database connection.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <note>
+                <para>
+OpenJPA allows you to use one of OpenJPA's built-in generator
+implementations in the <literal>sequenceName</literal> property. You can also
+set the <literal>sequenceName</literal> to <literal>system</literal> to use the
+system sequence defined by the <link linkend="openjpa.Sequence"><literal>
+openjpa.Sequence</literal></link> configuration property. See the Reference
+Guide's <xref linkend="ref_guide_sequence"/> for details.
+                </para>
+            </note>
+            <para>
+The XML element for a sequence generator is <literal>sequence-generator
+</literal>. Its attributes mirror the above annotation's properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>sequence-name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>initial-value</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>allocation-size</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>schema</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+To use a sequence generator, set your <classname>GeneratedValue</classname>
+annotation's <literal>strategy</literal> property to <literal>
+GenerationType.SEQUENCE</literal>, and its <literal>generator</literal> property
+to the sequence generator's declared name. Or equivalently, set your <literal>
+generated-value</literal> XML element's <literal>strategy</literal> attribute to
+<literal>SEQUENCE</literal> and its <literal>generator</literal> attribute to
+the generator name.
+            </para>
+        </section>
+        <section id="jpa_overview_mapping_sequence_tablegen">
+            <title>
+                Table Generator
+            </title>
+            <indexterm zone="jpa_overview_mapping_sequence_tablegen">
+                <primary>
+                    generators
+                </primary>
+                <secondary>
+                    TableGenerator
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_sequence_tablegen">
+                <primary>
+                    TableGenerator
+                </primary>
+            </indexterm>
+            <para>
+A <classname>TableGenerator</classname> refers to a database table used to store
+increasing sequence values for one or more entities. As with <classname>
+SequenceGenerator</classname>, you can place the <classname>TableGenerator
+</classname> annotation on any package, entity class, persistent field
+declaration (if your entity uses field access), or getter method for a
+persistent property (if your entity uses property access). <classname>
+TableGenerator</classname> has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            name property
+                        </secondary>
+                    </indexterm>
+<literal>String name</literal>: The generator name. This property is required.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            table property
+                        </secondary>
+                    </indexterm>
+<literal>String table</literal>: The name of the generator table. If left
+unspecified, your vendor will choose a default table.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            schema property
+                        </secondary>
+                    </indexterm>
+<literal>String schema</literal>: The named table's schema.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            catalog property
+                        </secondary>
+                    </indexterm>
+<literal>String catalog</literal>: The named table's catalog.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            pkColumnName property
+                        </secondary>
+                    </indexterm>
+<literal>String pkColumnName</literal>: The name of the primary key column in
+the generator table. If unspecified, your implementation will choose a default.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            valueColumnName property
+                        </secondary>
+                    </indexterm>
+<literal>String valueColumnName</literal>: The name of the column that holds
+the sequence value. If unspecified, your implementation will choose a default.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            pkColumnValue property
+                        </secondary>
+                    </indexterm>
+<literal>String pkColumnValue</literal>: The primary key column value of the
+row in the generator table holding this sequence value. You can use the same
+generator table for multiple logical sequences by supplying different <literal>
+pkColumnValue</literal> s. If you do not specify a value, the implementation
+will supply a default.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            initialValue property
+                        </secondary>
+                    </indexterm>
+<literal>int initialValue</literal>: The value of the generator's first issued
+number.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                    <indexterm>
+                        <primary>
+                            TableGenerator
+                        </primary>
+                        <secondary>
+                            allocationSize property
+                        </secondary>
+                    </indexterm>
+<literal>int allocationSize</literal>: The number of values to allocate in
+memory for each trip to the database. Allocating values in memory allows the JPA
+runtime to avoid accessing the database for every sequence request.
+This number also specifies the amount that the sequence value is incremented
+each time the generator table is updated. Defaults to 50.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The XML equivalent is the <literal>table-generator</literal> element. This
+element's attributes correspond exactly to the above annotation's properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>table</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>schema</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>catalog</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>pk-column-name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>value-column-name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>pk-column-value</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>initial-value</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>allocation-size</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+To use a table generator, set your <classname>GeneratedValue</classname>
+annotation's <literal>strategy</literal> property to <literal>
+GenerationType.TABLE</literal>, and its <literal>generator</literal> property to
+the table generator's declared name. Or equivalently, set your <literal>
+generated-value</literal> XML element's <literal>strategy</literal> attribute to
+<literal>TABLE</literal> and its <literal>generator</literal> attribute to the
+generator name.
+            </para>
+        </section>
+        <section id="jpa_overview_mapping_sequence_genex">
+            <title>
+                Example
+            </title>
+            <para>
+Let's take advantage of generators in our entity model. Here are our updated
+mappings.
+            </para>
+            <example id="jpa_overview_mapping_sequenceex">
+                <title>
+                    Generator Mapping
+                </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+@SequenceGenerator(name="ArticleSeq", sequenceName="ART_SEQ")
+public class Article {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ArticleSeq") 
+    private long id;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="AuthorGen")
+    @TableGenerator(name="AuthorGen", table="AUTH_GEN", pkColumnName="PK",
+        valueColumnName="AID")
+    @Column(name="AID", columnDefinition="INTEGER64")
+    private long id;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(generate=GenerationType.IDENTITY)
+    private long id;
+ 
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+public class Contract
+    extends Document {
+
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+public class Subscription {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+                <para>
+The same metadata for <literal>Article</literal> and <literal>Author</literal>
+expressed in XML form:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.Article"&gt;
+    &lt;table name="ART"&gt;
+        &lt;unique-constraint&gt;
+            &lt;column-name&gt;TITLE&lt;/column-name&gt;
+        &lt;/unique-constraint&gt;
+    &lt;/table&gt;
+    &lt;sequence-generator name="ArticleSeq" sequence-name="ART_SEQ"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"&gt;
+            &lt;generated-value strategy="SEQUENCE" generator="ArticleSeq"/&gt;
+        &lt;/id&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.pub.Author"&gt;
+    &lt;table name="AUTH"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"&gt;
+            &lt;column name="AID" column-definition="INTEGER64"/&gt;
+            &lt;generated-value strategy="TABLE" generator="AuthorGen"/&gt;
+            &lt;table-generator name="AuthorGen" table="AUTH_GEN" 
+                pk-column-name="PK" value-column-name="AID"/&gt;
+        &lt;/id&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="jpa_overview_mapping_inher">
+        <title>
+            Inheritance
+        </title>
+        <indexterm zone="jpa_overview_mapping_inher">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                inheritance
+            </secondary>
+            <seealso>
+                inheritance
+            </seealso>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_inher">
+            <primary>
+                inheritance
+            </primary>
+            <secondary>
+                mapping
+            </secondary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_inher">
+            <primary>
+                entities
+            </primary>
+            <secondary>
+                inheritance
+            </secondary>
+            <seealso>
+                inheritance
+            </seealso>
+        </indexterm>
+        <indexterm>
+            <primary>
+                impedance mismatch
+            </primary>
+        </indexterm>
+        <para>
+In the 1990's programmers coined the term <emphasis>impedance mismatch
+</emphasis> to describe the difficulties in bridging the object and relational
+worlds. Perhaps no feature of object modeling highlights the impedance mismatch
+better than inheritance. There is no natural, efficient way to represent an
+inheritance relationship in a relational database.
+        </para>
+        <para>
+        <indexterm>
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                inheritance
+            </secondary>
+            <tertiary>
+                strategy attribute
+            </tertiary>
+        </indexterm>
+Luckily, JPA gives you a choice of inheritance strategies, making
+the best of a bad situation. The base entity class defines the inheritance
+strategy for the hierarchy with the <classname>Inheritance</classname>
+annotation. <classname>Inheritance</classname> has the following properties:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>InheritanceType strategy</literal>: Enum value declaring the
+inheritance strategy for the hierarchy. Defaults to <literal>
+InheritanceType.SINGLE_TABLE</literal>. We detail each of the available
+strategies below.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The corresponding XML element is <literal>inheritance</literal>, which has a
+single attribute:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>strategy</literal>: One of <literal>SINGLE_TABLE</literal>, <literal>
+JOINED</literal>, or <literal>TABLE_PER_CLASS</literal>.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The following sections describe JPA's standard inheritance strategies.
+        </para>
+        <note>
+            <para>
+OpenJPA allows you to vary your inheritance strategy for each class, rather than
+forcing a single strategy per inheritance hierarchy. See
+<xref linkend="ref_guide_mapping_jpa"/> in the Reference Guide for
+details.
+            </para>
+        </note>
+        <section id="jpa_overview_mapping_inher_single">
+            <title>
+                Single Table
+            </title>
+            <indexterm zone="jpa_overview_mapping_inher_single">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    inheritance
+                </secondary>
+                <tertiary>
+                    SINGLE_TABLE strategy
+                </tertiary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_inher_single">
+                <primary>
+                    inheritance
+                </primary>
+                <secondary>
+                    SINGLE_TABLE strategy
+                </secondary>
+            </indexterm>
+            <para>
+The <literal>InheritanceType.SINGLE_TABLE</literal> strategy maps all classes in
+the hierarchy to the base class' table.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 266 x 203 (see README) -->
+                    <imagedata fileref="img/inher-superclass-table.png" width="177px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+In our model, <classname>Subscription</classname> is mapped to the <literal>
+CNTRCT.SUB</literal> table. <classname> LifetimeSubscription</classname>, which
+extends <classname> Subscription</classname>, adds its field data to this table
+as well.
+            </para>
+            <example id="jpa_overview_mapping_inher_singleex">
+                <title>
+                    Single Table Mapping
+                </title>
+<programlisting>
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+public class Subscription {
+    ...
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML form:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.subcribe.Subscription"&gt;
+    &lt;table name="SUB" schema="CNTRCT"/&gt;
+    &lt;inheritance strategy="SINGLE_TABLE"/&gt;
+    ...
+&lt;/entity&gt;
+&lt;entity class="org.mag.subscribe.LifetimeSubscription"&gt;
+    ...
+&lt;/entity&gt;
+</programlisting>
+            </example>
+            <para>
+Single table inheritance is the default strategy. Thus, we could omit the
+<literal>@Inheritance</literal> annotation in the example above and get the same
+result.
+            </para>
+            <note>
+                <para>
+                <indexterm>
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        flat
+                    </secondary>
+                </indexterm>
+                <indexterm>
+                    <primary>
+                        flat
+                    </primary>
+                    <seealso>
+                        inheritance
+                    </seealso>
+                </indexterm>
+Mapping subclass state to the superclass table is often called <emphasis>flat
+</emphasis> inheritance mapping.
+                </para>
+            </note>
+            <section id="jpa_overview_mapping_inher_single_adv">
+                <title>
+                    Advantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_single_adv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        SINGLE_TABLE strategy
+                    </secondary>
+                    <tertiary>
+                        advantages
+                    </tertiary>
+                </indexterm>
+                <para>
+Single table inheritance mapping is the fastest of all inheritance models, since
+it never requires a join to retrieve a persistent instance from the database.
+Similarly, persisting or updating a persistent instance requires only a single
+<literal>INSERT</literal> or <literal>UPDATE</literal> statement. Finally,
+relations to any class within a single table inheritance hierarchy are just as
+efficient as relations to a base class.
+                </para>
+            </section>
+            <section id="jpa_overview_mapping_inher_single_disadv">
+                <title>
+                    Disadvantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_single_disadv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        SINGLE_TABLE strategy
+                    </secondary>
+                    <tertiary>
+                        disadvantages
+                    </tertiary>
+                </indexterm>
+                <para>
+The larger the inheritance model gets, the "wider" the mapped table gets, in
+that for every field in the entire inheritance hierarchy, a column must exist in
+the mapped table. This may have undesirable consequence on the database size,
+since a wide or deep inheritance hierarchy will result in tables with many
+mostly-empty columns.
+                </para>
+            </section>
+        </section>
+        <section id="jpa_overview_mapping_inher_joined">
+            <title>
+                Joined
+            </title>
+            <indexterm zone="jpa_overview_mapping_inher_joined">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    inheritance
+                </secondary>
+                <tertiary>
+                    JOINED strategy
+                </tertiary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_inher_joined">
+                <primary>
+                    inheritance
+                </primary>
+                <secondary>
+                    JOINED strategy
+                </secondary>
+            </indexterm>
+            <para>
+The <literal>InheritanceType.JOINED</literal> strategy uses a different table
+for each class in the hierarchy. Each table only includes state declared in its
+class. Thus to load a subclass instance, the JPA implementation must
+read from the subclass table as well as the table of each ancestor class, up to
+the base entity class.
+            </para>
+            <note>
+                <para>
+                <indexterm>
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        vertical
+                    </secondary>
+                </indexterm>
+                <indexterm>
+                    <primary>
+                        vertical
+                    </primary>
+                    <seealso>
+                        inheritance
+                    </seealso>
+                </indexterm>
+Using joined subclass tables is also called <emphasis>vertical</emphasis>
+inheritance mapping.
+                </para>
+            </note>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 256 x 229 (see README) -->
+                    <imagedata fileref="img/jpa-inher-joined.png" width="171px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+<classname>PrimaryKeyJoinColumn</classname> annotations tell the JPA
+implementation how to join each subclass table record to the corresponding
+record in its direct superclass table. In our model, the <literal>LINE_ITEM.ID
+</literal> column joins to the <literal>CONTRACT.ID</literal> column. The
+<classname>PrimaryKeyJoinColumn</classname> annotation has the following
+properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of the subclass table column. When
+there is a single identity field, defaults to that field's column name.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String referencedColumnName</literal>: The name of the superclass
+table column this subclass table column joins to. When there is a single
+identity field, defaults to that field's column name.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String columnDefinition</literal>: This property has the same meaning
+as the <literal>columnDefinition</literal> property on the <classname>Column
+</classname> annotation, described in
+<xref linkend="jpa_overview_mapping_column"/>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The XML equivalent is the <literal>primary-key-join-column</literal> element.
+Its attributes mirror the annotation properties described above:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>referenced-column-name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>column-definition</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The example below shows how we use <literal>InheritanceTable.JOINED</literal>
+and a primary key join column to map our sample model according to the diagram
+above. Note that a primary key join column is not strictly needed, because there
+is only one identity column, and the subclass table column has the same name as
+the superclass table column. In this situation, the defaults suffice. However,
+we include the primary key join column for illustrative purposes.
+            </para>
+            <example id="jpa_overview_mapping_inher_joinedex">
+                <title>
+                    Joined Subclass Tables
+                </title>
+<programlisting>
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+public class Contract
+    extends Document {
+    ...
+}
+
+public class Subscription {
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    @PrimaryKeyJoinColumn(name="ID", referencedColumnName="ID")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML form:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.subcribe.Contract"&gt;
+    &lt;table schema="CNTRCT"/&gt;
+    &lt;inheritance strategy="JOINED"/&gt;
+    ...
+&lt;/entity&gt;
+&lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+    &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+    &lt;primary-key-join-column name="ID" referenced-column-name="PK"/&gt;
+    ...
+&lt;/entity&gt;
+</programlisting>
+            </example>
+            <para>
+When there are multiple identity columns, you must define multiple <classname>
+PrimaryKeyJoinColumn</classname>s using the aptly-named <classname>
+PrimaryKeyJoinColumns</classname> annotation. This annotation's value is an
+array of <classname> PrimaryKeyJoinColumn</classname> s. We could rewrite
+<classname>LineItem</classname>'s mapping as:
+            </para>
+<programlisting>
+@Entity
+@Table(name="LINE_ITEM", schema="CNTRCT")
+@PrimaryKeyJoinColumns({
+    @PrimaryKeyJoinColumn(name="ID", referencedColumnName="ID")
+})
+public static class LineItem
+    extends Contract {
+    ...
+}
+</programlisting>
+            <para>
+In XML, simply list as many <literal> primary-key-join-column</literal> elements
+as necessary.
+            </para>
+            <section id="jpa_overview_mapping_inher_joined_adv">
+                <title>
+                    Advantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_joined_adv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        JOINED strategy
+                    </secondary>
+                    <tertiary>
+                        advantages
+                    </tertiary>
+                </indexterm>
+                <para>
+The joined strategy has the following advantages:
+                </para>
+                <orderedlist>
+                    <listitem>
+                        <para>
+                        <indexterm>
+                            <primary>
+                                normalized
+                            </primary>
+                        </indexterm>
+Using joined subclass tables results in the most <emphasis>normalized</emphasis>
+database schema, meaning the schema with the least spurious or redundant data.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+As more subclasses are added to the data model over time, the only schema
+modification that needs to be made is the addition of corresponding subclass
+tables in the database (rather than having to change the structure of existing
+tables).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+Relations to a base class using this strategy can be loaded through standard
+joins and can use standard foreign keys, as opposed to the machinations required
+to load polymorphic relations to table-per-class base types, described below.
+                        </para>
+                    </listitem>
+                </orderedlist>
+            </section>
+            <section id="jpa_overview_mapping_inher_joined_disadv">
+                <title>
+                    Disadvantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_joined_disadv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        JOINED strategy
+                    </secondary>
+                    <tertiary>
+                        disadvantages
+                    </tertiary>
+                </indexterm>
+                <para>
+Aside from certain uses of the table-per-class strategy described below, the
+joined strategy is often the slowest of the inheritance models. Retrieving any
+subclass requires one or more database joins, and storing subclasses requires
+multiple <literal>INSERT</literal> or <literal>UPDATE</literal> statements. This
+is only the case when persistence operations are performed on subclasses; if
+most operations are performed on the least-derived persistent superclass, then
+this mapping is very fast.
+                </para>
+                <note>
+                    <para>
+When executing a select against a hierarchy that uses joined subclass table
+inheritance, you must consider how to load subclass state.
+<xref linkend="ref_guide_perfpack_eager"/> in the Reference Guide
+describes OpenJPA's options for efficient data loading.
+                    </para>
+                </note>
+            </section>
+        </section>
+        <section id="jpa_overview_mapping_inher_tpc">
+            <title>
+                Table Per Class
+            </title>
+            <indexterm zone="jpa_overview_mapping_inher_tpc">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    inheritance
+                </secondary>
+                <tertiary>
+                    TABLE_PER_CLASS strategy
+                </tertiary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_inher_tpc">
+                <primary>
+                    inheritance
+                </primary>
+                <secondary>
+                    TABLE_PER_CLASS strategy
+                </secondary>
+            </indexterm>
+            <para>
+Like the <literal>JOINED</literal> strategy, the <literal>
+InheritanceType.TABLE_PER_CLASS</literal> strategy uses a different table for
+each class in the hierarchy. Unlike the <literal>JOINED</literal> strategy,
+however, each table includes all state for an instance of the corresponding
+class. Thus to load a subclass instance, the JPA implementation must
+only read from the subclass table; it does not need to join to superclass
+tables.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 283 x 247 (see README) -->
+                    <imagedata fileref="img/inher-tpc.png" width="189px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+Suppose that our sample model's <classname>Magazine</classname> class has a
+subclass <classname>Tabloid</classname>. The classes are mapped using the
+table-per-class strategy, as in the diagram above. In a table-per-class mapping,
+<classname> Magazine</classname>'s table <literal>MAG</literal> contains all
+state declared in the base <classname>Magazine</classname> class. <classname>
+Tabloid</classname> maps to a separate table, <literal> TABLOID</literal>. This
+table contains not only the state declared in the <classname>Tabloid</classname>
+subclass, but all the base class state from <classname>Magazine</classname> as
+well. Thus the <literal>TABLOID</literal> table would contain columns for
+<literal>isbn</literal>, <literal>title</literal>, and other <classname>
+Magazine</classname> fields. These columns would default to the names used in
+<classname>Magazine</classname>'s mapping metadata.
+<xref linkend="jpa_overview_mapping_embed"/> will show you how to use
+<literal>AttributeOverride</literal>s and <literal>AssociationOverride</literal>
+s to override superclass field mappings.
+            </para>
+            <example id="jpa_overview_mapping_inher_tpcex">
+                <title>
+                    Table Per Class Mapping
+                </title>
+<programlisting>
+@Entity
+@Table(name="MAG")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+public class Magazine {
+    ...
+}
+
+@Entity
+@Table(name="TABLOID")
+public class Tabloid
+    extends Magazine {
+    ...
+}
+</programlisting>
+                <para>
+And the same classes in XML:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.Magazine"&gt;
+    &lt;table name="MAG"/&gt;
+    &lt;inheritance strategy="TABLE_PER_CLASS"/&gt;
+    ...
+&lt;/entity&gt;
+&lt;entity class="org.mag.Tabloid"&gt;
+    &lt;table name="TABLOID"/&gt;
+    ...
+&lt;/entity&gt;
+</programlisting>
+            </example>
+            <section id="jpa_overview_mapping_inher_tpc_adv">
+                <title>
+                    Advantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_tpc_adv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        TABLE_PER_CLASS strategy
+                    </secondary>
+                    <tertiary>
+                        advantages
+                    </tertiary>
+                </indexterm>
+                <para>
+The table-per-class strategy is very efficient when operating on instances of a
+known class. Under these conditions, the strategy never requires joining to
+superclass or subclass tables. Reads, joins, inserts, updates, and deletes are
+all efficient in the absence of polymorphic behavior. Also, as in the joined
+strategy, adding additional classes to the hierarchy does not require modifying
+existing class tables.
+                </para>
+            </section>
+            <section id="jpa_overview_mapping_inher_tpc_disadv">
+                <title>
+                    Disadvantages
+                </title>
+                <indexterm zone="jpa_overview_mapping_inher_tpc_disadv">
+                    <primary>
+                        inheritance
+                    </primary>
+                    <secondary>
+                        TABLE_PER_CLASS strategy
+                    </secondary>
+                    <tertiary>
+                        disadvantages
+                    </tertiary>
+                </indexterm>
+                <para>
+Polymorphic relations to non-leaf classes in a table-per-class hierarchy have
+many limitations. When the concrete subclass is not known, the related object
+could be in any of the subclass tables, making joins through the relation
+impossible. This ambiguity also affects identity lookups and queries; these
+operations require multiple SQL <literal>SELECT</literal>s (one for each
+possible subclass), or a complex <literal>UNION</literal>.
+                </para>
+                <note>
+                    <para>
+<xref linkend="ref_guide_mapping_limits_tpc"/> in the Reference Guide
+describes the limitations OpenJPA places on table-per-class mapping.
+                    </para>
+                </note>
+            </section>
+        </section>
+        <section id="jpa_overview_mapping_inher_together">
+            <title>
+                Putting it All Together
+            </title>
+            <para>
+Now that we have covered JPA's inheritance strategies, we can update our mapping
+document with inheritance information. Here is the complete model:
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 513 x 410 (see README) -->
+                    <imagedata fileref="img/jpa-inher-all.png" width="341px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+And here is the corresponding mapping metadata:
+            </para>
+            <example id="jpa_overview_mapping_inher_togetherex">
+                <title>
+                    Inheritance Mapping
+                </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+@SequenceGenerator(name="ArticleSeq", sequenceName="ART_SEQ")
+public class Article {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ArticleSeq") 
+    private long id;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="AuthorGen")
+    @TableGenerator(name="AuthorGen", table="AUTH_GEN", pkColumnName="PK",
+        valueColumnName="AID")
+    @Column(name="AID", columnDefinition="INTEGER64")
+    private long id;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+public class Contract
+    extends Document {
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+public class Subscription {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    @PrimaryKeyJoinColumn(name="ID", referencedColumnName="ID")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML form:
+                </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;table name="MAG"/&gt;
+        &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="isbn"&gt;
+                &lt;column length="9"/&gt;
+            &lt;/id&gt;
+            &lt;id name="title"/&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;table name="ART"&gt;
+            &lt;unique-constraint&gt;
+               &lt;column-name&gt;TITLE&lt;/column-name&gt;
+            &lt;/unique-constraint&gt;
+        &lt;/table&gt;
+        &lt;sequence-generator name="ArticleSeq" sequence-name="ART_SEQ"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="SEQUENCE" generator="ArticleSeq"/&gt;
+            &lt;/id&gt;
+           ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;table name="COMP"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="CID"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;table name="AUTH"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="AID" column-definition="INTEGER64"/&gt;
+                &lt;generated-value strategy="TABLE" generator="AuthorGen"/&gt;
+                &lt;table-generator name="AuthorGen" table="AUTH_GEN" 
+                    pk-column-name="PK" value-column-name="AID"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;table schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="JOINED"/&gt;
+        &lt;attributes&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;table name="SUB" schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="SINGLE_TABLE"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+        &lt;primary-key-join-column name="ID" referenced-column-name="PK"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        ...
+    &lt;/entity&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="jpa_overview_mapping_discrim">
+        <title>
+            Discriminator
+        </title>
+        <indexterm zone="jpa_overview_mapping_discrim">
+            <primary>
+                discriminator
+            </primary>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_discrim">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                discriminator
+            </secondary>
+            <seealso>
+                discriminator
+            </seealso>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_discrim">
+            <primary>
+                inheritance
+            </primary>
+            <secondary>
+                discriminator
+            </secondary>
+            <seealso>
+                discriminator
+            </seealso>
+        </indexterm>
+        <para>
+The <link linkend="jpa_overview_mapping_inher_single">single table</link>
+inheritance strategy results in a single table containing records for two or
+more different classes in an inheritance hierarchy. Similarly, using the
+<link linkend="jpa_overview_mapping_inher_joined"> joined</link> strategy
+results in the superclass table holding records for superclass instances as well
+as for the superclass state of subclass instances. When selecting data, JPA
+needs a way to differentiate a row representing an object of one class from a
+row representing an object of another. That is the job of the <emphasis>
+discriminator</emphasis> column.
+        </para>
+        <para>
+The discriminator column is always in the table of the base entity. It holds a
+different value for records of each class, allowing the JPA runtime
+to determine what class of object each row represents.
+        </para>
+        <para>
+The <classname>DiscriminatorColumn</classname> annotation represents a
+discriminator column. It has these properties:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>String name</literal>: The column name. Defaults to <literal>DTYPE
+</literal>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>length</literal>: For string discriminator values, the length of the
+column. Defaults to 31.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>String columnDefinition</literal>: This property has the same meaning
+as the <literal>columnDefinition</literal> property on the <classname>Column
+</classname> annotation, described in
+<xref linkend="jpa_overview_mapping_column"/>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>DiscriminatorType discriminatorType</literal>: Enum value declaring
+the discriminator strategy of the hierarchy.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The corresponding XML element is <literal> discriminator-column</literal>. Its
+attributes mirror the annotation properties above:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>name</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>length</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>column-definition</literal>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+<literal>discriminator-type</literal>: One of <literal>STRING</literal>,
+<literal>CHAR</literal>, or <literal>INTEGER</literal>.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <para>
+The <classname>DiscriminatorValue</classname> annotation specifies the
+discriminator value for each class. Though this annotation's value is always a
+string, the implementation will parse it according to the <classname>
+DiscriminatorColumn</classname>'s <literal>discriminatorType</literal> property
+above. The type defaults to <literal>DiscriminatorType.STRING</literal>, but
+may be <literal> DiscriminatorType.CHAR</literal> or <literal>
+DiscriminatorType.INTEGER</literal>. If you do not specify a <classname>
+DiscriminatorValue</classname>, the provider will choose an appropriate
+default.
+        </para>
+        <para>
+The corresponding XML element is <literal>discriminator-value</literal>. The
+text within this element is parsed as the discriminator value.
+        </para>
+        <note>
+            <para>
+OpenJPA assumes your model employs a discriminator column if any of the
+following are true:
+            </para>
+            <orderedlist>
+                <listitem>
+                    <para>
+The base entity explicitly declares an inheritance type of <literal>
+SINGLE_TABLE</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The base entity sets a discriminator value.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+The base entity declares a discriminator column.
+                    </para>
+                </listitem>
+            </orderedlist>
+            <para>
+Only <literal>SINGLE_TABLE</literal> inheritance hierarchies require a
+discriminator column and values. <literal> JOINED</literal> hierarchies can use
+a discriminator to make some operations more efficient, but do not require one.
+<literal>TABLE_PER_CLASS</literal> hierarchies have no use for a discriminator.
+            </para>
+            <para>
+OpenJPA defines additional discriminator strategies; see
+<xref linkend="ref_guide_mapping_jpa"/> in the Reference Guide for
+details. OpenJPA also supports final entity classes. OpenJPA does not use a
+discriminator on final classes.
+            </para>
+        </note>
+        <para>
+We can now translate our newfound knowledge of JPA discriminators into concrete
+JPA mappings. We first extend our diagram with discriminator columns:
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 513 x 410 (see README) -->
+                <imagedata fileref="img/jpa-discrim-all.png" width="341px"/>
+                
+            </imageobject>
+        </mediaobject>
+        <para>
+Next, we present the updated mapping document. Notice that in this version, we
+have removed explicit inheritance annotations when the defaults sufficed. Also,
+notice that entities using the default <literal>DTYPE</literal> discriminator
+column mapping do not need an explicit <classname>DiscriminatorColumn
+</classname> annotation.
+        </para>
+        <example id="jpa_overview_mapping_discrimex">
+            <title>
+                Discriminator Mapping
+            </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+@DiscriminatorValue("Mag")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+@SequenceGenerator(name="ArticleSeq", sequenceName="ART_SEQ")
+public class Article {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ArticleSeq") 
+    private long id;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="AuthorGen")
+    @TableGenerator(name="AuthorGen", table="AUTH_GEN", pkColumnName="PK",
+        valueColumnName="AID")
+    @Column(name="AID", columnDefinition="INTEGER64")
+    private long id;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="CTYPE")
+public class Contract
+    extends Document {
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+@DiscriminatorColumn(name="KIND", discriminatorType=DiscriminatorType.INTEGER)
+@DiscriminatorValue("1")
+public class Subscription {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+@DiscriminatorValue("2")
+public class LifetimeSubscription
+    extends Subscription {
+    ...
+}
+
+@Entity(name="Trial")
+@DiscriminatorValue("3")
+public class TrialSubscription
+    extends Subscription {
+    ...
+}
+</programlisting>
+            <para>
+The same metadata expressed in XML:
+            </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;table name="MAG"/&gt;
+        &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+        &lt;discriminator-value&gt;Mag&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;id name="isbn"&gt;
+                &lt;column length="9"/&gt;
+            &lt;/id&gt;
+            &lt;id name="title"/&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;table name="ART"&gt;
+            &lt;unique-constraint&gt;
+                &lt;column-name&gt;TITLE&lt;/column-name&gt;
+            &lt;/unique-constraint&gt;
+        &lt;/table&gt;
+        &lt;sequence-generator name="ArticleSeq" sequence-name="ART_SEQ"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="SEQUENCE" generator="ArticleSeq"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;table name="COMP"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="CID"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;table name="AUTH"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="AID" column-definition="INTEGER64"/&gt;
+                &lt;generated-value strategy="TABLE" generator="AuthorGen"/&gt;
+                &lt;table-generator name="AuthorGen" table="AUTH_GEN" 
+                    pk-column-name="PK" value-column-name="AID"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;table schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="JOINED"/&gt;
+        &lt;discriminator-column name="CTYPE"/&gt;
+        &lt;attributes&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;table name="SUB" schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="SINGLE_TABLE"/&gt;
+        &lt;discriminator-value&gt;1&lt;/discriminator-value&gt;
+        &lt;discriminator-column name="KIND" discriminator-type="INTEGER"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+        &lt;primary-key-join-column name="ID" referenced-column-name="PK"/&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        &lt;discriminator-value&gt;2&lt;/discriminator-value&gt;
+        ...
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        &lt;discriminator-value&gt;3&lt;/discriminator-value&gt;
+        ...
+    &lt;/entity&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+        </example>
+    </section>
+    <section id="jpa_overview_mapping_field">
+        <title>
+            Field Mapping
+        </title>
+        <indexterm zone="jpa_overview_mapping_field">
+            <primary>
+                mapping metadata
+            </primary>
+            <secondary>
+                field mapping
+            </secondary>
+            <seealso>
+                persistent fields
+            </seealso>
+        </indexterm>
+        <indexterm zone="jpa_overview_mapping_field">
+            <primary>
+                persistent fields
+            </primary>
+            <secondary>
+                mapping metadata
+            </secondary>
+        </indexterm>
+        <para>
+The following sections enumerate the myriad of field mappings JPA
+supports. JPA augments the persistence metadata covered in
+<xref linkend="jpa_overview_meta"/> with many new object-relational
+annotations. As we explore the library of standard mappings, we introduce each
+of these enhancements in context.
+        </para>
+        <note>
+            <para>
+OpenJPA supports many additional field types, and allows you to create custom
+mappings for unsupported field types or database schemas. See the Reference
+Guide's <xref linkend="ref_guide_mapping"/> for complete coverage of
+OpenJPA's mapping capabilities.
+            </para>
+        </note>
+        <section id="jpa_overview_mapping_basic">
+            <title>
+                Basic Mapping
+            </title>
+            <indexterm zone="jpa_overview_mapping_basic">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    basic fields
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_basic">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    basic
+                </secondary>
+            </indexterm>
+            <para>
+A <emphasis>basic</emphasis> field mapping stores the field value directly into
+a database column. The following field metadata types use basic mapping. These
+types were defined in <xref linkend="jpa_overview_meta_field"/>.
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<link linkend="jpa_overview_meta_id"><classname>Id</classname></link> fields.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<link linkend="jpa_overview_meta_version"><classname> Version</classname></link>
+fields.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<link linkend="jpa_overview_meta_basic"><classname>Basic</classname></link>
+fields.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+In fact, you have already seen examples of basic field mappings in this chapter
+- the mapping of all identity fields in
+<xref linkend="jpa_overview_mapping_identityex"/>. As you saw in that
+section, to write a basic field mapping you use the <classname>Column
+</classname> annotation to describe the column the field value is stored in. We
+discussed the <classname>Column</classname> annotation in
+<xref linkend="jpa_overview_mapping_column"/>. Recall that the name of
+the column defaults to the field name, and the type of the column defaults to an
+appropriate type for the field type. These defaults allow you to sometimes omit
+the annotation altogether.
+            </para>
+            <section id="jpa_overview_mapping_lob">
+                <title>
+                    LOBs
+                </title>
+                <indexterm zone="jpa_overview_mapping_lob">
+                    <primary>
+                        LOB
+                    </primary>
+                </indexterm>
+                <indexterm zone="jpa_overview_mapping_lob">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        LOB types
+                    </secondary>
+                </indexterm>
+                <indexterm zone="jpa_overview_mapping_lob">
+                    <primary>
+                        annotations
+                    </primary>
+                    <secondary>
+                        Lob
+                    </secondary>
+                </indexterm>
+                <para>
+Adding the <classname>Lob</classname> marker annotation to a basic field signals
+that the data is to be stored as a LOB (Large OBject). If the field holds string
+or character data, it will map to a <literal>CLOB</literal> (Character Large
+OBject) database column. If the field holds any other data type, it will be
+stored as binary data in a <literal>BLOB</literal> (Binary Large OBject) column.
+The implementation will serialize the Java value if needed.
+                </para>
+                <para>
+The equivalent XML element is <literal>lob</literal>, which has no children or
+attributes.
+                </para>
+                <note>
+                    <para>
+OpenJPA also supports LOB streaming. See <xref linkend="ref_guide_streamsupport"/> in
+the Reference Guide for details.
+                    </para>
+                </note>
+            </section>
+            <section id="jpa_overview_mapping_enum">
+                <title>
+                    Enumerated
+                </title>
+                <indexterm zone="jpa_overview_mapping_enum">
+                    <primary>
+                        Enumerated
+                    </primary>
+                </indexterm>
+                <indexterm zone="jpa_overview_mapping_enum">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        enums
+                    </secondary>
+                </indexterm>
+                <indexterm zone="jpa_overview_mapping_enum">
+                    <primary>
+                        annotations
+                    </primary>
+                    <secondary>
+                        Enumerated
+                    </secondary>
+                </indexterm>
+                <para>
+You can apply the <classname>Enumerated</classname> annotation to your
+<classname>Enum</classname> fields to control how they map to the database. The
+<classname>Enumerated</classname> annotation's value one of the following
+constants from the <classname>EnumType</classname> enum:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>EnumType.ORDINAL</literal>: The default. The persistence
+implementation places the ordinal value of the enum in a numeric column. This is
+an efficient mapping, but may break if you rearrange the Java enum declaration.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>EnumType.STRING</literal>: Store the name of the enum value rather
+than the ordinal. This mapping uses a <literal>VARCHAR</literal> column rather
+than a numeric one.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+The <classname>Enumerated</classname> annotation is optional. Any un-annotated
+enumeration field defaults to <literal>ORDINAL</literal> mapping.
+                </para>
+                <para>
+The corresponding XML element is <literal>enumerated</literal>. Its embedded
+text must be one of <literal>STRING</literal> or <literal>ORIDINAL</literal>.
+                </para>
+            </section>
+            <section id="jpa_overview_mapping_temporal">
+                <title>
+                    Temporal Types
+                </title>
+                <indexterm zone="jpa_overview_mapping_temporal">
+                    <primary>
+                        mapping metadata
+                    </primary>
+                    <secondary>
+                        temporal types
+                    </secondary>
+                </indexterm>
+                <indexterm zone="jpa_overview_mapping_temporal">
+                    <primary>
+                        persistent fields
+                    </primary>
+                    <secondary>
+                        temporal
+                    </secondary>
+                </indexterm>
+                <para>
+The <classname>Temporal</classname> annotation determines how the implementation
+handles your basic <classname> java.util.Date</classname> and <classname>
+java.util.Calendar</classname> fields at the JDBC level. The <classname>
+Temporal</classname> annotation's value is a constant from the <classname>
+TemporalType</classname> enum. Available values are:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+<literal>TemporalType.TIMESTAMP</literal>: The default. Use JDBC's timestamp
+APIs to manipulate the column data.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>TemporalType.DATE</literal>: Use JDBC's SQL date APIs to manipulate
+the column data.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+<literal>TemporalType.TIME</literal>: Use JDBC's time APIs to manipulate the
+column data.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+If the <classname>Temporal</classname> annotation is omitted, the implementation
+will treat the data as a timestamp.
+                </para>
+                <para>
+The corresponding XML element is <literal>temporal</literal>, whose text value
+must be one of: <literal>TIME</literal>, <literal>DATE</literal>, or <literal>
+TIMESTAMP</literal>.
+                </para>
+            </section>
+            <section id="jpa_overview_mapping_basic_example">
+                <title>
+                    The Updated Mappings
+                </title>
+                <para>
+Below we present an updated diagram of our model and its associated database
+schema, followed by the corresponding mapping metadata. Note that the mapping
+metadata relies on defaults where possible. Also note that as a mapped
+superclass, <classname>Document</classname> can define mappings that will
+automatically transfer to its subclass' tables. In
+<xref linkend="jpa_overview_mapping_embed"/>, you will see how a subclass
+can override its mapped superclass' mappings.
+                </para>
+                <mediaobject>
+                    <imageobject>
+                        <!-- PNG image data, 580 x 553 (see README) -->
+                        <imagedata fileref="img/jpa-basic-field.png" width="387px"/>
+                        
+                    </imageobject>
+                </mediaobject>
+                <example id="jpa_overview_mapping_basicex">
+                    <title>
+                        Basic Field Mapping
+                    </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+@DiscriminatorValue("Mag")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    @Column(name="VERS")
+    @Version private int version;
+    
+    private String name;
+    private double price;
+
+    @Column(name="COPIES")
+    private int copiesSold;
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+@SequenceGenerator(name="ArticleSeq", sequenceName="ART_SEQ")
+public class Article {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ArticleSeq") 
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    private String title;
+    private byte[] content;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    private String name;
+
+    @Column(name="REV")
+    private double revenue;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="AuthorGen")
+    @TableGenerator(name="AuthorGen", table="AUTH_GEN", pkColumnName="PK",
+        valueColumnName="AID")
+    @Column(name="AID", columnDefinition="INTEGER64")
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    @Column(name="FNAME")
+    private String firstName;
+
+    @Column(name="LNAME")
+    private String lastName;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+    ...
+}
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="CTYPE")
+public class Contract
+    extends Document {
+
+    @Lob
+    private String terms;
+
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+@DiscriminatorColumn(name="KIND", discriminatorType=DiscriminatorType.INTEGER)
+@DiscriminatorValue("1")
+public class Subscription {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    @Column(name="START")
+    private Date startDate;
+
+    @Column(name="PAY")
+    private double payment;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+
+        @Column(name="COMM")
+        private String comments;
+
+        private double price;
+        private long num;
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+@DiscriminatorValue("2")
+public class LifetimeSubscription
+    extends Subscription {
+
+    @Basic(fetch=FetchType.LAZY)
+    @Column(name="ELITE")
+    private boolean getEliteClub() { ... }
+    public void setEliteClub(boolean elite) { ... }
+
+    ...
+}
+
+@Entity(name="Trial")
+@DiscriminatorValue("3")
+public class TrialSubscription
+    extends Subscription {
+
+    @Column(name="END")
+    public Date getEndDate() { ... }
+    public void setEndDate(Date end) { ... }
+
+    ...
+}
+</programlisting>
+                    <para>
+The same metadata expressed in XML:
+                    </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;table name="MAG"/&gt;
+        &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+        &lt;discriminator-value&gt;Mag&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;id name="isbn"&gt;
+                &lt;column length="9"/&gt;
+            &lt;/id&gt;
+            &lt;id name="title"/&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="copiesSold"&gt;
+                &lt;column name="COPIES"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;table name="ART"&gt;
+            &lt;unique-constraint&gt;
+               &lt;column-name&gt;TITLE&lt;/column-name&gt;
+            &lt;/unique-constraint&gt;
+        &lt;/table&gt;
+        &lt;sequence-generator name="ArticleSeq", sequenceName="ART_SEQ"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="SEQUENCE" generator="ArticleSeq"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="title"/&gt;
+            &lt;basic name="content"/&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;table name="COMP"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="CID"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="revenue"&gt;
+                &lt;column name="REV"/&gt;
+            &lt;/basic&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;table name="AUTH"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="AID" column-definition="INTEGER64"/&gt;
+                &lt;generated-value strategy="TABLE" generator="AuthorGen"/&gt;
+                &lt;table-generator name="AuthorGen" table="AUTH_GEN" 
+                    pk-column-name="PK" value-column-name="AID"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="firstName"&gt;
+                &lt;column name="FNAME"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="lastName"&gt;
+                &lt;column name="LNAME"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;table schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="JOINED"/&gt;
+        &lt;discriminator-column name="CTYPE"/&gt;
+        &lt;attributes&gt;
+            &lt;basic name="terms"&gt;
+                &lt;lob/&gt;
+            &lt;/basic&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;table name="SUB" schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="SINGLE_TABLE"/&gt;
+        &lt;discriminator-value&gt;1&lt;/discriminator-value&gt;
+        &lt;discriminator-column name="KIND" discriminator-type="INTEGER"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="payment"&gt;
+                &lt;column name="PAY"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="startDate"&gt;
+                &lt;column name="START"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+        &lt;primary-key-join-column name="ID" referenced-column-name="PK"/&gt;
+        &lt;attributes&gt;
+            &lt;basic name="comments"&gt;
+                &lt;column name="COMM"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="num"/&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        &lt;discriminator-value&gt;2&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;basic name="eliteClub" fetch="LAZY"&gt;
+                &lt;column name="ELITE"/&gt;
+            &lt;/basic&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        &lt;discriminator-value&gt;3&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;basic name="endDate"&gt;
+                &lt;column name="END"/&gt;
+            &lt;/basic&gt;
+            ...
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+                </example>
+            </section>
+        </section>
+        <section id="jpa_overview_mapping_secondary">
+            <title>
+                Secondary Tables
+            </title>
+            <indexterm zone="jpa_overview_mapping_secondary">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    secondary table fields
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_secondary">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    in secondary tables
+                </secondary>
+            </indexterm>
+            <para>
+Sometimes a logical record is spread over multiple database tables. JPA
+calls a class' declared table the <emphasis>primary</emphasis>
+table, and calls other tables that make up a logical record <emphasis>secondary
+</emphasis> tables. You can map any persistent field to a secondary table. Just
+write the standard field mapping, then perform these two additional steps:
+            </para>
+            <orderedlist>
+                <listitem>
+                    <para>
+Set the <literal>table</literal> attribute of each of the field's columns or
+join columns to the name of the secondary table.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+Define the secondary table on the entity class declaration.
+                    </para>
+                </listitem>
+            </orderedlist>
+            <para>
+You define secondary tables with the <classname>SecondaryTable</classname>
+annotation. This annotation has all the properties of the <classname>Table
+</classname> annotation covered in <xref linkend="jpa_overview_mapping_table"/>
+, plus a <literal> pkJoinColumns</literal> property.
+            </para>
+            <para>
+The <literal>pkJoinColumns</literal> property is an array of <classname>
+PrimaryKeyJoinColumn</classname>s dictating how to join secondary table records
+to their owning primary table records. Each <classname>PrimaryKeyJoinColumn
+</classname> joins a secondary table column to a primary key column in the
+primary table. See <xref linkend="jpa_overview_mapping_inher_joined"/>
+above for coverage of <classname>PrimaryKeyJoinColumn</classname>'s properties.
+            </para>
+            <para>
+The corresponding XML element is <literal>secondary-table</literal>. This
+element has all the attributes of the <literal>table</literal> element, but also
+accepts nested <literal>primary-key-join-column</literal> elements.
+            </para>
+            <para>
+In the following example, we move the <literal>Article.content</literal> field
+we mapped in <xref linkend="jpa_overview_mapping_basic"/> into a joined
+secondary table, like so:
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 284 x 167 (see README) -->
+                    <imagedata fileref="img/secondary-table.png" width="189px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <example id="jpa_overview_mapping_secondaryex">
+                <title>
+                    Secondary Table Field Mapping
+                </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@Table(name="ART")
+@SecondaryTable(name="ART_DATA", 
+    pkJoinColumns=@PrimaryKeyJoinColumn(name="ART_ID", referencedColumnName="ID"))
+public class Article {
+
+    @Id private long id;
+
+    @Column(table="ART_DATA")
+    private byte[] content;
+
+    ...
+}
+</programlisting>
+                <para>
+And in XML:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.Article"&gt;
+    &lt;table name="ART"/&gt;
+    &lt;secondary-table name="ART_DATA"&gt;
+        &lt;primary-key-join-column name="ART_ID" referenced-column-name="ID"/&gt;
+    &lt;/secondary-table&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"/&gt;
+        &lt;basic name="content"&gt;
+            &lt;column table="ART_DATA"/&gt;
+        &lt;/basic&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+        </section>
+        <section id="jpa_overview_mapping_embed">
+            <title>
+                Embedded Mapping
+            </title>
+            <indexterm zone="jpa_overview_mapping_embed">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    embedded fields
+                </secondary>
+                <seealso>
+                    embedded
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_embed">
+                <primary>
+                    embedded
+                </primary>
+                <secondary>
+                    mapping embedded fields
+                </secondary>
+            </indexterm>
+            <para>
+<xref linkend="jpa_overview_meta"/> describes JPA's concept of <emphasis>
+embeddable</emphasis> objects. The field values of embedded objects are stored
+as part of the owning record, rather than as a separate database record. Thus,
+instead of mapping a relation to an embeddable object as a foreign key, you map
+all the fields of the embeddable instance to columns in the owning field's
+table.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 464 x 203 (see README) -->
+                    <imagedata fileref="img/jpa-embedded.png" width="309px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+JPA defaults the embedded column names and descriptions to those of
+the embeddable class' field mappings. The <classname> AttributeOverride
+</classname> annotation overrides a basic embedded mapping. This annotation has
+the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of the embedded class' field being
+mapped to this class' table.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>Column column</literal>: The column defining the mapping of the
+embedded class' field to this class' table.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The corresponding XML element is <literal> attribute-override</literal>. It has
+a single <literal>name</literal> attribute to name the field being overridden,
+and a single <literal>column</literal> child element.
+            </para>
+            <para>
+To declare multiple overrides, use the <classname>AttributeOverrides</classname>
+annotation, whose value is an array of <classname>AttributeOverride</classname>
+s. In XML, simply list multiple <literal>attribute-override</literal> elements
+in succession.
+            </para>
+            <para>
+To override a many to one or one to one relationship, use the <classname>
+AssociationOverride</classname> annotation in place of <classname>
+AttributeOverride</classname>. <classname> AssociationOverride</classname> has
+the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of the embedded class' field being
+mapped to this class' table.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>JoinColumn[] joinColumns</literal>: The foreign key columns joining to
+the related record.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+The corresponding XML element is <literal> association-override</literal>. It
+has a single <literal>name</literal> attribute to name the field being
+overridden, and one or more <literal>join-column</literal> child elements.
+            </para>
+            <para>
+To declare multiple relation overrides, use the <classname> AssociationOverrides
+</classname> annotation, whose value is an array of <classname>
+AssociationOverride</classname> s. In XML, simply list multiple <literal>
+association-override</literal> elements in succession.
+            </para>
+            <example id="jpa_overview_mapping_embedex">
+                <title>
+                    Embedded Field Mapping
+                </title>
+                <para>
+In this example, <classname>Company</classname> overrides the default mapping of
+<literal>Address.street</literal> and <literal>Address.city</literal>. All
+other embedded mappings are taken from the <classname>Address</classname>
+embeddable class.
+                </para>
+<programlisting>
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="street", column=@Column(name="STRT")),
+        @AttributeOverride(name="city", column=@Column(name="ACITY"))
+    })
+    private Address address;
+    
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    // use all defaults from Address class mappings
+    private Address address;
+    
+    ...
+}
+
+@Embeddable
+public class Address {
+
+    private String street;
+    private String city;
+    @Column(columnDefinition="CHAR(2)")
+    private String state;
+    private String zip;
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.pub.Company"&gt;
+    &lt;table name="COMP"/&gt;
+    &lt;attributes&gt;
+        ...
+        &lt;embedded name="address"&gt;
+            &lt;attribute-override name="street"&gt;
+               &lt;column name="STRT"/&gt;
+            &lt;/attribute-override&gt;
+            &lt;attribute-override name="city"&gt;
+               &lt;column name="ACITY"/&gt;
+            &lt;/attribute-override&gt;
+        &lt;/embedded&gt;
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.pub.Author"&gt;
+    &lt;table name="AUTH"/&gt;
+    &lt;attributes&gt;
+        &lt;embedded name="address"&gt;
+            &lt;!-- use all defaults from Address --&gt;
+        &lt;/embedded&gt;
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;embeddable class="org.mag.pub.Address"&gt;
+    &lt;attributes&gt;
+        &lt;basic name="street"/&gt;
+        &lt;basic name="city"/&gt;
+        &lt;basic name="state"&gt;
+            &lt;column column-definition="CHAR(2)"/&gt;
+        &lt;/basic&gt;
+        &lt;basic name="zip"/&gt;
+    &lt;/attributes&gt;
+&lt;/embeddable&gt;
+</programlisting>
+            </example>
+            <para>
+You can also use attribute overrides on an entity class to override mappings
+defined by its mapped superclass or table-per-class superclass. The example
+below re-maps the <literal>Document.version</literal> field to the <classname>
+Contract</classname> table's <literal>CVERSION</literal> column.
+            </para>
+            <example id="jpa_overview_mapping_joined_overex">
+                <title>
+                    Mapping Mapped Superclass Field
+                </title>
+<programlisting>
+@MappedSuperclass
+public abstract class Document {
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="CTYPE")
+@AttributeOverride(name="version", column=@Column(name="CVERSION"))
+public class Contract
+    extends Document {
+    ...
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML form:
+                </para>
+<programlisting>
+&lt;mapped-superclass class="org.mag.subcribe.Document"&gt;
+    &lt;attributes&gt;
+        &lt;version name="version"&gt;
+            &lt;column name="VERS"&gt;
+        &lt;/version&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/mapped-superclass&gt;
+&lt;entity class="org.mag.subcribe.Contract"&gt;
+    &lt;table schema="CNTRCT"/&gt;
+    &lt;inheritance strategy="JOINED"/&gt;
+    &lt;discriminator-column name="CTYPE"/&gt;
+    &lt;attribute-override name="version"&gt;
+        &lt;column name="CVERSION"/&gt;
+    &lt;/attribute-override&gt;
+    &lt;attributes&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+        </section>
+        <section id="jpa_overview_mapping_rel">
+            <title>
+                Direct Relations
+            </title>
+            <indexterm zone="jpa_overview_mapping_rel">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    direct relation fields
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_rel">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    direct relations
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_rel">
+                <primary>
+                    one-one
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_rel">
+                <primary>
+                    many-one
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <para>
+A direct relation is a non-embedded persistent field that holds a reference to
+another entity. <link linkend="jpa_overview_meta_manytoone">many to one</link>
+and <link linkend="jpa_overview_meta_onetoone">one to one</link> metadata field
+types are mapped as direct relations. Our model has three direct relations:
+<classname>Magazine</classname>'s <literal>publisher</literal> field is a direct
+relation to a <classname>Company</classname>, <classname>Magazine</classname>'s
+<literal>coverArticle</literal> field is a direct relation to <classname>
+Article</classname>, and the <literal>LineItem.magazine</literal> field is a
+direct relation to a <classname>Magazine</classname>. Direct relations are
+represented in the database by foreign key columns:
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 374 x 386 (see README) -->
+                    <imagedata fileref="img/jpa-direct-relation.png" width="249px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+You typically map a direct relation with <classname>JoinColumn</classname>
+annotations describing how the local foreign key columns join to the primary key
+columns of the related record. The <classname>JoinColumn</classname> annotation
+exposes the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: The name of the foreign key column. Defaults to
+the relation field name, plus an underscore, plus the name of the referenced
+primary key column.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String referencedColumnName</literal>: The name of the primary key
+column being joined to. If there is only one identity field in the related
+entity class, the join column name defaults to the name of the identity field's
+column.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>boolean unique</literal>: Whether this column is guaranteed to hold
+unique values for all rows. Defaults to false.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+<classname>JoinColumn</classname> also has the same <literal> nullable</literal>
+, <literal>insertable</literal>, <literal> updatable</literal>, <literal>
+columnDefinition</literal>, and <literal>table</literal> properties as the
+<classname> Column</classname> annotation. See
+<xref linkend="jpa_overview_mapping_column"/> for details on these
+properties.
+            </para>
+            <para>
+The <literal>join-column</literal> element represents a join column in XML. Its
+attributes mirror the above annotation's properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>referenced-column-name</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>unique</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>nullable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>insertable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>updatable</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>column-definition</literal>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>table</literal>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+When there are multiple columns involved in the join, as when a <classname>
+LineItem</classname> references a <classname>Magazine</classname> in our model,
+the <classname>JoinColumns</classname> annotation allows you to specify an array
+of <classname>JoinColumn</classname> values. In XML, simply list multiple
+<literal>join-column</literal> elements.
+            </para>
+            <note>
+                <para>
+OpenJPA supports many non-standard joins. See
+<xref linkend="ref_guide_mapping_notes_nonstdjoins"/> in the Reference
+Guide for details.
+                </para>
+            </note>
+            <example id="jpa_overview_mapping_relex">
+                <title>
+                    Direct Relation Field Mapping
+                </title>
+<programlisting>
+package org.mag;
+
+@Table(name="AUTH")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    @OneToOne
+    @JoinColumn(name="COVER_ID" referencedColumnName="ID")
+    private Article coverArticle;
+
+    @ManyToOne
+    @JoinColumn(name="PUB_ID" referencedColumnName="CID")
+    private Company publisher;
+
+    ...
+}
+
+@Table(name="ART")
+public class Article {
+
+    @Id private long id;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    ...
+}
+
+
+package org.mag.subscribe;
+
+public class Subscription {
+    ...
+
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+
+        @ManyToOne
+        @JoinColumns({
+            @JoinColumn(name="MAG_ISBN" referencedColumnName="ISBN"),
+            @JoinColumn(name="MAG_TITLE" referencedColumnName="TITLE")
+        })
+        private Magazine magazine;
+
+        ...
+    }
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML form:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.Magazine"&gt;
+    &lt;table name="MAG"/&gt;
+    &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="isbn"&gt;
+            &lt;column length="9"/&gt;
+        &lt;/id&gt;
+        &lt;id name="title"/&gt;
+        &lt;one-to-one name="coverArticle"&gt;
+            &lt;join-column name="COVER_ID" referenced-column-name="ID"/&gt;
+        &lt;/one-to-one&gt;
+        &lt;many-to-one name="publisher"&gt;
+            &lt;join-column name="PUB_IC" referenced-column-name="CID"/&gt;
+        &lt;/many-to-one&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.Article"&gt;
+    &lt;table name="ART"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"/&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.pub.Company"&gt;
+    &lt;table name="COMP"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"&gt;
+            &lt;column name="CID"/&gt;
+        &lt;/id&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+    &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+    &lt;primary-key-join-column name="ID" referenced-column-name="PK"/&gt;
+    &lt;attributes&gt;
+        &lt;many-to-one name="magazine"&gt;
+            &lt;join-column name="MAG_ISBN" referenced-column-name="ISBN"/&gt;
+            &lt;join-column name="MAG_TITLE" referenced-column-name="TITLE"/&gt;
+        &lt;/many-to-one&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+            <para>
+When the entities in a one to one relation join on shared primary key values
+rather than separate foreign key columns, use the <classname>
+PrimaryKeyJoinColumn(s)</classname> annotation or <literal>
+primary-key-join-column</literal> elements in place of <classname>JoinColumn(s)
+</classname> / <literal> join-column</literal> elements.
+            </para>
+        </section>
+        <section id="jpa_overview_mapping_assoccoll">
+            <title>
+                Join Table
+            </title>
+            <indexterm zone="jpa_overview_mapping_assoccoll">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    association table collection fields
+                </secondary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_assoccoll">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    join table collections
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    join table
+                </primary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_assoccoll">
+                <primary>
+                    one-many
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_assoccoll">
+                <primary>
+                    many-many
+                </primary>
+                <seealso>
+                    persistent fields
+                </seealso>
+            </indexterm>
+            <para>
+A <emphasis>join table</emphasis> consists of two foreign keys. Each row of a
+join table associates two objects together. JPA uses join tables to
+represent collections of entity objects: one foreign key refers back to the
+collection's owner, and the other refers to a collection element.
+            </para>
+            <para>
+<link linkend="jpa_overview_meta_onetomany">one to many</link> and
+<link linkend="jpa_overview_meta_manytomany">many to many</link> metadata field
+types can map to join tables. Several fields in our model use join table
+mappings, including <literal>Magazine.articles</literal> and <literal>
+Article.authors</literal>.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 391 x 407 (see README) -->
+                    <imagedata fileref="img/jpa-assoc-table.png" width="261px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+You define join tables with the <classname>JoinTable</classname> annotation.
+This annotation has the following properties:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>String name</literal>: Table name. If not given, the name of the table
+defaults to the name of the owning entity's table, plus an underscore, plus the
+name of the related entity's table.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String catalog</literal>: Table catalog.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>String schema</literal>: Table schema.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>JoinColumn[] joinColumns</literal>: Array of <classname>JoinColumn
+</classname> showing how to associate join table records with the owning row in
+the primary table. This property mirrors the <literal>pkJoinColumns</literal>
+property of the <classname> SecondaryTable</classname> annotation in
+functionality. See <xref linkend="jpa_overview_mapping_secondary"/> to
+refresh your memory on secondary tables.
+                    </para>
+                    <para>
+If this is a bidirectional relation (see
+<xref linkend="jpa_overview_meta_mappedby"/> ), the name of a join column
+defaults to the inverse field name, plus an underscore, plus the referenced
+primary key column name. Otherwise, the join column name defaults to the field's
+owning entity name, plus an underscore, plus the referenced primary key column
+name.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>JoinColumn[] inverseJoinColumns</literal>: Array of <classname>
+JoinColumns</classname> showing how to associate join table records with the
+records that form the elements of the collection. These join columns are used
+just like the join columns for direct relations, and they have the same naming
+defaults. Read <xref linkend="jpa_overview_mapping_rel"/> for a review of
+direct relation mapping.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+<literal>join-table</literal> is the corresponding XML element. It has the same
+attributes as the <literal>table</literal> element, but includes the ability to
+nest <literal>join-column</literal> and <literal>inverse-join-column</literal>
+elements as children. We have seen <literal>join-column</literal> elements
+already; <literal>inverse-join-column</literal> elements have the same
+attributes.
+            </para>
+            <para>
+Here are the join table mappings for the diagram above.
+            </para>
+            <example id="jpa_overview_mapping_assoccollex">
+                <title>
+                    Join Table Mapping
+                </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@Table(name="MAG")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    @OneToMany(...)
+    @OrderBy
+    @JoinTable(name="MAG_ARTS",
+        joinColumns={
+            @JoinColumn(name="MAG_ISBN", referencedColumnName="ISBN"),
+            @JoinColumn(name="MAG_TITLE", referencedColumnName="TITLE")
+        },
+        inverseJoinColumns=@JoinColumn(name="ART_ID", referencedColumnName="ID"))
+    private Collection&lt;Article&gt; articles;
+
+    ...
+}
+
+@Entity
+@Table(name="ART")
+public class Article {
+
+    @Id private long id;
+
+    @ManyToMany(cascade=CascadeType.PERSIST)
+    @OrderBy("lastName, firstName")
+    @JoinTable(name="ART_AUTHS",
+        joinColumns=@JoinColumn(name="ART_ID", referencedColumnName="ID"),
+        inverseJoinColumns=@JoinColumn(name="AUTH_ID", referencedColumnName="AID"))
+    private Collection&lt;Author&gt; authors;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Column(name="AID", columnDefinition="INTEGER64")
+    @Id private long id;
+
+    ...
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.Magazine"&gt;
+    &lt;table name="MAG"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="isbn"&gt;
+            &lt;column length="9"/&gt;
+        &lt;/id&gt;
+        &lt;id name="title"/&gt;
+        &lt;one-to-many name="articles"&gt;
+            &lt;order-by/&gt;
+            &lt;join-table name="MAG_ARTS"&gt;
+                &lt;join-column name="MAG_ISBN" referenced-column-name="ISBN"/&gt;
+                &lt;join-column name="MAG_TITLE" referenced-column-name="TITLE"/&gt;
+                &lt;inverse-join-column name="ART_ID" referenced-column-name="ID"/&gt;
+            &lt;/join-table&gt;
+        &lt;/one-to-many&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.Article"&gt;
+    &lt;table name="ART"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"/&gt;
+            &lt;many-to-many name="authors"&gt;
+                &lt;order-by&gt;lastName, firstName&lt;/order-by&gt;
+                &lt;join-table name="ART_AUTHS"&gt;
+                    &lt;join-column name="ART_ID" referenced-column-name="ID"/&gt;
+                    &lt;inverse-join-column name="AUTH_ID" referenced-column-name="AID"/&gt;
+                &lt;/join-table&gt;
+            &lt;cascade&gt;
+                &lt;cascade-persist/&gt;
+            &lt;/cascade&gt;
+            &lt;/many-to-many&gt;
+            ...
+       &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.pub.Author"&gt;
+    &lt;table name="AUTH"/&gt;
+    &lt;attributes&gt;
+        &lt;id name="id"&gt;
+            &lt;column name="AID" column-definition="INTEGER64"/&gt;
+        &lt;/id&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+        </section>
+        <section id="jpa_overview_mapping_bidi">
+            <title>
+                Bidirectional Mapping
+            </title>
+            <indexterm zone="jpa_overview_mapping_bidi">
+                <primary>
+                    bidirectional relations
+                </primary>
+                <secondary>
+                    mapping
+                </secondary>
+            </indexterm>
+            <para>
+<xref linkend="jpa_overview_meta_mappedby"/> introduced bidirectional
+relations. To map a bidirectional relation, you map one field normally using the
+annotations we have covered throughout this chapter. Then you use the <literal>
+mappedBy</literal> property of the other field's metadata annotation or the
+corresponding <literal>mapped-by</literal> XML attribute to refer to the mapped
+field. Look for this pattern in these bidirectional relations as you peruse the
+complete mappings below:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>Magazine.publisher</literal> and <literal>Company.mags</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>Article.authors</literal> and <literal>Author.articles</literal>.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section id="jpa_overview_mapping_map">
+            <title>
+                Map Mapping
+            </title>
+            <indexterm zone="jpa_overview_mapping_map">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    map fields
+                </secondary>
+            </indexterm>
+            <indexterm zone="jpa_overview_mapping_map">
+                <primary>
+                    persistent fields
+                </primary>
+                <secondary>
+                    maps
+                </secondary>
+            </indexterm>
+            <para>
+All map fields in JPA are modeled on either one to many or many to
+many associations. The map key is always derived from an associated entity's
+field. Thus map fields use the same mappings as any one to many or many to many
+fields, namely dedicated <link linkend="jpa_overview_mapping_assoccoll">join
+tables</link> or <link linkend="jpa_overview_mapping_bidi">bidirectional
+relations</link>. The only additions are the <classname>MapKey</classname>
+annotation and <literal>map-key</literal> element to declare the key field. We
+covered these additions in <xref linkend="jpa_overview_meta_mapkey"/>.
+            </para>
+            <mediaobject>
+                <imageobject>
+                    <!-- PNG image data, 382 x 274 (see README) -->
+                    <imagedata fileref="img/jpa-map.png" width="255px"/>
+                    
+                </imageobject>
+            </mediaobject>
+            <para>
+The example below maps <classname>Subscription</classname>'s map of <classname>
+LineItem</classname>s to the <literal>SUB_ITEMS</literal> join table. The key
+for each map entry is the <classname> LineItem</classname>'s <literal>num
+</literal> field value.
+            </para>
+            <example id="jpa_overview_mapping_mapex">
+                <title>
+                    Join Table Map Mapping
+                </title>
+<programlisting>
+package org.mag.subscribe;
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+public class Subscription {
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @MapKey(name="num")
+    @JoinTable(name="SUB_ITEMS", schema="CNTRCT",
+        joinColumns=@JoinColumn(name="SUB_ID"),
+        inverseJoinColumns=@JoinColumn(name="ITEM_ID"))
+    private Map&lt;Long,LineItem&gt; items;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+
+        private long num;
+
+        ...
+    }
+}
+</programlisting>
+                <para>
+The same metadata expressed in XML:
+                </para>
+<programlisting>
+&lt;entity class="org.mag.subscribe.Subscription"&gt;
+    &lt;table name="SUB" schema="CNTRCT"/&gt;
+    &lt;attributes&gt;
+        ...
+        &lt;one-to-many name="items"&gt;
+            &lt;map-key name="num"&gt;
+            &lt;join-table name="SUB_ITEMS" schema="CNTRCT"&gt;
+                &lt;join-column name="SUB_ID"/&gt;
+                &lt;inverse-join-column name="ITEM_ID"/&gt;
+            &lt;/join-table&gt;
+            &lt;cascade&gt;
+                &lt;cascade-persist/&gt;
+                &lt;cascade-remove/&gt;
+            &lt;/cascade&gt;
+        &lt;/one-to-many&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+&lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+    &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+    &lt;attributes&gt;
+        ...
+        &lt;basic name="num"/&gt;
+        ...
+    &lt;/attributes&gt;
+&lt;/entity&gt;
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="jpa_overview_mapping_full">
+        <title>
+            The Complete Mappings
+        </title>
+        <para>
+We began this chapter with the goal of mapping the following object model:
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 553 x 580 (see README) -->
+                <imagedata fileref="img/jpa-meta-model.png" width="369px"/>
+                
+            </imageobject>
+        </mediaobject>
+        <para>
+That goal has now been met. In the course of explaining JPA's object-relational
+mapping metadata, we slowly built the requisite schema and mappings for the
+complete model. First, the database schema:
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 490 x 662 (see README) -->
+                <imagedata fileref="img/jpa-data-model.png" width="326px"/>
+                
+            </imageobject>
+        </mediaobject>
+        <para>
+And finally, the complete entity mappings. We have trimmed the mappings to take
+advantage of JPA defaults where possible.
+        </para>
+        <example id="jpa_overview_mapping_fullex">
+            <title>
+                Full Entity Mappings
+            </title>
+<programlisting>
+package org.mag;
+
+@Entity
+@IdClass(Magazine.MagazineId.class)
+@Table(name="MAG")
+@DiscriminatorValue("Mag")
+public class Magazine {
+
+    @Column(length=9)
+    @Id private String isbn;
+    @Id private String title;
+
+    @Column(name="VERS")
+    @Version private int version;
+    
+    private String name;
+    private double price;
+
+    @Column(name="COPIES")
+    private int copiesSold;
+
+    @OneToOne(fetch=FetchType.LAZY, 
+        cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @JoinColumn(name="COVER_ID")
+    private Article coverArticle;
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @OrderBy
+    @JoinTable(name="MAG_ARTS",
+        joinColumns={
+            @JoinColumn(name="MAG_ISBN", referencedColumnName="ISBN"),
+            @JoinColumn(name="MAG_TITLE", referencedColumnName="TITLE")
+        },
+        inverseJoinColumns=@JoinColumn(name="ART_ID"))
+    private Collection&lt;Article&gt; articles;
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+    @JoinColumn(name="PUB_ID")
+    private Company publisher; 
+
+    @Transient private byte[] data;
+
+
+    ...
+
+    public static class MagazineId {
+        ...
+    }
+}
+
+@Entity
+@Table(name="ART", uniqueConstraints=@Unique(columnNames="TITLE"))
+@SequenceGenerator(name="ArticleSeq", sequenceName="ART_SEQ")
+public class Article {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ArticleSeq") 
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    private String title;
+    private byte[] content;
+
+    @ManyToMany(cascade=CascadeType.PERSIST)
+    @OrderBy("lastName, firstName")
+    @JoinTable(name="ART_AUTHS",
+        joinColumns=@JoinColumn(name="ART_ID"),
+        inverseJoinColumns=@JoinColumn(name="AUTH_ID"))
+    private Collection&lt;Author&gt; authors;
+
+    ...
+}
+
+
+package org.mag.pub;
+
+@Entity
+@Table(name="COMP")
+public class Company {
+
+    @Column(name="CID")
+    @Id private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    private String name;
+
+    @Column(name="REV")
+    private double revenue;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="street", column=@Column(name="STRT")),
+        @AttributeOverride(name="city", column=@Column(name="ACITY"))
+    })
+    private Address address;
+    
+    @OneToMany(mappedBy="publisher", cascade=CascadeType.PERSIST)
+    private Collection&lt;Magazine&gt; mags;
+
+    @OneToMany(cascade=CascadeType.PERSIST,CascadeType.REMOVE)
+    @JoinTable(name="COMP_SUBS",
+        joinColumns=@JoinColumn(name="COMP_ID"),
+        inverseJoinColumns=@JoinColumn(name="SUB_ID"))
+    private Collection&lt;Subscription&gt; subscriptions;
+
+    ...
+}
+
+@Entity
+@Table(name="AUTH")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="AuthorGen")
+    @TableGenerator(name="AuthorGen", tableName="AUTH_GEN", pkColumnName="PK",
+        valueColumnName="AID")
+    @Column(name="AID", columnDefinition="INTEGER64")
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    @Column(name="FNAME")
+    private String firstName;
+
+    @Column(name="LNAME")
+    private String lastName;
+
+    private Address address;
+    
+    @ManyToMany(mappedBy="authors", cascade=CascadeType.PERSIST)
+    private Collection&lt;Article&gt; arts;
+
+    ...
+}
+
+@Embeddable
+public class Address {
+
+    private String street;
+    private String city;
+    @Column(columnDefinition="CHAR(2)")
+    private String state;
+    private String zip;
+}
+
+
+package org.mag.subscribe;
+
+@MappedSuperclass
+public abstract class Document {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    ...
+}
+
+@Entity
+@Table(schema="CNTRCT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="CTYPE")
+public class Contract
+    extends Document {
+
+    @Lob
+    private String terms;
+
+    ...
+}
+
+@Entity
+@Table(name="SUB", schema="CNTRCT")
+@DiscriminatorColumn(name="KIND", discriminatorType=DiscriminatorType.INTEGER)
+@DiscriminatorValue("1")
+public class Subscription {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name="VERS")
+    @Version private int version;
+
+    @Column(name="START")
+    private Date startDate;
+
+    @Column(name="PAY")
+    private double payment;
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @MapKey(name="num")
+    @JoinTable(name="SUB_ITEMS", schema="CNTRCT",
+        joinColumns=@JoinColumn(name="SUB_ID"),
+        inverseJoinColumns=@JoinColumn(name="ITEM_ID"))
+    private Map&lt;Long,LineItem&gt; items;
+
+    ...
+
+    @Entity
+    @Table(name="LINE_ITEM", schema="CNTRCT")
+    public static class LineItem
+        extends Contract {
+
+        @Column(name="COMM")
+        private String comments;
+
+        private double price;
+        private long num;
+
+        @ManyToOne
+        @JoinColumns({
+             @JoinColumn(name="MAG_ISBN", referencedColumnName="ISBN"),
+             @JoinColumn(name="MAG_TITLE", referencedColumnName="TITLE")
+        })
+        private Magazine magazine;
+        ...
+    }
+}
+
+@Entity(name="Lifetime")
+@DiscriminatorValue("2")
+public class LifetimeSubscription
+    extends Subscription {
+
+    @Basic(fetch=FetchType.LAZY)
+    @Column(name="ELITE")
+    private boolean getEliteClub() { ... }
+    public void setEliteClub(boolean elite) { ... }
+
+    ...
+}
+
+@Entity(name="Trial")
+@DiscriminatorValue("3")
+public class TrialSubscription
+    extends Subscription {
+
+    @Column(name="END")
+    public Date getEndDate() { ... }
+    public void setEndDate(Date end) { ... }
+
+    ...
+}
+</programlisting>
+            <para>
+The same metadata expressed in XML form:
+            </para>
+<programlisting>
+&lt;entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
+    version="1.0"&gt;
+    &lt;mapped-superclass class="org.mag.subscribe.Document"&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+        &lt;/attributes&gt;
+    &lt;/mapped-superclass&gt;
+    &lt;entity class="org.mag.Magazine"&gt;
+        &lt;table name="MAG"/&gt;
+        &lt;id-class="org.mag.Magazine.MagazineId"/&gt;
+        &lt;discriminator-value&gt;Mag&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;id name="isbn"&gt;
+                &lt;column length="9"/&gt;
+            &lt;/id&gt;
+            &lt;id name="title"/&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="copiesSold"&gt;
+                &lt;column name="COPIES"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            &lt;many-to-one name="publisher" fetch="LAZY"&gt;
+                &lt;join-column name="PUB_ID"/&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/many-to-one&gt;
+            &lt;one-to-many name="articles"&gt;
+                &lt;order-by/&gt;
+                &lt;join-table name="MAG_ARTS"&gt;
+                    &lt;join-column name="MAG_ISBN" referenced-column-name="ISBN"/&gt;
+                    &lt;join-column name="MAG_TITLE" referenced-column-name="TITLE"/&gt;
+                    &lt;inverse-join-column name="ART_ID"/&gt;
+                &lt;/join-table&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+            &lt;one-to-one name="coverArticle" fetch="LAZY"&gt;
+                &lt;join-column name="COVER_ID"/&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-one&gt;
+            &lt;transient name="data"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.Article"&gt;
+        &lt;table name="ART"&gt;
+            &lt;unique-constraint&gt;
+               &lt;column-name&gt;TITLE&lt;/column-name&gt;
+            &lt;/unique-constraint&gt;
+        &lt;/table&gt;
+        &lt;sequence-generator name="ArticleSeq", sequenceName="ART_SEQ"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="SEQUENCE" generator="ArticleSeq"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="title"/&gt;
+            &lt;basic name="content"/&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            &lt;many-to-many name="articles"&gt;
+                &lt;order-by&gt;lastName, firstName&lt;/order-by&gt;
+                &lt;join-table name="ART_AUTHS"&gt;
+                    &lt;join-column name="ART_ID" referenced-column-name="ID"/&gt;
+                    &lt;inverse-join-column name="AUTH_ID" referenced-column-name="AID"/&gt;
+                &lt;/join-table&gt;
+            &lt;/many-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Company"&gt;
+        &lt;table name="COMP"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="CID"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="name"/&gt;
+            &lt;basic name="revenue"&gt;
+                &lt;column name="REV"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            &lt;one-to-many name="mags" mapped-by="publisher"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+            &lt;one-to-many name="subscriptions"&gt;
+                &lt;join-table name="COMP_SUBS"&gt;
+                    &lt;join-column name="COMP_ID"/&gt;
+                    &lt;inverse-join-column name="SUB_ID"/&gt;
+                &lt;/join-table&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+            &lt;embedded name="address"&gt;
+                &lt;attribute-override name="street"&gt;
+                   &lt;column name="STRT"/&gt;
+                &lt;/attribute-override&gt;
+                &lt;attribute-override name="city"&gt;
+                   &lt;column name="ACITY"/&gt;
+                &lt;/attribute-override&gt;
+            &lt;/embedded&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.pub.Author"&gt;
+        &lt;table name="AUTH"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;column name="AID" column-definition="INTEGER64"/&gt;
+                &lt;generated-value strategy="TABLE" generator="AuthorGen"/&gt;
+                &lt;table-generator name="AuthorGen" table="AUTH_GEN" 
+                    pk-column-name="PK" value-column-name="AID"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="firstName"&gt;
+                &lt;column name="FNAME"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="lastName"&gt;
+                &lt;column name="LNAME"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            &lt;many-to-many name="arts" mapped-by="authors"&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                &lt;/cascade&gt;
+            &lt;/many-to-many&gt;
+            &lt;embedded name="address"/&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Contract"&gt;
+        &lt;table schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="JOINED"/&gt;
+        &lt;discriminator-column name="CTYPE"/&gt;
+        &lt;attributes&gt;
+            &lt;basic name="terms"&gt;
+                &lt;lob/&gt;
+            &lt;/basic&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subcribe.Subscription"&gt;
+        &lt;table name="SUB" schema="CNTRCT"/&gt;
+        &lt;inheritance strategy="SINGLE_TABLE"/&gt;
+        &lt;discriminator-value&gt;1&lt;/discriminator-value&gt;
+        &lt;discriminator-column name="KIND" discriminator-type="INTEGER"/&gt;
+        &lt;attributes&gt;
+            &lt;id name="id"&gt;
+                &lt;generated-value strategy="IDENTITY"/&gt;
+            &lt;/id&gt;
+            &lt;basic name="payment"&gt;
+                &lt;column name="PAY"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="startDate"&gt;
+                &lt;column name="START"/&gt;
+            &lt;/basic&gt;
+            &lt;version name="version"&gt;
+                &lt;column name="VERS"/&gt;
+            &lt;/version&gt;
+            &lt;one-to-many name="items"&gt;
+                &lt;map-key name="num"&gt;
+                &lt;join-table name="SUB_ITEMS" schema="CNTRCT"&gt;
+                    &lt;join-column name="SUB_ID"/&gt;
+                    &lt;inverse-join-column name="ITEM_ID"/&gt;
+                &lt;/join-table&gt;
+                &lt;cascade&gt;
+                    &lt;cascade-persist/&gt;
+                    &lt;cascade-remove/&gt;
+                &lt;/cascade&gt;
+            &lt;/one-to-many&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.Subscription.LineItem"&gt;
+        &lt;table name="LINE_ITEM" schema="CNTRCT"/&gt;
+        &lt;attributes&gt;
+            &lt;basic name="comments"&gt;
+                &lt;column name="COMM"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="price"/&gt;
+            &lt;basic name="num"/&gt;
+            &lt;many-to-one name="magazine"&gt;
+                &lt;join-column name="MAG_ISBN" referenced-column-name="ISBN"/&gt;
+                &lt;join-column name="MAG_TITLE" referenced-column-name="TITLE"/&gt;
+            &lt;/many-to-one&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.LifetimeSubscription" name="Lifetime"&gt;
+        &lt;discriminator-value&gt;2&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;basic name="eliteClub" fetch="LAZY"&gt;
+                &lt;column name="ELITE"/&gt;
+            &lt;/basic&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;entity class="org.mag.subscribe.TrialSubscription" name="Trial"&gt;
+        &lt;discriminator-value&gt;3&lt;/discriminator-value&gt;
+        &lt;attributes&gt;
+            &lt;basic name="endDate"&gt;
+                &lt;column name="END"/&gt;
+            &lt;/basic&gt;
+        &lt;/attributes&gt;
+    &lt;/entity&gt;
+    &lt;embeddable class="org.mag.pub.Address"&gt;
+        &lt;attributes&gt;
+            &lt;basic name="street"/&gt;
+            &lt;basic name="city"/&gt;
+            &lt;basic name="state"&gt;
+                &lt;column column-definition="CHAR(2)"/&gt;
+            &lt;/basic&gt;
+            &lt;basic name="zip"/&gt;
+        &lt;/attributes&gt;
+    &lt;/embeddable&gt;
+&lt;/entity-mappings&gt;
+</programlisting>
+        </example>
+    </section>
+</chapter>

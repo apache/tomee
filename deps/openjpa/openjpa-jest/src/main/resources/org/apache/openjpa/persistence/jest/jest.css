@@ -1,0 +1,248 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+ */
+
+/** -----------------------------------------------------------------------
+ *  Basic layout consists of a left menu section (class='menu')and two  
+ *  vertical sections for command specification (class='highlight') and 
+ *  JEST response (class='canvas') respectively.
+ * --------------------------------------------------------------------- */
+ 
+/** -----------------------------------------------------------------------
+ *  div section containing the command menu.
+ *  Lodged on the top-left corner
+ *  -------------------------------------------------------------------- */
+.menu {
+	position:absolute;
+	left:0em;
+	top:80px;
+	width:10em;
+}
+/** -----------------------------------------------------------------------
+ * Highlighted blocks appear relative to the menu. The same top position
+ * of the menu and shifted to left of the menu by the menu's width+padding. 
+ * --------------------------------------------------------------------- */
+.highlight {
+	position:relative;
+	left:10em;
+	top:0em;
+//	background-color:#F9F9F9;
+	width:60em;
+
+//	border:1px solid black;
+//	padding:0em 1em 1em 1em; // top, right, bottom, left
+
+}
+
+.logo {
+	font-size:2em;
+	font-weight:bold;
+	font-family: "Palatino Linotype, Times Roman"
+}
+
+/** -----------------------------------------------------------------------
+ * Canvas section appears relative to the menu and the highlighted section. 
+ * The top position is relative to the highlighted section and left position
+ * is relative to the menu section.
+ * --------------------------------------------------------------------- */
+.canvas {
+	position:relative;
+	left:10em;
+	top:1em;
+	width:60em;
+	padding:0em 1em 0em 1em; // top, right, bottom, left
+}
+
+.help {
+	float:right;
+	text-align:right;
+	margin-right:0.1em;
+	margin-top: -0.1em;
+}
+/** -----------------------------------------------------------------------
+ * Visible/Invisible divisions
+ * --------------------------------------------------------------------- */
+.open {
+	display:block;
+}
+.close {
+	display:none;
+}
+
+/** -----------------------------------------------------------------------
+ * Hyperlinks
+ * --------------------------------------------------------------------- */
+.url {
+	color:blue;
+	font-size:1.1em;
+	font-family:"Courier New", Arial;
+	border:0px;
+	cursor:pointer;
+}
+
+.url-invalid {
+	color:red;
+	font-size:0.9em;
+	font-family:"Courier New", Arial;
+}
+
+
+
+/** -----------------------------------------------------------------------
+ * XML Tag 
+ * --------------------------------------------------------------------- */
+pre, code { 
+	background-color: white;
+}
+.tag {
+	color:green;
+	font-family:"Courier New";
+	font-weight:bold;
+	border:0px;
+}
+/** -----------------------------------------------------------------------
+ * Data Table used for Tabular HTML
+ * --------------------------------------------------------------------- */
+table.data td th {
+	width : 70%;
+	border-collapse:collapse;
+	border:2px solid black;
+	margin: 10px 10px 10px 10px;
+}
+tr {
+	vertical-align:top;
+}
+th {
+   background-color:#444444;
+   color:white;
+   text-align:left;
+}
+caption {
+	background-color:#000000;
+    color:white;
+	font-size:1.2em;
+	font-weight:bold;
+	padding:5px 5px 5px 5px;
+}
+/** -----------------------------------------------------------------------
+ * Alternate Table Row
+ * --------------------------------------------------------------------- */
+tr.even td {
+   background-color: #FFFFFF; color: black;
+   padding:2px 20px;
+   border:2px solid black;
+	vertical-align:top;
+}
+tr.odd td {
+   background-color: #EEEEEE; color: black;
+   padding:2px 20px;
+   border:2px solid black;
+	vertical-align:top;
+}
+td.mandatory {
+	font-weight:bold;
+	color:red;
+}
+
+td input {
+	width : 99%;
+}
+td select {
+	width : 99%;
+}
+
+/** -----------------------------------------------------------------------
+ * Paragraph with smaller line breaks 
+ * --------------------------------------------------------------------- */
+p.small {
+	line-height:60%;
+}
+
+/** -----------------------------------------------------------------------
+ * Error Page 
+ * --------------------------------------------------------------------- */
+.error-header {
+	color:red;
+	font-size:2em;
+	font-weight:bold;
+}
+.error-message {
+	color:red;
+	font-size:1.2em;
+}
+
+/*
+ *  JPA styles
+*/
+.id {
+	color:red;
+	font-weight:bold;
+}
+.enum {
+	color:magenta;
+	font-weight:bold;
+}
+.basic {
+	color:green;
+	font-weight:bold;
+}
+.one-to-one {
+	color:lightblue;
+	font-weight:bold;
+}
+.one-to-many {
+	color:darkblue;
+	font-weight:bold;
+}
+
+.ref {
+	color : blue;
+}
+.null {
+	color : red;
+}
+
+.delimiter {
+  color:lightgray;
+  font-weight:bold;
+}
+.attr-name {
+	color:gray;
+}
+.attr-value {
+	color:green;
+}
+.node-value {
+	font-weight:bold;
+}
+.entity {
+	font-weight:bold;
+}
+.metamodel {
+	font-weight:bold;
+}
+
+.instances {
+	font-weight:bold;
+}
+.instance {
+	font-weight:bold;
+}
+
+
+	

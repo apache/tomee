@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_sqlquery">
+    <title>
+        SQL Queries
+    </title>
+    <indexterm zone="jpa_overview_sqlquery">
+        <primary>
+            SQL queries
+        </primary>
+        <seealso>
+            Query
+        </seealso>
+    </indexterm>
+    <indexterm>
+        <primary>
+            Query
+        </primary>
+        <secondary>
+            SQL
+        </secondary>
+        <see>
+            SQL queries
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            SQL
+        </primary>
+        <secondary>
+            queries
+        </secondary>
+        <see>
+            SQL queries
+        </see>
+    </indexterm>
+    <indexterm>
+        <primary>
+            Native
+        </primary>
+        <secondary>
+            queries
+        </secondary>
+        <see>
+            SQL queries
+        </see>
+    </indexterm>
+    <para>
+JPQL is a powerful query language, but there are times when it is not enough.
+Maybe you're migrating a JDBC application to JPA on a strict deadline, and you
+don't have time to translate your existing SQL selects to JPQL. Or maybe a
+certain query requires database-specific SQL your JPA implementation doesn't
+support. Or maybe your DBA has spent hours crafting the perfect select statement
+for a query in your application's critical path. Whatever the reason, SQL
+queries can remain an essential part of an application.
+    </para>
+    <para>
+You are probably familiar with executing SQL queries by obtaining a <classname>
+java.sql.Connection</classname>, using the JDBC APIs to create a <classname>
+Statement</classname>, and executing that <classname>Statement</classname> to
+obtain a <classname>ResultSet</classname>. And of course, you are free to
+continue using this low-level approach to SQL execution in your JPA
+applications. However, JPA also supports executing SQL queries through the
+<classname>javax.persistence.Query</classname> interface introduced in
+<xref linkend="jpa_overview_query"/>. Using a JPA SQL query, you can
+retrieve either persistent objects or projections of column values. The
+following sections detail each use.
+    </para>
+    <section id="jpa_overview_sqlquery_create">
+        <title>
+            Creating SQL Queries
+        </title>
+        <indexterm zone="jpa_overview_sqlquery_create">
+            <primary>
+                SQL queries
+            </primary>
+            <secondary>
+                creating
+            </secondary>
+        </indexterm>
+        <para>
+The <classname>EntityManager</classname> has two factory methods suitable for
+creating SQL queries:
+        </para>
+<programlisting>
+public Query createNativeQuery(String sqlString, Class resultClass);
+public Query createNativeQuery(String sqlString, String resultSetMapping);
+</programlisting>
+        <para>
+The first method is used to create a new <classname>Query</classname> instance
+that will return instances of the specified class.
+        </para>
+        <para>
+The second method uses a <literal>SqlResultSetMapping</literal> to determine the
+type of object or objects to return. The example below shows these methods in
+action.
+        </para>
+        <example id="jpa_overview_sqlquery_createex">
+            <title>
+                Creating a SQL Query
+            </title>
+<programlisting>
+EntityManager em = ...;
+Query query = em.createNativeQuery("SELECT * FROM MAG", Magazine.class);
+processMagazines(query.getResultList());
+</programlisting>
+        </example>
+        <note>
+            <para>
+            <indexterm>
+                <primary>
+                    SQL queries
+                </primary>
+                <secondary>
+                    stored procedures
+                </secondary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    stored procedures
+                </primary>
+                <secondary>
+                    as queries
+                </secondary>
+                <seealso>
+                    Query
+                </seealso>
+            </indexterm>
+In addition to SELECT statements, OpenJPA supports stored procedure invocations
+as SQL queries. OpenJPA will assume any SQL that does not begin with the
+<literal>SELECT</literal> keyword (ignoring case) is a stored procedure call,
+and invoke it as such at the JDBC level.
+            </para>
+        </note>
+    </section>
+    <section id="jpa_overview_sqlquery_obj">
+        <title>
+            Retrieving Persistent Objects with SQL
+        </title>
+        <indexterm zone="jpa_overview_sqlquery_obj">
+            <primary>
+                SQL queries
+            </primary>
+            <secondary>
+                retrieving persistent objects
+            </secondary>
+        </indexterm>
+        <indexterm zone="jpa_overview_sqlquery_obj">
+            <primary>
+                persistent objects
+            </primary>
+            <secondary>
+                retrieving with SQL
+            </secondary>
+            <seealso>
+                SQL queries
+            </seealso>
+        </indexterm>
+        <para>
+When you give a SQL <classname>Query</classname> a candidate class, it will
+return persistent instances of that class. At a minimum, your SQL must select
+the class' primary key columns, discriminator column (if mapped), and version
+column (also if mapped). The JPA runtime uses the values of the primary key
+columns to construct each result object's identity, and possibly to match it
+with a persistent object already in the <classname>EntityManager</classname>'s
+cache. When an object is not already cached, the implementation creates a new
+object to represent the current result row. It might use the discriminator
+column value to make sure it constructs an object of the correct subclass.
+Finally, the query records available version column data for use in optimistic
+concurrency checking, should you later change the result object and flush it
+back to the database.
+        </para>
+        <para>
+Aside from the primary key, discriminator, and version columns, any columns you
+select are used to populate the persistent fields of each result object. JPA
+implementations will compete on how effectively they map your selected data to
+your persistent instance fields.
+        </para>
+        <para>
+Let's make the discussion above concrete with an example. It uses the following
+simple mapping between a class and the database:
+        </para>
+        <mediaobject>
+            <imageobject>
+                <!-- PNG image data, 320 x 149 (see README) -->
+                <imagedata fileref="img/sqlquery-model.png" width="213px"/>
+            </imageobject>
+        </mediaobject>
+        <example id="jpa_overview_sqlquery_objex">
+            <title>
+                Retrieving Persistent Objects
+            </title>
+<programlisting>
+Query query = em.createNativeQuery("SELECT ISBN, TITLE, PRICE, "
+    + "VERS FROM MAG WHERE PRICE &gt; 5 AND PRICE &lt; 10", Magazine.class);
+List&lt;Magazine&gt; results = (List&lt;Magazine&gt;) query.getResultList();
+for (Magazine mag : results)
+    processMagazine(mag);
+</programlisting>
+        </example>
+        <para>
+The query above works as advertised, but isn't very flexible. Let's update it to
+take in parameters for the minimum and maximum price, so we can reuse it to find
+magazines in any price range:
+        </para>
+        <example id="jpa_overview_sqlquery_obj_paramex">
+            <title>
+                SQL Query Parameters
+            </title>
+<programlisting>
+Query query = em.createNativeQuery("SELECT ISBN, TITLE, PRICE, "
+    + "VERS FROM MAG WHERE PRICE &gt; ?1 AND PRICE &lt; ?2", Magazine.class);
+
+query.setParameter(1, 5d);
+query.setParameter(2, 10d);
+
+List&lt;Magazine&gt; results = (List&lt;Magazine&gt;) query.getResultList();
+for (Magazine mag : results)
+    processMagazine(mag);
+</programlisting>
+        </example>
+        <para>
+        <indexterm>
+            <primary>
+                SQL queries
+            </primary>
+            <secondary>
+                parameters
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                parameters
+            </primary>
+            <secondary>
+                in SQL queries
+            </secondary>
+            <seealso>
+                SQL queries
+            </seealso>
+        </indexterm>
+Like JDBC prepared statements, SQL queries represent parameters with question
+marks, but are followed by an integer to represent its index.
+        </para>
+    </section>
+</chapter>

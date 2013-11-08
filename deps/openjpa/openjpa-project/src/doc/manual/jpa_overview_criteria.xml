@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="jpa_overview_criteria">
+    <title>
+        JPA Criteria
+    </title>
+    <indexterm zone="jpa_overview_criteria">
+        <primary>
+            JP Criteria
+        </primary>
+        <seealso>
+            JPQL
+        </seealso>
+    </indexterm>
+    <indexterm>
+        <primary>
+            queries
+        </primary>
+        <see>
+            Query
+        </see>
+    </indexterm>
+    <para>
+    JPA 2.0 specification introduces a new API to define queries dynamically
+    via construction of an object-based 
+    <classname>javax.persistence.CriteriaQuery</classname> instance, rather
+    than string-based approach used in JPQL (Java Persistence Query Language).
+    This dynamic query definition capability, referred as Criteria API, is 
+    based on the abstract persistent schema of the entities, their embedded
+    objects and their relationships. The syntax is designed to construct a
+    <emphasis>Query Tree</emphasis> whose nodes represent the semantic query
+    elements such as projections, conditional predicates of WHERE clause or
+    GROUP BY elements etc. 
+    </para>
+    
+    <section>
+    	<title>Constructing a CriteriaQuery</title>
+    	<para>
+    	The CriteriaBuilder interface is the factory for CriteriaQuery. A
+    	CriteriaBuilder is obtained from either an EntityManagerFactory or 
+    	an EntityManager as follows:
+    	<programlisting>
+EntityManager em = ... ; 
+CriteriaBuilder queryBuilder = em.getCriteriaBuilder();
+CriteriaQuery qdef = queryBuilder.createQuery();
+    	</programlisting>
+    	The first step in constructing a query definition is specification of 
+    	query roots.  Query roots specify the domain objects on which the query 
+    	is evaluated. Query root is an instance of the Root&lt;T&gt; interface. A
+    	query root is added to a CriteriaQuery by 
+    	<methodname>addRoot(Class c)</methodname> method.
+    	<programlisting>
+    	Root&lt;Customer&gt; customer = qdef.from(Customer.class);
+    	</programlisting>
+    	A query domain can be further refined by joining to other domain objects.
+    	For example, for the above query definition to operate over customers 
+    	and their orders, use <methodname>join(String attribute)</methodname>:
+		<programlisting>
+Root&lt;Order&gt; order = customer.join(customer.get(Customer_.orders));
+		</programlisting>  
+		where Customer_.orders represent a field of canonical metamodel class for Customer.
+		These canonical metamodel classes are generated during compilation by processing
+		the persistent annotation in the source code of Customer.java.
+		</para>
+		<para>
+		The condition of a query definition is set via 
+		<methodname>where(Predicate p)</methodname> where the argument 
+		designates a conditional predicate. Conditional predicates are often
+		composed of one or more comparisons between the attribute values of
+		the domain objects and some variable. For example, to select the
+		Customer whose name is <emphasis>"John Doe"</emphasis> and has 
+		orders that are not yet delivered, you can build the predicate and set  
+		it to the query definition as:
+		<programlisting>
+           qdef.where(customer.get(Customer_.name).equal("John Doe")
+               .and(order.get(Order_.status).equal(OrderStatus.DELIVERED).not()));
+		</programlisting>
+		The <methodname>select()</methodname> method defines the result of the
+		query. If left unspecified, the select projection is assumed to be the
+		root domain object. However, you can specify the selected projections
+		explicitly as a list:
+		<programlisting>
+            qdef.select(customer.get(Customer_.name), order.get(Order_.status));
+		</programlisting>
+    	</para>
+    	
+    	<para>
+    	An attribute of a domain object can also be specified by navigating via 
+		<methodname>get(String attr)</methodname>. The attribute 
+		<emphasis>should</emphasis> refer
+		to a valid persistent property of the receiving domain object, however
+		no such validation is enforced during the construction of the query 
+		definition. All validation is deferred until the query is actually executed.
+		On the other hand, using canonical metamodel for path navigate enforces
+		compile type checking. 
+    	</para>
+    </section> 
+    
+    <section>
+    <title>Executing a CriteriaQuery</title>
+    <para>
+    A CriteriaQuery is executed in a similar fashion to a string-based JPQL
+    query via the EntityManager and Query interfaces.
+    <programlisting>
+EntityManager em = ...
+Query query = em.createQuery(qdef);
+List result = query.getResultList();    
+    </programlisting>
+    </para>
+    <para>
+    A query definition can use named parameters, and the parameter values are
+    set as usual in the Query instance. 
+    </para>
+    
+    <para>
+    <ulink url="http://www.ibm.com/developerworks/java/library/j-typesafejpa/">A developerworks article</ulink>
+    explains details and further usage of Criteria API and its OpenJPA extensions.  
+    </para>
+    </section>
+    
+    <section>
+    <title>Extension to Criteria API</title>
+    <para>
+    Criteria API has provided an alternative means to string-based JPQL to 
+    execute a query. However, JPA 2.0 specification has not explicitly specified 
+    any equivalence between a dynamically constructed CriteriaQuery and
+    a JPQL string. OpenJPA provides a mechanism to convert a CriteriaQuery to
+    an equivalent JPQL query string via the extended OpenJPACriteriaQuery API.
+    <programlisting>
+public interface OpenJPACriteriaQuery extends CriteriaQuery {
+    /**
+     * Gets equivalent JPQL String for the given CriteriaQuery.
+     */
+    public String toCQL();
+}
+    </programlisting>
+    
+    </para>
+    </section>
+    
+    <section>
+       <title>Generation of Canonical MetaModel classes</title>
+       <para>
+Annotation processing tool generates source code for a metamodel class given 
+the annotated source code of persistent entity. 
+This tool is invoked during compilation for JDK6 compiler if OpenJPA and JPA 
+libraries are specified in the compiler <code>-classpath</code> option <emphasis>and</emphasis>
+Annotation processor option <code>-Aopenjpa.metamodel=true</code> is specified.
+    <programlisting>
+ $ javac -classpath path/to/openjpa-all.jar -Aopenjpa.metamodel=true mypackage/MyEntity.java
+    </programlisting>
+will generate source code for canonical meta-model class <code>mypackage.MyEntity_</code>.
+The source code is generated relative to the directory specified in <code>-s</code> option
+of <code>javac</code> compiler and defaulted to the current directory.
+      </para>
+      
+      <para>
+The Annotation Processor recognizes the following options specified in the command-line with <code>-A</code> 
+(none of them are mandatory).
+    <itemizedlist>
+        <listitem>
+			<para>
+              -Aopenjpa.log=TRACE|INFO|WARN|ERROR : The logging level. Default is <code>WARN</code>.
+            </para>
+        </listitem>
+        <listitem>
+			<para>
+             -Aopenjpa.source=&lt;n&gt; : where &lt;n&gt; denotes the integral number for Java source 
+             version of the generated code. Default is <code>6</code>.
+             </para>
+        </listitem>
+        <listitem>
+			<para>
+               -Aopenjpa.naming=class name : fully-qualified name of a class implementing 
+               <code>org.apache.openjpa.meta.MetaDataFactory</code> that determines
+the name of a meta-class given the name of the original persistent Java entity class. Defaults to
+<code>org.apache.openjpa.persistence.PersistenceMetaDataFactory</code> which appends an underscore character
+(<code>_</code>) to the original Java class name. 
+             </para>
+        </listitem>
+        <listitem>
+			<para>
+               -Aopenjpa.header=&lt;url&gt; : A url whose content will appear as comment header to the generated file(s). 
+               Recognizes special value <code>ASL</code> for Apache Source License header as comment. 
+               By default, adds an OpenJPA proprietary text as comment block.
+             </para>
+        </listitem>
+    </itemizedlist>
+       </para>
+    </section>
+
+</chapter>

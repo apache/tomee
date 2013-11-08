@@ -1,0 +1,49 @@
+ ------
+ Enhance
+ ------
+ Mark Struberg
+ <struberg@yahoo.de>
+ ------
+ April 03, 2009
+ ------
+
+Test Enhance
+
+  The following build configuration shows how to enhance JPA entities
+  which are needed for testing only.
+  
+  The {{{../test-enhance-mojo.html}openjpa:test-enhance}} mojo will typically be 
+  called in the <<<process-test-classes>>> phase.
+
+  Please note that the tmpClassLoader defaults to <<<false>>> to make
+  sure that classes in depending artifacts (like enums in interfaces)
+  can be parsed by the PCEnhancer.  
+  
+-------------------
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>testEnhancer</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>test-enhance</goal>
+            </goals>
+          </execution>
+        </executions> 
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
+-------------------
+ 

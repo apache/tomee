@@ -1,0 +1,4365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<chapter id="ref_guide_conf">
+    <title>
+        Configuration
+    </title>
+    <indexterm>
+        <primary>
+            configuration
+        </primary>
+    </indexterm>
+    <section id="ref_guide_conf_intro">
+        <title>
+            Introduction
+        </title>
+        <para>
+This chapter describes the OpenJPA configuration framework. It concludes with
+descriptions of all the configuration properties recognized by OpenJPA. You may
+want to browse these properties now, but it is not necessary. Most of them will
+be referenced later in the documentation as we explain the various features they
+apply to.
+        </para>
+    </section>
+    <section id="ref_guide_conf_specify">
+        <title>
+            Runtime Configuration
+        </title>
+        <indexterm zone="ref_guide_conf_specify">
+            <primary>
+                configuration
+            </primary>
+            <secondary>
+                runtime
+            </secondary>
+        </indexterm>
+        <para>
+The OpenJPA runtime includes a comprehensive system of configuration defaults
+and overrides:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        openjpa.xml
+                    </primary>
+                </indexterm>
+OpenJPA first looks for an optional <filename>openjpa.xml</filename> resource.
+OpenJPA searches for this resource in each top-level directory of your <literal>
+CLASSPATH</literal>. OpenJPA will also find the resource if you place it within
+a <filename>META-INF</filename> directory in any top-level directory of the
+<literal>CLASSPATH</literal>. The <filename>openjpa.xml</filename> resource
+contains property settings in <link linkend="jpa_overview_persistence_xml">
+JPA's XML format</link>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+You can customize the name or location of the above resource by specifying the
+correct resource path in the <literal>openjpa.properties</literal> System
+property.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+You can override any value defined in the above resource by setting the System
+property of the same name to the desired value.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                <indexterm>
+                    <primary>
+                        Persistence
+                    </primary>
+                    <secondary>
+                        createEntityManagerFactory
+                    </secondary>
+                </indexterm>
+In JPA, the values in the standard <filename> META-INF/persistence.xml
+</filename> bootstrapping file used by the
+<link linkend="jpa_overview_persistence"><classname>Persistence</classname>
+</link> class at runtime override the values in the above resource, as well as
+any System property settings. The <classname>Map</classname> passed to
+<methodname>Persistence.createEntityManagerFactory</methodname> at runtime also
+overrides previous settings, including properties defined in <filename>
+persistence.xml</filename>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+In JPA, The <classname>Map</classname> passed to the methods defined in the
+<classname>Query</classname> and <classname>EntityManager</classname> interfaces
+at runtime also overrides previous settings, including properties defined in
+<filename>persistence.xml</filename>. The <classname>Map</classname> is in
+effect only during the method invocation.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+When using JCA deployment the <literal>config-property</literal> values in your
+<filename>ra.xml</filename> file override other settings.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+All OpenJPA command-line tools accept flags that allow you to specify the
+configuration resource to use, and to override any property.
+<xref linkend="ref_guide_conf_devtools"/> describes these flags.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <note>
+            <para>
+Internally, the OpenJPA runtime environment and development
+tools manipulate property settings through a general
+<ulink url="../javadoc/org/apache/openjpa/lib/conf/Configuration.html">
+<classname>Configuration</classname></ulink> interface, and in particular its
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html">
+<classname>OpenJPAConfiguration</classname></ulink> and
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html">
+<classname>JDBCConfiguration</classname></ulink> subclasses. For advanced
+customization, OpenJPA's extended runtime interfaces and its development tools
+allow you to access these interfaces directly. See the <ulink url="../javadoc/">
+Javadoc</ulink> for details.
+            </para>
+        </note>
+    </section>
+    <section id="ref_guide_conf_devtools">
+        <title>
+            Command Line Configuration
+        </title>
+        <indexterm zone="ref_guide_conf_devtools">
+            <primary>
+                configuration
+            </primary>
+            <secondary>
+                command line
+            </secondary>
+        </indexterm>
+        <para>
+OpenJPA development tools share the same set of configuration defaults and
+overrides as the runtime system. They also allow you to specify property values
+on the command line:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+<literal>-properties/-p &lt;configuration file or resource&gt;</literal>: Use
+the <literal>-properties</literal> flag, or its shorter <literal>-p</literal>
+form, to specify a configuration file to use. Note that OpenJPA always searches
+the default file locations described above, so this flag is only needed when you
+do not have a default resource in place, or when you wish to override the
+defaults. The given value can be the path to a file, or the resource name of a
+file somewhere in the <literal>CLASSPATH</literal>. OpenJPA will search the
+given location as well as the location prefixed by <filename> META-INF/
+</filename>. Thus, to point an OpenJPA tool at <filename>
+META-INF/my-persistence.xml</filename>, you can use:
+                </para>
+<programlisting>
+&lt;tool&gt; -p my-persistence.xml
+</programlisting>
+                <para>
+If you want to run a tool against just one particular persistence unit in
+a configuration file, you can do so by specifying an anchor along with the
+resource. If you do not specify an anchor, the tools will run against all
+the persistence units defined within the specified resource, or the default
+resource if none is specified. If the persistence unit is defined within
+the default resource location, then you can just specify the raw anchor itself:
+                </para>
+<programlisting>
+&lt;tool&gt; -p my-persistence.xml#sales-persistence-unit
+&lt;tool&gt; -p #invoice-persistence-unit
+</programlisting>
+            </listitem>
+            <listitem>
+                <para>
+<literal>-&lt;property name&gt; &lt;property value&gt;</literal>: Any
+configuration property that you can specify in a configuration file can be
+overridden with a command line flag. The flag name is always the last token of
+the corresponding property name, with the first letter in either upper or lower
+case. For example, to override the <literal>openjpa.ConnectionUserName</literal>
+property, you could pass the <literal>-connectionUserName &lt;value&gt;
+</literal> flag to any tool. Values set this way override both the values in the
+configuration file and values set via System properties.
+                </para>
+            </listitem>
+        </itemizedlist>
+        <section id="ref_guide_conf_devtools_format">
+            <title>
+                Code Formatting
+            </title>
+            <indexterm zone="ref_guide_conf_devtools_format">
+                <primary>
+                    code formatting
+                </primary>
+            </indexterm>
+            <para>
+Some OpenJPA development tools generate Java code. These tools share a common
+set of command-line flags for formatting their output to match your coding
+style. All code formatting flags can begin with either the <literal>codeFormat
+</literal> or <literal>cf</literal> prefix.
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.tabSpaces &lt;spaces&gt;</literal>: The number of
+spaces that make up a tab, or 0 to use tab characters. Defaults to using tab
+characters.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.spaceBeforeParen &lt;true/t | false/f&gt;</literal>:
+Whether or not to place a space before opening parentheses on method calls, if
+statements, loops, etc. Defaults to <literal>false</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.spaceInParen &lt;true/t | false/f&gt;</literal>:
+Whether or not to place a space within parentheses; i.e. <literal>method( arg)
+</literal>. Defaults to <literal>false</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.braceOnSameLine &lt;true/t | false/f&gt;</literal>:
+Whether or not to place opening braces on the same line as the declaration that
+begins the code block, or on the next line. Defaults to <literal>true</literal>
+.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.braceAtSameTabLevel &lt;true/t | false/f&gt;</literal>
+: When the <literal>braceOnSameLine</literal> option is disabled, you can choose
+whether to place the brace at the same tab level of the contained code. Defaults
+to <literal>false</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.scoreBeforeFieldName &lt;true/t | false/f&gt;
+</literal>: Whether to prefix an underscore to names of private member
+variables. Defaults to <literal>false</literal>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+<literal>-codeFormat./-cf.linesBetweenSections &lt;lines&gt;</literal>: The
+number of lines to skip between sections of code. Defaults to 1.
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <example id="ref_guide_conf_devtools_format_ex">
+                <title>
+                    Code Formatting with the Application Id Tool
+                </title>
+<programlisting>
+java org.apache.openjpa.enhance.ApplicationIdTool -cf.spaceBeforeParen true -cf.tabSpaces 4
+</programlisting>
+            </example>
+        </section>
+    </section>
+    <section id="ref_guide_conf_plugins">
+        <title>
+            Plugin Configuration
+        </title>
+        <indexterm zone="ref_guide_conf_plugins">
+            <primary>
+                configuration
+            </primary>
+            <secondary>
+                plugins
+            </secondary>
+        </indexterm>
+        <indexterm>
+            <primary>
+                plugins
+            </primary>
+            <see>
+                configuration
+            </see>
+        </indexterm>
+        <para>
+Because OpenJPA is a highly customizable environment, many configuration
+properties relate to the creation and configuration of system plugins. Plugin
+properties have a syntax very similar to that of Java annotations. They allow
+you to specify both what class to use for the plugin and how to configure the
+public fields or bean properties of the instantiated plugin instance. The
+easiest way to describe the plugin syntax is by example:
+        </para>
+        <para>
+OpenJPA has a pluggable L2 caching mechanism that is controlled by the <literal>
+openjpa.DataCache</literal> configuration property. Suppose that you have
+created a new class, <classname>com.xyz.MyDataCache</classname>, that you want
+OpenJPA to use for caching. You've made instances of <literal>MyDataCache
+</literal> configurable via two methods, <methodname>setCacheSize(int size)
+</methodname> and <methodname>setRemoteHost(String host)</methodname>. The
+sample below shows how you would tell OpenJPA to use an instance of your custom
+plugin with a max size of 1000 and a remote host of <literal>cacheserver
+</literal>.
+        </para>
+<programlisting>
+&lt;property name="openjpa.DataCache" 
+    value="com.xyz.MyDataCache(CacheSize=1000, RemoteHost=cacheserver)"/&gt;
+</programlisting>
+        <para>
+As you can see, plugin properties take a class name, followed by a
+comma-separated list of values for the plugin's public fields or bean properties
+in parentheses. OpenJPA will match each named property to a field or setter
+method in the instantiated plugin instance, and set the field or invoke the
+method with the given value (after converting the value to the right type, of
+course). The first letter of the property names can be in either upper or lower
+case. The following would also have been valid:
+        </para>
+<programlisting>
+com.xyz.MyDataCache(cacheSize=1000, remoteHost=cacheserver)
+</programlisting>
+        <para>
+If you do not need to pass any property settings to a plugin, you can just name
+the class to use:
+        </para>
+<programlisting>
+com.xyz.MyDataCache
+</programlisting>
+        <para>
+Similarly, if the plugin has a default class that you do not want to change, you
+can simply specify a list of property settings, without a class name. For
+example, OpenJPA's query cache companion to the data cache has a default
+implementation suitable to most users, but you still might want to change the
+query cache's size. It has a <literal>CacheSize</literal> property for this
+purpose:
+        </para>
+<programlisting>
+CacheSize=1000
+</programlisting>
+        <para>
+Finally, many of OpenJPA's built-in options for plugins have short alias names
+that you can use in place of the full class name. The data cache property, for
+example, has an available alias of <literal>true</literal> for the standard
+cache implementation. The property value simply becomes:
+        </para>
+<programlisting>
+true
+</programlisting>
+        <para>
+The standard cache implementation class also has a <literal>CacheSize</literal>
+property, so to use the standard implementation and configure the size, specify:
+        </para>
+<programlisting>
+true(CacheSize=1000)
+</programlisting>
+
+        <para>
+The remainder of this chapter reviews the set of configuration properties
+OpenJPA recognizes. 
+        </para>
+    </section>
+    <section id="ref_guide_conf_openjpa">
+        <title>
+            OpenJPA Properties
+        </title>
+        <indexterm zone="ref_guide_conf_openjpa">
+            <primary>
+                configuration
+            </primary>
+            <secondary>
+                of OpenJPA properties
+            </secondary>
+        </indexterm>
+        <para>
+OpenJPA defines many configuration properties. Most of these properties are
+provided for advanced users who wish to customize OpenJPA's behavior; the
+majority of developers can omit them. The following properties apply to any
+OpenJPA back-end, though the given descriptions are tailored to OpenJPA's
+default JDBC store.
+        </para>
+        
+        <para>
+A few of the properties recognized by OpenJPA have been standardized in JPA 2.0 
+specification using equivalent names. These properties can be specified either
+by the JPA standard key or equivalent OpenJPA key. Specifying the same key once
+as JPA standard key and again as equivalent OpenJPA key in the same configuration, 
+however, is not allowed. The following table lists these standard JPA properties 
+and their OpenJPA equivalent.
+        </para>
+    <table tocentry="1">
+        <title>
+            Standard JPA Properties and OpenJPA equivalents
+        </title>
+        <tgroup rowsep="1" colsep="8" align="left" cols="2">
+            <colspec colname="StandardJPA"/>
+            <colspec colname="OpenJPAEquivalent"/>
+            <thead>
+                <row>
+                    <entry colname="StandardJPA">Standard JPA 2.0</entry>
+                    <entry colname="OpenJPAEquivalent">OpenJPA Equivalent</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry colname="StandardJPA">javax.persistence.jdbc.driver</entry>
+                    <entry colname="OpenJPAEquivalent">openjpa.ConnectionDriverName</entry>
+                </row>
+                <row>
+                    <entry colname="StandardJPA">javax.persistence.jdbc.url</entry>
+                    <entry colname="OpenJPAEquivalent">openjpa.ConnectionURL</entry>
+                </row>
+                <row>
+                    <entry colname="StandardJPA">javax.persistence.jdbc.user</entry>
+                    <entry colname="OpenJPAEquivalent">openjpa.ConnectionUserName</entry>
+                </row>
+                <row>
+                    <entry colname="StandardJPA">javax.persistence.jdbc.password</entry>
+                    <entry colname="OpenJPAEquivalent">openjpa.ConnectionPassword</entry>
+                </row>
+           </tbody>
+        </tgroup>
+    </table>
+        
+        
+        
+        <!--
+        <section id="openjpa.AggregateListeners">
+            <title>
+                openjpa.AggregateListeners
+            </title>
+            <indexterm zone="openjpa.AggregateListeners">
+                <primary>
+                    AggregateListeners
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.AggregateListeners">
+                <primary>
+                    Query
+                </primary>
+                <secondary>
+                    AggregateListeners
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.AggregateListeners</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getAggregateListeners()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getAggregateListeners
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+AggregateListeners</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of plugin
+strings (see <xref linkend="ref_guide_conf_plugins"/>) describing custom
+<ulink url="../javadoc/org/apache/openjpa/jdbc/kernel/exps/JDBCAggregateListener.html">
+<classname> org.apache.openjpa.jdbc.kernel.exps.JDBCAggregateListener
+</classname></ulink>s to make available to all queries, in addition to the
+standard set of listeners. See <xref linkend="ref_guide_enterprise_queryext"/>
+ for details on aggregate listeners.
+            </para>
+        </section>
+        -->
+        <section id="openjpa.AutoClear">
+            <title>
+                openjpa.AutoClear
+            </title>
+            <indexterm zone="openjpa.AutoClear">
+                <primary>
+                    AutoClear
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.AutoClear">
+                <primary>
+                    transactions
+                </primary>
+                <secondary>
+                    AutoClear
+                </secondary>
+                <tertiary>
+                    AutoClear
+                </tertiary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.AutoClear
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getAutoClear()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getAutoClear
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+AutoClear</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>datastore</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>datastore</literal>,
+<literal>all</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> When to automatically clear
+instance state: on entering a datastore transaction, or on entering any
+transaction.
+            </para>
+        </section>
+        <section id="openjpa.AutoDetach">
+            <title>
+                openjpa.AutoDetach
+            </title>
+            <indexterm zone="openjpa.AutoDetach">
+                <primary>
+                    AutoDetach
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.AutoDetach">
+                <primary>
+                    detach
+                </primary>
+                <secondary>
+                    AutoDetach
+                </secondary>
+                <tertiary>
+                    AutoDetach
+                </tertiary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.AutoDetach
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getAutoDetach()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getAutoDetach
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+AutoDetach</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> - null
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>close</literal>,
+<literal>commit</literal>, <literal>nontx-read</literal>, <literal>rollback</literal>, <literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of events
+when managed instances will be automatically detached. When using the OpenJPA EntityManager this defaults to 
+<literal>close</literal>, and <literal>rollback</literal> per the JPA spec. If you need to change this setting, you
+need to set it directly on an instantiated EntityManager.
+            </para>
+            
+            <para>
+<literal>none</literal> option is exclusive. It can not be specified with any other option.
+<literal>none</literal> option implies that managed objects will not be detached from the persistence context,
+the second-class object fields such as collections or date will <emphasis>not</emphasis> be proxied unlike normal
+circumstances. This option is relevant for specific use cases where the user application would not refer to the
+managed objects after the transaction and/or the context ends e.g. typical batch insertion scenario.  
+            </para>
+            
+        </section>
+        <section id="openjpa.BrokerFactory">
+            <title>
+                openjpa.BrokerFactory
+            </title>
+            <indexterm zone="openjpa.BrokerFactory">
+                <primary>
+                    BrokerFactory
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.BrokerFactory
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getBrokerFactory()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getBrokerFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+BrokerFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>jdbc</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>jdbc</literal>,
+<literal>abstractstore</literal>, <literal>remote</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/kernel/BrokerFactory.html">
+<classname>org.apache.openjpa.kernel.BrokerFactory</classname></ulink> type to
+use.
+            </para>
+        </section>
+        <section id="openjpa.BrokerImpl">
+            <title>
+                openjpa.BrokerImpl
+            </title>
+            <indexterm zone="openjpa.BrokerImpl">
+                <primary>
+                    BrokerImpl
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.BrokerImpl">
+                <primary>
+                    Broker
+                </primary>
+                <secondary>
+                    BrokerImpl
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.BrokerImpl
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getBrokerImpl()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getBrokerImpl
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+BrokerImpl</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/kernel/Broker.html"><classname>
+org.apache.openjpa.kernel.Broker</classname></ulink> type to use at runtime. See
+<xref linkend="ref_guide_runtime_broker_extension"/> on for details.
+            </para>
+        </section>
+
+<section id="openjpa.Callbacks">
+            <title>openjpa.Callbacks</title>
+            <indexterm zone="openjpa.Callbacks">
+                <primary>Callbacks</primary>
+            </indexterm>
+            <indexterm>
+                <primary>Callbacks</primary>
+                <see>Callbacks</see>
+            </indexterm>
+  <para>
+     <emphasis role="bold">Property name: </emphasis><literal>openjpa.Callbacks</literal>
+  </para>
+  <para>
+     <emphasis role="bold">Configuration API:</emphasis>
+     <ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getCallbackOptionsInstance()">
+     <methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getCallbackOptionsInstance</methodname></ulink>
+  </para>
+  <para>
+     <emphasis role="bold">Resource adaptor config-property: </emphasis><literal>Callbacks</literal>
+  </para>
+  <para>
+     <emphasis role="bold">Default: </emphasis><literal>default</literal>
+  </para>
+  <para>
+     <emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) to fine tune some of the configurable
+properties related to callbacks. The plug-in supports two boolean properties:
+   </para>
+   <itemizedlist>
+   	<listitem>
+   		<para><literal>PostPersistCallbackImmediate</literal>: whether the 
+   		post-persist callback is invoked as soon as a new instance
+        is managed. The default is <literal>false</literal>, implies that 
+        the post-persist callback is invoked after the instance been committed 
+        or flushed to the datastore.
+        </para>
+   	</listitem>
+   	<listitem>
+   	    <para><literal>AllowsMultipleMethodsForSameCallback</literal>: whether
+   	    multiple methods of the same class can handle the same callback event.
+   	    Defaults to <literal>false</literal>.
+   	    </para>
+   	</listitem>
+   </itemizedlist>
+</section>
+
+        <section id="openjpa.ClassResolver">
+            <title>
+                openjpa.ClassResolver
+            </title>
+            <indexterm zone="openjpa.ClassResolver">
+                <primary>
+                    ClassResolver
+                </primary>
+            </indexterm>
+            <indexterm>
+                <primary>
+                    class loading
+                </primary>
+                <see>
+                    ClassResolver
+                </see>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.ClassResolver
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getClassResolver()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getClassResolver
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ClassResolver</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/util/ClassResolver.html"><classname>
+org.apache.openjpa.util.ClassResolver</classname></ulink> implementation to use
+for class name resolution. You may wish to plug in your own resolver if you have
+special classloading needs.
+            </para>
+        </section>
+        <section id="openjpa.Compatibility">
+            <title>
+                openjpa.Compatibility
+            </title>
+            <indexterm zone="openjpa.Compatibility">
+                <primary>
+                    Compatibility
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Compatibility">
+                <primary>
+                    backwards compatibility
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Compatibility
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getCompatibility()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getCompatibility
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Compatibility</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Encapsulates options to mimic the
+behavior of previous OpenJPA releases.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionDriverName">
+            <title>
+                openjpa.ConnectionDriverName
+            </title>
+            <indexterm zone="openjpa.ConnectionDriverName">
+                <primary>
+                    ConnectionDriverName
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionDriverName">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionDriverName
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionDriverName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionDriverName()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionDriverName
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionDriverName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The full class name of either the
+JDBC <classname>java.sql.Driver</classname>, or a <classname>
+javax.sql.DataSource</classname> implementation to use to connect to the
+database. See <xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Connection2DriverName">
+            <title>
+                openjpa.Connection2DriverName
+            </title>
+            <indexterm zone="openjpa.Connection2DriverName">
+                <primary>
+                    Connection2DriverName
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Connection2DriverName">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    Connection2DriverName
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.Connection2DriverName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnection2DriverName()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnection2DriverName
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Connection2DriverName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionDriverName</literal> property described in
+<xref linkend="openjpa.ConnectionDriverName"/>, but applies to the
+alternate connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactory">
+            <title>
+                openjpa.ConnectionFactory
+            </title>
+            <indexterm zone="openjpa.ConnectionFactory">
+                <primary>
+                    ConnectionFactory
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactory">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactory
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactory()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A <classname>javax.sql.DataSource
+</classname> to use to connect to the database. See
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactory2">
+            <title>
+                openjpa.ConnectionFactory2
+            </title>
+            <indexterm zone="openjpa.ConnectionFactory2">
+                <primary>
+                    ConnectionFactory2
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactory2">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactory2
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactory2</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactory2()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactory2
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactory2</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> An unmanaged <classname>
+javax.sql.DataSource</classname> to use to connect to the database. See
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactoryName">
+            <title>
+                openjpa.ConnectionFactoryName
+            </title>
+            <indexterm zone="openjpa.ConnectionFactoryName">
+                <primary>
+                    ConnectionFactoryName
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactoryName">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactoryName
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactoryName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactoryName()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactoryName
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactoryName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The JNDI location of a <classname>
+javax.sql.DataSource</classname> to use to connect to the database. See
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactory2Name">
+            <title>
+                openjpa.ConnectionFactory2Name
+            </title>
+            <indexterm zone="openjpa.ConnectionFactory2Name">
+                <primary>
+                    ConnectionFactory2Name
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactory2Name">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactory2Name
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactory2Name</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactory2Name()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactory2Name
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactory2Name</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The JNDI location of an unmanaged
+<classname>javax.sql.DataSource</classname> to use to connect to the database.
+See <xref linkend="ref_guide_enterprise_xa"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactoryMode">
+            <title>
+                openjpa.ConnectionFactoryMode
+            </title>
+            <indexterm zone="openjpa.ConnectionFactoryMode">
+                <primary>
+                    ConnectionFactoryMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactoryMode">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactoryMode
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactoryMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactoryMode()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactoryMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactoryMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>local</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>local</literal>,
+<literal>managed</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The connection factory mode to use
+when integrating with the application server's managed transactions. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactoryProperties">
+            <title>
+                openjpa.ConnectionFactoryProperties
+            </title>
+            <indexterm zone="openjpa.ConnectionFactoryProperties">
+                <primary>
+                    ConnectionFactoryProperties
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactoryProperties">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactoryProperties
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactoryProperties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactoryProperties()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactoryProperties
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactoryProperties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) listing properties for
+configuration of the datasource in use. See the
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionFactory2Properties">
+            <title>
+                openjpa.ConnectionFactory2Properties
+            </title>
+            <indexterm zone="openjpa.ConnectionFactory2Properties">
+                <primary>
+                    ConnectionFactory2Properties
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionFactory2Properties">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionFactory2Properties
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionFactory2Properties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionFactory2Properties()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionFactory2Properties
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionFactory2Properties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionFactoryProperties</literal> property described in
+<xref linkend="openjpa.ConnectionFactoryProperties"/>, but applies to the
+alternate connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionPassword">
+            <title>
+                openjpa.ConnectionPassword
+            </title>
+            <indexterm zone="openjpa.ConnectionPassword">
+                <primary>
+                    ConnectionPassword
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionPassword">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionPassword
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionPassword</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionPassword()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionPassword
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionPassword</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The password for the user
+specified in the <literal>ConnectionUserName</literal> property. See
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Connection2Password">
+            <title>
+                openjpa.Connection2Password
+            </title>
+            <indexterm zone="openjpa.Connection2Password">
+                <primary>
+                    Connection2Password
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Connection2Password">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    Connection2Password
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.Connection2Password</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnection2Password()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnection2Password
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Connection2Password</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionPassword</literal> property described in
+<xref linkend="openjpa.ConnectionPassword"/>, but applies to the
+alternate connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionProperties">
+            <title>
+                openjpa.ConnectionProperties
+            </title>
+            <indexterm zone="openjpa.ConnectionProperties">
+                <primary>
+                    ConnectionProperties
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionProperties">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionProperties
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionProperties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionProperties()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionProperties
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionProperties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) listing properties to configure
+the driver listed in the <literal>ConnectionDriverName</literal> property
+described below. See <xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Connection2Properties">
+            <title>
+                openjpa.Connection2Properties
+            </title>
+            <indexterm zone="openjpa.Connection2Properties">
+                <primary>
+                    Connection2Properties
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Connection2Properties">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    Connection2Properties
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.Connection2Properties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnection2Properties()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnection2Properties
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Connection2Properties</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionProperties</literal> property described in
+<xref linkend="openjpa.ConnectionProperties"/>, but applies to the
+alternate connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionURL">
+            <title>
+                openjpa.ConnectionURL
+            </title>
+            <indexterm zone="openjpa.ConnectionURL">
+                <primary>
+                    ConnectionURL
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionURL">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionURL
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.ConnectionURL
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionURL()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionURL
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionURL</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The JDBC URL for the database. See
+<xref linkend="ref_guide_dbsetup"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Connection2URL">
+            <title>
+                openjpa.Connection2URL
+            </title>
+            <indexterm zone="openjpa.Connection2URL">
+                <primary>
+                    Connection2URL
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Connection2URL">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    Connection2URL
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Connection2URL
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnection2URL()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnection2URL
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Connection2URL</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionURL</literal> property described in
+<xref linkend="openjpa.ConnectionURL"/>, but applies to the alternate
+connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionUserName">
+            <title>
+                openjpa.ConnectionUserName
+            </title>
+            <indexterm zone="openjpa.ConnectionUserName">
+                <primary>
+                    ConnectionUserName
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionUserName">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionUserName
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionUserName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionUserName()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionUserName
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionUserName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The user name to use when
+connecting to the database. See the <xref linkend="ref_guide_dbsetup"/>
+for details.
+            </para>
+        </section>
+        <section id="openjpa.Connection2UserName">
+            <title>
+                openjpa.Connection2UserName
+            </title>
+            <indexterm zone="openjpa.Connection2UserName">
+                <primary>
+                    Connection2UserName
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Connection2UserName">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    Connection2UserName
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.Connection2UserName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnection2UserName()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getConnection2UserName
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Connection2UserName</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> This property is equivalent to the
+<literal>openjpa.ConnectionUserName</literal> property described in
+<xref linkend="openjpa.ConnectionUserName"/>, but applies to the
+alternate connection factory used for unmanaged connections. See
+<xref linkend="ref_guide_dbsetup_thirdparty_enlist"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.ConnectionRetainMode">
+            <title>
+                openjpa.ConnectionRetainMode
+            </title>
+            <indexterm zone="openjpa.ConnectionRetainMode">
+                <primary>
+                    ConnectionRetainMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ConnectionRetainMode">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionRetainMode
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.ConnectionRetainMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getConnectionRetainMode()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getConnectionRetainMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionRetainMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>on-demand</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Controls how OpenJPA uses
+datastore connections. This property can also be specified for individual
+sessions. See <xref linkend="ref_guide_dbsetup_retain"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.DataCache">
+            <title>
+                openjpa.DataCache
+            </title>
+            <indexterm zone="openjpa.DataCache">
+                <primary>
+                    DataCache
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.DataCache">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    DataCache
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.DataCache
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDataCache()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getDataCache
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DataCache</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin list string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/datacache/DataCache.html"><classname>
+org.apache.openjpa.datacache.DataCache</classname></ulink>s to use for data
+caching. See <xref linkend="ref_guide_cache_conf"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.DataCacheManager">
+            <title>
+                openjpa.DataCacheManager
+            </title>
+            <indexterm zone="openjpa.DataCacheManager">
+                <primary>
+                    DataCacheManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.DataCacheManager">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    DataCacheManager
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.DataCacheManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDataCacheManager()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getDataCacheManager
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DataCacheManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/datacache/DataCacheManager.html">
+<classname>openjpa.datacache.DataCacheManager</classname></ulink> that manages
+the system data caches. See <xref linkend="ref_guide_cache"/> for details
+on data caching.
+            </para>
+        </section>
+        <section id="openjpa.DataCacheMode">
+            <title>
+                openjpa.DataCacheMode
+            </title>
+            <indexterm zone="openjpa.DataCacheMode">
+                <primary>
+                    DataCacheMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.DataCacheMode">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    DataCacheTimeout
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.DataCacheMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDataCacheMode()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getDataCacheMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DataCacheMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>DataCacheMode.UNSPECIFIED (see javadoc for details)</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis>Determines which entities will be included in the DataCache. May be any of the values defined in <ulink url="../javadoc/org/apache/openjpa/datacache/DataCacheMode.html"/>.
+            </para>
+        </section>
+
+        <section id="openjpa.DataCacheTimeout">
+            <title>
+                openjpa.DataCacheTimeout
+            </title>
+            <indexterm zone="openjpa.DataCacheTimeout">
+                <primary>
+                    DataCacheTimeout
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.DataCacheTimeout">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    DataCacheTimeout
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.DataCacheTimeout</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDataCacheTimeout()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getDataCacheTimeout
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DataCacheTimeout</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>-1</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The number of milliseconds that
+data in the data cache is valid. Set this to -1 to indicate that data should not
+expire from the cache. This property can also be specified for individual
+classes. See <xref linkend="ref_guide_cache_conf"/> for details.
+            </para>
+        </section>
+
+        <section id="openjpa.DetachState">
+            <title>
+                openjpa.DetachState
+            </title>
+            <indexterm zone="openjpa.AutoDetach">
+                <primary>
+                    DetachState
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.AutoDetach">
+                <primary>
+                    detach
+                </primary>
+                <secondary>
+                    DetachState
+                </secondary>
+                <tertiary>
+                    DetachState
+                </tertiary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.DetachState
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfigurationImpl.html#getDetachState()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfigurationImpl.getDetachState
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DetachState</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>loaded</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>loaded</literal>,
+<literal>fetch-groups</literal>, <literal>all</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Determines which fields are part
+of the detached graph and related options. For more details, see
+<xref linkend="ref_guide_detach_graph"/>.
+            </para>
+        </section>
+        <section id="openjpa.DynamicDataStructs">
+            <title>
+                openjpa.DynamicDataStructs
+            </title>
+            <indexterm zone="openjpa.DynamicDataStructs">
+                <primary>
+                    DynamicDataStructs
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.DynamicDataStructs">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    DynamicDataStructs
+                </secondary>
+            </indexterm>
+            <indexterm zone="openjpa.DynamicDataStructs">
+                <primary>
+                    remote
+                </primary>
+                <secondary>
+                    DynamicDataStructs
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.DynamicDataStructs</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDynamicDataStructs()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getDynamicDataStructs
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DynamicDataStructs</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether to dynamically generate
+customized structs to hold persistent data. Both the OpenJPA data cache and the
+remote framework rely on data structs to cache and transfer persistent state.
+With dynamic structs, OpenJPA can customize data storage for each class,
+eliminating the need to generate primitive wrapper objects. This saves memory
+and speeds up certain runtime operations. The price is a longer warm-up time for
+the application - generating and loading custom classes into the JVM takes time.
+Therefore, only set this property to <literal>true</literal> if you have a
+long-running application where the initial cost of class generation is offset by
+memory and speed optimization over time.
+            </para>
+        </section>
+        <section id="openjpa.DynamicEnhancementAgent">
+            <title>openjpa.DynamicEnhancementAgent</title>
+            <para> 
+                <emphasis role="bold">Property name: </emphasis>
+                <literal>openjpa.DynamicEnhancementAgent</literal>
+            </para>
+            <para>
+                 <emphasis role="bold">Configuration API: </emphasis>
+                 <ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getDynamicEnhancementAgent()">org.apache.openjpa.conf.OpenJPAConfiguration.getDynamicEnhancementAgent</ulink>
+            </para>
+            <para>
+                <emphasis role="bold">Resource adaptor config property:</emphasis>
+                DynamicEnhancementAgent
+            </para>
+            <para>
+                <emphasis role="bold">Default: </emphasis>
+                <literal>true</literal>
+                
+            </para>
+            <para>
+                <emphasis role="bold">Description:</emphasis>
+                The DynamicEnhancementAgent property controls whether or not
+                OpenJPA will attempt to dynamically load the PCEnhancer 
+                javaagent.
+            </para>
+            <para>
+                See the reference guide for more information 
+                <xref linkend="ref_guide_pc_enhance_dynamic"/>
+            </para>            
+        </section>
+        <section id="openjpa.FetchBatchSize">
+            <title>
+                openjpa.FetchBatchSize
+            </title>
+            <indexterm zone="openjpa.FetchBatchSize">
+                <primary>
+                    FetchBatchSize
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.FetchBatchSize">
+                <primary>
+                    large result sets
+                </primary>
+                <secondary>
+                    FetchBatchSize
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.FetchBatchSize
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getFetchBatchSize()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getFetchBatchSize
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+FetchBatchSize</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>-1</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The number of rows to fetch at
+once when scrolling through a result set. The fetch size can also be set at
+runtime. See <xref linkend="ref_guide_dbsetup_lrs"/> for details.
+            </para>
+        </section>
+<!-- start -->     
+<section id="openjpa.EncryptionProvider">
+            <title>
+                openjpa.EncryptionProvider
+            </title>
+            <indexterm zone="openjpa.EncryptionProvider">
+                <primary>
+                    DataCache
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.EncryptionProvider">
+                <primary>
+                    encryption
+                </primary>
+            </indexterm>
+            <para>
+		<emphasis role="bold">Property name: </emphasis><literal>openjpa.EncryptionProvider</literal>
+            </para>
+            <para>
+		<emphasis role="bold">Configuration API:</emphasis>
+		<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getEncryptionProvider()">
+			<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getEncryptionProvider</methodname>
+		</ulink>
+            </para>
+            <para>
+		<emphasis role="bold">Resource adaptor config-property: </emphasis>
+		<literal>EncryptionProvider</literal>
+            </para>
+            <para>
+		<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin list string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/lib/encryption/EncryptionProvider.html"><classname>
+org.apache.openjpa.lib.encryption.EncryptionProvider</classname></ulink>s to use for connection password
+encryption. See <xref linkend="ref_guide_encryption"/> for details.
+            </para>
+        </section>
+
+<!-- end -->        
+        <section id="openjpa.FetchGroups">
+            <title>
+                openjpa.FetchGroups
+            </title>
+            <indexterm zone="openjpa.FetchGroups">
+                <primary>
+                    fetch groups
+                </primary>
+                <secondary>
+                    FetchGroups
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.FetchGroups
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getFetchGroups()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getFetchGroups
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+FetchGroups</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of fetch
+group names that are to be loaded when retrieving objects from the datastore.
+Fetch groups can also be set at runtime. See <xref linkend="ref_guide_fetch"/>
+ for details.
+            </para>
+        </section>
+        <!--
+        <section id="openjpa.FilterListeners">
+            <title>
+                openjpa.FilterListeners
+            </title>
+            <indexterm zone="openjpa.FilterListeners">
+                <primary>
+                    FilterListeners
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.FilterListeners">
+                <primary>
+                    Query
+                </primary>
+                <secondary>
+                    FilterListeners
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.FilterListeners
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getFilterListeners()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getFilterListeners
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+FilterListeners</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of full
+plugin strings (see <xref linkend="ref_guide_conf_plugins"/>) for custom
+<ulink url="../javadoc/org/apache/openjpa/jdbc/kernel/exps/JDBCFilterListener.html">
+<classname> org.apache.openjpa.jdbc.kernel.exps.JDBCFilterListener</classname>
+</ulink>s to make available to all queries, in addition to the standard set of
+listeners. You can also add filter listeners to individual queries. See
+<xref linkend="ref_guide_enterprise_queryext"/> for details.
+            </para>
+        </section>
+        -->
+        <section id="openjpa.FlushBeforeQueries">
+            <title>
+                openjpa.FlushBeforeQueries
+            </title>
+            <indexterm zone="openjpa.FlushBeforeQueries">
+                <primary>
+                    FlushBeforeQueries
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.FlushBeforeQueries">
+                <primary>
+                    Query
+                </primary>
+                <secondary>
+                    FlushBeforeQueries
+                </secondary>
+            </indexterm>
+            <indexterm zone="openjpa.FlushBeforeQueries">
+                <primary>
+                    flush
+                </primary>
+                <secondary>
+                    FlushBeforeQueries
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.FlushBeforeQueries</literal>
+            </para>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.FlushBeforeQueries</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getFlushBeforeQueries()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getFlushBeforeQueries
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+FlushBeforeQueries</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether or not to flush any
+changes made in the current transaction to the datastore before executing a
+query. See <xref linkend="ref_guide_dbsetup_retain"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.IgnoreChanges">
+            <title>
+                openjpa.IgnoreChanges
+            </title>
+            <indexterm zone="openjpa.IgnoreChanges">
+                <primary>
+                    IgnoreChanges
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.IgnoreChanges
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getIgnoreChanges()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getIgnoreChanges
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+IgnoreChanges</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether to consider modifications
+to persistent objects made in the current transaction when evaluating queries.
+Setting this to <literal>true</literal> allows OpenJPA to ignore changes and
+execute the query directly against the datastore. A value of <literal>false
+</literal> forces OpenJPA to consider whether the changes in the current
+transaction affect the query, and if so to either evaluate the query in-memory
+or flush before running it against the datastore.
+            </para>
+        </section>
+        <section id="openjpa.Id">
+            <title>openjpa.Id</title>
+            <indexterm zone="openjpa.Id">
+                <primary>Id</primary>
+            </indexterm>
+            <para>
+            <emphasis role="bold">Property name:</emphasis>
+            <literal>openjpa.Id</literal>
+            </para>
+            <para>
+            <emphasis role="bold">Resource adaptor config-property:</emphasis>
+            <literal>Id</literal>
+            </para>
+            <para>
+            <emphasis role="bold">Default:</emphasis> none
+            </para>
+            <para>
+            <emphasis role="bold">Description:</emphasis> An
+            environment-specific identifier for this configuration. This
+            might correspond to a JPA persistence-unit name, or to some other
+            more-unique value available in the current environment.
+            </para>
+        </section>
+        
+        <section id="openjpa.InitializeEagerly">
+            <title>
+                openjpa.InitializeEagerly
+            </title>
+            <indexterm zone="openjpa.InitializeEagerly">
+                <primary>
+                    InverseManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.InitializeEagerly">
+                <primary>
+                    Initialization
+                </primary>
+                <secondary>
+                    Configuration
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.InitializeEagerly
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#isInitializeEagerly()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.isInitializeEagerly
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+InitializeEagerly</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>false</literal>,
+<literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Controls whether initialization
+is eager or lazy. Eager initialization imply all persistent classes, their 
+mapping information, database connectivity and all other resources specified in
+the configuration of a persistence unit will be initialized when a persistent 
+unit is constructed. The default behavior is
+lazy i.e. persistent classes, database and other resources are initialized only
+when the application refers to a resource for the first time.
+            </para>
+        </section>
+
+        <section id="openjpa.Instrumentation">
+            <title>
+                openjpa.Instrumentation
+            </title>
+            <indexterm zone="openjpa.Instrumentation">
+                <primary>
+                    Instrumentation
+                </primary>
+            </indexterm>
+            <indexterm zone="Instrumentation">
+                <primary>
+                    Instrumentation
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.Instrumentation</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getInstrumentation()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getInstrumentation
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Instrumentation</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>-</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>jmx</literal>,
+<literal>custom plugin string</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing one or more instances of
+<ulink url="../javadoc/org/apache/openjpa/lib/instrumentation/InstrumentationProvider.html">
+<classname>org.apache.openjpa.lib.instrumentation.InstrumentationProvider</classname></ulink> and
+specific instruments to enable. See <xref linkend="ref_guide_instrumentation"/> for details.
+            </para>
+        </section>
+        
+        <section id="openjpa.InverseManager">
+            <title>
+                openjpa.InverseManager
+            </title>
+            <indexterm zone="openjpa.InverseManager">
+                <primary>
+                    InverseManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.InverseManager">
+                <primary>
+                    bidirectional relation
+                </primary>
+                <secondary>
+                    InverseManager
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.InverseManager
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getInverseManager()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getInverseManager
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+InverseManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>false</literal>,
+<literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/kernel/InverseManager.html">
+<classname>org.apache.openjpa.kernel.InverseManager</classname></ulink> to use
+for managing bidirectional relations upon a flush. See
+<xref linkend="ref_guide_inverses"/> for usage documentation.
+            </para>
+        </section>
+        <section id="openjpa.LockManager">
+            <title>
+                openjpa.LockManager
+            </title>
+            <indexterm zone="openjpa.LockManager">
+                <primary>
+                    LockManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.LockManager">
+                <primary>
+                    locking
+                </primary>
+                <secondary>
+                    LockManager
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.LockManager
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getLockManager()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getLockManager
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+LockManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>mixed</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>none</literal>, <literal>version</literal>,
+<literal>pessimistic</literal>, <literal>mixed</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/kernel/LockManager.html"><classname>
+org.apache.openjpa.kernel.LockManager</classname></ulink> to use for acquiring
+locks on persistent instances during transactions.  See 
+<xref linkend="ref_guide_locking_lockmgr"/> for more information.
+            </para>
+        </section>
+        <section id="openjpa.LockTimeout">
+            <title>
+                openjpa.LockTimeout
+            </title>
+            <indexterm zone="openjpa.LockTimeout">
+                <primary>
+                    LockTimeout
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.LockTimeout">
+                <primary>
+                    locking
+                </primary>
+                <secondary>
+                    LockTimeout
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.LockTimeout
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getLockTimeout()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getLockTimeout
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+LockTimeout</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>-1</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The number of milliseconds to wait
+for an object lock before throwing an exception, or -1 for no limit. See
+<xref linkend="ref_guide_locking"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Log">
+            <title>
+                openjpa.Log
+            </title>
+            <indexterm zone="openjpa.Log">
+                <primary>
+                    Log
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Log">
+                <primary>
+                    logging
+                </primary>
+                <secondary>
+                    Log
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Log</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/lib/conf/Configuration.html#getLog()">
+<methodname>org.apache.openjpa.lib.conf.Configuration.getLog</methodname>
+</ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>Log
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>openjpa</literal>,
+<literal>commons</literal>, <literal>log4j</literal>, <literal>slf4j</literal>,
+<literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/lib/log/LogFactory.html"><classname>
+org.apache.openjpa.lib.log.LogFactory</classname></ulink> to use for logging.
+For details on logging, see <xref linkend="ref_guide_logging"/>.
+            </para>
+        </section>
+        <section id="openjpa.ManagedRuntime">
+            <title>
+                openjpa.ManagedRuntime
+            </title>
+            <indexterm zone="openjpa.ManagedRuntime">
+                <primary>
+                    ManagedRuntime
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ManagedRuntime">
+                <primary>
+                    transactions
+                </primary>
+                <secondary>
+                    managed
+                </secondary>
+                <tertiary>
+                    ManagedRuntime
+                </tertiary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.ManagedRuntime
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getManagedRuntime()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getManagedRuntime
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ManagedRuntime</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>auto</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/ee/ManagedRuntime.html"><classname>
+org.apache.openjpa.ee.ManagedRuntime</classname></ulink> implementation to use
+for obtaining a reference to the <classname>TransactionManager</classname> in an
+enterprise environment.
+            </para>
+        </section>
+        <section id="openjpa.Mapping">
+            <title>
+                openjpa.Mapping
+            </title>
+            <indexterm zone="openjpa.Mapping">
+                <primary>
+                    Mapping
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Mapping
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getMapping()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getMapping</methodname>
+</ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Mapping</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The symbolic name of the
+object-to-datastore mapping to use.
+            </para>
+        </section>
+        <section id="openjpa.MaxFetchDepth">
+            <title>
+                openjpa.MaxFetchDepth
+            </title>
+            <indexterm zone="openjpa.MaxFetchDepth">
+                <primary>
+                    MaxFetchDepth
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.MaxFetchDepth">
+                <primary>
+                    eager fetching
+                </primary>
+                <secondary>
+                    MaxFetchDepth
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.MaxFetchDepth
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getMaxFetchDepth()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getMaxFetchDepth
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+MaxFetchDepth</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>-1</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The maximum depth of relations to
+traverse when eager fetching. Use -1 for no limit. Defaults to no limit.  See
+<xref linkend="ref_guide_perfpack_eager"/> for details on eager fetching.
+            </para>
+        </section>
+        <section id="openjpa.MetaDataFactory">
+            <title>
+                openjpa.MetaDataFactory
+            </title>
+            <indexterm zone="openjpa.MetaDataFactory">
+                <primary>
+                    MetaDataFactory
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.MetaDataFactory">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    MetaDataFactory
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.MetaDataFactory
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getMetaDataFactory()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getMetaDataFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+MetaDataFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> <literal>jpa</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/meta/MetaDataFactory.html">
+<classname>openjpa.meta.MetaDataFactory</classname></ulink> to use to store and
+retrieve metadata for your persistent classes. See
+<xref linkend="ref_guide_meta_factory"/> for details.
+            </para>
+        </section>
+        <!-- start -->
+        <section id="openjpa.MetaDataRepository">
+            <title>
+                openjpa.MetaDataRepository
+            </title>
+            <indexterm zone="openjpa.MetaDataRepository">
+                <primary>
+                    MetaDataRepository
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.MetaDataRepository">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    MetaDataRepository
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.MetaDataRepository
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getMetaDataRepository()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getMetaDataRepository
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+MetaDataRepository</literal>
+            </para>
+            <para>
+		<emphasis role="bold">Default:</emphasis>none<literal></literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/meta/MetaDataRepository.html">
+<classname>openjpa.meta.MetaDataRepository</classname></ulink> to use to store and
+retrieve metadata for your persistent classes. See
+<xref linkend="ref_guide_meta_repository"/> for details.
+            </para>
+        </section>
+        
+        <!-- end -->
+        
+        <section id="openjpa.Multithreaded">
+            <title>
+                openjpa.Multithreaded
+            </title>
+            <indexterm zone="openjpa.Multithreaded">
+                <primary>
+                    Multithreaded
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Multithreaded">
+                <primary>
+                    threading
+                </primary>
+                <secondary>
+                    Multithreaded
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Multithreaded
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getMultithreaded()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getMultithreaded
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Multithreaded</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether persistent instances and
+OpenJPA components other than the <classname>EntityManagerFactory</classname>
+will be accessed by multiple threads at once.
+            </para>
+        </section>
+        <section id="openjpa.Optimistic">
+            <title>
+                openjpa.Optimistic
+            </title>
+            <indexterm zone="openjpa.Optimistic">
+                <primary>
+                    Optimistic
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.Optimistic">
+                <primary>
+                    transactions
+                </primary>
+                <secondary>
+                    optimistic
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Optimistic
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getOptimistic()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getOptimistic
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Optimistic</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Selects between optimistic and
+pessimistic (datastore) transactional modes.
+            </para>
+        </section>
+        <section id="openjpa.OptimizeIdCopy">
+            <title>
+                openjpa.OptimizeIdCopy
+            </title>
+            <indexterm zone="openjpa.OptimizeIdCopy">
+                <primary>
+                    OptimizeIdCopy
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.OptimizeIdCopy">
+                <primary>
+                    id
+                </primary>
+                <secondary>
+                    enhancement
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.OptimizeIdCopy
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getOptimizeIdCopy()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getOptimizeIdCopy
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+OptimizeIdCopy</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Attempt to optimize id class copy operations
+used internally by the provider during various ORM operations.  This optimization is only
+applicable for entities using simple id classes (via @IdClass or XML equivalent) that do not
+have public setters, provide a public constructor with exact matching parameter types, and
+perform direct assignments to id class fields within the constructor. If these conditions
+are met, OpenJPA will use a public constructor during internal id copy operations instead
+of less optimal reflection. Optimization of id copy occurs during the enhancement phase.  
+If the enhancer determines optimization cannot occur, it will fallback to the normal behavior.
+A side effect of enabling this property is that an id class constructor will be called by
+the provider during runtime operations.  If there is logic in the constructor in addition
+to field initialization, (parameter verification, for example) that logic will also be
+executed during the operation, which could result in a change in runtime behavior.
+            </para>
+        </section>        
+        <section id="openjpa.OrphanedKeyAction">
+            <title>
+                openjpa.OrphanedKeyAction
+            </title>
+            <indexterm zone="openjpa.OrphanedKeyAction">
+                <primary>
+                    OrphanedKeyAction
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.OrphanedKeyAction">
+                <primary>
+                    foreign keys
+                </primary>
+                <secondary>
+                    OrphanedKeyAction
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.OrphanedKeyAction</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getOrphanedKeyAction()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getOrphanedKeyAction
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+OrphanedKeyAction</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>log</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>log</literal>,
+<literal>exception</literal>, <literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/event/OrphanedKeyAction.html">
+<classname>org.apache.openjpa.event.OrphanedKeyAction</classname></ulink> to
+invoke when OpenJPA discovers an orphaned datastore key. See
+<xref linkend="ref_guide_orphan"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.NontransactionalRead">
+            <title>
+                openjpa.NontransactionalRead
+            </title>
+            <indexterm zone="openjpa.NontransactionalRead">
+                <primary>
+                    NontransactionalRead
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.NontransactionalRead</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getNontransactionalRead()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getNontransactionalRead
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+NontransactionalRead</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether the OpenJPA runtime will
+allow you to read data outside of a transaction.
+            </para>
+        </section>
+        <section id="openjpa.NontransactionalWrite">
+            <title>
+                openjpa.NontransactionalWrite
+            </title>
+            <indexterm zone="openjpa.NontransactionalWrite">
+                <primary>
+                    NontransactionalWrite
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.NontransactionalWrite</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getNontransactionalWrite()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getNontransactionalWrite
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+NontransactionalWrite</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> <literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether you can modify persistent
+objects and perform persistence operations outside of a transaction. Changes
+will take effect on the next transaction.
+            </para>
+        </section>
+        <section id="openjpa.ProxyManager">
+            <title>
+                openjpa.ProxyManager
+            </title>
+            <indexterm zone="openjpa.ProxyManager">
+                <primary>
+                    ProxyManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ProxyManager">
+                <primary>
+                    proxies
+                </primary>
+                <secondary>
+                    ProxyManager
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.ProxyManager
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getProxyManager()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getProxyManager
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ProxyManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/util/ProxyManager.html"><classname>
+org.apache.openjpa.util.ProxyManager</classname></ulink> to use for proxying
+mutable second class objects. See
+<xref linkend="ref_guide_pc_scos_proxy_custom"/> for details.
+            </para>
+        </section>
+
+        <section id="openjpa.PostLoadOnMerge">
+            <title>
+                openjpa.PostLoadOnMerge
+            </title>
+            <indexterm zone="openjpa.PostLoadOnMerge">
+                <primary>
+                    PostLoadOnMerge
+                </primary>
+            </indexterm>
+            <para>
+                <emphasis role="bold">Property name: </emphasis><literal>
+                openjpa.PostLoadOnMerge</literal>
+            </para>
+            <para>
+                <emphasis role="bold">Configuration API:</emphasis>
+                <ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getPostLoadOnMerge()">
+                    <methodname>
+                        org.apache.openjpa.conf.OpenJPAConfiguration.getPostLoadOnMerge
+                    </methodname></ulink>
+            </para>
+            <para>
+                <emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+                PostLoadOnMerge</literal>
+            </para>
+            <para>
+                <emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+                <emphasis role="bold">Description:</emphasis> Whether the OpenJPA runtime will
+                trigger a PostLoad lifecycle event for EntityManager#merge(). If you enable this
+                option, OpenJPA will also ensure that the whole entity from the database will
+                get passed to the PostLoad entity listener.
+            </para>
+        </section>
+
+
+
+        <section id="openjpa.QueryCache">
+            <title>
+                openjpa.QueryCache
+            </title>
+            <indexterm zone="openjpa.QueryCache">
+                <primary>
+                    QueryCache
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.QueryCache">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    QueryCache
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.QueryCache
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getQueryCache()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getQueryCache
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+QueryCache</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/datacache/QueryCache.html">
+<classname>org.apache.openjpa.datacache.QueryCache</classname></ulink>
+implementation to use for caching of queries loaded from the data store. See
+<xref linkend="ref_guide_cache_query"/> for details.
+            </para>
+        </section>
+		<section id="openjpa.QueryCompilationCache">
+			<title>
+                openjpa.QueryCompilationCache
+            </title>
+			<indexterm zone="openjpa.QueryCompilationCache">
+				<primary>
+                    QueryCompilationCache
+                </primary>
+			</indexterm>
+			<indexterm zone="openjpa.QueryCompilationCache">
+				<primary>
+                    caching
+                </primary>
+				<secondary>
+                    QueryCompilationCache
+                </secondary>
+			</indexterm>
+			<para>
+<emphasis role="bold">Property name:</emphasis>
+<literal>openjpa.QueryCompilationCache</literal>
+			</para>
+			<para>
+<emphasis role="bold">Resource adaptor config-property:</emphasis> 
+<literal>QueryCompilationCache</literal>
+			</para>
+			<para>
+<emphasis role="bold">Default:</emphasis> <literal>true</literal>.
+			</para>
+			<para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see 
+<xref linkend="ref_guide_conf_plugins"/>) describing the 
+<classname>java.util.Map</classname> to use for caching of data used during 
+query compilation.  See <xref linkend="ref_guide_cache_querycomp"/> for details.
+			</para>
+		</section>
+        <section id="openjpa.ReadLockLevel">
+            <title>
+                openjpa.ReadLockLevel
+            </title>
+            <indexterm zone="openjpa.ReadLockLevel">
+                <primary>
+                    ReadLockLevel
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.ReadLockLevel">
+                <primary>
+                    locking
+                </primary>
+                <secondary>
+                    ReadLockLevel
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.ReadLockLevel
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getReadLockLevel()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getReadLockLevel
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ReadLockLevel</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>read</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>none</literal>,
+<literal>read</literal>, <literal>write</literal>,
+<literal>optimistic</literal>, <literal>optimistic-force-increment</literal>,
+<literal>pessimistic-read</literal>, <literal>pessimistic-write</literal>,
+<literal>pessimistic-force-increment</literal>, numeric values for
+lock-manager specific lock levels
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The default level at which to lock
+objects retrieved during a non-optimistic transaction. Note that for the default
+JDBC lock manager, <literal> read</literal> and <literal>write</literal> lock
+levels are equivalent. Lock levels <literal>pessimistic-read</literal>,
+<literal>pessimistic-write</literal> and
+<literal>pessimistic-force-increment</literal> are in effect only when the
+<literal>mixed</literal> lock manager is used.
+            </para>
+        </section>
+        <section id="openjpa.RemoteCommitProvider">
+            <title>
+                openjpa.RemoteCommitProvider
+            </title>
+            <indexterm zone="openjpa.RemoteCommitProvider">
+                <primary>
+                    RemoteCommitProvider
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.RemoteCommitProvider">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    RemoteCommitProvider
+                </secondary>
+            </indexterm>
+            <indexterm zone="openjpa.RemoteCommitProvider">
+                <primary>
+                    remote
+                </primary>
+                <secondary>
+                    RemoteCommitProvider
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.RemoteCommitProvider</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getRemoteCommitProvider()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getRemoteCommitProvider
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+RemoteCommitProvider</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> - If <literal>openjpa.DataCache</literal> is enabled, the default value is <literal>sjvm</literal>.
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/event/RemoteCommitProvider.html">
+<classname>org.apache.openjpa.event.RemoteCommitProvider</classname></ulink>
+implementation to use for distributed event notification. See
+<xref linkend="ref_guide_event_conf"/> for more information.
+            </para>
+        </section>
+        <section id="openjpa.RestoreState">
+            <title>
+                openjpa.RestoreState
+            </title>
+            <indexterm zone="openjpa.RestoreState">
+                <primary>
+                    RestoreState
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.RestoreState
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getRestoreState()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getRestoreState
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+RestoreState</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>none</literal>,
+<literal>immutable</literal>, <literal>all</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether to restore managed fields
+to their pre-transaction values when a rollback occurs.
+            </para>
+        </section>
+        <section id="openjpa.RetainState">
+            <title>
+                openjpa.RetainState
+            </title>
+            <indexterm zone="openjpa.RetainState">
+                <primary>
+                    RetainState
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.RetainState
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getRetainState()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getRetainState
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+RetainState</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>true</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Whether persistent fields retain
+their values on transaction commit.
+            </para>
+        </section>
+        <section id="openjpa.RetryClassRegistration">
+            <title>
+                openjpa.RetryClassRegistration
+            </title>
+            <indexterm zone="openjpa.RetryClassRegistration">
+                <primary>
+                    RetryClassRegistration
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.RetryClassRegistration">
+                <primary>
+                    metadata
+                </primary>
+                <secondary>
+                    RetryClassRegistration
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.RetryClassRegistration</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getRetryClassRegistration()">
+<methodname>
+org.apache.openjpa.conf.OpenJPAConfiguration.getRetryClassRegistration
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+RetryClassRegistration</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>false</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Controls whether to log a warning
+and defer registration instead of throwing an exception when a persistent class
+cannot be fully processed. This property should <emphasis>only</emphasis> be
+used in complex classloader situations where security is preventing OpenJPA from
+reading registered classes. Setting this to true unnecessarily may obscure more
+serious problems.
+            </para>
+        </section>
+        <section id="openjpa.RuntimeUnenhancedClasses">
+            <title>openjpa.RuntimeUnenhancedClasses</title>
+            <para> 
+                <emphasis role="bold">Property name: </emphasis>
+                <literal>openjpa.RuntimeUnenhancedClasses</literal>
+            </para>
+            <para>
+                 <emphasis role="bold">Configuration API: </emphasis>
+                 <ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getRuntimeUnenhancedClasses()">org.apache.openjpa.conf.OpenJPAConfiguration.getRuntimeUnenhancedClasses</ulink>
+            </para>
+            <para>
+                <emphasis role="bold">Resource adaptor config property:</emphasis>
+                RuntimeUnenhancedClasses
+            </para>
+            <para>
+                <emphasis role="bold">Default: </emphasis>
+                <literal>unsupported</literal>
+                
+            </para>
+            <para>
+                <emphasis role="bold">Possible values:</emphasis>
+                <literal>supported</literal>, 
+                <literal>unsupported</literal>, 
+                <literal>warn</literal>
+            </para>
+            <para>
+                <emphasis role="bold">Description:</emphasis>
+                The RuntimeUnenhancedClasses property controls how OpenJPA 
+                handles classes that have not been enhanced by the PCEnhancer 
+                tool or automatically by a javaagent. If RuntimeUnenhancedClasses is 
+                set to <literal>supported</literal> OpenJPA will automatically 
+                create subclasses for unenhanced entity classes. If set to 
+                <literal>unsupported</literal> OpenJPA will not create subclasses 
+                for unenhanced entity classes and will throw an exception when 
+                they are detected. If set to <literal>warn</literal> OpenJPA 
+                will not create subclasses for unenhanced entity classes 
+                but will log a warning message.  
+            </para>
+            <para>
+                This function is often useful for rapid prototyping but is not
+                <emphasis role="italic">generally</emphasis>
+                recommended for use in production. Please consult the reference guide 
+                before changing the default value. 
+            </para>
+            <para>
+                See the reference guide section on unenhanced types for more 
+                information 
+                <xref linkend="ref_guide_pc_enhance_unenhanced_types"/>
+            </para>
+        </section>
+        <section id="openjpa.SavepointManager">
+            <title>
+                openjpa.SavepointManager
+            </title>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.SavepointManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getSavepointManager()">
+org.apache.openjpa.conf.OpenJPAConfiguration.getSavepointManager</ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property:</emphasis>
+SavepointManager
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>in-mem</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>in-mem</literal>,
+<literal>jdbc</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing a
+<ulink url="../javadoc/org/apache/openjpa/kernel/SavepointManager.html">
+<classname>org.apache.openjpa.kernel.SavepointManager</classname></ulink> to 
+use for managing transaction savepoints. See 
+<xref linkend="ref_guide_savepoints"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.Sequence">
+            <title>
+                openjpa.Sequence
+            </title>
+            <indexterm zone="openjpa.Sequence">
+                <primary>
+                    Sequence
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Sequence
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getSequence()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getSequence
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Sequence</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>table</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/kernel/Seq.html"><classname>
+org.apache.openjpa.kernel.Seq</classname></ulink> implementation to use for the
+system sequence. See <xref linkend="ref_guide_sequence"/> for more
+information.
+            </para>
+        </section>
+        <section id="openjpa.Specification">
+            <title>
+                openjpa.Specification
+            </title>
+            <indexterm zone="openjpa.Specification">
+                <primary>
+                    Specification
+                </primary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.Specification
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getSpecificationInstance()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getSpecificationInstance
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Specification</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>table</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A formatted string describing the Specification
+to use for the default configuration options. The format of the Specifcation string is 
+<literal>name [major.[minor]]</literal> where <literal>name</literal> denotes the name of the
+Specification such as <literal>JPA</literal> or <literal>JDO</literal>, <literal>major</literal>
+denotes the major integral version number of the Specification and <literal>minor</literal>
+denotes a minor version which can be an arbitrary string.  
+See <xref linkend="ref_guide_spec_compatibility"/> for more information.
+            </para>
+        </section>
+        
+        <section id="openjpa.TransactionMode">
+            <title>
+                openjpa.TransactionMode
+            </title>
+            <indexterm zone="openjpa.TransactionMode">
+                <primary>
+                    TransactionMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.TransactionMode">
+                <primary>
+                    transactions
+                </primary>
+                <secondary>
+                    TransactionMode
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.TransactionMode
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getTransactionMode()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getTransactionMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+TransactionMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>local</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>local</literal>,
+<literal>managed</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The default transaction mode to
+use. You can override this setting per-session.
+            </para>
+        </section>
+        <section id="openjpa.WriteLockLevel">
+            <title>
+                openjpa.WriteLockLevel
+            </title>
+            <indexterm zone="openjpa.WriteLockLevel">
+                <primary>
+                    WriteLockLevel
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.WriteLockLevel">
+                <primary>
+                    locking
+                </primary>
+                <secondary>
+                    WriteLockLevel
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.WriteLockLevel
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/conf/OpenJPAConfiguration.html#getWriteLockLevel()">
+<methodname>org.apache.openjpa.conf.OpenJPAConfiguration.getWriteLockLevel
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+WriteLockLevel</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>write</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>none</literal>,
+<literal>read</literal>, <literal>write</literal>,
+<literal>optimistic</literal>, <literal>optimistic-force-increment</literal>,
+<literal>pessimistic-read</literal>, <literal>pessimistic-write</literal>,
+<literal>pessimistic-force-increment</literal>, numeric values for
+lock-manager specific lock levels.
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The default level at which to lock
+objects changed during a non-optimistic transaction. Note that for the default
+JDBC lock manager, <literal> read</literal> and <literal>write</literal> lock
+levels are equivalent. Lock levels <literal>pessimistic-read</literal>,
+<literal>pessimistic-write</literal> and
+<literal>pessimistic-force-increment</literal> are in effect only when the
+<literal>mixed</literal> lock manager is used.
+            </para>
+        </section>
+    </section>
+    <section id="ref_guide_conf_jdbc">
+        <title>
+            OpenJPA JDBC Properties
+        </title>
+        <indexterm zone="ref_guide_conf_jdbc">
+            <primary>
+                configuration
+            </primary>
+            <secondary>
+                of JDBC properties
+            </secondary>
+        </indexterm>
+        <para>
+The following properties apply exclusively to the OpenJPA JDBC back-end.
+        </para>
+        <section id="openjpa.jdbc.ConnectionDecorators">
+            <title>
+                openjpa.jdbc.ConnectionDecorators
+            </title>
+            <indexterm zone="openjpa.jdbc.ConnectionDecorators">
+                <primary>
+                    ConnectionDecorators
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.ConnectionDecorators">
+                <primary>
+                    connections
+                </primary>
+                <secondary>
+                    ConnectionDecorators
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.ConnectionDecorators</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getConnectionDecorators()">
+<methodname>
+org.apache.openjpa.jdbc.conf.JDBCConfiguration.getConnectionDecorators
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ConnectionDecorators</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of plugin
+strings (see <xref linkend="ref_guide_conf_plugins"/>) describing
+<ulink url="../javadoc/org/apache/openjpa/lib/jdbc/ConnectionDecorator.html">
+<classname>org.apache.openjpa.lib.jdbc.ConnectionDecorator</classname></ulink>
+instances to install on the connection factory. These decorators can wrap
+connections passed from the underlying <classname>DataSource</classname> to add
+functionality. OpenJPA will pass all connections through the list of decorators
+before using them. Note that by default OpenJPA employs all
+of the built-in decorators in the <classname>org.apache.openjpa.lib.jdbc
+</classname> package already; you do not need to list them here.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.DBDictionary">
+            <title>
+                openjpa.jdbc.DBDictionary
+            </title>
+            <indexterm zone="openjpa.jdbc.DBDictionary">
+                <primary>
+                    DBDictionary
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.DBDictionary">
+                <primary>
+                    JDBC
+                </primary>
+                <secondary>
+                    DBDictionary
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.DBDictionary</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getDBDictionary()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getDBDictionary
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DBDictionary</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> Based on the
+<link linkend="openjpa.ConnectionURL"><literal>openjpa.ConnectionURL</literal>
+</link><link linkend="openjpa.ConnectionDriverName"><literal>
+openjpa.ConnectionDriverName</literal></link>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/sql/DBDictionary.html">
+<classname>org.apache.openjpa.jdbc.sql.DBDictionary</classname></ulink> to use
+for database interaction. OpenJPA typically auto-configures the dictionary based
+on the JDBC URL, but you may have to set this property explicitly if you are
+using an unrecognized driver, or to plug in your own dictionary for a database
+OpenJPA does not support out-of-the-box. See
+<xref linkend="ref_guide_dbsetup_dbsupport"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.DriverDataSource">
+            <title>
+                openjpa.jdbc.DriverDataSource
+            </title>
+            <indexterm zone="openjpa.jdbc.DriverDataSource">
+                <primary>
+                    DriverDataSource
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.DriverDataSource">
+                <primary>
+                    JDBC
+                </primary>
+                <secondary>
+                    DriverDataSource
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.DriverDataSource</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getDriverDataSource()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getDriverDataSource
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+DriverDataSource</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>auto</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>auto</literal>,
+<literal>dbcp</literal>, <literal>simple</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The alias or full class name of
+the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/schema/DriverDataSource.html">
+<classname>org.apache.openjpa.jdbc.schema.DriverDataSource</classname></ulink>
+implementation to use to wrap JDBC Driver classes with javax.sql.DataSource
+instances.  The <classname>org.apache.openjpa.jdbc.schema.AutoDriverDataSource</classname> implementation is the default and will select either the DBCPDriverDataSource or SimpleDriverDataSource based on if Apache Commons DBCP is available
+on the classpath.
+The <classname>org.apache.openjpa.jdbc.schema.DBCPDriverDataSource</classname> implementation requires Apache Commons DBCP to be available on the classpath and uses <classname>org.apache.commons.dbcp.BasicDataSource</classname> to provide connection pooling.  
+            </para>
+        </section>
+        <section id="openjpa.jdbc.EagerFetchMode">
+            <title>
+                openjpa.jdbc.EagerFetchMode
+            </title>
+            <indexterm zone="openjpa.jdbc.EagerFetchMode">
+                <primary>
+                    EagerFetchMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.EagerFetchMode">
+                <primary>
+                    eager fetching
+                </primary>
+                <secondary>
+                    EagerFetchMode
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.EagerFetchMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getEagerFetchMode()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getEagerFetchMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+EagerFetchMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>parallel</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>parallel</literal>,
+<literal>join</literal>, <literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Optimizes how OpenJPA loads
+persistent relations. This setting can also be varied at runtime. See
+<xref linkend="ref_guide_perfpack_eager"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.FetchDirection">
+            <title>
+                openjpa.jdbc.FetchDirection
+            </title>
+            <indexterm zone="openjpa.jdbc.FetchDirection">
+                <primary>
+                    FetchDirection
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.FetchDirection">
+                <primary>
+                    large result sets
+                </primary>
+                <secondary>
+                    FetchDirection
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.FetchDirection</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getFetchDirection()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getFetchDirection
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+FetchDirection</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>forward</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>forward</literal>,
+<literal>reverse</literal>, <literal>unknown</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The expected order in which query
+result lists will be accessed. This property can also be varied at runtime. See
+<xref linkend="ref_guide_dbsetup_lrs"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.JDBCListeners">
+            <title>
+                openjpa.jdbc.JDBCListeners
+            </title>
+            <indexterm zone="openjpa.jdbc.JDBCListeners">
+                <primary>
+                    JDBCListeners
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.JDBCListeners">
+                <primary>
+                    JDBC
+                </primary>
+                <secondary>
+                    JDBCListeners
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.JDBCListeners</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getJDBCListeners()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getJDBCListeners
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+JDBCListeners</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of plugin
+strings (see <xref linkend="ref_guide_conf_plugins"/>) describing
+<ulink url="../javadoc/org/apache/openjpa/lib/jdbc/JDBCListener.html">
+<classname>org.apache.openjpa.lib.jdbc.JDBCListener</classname></ulink> event
+listeners to install. These listeners will be notified on various JDBC-related
+events.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.LRSSize">
+            <title>
+                openjpa.jdbc.LRSSize
+            </title>
+            <indexterm zone="openjpa.jdbc.LRSSize">
+                <primary>
+                    LRSSize
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.LRSSize">
+                <primary>
+                    large result sets
+                </primary>
+                <secondary>
+                    LRSSize
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.jdbc.LRSSize
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getLRSSize()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getLRSSize
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+LRSSize</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>query</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>query</literal>,
+<literal>last</literal>, <literal>unknown</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The strategy to use to calculate
+the size of a result list. This property can also be varied at runtime. See
+<xref linkend="ref_guide_dbsetup_lrs"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.MappingDefaults">
+            <title>
+                openjpa.jdbc.MappingDefaults
+            </title>
+            <indexterm zone="openjpa.jdbc.MappingDefaults">
+                <primary>
+                    MappingDefaults
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.MappingDefaults">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    MappingDefaults
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.MappingDefaults</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getMappingDefaults()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getMappingDefaults
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+MappingDefaults</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> jpa
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/meta/MappingDefaults.html">
+<classname>org.apache.openjpa.jdbc.meta.MappingDefaults</classname></ulink> to
+use to define default column names, table names, and constraints for your
+persistent classes. See <xref linkend="ref_guide_mapping_factory"/> for
+details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.MappingFactory">
+            <title>
+                openjpa.jdbc.MappingFactory
+            </title>
+            <indexterm zone="openjpa.jdbc.MappingFactory">
+                <primary>
+                    MappingFactory
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.MappingFactory">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    MappingFactory
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.MappingFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getMappingFactory()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getMappingFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+MappingFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/meta/MetaDataFactory.html">
+<classname>org.apache.openjpa.meta.MetaDataFactory</classname></ulink> to use to
+store and retrieve object-relational mapping information for your persistent
+classes. See <xref linkend="ref_guide_mapping_factory"/> for details.
+            </para>
+            
+        </section>
+        <section id="openjpa.jdbc.QuerySQLCache">
+            <title>
+                openjpa.jdbc.QuerySQLCache
+            </title>
+            <indexterm zone="openjpa.jdbc.QuerySQLCache">
+                <primary>
+                    Prepared SQL Cache
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.QuerySQLCache">
+                <primary>
+                    caching
+                </primary>
+                <secondary>
+                    QuerySQLCache
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name:</emphasis>
+<literal>openjpa.jdbc.QuerySQLCache</literal>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property:</emphasis> 
+<literal>QuerySQLCache</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> <literal>true</literal>.
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see 
+<xref linkend="ref_guide_conf_plugins"/>) describing the options to cache and 
+reuse SQL statements generated for JPQL queries. 
+See <xref linkend="ref_guide_cache_querysql"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.ResultSetType">
+            <title>
+                openjpa.jdbc.ResultSetType
+            </title>
+            <indexterm zone="openjpa.jdbc.ResultSetType">
+                <primary>
+                    ResultSetType
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.ResultSetType">
+                <primary>
+                    large result sets
+                </primary>
+                <secondary>
+                    ResultSetType
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.ResultSetType</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getResultSetType()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getResultSetType
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+ResultSetType</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>forward-only</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>forward-only</literal>
+, <literal>scroll-sensitive</literal>, <literal>scroll-insensitive</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The JDBC result set type to use
+when fetching result lists. This property can also be varied at runtime. See
+<xref linkend="ref_guide_dbsetup_lrs"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.Schema">
+            <title>
+                openjpa.jdbc.Schema
+            </title>
+            <indexterm zone="openjpa.jdbc.Schema">
+                <primary>
+                    schema
+                </primary>
+                <secondary>
+                    Schema
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.jdbc.Schema
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSchema()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSchema
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Schema</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The default schema name to prepend
+to unqualified table names. Also, the schema in which OpenJPA will create new
+tables. See <xref linkend="ref_guide_schema_def"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.SchemaFactory">
+            <title>
+                openjpa.jdbc.SchemaFactory
+            </title>
+            <indexterm zone="openjpa.jdbc.SchemaFactory">
+                <primary>
+                    SchemaFactory
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.SchemaFactory">
+                <primary>
+                    schema
+                </primary>
+                <secondary>
+                    SchemaFactory
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.SchemaFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSchemaFactory()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSchemaFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+SchemaFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>dynamic</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>dynamic</literal>,
+<literal>native</literal>, <literal>file</literal>, <literal>table</literal>,
+others
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/schema/SchemaFactory.html">
+<classname>org.apache.openjpa.jdbc.schema.SchemaFactory</classname></ulink> to
+use to store and retrieve information about the database schema. See
+<xref linkend="ref_guide_schema_info_factory"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.Schemas">
+            <title>
+                openjpa.jdbc.Schemas
+            </title>
+            <indexterm zone="openjpa.jdbc.Schemas">
+                <primary>
+                    schema
+                </primary>
+                <secondary>
+                    Schemas
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.jdbc.Schemas
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSchemas()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSchemas
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+Schemas</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A comma-separated list of the
+schemas and/or tables used for your persistent data. See
+<xref linkend="ref_guide_schema_info_list"/> for details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.SQLFactory">
+            <title>
+                openjpa.jdbc.SQLFactory
+            </title>
+            <indexterm zone="openjpa.jdbc.SQLFactory">
+                <primary>
+                    SQLFactory
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.SQLFactory">
+                <primary>
+                    SQL
+                </primary>
+                <secondary>
+                    SQLFactory
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>openjpa.jdbc.SQLFactory
+</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSQLFactory()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSQLFactory
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+SQLFactory</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> A plugin string (see
+<xref linkend="ref_guide_conf_plugins"/>) describing the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/sql/SQLFactory.html"><classname>
+org.apache.openjpa.jdbc.sql.SQLFactory</classname></ulink> to use to abstract
+common SQL constructs.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.SubclassFetchMode">
+            <title>
+                openjpa.jdbc.SubclassFetchMode
+            </title>
+            <indexterm zone="openjpa.jdbc.SubclassFetchMode">
+                <primary>
+                    SubclassFetchMode
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.SubclassFetchMode">
+                <primary>
+                    eager fetching
+                </primary>
+                <secondary>
+                    SubclassFetchMode
+                </secondary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.SubclassFetchMode">
+                <primary>
+                    inheritance
+                </primary>
+                <secondary>
+                    SubclassFetchMode
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.SubclassFetchMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSubclassFetchMode()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSubclassFetchMode
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+SubclassFetchMode</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>parallel</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>parallel</literal>,
+<literal>join</literal>, <literal>none</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> How to select subclass data when
+it is in other tables. This setting can also be varied at runtime. See
+<xref linkend="ref_guide_perfpack_eager"/>.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.SynchronizeMappings">
+            <title>
+                openjpa.jdbc.SynchronizeMappings
+            </title>
+            <indexterm zone="openjpa.jdbc.SynchronizeMappings">
+                <primary>
+                    SynchronizeMappings
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.SynchronizeMappings">
+                <primary>
+                    mapping metadata
+                </primary>
+                <secondary>
+                    SynchronizeMappings
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.SynchronizeMappings</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getSynchronizeMappings()">
+<methodname>
+org.apache.openjpa.jdbc.conf.JDBCConfiguration.getSynchronizeMappings
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+SynchronizeMappings</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default:</emphasis> -
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> Controls whether OpenJPA will
+attempt to run the mapping tool on all persistent classes to synchronize their
+mappings and schema at runtime. Useful for rapid test/debug cycles. See
+<xref linkend="ref_guide_mapping_synch"/> for more information.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.TransactionIsolation">
+            <title>
+                openjpa.jdbc.TransactionIsolation
+            </title>
+            <indexterm zone="openjpa.jdbc.TransactionIsolation">
+                <primary>
+                    TransactionIsolation
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.TransactionIsolation">
+                <primary>
+                    transactions
+                </primary>
+                <secondary>
+                    TransactionIsolation
+                </secondary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.TransactionIsolation">
+                <primary>
+                    JDBC
+                </primary>
+                <secondary>
+                    TransactionIsolation
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.TransactionIsolation</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getTransactionIsolation()">
+<methodname>
+org.apache.openjpa.jdbc.conf.JDBCConfiguration.getTransactionIsolation
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+TransactionIsolation</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>default</literal>
+            </para>
+            <para>
+<emphasis role="bold">Possible values: </emphasis><literal>default</literal>,
+<literal>none</literal>, <literal>read-committed</literal>, <literal>
+read-uncommitted</literal>, <literal>repeatable-read</literal>, <literal>
+serializable</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The JDBC transaction isolation
+level to use. See <xref linkend="ref_guide_dbsetup_isolation"/> for
+details.
+            </para>
+        </section>
+        <section id="openjpa.jdbc.UpdateManager">
+            <title>
+                openjpa.jdbc.UpdateManager
+            </title>
+            <indexterm zone="openjpa.jdbc.UpdateManager">
+                <primary>
+                    UpdateManager
+                </primary>
+            </indexterm>
+            <indexterm zone="openjpa.jdbc.UpdateManager">
+                <primary>
+                    JDBC
+                </primary>
+                <secondary>
+                    UpdateManager
+                </secondary>
+            </indexterm>
+            <para>
+<emphasis role="bold">Property name: </emphasis><literal>
+openjpa.jdbc.UpdateManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Configuration API:</emphasis>
+<ulink url="../javadoc/org/apache/openjpa/jdbc/conf/JDBCConfiguration.html#getUpdateManager()">
+<methodname>org.apache.openjpa.jdbc.conf.JDBCConfiguration.getUpdateManager
+</methodname></ulink>
+            </para>
+            <para>
+<emphasis role="bold">Resource adaptor config-property: </emphasis><literal>
+UpdateManager</literal>
+            </para>
+            <para>
+<emphasis role="bold">Default: </emphasis><literal>batching-constraint</literal>
+            </para>
+            <para>
+            <emphasis role="bold">Possible values: </emphasis><literal>default</literal>,
+<literal>operation-order</literal>, <literal>constraint</literal>, <literal>
+batching-constraint</literal>, <literal>batching-operation-order</literal>
+            </para>
+            <para>
+<emphasis role="bold">Description:</emphasis> The full class name of the
+<ulink url="../javadoc/org/apache/openjpa/jdbc/kernel/UpdateManager.html">
+<classname>org.apache.openjpa.jdbc.kernel.UpdateManager</classname></ulink> to
+use to flush persistent object changes to the datastore. The provided default
+implementation is
+<ulink url="../javadoc/org/apache/openjpa/jdbc/kernel/BatchingConstraintUpdateManager">
+<classname>org.apache.openjpa.jdbc.kernel.BatchingConstraintUpdateManager</classname>
+</ulink>.
+
+            </para>
+        </section>
+        
+        <section id="ref_guide_spec_compatibility">
+        <title>Compatibility with Specification</title>
+        <para>
+The default behavior of certain OpenJPA API methods can evolve to align with the behaviors
+defined in JPA specification. To maintain backward compatibility, OpenJPA allows configuration
+options such that while the default behavior changes to align with current JPA specification, the
+previous behaviors can always be emulated. 
+		</para>
+		<para>
+For example, JPA 2.0 specification
+introduces a new API <literal>void EntityManager.detach(Object entity)</literal> that detaches
+the given entity from the current persistence context. OpenJPA has provided similar
+feature via <literal>&lt;T&gt; T OpenJPAEntityManager.detach(T entity)</literal> prior to JPA 2.0. 
+OpenJPA <literal>detach()</literal>, however, has different default behavior than what JPA 2.0
+specification mandates. Firstly, OpenJPA creates a copy of the given entity as a detached instance
+and returns it, whereas JPA 2.0 behavior requires the same given entity instance be detached.
+Secondly, the given instance is removed from the persistence context for JPA 2.0, whereas
+OpenJPA <literal>detach()</literal> method, prior to JPA 2.0, does not remove the instance
+from the persistence context as a copy is returned. Thirdly, OpenJPA will flush before
+detaching a dirty instance so that the detached instance can later be merged, whereas
+JPA 2.0 <literal>detach()</literal> semantics does not require a dirty instance be flushed
+before detach.        
+		</para>
+		<para>
+A user application running with OpenJPA that is compliant to a specific version of JPA specification
+can emulate the older behavior by configuring OpenJPA compatibility options.
+For example, <literal>openjpa.Compatibility=FlushBeforeDetach=false,CopyOnDetach=true</literal>
+will emulate the older behavior of detach even when running with OpenJPA that is
+compliant to JPA 2.0 specification.  The configuration can also be set to a different version of the specification.
+For example, <literal>openjpa.Specification="JPA 1.0"</literal> configuration setting will emulate
+default OpenJPA behavior as it were for JPA specification version 1.0. Setting
+<literal>openjpa.Specification</literal> is a shorthand for more fine-grained control available via
+<literal>openjpa.Compatibility</literal>.    
+  
+		</para>
+        </section>
+    </section>
+</chapter>

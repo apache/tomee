@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+
+<!-- 
+    Please keep the project tag on one line to avoid confusing 
+    the release plugin.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-examples</artifactId>
+        <version>2.3.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.openjpa.openjpa-examples</groupId>
+    <artifactId>openbooks</artifactId>
+    <packaging>jar</packaging>
+
+    <name>OpenJPA Examples - OpenBooks</name>
+    <description>Apache OpenJPA Examples - OpenBooks</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-all</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>3.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.8.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.java2html</groupId>
+            <artifactId>java2html</artifactId>
+            <version>5.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.12</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>**/*_.java,**/*.java</excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!-- Don't publish these artifacts to central -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>build</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>genmodel</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <echo>Running OpenBooks genmodel</echo>
+                                        <property name="openjpa.version" value="${project.version}" />
+                                        <property name="maven.repos" value="${settings.localRepository}" />
+                                        <ant antfile="${basedir}/build.xml">
+                                            <target name="generate-canonical-model" />
+                                        </ant>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>enhance</id>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <tasks>
+                                        <echo>Running OpenBooks Enhance</echo>
+                                        <property name="openjpa.version" value="${project.version}" />
+                                        <property name="maven.repos" value="${settings.localRepository}" />
+                                        <ant antfile="${basedir}/build.xml">
+                                            <target name="enhance" />
+                                        </ant>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>generate-source</id>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <tasks>
+                                        <echo>Running OpenBooks Generate Source</echo>
+                                        <property name="openjpa.version" value="${project.version}" />
+                                        <property name="maven.repos" value="${settings.localRepository}" />
+                                        <ant antfile="${basedir}/build.xml">
+                                            <target name="generate-source" />
+                                        </ant>
+                                        <copy todir="${basedir}/target">
+                                            <fileset dir="${basedir}" includes="index.html" />
+                                            <fileset dir="${basedir}" includes="*.txt" />
+                                            <fileset dir="${basedir}" includes="run.*" />
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>bin</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attached</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile to launch OpenBooks via "mvn test -Prun" -->
+        <profile>
+            <id>run</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>run</id>
+                                <phase>test</phase>
+                                <configuration>
+                                    <tasks>
+                                        <echo>Launching OpenBooks</echo>
+                                        <property name="openjpa.version" value="${project.version}" />
+                                        <property name="maven.repos" value="${settings.localRepository}" />
+                                        <ant antfile="run.xml" dir="${basedir}/target">
+                                            <target name="run" />
+                                        </ant>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
+

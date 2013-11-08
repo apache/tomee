@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.   
+-->
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--               Ant build script for JEST Demo                           -->
+<!--                                                                        -->
+<!-- Creates a web archieve for a simple application                        -->
+<!-- Web deployment descriptor (WEB-INF/web.xml) of this simple application -->
+<!-- includes JEST servlet.                                                 -->
+<!-- ====================================================================== -->
+
+<project name="jest" default="war">
+
+	<!-- ================================================================== -->
+	<property file="build.properties" />
+	<!-- ================================================================== -->
+	<!-- root directory of Java Source files                                -->
+	<property name="src.dir" value="${basedir}/src/main/java" />
+	<!-- ================================================================== -->
+	<!-- root directory of resource files e.g web.xml or persistence.xml    -->
+	<property name="rsrc.dir" value="${basedir}/src/main/resources" />
+	<!-- ================================================================== -->
+	<!-- JPA configuration file anchored by the persistence unit name       -->
+	<property name="jpa.properties" value="META-INF/persistence.xml#jestdemo" />
+	<!-- ================================================================== -->
+	<!-- Root directory of all derived artifacts                            -->
+	<property name="target.dir" value="${basedir}/target" />
+	<!-- ================================================================== -->
+	<!-- root directory of compiled class files                             -->
+	<property name="classes.dir" value="${target.dir}/classes" />
+	<!-- ================================================================== -->
+	<!-- war archive for the demo                                           -->
+	<property name="webapp.war" value="demo.war" />
+	<!-- ================================================================== -->
+
+	<path id="compile.classpath" description="Compilation classpath requires OpenJPA specific library 
+		because of bytecode enhancement">
+		<pathelement location="${src.dir}" />
+		<pathelement location="${classes.dir}" />
+		<pathelement location="${rsrc.dir}" />
+		<pathelement location="${openjpa.dir}/${openjpa.jar}" />
+		<pathelement location="${servlet.jar}" />
+	</path>
+
+
+	<target name="clean" description="Removes all derived targets">
+		<delete dir="${target.dir}" failonerror="false" />
+	</target>
+
+	<target name="compile" description="Compile classes.">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true">
+			<classpath refid="compile.classpath" />
+			<exclude name="**/Test*.java" />
+		</javac>
+	</target>
+
+	<target name="enhance" depends="compile" description="Enhance persistent domain classes.">
+		<echo message="Enhancing ${jpa.properties}" />
+		<java classname="org.apache.openjpa.enhance.PCEnhancer" fork="true">
+			<arg value="-properties" />
+			<arg value="${jpa.properties}" />
+			<classpath refid="compile.classpath" />
+		</java>
+	</target>
+
+	<target name="war" depends="clean,enhance">
+		<delete file="${webapp.war}" failonerror="false">
+		</delete>
+		<echo message="Creating web application archieve ${webapp.war}" />
+		<war destfile="${webapp.war}" filesonly="true" webxml="${rsrc.dir}/WEB-INF/web.xml">
+			<fileset dir="${basedir}">
+				<exclude name="*.*" />
+				<exclude name="**/*.*" />
+			</fileset>
+			<classes dir="${classes.dir}">
+				<include name="**/*.class" />
+			</classes>
+			<classes dir="${rsrc.dir}">
+				<include name="META-INF/persistence.xml" />
+				<include name="**/index.html" />
+			</classes>
+
+			<lib dir="${openjpa.dir}">
+				<include name="${openjpa.jar}" />
+			</lib>
+		</war>
+	</target>
+</project>
