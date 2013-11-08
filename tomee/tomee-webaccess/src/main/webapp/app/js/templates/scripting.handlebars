@@ -24,6 +24,16 @@
                 <li><a class="ux-source-option" name="groovy" href="#">{{i18n "groovy"}}</a></li>
             </ul>
         </div>
-        <a class="btn btn-primary ux-execute-script">{{i18n "execute"}}</a>
+        <div class="btn-group dropup">
+            <a class="btn btn-primary ux-execute-primary ux-execute-script">{{i18n "execute"}}</a>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="ux-execute-script">{{i18n "execute"}}</a></li>
+                <li><a class="ux-clean-execute-script">{{i18n "clean.execute"}}</a></li>
+            </ul>
+        </div>
     </div>
 </div>
