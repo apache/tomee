@@ -100,7 +100,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.15-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.15</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -338,6 +338,20 @@
       </plugin>
     </plugins>
   </build>
+
+      <modules>
+        <module>deps</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>container</module>
+        <module>server</module>
+        <module>examples</module>
+        <module>assembly</module>
+        <module>tck</module>
+        <module>arquillian</module>
+        <module>utils</module>
+        <module>tomee</module>
+      </modules>
 
   <profiles>
     <profile>
