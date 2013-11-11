@@ -93,7 +93,7 @@
     <openejb.version>4.6.0</openejb.version>
     <tomee.version>1.6.0</tomee.version>
 
-    <openjpa.version>2.3.0-nonfinal-r1539950</openjpa.version>
+    <openjpa.version>2.3.0</openjpa.version>
     <org.apache.openwebbeans.version>1.2.1</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
@@ -554,8 +554,8 @@
     </repository>
     <repository>
       <id>xbean</id>
-      <name>Apache XBean 3.15 staging repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-086/</url>
+      <name>Apache OpenJPA 2.3.0 staging repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-117/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -1297,7 +1297,7 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.deps</groupId>
+        <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>

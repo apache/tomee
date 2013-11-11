@@ -179,7 +179,7 @@
         </exclusion>
         <exclusion>
           <artifactId>openjpa</artifactId>
-          <groupId>org.apache.openejb.deps</groupId>
+          <groupId>org.apache.openjpa</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openwebbeans-web</artifactId>
