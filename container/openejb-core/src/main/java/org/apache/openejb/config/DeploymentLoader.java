@@ -1719,22 +1719,18 @@ public class DeploymentLoader implements DeploymentFilterable {
 
 
         URL pathToScanDescriptors = baseUrl;
-        if (baseUrl != null) {
-            final String baseURLString = baseUrl.toString();
-            if (baseUrl.getProtocol().equals("file") && baseURLString.endsWith("WEB-INF/classes/")) {
-                //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
-                pathToScanDescriptors = new URL(baseURLString.substring(0, baseURLString.lastIndexOf("WEB-INF/classes/")));
-            }
-        }
-
-        final Map<String, URL> descriptors = getDescriptors(classLoader, pathToScanDescriptors);
-
         String path;
         if (baseUrl != null) {
-            path = baseUrl.getPath();
+            path = URLs.toFile(baseUrl).getAbsolutePath();
+            if (baseUrl.getProtocol().equals("file") && path.endsWith("WEB-INF/classes/")) {
+                //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
+                pathToScanDescriptors = new URL(path.substring(0, path.lastIndexOf("WEB-INF/classes/")));
+            }
         } else {
             path = "";
         }
+
+        final Map<String, URL> descriptors = getDescriptors(classLoader, pathToScanDescriptors);
 
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
