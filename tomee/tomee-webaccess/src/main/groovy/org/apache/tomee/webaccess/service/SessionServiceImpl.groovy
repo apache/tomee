@@ -26,7 +26,6 @@ import javax.ejb.TransactionAttribute
 import javax.ejb.TransactionAttributeType
 import javax.management.InstanceNotFoundException
 import javax.management.ObjectName
-import javax.ws.rs.PathParam
 import java.lang.management.ManagementFactory
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -34,7 +33,7 @@ import java.lang.management.ManagementFactory
 @RolesAllowed('tomee-admin')
 class SessionServiceImpl {
 
-    static void expireSession(@PathParam("context") String context, @PathParam("sessionId") String sessionId) {
+    static void expireSession(String context, String sessionId) {
         def server = ManagementFactory.getPlatformMBeanServer()
         def name = "Catalina:type=Manager,context=/$context,host=localhost" as String
         try {
