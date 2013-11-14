@@ -23,7 +23,9 @@ import javax.ws.rs.core.Application
 
 @ApplicationPath("/rest")
 class ApplicationConfig extends Application {
+
     Set<Class<?>> getClasses() {
-        [KeepAlive, Log, Scripting, WebServices]
+        [KeepAlive, Log, Scripting, WebServices, Session]
     }
+
 }

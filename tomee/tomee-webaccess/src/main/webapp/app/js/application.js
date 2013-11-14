@@ -21,13 +21,14 @@
 
     var deps = [
         'app/js/view/container',
-        'app/js/view/scripting', 'app/js/view/logfiles', 'app/js/view/growl',
+        'app/js/view/scripting', 'app/js/view/logfiles', 'app/js/view/sessions', 'app/js/view/growl',
         'lib/underscore',
         'app/js/i18n',
+        'app/js/handlebarsHelpers',
         'lib/less', 'lib/backbone', 'lib/jquery', 'lib/bootstrap',
         'app/js/keep-alive'
     ];
-    define(deps, function (containerView, scriptingView, logfilesView) {
+    define(deps, function (containerView, scriptingView, logfilesView, sessionsView) {
         containerView.render();
 
         $.ajaxSetup({ cache: false });
@@ -36,13 +37,30 @@
             //Starting the backbone router.
             var Router = Backbone.Router.extend({
                 routes: {
-                    '': 'showScripting',
+                    '': 'showSessions',
+                    '/': 'showSessions',
+                    'sessions': 'showSessions',
                     'scripting': 'showScripting',
                     'scripting/': 'showScripting',
                     'scripting/:scriptType': 'showScripting',
                     'log-files': 'showLogFile',
                     'log-files/': 'showLogFile',
                     'log-files/:fileName': 'showLogFile'
+                },
+
+                showSessions: function () {
+                    containerView.showView(sessionsView);
+                    $.ajax({
+                        url: window.ux.ROOT_URL + 'rest/session',
+                        method: 'GET',
+                        dataType: 'json',
+                        data: {},
+                        success: function (data) {
+                            sessionsView.render({
+                                sessions: data.sessionResultDto
+                            });
+                        }
+                    });
                 },
 
                 showScripting: function (scriptType) {
@@ -64,6 +82,18 @@
             containerView.on('navigate', function (data) {
                 router.navigate(data.href, {
                     trigger: true
+                });
+            });
+
+            sessionsView.on('expire-session', function (data) {
+                $.ajax({
+                    url: window.ux.ROOT_URL + 'rest/session/expire/' + data.context + '/' + data.sessionId,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    data: {},
+                    success: function (data) {
+                        router.showSessions();
+                    }
                 });
             });
 

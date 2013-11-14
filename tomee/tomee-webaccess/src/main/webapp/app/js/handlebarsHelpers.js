@@ -14,35 +14,19 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ "use strict";
  */
 
-package org.apache.tomee.webaccess.rest
+define(['app/js/i18n', 'lib/handlebars'], function (i18n) {
+    'use strict';
 
-import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
-import org.apache.tomee.webaccess.data.dto.LogFileResultDto
-import org.apache.tomee.webaccess.service.LogServiceImpl
+    Handlebars.registerHelper('i18n', function (key) {
+        return i18n.get(key);
+    });
 
-import javax.ejb.EJB
-import javax.ws.rs.*
+    Handlebars.registerHelper('timeStampToDate', function (value) {
+        var date = new Date(value);
+        return date.toUTCString();
+    });
 
-@Path("/log")
-class Log {
-
-    @EJB
-    private LogServiceImpl service
-
-    @GET
-    @Path("/list-files")
-    @Produces("application/json")
-    ListFilesResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.listFiles()
-    }
-
-    @GET
-    @Path("/load/{fileName}")
-    @Produces("application/json")
-    LogFileResultDto load(@PathParam('fileName') String fileName) {
-        service.load(fileName)
-    }
-
-}
+});

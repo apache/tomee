@@ -32,7 +32,13 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         'groovy': 'Groovy',
         'javascript': 'JavaScript',
         'log.files': 'Log Files',
-        'log.file': 'Choose file'
+        'log.file': 'Choose file',
+        'sessions': 'Sessions',
+        'session.id': 'Session Id',
+        'session.context': 'Context',
+        'session.creation.date': 'Created',
+        'session.last.access': 'Accessed',
+        'session.expiration.date': 'Expire'
     };
 
     underscore.each(underscore.keys(messages), function (key) {
@@ -52,10 +58,6 @@ define(['lib/underscore', 'lib/handlebars', 'app/js/log'], function (underscore)
         }
         return template(cfg);
     };
-
-    Handlebars.registerHelper('i18n', function (key) {
-        return get(key);
-    });
 
     return {
         get: get

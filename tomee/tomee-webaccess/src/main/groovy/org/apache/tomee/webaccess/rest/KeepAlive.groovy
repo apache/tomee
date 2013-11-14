@@ -23,8 +23,10 @@ import javax.ws.rs.Path
 
 @Path("/keep-alive")
 class KeepAlive {
+
     @GET
     void ping() {
         // no-op
     }
+
 }

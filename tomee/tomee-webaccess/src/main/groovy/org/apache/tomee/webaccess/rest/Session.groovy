@@ -18,31 +18,27 @@
 
 package org.apache.tomee.webaccess.rest
 
-import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
-import org.apache.tomee.webaccess.data.dto.LogFileResultDto
-import org.apache.tomee.webaccess.service.LogServiceImpl
+import org.apache.tomee.webaccess.data.dto.SessionResultDto
+import org.apache.tomee.webaccess.service.SessionServiceImpl
 
 import javax.ejb.EJB
 import javax.ws.rs.*
 
-@Path("/log")
-class Log {
+@Path("/session")
+class Session {
 
     @EJB
-    private LogServiceImpl service
+    private SessionServiceImpl service
 
-    @GET
-    @Path("/list-files")
-    @Produces("application/json")
-    ListFilesResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.listFiles()
+    @DELETE
+    @Path("/expire/{context}/{sessionId}")
+    void expireSession(@PathParam("context") String context, @PathParam("sessionId") String sessionId) {
+        service.expireSession(context, sessionId)
     }
 
     @GET
-    @Path("/load/{fileName}")
     @Produces("application/json")
-    LogFileResultDto load(@PathParam('fileName') String fileName) {
-        service.load(fileName)
+    List<SessionResultDto> list() {
+        service.listSessions()
     }
-
 }

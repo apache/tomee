@@ -28,6 +28,7 @@ import javax.ws.rs.Produces
 
 @Path("/ws")
 class WebServices {
+
     @EJB
     private WsServiceImpl service
 
@@ -36,4 +37,5 @@ class WebServices {
     WsListResultDto list() {
         service.list()
     }
+
 }
