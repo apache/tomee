@@ -27,7 +27,8 @@
         'script-sample-javascript',
         'script-sample-groovy',
         'logfiles',
-        'logfile-link'
+        'logfile-link',
+        'sessions'
     ];
 
     function loop(values, callback) {

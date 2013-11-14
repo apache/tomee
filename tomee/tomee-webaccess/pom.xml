@@ -172,7 +172,7 @@
         <version>${project.version}</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <context>ROOT</context>
+          <context>webaccess</context>
           <tomeeClassifier>jaxrs</tomeeClassifier>
         </configuration>
       </plugin>

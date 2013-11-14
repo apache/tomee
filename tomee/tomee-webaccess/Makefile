@@ -13,8 +13,8 @@
 #
 
 up-static:
-	rm -rf target/apache-tomee/webapps/ROOT/app
-	cp -r src/main/webapp/app target/apache-tomee/webapps/ROOT/
+	rm -rf target/apache-tomee/webapps/webaccess/app
+	cp -r src/main/webapp/app target/apache-tomee/webapps/webaccess/
 
 run:
 	mvn clean install -DskipTests=true

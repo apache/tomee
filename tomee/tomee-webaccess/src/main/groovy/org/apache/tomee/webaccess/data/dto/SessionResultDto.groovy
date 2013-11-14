@@ -16,33 +16,30 @@
  *  limitations under the License.
  */
 
-package org.apache.tomee.webaccess.rest
+package org.apache.tomee.webaccess.data.dto
 
-import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
-import org.apache.tomee.webaccess.data.dto.LogFileResultDto
-import org.apache.tomee.webaccess.service.LogServiceImpl
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-import javax.ejb.EJB
-import javax.ws.rs.*
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+class SessionResultDto {
 
-@Path("/log")
-class Log {
+    @XmlElement
+    String context
 
-    @EJB
-    private LogServiceImpl service
+    @XmlElement
+    String sessionId
 
-    @GET
-    @Path("/list-files")
-    @Produces("application/json")
-    ListFilesResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.listFiles()
-    }
+    @XmlElement
+    Long lastAccessTs
 
-    @GET
-    @Path("/load/{fileName}")
-    @Produces("application/json")
-    LogFileResultDto load(@PathParam('fileName') String fileName) {
-        service.load(fileName)
-    }
+    @XmlElement
+    Long creationTs
+
+    @XmlElement
+    Long expirationTs
 
 }

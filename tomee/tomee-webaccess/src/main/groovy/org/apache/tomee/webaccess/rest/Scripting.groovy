@@ -29,6 +29,7 @@ import javax.ws.rs.Produces
 
 @Path("/scripting")
 class Scripting {
+
     @EJB
     private ScriptingServiceImpl service
 
@@ -37,4 +38,5 @@ class Scripting {
     ScriptingResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
         service.execute(engine, script)
     }
+
 }
