@@ -39,6 +39,21 @@
           <exclude name="**/.classpath"/>
           <exclude name="**/README.md"/>
           <exclude name="**/README.mdtext"/>
+          <exclude name="**/LoadableExtension"/>
+          <exclude name="**/javax.enterprise.inject.spi.Extension"/>
+          <exclude name="**/*.handlebars"/>
+
+	  <!-- Copies of JS libs covered by LICENSE and NOTICE files -->
+          <exclude name="tomee/tomee-static-content/backbone/src/**"/>
+          <exclude name="tomee/tomee-static-content/bootstrap/src/**"/>
+          <exclude name="tomee/tomee-static-content/codemirror/src/**"/>
+          <exclude name="tomee/tomee-static-content/handlebars/src/**"/>
+          <exclude name="tomee/tomee-static-content/jquery/src/**"/>
+          <exclude name="tomee/tomee-static-content/json2/src/**"/>
+          <exclude name="tomee/tomee-static-content/less/src/**"/>
+          <exclude name="tomee/tomee-static-content/underscorejs/src/**"/>
+          <exclude name="tomee/tomee-static-content/require/src/main/resources/META-INF/resources/app/lib/require/**"/>
+
 
           <exclude name="assembly/openejb-standalone/src/main/resources/service.readme.txt"/>
           <exclude name="arquillian/arquillian-tomee-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension"/>
@@ -118,6 +133,7 @@
           <exclude name="**/container/openejb-core/src/test/resources/convert/**/*.xml"/>
           <exclude name="**/container/openejb-core/src/test/resources/mixedcase/**/*.xml"/>
           <exclude name="**/container/openejb-spring/src/test/resources/META-INF/ejb-jar.xml"/>
+          <exclude name="**/container/openejb-jee-accessors/src/test/resources/*.xml"/>
 
           <!-- empty or insignificant descriptors from examples --> 
           <exclude name="**/examples/**/src/*/resources/META-INF/ejb-jar.xml"/> 
