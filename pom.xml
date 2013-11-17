@@ -93,7 +93,7 @@
     <openejb.version>4.6.0</openejb.version>
     <tomee.version>1.6.0</tomee.version>
 
-    <openjpa.version>2.3.0</openjpa.version>
+    <openjpa.version>2.3.0-nonfinal-1540826</openjpa.version>
     <org.apache.openwebbeans.version>1.2.1</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
@@ -555,29 +555,7 @@
     <repository>
       <id>xbean</id>
       <name>Apache OpenJPA 2.3.0 staging repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-117/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>openwebbeans</id>
-      <name>Apache OpenWebBeans 1.2.1 staging epository</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-091/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>openjpa</id>
-      <name>Patched Apache OpenJPA 2.3.0 staging epository</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-102/</url>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-147/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -1297,7 +1275,7 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openjpa</groupId>
+        <groupId>org.apache.openejb.patch</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <exclusions>
