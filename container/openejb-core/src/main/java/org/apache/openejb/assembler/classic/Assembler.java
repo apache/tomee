@@ -215,6 +215,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private static final String GLOBAL_UNIQUE_ID = "global";
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
+    public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
 
     private final boolean skipLoaderIfPossible;
 
@@ -957,6 +958,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public List<BeanContext> initEjbs(final ClassLoader classLoader, final AppInfo appInfo, final AppContext appContext,
                                       final Set<Injection> injections, final List<BeanContext> allDeployments, final String webappId) throws OpenEJBException {
+        final String globalTimersOn = SystemInstance.get().getProperty(OPENEJB_TIMERS_ON, "true");
+
         final EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
             boolean skip = false;
@@ -1020,7 +1023,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             }
                         }
                     }
-                    if (timerServiceRequired) {
+
+                    if (timerServiceRequired && "true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_TIMERS_ON, globalTimersOn))) {
                         // Create the timer
                         final EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext, newTimerStore(beanContext));
                         //Load auto-start timers
