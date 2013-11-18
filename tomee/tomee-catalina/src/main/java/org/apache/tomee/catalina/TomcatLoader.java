@@ -93,11 +93,6 @@ import java.util.Set;
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
 public class TomcatLoader implements Loader {
-
-    static {
-        Warmup.warmup();
-    }
-
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, TomcatLoader.class);
     public static final String TOMEE_NOSHUTDOWNHOOK_PROP = "tomee.noshutdownhook";
 
@@ -115,12 +110,6 @@ public class TomcatLoader implements Loader {
     private static final List<ServerService> services = new ArrayList<ServerService> ();
 
     /**
-     * Creates a new instance.
-     */
-    public TomcatLoader() {
-    }
-
-    /**
      *  {@inheritDoc}
      */
     public void init(Properties properties) throws Exception {
@@ -131,6 +120,9 @@ public class TomcatLoader implements Loader {
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
         SystemInstance.init(properties);
+
+        Warmup.warmup(); // better than static (we are sure we don't hit it too eagerly) and doesn't cost more since uses static block
+
         initialize(properties);
     }
 

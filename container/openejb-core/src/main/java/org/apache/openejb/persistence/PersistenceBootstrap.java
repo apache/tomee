@@ -96,7 +96,7 @@ public class PersistenceBootstrap {
             final Collection<String> pXmlNames = new ArrayList<String>();
 
             // altdd logic duplicated to avoid classloading issue in tomee-webapp mode
-            final String altDD = SystemInstance.get().getOptions().get("openejb.altdd.prefix", (String) null);
+            final String altDD = getAltDD();
             if (altDD != null) {
                 for (final String p : altDD.split(",")) {
                     pXmlNames.add(p + ".persistence.xml");
@@ -211,6 +211,15 @@ public class PersistenceBootstrap {
         } catch (final Throwable t) {
             debug("error: ", t);
         }
+    }
+
+    // don't force eager init
+    private static String getAltDD() {
+        final String property = "openejb.altdd.prefix";
+        if (SystemInstance.isInitialized()) {
+            return SystemInstance.get().getOptions().get(property, (String) null);
+        }
+        return System.getProperty(property);
     }
 
     private static void debug(String x) {
