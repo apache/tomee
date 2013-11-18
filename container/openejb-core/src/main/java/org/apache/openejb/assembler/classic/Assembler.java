@@ -188,6 +188,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1374,20 +1375,41 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private void destroyResourceTree(final NamingEnumeration<Binding> namingEnumeration) {
+    private Collection<DestroyingResource> destroyResourceTree(final NamingEnumeration<Binding> namingEnumeration) {
+        final List<DestroyingResource> resources = new LinkedList<DestroyingResource>();
         while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
             final Binding binding = namingEnumeration.nextElement();
             final Object object = binding.getObject();
             if (Context.class.isInstance(object)) {
                 try {
-                    destroyResourceTree(Context.class.cast(object).listBindings(""));
+                    resources.addAll(destroyResourceTree(Context.class.cast(object).listBindings("")));
                 } catch (final Exception ignored) {
                     // no-op
                 }
             } else {
-                destroyResource(binding.getName(), binding.getClassName(), object);
+                resources.add(new DestroyingResource(binding.getName(), binding.getClassName(), object));
             }
         }
+
+        Collections.sort(resources, new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instanceà
+            @Override
+            public int compare(final DestroyingResource o1, final DestroyingResource o2) {
+                if (ResourceAdapter.class.isInstance(o2.instance) && !ResourceAdapter.class.isInstance(o1.instance)) {
+                    return -1;
+                }
+                return 1;
+            }
+        });
+
+        for (final DestroyingResource resource : resources) {
+            try {
+                destroyResource(resource.name, resource.clazz, resource.instance);
+            } catch (final Throwable th) {
+                logger.debug(th.getMessage(), th);
+            }
+        }
+
+        return resources;
     }
 
     private static void destroyResource(final String name, final String className, final Object object) {
@@ -2694,6 +2716,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         @Override
         public int hashCode() {
             return delegate != null ? delegate.hashCode() : 0;
+        }
+    }
+
+    private static class DestroyingResource {
+        private final String name;
+        private final String clazz;
+        private final Object instance;
+
+        private DestroyingResource(final String name, final String clazz, final Object instance) {
+            this.name = name;
+            this.clazz = clazz;
+            this.instance = instance;
         }
     }
 }
