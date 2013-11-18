@@ -74,6 +74,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -365,15 +366,17 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
+        final ClassLoader classLoader = context.getLoader().getClassLoader();
+
         // add myfaces auto-initializer if mojarra is not present
         try {
-            context.getLoader().getClassLoader().loadClass("com.sun.faces.context.SessionMap");
+            classLoader.loadClass("com.sun.faces.context.SessionMap");
             return;
         } catch (final Throwable ignored) {
             // no-op
         }
         try {
-            final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, context.getLoader().getClassLoader());
+            final Class<?> myfacesInitializer = Class.forName(MYFACES_TOMEEM_CONTAINER_INITIALIZER, true, classLoader);
             final ServletContainerInitializer instance = (ServletContainerInitializer) myfacesInitializer.newInstance();
             context.addServletContainerInitializer(instance, getJsfClasses(context));
             context.addApplicationListener(new ApplicationListener(TOMEE_MYFACES_CONTEXT_LISTENER, false)); // cleanup listener
@@ -413,9 +416,22 @@ public class OpenEJBContextConfig extends ContextConfig {
         try {
             super.processServletContainerInitializers(fragments);
 
-            if (typeInitializerMap.size() > 0 && finder != null) {
-                final ClassLoader loader = context.getLoader().getClassLoader();
+            final ClassLoader loader = context.getLoader().getClassLoader();
 
+            // spring-web (not scanned)
+            try {
+                final Class<?> initializer = Class.forName("org.springframework.web.SpringServletContainerInitializer", true, loader);
+                final ServletContainerInitializer instance = (ServletContainerInitializer) initializer.newInstance();
+                typeInitializerMap.put(Class.forName("org.springframework.web.WebApplicationInitializer", true, loader), Collections.singleton(instance));
+                initializerClassMap.put(instance, new HashSet<Class<?>>());
+            } catch (final Exception ignored) {
+                // no-op
+            } catch (final NoClassDefFoundError error) {
+                // no-op
+            }
+
+            // scanned SCIs
+            if (typeInitializerMap.size() > 0 && finder != null) {
                 for (final Map.Entry<Class<?>, Set<ServletContainerInitializer>> entry : typeInitializerMap.entrySet()) {
                     final Class<?> annotation = entry.getKey();
                     for (final ServletContainerInitializer sci : entry.getValue()) {
