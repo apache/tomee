@@ -18,7 +18,10 @@ package org.apache.openejb.config.typed.util;
 
 import org.apache.openejb.util.Duration;
 
-public class DurationAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<java.lang.String, Duration> {
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.lang.String;
+
+public class DurationAdapter extends XmlAdapter<String, Duration> {
     @Override
     public Duration unmarshal(String v) throws Exception {
         return Duration.parse(v);

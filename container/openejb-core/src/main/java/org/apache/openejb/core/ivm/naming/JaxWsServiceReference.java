@@ -69,7 +69,7 @@ public class JaxWsServiceReference extends Reference {
         this.injections = injections;
     }
 
-    public Object getObject() throws javax.naming.NamingException {
+    public Object getObject() throws NamingException {
         String referenceClassName = referenceClass != null ? referenceClass.getName() : null;
         Set<PortAddress> portAddresses = getPortAddressRegistry().getPorts(id, serviceQName, referenceClassName);
 

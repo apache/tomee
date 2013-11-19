@@ -42,6 +42,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.enterprise.inject.Alternative;
+import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -250,13 +251,13 @@ public class DeployerEjb implements Deployer {
 
             LOGGER.error("Can't deploy " + inLocation, e);
 
-            if (e instanceof javax.validation.ValidationException) {
-                throw (javax.validation.ValidationException) e;
+            if (e instanceof ValidationException) {
+                throw (ValidationException) e;
             }
 
             if (e instanceof OpenEJBException) {
-                if (e.getCause() instanceof javax.validation.ValidationException) {
-                    throw (javax.validation.ValidationException) e.getCause();
+                if (e.getCause() instanceof ValidationException) {
+                    throw (ValidationException) e.getCause();
                 }
                 throw (OpenEJBException) e;
             }

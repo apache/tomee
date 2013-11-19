@@ -19,6 +19,7 @@ package org.apache.openejb.resource.activemq;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.openejb.OpenEJBRuntimeException;
 
+import java.lang.Throwable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -46,11 +47,11 @@ public class ActiveMQFactory {
                 try {
                     tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
                     brokerPrefix = "amq5factory:";
-                } catch (java.lang.Throwable t1) {
+                } catch (Throwable t1) {
                     try {
                         tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
                         brokerPrefix = "amq4factory:";
-                    } catch (java.lang.Throwable t2) {
+                    } catch (Throwable t2) {
                         throw new OpenEJBRuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
                     }
                 }

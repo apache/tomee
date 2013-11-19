@@ -16,12 +16,18 @@
  */
 package org.apache.openejb.util.urlhandler.resource;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
-public class Handler extends java.net.URLStreamHandler {
+public class Handler extends URLStreamHandler {
 
-    protected URLConnection openConnection(URL url) throws java.io.IOException {
+    protected URLConnection openConnection(URL url) throws IOException {
         String cln = url.getHost();
 
         String resrce = url.getFile().substring(1);
@@ -36,27 +42,27 @@ public class Handler extends java.net.URLStreamHandler {
 
                 clz = Class.forName(cln, true, cl);
             } catch (ClassNotFoundException ex) {
-                throw (java.io.IOException)new java.net.MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
+                throw (IOException)new MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
             }
 
             realURL = cl.getResource(resrce);
 
             if (realURL == null)
-                throw new java.io.FileNotFoundException("Class resource " + resrce + " of class " + cln + " cannot be found");
+                throw new FileNotFoundException("Class resource " + resrce + " of class " + cln + " cannot be found");
         } else {
             ClassLoader cl = getContextClassLoader();
             realURL = cl.getResource(resrce);
 
             if (realURL == null)
-                throw new java.io.FileNotFoundException("System resource " + resrce + " cannot be found");
+                throw new FileNotFoundException("System resource " + resrce + " cannot be found");
         }
 
         return realURL.openConnection();
     }
 
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
+        return (ClassLoader) AccessController.doPrivileged(
+                new PrivilegedAction() {
                     public Object run() {
                         return Thread.currentThread().getContextClassLoader();
                     }

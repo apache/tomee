@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -26,11 +27,13 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+import java.io.Serializable;
 
 /**
  * @org.apache.xbean.XBean element="userTransaction"
  */
-public class CoreUserTransaction implements javax.transaction.UserTransaction, java.io.Serializable {
+public class CoreUserTransaction implements UserTransaction, Serializable {
     private static final long serialVersionUID = 9203248912222645965L;
     private static transient final Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
     private transient TransactionManager transactionManager;
@@ -41,7 +44,7 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
 
     private TransactionManager transactionManager() {
         if (transactionManager == null) {
-            transactionManager = org.apache.openejb.OpenEJB.getTransactionManager();
+            transactionManager = OpenEJB.getTransactionManager();
         }
         return transactionManager;
     }
@@ -81,7 +84,7 @@ public class CoreUserTransaction implements javax.transaction.UserTransaction, j
     }
 
     @Override
-    public void setRollbackOnly() throws javax.transaction.SystemException {
+    public void setRollbackOnly() throws SystemException {
         if (transactionLogger.isDebugEnabled()) {
             transactionLogger.debug("Marking user transaction for rollback: " + transactionManager().getTransaction());
         }

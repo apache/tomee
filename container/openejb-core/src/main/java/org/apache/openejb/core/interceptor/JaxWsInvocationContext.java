@@ -27,7 +27,7 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public class JaxWsInvocationContext extends ReflectionInvocationContext {
-    private final javax.xml.ws.handler.MessageContext messageContext;
+    private final MessageContext messageContext;
 
     public JaxWsInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext, Object... parameters) {
         super(operation, interceptors, target, method, parameters);

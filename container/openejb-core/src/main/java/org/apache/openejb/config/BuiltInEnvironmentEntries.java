@@ -25,6 +25,10 @@ import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
 
 import javax.enterprise.inject.spi.BeanManager;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.Map;
 
 public class BuiltInEnvironmentEntries implements DynamicDeployer {
@@ -65,10 +69,10 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
 
         // Standard References to built-in objects
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/BeanManager").type(BeanManager.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/Validator").type(javax.validation.Validator.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/ValidatorFactory").type(javax.validation.ValidatorFactory.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(javax.transaction.TransactionManager.class));
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(javax.transaction.TransactionSynchronizationRegistry.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/Validator").type(Validator.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/ValidatorFactory").type(ValidatorFactory.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(TransactionManager.class));
+        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(TransactionSynchronizationRegistry.class));
 
 
         // OpenEJB specific feature

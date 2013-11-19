@@ -58,9 +58,12 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
+import javax.ejb.Handle;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
+import javax.ejb.SessionBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
@@ -69,6 +72,8 @@ import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
+import java.lang.NoSuchMethodException;
+import java.lang.Object;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -149,17 +154,17 @@ public class BeanContext extends DeploymentContext {
         Collection.class.cast(Reflections.get(info, "cdiInterceptors")).clear();
     }
 
-    public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
+    public interface BusinessLocalHome extends EJBLocalHome {
 
         Object create();
     }
 
-    public interface BusinessLocalBeanHome extends javax.ejb.EJBLocalHome {
+    public interface BusinessLocalBeanHome extends EJBLocalHome {
 
         Object create();
     }
 
-    public interface BusinessRemoteHome extends javax.ejb.EJBHome {
+    public interface BusinessRemoteHome extends EJBHome {
 
         Object create();
     }
@@ -296,13 +301,13 @@ public class BeanContext extends DeploymentContext {
         if (type != null)
             return type;
 
-        if (javax.ejb.EJBLocalHome.class.isAssignableFrom(clazz))
+        if (EJBLocalHome.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_LOCAL_HOME;
-        if (javax.ejb.EJBLocalObject.class.isAssignableFrom(clazz))
+        if (EJBLocalObject.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_LOCAL;
-        if (javax.ejb.EJBHome.class.isAssignableFrom(clazz))
+        if (EJBHome.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_HOME;
-        if (javax.ejb.EJBObject.class.isAssignableFrom(clazz))
+        if (EJBObject.class.isAssignableFrom(clazz))
             return InterfaceType.EJB_OBJECT;
 
         for (final Entry<Class, InterfaceType> entry : interfaces.entrySet()) { // for @Remote case where the loaded interface can be different from the stored one
@@ -405,11 +410,11 @@ public class BeanContext extends DeploymentContext {
 
         addInterface(getServiceEndpointInterface(), InterfaceType.SERVICE_ENDPOINT);
 
-        addInterface(javax.ejb.EJBHome.class, InterfaceType.EJB_HOME);
-        addInterface(javax.ejb.EJBObject.class, InterfaceType.EJB_OBJECT);
+        addInterface(EJBHome.class, InterfaceType.EJB_HOME);
+        addInterface(EJBObject.class, InterfaceType.EJB_OBJECT);
 
-        addInterface(javax.ejb.EJBLocalHome.class, InterfaceType.EJB_LOCAL_HOME);
-        addInterface(javax.ejb.EJBLocalObject.class, InterfaceType.EJB_LOCAL);
+        addInterface(EJBLocalHome.class, InterfaceType.EJB_LOCAL_HOME);
+        addInterface(EJBLocalObject.class, InterfaceType.EJB_LOCAL);
 
         addInterface(getHomeInterface(), InterfaceType.EJB_HOME);
         addInterface(getRemoteInterface(), InterfaceType.EJB_OBJECT);
@@ -1070,7 +1075,7 @@ public class BeanContext extends DeploymentContext {
         this.instanceScopedInterceptors.addAll(interceptors);
     }
 
-    public void createMethodMap() throws org.apache.openejb.SystemException {
+    public void createMethodMap() throws SystemException {
         if (getRemoteInterface() != null) {
             mapObjectInterface(getLegacyView().remoteInterface);
             mapHomeInterface(getLegacyView().homeInterface);
@@ -1108,8 +1113,8 @@ public class BeanContext extends DeploymentContext {
             if (componentType == BeanType.STATEFUL || componentType == BeanType.MANAGED) {
 
                 Method beanMethod = null;
-                if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {
-                    beanMethod = javax.ejb.SessionBean.class.getDeclaredMethod("ejbRemove");
+                if (SessionBean.class.isAssignableFrom(beanClass)) {
+                    beanMethod = SessionBean.class.getDeclaredMethod("ejbRemove");
                 } else {
                     for (final Method method : getRemoveMethods()) {
                         if (method.getParameterTypes().length == 0) {
@@ -1122,27 +1127,27 @@ public class BeanContext extends DeploymentContext {
                     }
                 }
 
-                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
+                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", Handle.class);
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
+                clientMethod = EJBHome.class.getDeclaredMethod("remove", Object.class);
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
+                clientMethod = EJBObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
+                clientMethod = EJBLocalObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
             } else if (componentType == BeanType.BMP_ENTITY || componentType == BeanType.CMP_ENTITY) {
-                final Method beanMethod = javax.ejb.EntityBean.class.getDeclaredMethod("ejbRemove");
-                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", javax.ejb.Handle.class);
+                final Method beanMethod = EntityBean.class.getDeclaredMethod("ejbRemove");
+                Method clientMethod = EJBHome.class.getDeclaredMethod("remove", Handle.class);
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = EJBHome.class.getDeclaredMethod("remove", java.lang.Object.class);
+                clientMethod = EJBHome.class.getDeclaredMethod("remove", Object.class);
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBObject.class.getDeclaredMethod("remove");
+                clientMethod = EJBObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
-                clientMethod = javax.ejb.EJBLocalObject.class.getDeclaredMethod("remove");
+                clientMethod = EJBLocalObject.class.getDeclaredMethod("remove");
                 mapMethods(clientMethod, beanMethod);
             }
-        } catch (java.lang.NoSuchMethodException nsme) {
-            throw new org.apache.openejb.SystemException(nsme);
+        } catch (NoSuchMethodException nsme) {
+            throw new SystemException(nsme);
         }
 
         if (mdb != null && mdb.mdbInterface != null) {
@@ -1491,7 +1496,7 @@ public class BeanContext extends DeploymentContext {
             }
 
             // Create interceptors
-            final Map<String, Object> interceptorInstances = new LinkedHashMap<String, java.lang.Object>();
+            final Map<String, Object> interceptorInstances = new LinkedHashMap<String, Object>();
 
             // Add the stats interceptor instance and other already created interceptor instances
             for (final InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
@@ -1523,7 +1528,7 @@ public class BeanContext extends DeploymentContext {
                     iInstance = clazz.newInstance();
                 }
 
-                final InjectionProcessor interceptorInjector = new InjectionProcessor(iInstance, this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
+                final InjectionProcessor interceptorInjector = new InjectionProcessor(iInstance, this.getInjections(), InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
                     if (webBeansContext != null) {

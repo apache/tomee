@@ -36,7 +36,7 @@ public class JndiReference extends Reference {
     * some other JNDI name space. The context is provided and the lookup name, but the 
     * object is not resolved until it's requested. 
     */
-    public JndiReference(javax.naming.Context linkedContext, String jndiName) {
+    public JndiReference(Context linkedContext, String jndiName) {
         this.context = linkedContext;
         this.jndiName = jndiName;
     }

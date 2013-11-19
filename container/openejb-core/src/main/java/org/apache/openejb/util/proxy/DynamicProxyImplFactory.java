@@ -27,6 +27,7 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 public class DynamicProxyImplFactory {
@@ -37,7 +38,7 @@ public class DynamicProxyImplFactory {
                 || metaClass.getAnnotation(Proxy.class) != null);
     }
 
-    public static Object newProxy(BeanContext context, java.lang.reflect.InvocationHandler invocationHandler) {
+    public static Object newProxy(BeanContext context, InvocationHandler invocationHandler) {
         if (QueryProxy.class.isInstance(invocationHandler)) {
             EntityManager em = null;
             for (final Injection injection : context.getInjections()) {
@@ -72,14 +73,14 @@ public class DynamicProxyImplFactory {
         return null;
     }
 
-    private static class Handler implements java.lang.reflect.InvocationHandler {
-        private java.lang.reflect.InvocationHandler handler;
+    private static class Handler implements InvocationHandler {
+        private InvocationHandler handler;
 
-        private Handler(java.lang.reflect.InvocationHandler handler) {
+        private Handler(InvocationHandler handler) {
             this.handler = handler;
         }
 
-        public java.lang.reflect.InvocationHandler realHandler() {
+        public InvocationHandler realHandler() {
             return handler;
         }
 

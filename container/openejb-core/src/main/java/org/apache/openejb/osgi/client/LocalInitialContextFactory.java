@@ -19,6 +19,7 @@ package org.apache.openejb.osgi.client;
 import org.apache.openejb.core.LocalInitialContext;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.Hashtable;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Hashtable;
 public class LocalInitialContextFactory extends org.apache.openejb.core.LocalInitialContextFactory {
 
     @Override
-    public Context getInitialContext(final Hashtable env) throws javax.naming.NamingException {
+    public Context getInitialContext(final Hashtable env) throws NamingException {
         init(env);
         return new LocalInitialContext(env, this);
     }

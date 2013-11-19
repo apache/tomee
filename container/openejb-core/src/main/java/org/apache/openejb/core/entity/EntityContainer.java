@@ -33,6 +33,7 @@ import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -146,7 +147,7 @@ public class EntityContainer implements RpcContainer {
         try {
             boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
-                throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
+                throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
             Class declaringClass = callMethod.getDeclaringClass();
             String methodName = callMethod.getName();
@@ -360,7 +361,7 @@ public class EntityContainer implements RpcContainer {
         * Find operations return either a single primary key or a collection of primary keys.
         * The primary keys are converted to ProxyInfo objects.
         */
-        if (returnValue instanceof java.util.Collection) {
+        if (returnValue instanceof Collection) {
             Iterator keys = ((Collection) returnValue).iterator();
             Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasNext()) {
@@ -368,14 +369,14 @@ public class EntityContainer implements RpcContainer {
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));
             }
             returnValue = proxies;
-        } else if (returnValue instanceof java.util.Enumeration) {
+        } else if (returnValue instanceof Enumeration) {
             Enumeration keys = (Enumeration) returnValue;
             Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
             while (keys.hasMoreElements()) {
                 Object primaryKey = keys.nextElement();
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));
             }
-            returnValue = new org.apache.openejb.util.ArrayEnumeration(proxies);
+            returnValue = new ArrayEnumeration(proxies);
         } else
             returnValue = new ProxyInfo(beanContext, returnValue);
 

@@ -87,7 +87,7 @@ public final class BasicDataSourceUtil {
     }
     
     /**
-     * Create a {@link org.apache.openejb.resource.jdbc.cipher.PasswordCipher} instance from the
+     * Create a {@link PasswordCipher} instance from the
      *  passwordCipher class name.
      * 
      * @param passwordCipherClass the password cipher to look for

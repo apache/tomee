@@ -635,7 +635,7 @@ public class CmpContainer implements RpcContainer {
 
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(beanContext, primaryKey);
-        } catch (javax.ejb.FinderException fe) {
+        } catch (FinderException fe) {
             handleApplicationException(txPolicy, fe, false);
         } catch (Throwable e) {// handle reflection exception
             handleSystemException(txPolicy, e, callContext);
@@ -693,7 +693,7 @@ public class CmpContainer implements RpcContainer {
                     return new ProxyInfo(beanContext, primaryKey);
                 }
             }
-        } catch (javax.ejb.FinderException fe) {
+        } catch (FinderException fe) {
             handleApplicationException(txPolicy, fe, false);
         } catch (Throwable e) {// handle reflection exception
             handleSystemException(txPolicy, e, callContext);

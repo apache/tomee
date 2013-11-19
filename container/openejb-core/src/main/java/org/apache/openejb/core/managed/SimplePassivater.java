@@ -24,6 +24,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
@@ -54,11 +56,11 @@ public class SimplePassivater implements PassivationStrategy {
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
-                throw new java.io.IOException("Failed to create directory: " + sessionDirectory.getAbsolutePath());
+                throw new IOException("Failed to create directory: " + sessionDirectory.getAbsolutePath());
             }
 
             logger.info("Using directory " + sessionDirectory + " for stateful session passivation");
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new SystemException(getClass().getName() + ".init(): can't use directory prefix " + dir + ":" + e, e);
         }
     }
@@ -78,7 +80,7 @@ public class SimplePassivater implements PassivationStrategy {
             oos.writeObject(state);// passivate just the bean instance
             oos.close();
             sessionFile.deleteOnExit();
-        } catch (java.io.NotSerializableException nse) {
+        } catch (NotSerializableException nse) {
             logger.error("Passivation failed ", nse);
             throw (SystemException) new SystemException("The type " + nse.getMessage() + " is not serializable as mandated by the EJB specification.").initCause(nse);
         } catch (Exception t) {

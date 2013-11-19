@@ -18,7 +18,9 @@ package org.apache.openejb.util;
 
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -214,11 +216,11 @@ public class PojoSerialization implements Serializable {
         this.object = object;
     }
 
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         write(out);
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         read(in);
     }
 

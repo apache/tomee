@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
@@ -58,7 +59,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String, TransactionType> txTypeByUnit = new HashMap<String, TransactionType>();
     // TODO We could turn this into the Resources JAXB object and support containers and other things as well
     private final Collection<Resource> resources = new HashSet<Resource>();
-    private final Collection<org.apache.openejb.config.sys.Service> services = new HashSet<org.apache.openejb.config.sys.Service>();
+    private final Collection<Service> services = new HashSet<Service>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
@@ -334,7 +335,7 @@ public class AppModule implements DeploymentModule {
         return resources;
     }
 
-    public Collection<org.apache.openejb.config.sys.Service> getServices() {
+    public Collection<Service> getServices() {
         return services;
     }
 

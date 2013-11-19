@@ -16,10 +16,14 @@
  */
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
@@ -34,6 +38,8 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import java.io.ObjectStreamException;
+import java.lang.Object;
+import java.lang.Throwable;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
@@ -65,8 +71,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     @Override
     public Object _invoke(final Object p, final Class interfce, final Method m, final Object[] a) throws Throwable {
-        java.lang.Object retValue = null;
-        java.lang.Throwable exc = null;
+        Object retValue = null;
+        Throwable exc = null;
 
         try {
             if (logger.isDebugEnabled()) {
@@ -115,7 +121,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * The ire is thrown by the container system and propagated by
             * the server to the stub.
             */
-        } catch (org.apache.openejb.InvalidateReferenceException ire) {
+        } catch (InvalidateReferenceException ire) {
             invalidateAllHandlers(getRegistryId());
             exc = ire.getRootCause() != null ? ire.getRootCause() : new RemoteException("InvalidateReferenceException: " + ire);
             throw exc;
@@ -123,7 +129,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (org.apache.openejb.ApplicationException ae) {
+        } catch (ApplicationException ae) {
             exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
@@ -143,12 +149,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (org.apache.openejb.SystemException se) {
+        } catch (SystemException se) {
             invalidateReference();
             exc = se.getRootCause() != null ? se.getRootCause() : se;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
-        } catch (org.apache.openejb.OpenEJBException oe) {
+        } catch (OpenEJBException oe) {
             exc = oe.getRootCause() != null ? oe.getRootCause() : oe;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Unknown Container Exception", oe.getRootCause());
@@ -185,8 +191,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     @Override
-    public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(getBeanContext(), primaryKey, getInterfaces(), interfaceType, getMainInterface());
+    public ProxyInfo getProxyInfo() {
+        return new ProxyInfo(getBeanContext(), primaryKey, getInterfaces(), interfaceType, getMainInterface());
     }
 
     @Override

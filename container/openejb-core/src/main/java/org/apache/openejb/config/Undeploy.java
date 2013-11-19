@@ -33,6 +33,8 @@ import org.apache.openejb.util.OpenEjbVersion;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.ServiceUnavailableException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -91,11 +93,11 @@ public class Undeploy {
         try {
             InitialContext ctx = new InitialContext(p);
             deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
-        } catch (javax.naming.ServiceUnavailableException e) {
+        } catch (ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(Undeploy.messages.format("cmd.deploy.serverOffline"));
             throw new SystemExitException(-1);
-        } catch (javax.naming.NamingException e) {
+        } catch (NamingException e) {
             System.out.println("DeployerEjb does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
             throw new SystemExitException(-2);
         }

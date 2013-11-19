@@ -18,6 +18,7 @@ package org.apache.openejb.util.proxy;
 
 import org.apache.openejb.OpenEJBException;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.LinkedHashSet;
 import java.util.Properties;
@@ -34,8 +35,8 @@ public class Jdk13ProxyFactory implements ProxyFactory {
     public void init(Properties props) throws OpenEJBException {
     }
 
-    public java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException {
-        return (java.lang.reflect.InvocationHandler) Proxy.getInvocationHandler(proxy);
+    public InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException {
+        return (InvocationHandler) Proxy.getInvocationHandler(proxy);
     }
 
     public Class getProxyClass(Class interfce) throws IllegalArgumentException {
@@ -60,7 +61,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
+    public Object newProxyInstance(Class interfce, InvocationHandler h) throws IllegalArgumentException {
         try {
             return Proxy.newProxyInstance(interfce.getClassLoader(), new Class[]{interfce}, h);
         } catch (IllegalArgumentException iae) {
@@ -78,7 +79,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
      * Returns an instance of a proxy class for the specified interface that dispatches method invocations to
      * the specified invocation handler.
      */
-    public Object newProxyInstance(Class[] interfaces, java.lang.reflect.InvocationHandler handler) throws IllegalArgumentException {
+    public Object newProxyInstance(Class[] interfaces, InvocationHandler handler) throws IllegalArgumentException {
         if (interfaces.length < 1) {
             throw new IllegalArgumentException("It's boring to implement 0 interfaces!");
         }

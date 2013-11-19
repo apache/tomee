@@ -38,6 +38,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.lang.System;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +55,7 @@ import java.util.Set;
  * Properties which specifies the default values which are used if the key is not in this Properties.
  *
  * @see Hashtable
- * @see java.lang.System#getProperties
+ * @see System#getProperties
  */
 public class SuperProperties extends Properties {
 

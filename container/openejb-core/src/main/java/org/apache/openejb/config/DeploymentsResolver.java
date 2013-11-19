@@ -149,7 +149,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         Files.dir(dir);
         Files.notHidden(dir);
 
-        final Map<String, File> files = new LinkedHashMap<String, java.io.File>();
+        final Map<String, File> files = new LinkedHashMap<String, File>();
         final File[] list = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File f) {

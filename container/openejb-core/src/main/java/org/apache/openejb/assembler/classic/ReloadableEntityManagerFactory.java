@@ -51,6 +51,7 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
+import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -404,7 +405,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         entityManagerFactoryCallable.getUnitInfo().getManagedClassNames().remove(clazz);
     }
 
-    public javax.persistence.spi.PersistenceUnitInfo info() {
+    public PersistenceUnitInfo info() {
         return entityManagerFactoryCallable.getUnitInfo();
     }
 

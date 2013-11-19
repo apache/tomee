@@ -22,6 +22,7 @@ import org.apache.openejb.util.OptionsLog;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -32,7 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version $Rev$ $Date$
  */
 @SuppressWarnings("UseOfObsoleteCollectionType")
-public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
+public class LocalInitialContextFactory implements InitialContextFactory {
 
     private static final ReentrantLock lock = new ReentrantLock();
     private static OpenEJBInstance openejb = null;
@@ -40,12 +41,12 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
     private boolean bootedOpenEJB;
 
     @Override
-    public Context getInitialContext(final Hashtable env) throws javax.naming.NamingException {
+    public Context getInitialContext(final Hashtable env) throws NamingException {
         init(env);
         return getLocalInitialContext(env);
     }
 
-    protected void init(final Hashtable env) throws javax.naming.NamingException {
+    protected void init(final Hashtable env) throws NamingException {
 
         final ReentrantLock l = lock;
         l.lock();
@@ -107,7 +108,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         }
     }
 
-    private Context getLocalInitialContext(final Hashtable env) throws javax.naming.NamingException {
+    private Context getLocalInitialContext(final Hashtable env) throws NamingException {
         final Context context;
         try {
             final ClassLoader cl = SystemInstance.get().getClassLoader();
@@ -128,7 +129,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
             if (e instanceof NamingException) {
                 throw (NamingException) e;
             }
-            throw (NamingException) new javax.naming.NamingException("Cannot instantiate a LocalInitialContext. Exception: "
+            throw (NamingException) new NamingException("Cannot instantiate a LocalInitialContext. Exception: "
                                                                      + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 

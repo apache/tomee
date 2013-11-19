@@ -48,6 +48,8 @@ import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
+import java.lang.UnsupportedOperationException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,8 +200,8 @@ public class SingletonInstanceManager {
 
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext(), lock);
         } catch (Throwable e) {
-            if (e instanceof java.lang.reflect.InvocationTargetException) {
-                e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
             }
             String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
@@ -378,7 +380,7 @@ public class SingletonInstanceManager {
             }
 
             public Condition newCondition() {
-                throw new java.lang.UnsupportedOperationException("newCondition()");
+                throw new UnsupportedOperationException("newCondition()");
             }
 
             public boolean tryLock() {

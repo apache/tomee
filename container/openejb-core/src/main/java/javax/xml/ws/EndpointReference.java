@@ -16,17 +16,20 @@
  */
 package javax.xml.ws;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which
  * uses JaxWS 2.1.  All of the methods throw UnsupportedOperationException.
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public abstract class EndpointReference {
-    public static EndpointReference readFrom(javax.xml.transform.Source eprInfoset) {
+    public static EndpointReference readFrom(Source eprInfoset) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
-    public abstract void writeTo(javax.xml.transform.Result result);
+    public abstract void writeTo(Result result);
 
     public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");

@@ -659,7 +659,7 @@ public final class ApplicationComposers {
             ThreadContext.exit(oldContext);
         }
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 

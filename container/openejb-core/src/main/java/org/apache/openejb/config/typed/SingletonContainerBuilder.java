@@ -35,7 +35,7 @@ public class SingletonContainerBuilder extends Container {
 
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
+    private Duration accessTimeout = Duration.parse("30 seconds");
 
     public SingletonContainerBuilder() {
         setClassName("org.apache.openejb.core.singleton.SingletonContainer");
@@ -51,16 +51,16 @@ public class SingletonContainerBuilder extends Container {
         return this;
     }
 
-    public SingletonContainerBuilder withAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public SingletonContainerBuilder withAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public void setAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
-    public org.apache.openejb.util.Duration getAccessTimeout() {
+    public Duration getAccessTimeout() {
         return accessTimeout;
     }
 

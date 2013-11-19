@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
+import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 
 public class ProxyManager {
@@ -59,7 +60,7 @@ public class ProxyManager {
         return defaultFactoryName;
     }
 
-    public static java.lang.reflect.InvocationHandler getInvocationHandler(Object proxy) {
+    public static InvocationHandler getInvocationHandler(Object proxy) {
         if (LocalBeanProxyFactory.isProxy(proxy.getClass())) {
             return LocalBeanProxyFactory.getInvocationHandler(proxy);
         }
@@ -76,11 +77,11 @@ public class ProxyManager {
         return defaultFactory.getProxyClass(interfaces);
     }
 
-    public static Object newProxyInstance(Class interfaceType, java.lang.reflect.InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(Class interfaceType, InvocationHandler h) throws IllegalAccessException {
         return newProxyInstance(new Class[]{interfaceType}, h);
     }
 
-    public static Object newProxyInstance(Class[] interfaces, java.lang.reflect.InvocationHandler h) throws IllegalAccessException {
+    public static Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalAccessException {
         checkDefaultFactory();
         return defaultFactory.newProxyInstance(interfaces, h);
     }

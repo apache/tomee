@@ -16,17 +16,19 @@
  */
 package org.apache.openejb.resource.jdbc.router;
 
+import org.apache.openejb.resource.jdbc.RoutedDataSource;
+
 import javax.sql.DataSource;
 
 /**
- * The Router interface is responsible for providing the target data source to the ${@link org.apache.openejb.resource.jdbc.RoutedDataSource}}.
+ * The Router interface is responsible for providing the target data source to the ${@link RoutedDataSource}}.
  *
  * $Rev:$
  */
 public interface Router {
 
     /**
-     * Used by ${@link org.apache.openejb.resource.jdbc.RoutedDataSource} to get the active data source.
+     * Used by ${@link RoutedDataSource} to get the active data source.
      * @return the data source to delegate to
      */
     DataSource getDataSource();

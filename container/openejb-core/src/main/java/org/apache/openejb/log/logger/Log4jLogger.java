@@ -20,6 +20,8 @@ package org.apache.openejb.log.logger;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -47,7 +49,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
     private static final Map<Level, org.apache.log4j.Level> TO_LOG4J = new HashMap<Level, org.apache.log4j.Level>();
     private static final org.apache.log4j.Level TRACE;
 
-    private final org.apache.log4j.Logger log;
+    private final Logger log;
 
     static {
         //older versions of log4j don't have TRACE, use debug
@@ -73,7 +75,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
 
     public Log4jLogger(String name, String resourceBundleName) {
         super(name, resourceBundleName);
-        log = org.apache.log4j.LogManager.getLogger(name);
+        log = LogManager.getLogger(name);
     }
 
     public Level getLevel() {

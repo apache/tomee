@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.Assembler;
@@ -62,7 +63,7 @@ public final class OpenEJB {
          * org.apache.openejb.core.ivm.naming.InitContextFactory
          */
         public Instance(final Properties props) throws OpenEJBException {
-            this(props, new org.apache.openejb.core.ServerFederation());
+            this(props, new ServerFederation());
         }
 
         /**

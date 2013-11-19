@@ -23,6 +23,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.JndiFactory;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.Map;
 
 /**
@@ -39,7 +40,7 @@ public class IvmJndiFactory implements JndiFactory {
             jndiRootContext.bind("openejb/client/.", "");
             jndiRootContext.bind("openejb/Deployment/.", "");
             jndiRootContext.bind("openejb/global/.", "");
-        } catch (javax.naming.NamingException e) {
+        } catch (NamingException e) {
             throw new OpenEJBRuntimeException("this should not happen", e);
         }
     }
@@ -48,8 +49,8 @@ public class IvmJndiFactory implements JndiFactory {
         IvmContext context = new IvmContext();
         try {
             context.bind("java:comp/env/dummy", "dummy");
-        } catch (javax.naming.NamingException e) {
-            throw new org.apache.openejb.SystemException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
+        } catch (NamingException e) {
+            throw new SystemException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
         }
         for (Map.Entry<String, Object> entry:  bindings.entrySet()) {
             String name = entry.getKey();
@@ -58,8 +59,8 @@ public class IvmJndiFactory implements JndiFactory {
 
             try {
                 context.bind(name, value);
-            } catch (javax.naming.NamingException e) {
-                throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
+            } catch (NamingException e) {
+                throw new SystemException("Unable to bind '" + name + "' into bean's enc.", e);
             }
         }
 

@@ -31,7 +31,7 @@ import java.io.Serializable;
  * <p>
  * Let <ul>
  * <li> dev = (current obs - previous mean) </li>
- * <li> m2 = previous value of {@link org.apache.openejb.math.stat.descriptive.moment.SecondMoment} </li>
+ * <li> m2 = previous value of {@link SecondMoment} </li>
  * <li> m2 = previous value of {@link ThirdMoment} </li>
  * <li> n = number of observations (including current obs) </li>
  * </ul>

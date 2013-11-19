@@ -484,7 +484,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        Map<String,org.apache.openejb.jee.JndiReference> refMap = new TreeMap<String,org.apache.openejb.jee.JndiReference>();
+        Map<String,JndiReference> refMap = new TreeMap<String,JndiReference>();
         refMap.putAll(webApp.getEjbRefMap());
         refMap.putAll(webApp.getEjbLocalRefMap());
 
@@ -492,7 +492,7 @@ public class SunConversion implements DynamicDeployer {
         for (EjbRef ref : sunWebApp.getEjbRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getEjbRefName();
-                org.apache.openejb.jee.JndiReference ejbRef = refMap.get(refName);
+                JndiReference ejbRef = refMap.get(refName);
                 if (ejbRef == null) {
                     ejbRef = new org.apache.openejb.jee.EjbRef();
                     ejbRef.setName(refName);
@@ -816,7 +816,7 @@ public class SunConversion implements DynamicDeployer {
 
             // skip all non-CMP beans
             EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejb.getEjbName());
-            if (!(enterpriseBean instanceof org.apache.openejb.jee.EntityBean) ||
+            if (!(enterpriseBean instanceof EntityBean) ||
                     ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
                 continue;
             }

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Log4jLogStreamFactory implements LogStreamFactory {
@@ -168,7 +169,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             // TODO Has to be a better way to set the log level
             final Logger logger = Logger.getLogger("org.apache");
             final Logger parent = logger.getParent();
-            parent.setLevel(java.util.logging.Level.WARNING);
+            parent.setLevel(Level.WARNING);
 
         }
     }

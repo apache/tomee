@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.resource.jdbc.cipher;
 
+import java.lang.String;
+
 /**
  * This {@link PlainTextPasswordCipher} is an {@link PasswordCipher}
  * implementation that does not use any encryption/decryption algorithm at all.
@@ -45,7 +47,7 @@ public class PlainTextPasswordCipher implements PasswordCipher {
      *            the plain-text password
      * @return the plain-text password as character array
      * 
-     * @see PasswordCipher#encrypt(java.lang.String)
+     * @see PasswordCipher#encrypt(String)
      */
     public char[] encrypt(String plainPassword) {
         if (null == plainPassword) {

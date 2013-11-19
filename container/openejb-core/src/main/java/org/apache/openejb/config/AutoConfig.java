@@ -28,6 +28,7 @@ import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
@@ -42,6 +43,7 @@ import org.apache.openejb.jee.PersistenceRef;
 import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -1261,23 +1263,23 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private static String getType(final EnterpriseBean enterpriseBean) throws OpenEJBException {
-        if (enterpriseBean instanceof org.apache.openejb.jee.EntityBean) {
-            if (((org.apache.openejb.jee.EntityBean) enterpriseBean).getPersistenceType() == PersistenceType.CONTAINER) {
+        if (enterpriseBean instanceof EntityBean) {
+            if (((EntityBean) enterpriseBean).getPersistenceType() == PersistenceType.CONTAINER) {
                 return BeanTypes.CMP_ENTITY;
             } else {
                 return BeanTypes.BMP_ENTITY;
             }
-        } else if (enterpriseBean instanceof org.apache.openejb.jee.SessionBean) {
-            if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.STATEFUL) {
+        } else if (enterpriseBean instanceof SessionBean) {
+            if (((SessionBean) enterpriseBean).getSessionType() == SessionType.STATEFUL) {
                 return BeanTypes.STATEFUL;
-            } else if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.SINGLETON) {
+            } else if (((SessionBean) enterpriseBean).getSessionType() == SessionType.SINGLETON) {
                 return BeanTypes.SINGLETON;
-            } else if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.MANAGED) {
+            } else if (((SessionBean) enterpriseBean).getSessionType() == SessionType.MANAGED) {
                 return BeanTypes.MANAGED;
             } else {
                 return BeanTypes.STATELESS;
             }
-        } else if (enterpriseBean instanceof org.apache.openejb.jee.MessageDrivenBean) {
+        } else if (enterpriseBean instanceof MessageDrivenBean) {
             return BeanTypes.MESSAGE;
         }
         throw new OpenEJBException("Unknown enterprise bean type " + enterpriseBean.getClass().getName());

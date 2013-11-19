@@ -20,6 +20,7 @@ import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.AbstractUnivariateStatistic;
 
 import java.io.Serializable;
+import java.lang.Double;
 import java.util.Arrays;
 
 /**
@@ -46,9 +47,9 @@ import java.util.Arrays;
  * </ol></p>
  * <p>
  * To compute percentiles, the data must be (totally) ordered.  Input arrays
- * are copied and then sorted using  {@link java.util.Arrays#sort(double[])}.
+ * are copied and then sorted using  {@link Arrays#sort(double[])}.
  * The ordering used by <code>Arrays.sort(double[])</code> is the one determined
- * by {@link java.lang.Double#compareTo(Double)}.  This ordering makes
+ * by {@link Double#compareTo(Double)}.  This ordering makes
  * <code>Double.NaN</code> larger than any other value (including
  * <code>Double.POSITIVE_INFINITY</code>).  Therefore, for example, the median
  * (50th percentile) of

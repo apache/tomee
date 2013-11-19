@@ -199,7 +199,7 @@ public class StatelessInstanceManager {
         return createInstance(callContext, beanContext);
     }
 
-    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws org.apache.openejb.ApplicationException {
+    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
         try {
             final InstanceContext context = beanContext.newInstance();
             if (context.getBean() instanceof SessionBean) {
@@ -226,7 +226,7 @@ public class StatelessInstanceManager {
             }
             final String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
-            throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
+            throw new ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
         }
     }
 

@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
@@ -128,7 +129,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public java.io.BufferedReader getReader() throws IOException {
+    public BufferedReader getReader() throws IOException {
         return get().getReader();
     }
 

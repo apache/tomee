@@ -18,6 +18,12 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 /*
   This class is used as a replacement when a IvmContext referenced by a stateful bean 
   is being serialized for passivation along with the bean.  It ensures that the entire
@@ -29,7 +35,7 @@ import org.apache.openejb.core.ThreadContext;
   this object.
 */
 
-public class JndiEncArtifact implements java.io.Serializable {
+public class JndiEncArtifact implements Serializable {
     String path = new String();
 
     public JndiEncArtifact(IvmContext context) {
@@ -40,17 +46,17 @@ public class JndiEncArtifact implements java.io.Serializable {
         } while (node != null);
     }
 
-    public Object readResolve() throws java.io.ObjectStreamException {
+    public Object readResolve() throws ObjectStreamException {
         ThreadContext thrdCntx = ThreadContext.getThreadContext();
         BeanContext deployment = thrdCntx.getBeanContext();
-        javax.naming.Context cntx = deployment.getJndiEnc();
+        Context cntx = deployment.getJndiEnc();
         try {
             Object obj = cntx.lookup(path);
             if (obj == null)
-                throw new java.io.InvalidObjectException("JNDI ENC context reference could not be properly resolved when bean instance was activated");
+                throw new InvalidObjectException("JNDI ENC context reference could not be properly resolved when bean instance was activated");
             return obj;
-        } catch (javax.naming.NamingException e) {
-            throw (java.io.InvalidObjectException)new java.io.InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);
+        } catch (NamingException e) {
+            throw (InvalidObjectException)new InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);
         }
     }
 

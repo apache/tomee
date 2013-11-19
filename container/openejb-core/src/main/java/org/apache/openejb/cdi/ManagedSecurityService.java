@@ -32,7 +32,7 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
 
     @Override
     public Principal getCurrentPrincipal() {
-        final SecurityService<?> service = SystemInstance.get().getComponent(org.apache.openejb.spi.SecurityService.class);
+        final SecurityService<?> service = SystemInstance.get().getComponent(SecurityService.class);
         if(service != null) {
             return service.getCallerPrincipal();
         }

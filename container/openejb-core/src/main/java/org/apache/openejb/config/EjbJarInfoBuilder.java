@@ -157,11 +157,11 @@ public class EjbJarInfoBuilder {
 
         for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
             EnterpriseBeanInfo beanInfo;
-            if (bean instanceof org.apache.openejb.jee.SessionBean) {
+            if (bean instanceof SessionBean) {
                 beanInfo = initSessionBean((SessionBean) bean, ejbJar, ejbds);
-            } else if (bean instanceof org.apache.openejb.jee.EntityBean) {
+            } else if (bean instanceof EntityBean) {
                 beanInfo = initEntityBean((EntityBean) bean, ejbds);
-            } else if (bean instanceof org.apache.openejb.jee.MessageDrivenBean) {
+            } else if (bean instanceof MessageDrivenBean) {
                 beanInfo = initMessageBean((MessageDrivenBean) bean, ejbds);
             } else {
                 throw new OpenEJBException("Unknown bean type: "+bean.getClass().getName());

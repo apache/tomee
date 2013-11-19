@@ -24,7 +24,7 @@ import java.security.PrivilegedAction;
  * @version $Rev$ $Date$
  */
 public class SetAccessible implements PrivilegedAction {
-    private final java.lang.reflect.AccessibleObject object;
+    private final AccessibleObject object;
 
     public SetAccessible(AccessibleObject object) {
         this.object = object;

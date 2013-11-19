@@ -17,12 +17,15 @@
 package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.EnvProps;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
+import javax.naming.spi.InitialContextFactory;
 import javax.security.auth.login.LoginException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -30,10 +33,10 @@ import java.util.Properties;
 /**
  * @deprecated Use org.apache.openejb.core.LocalInitialContextFactory
  */
-public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
+public class InitContextFactory implements InitialContextFactory {
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
-        if (!org.apache.openejb.OpenEJB.isInitialized()) {
+        if (!OpenEJB.isInitialized()) {
             initializeOpenEJB(env);
         }
 
@@ -80,10 +83,10 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
 
             props.putAll(env);
 
-            org.apache.openejb.OpenEJB.init(props);
+            OpenEJB.init(props);
 
         }
-        catch (org.apache.openejb.OpenEJBException e) {
+        catch (OpenEJBException e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }
         catch (Exception e) {

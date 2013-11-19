@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import java.util.EmptyStackException;
+
 public class LinkedListStack implements Stack {
 
     private LinkedEntry occupiedEntries;
@@ -46,7 +48,7 @@ public class LinkedListStack implements Stack {
         return object;
     }
 
-    public synchronized Object pop() throws java.util.EmptyStackException {
+    public synchronized Object pop() throws EmptyStackException {
         /* Take an entry from the occupied list and move it to the vacant list. */
 
         LinkedEntry entry = occupiedEntries;

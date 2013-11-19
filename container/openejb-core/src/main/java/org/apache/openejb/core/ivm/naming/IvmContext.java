@@ -29,6 +29,7 @@ import javax.naming.CompositeName;
 import javax.naming.Context;
 import javax.naming.LinkRef;
 import javax.naming.Name;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
@@ -155,7 +156,7 @@ public class IvmContext implements Context, Serializable {
         }
 
         if (obj == null){
-            throw new javax.naming.NameNotFoundException("Name \"" + compositName + "\" not found.");
+            throw new NameNotFoundException("Name \"" + compositName + "\" not found.");
         }
 
         if (obj.getClass() == IvmContext.class)
@@ -191,7 +192,7 @@ public class IvmContext implements Context, Serializable {
             }
         }
 
-        throw new javax.naming.NameNotFoundException("Name \"" + compositName + "\" not found.");
+        throw new NameNotFoundException("Name \"" + compositName + "\" not found.");
     }
 
     static ObjectFactory [] federatedFactories = null;
@@ -291,7 +292,7 @@ public class IvmContext implements Context, Serializable {
             name = name.substring(indx + 1);
         }
         if (fastCache.containsKey(name))
-            throw new javax.naming.NameAlreadyBoundException();
+            throw new NameAlreadyBoundException();
         else {
             ParsedName parsedName = new ParsedName(name);
             mynode.bind(parsedName, obj);
@@ -344,7 +345,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void rename(String oldname, String newname) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        throw new OperationNotSupportedException();
     }
 
     public void rename(Name oldname, Name newname) throws NamingException {
@@ -378,7 +379,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void destroySubcontext(String name) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        throw new OperationNotSupportedException();
     }
 
     public void destroySubcontext(Name name) throws NamingException {
@@ -396,7 +397,7 @@ public class IvmContext implements Context, Serializable {
             name = name.substring(indx + 1);
         }
         if (fastCache.containsKey(name))
-            throw new javax.naming.NameAlreadyBoundException();
+            throw new NameAlreadyBoundException();
         else
             return mynode.createSubcontext(new ParsedName(name));
     }

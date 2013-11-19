@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.cipher.PasswordCipher} interface. Basically,
+ * Command line tool on top of the {@link PasswordCipher} interface. Basically,
  * it allows end user to encrypt/decrypt a string (ie. a password) using a cipher
  * implementation.
  */

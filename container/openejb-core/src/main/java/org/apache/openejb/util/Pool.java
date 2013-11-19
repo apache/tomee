@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -128,7 +129,7 @@ public class Pool<T> {
             scheduler.shutdown();
             try {
                 if (!scheduler.awaitTermination(10000, MILLISECONDS)) {
-                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Pool scheduler termination timeout expired");
                 }
             } catch (InterruptedException e) {
                 //Ignore
@@ -165,7 +166,7 @@ public class Pool<T> {
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
-     * @throws java.util.concurrent.TimeoutException
+     * @throws TimeoutException
      *                               if no instance could be obtained within the timeout
      */
     public Entry pop(final long timeout, final TimeUnit unit) throws InterruptedException, TimeoutException {
@@ -262,7 +263,7 @@ public class Pool<T> {
 
     /**
      * Never call this method without having successfully called
-     * {@link #pop(long, java.util.concurrent.TimeUnit)} beforehand.
+     * {@link #pop(long, TimeUnit)} beforehand.
      * <p/>
      * Failure to do so will increase the max pool size by one.
      *
@@ -275,7 +276,7 @@ public class Pool<T> {
 
     /**
      * Never call this method without having successfully called
-     * {@link #pop(long, java.util.concurrent.TimeUnit)} beforehand.
+     * {@link #pop(long, TimeUnit)} beforehand.
      * <p/>
      * Failure to do so will increase the max pool size by one.
      *

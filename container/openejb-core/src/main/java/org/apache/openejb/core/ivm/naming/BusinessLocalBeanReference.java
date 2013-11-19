@@ -18,6 +18,8 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.BeanContext;
 
+import javax.naming.NamingException;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -29,7 +31,7 @@ public class BusinessLocalBeanReference extends Reference {
         this.businessHome = localBeanHome;
     }
 
-    public Object getObject() throws javax.naming.NamingException {
+    public Object getObject() throws NamingException {
         return businessHome.create();
     }
 

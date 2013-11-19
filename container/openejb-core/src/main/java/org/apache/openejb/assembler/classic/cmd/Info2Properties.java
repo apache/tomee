@@ -34,7 +34,10 @@ import org.apache.openejb.util.URISupport;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.ServiceUnavailableException;
 import java.io.File;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -89,11 +92,11 @@ public class Info2Properties {
         try {
             final InitialContext ctx = new InitialContext(p);
             configInfo = (ConfigurationInfo) ctx.lookup("openejb/ConfigurationInfoBusinessRemote");
-        } catch (javax.naming.ServiceUnavailableException e) {
+        } catch (ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(messages.format("cmd.deploy.serverOffline"));
             System.exit(1);
-        } catch (javax.naming.NamingException e) {
+        } catch (NamingException e) {
             System.out.println("ConfigurationInfo does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
             System.exit(2);
         }
@@ -292,7 +295,7 @@ public class Info2Properties {
 
     // Filter out the stupid date comment the Properties.store() method
     // adds seemingly no matter what.
-    static class Filter extends java.io.FilterOutputStream {
+    static class Filter extends FilterOutputStream {
         private boolean pastFirstLine;
 
         public Filter(final OutputStream out) {
@@ -306,7 +309,7 @@ public class Info2Properties {
 
     }
 
-    static class CommentsFilter extends java.io.FilterOutputStream {
+    static class CommentsFilter extends FilterOutputStream {
 
         public CommentsFilter(final OutputStream out) {
             super(out);

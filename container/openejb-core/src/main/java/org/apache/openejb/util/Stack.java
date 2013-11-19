@@ -16,8 +16,10 @@
  */
 package org.apache.openejb.util;
 
+import java.util.EmptyStackException;
+
 public interface Stack {
-    Object pop() throws java.util.EmptyStackException;
+    Object pop() throws EmptyStackException;
 
     Object push(Object obj);
 

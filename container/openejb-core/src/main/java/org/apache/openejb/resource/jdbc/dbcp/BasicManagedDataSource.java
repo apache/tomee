@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
+import org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 
@@ -45,7 +46,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * ciphered value.
      * <p/>
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link org.apache.openejb.resource.jdbc.cipher.PlainTextPasswordCipher} can also be used.
+     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
     private String passwordCipher = null;
     private JMXBasicDataSource jmxDs = null;

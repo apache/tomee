@@ -35,7 +35,7 @@ public class StatelessContainerBuilder extends Container {
 
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
+    private Duration accessTimeout = Duration.parse("30 seconds");
     @XmlAttribute
     private int maxSize = 10;
     @XmlAttribute
@@ -44,7 +44,7 @@ public class StatelessContainerBuilder extends Container {
     private boolean strictPooling = true;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration maxAge = org.apache.openejb.util.Duration.parse("0 hours");
+    private Duration maxAge = Duration.parse("0 hours");
     @XmlAttribute
     private boolean replaceAged = true;
     @XmlAttribute
@@ -53,17 +53,17 @@ public class StatelessContainerBuilder extends Container {
     private int maxAgeOffset = -1;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration idleTimeout = org.apache.openejb.util.Duration.parse("0 minutes");
+    private Duration idleTimeout = Duration.parse("0 minutes");
     @XmlAttribute
     private boolean garbageCollection = false;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration sweepInterval = org.apache.openejb.util.Duration.parse("5 minutes");
+    private Duration sweepInterval = Duration.parse("5 minutes");
     @XmlAttribute
     private int callbackThreads = 5;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration closeTimeout = org.apache.openejb.util.Duration.parse("5 minutes");
+    private Duration closeTimeout = Duration.parse("5 minutes");
 
     public StatelessContainerBuilder() {
         setClassName("org.apache.openejb.core.stateless.StatelessContainerFactory");
@@ -79,16 +79,16 @@ public class StatelessContainerBuilder extends Container {
         return this;
     }
 
-    public StatelessContainerBuilder withAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public StatelessContainerBuilder withAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public void setAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
-    public org.apache.openejb.util.Duration getAccessTimeout() {
+    public Duration getAccessTimeout() {
         return accessTimeout;
     }
 
@@ -139,16 +139,16 @@ public class StatelessContainerBuilder extends Container {
         return strictPooling;
     }
 
-    public StatelessContainerBuilder withMaxAge(org.apache.openejb.util.Duration maxAge) {
+    public StatelessContainerBuilder withMaxAge(Duration maxAge) {
         this.maxAge = maxAge;
         return this;
     }
 
-    public void setMaxAge(org.apache.openejb.util.Duration maxAge) {
+    public void setMaxAge(Duration maxAge) {
         this.maxAge = maxAge;
     }
 
-    public org.apache.openejb.util.Duration getMaxAge() {
+    public Duration getMaxAge() {
         return maxAge;
     }
 
@@ -199,16 +199,16 @@ public class StatelessContainerBuilder extends Container {
         return maxAgeOffset;
     }
 
-    public StatelessContainerBuilder withIdleTimeout(org.apache.openejb.util.Duration idleTimeout) {
+    public StatelessContainerBuilder withIdleTimeout(Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
         return this;
     }
 
-    public void setIdleTimeout(org.apache.openejb.util.Duration idleTimeout) {
+    public void setIdleTimeout(Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 
-    public org.apache.openejb.util.Duration getIdleTimeout() {
+    public Duration getIdleTimeout() {
         return idleTimeout;
     }
 
@@ -233,16 +233,16 @@ public class StatelessContainerBuilder extends Container {
         return garbageCollection;
     }
 
-    public StatelessContainerBuilder withSweepInterval(org.apache.openejb.util.Duration sweepInterval) {
+    public StatelessContainerBuilder withSweepInterval(Duration sweepInterval) {
         this.sweepInterval = sweepInterval;
         return this;
     }
 
-    public void setSweepInterval(org.apache.openejb.util.Duration sweepInterval) {
+    public void setSweepInterval(Duration sweepInterval) {
         this.sweepInterval = sweepInterval;
     }
 
-    public org.apache.openejb.util.Duration getSweepInterval() {
+    public Duration getSweepInterval() {
         return sweepInterval;
     }
 
@@ -267,16 +267,16 @@ public class StatelessContainerBuilder extends Container {
         return callbackThreads;
     }
 
-    public StatelessContainerBuilder withCloseTimeout(org.apache.openejb.util.Duration closeTimeout) {
+    public StatelessContainerBuilder withCloseTimeout(Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
         return this;
     }
 
-    public void setCloseTimeout(org.apache.openejb.util.Duration closeTimeout) {
+    public void setCloseTimeout(Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
     }
 
-    public org.apache.openejb.util.Duration getCloseTimeout() {
+    public Duration getCloseTimeout() {
         return closeTimeout;
     }
 

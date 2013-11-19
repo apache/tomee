@@ -499,7 +499,7 @@ public class StatefulContainer implements RpcContainer {
                  * javax.ejb.SessionBean is a workaround for passing the TCK while the tests in
                  * question can be challenged or the spec can be changed/updated.
                  */
-                if (instance != null && instance.bean instanceof javax.ejb.SessionBean) {
+                if (instance != null && instance.bean instanceof SessionBean) {
                     throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
                 }
             }

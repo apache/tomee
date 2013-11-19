@@ -22,6 +22,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.lang.RuntimeException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ConcurrentModificationException;
@@ -54,7 +55,7 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>MathRuntimeException</code> with specified
      * formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      */
@@ -79,7 +80,7 @@ public class MathRuntimeException extends RuntimeException {
     /**
      * Constructs a new <code>MathRuntimeException</code> with specified
      * formatted detail message and nested <code>Throwable</code> root cause.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param rootCause the exception or error that caused this exception
      * to be thrown.
      * @param pattern format specifier
@@ -193,7 +194,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>ArithmeticException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -222,7 +223,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>ArrayIndexOutOfBoundsException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -251,7 +252,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>EOFException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -297,7 +298,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>IllegalArgumentException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -339,7 +340,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>IllegalStateException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -368,7 +369,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>ConcurrentModificationException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -397,7 +398,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>NoSuchElementException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -426,7 +427,7 @@ public class MathRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new <code>NullPointerException</code> with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param pattern format specifier
      * @param arguments format arguments
      * @return built exception
@@ -456,7 +457,7 @@ public class MathRuntimeException extends RuntimeException {
    /**
      * Constructs a new <code>ParseException</code> with specified
      * formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Message formatting is delegated to {@link MessageFormat}.
      * @param offset offset at which error occurred
      * @param pattern format specifier
      * @param arguments format arguments
@@ -485,9 +486,9 @@ public class MathRuntimeException extends RuntimeException {
         };
     }
 
-    /** Create an {@link java.lang.RuntimeException} for an internal error.
+    /** Create an {@link RuntimeException} for an internal error.
      * @param cause underlying cause
-     * @return an {@link java.lang.RuntimeException} for an internal error
+     * @return an {@link RuntimeException} for an internal error
      */
     public static RuntimeException createInternalError(final Throwable cause) {
         return new OpenEJBRuntimeException("internal error, please fill a bug report at https://issues.apache.org/jira/browse/MATH", cause);

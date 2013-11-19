@@ -21,8 +21,10 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @org.apache.xbean.XBean element="containerSystem"
  */
-public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
+public class CoreContainerSystem implements ContainerSystem {
 
     private final Map<Object, AppContext> apps = new ConcurrentHashMap<Object, AppContext>();
     private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
@@ -65,7 +67,7 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
                 || !(jndiContext.lookup("openejb/global") instanceof Context)) {
                 throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present");
             }
-        } catch (javax.naming.NamingException exception) {
+        } catch (NamingException exception) {
             throw new OpenEJBRuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present", exception);
         }
         SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);

@@ -16,7 +16,10 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-public class ParsedName implements java.io.Serializable {
+import java.io.Serializable;
+import java.util.StringTokenizer;
+
+public class ParsedName implements Serializable {
     final static int IS_EQUAL = 0;
     final static int IS_LESS = -1;
     final static int IS_GREATER = 1;
@@ -34,7 +37,7 @@ public class ParsedName implements java.io.Serializable {
             components[0] = "";
             hashcode = 0;
         } else if (path.length() > 0) {
-            java.util.StringTokenizer st = new java.util.StringTokenizer(path, "/");
+            StringTokenizer st = new StringTokenizer(path, "/");
             components = new String[st.countTokens()];
             for (int i = 0; st.hasMoreTokens() && i < components.length; i++)
                 components[i] = st.nextToken();

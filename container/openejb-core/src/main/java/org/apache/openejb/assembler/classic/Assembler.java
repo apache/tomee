@@ -67,6 +67,7 @@ import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.ParentClassLoaderFinder;
+import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
@@ -234,7 +235,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final RemoteResourceMonitor remoteResourceMonitor = new RemoteResourceMonitor();
 
     @Override
-    public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
+    public ContainerSystem getContainerSystem() {
         return containerSystem;
     }
 
@@ -301,7 +302,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final ApplicationServer appServer = system.getComponent(ApplicationServer.class);
         if (appServer == null) {
-            system.setComponent(ApplicationServer.class, new org.apache.openejb.core.ServerFederation());
+            system.setComponent(ApplicationServer.class, new ServerFederation());
         }
 
         system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
@@ -445,7 +446,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
      * This method leverage the other assemble and apply methods which
      * can be used independently.
      * <p/>
-     * Assembles and returns the {@link org.apache.openejb.core.CoreContainerSystem} using the
+     * Assembles and returns the {@link CoreContainerSystem} using the
      * information from the {@link OpenEjbConfiguration} object passed in.
      * <pre>
      * This method performs the following actions(in order):

@@ -45,7 +45,7 @@ public class JarExtractor {
      * @param file     Jar file to unpack
      * @param pathname Context path name for web application
      * @throws IllegalArgumentException if this is not a "jar:" URL
-     * @throws java.io.IOException      if an input/output error was encountered
+     * @throws IOException      if an input/output error was encountered
      *                                  during expansion
      */
     public static File extract(final File file, final String pathname) throws IOException {
@@ -72,7 +72,7 @@ public class JarExtractor {
      *
      * @param file           jar file to unpack
      * @param destinationDir the directory in which the jar will be unpacked; must not exist
-     * @throws java.io.IOException if an input/output error was encountered during expansion
+     * @throws IOException if an input/output error was encountered during expansion
      */
     public static File extract(final File file, File destinationDir) throws IOException {
         if (destinationDir.exists()) {
@@ -206,7 +206,7 @@ public class JarExtractor {
      * @param docBase Document base directory into which we are extracting
      * @param name    Relative pathname of the file to be created
      * @return A handle to the extracted File
-     * @throws java.io.IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     protected static File extract(final InputStream input, final File docBase, final String name)
             throws IOException {

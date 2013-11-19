@@ -22,12 +22,16 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.RemoveException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
@@ -63,32 +67,32 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             throw e;
         }
 
-        if (retValue instanceof java.util.Collection) {
-            Object [] proxyInfos = ((java.util.Collection) retValue).toArray();
+        if (retValue instanceof Collection) {
+            Object [] proxyInfos = ((Collection) retValue).toArray();
             Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
                 ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
                 proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;
-        } else if (retValue instanceof org.apache.openejb.util.ArrayEnumeration) {
-            org.apache.openejb.util.ArrayEnumeration enumeration = (org.apache.openejb.util.ArrayEnumeration) retValue;
+        } else if (retValue instanceof ArrayEnumeration) {
+            ArrayEnumeration enumeration = (ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
                 ProxyInfo proxyInfo = (ProxyInfo) enumeration.get(i);
                 enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return enumeration;
-        } else if (retValue instanceof java.util.Enumeration) {
-            java.util.Enumeration enumeration = (java.util.Enumeration) retValue;
+        } else if (retValue instanceof Enumeration) {
+            Enumeration enumeration = (Enumeration) retValue;
 
-            java.util.List proxies = new java.util.ArrayList();
+            List proxies = new ArrayList();
             while (enumeration.hasMoreElements()) {
                 ProxyInfo proxyInfo = (ProxyInfo) enumeration.nextElement();
                 proxies.add(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
-            return new org.apache.openejb.util.ArrayEnumeration(proxies);
+            return new ArrayEnumeration(proxies);
         } else {
-            org.apache.openejb.ProxyInfo proxyInfo = (org.apache.openejb.ProxyInfo) retValue;
+            ProxyInfo proxyInfo = (ProxyInfo) retValue;
 
 
             return createProxy(proxyInfo.getPrimaryKey(), getMainInterface());

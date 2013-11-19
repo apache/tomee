@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.Annotated;
@@ -50,7 +51,7 @@ public class MBeanDeployer implements DynamicDeployer {
         }
 
         final Collection<Class<? extends Annotation>> mbeanClasses = new ArrayList<Class<? extends Annotation>>(2);
-        mbeanClasses.add(org.apache.openejb.api.jmx.MBean.class);
+        mbeanClasses.add(MBean.class);
 
         try { // for OSGi environment, javax.management is imported by the JRE
             mbeanClasses.add((Class<? extends Annotation>) cl.loadClass("javax.management.MBean"));

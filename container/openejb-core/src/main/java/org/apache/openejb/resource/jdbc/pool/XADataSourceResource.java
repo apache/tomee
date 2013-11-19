@@ -27,7 +27,7 @@ public final class XADataSourceResource {
     private static final Class<?>[] XA_DATASOURCE_API = new Class<?>[]{ XADataSource.class };
 
     public static XADataSource proxy(final ClassLoader loader, final String xaDataSource) {
-        return javax.sql.XADataSource.class.cast(Proxy.newProxyInstance(loader, XA_DATASOURCE_API, new LazyXADataSourceHandler(xaDataSource)));
+        return XADataSource.class.cast(Proxy.newProxyInstance(loader, XA_DATASOURCE_API, new LazyXADataSourceHandler(xaDataSource)));
     }
 
     private static class LazyXADataSourceHandler implements InvocationHandler {

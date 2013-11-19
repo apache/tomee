@@ -23,6 +23,7 @@ import javax.security.auth.login.LoginException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -33,7 +34,7 @@ public class PseudoSecurityService implements SecurityService {
         PseudoPolicyConfigurationFactory.install();
     }
 
-    public void init(java.util.Properties props) {
+    public void init(Properties props) {
     }
 
     public Object login(String user, String pass) throws LoginException {

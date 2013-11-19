@@ -35,14 +35,14 @@ public class StatefulContainerBuilder extends Container {
 
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration accessTimeout = org.apache.openejb.util.Duration.parse("30 seconds");
+    private Duration accessTimeout = Duration.parse("30 seconds");
     @XmlAttribute
     private String cache = "org.apache.openejb.core.stateful.SimpleCache";
     @XmlAttribute
     private String passivator = "org.apache.openejb.core.stateful.SimplePassivater";
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration timeOut = org.apache.openejb.util.Duration.parse("20");
+    private Duration timeOut = Duration.parse("20");
     @XmlAttribute
     private int frequency = 60;
     @XmlAttribute
@@ -64,16 +64,16 @@ public class StatefulContainerBuilder extends Container {
         return this;
     }
 
-    public StatefulContainerBuilder withAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public StatefulContainerBuilder withAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
         return this;
     }
 
-    public void setAccessTimeout(org.apache.openejb.util.Duration accessTimeout) {
+    public void setAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
-    public org.apache.openejb.util.Duration getAccessTimeout() {
+    public Duration getAccessTimeout() {
         return accessTimeout;
     }
 
@@ -111,16 +111,16 @@ public class StatefulContainerBuilder extends Container {
         return passivator;
     }
 
-    public StatefulContainerBuilder withTimeOut(org.apache.openejb.util.Duration timeOut) {
+    public StatefulContainerBuilder withTimeOut(Duration timeOut) {
         this.timeOut = timeOut;
         return this;
     }
 
-    public void setTimeOut(org.apache.openejb.util.Duration timeOut) {
+    public void setTimeOut(Duration timeOut) {
         this.timeOut = timeOut;
     }
 
-    public org.apache.openejb.util.Duration getTimeOut() {
+    public Duration getTimeOut() {
         return timeOut;
     }
 

@@ -33,6 +33,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class QueryProxy implements java.lang.reflect.InvocationHandler {
+public class QueryProxy implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, QueryProxy.class);
 
     // keywords

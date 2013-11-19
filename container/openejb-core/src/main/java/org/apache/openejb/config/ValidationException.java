@@ -18,7 +18,9 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.util.Messages;
 
-public class ValidationException extends java.lang.Exception {
+import java.lang.Exception;
+
+public class ValidationException extends Exception {
     protected static final Messages messages = new Messages("org.apache.openejb.config.rules");
     protected Object[] details;
     protected String message;

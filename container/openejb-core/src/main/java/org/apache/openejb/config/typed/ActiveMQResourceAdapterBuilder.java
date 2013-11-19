@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -36,12 +37,12 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
     @XmlAttribute
     private String brokerXmlConfig = "broker:(tcp://localhost:61616)?useJmx=false";
     @XmlAttribute
-    private java.net.URI serverUrl = java.net.URI.create("vm://localhost?waitForStart=20000&async=true");
+    private URI serverUrl = URI.create("vm://localhost?waitForStart=20000&async=true");
     @XmlAttribute
     private String dataSource = "Default Unmanaged JDBC Database";
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration startupTimeout = org.apache.openejb.util.Duration.parse("10 seconds");
+    private Duration startupTimeout = Duration.parse("10 seconds");
 
     public ActiveMQResourceAdapterBuilder() {
         setClassName("org.apache.openejb.resource.activemq.ActiveMQResourceAdapter");
@@ -68,16 +69,16 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return brokerXmlConfig;
     }
 
-    public ActiveMQResourceAdapterBuilder withServerUrl(java.net.URI serverUrl) {
+    public ActiveMQResourceAdapterBuilder withServerUrl(URI serverUrl) {
         this.serverUrl = serverUrl;
         return this;
     }
 
-    public void setServerUrl(java.net.URI serverUrl) {
+    public void setServerUrl(URI serverUrl) {
         this.serverUrl = serverUrl;
     }
 
-    public java.net.URI getServerUrl() {
+    public URI getServerUrl() {
         return serverUrl;
     }
 
@@ -94,16 +95,16 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return dataSource;
     }
 
-    public ActiveMQResourceAdapterBuilder withStartupTimeout(org.apache.openejb.util.Duration startupTimeout) {
+    public ActiveMQResourceAdapterBuilder withStartupTimeout(Duration startupTimeout) {
         this.startupTimeout = startupTimeout;
         return this;
     }
 
-    public void setStartupTimeout(org.apache.openejb.util.Duration startupTimeout) {
+    public void setStartupTimeout(Duration startupTimeout) {
         this.startupTimeout = startupTimeout;
     }
 
-    public org.apache.openejb.util.Duration getStartupTimeout() {
+    public Duration getStartupTimeout() {
         return startupTimeout;
     }
 
