@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.lang.Class;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

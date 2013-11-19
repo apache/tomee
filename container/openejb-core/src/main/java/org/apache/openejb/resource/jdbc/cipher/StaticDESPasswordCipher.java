@@ -21,7 +21,6 @@ import org.apache.openejb.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.lang.String;
 
 /**
  * This {@link PasswordCipher} implementation uses a the Triple-DES encryption

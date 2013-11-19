@@ -38,8 +38,6 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import java.io.ObjectStreamException;
-import java.lang.Object;
-import java.lang.Throwable;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;

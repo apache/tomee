@@ -16,8 +16,6 @@
  */
 package javax.xml.ws;
 
-import java.lang.String;
-
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which
  * uses JaxWS 2.1.

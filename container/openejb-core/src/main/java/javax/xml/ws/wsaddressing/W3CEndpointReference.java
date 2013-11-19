@@ -19,7 +19,6 @@ package javax.xml.ws.wsaddressing;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
-import java.lang.String;
 
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which

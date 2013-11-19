@@ -22,7 +22,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.RuntimeException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ConcurrentModificationException;

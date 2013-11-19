@@ -20,7 +20,6 @@ import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.AbstractUnivariateStatistic;
 
 import java.io.Serializable;
-import java.lang.Double;
 import java.util.Arrays;
 
 /**

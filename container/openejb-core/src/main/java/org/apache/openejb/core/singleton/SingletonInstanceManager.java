@@ -48,7 +48,6 @@ import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
-import java.lang.UnsupportedOperationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

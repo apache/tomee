@@ -38,7 +38,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.lang.System;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
