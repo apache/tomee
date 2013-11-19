@@ -821,7 +821,7 @@ public class Pool<T> {
         }
     }
 
-    public static interface Supplier<T> {
+    public interface Supplier<T> {
 
         void discard(T t, Event reason);
 

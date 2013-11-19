@@ -37,7 +37,7 @@ public interface PasswordCipher {
      *            The password to encode. May not be <code>null</code>, nor empty.
      * @return The encoded password.
      */
-    public char[] encrypt(String plainPassword);
+    char[] encrypt(String plainPassword);
 
     /**
      * Decodes an encoded password and returns a plain text password.
@@ -47,6 +47,6 @@ public interface PasswordCipher {
      *            nor empty.
      * @return The plain text password.
      */
-    public String decrypt(char[] encryptedPassword);
+    String decrypt(char[] encryptedPassword);
 
 }

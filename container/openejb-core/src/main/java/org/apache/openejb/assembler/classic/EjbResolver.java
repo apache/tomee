@@ -30,7 +30,7 @@ import java.util.ArrayList;
  */
 public class EjbResolver {
 
-    public static interface Reference {
+    public interface Reference {
 
         String getName();
 

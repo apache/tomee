@@ -190,6 +190,6 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public interface RoleResolver {
-        public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles);
+        Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles);
     }
 }

@@ -35,29 +35,29 @@ public interface SecurityService<T> extends Service {
     /**
      *
      */
-    public T login(String user, String pass) throws LoginException;
+    T login(String user, String pass) throws LoginException;
 
-    public T login(String securityRealm, String user, String pass) throws LoginException;
-
-    /**
-     * Active
-     */
-    public void associate(T securityIdentity) throws LoginException;
+    T login(String securityRealm, String user, String pass) throws LoginException;
 
     /**
      * Active
      */
-    public T disassociate();
+    void associate(T securityIdentity) throws LoginException;
 
     /**
      * Active
      */
-    public void logout(T securityIdentity) throws LoginException;
+    T disassociate();
 
     /**
      * Active
      */
-    public boolean isCallerInRole(String role);
+    void logout(T securityIdentity) throws LoginException;
+
+    /**
+     * Active
+     */
+    boolean isCallerInRole(String role);
 
     /**
      * Implementors are encouraged to return a java.security.Principal
@@ -66,14 +66,14 @@ public interface SecurityService<T> extends Service {
      * JAAS LoginModule implementors are encouraged to use the CallerPrincipal
      * interface to denote the best fitting Principal for getCallerPrincipal.
      */
-    public Principal getCallerPrincipal();
+    Principal getCallerPrincipal();
 
     /**
      * Active
      */
-    public boolean isCallerAuthorized(Method method, InterfaceType type);
+    boolean isCallerAuthorized(Method method, InterfaceType type);
 
     // mainly for asynch handling
-    public void setState(Object o);
-    public Object currentState();
+    void setState(Object o);
+    Object currentState();
 }

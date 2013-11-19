@@ -37,27 +37,27 @@ public interface Service {
      * <p/>
      * <p/>
      */
-    public Properties getProperties();
+    Properties getProperties();
 
-    public String getId();
+    String getId();
 
-    public void setId(String id);
+    void setId(String id);
 
-    public String getJar();
+    String getJar();
 
-    public void setJar(String jar);
+    void setJar(String jar);
 
-    public String getProvider();
+    String getProvider();
 
-    public void setProvider(String provider);
+    void setProvider(String provider);
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
-    public String getClassName();
+    String getClassName();
 
-    public String getConstructor();
+    String getConstructor();
 
-    public String getFactoryName();
+    String getFactoryName();
 }

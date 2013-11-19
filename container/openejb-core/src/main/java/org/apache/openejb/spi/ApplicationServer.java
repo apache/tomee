@@ -78,16 +78,16 @@ import org.apache.openejb.ProxyInfo;
  */
 public interface ApplicationServer {
 
-    public EJBMetaData getEJBMetaData(ProxyInfo proxyInfo);
+    EJBMetaData getEJBMetaData(ProxyInfo proxyInfo);
 
-    public Handle getHandle(ProxyInfo proxyInfo);
+    Handle getHandle(ProxyInfo proxyInfo);
 
-    public HomeHandle getHomeHandle(ProxyInfo proxyInfo);
+    HomeHandle getHomeHandle(ProxyInfo proxyInfo);
 
-    public EJBObject getEJBObject(ProxyInfo proxyInfo);
+    EJBObject getEJBObject(ProxyInfo proxyInfo);
 
-    public Object getBusinessObject(ProxyInfo proxyInfo);
+    Object getBusinessObject(ProxyInfo proxyInfo);
 
-    public EJBHome getEJBHome(ProxyInfo proxyInfo);
+    EJBHome getEJBHome(ProxyInfo proxyInfo);
 
 }

@@ -27,7 +27,7 @@ public interface ConfigurationInfo {
 
     OpenEjbConfiguration getOpenEjbConfiguration(File tmpFile) throws UnauthorizedException;
 
-    public static class UnauthorizedException extends Exception {
+    class UnauthorizedException extends Exception {
         public UnauthorizedException(String message) {
             super(message);
         }

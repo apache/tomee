@@ -75,7 +75,7 @@ public class JndiTreeBrowser {
         new JndiTreeBrowser(ctx).runOnTree(new LogJndiWorker(foo));
     }
 
-    private static interface JndiNodeWorker {
+    private interface JndiNodeWorker {
         void doWork(String path, String name, Object obj);
     }
 

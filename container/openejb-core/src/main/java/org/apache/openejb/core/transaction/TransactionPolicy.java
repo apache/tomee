@@ -152,7 +152,7 @@ public interface TransactionPolicy {
      * completes.
      */
     interface TransactionSynchronization {
-        public enum Status {
+        enum Status {
             COMMITTED, ROLLEDBACK, UNKNOWN
         }
 

@@ -24,15 +24,15 @@ import org.apache.openejb.OpenEJBException;
 
 public interface Assembler {
 
-    public void init(Properties props) throws OpenEJBException;
+    void init(Properties props) throws OpenEJBException;
 
-    public void build() throws OpenEJBException;
+    void build() throws OpenEJBException;
 
-    public ContainerSystem getContainerSystem();
+    ContainerSystem getContainerSystem();
 
-    public TransactionManager getTransactionManager();
+    TransactionManager getTransactionManager();
 
-    public SecurityService getSecurityService();
+    SecurityService getSecurityService();
 
-    public void destroy();
+    void destroy();
 }

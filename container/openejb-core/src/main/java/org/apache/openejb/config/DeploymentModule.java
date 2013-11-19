@@ -32,7 +32,7 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public interface DeploymentModule {
-    static String OPENEJB_MODULENAME_USE_HASH = "openejb.modulename.useHash";
+    String OPENEJB_MODULENAME_USE_HASH = "openejb.modulename.useHash";
 
     String getModuleId();
     

@@ -20,6 +20,6 @@ import java.lang.reflect.Method;
 
 public interface RpcContainer extends Container {
 
-    public Object invoke(Object deployID, InterfaceType callType, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException;
+    Object invoke(Object deployID, InterfaceType callType, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException;
 
 }

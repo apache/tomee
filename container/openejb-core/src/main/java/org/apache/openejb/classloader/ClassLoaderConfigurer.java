@@ -25,7 +25,7 @@ public interface ClassLoaderConfigurer {
     URL[] additionalURLs();
     boolean accept(final URL url);
 
-    public static class Helper {
+    class Helper {
         private Helper() {
             // no-op
         }

@@ -78,7 +78,7 @@ public interface Cache<K, V> {
     /**
      * Callback listener for cache events.
      */
-    public interface CacheListener<V> {
+    interface CacheListener<V> {
         /**
          * Called after an entry is loaded from a store.
          *
@@ -104,7 +104,7 @@ public interface Cache<K, V> {
      * CacheFileter is used to select values to remove during a removeAll
      * invocation.
      */
-    public interface CacheFilter<V> {
+    interface CacheFilter<V> {
         /**
          * True if the filter matches the value.
          */
@@ -115,7 +115,7 @@ public interface Cache<K, V> {
      * A cache entry can implement this interface
      * to provide its timeout.     
      */
-    public interface TimeOut {
+    interface TimeOut {
         
         Duration getTimeOut();
         

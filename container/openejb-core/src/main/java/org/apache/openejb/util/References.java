@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class References {
 
-    public static interface Visitor<T> {
+    public interface Visitor<T> {
         String getName(T t);
 
         Set<String> getReferences(T t);

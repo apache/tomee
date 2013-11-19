@@ -26,13 +26,13 @@ import java.util.List;
 
 public interface ContainerSystem {
 
-    public BeanContext getBeanContext(Object id);
+    BeanContext getBeanContext(Object id);
 
-    public BeanContext[] deployments();
+    BeanContext[] deployments();
 
-    public Container getContainer(Object id);
+    Container getContainer(Object id);
 
-    public Container [] containers();
+    Container [] containers();
 
     WebContext getWebContext(String id);
 

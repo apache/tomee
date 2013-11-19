@@ -24,5 +24,5 @@ import java.lang.reflect.InvocationHandler;
  * @version $Rev$ $Date$
  */
 public interface BeanContextInvocationHandler extends InvocationHandler {
-    public BeanContext getBeanContext();
+    BeanContext getBeanContext();
 }

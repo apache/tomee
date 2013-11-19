@@ -823,7 +823,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
-    private static @interface Proxy {
+    private @interface Proxy {
 
     }
 }
