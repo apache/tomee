@@ -100,6 +100,7 @@ import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
+import org.apache.openejb.resource.PropertiesFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.spi.ApplicationServer;
@@ -2111,7 +2112,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createResource(final ResourceInfo serviceInfo) throws OpenEJBException {
         final ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
-        if ("false".equalsIgnoreCase(serviceInfo.properties.getProperty("SkipImplicitAttributes", "false"))) {
+        final boolean properties = PropertiesFactory.class.getName().equals(serviceInfo.className);
+        if ("false".equalsIgnoreCase(serviceInfo.properties.getProperty("SkipImplicitAttributes", "false")) && !properties) {
             serviceRecipe.setProperty("transactionManager", transactionManager);
             serviceRecipe.setProperty("ServiceId", serviceInfo.id);
         }
@@ -2295,7 +2297,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     remoteResourceMonitor.registerIfNot();
                 }
             }
-        } else {
+        } else if (!Properties.class.isInstance(service)) {
             logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
