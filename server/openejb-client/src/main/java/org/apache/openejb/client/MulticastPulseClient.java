@@ -18,7 +18,9 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,8 +81,15 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
     }
 
     private static synchronized ExecutorService getExecutorService() {
+
         if (null == executor) {
-            executor = Executors.newFixedThreadPool(getInterfaces().length + 2);
+
+            int length = getInterfaces().length;
+            if (length < 1) {
+                length = 1;
+            }
+
+            executor = Executors.newFixedThreadPool(length * 2);
         }
 
         return executor;
@@ -194,6 +203,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
 
         final AtomicBoolean running = new AtomicBoolean(true);
+        final List<Future> futures = Collections.synchronizedList(new ArrayList<Future>());
 
         MulticastSocket[] clientSockets = null;
 
@@ -252,7 +262,6 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             //Start threads that listen for multicast packets on our channel.
             //These need to start 'before' we pulse a request.
-            final ArrayList<Future> futures = new ArrayList<Future>();
             final CountDownLatch latchListeners = new CountDownLatch(clientSocketsFinal.length);
 
             for (final MulticastSocket socket : clientSocketsFinal) {
@@ -380,7 +389,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             try {
                 //Give listener threads a reasonable amount of time to start
-                if (latchListeners.await(5, TimeUnit.SECONDS)) {
+                if (latchListeners.await(clientSocketsFinal.length * 2, TimeUnit.SECONDS)) {
 
                     //Start pulsing client request every 10ms - This will ensure we have at least 4 client pulses within our minimum timeout
                     //This pulse is designed to tell a listening server to wake up and pulse back a response
@@ -428,23 +437,14 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                     running.set(false);
 
-                    for (final Future future : futures) {
-                        future.cancel(true);
+                    try {
+                        for (final Future future : futures) {
+                            future.cancel(true);
+                        }
+                    } catch (ConcurrentModificationException e) {
+                        //Ignore
                     }
 
-                    for (final MulticastSocket socket : clientSocketsFinal) {
-
-                        try {
-                            socket.leaveGroup(ia);
-                        } catch (Exception e) {
-                            //Ignore
-                        }
-                        try {
-                            socket.close();
-                        } catch (Exception e) {
-                            //Ignore
-                        }
-                    }
                 }
             }, timeout);
 
@@ -464,6 +464,18 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                 setLock.unlock();
             }
         } finally {
+
+            //Just to be sure we are clean
+            for (final Future future : futures) {
+                try {
+                    future.cancel(true);
+                } catch (Exception e) {
+                    //Ignore
+                }
+            }
+
+            futures.clear();
+
             for (final MulticastSocket socket : clientSockets) {
 
                 try {
