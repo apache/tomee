@@ -22,8 +22,8 @@ import org.apache.openejb.OpenEJBException;
 
 public interface OpenEjbConfigurationFactory {
 
-    public void init(Properties props) throws OpenEJBException;
+    void init(Properties props) throws OpenEJBException;
 
-    public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException;
+    OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException;
 
 }

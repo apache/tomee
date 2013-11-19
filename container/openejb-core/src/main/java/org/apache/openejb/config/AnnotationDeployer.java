@@ -4715,13 +4715,13 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public interface AnnotationHandler<A extends Annotation> {
-            public Class<A> getAnnotationClass();
+            Class<A> getAnnotationClass();
 
-            public Map<String, List<MethodAttribute>> getExistingDeclarations();
+            Map<String, List<MethodAttribute>> getExistingDeclarations();
 
-            public void addClassLevelDeclaration(A annotation, Class clazz);
+            void addClassLevelDeclaration(A annotation, Class clazz);
 
-            public void addMethodLevelDeclaration(A annotation, Method method);
+            void addMethodLevelDeclaration(A annotation, Method method);
         }
 
         public static class TransactionAttributeHandler implements AnnotationHandler<TransactionAttribute> {
@@ -5141,7 +5141,7 @@ public class AnnotationDeployer implements DynamicDeployer {
      * so that each can be treated as injection targets using
      * the same code.
      */
-    public static interface Member {
+    public interface Member {
         Class<?> getDeclaringClass();
 
         String getName();

@@ -19,8 +19,8 @@ package org.apache.openejb.config;
 import java.util.Map;
 
 public interface PersistenceContextAnn {
-    public abstract String name();
-    public abstract String unitName();
-    public abstract String type();
-    public abstract Map<String,String> properties();
+    String name();
+    String unitName();
+    String type();
+    Map<String,String> properties();
 }

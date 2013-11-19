@@ -18,20 +18,20 @@ package org.apache.openejb;
 
 public interface Container {
 
-    public ContainerType getContainerType();
+    ContainerType getContainerType();
 
-    public Object getContainerID();
+    Object getContainerID();
 
-    public BeanContext getBeanContext(Object deploymentID);
+    BeanContext getBeanContext(Object deploymentID);
 
-    public BeanContext[] getBeanContexts();
+    BeanContext[] getBeanContexts();
 
-    public void deploy(BeanContext info) throws OpenEJBException;
+    void deploy(BeanContext info) throws OpenEJBException;
         
-    public void start(BeanContext info) throws OpenEJBException;
+    void start(BeanContext info) throws OpenEJBException;
     
-    public void stop(BeanContext info) throws OpenEJBException;
+    void stop(BeanContext info) throws OpenEJBException;
     
-    public void undeploy(BeanContext info) throws OpenEJBException;
+    void undeploy(BeanContext info) throws OpenEJBException;
     
 }

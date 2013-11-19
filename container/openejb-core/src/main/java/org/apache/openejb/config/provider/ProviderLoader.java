@@ -25,6 +25,6 @@ import java.util.List;
  */
 public interface ProviderLoader {
 
-    public ServiceProvider load(ID id);
-    public List<ServiceProvider> load(String namespace);
+    ServiceProvider load(ID id);
+    List<ServiceProvider> load(String namespace);
 }

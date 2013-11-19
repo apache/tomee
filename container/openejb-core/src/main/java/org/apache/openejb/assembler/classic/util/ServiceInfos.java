@@ -157,7 +157,7 @@ public final class ServiceInfos {
         return service;
     }
 
-    public static interface Factory {
+    public interface Factory {
         Object newInstance(final Class<?> clazz) throws Exception;
     }
 }

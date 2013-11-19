@@ -156,7 +156,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         return toArray(new Object[entries.length]);
     }
 
-    public static interface ListSet extends List, Set {
+    public interface ListSet extends List, Set {
     }
 
     public Object[] toArray(Object values[]) {

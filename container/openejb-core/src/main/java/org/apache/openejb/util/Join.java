@@ -86,9 +86,9 @@ public class Join {
         return list;
     }
 
-    public static interface NameCallback<T> {
+    public interface NameCallback<T> {
 
-        public String getName(T object);
+        String getName(T object);
     }
 
     public static class FileCallback implements NameCallback<File> {

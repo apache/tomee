@@ -119,9 +119,9 @@ public class JndiBuilder {
         }
     }
 
-    public static interface JndiNameStrategy {
+    public interface JndiNameStrategy {
 
-        public static enum Interface {
+        enum Interface {
 
             REMOTE_HOME(InterfaceType.EJB_HOME, "RemoteHome", "home", ""),
             LOCAL_HOME(InterfaceType.EJB_LOCAL_HOME, "LocalHome", "local-home", "Local"),
@@ -167,13 +167,13 @@ public class JndiBuilder {
 
         }
 
-        public void begin(BeanContext beanContext);
+        void begin(BeanContext beanContext);
 
-        public String getName(Class interfce, String key, Interface type);
+        String getName(Class interfce, String key, Interface type);
 
-        public Map<String, String> getNames(Class interfce, Interface type);
+        Map<String, String> getNames(Class interfce, Interface type);
 
-        public void end();
+        void end();
     }
 
     // TODO: put these into the classpath and get them with xbean-finder

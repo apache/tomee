@@ -23,5 +23,5 @@ import java.util.Properties;
  */
 public interface Service {
 
-    public void init(Properties props) throws Exception;
+    void init(Properties props) throws Exception;
 }

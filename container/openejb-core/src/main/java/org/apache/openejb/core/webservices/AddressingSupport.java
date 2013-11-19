@@ -28,8 +28,8 @@ import org.w3c.dom.Element;
  */
 public interface AddressingSupport {
     
-    public EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters);
+    EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters);
 
-    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters);
+    <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters);
     
 }

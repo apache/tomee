@@ -20,5 +20,5 @@ package org.apache.openejb.cli;
  * @version $Rev$ $Date$
  */
 public interface Main {
-    public void main(String[] args) throws Exception;
+    void main(String[] args) throws Exception;
 }

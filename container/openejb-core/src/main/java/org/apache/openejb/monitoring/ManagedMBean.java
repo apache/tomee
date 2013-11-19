@@ -295,7 +295,7 @@ public class ManagedMBean implements DynamicMBean {
      * so that each can be treated as injection targets using
      * the same code.
      */
-    public static interface Member {
+    public interface Member {
         Object get() throws IllegalAccessException, InvocationTargetException;
 
         String getName();

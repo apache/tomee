@@ -22,9 +22,9 @@ import java.util.Properties;
 import org.apache.openejb.SystemException;
 
 public interface PassivationStrategy {
-    public void init(Properties props) throws SystemException;
+    void init(Properties props) throws SystemException;
 
-    public void passivate(Map stateTable) throws SystemException;
+    void passivate(Map stateTable) throws SystemException;
 
-    public Object activate(Object primaryKey) throws SystemException;
+    Object activate(Object primaryKey) throws SystemException;
 }
