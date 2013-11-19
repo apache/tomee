@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
 import java.io.PrintWriter;
@@ -25,12 +26,12 @@ import java.io.PrintWriter;
  */
 public class Log4jPrintWriter extends PrintWriter {
     private final StringBuffer text = new StringBuffer("");
-    private final org.apache.log4j.Logger logger;
+    private final Logger logger;
     private final Priority priority;
 
     public Log4jPrintWriter(String category, Priority priority) {
         super(System.err);
-        logger = org.apache.log4j.Logger.getLogger(category);
+        logger = Logger.getLogger(category);
         this.priority = priority;
     }
 

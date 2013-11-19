@@ -22,9 +22,11 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBHome;
+import javax.ejb.EJBMetaData;
 import java.io.ObjectStreamException;
+import java.io.Serializable;
 
-public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializable {
+public class IntraVmMetaData implements EJBMetaData, Serializable {
 
     protected Class homeClass;
 
@@ -93,7 +95,7 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
         homeStub = home;
     }
 
-    public javax.ejb.EJBHome getEJBHome() {
+    public EJBHome getEJBHome() {
         return homeStub;
     }
 

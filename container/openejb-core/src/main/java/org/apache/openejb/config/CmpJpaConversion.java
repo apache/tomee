@@ -62,6 +62,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
 
 import javax.ejb.EJBLocalObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -766,7 +767,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 MappedSuperclass idclass = null; 
                 // now validate the primary class fields against the bean cmp fields 
                 // to make sure everything maps correctly. 
-                for (java.lang.reflect.Field pkField : pkClass.getFields()) {
+                for (Field pkField : pkClass.getFields()) {
                     String pkFieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
                     if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(pkFieldName)) {
@@ -885,7 +886,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
                 MappedSuperclass superclass = null;
                 MappedSuperclass idclass = null; 
-                for (java.lang.reflect.Field pkField : pkClass.getFields()) {
+                for (Field pkField : pkClass.getFields()) {
                     String fieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
                     // the primary key fields must be public, non-static, must be defined as a CMP field, 
@@ -1019,7 +1020,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             // This is a single target for the relationship mapping for each 
             // class in the hierarchy. 
             MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
-            for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+            for (Field field : clazz.getDeclaredFields()) {
                 if (!field.isSynthetic()) {
                     String fieldName = field.getName();
                     // if this is one of bean's persistence fields, create the mapping

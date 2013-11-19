@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 
 /**
@@ -29,7 +30,7 @@ public class PersistenceContextReference extends Reference {
         this.em = em;
     }
 
-    public Object getObject() throws javax.naming.NamingException {
+    public Object getObject() throws NamingException {
         return em;
     }
 

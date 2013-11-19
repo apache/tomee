@@ -31,7 +31,7 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
 
     public ComplexKeyGenerator(Class entityBeanClass, Class pkClass) throws OpenEJBException {
         this.pkClass = pkClass;
-        List<org.apache.openejb.core.cmp.ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
+        List<ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
         for (Field pkObjectField : pkClass.getFields()) {
             if (isValidPkField(pkObjectField)) {
                 Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());

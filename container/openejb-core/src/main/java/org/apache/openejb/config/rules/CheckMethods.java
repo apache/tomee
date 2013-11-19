@@ -141,7 +141,7 @@ public class CheckMethods extends ValidationBase {
         Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
-            if (interfaceMethods[i].getDeclaringClass() == javax.ejb.EJBObject.class) continue;
+            if (interfaceMethods[i].getDeclaringClass() == EJBObject.class) continue;
             String name = interfaceMethods[i].getName();
             try {
                 Class[] params = interfaceMethods[i].getParameterTypes();

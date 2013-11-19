@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
@@ -136,7 +137,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public java.io.BufferedReader getReader() throws IOException {
+    public BufferedReader getReader() throws IOException {
         return get().getReader();
     }
 

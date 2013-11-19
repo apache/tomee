@@ -18,6 +18,7 @@ package org.apache.openejb.core.ivm;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.spi.ApplicationServer;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBMetaData;
@@ -25,7 +26,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
 
-public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
+public class IntraVmServer implements ApplicationServer {
 
     public EJBMetaData getEJBMetaData(ProxyInfo pi) {
         BeanContext beanContext = pi.getBeanContext();

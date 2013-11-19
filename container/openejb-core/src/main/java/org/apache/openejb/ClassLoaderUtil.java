@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
 /**
@@ -167,24 +168,24 @@ public class ClassLoaderUtil {
         if (null != cl && cl instanceof URLClassLoader) {
 
             final URLClassLoader ucl = (URLClassLoader) cl;
-            final Class clazz = java.net.URLClassLoader.class;
+            final Class clazz = URLClassLoader.class;
 
             try {
 
-                final java.lang.reflect.Field ucp = clazz.getDeclaredField("ucp");
+                final Field ucp = clazz.getDeclaredField("ucp");
                 ucp.setAccessible(true);
                 final Object cp = ucp.get(ucl);
-                final java.lang.reflect.Field loaders = cp.getClass().getDeclaredField("loaders");
+                final Field loaders = cp.getClass().getDeclaredField("loaders");
                 loaders.setAccessible(true);
-                final java.util.Collection c = (java.util.Collection) loaders.get(cp);
-                java.lang.reflect.Field loader;
-                java.util.jar.JarFile jf;
+                final Collection c = (Collection) loaders.get(cp);
+                Field loader;
+                JarFile jf;
 
                 for (final Object jl : c.toArray()) {
                     try {
                         loader = jl.getClass().getDeclaredField("jar");
                         loader.setAccessible(true);
-                        jf = (java.util.jar.JarFile) loader.get(jl);
+                        jf = (JarFile) loader.get(jl);
                         files.add(jf.getName());
                         jf.close();
                     } catch (Throwable t) {
@@ -204,7 +205,7 @@ public class ClassLoaderUtil {
 
         boolean res = false;
         final Class classClassLoader = ClassLoader.class;
-        java.lang.reflect.Field nativeLibraries = null;
+        Field nativeLibraries = null;
 
         try {
             nativeLibraries = classClassLoader.getDeclaredField("nativeLibraries");
@@ -231,7 +232,7 @@ public class ClassLoaderUtil {
 
         res = true;
         final Vector java_lang_ClassLoader_NativeLibrary = (Vector) obj;
-        java.lang.reflect.Method finalize;
+        Method finalize;
 
         for (final Object lib : java_lang_ClassLoader_NativeLibrary) {
 

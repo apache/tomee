@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +43,7 @@ public class DataSourceBuilder extends Resource {
     @XmlAttribute
     private String jdbcDriver = "org.hsqldb.jdbcDriver";
     @XmlAttribute
-    private java.net.URI jdbcUrl = java.net.URI.create("jdbc:hsqldb:mem:hsqldb");
+    private URI jdbcUrl = URI.create("jdbc:hsqldb:mem:hsqldb");
     @XmlAttribute
     private String userName = "sa";
     @XmlAttribute
@@ -65,7 +66,7 @@ public class DataSourceBuilder extends Resource {
     private int minIdle = 0;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration maxWaitTime = org.apache.openejb.util.Duration.parse("-1 millisecond");
+    private Duration maxWaitTime = Duration.parse("-1 millisecond");
     @XmlAttribute
     private String validationQuery = null;
     @XmlAttribute
@@ -76,12 +77,12 @@ public class DataSourceBuilder extends Resource {
     private boolean testWhileIdle = false;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration timeBetweenEvictionRuns = org.apache.openejb.util.Duration.parse("-1 millisecond");
+    private Duration timeBetweenEvictionRuns = Duration.parse("-1 millisecond");
     @XmlAttribute
     private int numTestsPerEvictionRun = 3;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration minEvictableIdleTime = org.apache.openejb.util.Duration.parse("30 minutes");
+    private Duration minEvictableIdleTime = Duration.parse("30 minutes");
     @XmlAttribute
     private boolean poolPreparedStatements = false;
     @XmlAttribute
@@ -159,16 +160,16 @@ public class DataSourceBuilder extends Resource {
         return jdbcDriver;
     }
 
-    public DataSourceBuilder withJdbcUrl(java.net.URI jdbcUrl) {
+    public DataSourceBuilder withJdbcUrl(URI jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
         return this;
     }
 
-    public void setJdbcUrl(java.net.URI jdbcUrl) {
+    public void setJdbcUrl(URI jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
     }
 
-    public java.net.URI getJdbcUrl() {
+    public URI getJdbcUrl() {
         return jdbcUrl;
     }
 
@@ -302,16 +303,16 @@ public class DataSourceBuilder extends Resource {
         return minIdle;
     }
 
-    public DataSourceBuilder withMaxWaitTime(org.apache.openejb.util.Duration maxWaitTime) {
+    public DataSourceBuilder withMaxWaitTime(Duration maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
         return this;
     }
 
-    public void setMaxWaitTime(org.apache.openejb.util.Duration maxWaitTime) {
+    public void setMaxWaitTime(Duration maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
     }
 
-    public org.apache.openejb.util.Duration getMaxWaitTime() {
+    public Duration getMaxWaitTime() {
         return maxWaitTime;
     }
 
@@ -375,16 +376,16 @@ public class DataSourceBuilder extends Resource {
         return testWhileIdle;
     }
 
-    public DataSourceBuilder withTimeBetweenEvictionRuns(org.apache.openejb.util.Duration timeBetweenEvictionRuns) {
+    public DataSourceBuilder withTimeBetweenEvictionRuns(Duration timeBetweenEvictionRuns) {
         this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
         return this;
     }
 
-    public void setTimeBetweenEvictionRuns(org.apache.openejb.util.Duration timeBetweenEvictionRuns) {
+    public void setTimeBetweenEvictionRuns(Duration timeBetweenEvictionRuns) {
         this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
     }
 
-    public org.apache.openejb.util.Duration getTimeBetweenEvictionRuns() {
+    public Duration getTimeBetweenEvictionRuns() {
         return timeBetweenEvictionRuns;
     }
 
@@ -409,16 +410,16 @@ public class DataSourceBuilder extends Resource {
         return numTestsPerEvictionRun;
     }
 
-    public DataSourceBuilder withMinEvictableIdleTime(org.apache.openejb.util.Duration minEvictableIdleTime) {
+    public DataSourceBuilder withMinEvictableIdleTime(Duration minEvictableIdleTime) {
         this.minEvictableIdleTime = minEvictableIdleTime;
         return this;
     }
 
-    public void setMinEvictableIdleTime(org.apache.openejb.util.Duration minEvictableIdleTime) {
+    public void setMinEvictableIdleTime(Duration minEvictableIdleTime) {
         this.minEvictableIdleTime = minEvictableIdleTime;
     }
 
-    public org.apache.openejb.util.Duration getMinEvictableIdleTime() {
+    public Duration getMinEvictableIdleTime() {
         return minEvictableIdleTime;
     }
 

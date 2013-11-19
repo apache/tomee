@@ -43,6 +43,7 @@ import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
@@ -314,8 +315,8 @@ class AppInfoBuilder {
     }
 
     private void buildAppServices(final AppModule appModule, final AppInfo appInfo) throws OpenEJBException {
-        final Collection<org.apache.openejb.config.sys.Service> services = appModule.getServices();
-        for (final org.apache.openejb.config.sys.Service service : services) {
+        final Collection<Service> services = appModule.getServices();
+        for (final Service service : services) {
             final ServiceInfo info = this.configFactory.configureService(service, ServiceInfo.class);
             appInfo.services.add(info);
         }

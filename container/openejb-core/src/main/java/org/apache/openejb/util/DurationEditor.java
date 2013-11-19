@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.util;
 
-public class DurationEditor extends java.beans.PropertyEditorSupport {
+import java.beans.PropertyEditorSupport;
+
+public class DurationEditor extends PropertyEditorSupport {
     public void setAsText(String text) {
         Duration d = Duration.parse(text);
         setValue(d);

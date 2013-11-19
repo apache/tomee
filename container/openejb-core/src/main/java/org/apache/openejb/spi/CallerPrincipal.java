@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.spi;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -28,7 +31,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @version $Rev$ $Date$
  */
-@java.lang.annotation.Target(value = {TYPE})
-@java.lang.annotation.Retention(value = RUNTIME)
+@Target(value = {TYPE})
+@Retention(value = RUNTIME)
 public @interface CallerPrincipal {
 }

@@ -16,17 +16,22 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-public class NamingException extends javax.naming.NamingException {
-    private org.apache.openejb.OpenEJBException delegate;
+import org.apache.openejb.OpenEJBException;
 
-    public NamingException(String message, org.apache.openejb.OpenEJBException delegateArg) {
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
+public class NamingException extends javax.naming.NamingException {
+    private OpenEJBException delegate;
+
+    public NamingException(String message, OpenEJBException delegateArg) {
         super();
         delegate = delegateArg;
     }
 
     public NamingException(String message, Throwable rootCause) {
         super();
-        delegate = new org.apache.openejb.OpenEJBException(message, rootCause);
+        delegate = new OpenEJBException(message, rootCause);
     }
 
     public String getMessage() {
@@ -37,11 +42,11 @@ public class NamingException extends javax.naming.NamingException {
         delegate.printStackTrace();
     }
 
-    public void printStackTrace(java.io.PrintStream stream) {
+    public void printStackTrace(PrintStream stream) {
         delegate.printStackTrace(stream);
     }
 
-    public void printStackTrace(java.io.PrintWriter writer) {
+    public void printStackTrace(PrintWriter writer) {
         delegate.printStackTrace(writer);
     }
 }

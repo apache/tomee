@@ -23,9 +23,12 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
+import javax.ejb.Handle;
+import javax.ejb.HomeHandle;
 import java.io.ObjectStreamException;
+import java.io.Serializable;
 
-public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle, javax.ejb.Handle {
+public class IntraVmHandle implements Serializable, HomeHandle, Handle {
     protected Object theProxy;
 
     public IntraVmHandle(Object proxy) {
@@ -41,7 +44,7 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
     }
 
     public Object getPrimaryKey() {
-        return ((BaseEjbProxyHandler) org.apache.openejb.util.proxy.ProxyManager.getInvocationHandler(theProxy)).primaryKey;
+        return ((BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy)).primaryKey;
     }
 
     protected Object writeReplace() throws ObjectStreamException {
@@ -69,10 +72,10 @@ public class IntraVmHandle implements java.io.Serializable, javax.ejb.HomeHandle
             */
         } else {
             BaseEjbProxyHandler handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(theProxy);
-            if (theProxy instanceof javax.ejb.EJBObject) {
+            if (theProxy instanceof EJBObject) {
                 ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHandle(handler.getProxyInfo());
-            } else if (theProxy instanceof javax.ejb.EJBHome) {
+            } else if (theProxy instanceof EJBHome) {
                 ApplicationServer applicationServer = ServerFederation.getApplicationServer();
                 return applicationServer.getHomeHandle(handler.getProxyInfo());
             } else {

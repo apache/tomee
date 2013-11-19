@@ -16,6 +16,8 @@
  */
 package javax.xml.ws;
 
+import java.lang.String;
+
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which
  * uses JaxWS 2.1.
@@ -23,7 +25,7 @@ package javax.xml.ws;
 public abstract class WebServiceFeature {
     protected boolean enabled;
 
-    public abstract java.lang.String getID();
+    public abstract String getID();
 
     public boolean isEnabled() {
         return enabled;

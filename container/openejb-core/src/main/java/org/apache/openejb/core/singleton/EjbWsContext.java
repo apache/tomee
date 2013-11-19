@@ -59,7 +59,7 @@ public class EjbWsContext implements WebServiceContext {
         return wsaSupport;
     }
     
-    public EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters) {
+    public EndpointReference getEndpointReference(Element... referenceParameters) {
         return getAddressingSupport().getEndpointReference(referenceParameters);      
     }
 

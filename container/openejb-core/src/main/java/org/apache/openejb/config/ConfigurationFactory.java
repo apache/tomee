@@ -1264,7 +1264,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * @param providerId         String
      * @param serviceType        String
      * @return ServiceInfo T
-     * @throws org.apache.openejb.OpenEJBException
+     * @throws OpenEJBException
      *
      */
     public <T extends ServiceInfo> T configureService(final Class<? extends T> type, final String serviceId, final Properties declaredProperties, final String providerId, final String serviceType) throws OpenEJBException {

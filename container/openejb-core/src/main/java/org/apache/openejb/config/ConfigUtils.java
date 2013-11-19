@@ -142,7 +142,7 @@ public class ConfigUtils {
                 }
             }
 
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new OpenEJBException("Could not locate config file: ", e);
         }
@@ -157,7 +157,7 @@ public class ConfigUtils {
         return new String[] { path };
     }
 
-    public static File createConfig(File config) throws java.io.IOException {
+    public static File createConfig(File config) throws IOException {
         ResourceFinder finder = new ResourceFinder("");
         URL defaultConfig = finder.find("default.openejb.conf");
 
@@ -181,7 +181,7 @@ public class ConfigUtils {
                      * to add it to the config or go any futher.
                      */
                     if (jar.equals(target)) return false;
-                } catch (java.io.IOException e) {
+                } catch (IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 
                      * just add this jars path explicitly.
@@ -199,7 +199,7 @@ public class ConfigUtils {
                      * any futher.
                      */
                     if (jarDir != null && jarDir.equals(target)) return false;
-                } catch (java.io.IOException e) {
+                } catch (IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 
                      * just add this jars path explicitly.

@@ -17,12 +17,13 @@
 package org.apache.openejb.util;
 
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 public class Log4jLogStream implements LogStream {
-    protected org.apache.log4j.Logger logger;
+    protected Logger logger;
 
     public Log4jLogStream(LogCategory logCategory) {
-        logger = org.apache.log4j.Logger.getLogger(logCategory.getName());
+        logger = Logger.getLogger(logCategory.getName());
     }
 
     public boolean isFatalEnabled() {

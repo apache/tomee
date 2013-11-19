@@ -18,6 +18,7 @@ package org.apache.openejb.resource.quartz;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -30,6 +31,7 @@ import org.quartz.listeners.SchedulerListenerSupport;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
@@ -42,7 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @version $Rev$ $Date$
  */
-public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter {
+public class QuartzResourceAdapter implements ResourceAdapter {
 
     public static final String OPENEJB_QUARTZ_TIMEOUT = "openejb.quartz.timeout";
 
@@ -56,7 +58,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
     public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
 
         if (null != this.bootstrapContext.getAndSet(bootstrapContext)) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("QuartzResourceAdapter is already starting");
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("QuartzResourceAdapter is already starting");
             return;
         }
 
@@ -125,14 +127,14 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
         final Throwable exception = ex.get();
         if (null != exception) {
             final String err = "Error creating Quartz Scheduler";
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error(err, exception);
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error(err, exception);
             throw new ResourceAdapterInternalException(err, exception);
         }
 
         if (started) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Started Quartz Scheduler");
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Started Quartz Scheduler");
         } else {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Failed to start Quartz Scheduler within defined timeout, status unknown");
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Failed to start Quartz Scheduler within defined timeout, status unknown");
         }
     }
 
@@ -210,7 +212,7 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
                             try {
                                 //Force a shutdown without waiting for jobs to complete.
                                 s.shutdown(false);
-                                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
+                                Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
                             } catch (Throwable e) {
                                 QuartzResourceAdapter.this.ex.set(e);
                             }
@@ -235,9 +237,9 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
         this.bootstrapContext.set(null);
 
         if (null != ex.get()) {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Error stopping Quartz Scheduler", ex.get());
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Error stopping Quartz Scheduler", ex.get());
         } else {
-            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped Quartz Scheduler");
+            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped Quartz Scheduler");
         }
     }
 

@@ -96,6 +96,7 @@ import org.apache.openejb.jee.SecurityIdentity;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.SingletonBean;
@@ -142,6 +143,7 @@ import javax.annotation.security.RunAs;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.annotation.sql.DataSourceDefinitions;
 import javax.ejb.AccessTimeout;
+import javax.ejb.ActivationConfigProperty;
 import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
 import javax.ejb.ApplicationException;
@@ -167,6 +169,8 @@ import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
 import javax.ejb.RemoteHome;
 import javax.ejb.Remove;
+import javax.ejb.Schedule;
+import javax.ejb.Schedules;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateful;
@@ -215,6 +219,8 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.NoClassDefFoundError;
+import java.lang.Object;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -1296,7 +1302,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             managedClasses.add(className);
                         } catch (final ClassNotFoundException e) {
                             notLoadedClasses.add(rawClassName);
-                        } catch (final java.lang.NoClassDefFoundError e) {
+                        } catch (final NoClassDefFoundError e) {
                             // no-op
                         }
                     }
@@ -2639,14 +2645,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                             activationConfig.addProperty("destination", messageDriven.mappedName());
                         }
 
-                        javax.ejb.ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
+                        ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
                         if (configProperties != null) {
                             if (mdb.getActivationConfig() == null) {
                                 mdb.setActivationConfig(activationConfig);
                             }
 
                             Properties properties = activationConfig.toProperties();
-                            for (javax.ejb.ActivationConfigProperty property : configProperties) {
+                            for (ActivationConfigProperty property : configProperties) {
                                 if (!properties.containsKey(property.propertyName())) {
                                     activationConfig.addProperty(property.propertyName(), property.propertyValue());
                                 }
@@ -3369,8 +3375,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             TimerConsumer timerConsumer = (TimerConsumer)bean;
             Set<Annotated<Method>> scheduleMethods = new HashSet<Annotated<Method>>();
-            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Schedules.class));
-            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Schedule.class));
+            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedules.class));
+            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedule.class));
 
             List<Timer> timers = timerConsumer.getTimer();
 
@@ -3389,19 +3395,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
-                List<javax.ejb.Schedule> scheduleAnnotationList = new ArrayList<javax.ejb.Schedule>();
+                List<Schedule> scheduleAnnotationList = new ArrayList<Schedule>();
 
-                javax.ejb.Schedules schedulesAnnotation = method.getAnnotation(javax.ejb.Schedules.class);
+                Schedules schedulesAnnotation = method.getAnnotation(Schedules.class);
                 if (schedulesAnnotation != null) {
                     scheduleAnnotationList.addAll(asList(schedulesAnnotation.value()));
                 }
 
-                javax.ejb.Schedule scheduleAnnotation = method.getAnnotation(javax.ejb.Schedule.class);
+                Schedule scheduleAnnotation = method.getAnnotation(Schedule.class);
                 if (scheduleAnnotation != null) {
                     scheduleAnnotationList.add(scheduleAnnotation);
                 }
 
-                for (javax.ejb.Schedule schedule : scheduleAnnotationList) {
+                for (Schedule schedule : scheduleAnnotationList) {
                     Timer timer = new Timer();
                     timer.setPersistent(schedule.persistent());
                     timer.setInfo(schedule.info() == null || schedule.info().isEmpty() ? null : schedule.info());
@@ -3484,8 +3490,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (bean instanceof org.apache.openejb.jee.Session) {
-                org.apache.openejb.jee.Session session = (org.apache.openejb.jee.Session) bean;
+            if (bean instanceof Session) {
+                Session session = (Session) bean;
 
                 /*
                  * @AfterBegin
@@ -4438,7 +4444,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void buildDataSourceDefinition(JndiConsumer consumer, DataSourceDefinition d) {
-            final org.apache.openejb.jee.DataSource dataSource = new org.apache.openejb.jee.DataSource();
+            final DataSource dataSource = new DataSource();
 
             dataSource.setName(d.name());
             dataSource.setClassName(d.className());
@@ -4549,7 +4555,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // reference type
             if (serviceRef.getServiceRefType() == null || "".equals(serviceRef.getServiceRefType())) {
-                if (webService.type() != java.lang.Object.class) {
+                if (webService.type() != Object.class) {
                     serviceRef.setServiceRefType(webService.type().getName());
                 } else {
                     serviceRef.setServiceRefType(member.getType().getName());

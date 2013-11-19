@@ -40,7 +40,9 @@ import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import java.lang.Class;
 import java.lang.reflect.Constructor;
+import java.rmi.Remote;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -181,7 +183,7 @@ public class JndiBuilder {
     public static class TemplatedStrategy implements JndiNameStrategy {
         private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
         private static final String KEYS = "default,local,global,app";
-        private org.apache.openejb.util.StringTemplate template;
+        private StringTemplate template;
         private HashMap<String, EnterpriseBeanInfo> beanInfos;
 
         // Set in begin()
@@ -727,9 +729,9 @@ public class JndiBuilder {
 
     public static class RemoteInterfaceComparator implements Comparator<Class> {
 
-        public int compare(java.lang.Class a, java.lang.Class b) {
-            boolean aIsRmote = java.rmi.Remote.class.isAssignableFrom(a);
-            boolean bIsRmote = java.rmi.Remote.class.isAssignableFrom(b);
+        public int compare(Class a, Class b) {
+            boolean aIsRmote = Remote.class.isAssignableFrom(a);
+            boolean bIsRmote = Remote.class.isAssignableFrom(b);
 
             if (aIsRmote == bIsRmote) return 0;
             return aIsRmote ? 1 : -1;

@@ -16,11 +16,15 @@
  */
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.InvalidateReferenceException;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
@@ -37,8 +41,10 @@ import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
+import javax.ejb.Handle;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.Object;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
@@ -177,7 +183,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         final String methodName = method.getName();
 
         try {
-            final java.lang.Object retValue;
+            final Object retValue;
             final MethodType operation = dispatchTable.get(methodName);
 
             if (operation == null) {
@@ -204,7 +210,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                         final Class type = method.getParameterTypes()[0];
 
                         /*-- HANDLE ------- EJBHome.remove(Handle handle) ---*/
-                        if (javax.ejb.Handle.class.isAssignableFrom(type)) {
+                        if (Handle.class.isAssignableFrom(type)) {
                             retValue = removeWithHandle(interfce, method, args, proxy);
                         } else {
                             /*-- PRIMARY KEY ----- EJBHome.remove(Object key) ---*/
@@ -234,7 +240,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 throw re;
             }
 
-        } catch (org.apache.openejb.InvalidateReferenceException ire) {
+        } catch (InvalidateReferenceException ire) {
             Throwable cause = ire.getRootCause();
             if (cause instanceof RemoteException && interfaceType.isLocal()) {
                 final RemoteException re = (RemoteException) cause;
@@ -246,7 +252,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (org.apache.openejb.ApplicationException ae) {
+        } catch (ApplicationException ae) {
             final Throwable exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
@@ -271,13 +277,13 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (org.apache.openejb.SystemException se) {
+        } catch (SystemException se) {
             if (interfaceType.isLocal()) {
                 throw new EJBException("Container has suffered a SystemException").initCause(se.getRootCause());
             } else {
                 throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
             }
-        } catch (org.apache.openejb.OpenEJBException oe) {
+        } catch (OpenEJBException oe) {
             if (interfaceType.isLocal()) {
                 throw new EJBException("Unknown Container Exception").initCause(oe.getRootCause());
             } else {
@@ -333,11 +339,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     @Override
-    public org.apache.openejb.ProxyInfo getProxyInfo() {
+    public ProxyInfo getProxyInfo() {
         if (getMainInterface() == null) {
             throw new IllegalStateException("no main interface");
         }
-        return new org.apache.openejb.ProxyInfo(getBeanContext(), null, getBeanContext().getInterfaces(interfaceType), interfaceType, getMainInterface());
+        return new ProxyInfo(getBeanContext(), null, getBeanContext().getInterfaces(interfaceType), interfaceType, getMainInterface());
     }
 
     @Override

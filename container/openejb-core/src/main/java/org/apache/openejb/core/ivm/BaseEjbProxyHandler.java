@@ -19,6 +19,8 @@ package org.apache.openejb.core.ivm;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
@@ -50,6 +52,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.rmi.AccessException;
 import java.rmi.NoSuchObjectException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,7 +225,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
     }
 
-    protected void checkAuthorization(final Method method) throws org.apache.openejb.OpenEJBException {
+    protected void checkAuthorization(final Method method) throws OpenEJBException {
     }
 
     public void setIntraVmCopyMode(final boolean on) {
@@ -338,7 +341,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (isInvalidReference) {
             if (interfaceType.isComponent() && interfaceType.isLocal()) {
                 throw new NoSuchObjectLocalException("reference is invalid");
-            } else if (interfaceType.isComponent() || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
+            } else if (interfaceType.isComponent() || Remote.class.isAssignableFrom(method.getDeclaringClass())) {
                 throw new NoSuchObjectException("reference is invalid");
             } else {
                 throw new NoSuchEJBException("reference is invalid for " + deploymentID);
@@ -361,7 +364,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
      * @param interfce Class
      */
     protected Throwable convertException(Throwable e, final Method method, final Class interfce) {
-        final boolean rmiRemote = java.rmi.Remote.class.isAssignableFrom(interfce);
+        final boolean rmiRemote = Remote.class.isAssignableFrom(interfce);
         if (e instanceof TransactionRequiredException) {
             if (!rmiRemote && interfaceType.isBusiness()) {
                 return new EJBTransactionRequiredException(e.getMessage()).initCause(getCause(e));
@@ -602,7 +605,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
     }
 
-    public abstract org.apache.openejb.ProxyInfo getProxyInfo();
+    public abstract ProxyInfo getProxyInfo();
 
     public BeanContext getBeanContext() {
         final BeanContext beanContext = beanContextRef.get();
@@ -627,14 +630,14 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         return proxyRegistry.liveHandleRegistry;
     }
 
-    private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
 
         out.writeObject(getInterfaces());
         out.writeObject(getMainInterface());
     }
 
-    private void readObject(final java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
 
         in.defaultReadObject();
 

@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import java.lang.reflect.Method;
+import java.rmi.Remote;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class ProxyInterfaceResolver {
         List<Class> remotes = new ArrayList<Class>();
         List<Class> nonremotes = new ArrayList<Class>();
         for (Class interfce : valid) {
-            if (java.rmi.Remote.class.isAssignableFrom(interfce)){
+            if (Remote.class.isAssignableFrom(interfce)){
                 remotes.add(interfce);
             } else {
                 nonremotes.add(interfce);
@@ -100,7 +101,7 @@ public class ProxyInterfaceResolver {
 
         // Show affinity for the remote interfaces if the main
         // interface is a java.rmi.Remote
-        if (java.rmi.Remote.class.isAssignableFrom(mainInterface)){
+        if (Remote.class.isAssignableFrom(mainInterface)){
             for (Class interfce : remotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
@@ -189,8 +190,8 @@ public class ProxyInterfaceResolver {
 
             if (!sig.equals(signature.sig)) return false;
 
-            boolean aIsRemote = java.rmi.Remote.class.isAssignableFrom(clazz);
-            boolean bIsRemote = java.rmi.Remote.class.isAssignableFrom(signature.clazz);
+            boolean aIsRemote = Remote.class.isAssignableFrom(clazz);
+            boolean bIsRemote = Remote.class.isAssignableFrom(signature.clazz);
 
             return !(aIsRemote == bIsRemote);
         }

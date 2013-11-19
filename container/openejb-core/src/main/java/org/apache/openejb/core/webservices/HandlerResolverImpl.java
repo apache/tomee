@@ -54,7 +54,7 @@ public class HandlerResolverImpl implements HandlerResolver {
         }
     }
 
-    public List<Handler> getHandlerChain(javax.xml.ws.handler.PortInfo portInfo) {
+    public List<Handler> getHandlerChain(PortInfo portInfo) {
         List<Handler> chain = new ArrayList<Handler>();
         for (HandlerChainData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
@@ -65,7 +65,7 @@ public class HandlerResolverImpl implements HandlerResolver {
         return chain;
     }
 
-    private List<Handler> buildHandlers(javax.xml.ws.handler.PortInfo portInfo, HandlerChainData handlerChain) {
+    private List<Handler> buildHandlers(PortInfo portInfo, HandlerChainData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) ||
                 !matchPortName(portInfo, handlerChain.getPortNamePattern()) ||
                 !matchBinding(portInfo, handlerChain.getProtocolBindings())) {

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.managed;
 
+import org.apache.openejb.SystemException;
 import org.apache.openejb.spi.Serializer;
 
 import java.io.File;
@@ -44,11 +45,11 @@ public class RAFPassivater implements PassivationStrategy {
         }
     }
 
-    public void init(Properties props) throws org.apache.openejb.SystemException {
+    public void init(Properties props) throws SystemException {
     }
 
     public synchronized void passivate(Map stateTable)
-            throws org.apache.openejb.SystemException {
+            throws SystemException {
         try {
             fileID++;
 
@@ -70,12 +71,12 @@ public class RAFPassivater implements PassivationStrategy {
             }
             ras.close();
         } catch (Exception e) {
-            throw new org.apache.openejb.SystemException(e);
+            throw new SystemException(e);
         }
     }
 
     public synchronized Object activate(Object primaryKey)
-            throws org.apache.openejb.SystemException {
+            throws SystemException {
 
         Pointer pointer = (Pointer) masterTable.get(primaryKey);
         if (pointer == null)
@@ -89,7 +90,7 @@ public class RAFPassivater implements PassivationStrategy {
             ras.close();
             return Serializer.deserialize(bytes);
         } catch (Exception e) {
-            throw new org.apache.openejb.SystemException(e);
+            throw new SystemException(e);
         }
 
     }

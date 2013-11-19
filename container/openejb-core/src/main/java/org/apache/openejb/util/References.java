@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @version $Rev$ $Date$
@@ -76,7 +77,7 @@ public class References {
             Set<Circuit> circuits = new LinkedHashSet<Circuit>();
 
             for (Node node : nodes.values()) {
-                findCircuits(circuits, node, new java.util.Stack<Node>());
+                findCircuits(circuits, node, new Stack<Node>());
             }
 
             ArrayList<Circuit> list = new ArrayList<Circuit>(circuits);
@@ -159,7 +160,7 @@ public class References {
         return referees;
     }
 
-    private static void findCircuits(Set<Circuit> circuits, Node node, java.util.Stack<Node> stack) {
+    private static void findCircuits(Set<Circuit> circuits, Node node, Stack<Node> stack) {
         if (stack.contains(node)) {
             int fromIndex = stack.indexOf(node);
             int toIndex = stack.size();

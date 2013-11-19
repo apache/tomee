@@ -18,6 +18,7 @@
  */
 package org.apache.openejb.log.logger;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -374,7 +375,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
             }
             if (format.indexOf("{0") >= 0 || format.indexOf("{1") >= 0
                     || format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
-                return java.text.MessageFormat.format(format, parameters);
+                return MessageFormat.format(format, parameters);
             }
             return format;
         } catch (Exception ex) {
@@ -388,7 +389,7 @@ public abstract class AbstractDelegatingLogger extends Logger {
      * @param resourceBundleName
      *            the name of the resource bundle to load, cannot be null
      * @return the loaded resource bundle.
-     * @throws java.util.MissingResourceException
+     * @throws MissingResourceException
      *             If the specified resource bundle can not be loaded.
      */
     static ResourceBundle loadResourceBundle(String resourceBundleName) {

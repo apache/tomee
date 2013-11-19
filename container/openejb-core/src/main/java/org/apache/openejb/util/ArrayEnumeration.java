@@ -20,7 +20,9 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.Object;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Vector;
@@ -36,7 +38,7 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
         elements.copyInto(this.elements);
     }
 
-    public ArrayEnumeration(java.util.List list) {
+    public ArrayEnumeration(List list) {
         this.elements = new Object[list.size()];
         list.toArray(this.elements);
     }
@@ -49,11 +51,11 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
     public ArrayEnumeration() {
     }
 
-    public java.lang.Object get(int index) {
+    public Object get(int index) {
         return elements[index];
     }
 
-    public void set(int index, java.lang.Object o) {
+    public void set(int index, Object o) {
         elements[index] = o;
     }
 

@@ -35,7 +35,7 @@ public class TransactionManagerBuilder extends TransactionManager {
 
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration defaultTransactionTimeout = org.apache.openejb.util.Duration.parse("10 minutes");
+    private Duration defaultTransactionTimeout = Duration.parse("10 minutes");
     @XmlAttribute
     private boolean txRecovery = false;
     @XmlAttribute
@@ -46,7 +46,7 @@ public class TransactionManagerBuilder extends TransactionManager {
     private boolean adler32Checksum = true;
     @XmlJavaTypeAdapter(DurationAdapter.class)
     @XmlAttribute
-    private org.apache.openejb.util.Duration flushSleepTime = org.apache.openejb.util.Duration.parse("50 Milliseconds");
+    private Duration flushSleepTime = Duration.parse("50 Milliseconds");
     @XmlAttribute
     private String logFileDir = "txlog";
     @XmlAttribute
@@ -80,16 +80,16 @@ public class TransactionManagerBuilder extends TransactionManager {
         return this;
     }
 
-    public TransactionManagerBuilder withDefaultTransactionTimeout(org.apache.openejb.util.Duration defaultTransactionTimeout) {
+    public TransactionManagerBuilder withDefaultTransactionTimeout(Duration defaultTransactionTimeout) {
         this.defaultTransactionTimeout = defaultTransactionTimeout;
         return this;
     }
 
-    public void setDefaultTransactionTimeout(org.apache.openejb.util.Duration defaultTransactionTimeout) {
+    public void setDefaultTransactionTimeout(Duration defaultTransactionTimeout) {
         this.defaultTransactionTimeout = defaultTransactionTimeout;
     }
 
-    public org.apache.openejb.util.Duration getDefaultTransactionTimeout() {
+    public Duration getDefaultTransactionTimeout() {
         return defaultTransactionTimeout;
     }
 
@@ -153,16 +153,16 @@ public class TransactionManagerBuilder extends TransactionManager {
         return adler32Checksum;
     }
 
-    public TransactionManagerBuilder withFlushSleepTime(org.apache.openejb.util.Duration flushSleepTime) {
+    public TransactionManagerBuilder withFlushSleepTime(Duration flushSleepTime) {
         this.flushSleepTime = flushSleepTime;
         return this;
     }
 
-    public void setFlushSleepTime(org.apache.openejb.util.Duration flushSleepTime) {
+    public void setFlushSleepTime(Duration flushSleepTime) {
         this.flushSleepTime = flushSleepTime;
     }
 
-    public org.apache.openejb.util.Duration getFlushSleepTime() {
+    public Duration getFlushSleepTime() {
         return flushSleepTime;
     }
 

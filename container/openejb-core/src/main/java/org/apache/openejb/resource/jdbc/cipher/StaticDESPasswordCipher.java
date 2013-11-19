@@ -21,6 +21,7 @@ import org.apache.openejb.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.lang.String;
 
 /**
  * This {@link PasswordCipher} implementation uses a the Triple-DES encryption
@@ -43,7 +44,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
     private static final String TRANSFORMATION = new String("DESede");
 
     /**
-     * @see PasswordCipher#encrypt(java.lang.String)
+     * @see PasswordCipher#encrypt(String)
      * @throws RuntimeException
      *             in any case of error.
      */

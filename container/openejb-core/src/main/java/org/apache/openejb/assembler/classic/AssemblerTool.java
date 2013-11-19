@@ -16,11 +16,16 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +36,12 @@ public class AssemblerTool {
     public static final Map<String, Class> serviceInterfaces = new HashMap<String, Class>();
     static {
         serviceInterfaces.put("ProxyFactory", ProxyFactory.class);
-        serviceInterfaces.put("SecurityService", org.apache.openejb.spi.SecurityService.class);
+        serviceInterfaces.put("SecurityService", SecurityService.class);
         serviceInterfaces.put("TransactionManager", TransactionManager.class);
-        serviceInterfaces.put("ConnectionManager", javax.resource.spi.ConnectionManager.class);
-        serviceInterfaces.put("Connector", javax.resource.spi.ManagedConnectionFactory.class);
-        serviceInterfaces.put("Resource", javax.resource.spi.ResourceAdapter.class);
-        serviceInterfaces.put("Container", org.apache.openejb.Container.class);
+        serviceInterfaces.put("ConnectionManager", ConnectionManager.class);
+        serviceInterfaces.put("Connector", ManagedConnectionFactory.class);
+        serviceInterfaces.put("Resource", ResourceAdapter.class);
+        serviceInterfaces.put("Container", Container.class);
     }
 
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");

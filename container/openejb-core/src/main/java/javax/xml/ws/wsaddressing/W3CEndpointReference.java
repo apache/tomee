@@ -19,6 +19,7 @@ package javax.xml.ws.wsaddressing;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
+import java.lang.String;
 
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which
@@ -26,7 +27,7 @@ import javax.xml.ws.EndpointReference;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public final class W3CEndpointReference extends EndpointReference {
-    protected static final java.lang.String NS = "http://www.w3.org/2005/08/addressing";
+    protected static final String NS = "http://www.w3.org/2005/08/addressing";
 
     protected W3CEndpointReference() {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");

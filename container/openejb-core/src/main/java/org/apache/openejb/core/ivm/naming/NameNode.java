@@ -19,11 +19,14 @@ package org.apache.openejb.core.ivm.naming;
 import org.apache.openejb.OpenEJBRuntimeException;
 
 import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NameNode implements java.io.Serializable {
+public class NameNode implements Serializable {
     private final String atomicName;
     private final int atomicHash;
     private NameNode lessTree;
@@ -63,9 +66,9 @@ public class NameNode implements java.io.Serializable {
         }
     }
 
-    public Object resolve(ParsedName name) throws javax.naming.NameNotFoundException {
+    public Object resolve(ParsedName name) throws NameNotFoundException {
         int compareResult = name.compareTo(atomicHash);
-        javax.naming.NameNotFoundException n = null;
+        NameNotFoundException n = null;
         int pos = name.getPos();
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             // hashcodes and String valuse are equal
@@ -107,7 +110,7 @@ public class NameNode implements java.io.Serializable {
                     } else {
                         return o;
                     }
-                } catch (javax.naming.NamingException e) {
+                } catch (NamingException e) {
                     //ignore
                 }
             }
@@ -117,15 +120,15 @@ public class NameNode implements java.io.Serializable {
             }
         }
         if (n != null) throw n;
-        throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
+        throw new NameNotFoundException("Cannot resolve " + name);
     }
 
-    public void bind(ParsedName name, Object obj) throws javax.naming.NameAlreadyBoundException {
+    public void bind(ParsedName name, Object obj) throws NameAlreadyBoundException {
         int compareResult = name.compareTo(atomicHash);
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             if (name.next()) {
                 if (myObject != null && !(myObject instanceof Federation)) {
-                    throw new javax.naming.NameAlreadyBoundException();
+                    throw new NameAlreadyBoundException();
                 }
                 if (subTree == null)
                     subTree = new NameNode(this, name, obj, this);
@@ -135,7 +138,7 @@ public class NameNode implements java.io.Serializable {
                 if (obj instanceof Context) {
                     if (myObject != null) {
                         if (!(myObject instanceof Federation)) {
-                            throw new javax.naming.NameAlreadyBoundException(name.toString());
+                            throw new NameAlreadyBoundException(name.toString());
                         }
                     } else {
                         myObject = new Federation();
@@ -143,10 +146,10 @@ public class NameNode implements java.io.Serializable {
                     ((Federation)myObject).add((Context) obj);
                 } else {
                     if (subTree != null) {
-                        throw new javax.naming.NameAlreadyBoundException(name.toString());
+                        throw new NameAlreadyBoundException(name.toString());
                     }
                     if (myObject != null) {
-                        throw new javax.naming.NameAlreadyBoundException(name.toString());
+                        throw new NameAlreadyBoundException(name.toString());
                     }
                     unbound = false;
                     myObject = obj;// bind the object to this node
@@ -233,7 +236,7 @@ public class NameNode implements java.io.Serializable {
         }
     }
 
-    public void unbind(ParsedName name) throws javax.naming.NameAlreadyBoundException {
+    public void unbind(ParsedName name) throws NameAlreadyBoundException {
         int compareResult = name.compareTo(atomicHash);
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             if (name.next()) {
@@ -328,13 +331,13 @@ public class NameNode implements java.io.Serializable {
         }
     }
 
-    public IvmContext createSubcontext(ParsedName name) throws javax.naming.NameAlreadyBoundException {
+    public IvmContext createSubcontext(ParsedName name) throws NameAlreadyBoundException {
         try {
             bind(name, null);
             name.reset();
             return (IvmContext) resolve(name);
         }
-        catch (javax.naming.NameNotFoundException exception) {
+        catch (NameNotFoundException exception) {
             exception.printStackTrace();
             throw new OpenEJBRuntimeException(exception);
         }

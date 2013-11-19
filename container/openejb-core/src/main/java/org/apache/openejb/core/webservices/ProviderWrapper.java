@@ -43,6 +43,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.Class;
+import java.lang.Object;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -217,7 +219,7 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
-        public Dispatch<java.lang.Object> createDispatch(final QName portName, final JAXBContext context, final Service.Mode mode, final WebServiceFeature... features) {
+        public Dispatch<Object> createDispatch(final QName portName, final JAXBContext context, final Service.Mode mode, final WebServiceFeature... features) {
             return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchJaxBContext,
                     portName,
                     context,
@@ -240,7 +242,7 @@ public class ProviderWrapper extends Provider {
 
         @SuppressWarnings({"unchecked"})
         public <T> Dispatch<T> createDispatch(final EndpointReference endpointReference,
-                                              final java.lang.Class<T> type,
+                                              final Class<T> type,
                                               final Service.Mode mode,
                                               final WebServiceFeature... features) {
             return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchReferenceClass,

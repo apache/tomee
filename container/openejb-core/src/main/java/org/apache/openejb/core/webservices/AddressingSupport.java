@@ -16,19 +16,21 @@
  */
 package org.apache.openejb.core.webservices;
 
+import org.apache.openejb.core.stateless.EjbWsContext;
 import org.w3c.dom.Element;
 
 import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceContext;
 
 /**
- * This interface defines the WS-Addressing functions of {@link javax.xml.ws.WebServiceContext WebServiceContext} 
+ * This interface defines the WS-Addressing functions of {@link WebServiceContext WebServiceContext}
  * that must be implemented by each JAX-WS provider. This interface is used within 
- * {@link org.apache.openejb.core.stateless.EjbWsContext EjbWsContext} and its implementation can be passed to 
+ * {@link EjbWsContext EjbWsContext} and its implementation can be passed to
  * the stateless or singleton container on Web Service invocations. 
  */
 public interface AddressingSupport {
     
-    EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters);
+    EndpointReference getEndpointReference(Element... referenceParameters);
 
     <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters);
     

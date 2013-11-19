@@ -42,6 +42,7 @@ import org.xml.sax.InputSource;
 import javax.jws.HandlerChain;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
@@ -429,7 +430,7 @@ public class WsDeployer implements DynamicDeployer {
         if (definition == null) return null;
 
         try {
-            javax.wsdl.Service service = definition.getService(portComponent.getWsdlService());
+            Service service = definition.getService(portComponent.getWsdlService());
             if (service == null) return null;
 
             Port port = service.getPort(portComponent.getWsdlPort().getLocalPart());

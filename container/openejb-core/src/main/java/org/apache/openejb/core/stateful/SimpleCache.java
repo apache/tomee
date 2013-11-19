@@ -532,8 +532,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     private void storeEntries(Map<K, V> entriesToStore) {
         CacheListener<V> listener = this.getListener();
-        for (Iterator<java.util.Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
-            java.util.Map.Entry<K, V> entry = iterator.next();
+        for (Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<K, V> entry = iterator.next();
 
             if (listener != null) {
                 try {

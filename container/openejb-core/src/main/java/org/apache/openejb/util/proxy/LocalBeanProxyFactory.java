@@ -46,7 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LocalBeanProxyFactory implements Opcodes {
 
-    public static final java.lang.reflect.InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
+    public static final InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
     private static final String BUSSINESS_HANDLER_NAME = "businessHandler";
     private static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
@@ -77,12 +77,12 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    public static java.lang.reflect.InvocationHandler getInvocationHandler(final Object proxy) {
+    public static InvocationHandler getInvocationHandler(final Object proxy) {
         try {
             final Field field = proxy.getClass().getDeclaredField(BUSSINESS_HANDLER_NAME);
             field.setAccessible(true);
             try {
-                return (java.lang.reflect.InvocationHandler) field.get(proxy);
+                return (InvocationHandler) field.get(proxy);
             } finally {
                 field.setAccessible(false);
             }
@@ -93,7 +93,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    public static Object constructProxy(final Class clazz, final java.lang.reflect.InvocationHandler handler) throws IllegalStateException {
+    public static Object constructProxy(final Class clazz, final InvocationHandler handler) throws IllegalStateException {
 
         final Object instance = Unsafe.allocateInstance(clazz);
 
@@ -686,7 +686,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         }
     }
 
-    static class NonBusinessHandler implements java.lang.reflect.InvocationHandler, Serializable {
+    static class NonBusinessHandler implements InvocationHandler, Serializable {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {

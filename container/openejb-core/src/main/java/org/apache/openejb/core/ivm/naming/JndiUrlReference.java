@@ -17,6 +17,7 @@
 package org.apache.openejb.core.ivm.naming;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public class JndiUrlReference extends Reference {
     private String jndiName;
@@ -25,7 +26,7 @@ public class JndiUrlReference extends Reference {
         this.jndiName = jndiName;
     }
 
-    public Object getObject() throws javax.naming.NamingException {
+    public Object getObject() throws NamingException {
         return new InitialContext().lookup(jndiName);
     }
 

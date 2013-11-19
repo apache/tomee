@@ -19,11 +19,13 @@ package org.apache.openejb.resource.activemq;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 
 import javax.naming.Context;
@@ -51,7 +53,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     @Override
     public synchronized BrokerService createBroker(final URI brokerURI) throws Exception {
 
-        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ5Factory creating broker");
+        Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ5Factory creating broker");
 
         BrokerService broker = brokers.get(brokerURI);
 
@@ -119,7 +121,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 disableScheduler(broker);
 
                 //Notify when an error occurs on shutdown.
-                broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
+                broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
             }
 
             //We must close the broker
@@ -135,15 +137,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 @Override
                 public void run() {
 
-                    Thread.currentThread().setContextClassLoader(org.apache.activemq.ra.ActiveMQResourceAdapter.class.getClassLoader());
+                    Thread.currentThread().setContextClassLoader(ActiveMQResourceAdapter.class.getClassLoader());
 
                     try {
                         //Start before returning - this is known to be safe.
                         if (!bs.isStarted()) {
-                            org.apache
-                                .openejb
-                                .util
-                                .Logger
+                            Logger
                                 .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
                                 .getChildLogger("service")
                                 .info("Starting ActiveMQ BrokerService");
@@ -153,10 +152,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                         bs.waitUntilStarted();
 
                         //Force a checkpoint to initialize pools
-                        org.apache
-                            .openejb
-                            .util
-                            .Logger
+                        Logger
                             .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
                             .getChildLogger("service")
                             .info("Starting ActiveMQ checkpoint");
@@ -187,10 +183,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
             try {
                 timeout = Integer.parseInt(properties.getProperty("startuptimeout", "30000"));
-                org.apache
-                    .openejb
-                    .util
-                    .Logger
+                Logger
                     .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
                     .getChildLogger("service")
                     .info("Using ActiveMQ startup timeout of " + timeout + "ms");
@@ -208,15 +201,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
 
             if (null != throwable) {
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
+                Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").error("ActiveMQ failed to start broker",
                                                                                                                                                 throwable);
             } else if (started.get()) {
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
+                Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).getChildLogger("service").info("ActiveMQ broker started");
             } else {
-                org.apache
-                    .openejb
-                    .util
-                    .Logger
+                Logger
                     .getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class)
                     .getChildLogger("service")
                     .warning("ActiveMQ failed to start broker within " + timeout + " seconds - It may be unusable");

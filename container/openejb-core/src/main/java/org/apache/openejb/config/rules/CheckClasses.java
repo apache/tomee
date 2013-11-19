@@ -30,12 +30,30 @@ import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.ClassFinder;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.annotation.Resources;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.RunAs;
+import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.EJBs;
+import javax.ejb.Init;
 import javax.ejb.Local;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
+import javax.ejb.Remove;
+import javax.ejb.Timeout;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionManagement;
 import javax.jws.WebService;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -52,25 +70,25 @@ public class CheckClasses extends ValidationBase {
     private static final List<Class<? extends Annotation>> beanOnlyAnnotations = new ArrayList<Class<? extends Annotation>>();
 
     static {
-        beanOnlyAnnotations.add(javax.annotation.PostConstruct.class);
-        beanOnlyAnnotations.add(javax.annotation.PreDestroy.class);
-        beanOnlyAnnotations.add(javax.annotation.Resource.class);
-        beanOnlyAnnotations.add(javax.annotation.Resources.class);
-        beanOnlyAnnotations.add(javax.annotation.security.DeclareRoles.class);
-        beanOnlyAnnotations.add(javax.annotation.security.DenyAll.class);
-        beanOnlyAnnotations.add(javax.annotation.security.PermitAll.class);
-        beanOnlyAnnotations.add(javax.annotation.security.RolesAllowed.class);
-        beanOnlyAnnotations.add(javax.annotation.security.RunAs.class);
+        beanOnlyAnnotations.add(PostConstruct.class);
+        beanOnlyAnnotations.add(PreDestroy.class);
+        beanOnlyAnnotations.add(Resource.class);
+        beanOnlyAnnotations.add(Resources.class);
+        beanOnlyAnnotations.add(DeclareRoles.class);
+        beanOnlyAnnotations.add(DenyAll.class);
+        beanOnlyAnnotations.add(PermitAll.class);
+        beanOnlyAnnotations.add(RolesAllowed.class);
+        beanOnlyAnnotations.add(RunAs.class);
 
-        beanOnlyAnnotations.add(javax.ejb.EJB.class);
-        beanOnlyAnnotations.add(javax.ejb.EJBs.class);
-        beanOnlyAnnotations.add(javax.ejb.Init.class);
-        beanOnlyAnnotations.add(javax.ejb.PostActivate.class);
-        beanOnlyAnnotations.add(javax.ejb.PrePassivate.class);
-        beanOnlyAnnotations.add(javax.ejb.Remove.class);
-        beanOnlyAnnotations.add(javax.ejb.Timeout.class);
-        beanOnlyAnnotations.add(javax.ejb.TransactionAttribute.class);
-        beanOnlyAnnotations.add(javax.ejb.TransactionManagement.class);
+        beanOnlyAnnotations.add(EJB.class);
+        beanOnlyAnnotations.add(EJBs.class);
+        beanOnlyAnnotations.add(Init.class);
+        beanOnlyAnnotations.add(PostActivate.class);
+        beanOnlyAnnotations.add(PrePassivate.class);
+        beanOnlyAnnotations.add(Remove.class);
+        beanOnlyAnnotations.add(Timeout.class);
+        beanOnlyAnnotations.add(TransactionAttribute.class);
+        beanOnlyAnnotations.add(TransactionManagement.class);
     }
 
     public void validate(EjbModule ejbModule) {

@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.BeansDeployer;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
@@ -72,7 +73,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private final boolean skipClassNotFoundError;
 
     /**Deploy discovered beans*/
-    private final org.apache.webbeans.config.BeansDeployer deployer;
+    private final BeansDeployer deployer;
 
     /**XML discovery. */
     //XML discovery is removed from the specification. It is here for next revisions of spec.
@@ -94,7 +95,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         this.beanManager = webBeansContext.getBeanManagerImpl();
         this.xmlDeployer = new WebBeansXMLConfigurator();
-        this.deployer = new org.apache.webbeans.config.BeansDeployer(this.xmlDeployer, webBeansContext);
+        this.deployer = new BeansDeployer(this.xmlDeployer, webBeansContext);
         this.jndiService = webBeansContext.getService(JNDIService.class);
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();

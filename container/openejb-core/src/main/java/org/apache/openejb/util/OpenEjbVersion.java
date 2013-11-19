@@ -18,6 +18,7 @@ package org.apache.openejb.util;
 
 import org.apache.xbean.finder.ResourceFinder;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
 
@@ -39,7 +40,7 @@ public class OpenEjbVersion {
         try {
             ResourceFinder finder = new ResourceFinder();
             info = finder.findProperties("openejb-version.properties");
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

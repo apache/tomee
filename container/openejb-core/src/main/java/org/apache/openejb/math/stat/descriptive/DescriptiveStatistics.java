@@ -48,7 +48,7 @@ import java.util.Arrays;
  * in the dataset.
  *
  * <p>Note: this class is not threadsafe.  Use
- * {@link org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics} if concurrent access from multiple
+ * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
  *
  * @version $Revision: 885278 $ $Date: 2009-11-29 13:47:51 -0800 (Sun, 29 Nov 2009) $

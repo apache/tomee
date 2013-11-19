@@ -29,6 +29,7 @@ import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
@@ -174,7 +175,7 @@ public class InterceptorData {
         return data;
     }
 
-    private static void add(ClassFinder finder, Set<Method> methods, Class<? extends java.lang.annotation.Annotation> annotation) {
+    private static void add(ClassFinder finder, Set<Method> methods, Class<? extends Annotation> annotation) {
 
         final List<Method> annotatedMethods = finder.findAnnotatedMethods(annotation);
         for (Method method : annotatedMethods) {

@@ -43,63 +43,63 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.Container }
+     * Create an instance of {@link Container }
      */
     public Container createContainer() {
         return new Container();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.ConnectionManager }
+     * Create an instance of {@link ConnectionManager }
      */
     public ConnectionManager createConnectionManager() {
         return new ConnectionManager();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.Resource }
+     * Create an instance of {@link Resource }
      */
     public Resource createResource() {
         return new Resource();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.SecurityService }
+     * Create an instance of {@link SecurityService }
      */
     public SecurityService createSecurityService() {
         return new SecurityService();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.JndiProvider }
+     * Create an instance of {@link JndiProvider }
      */
     public JndiProvider createJndiProvider() {
         return new JndiProvider();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.Deployments }
+     * Create an instance of {@link Deployments }
      */
     public Deployments createDeployments() {
         return new Deployments();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.Connector }
+     * Create an instance of {@link Connector }
      */
     public Connector createConnector() {
         return new Connector();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.ProxyFactory }
+     * Create an instance of {@link ProxyFactory }
      */
     public ProxyFactory createProxyFactory() {
         return new ProxyFactory();
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.Openejb }
+     * Create an instance of {@link Openejb }
      */
     public Openejb createOpenejb() {
         return new Openejb();
@@ -110,7 +110,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link org.apache.openejb.config.sys.TransactionManager }
+     * Create an instance of {@link TransactionManager }
      */
     public TransactionManager createTransactionManager() {
         return new TransactionManager();

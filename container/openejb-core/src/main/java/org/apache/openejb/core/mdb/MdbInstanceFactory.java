@@ -34,6 +34,7 @@ import javax.ejb.MessageDrivenBean;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.resource.spi.UnavailableException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -213,8 +214,8 @@ public class MdbInstanceFactory {
 
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
         } catch (Throwable e) {
-            if (e instanceof java.lang.reflect.InvocationTargetException) {
-                e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
             }
             String message = "The bean instance threw a system exception:" + e;
             MdbInstanceFactory.logger.error(message, e);

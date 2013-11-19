@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.util;
 
+import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class Enumerator implements java.io.Serializable, java.util.Enumeration {
+public class Enumerator implements Serializable, Enumeration {
     private static final long serialVersionUID = 8382575322402414896L;
     private final List list;
     private int index;

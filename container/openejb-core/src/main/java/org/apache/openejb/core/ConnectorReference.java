@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 import org.apache.openejb.core.ivm.naming.Reference;
 
 import javax.naming.NamingException;
+import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 /*
@@ -47,8 +48,8 @@ public class ConnectorReference extends Reference {
         try {
             Object connection = mngedConFactory.createConnectionFactory(conMngr);
             return connection;
-        } catch (javax.resource.ResourceException re) {
-            throw (javax.naming.NamingException) new NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re);
+        } catch (ResourceException re) {
+            throw (NamingException) new NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re);
         }
     }
 

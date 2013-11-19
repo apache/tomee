@@ -227,7 +227,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public ExpressionFactory wrapExpressionFactory(javax.el.ExpressionFactory expressionFactory) {
+    public ExpressionFactory wrapExpressionFactory(ExpressionFactory expressionFactory) {
         return super.wrapExpressionFactory(expressionFactory);
     }
 

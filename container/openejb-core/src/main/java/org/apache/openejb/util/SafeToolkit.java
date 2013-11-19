@@ -18,6 +18,8 @@ package org.apache.openejb.util;
 
 import org.apache.openejb.OpenEJBException;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 
 public class SafeToolkit {
@@ -61,8 +63,8 @@ public class SafeToolkit {
         catch (Throwable exception) {
             exception.printStackTrace();
             ClassLoader classLoader = clazz.getClassLoader();
-            if (classLoader instanceof java.net.URLClassLoader) {
-                OpenEJBErrorHandler.classNotIntantiateableFromCodebaseForUnknownReason(systemLocation, clazz.getName(), getCodebase((java.net.URLClassLoader) classLoader),
+            if (classLoader instanceof URLClassLoader) {
+                OpenEJBErrorHandler.classNotIntantiateableFromCodebaseForUnknownReason(systemLocation, clazz.getName(), getCodebase((URLClassLoader) classLoader),
                         exception.getClass().getName(), exception.getMessage());
             } else {
                 OpenEJBErrorHandler.classNotIntantiateableForUnknownReason(systemLocation, clazz.getName(), exception.getClass().getName(), exception.getMessage());
@@ -72,9 +74,9 @@ public class SafeToolkit {
 
     }
 
-    private static String getCodebase(java.net.URLClassLoader urlClassLoader) {
+    private static String getCodebase(URLClassLoader urlClassLoader) {
         StringBuilder codebase = new StringBuilder();
-        java.net.URL urlList[] = urlClassLoader.getURLs();
+        URL urlList[] = urlClassLoader.getURLs();
         codebase.append(urlList[0].toString());
         for (int i = 1; i < urlList.length; ++i) {
             codebase.append(';');

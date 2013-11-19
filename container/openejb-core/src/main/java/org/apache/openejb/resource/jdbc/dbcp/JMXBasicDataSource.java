@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.ManagedAttribute;
@@ -35,11 +36,11 @@ import java.sql.Statement;
 @SuppressWarnings("UnusedDeclaration")
 @Description("describe a datasource pool")
 public class JMXBasicDataSource {
-    private transient final org.apache.commons.dbcp.BasicDataSource ds;
+    private transient final BasicDataSource ds;
 
     private transient ObjectName objectName;
 
-    public JMXBasicDataSource(final String name, final org.apache.commons.dbcp.BasicDataSource ds) {
+    public JMXBasicDataSource(final String name, final BasicDataSource ds) {
         this.ds = ds;
 
         if (LocalMBeanServer.isJMXActive()) {

@@ -19,11 +19,12 @@ package org.apache.openejb.math.stat.descriptive.summary;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 import java.io.Serializable;
+import java.lang.Math;
 
 /**
  * Returns the sum of the natural logs for this collection of values.
  * <p>
- * Uses {@link java.lang.Math#log(double)} to compute the logs.  Therefore,
+ * Uses {@link Math#log(double)} to compute the logs.  Therefore,
  * <ul>
  * <li>If any of values are < 0, the result is <code>NaN.</code></li>
  * <li>If all values are non-negative and less than
