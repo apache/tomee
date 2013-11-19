@@ -72,8 +72,6 @@ import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
-import java.lang.NoSuchMethodException;
-import java.lang.Object;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -19,7 +19,6 @@ package org.apache.openejb.math.stat.descriptive.summary;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 
 import java.io.Serializable;
-import java.lang.Math;
 
 /**
  * Returns the sum of the natural logs for this collection of values.

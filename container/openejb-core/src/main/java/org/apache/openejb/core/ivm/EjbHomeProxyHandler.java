@@ -44,7 +44,6 @@ import javax.ejb.EJBHome;
 import javax.ejb.Handle;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.lang.Object;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;

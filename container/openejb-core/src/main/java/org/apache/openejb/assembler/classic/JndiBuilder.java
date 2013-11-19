@@ -40,7 +40,6 @@ import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import java.lang.Class;
 import java.lang.reflect.Constructor;
 import java.rmi.Remote;
 import java.util.ArrayList;
