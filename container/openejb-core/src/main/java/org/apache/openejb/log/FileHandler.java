@@ -385,7 +385,7 @@ public class FileHandler
             FileOutputStream fos = new FileOutputStream(pathname, true);
             OutputStream os = bufferSize>0?new BufferedOutputStream(fos,bufferSize):fos;
             writer = new PrintWriter(
-                    (encoding != null) ? new OutputStreamWriter(os, encoding)
+                    encoding != null ? new OutputStreamWriter(os, encoding)
                             : new OutputStreamWriter(os), false);
             writer.write(getFormatter().getHead(this));
         } catch (Exception e) {

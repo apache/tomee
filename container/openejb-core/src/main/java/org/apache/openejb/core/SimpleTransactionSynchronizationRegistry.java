@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core;
 
-import java.util.Map;
-import java.util.HashMap;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.Transaction;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleTransactionSynchronizationRegistry implements TransactionSynchronizationRegistry {
     private final TransactionManager transactionManager;

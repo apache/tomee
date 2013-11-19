@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,11 +35,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Duration;
 
 public class SimpleCache<K, V> implements Cache<K, V> {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -577,7 +577,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             
             if (value instanceof Cache.TimeOut) {
                 Duration duration = ((Cache.TimeOut) value).getTimeOut();
-                this.timeOut = (duration != null) ? duration.getTime(TimeUnit.MILLISECONDS) : getTimeOut(); 
+                this.timeOut = duration != null ? duration.getTime(TimeUnit.MILLISECONDS) : getTimeOut();
             } else {
                 this.timeOut = getTimeOut();
             }
@@ -614,7 +614,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                 return true;
             } else {
                 long now = System.currentTimeMillis();
-                return (now - lastAccess) > timeOut;
+                return now - lastAccess > timeOut;
             }
         }
 

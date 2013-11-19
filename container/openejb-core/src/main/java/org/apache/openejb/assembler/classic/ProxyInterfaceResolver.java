@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

@@ -17,13 +17,12 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.loader.SystemInstance;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
-
-import org.apache.openejb.loader.SystemInstance;
 
 /**
  * @version $Rev$ $Date$

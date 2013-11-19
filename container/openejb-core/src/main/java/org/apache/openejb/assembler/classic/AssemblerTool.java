@@ -23,8 +23,8 @@ import org.apache.openejb.util.proxy.ProxyFactory;
 
 import javax.transaction.TransactionManager;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 
 public class AssemblerTool {
 

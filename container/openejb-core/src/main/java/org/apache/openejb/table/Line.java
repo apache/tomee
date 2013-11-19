@@ -49,7 +49,7 @@ public class Line {
                 sb.append(EMPTY_CHAR);
             }
             sb.append(columns[i]);
-            for (int k = 0; k < spaces - (spaces / 2); k++) {
+            for (int k = 0; k < spaces - spaces / 2; k++) {
                 sb.append(EMPTY_CHAR);
             }
             sb.append(EMPTY_CHAR).append(COL_SEP);

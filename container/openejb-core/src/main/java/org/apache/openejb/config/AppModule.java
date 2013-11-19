@@ -128,7 +128,7 @@ public class AppModule implements DeploymentModule {
         this.classLoader = classLoader;
         this.application = application;
 
-        final File file = (jarLocation == null) ? null : new File(jarLocation);
+        final File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, application, null, file, null, this);
         this.validation = new ValidationContext(this);
         this.standaloneModule = standaloneModule;
@@ -256,7 +256,7 @@ public class AppModule implements DeploymentModule {
 
     @Override
     public String getJarLocation() {
-        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+        return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
     public void setModuleId(final String moduleId) {

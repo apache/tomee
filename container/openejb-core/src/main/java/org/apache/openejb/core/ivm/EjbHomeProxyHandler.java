@@ -238,7 +238,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             Throwable cause = ire.getRootCause();
             if (cause instanceof RemoteException && interfaceType.isLocal()) {
                 final RemoteException re = (RemoteException) cause;
-                final Throwable detail = (re.detail != null) ? re.detail : re;
+                final Throwable detail = re.detail != null ? re.detail : re;
                 cause = new EJBException(re.getMessage()).initCause(detail);
             }
             throw cause;
@@ -247,7 +247,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             * do not impact the viability of the proxy.
             */
         } catch (org.apache.openejb.ApplicationException ae) {
-            final Throwable exc = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
+            final Throwable exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
                     throw exc;

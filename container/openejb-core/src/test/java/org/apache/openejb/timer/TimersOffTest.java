@@ -28,7 +28,6 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
-
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

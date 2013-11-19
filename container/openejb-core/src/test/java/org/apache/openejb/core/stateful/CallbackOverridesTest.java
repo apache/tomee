@@ -22,21 +22,20 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import static org.apache.openejb.core.stateful.CallbackOverridesTest.Callback.POST_CONSTRUCT;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Stateful;
 import javax.ejb.Remove;
-import javax.interceptor.InvocationContext;
+import javax.ejb.Stateful;
 import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
 import static java.util.Arrays.asList;
 
 /**

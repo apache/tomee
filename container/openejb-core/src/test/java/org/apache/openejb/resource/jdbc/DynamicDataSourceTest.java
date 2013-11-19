@@ -17,14 +17,27 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import static org.junit.Assert.assertEquals;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.PersistenceModule;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.router.Router;
+import org.apache.openejb.spi.ContainerSystem;
+import org.junit.Test;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -38,28 +51,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.PersistenceModule;
-import org.apache.openejb.config.sys.Resource;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.TransactionType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.router.Router;
-import org.apache.openejb.spi.ContainerSystem;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class DynamicDataSourceTest {
 

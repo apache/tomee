@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.core.transaction;
 
-import javax.transaction.TransactionManager;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
+
+import javax.transaction.TransactionManager;
 
 public class JtaTransactionPolicyFactory implements TransactionPolicyFactory {
     private final TransactionManager transactionManager;

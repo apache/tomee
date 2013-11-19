@@ -23,9 +23,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -51,7 +49,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
         this.connector = connector;
         setClassLoader(classLoader);
 
-        File file = (jarLocation == null) ? null : new File(jarLocation);
+        File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, connector, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
     }
@@ -61,7 +59,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
     }
 
     public String getJarLocation() {
-        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+        return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
     public String getModuleId() {

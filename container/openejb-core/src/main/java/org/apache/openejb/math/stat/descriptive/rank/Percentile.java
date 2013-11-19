@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.math.stat.descriptive.rank;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.AbstractUnivariateStatistic;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Provides percentile computation.
@@ -197,7 +197,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
 
         test(values, begin, length);
 
-        if ((p > 100) || (p <= 0)) {
+        if (p > 100 || p <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
                   "out of bounds quantile value: {0}, must be in (0, 100]", p);
         }

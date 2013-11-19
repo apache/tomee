@@ -17,11 +17,11 @@
  */
 package org.apache.openejb.core.mdb;
 
-import javax.jms.MessageProducer;
+import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.Connection;
 import java.lang.reflect.Method;
 
 public class MdbUtil {

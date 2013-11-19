@@ -18,38 +18,38 @@ package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InterfaceType;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.WebServiceContext;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
+import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Arrays;
-import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The point of this test case is to verify that OpenEJB is accurately performing

@@ -17,28 +17,21 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
-
-import javax.inject.Inject;
-import javax.naming.InitialContext;
-import javax.ejb.SessionContext;
-import javax.ejb.EJB;
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Stack;
-
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.StatelessBean;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.naming.InitialContext;
 
 /**
  * @version $Revision$ $Date$

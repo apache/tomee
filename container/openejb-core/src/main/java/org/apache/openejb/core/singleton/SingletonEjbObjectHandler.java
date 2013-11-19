@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.core.singleton;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 

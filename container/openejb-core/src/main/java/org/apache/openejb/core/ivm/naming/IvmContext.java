@@ -16,14 +16,12 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.xbean.naming.context.ContextUtil;
 
 import javax.naming.Binding;
@@ -39,7 +37,6 @@ import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
 import javax.naming.spi.ObjectFactory;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +46,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
@@ -57,6 +53,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
 * This class wrappers a specific NameNode which is the data model for the JNDI
@@ -431,7 +428,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Name composeName(Name name, Name prefix) throws NamingException {
-        Name result = (Name) (prefix.clone());
+        Name result = (Name) prefix.clone();
         result.addAll(name);
         return result;
     }

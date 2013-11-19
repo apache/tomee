@@ -17,7 +17,6 @@
 package org.apache.openejb.util;
 
 import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.openejb.InjectionProcessor;
 
 /**
  * @version $Rev$ $Date$

@@ -18,10 +18,10 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.EnterpriseBean;
 
 import java.util.Map;
 

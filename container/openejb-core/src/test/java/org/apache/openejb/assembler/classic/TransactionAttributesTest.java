@@ -16,20 +16,17 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import static org.apache.openejb.assembler.classic.MethodTransactionBuilder.normalize;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.TransAttribute;
-
-import static org.apache.openejb.assembler.classic.MethodInfoUtil.*;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.Local;
@@ -38,14 +35,17 @@ import javax.ejb.Remote;
 import javax.ejb.TransactionAttribute;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import javax.transaction.TransactionRequiredException;
-
-import static javax.ejb.TransactionAttributeType.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
+
+import static javax.ejb.TransactionAttributeType.MANDATORY;
+import static javax.ejb.TransactionAttributeType.NEVER;
+import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
+import static org.apache.openejb.assembler.classic.MethodTransactionBuilder.normalize;
 
 /**
  * @version $Rev$ $Date$

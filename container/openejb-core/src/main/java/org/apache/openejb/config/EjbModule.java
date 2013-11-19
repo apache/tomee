@@ -20,7 +20,6 @@ import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
@@ -128,7 +127,7 @@ public class EjbModule extends Module implements WsModule {
     }
 
     public String getJarLocation() {
-        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+        return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
     public void setJarLocation(String jarLocation) {

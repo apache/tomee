@@ -161,7 +161,7 @@ public class CleanEnvEntries implements DynamicDeployer {
 
         normalize(types);
 
-        final Class<?> type = (types.size() == 1) ? types.iterator().next() : String.class;
+        final Class<?> type = types.size() == 1 ? types.iterator().next() : String.class;
 
         entry.setType(type.getName());
     }

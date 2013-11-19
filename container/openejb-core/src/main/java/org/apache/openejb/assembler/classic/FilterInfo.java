@@ -16,9 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 public class FilterInfo extends InfoObject {

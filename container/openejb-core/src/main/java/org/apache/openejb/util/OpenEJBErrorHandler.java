@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.OpenEJBException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-
-import org.apache.openejb.OpenEJBException;
 
 public class OpenEJBErrorHandler {
 

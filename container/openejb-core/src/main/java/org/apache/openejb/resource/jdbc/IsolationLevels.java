@@ -18,8 +18,8 @@ package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.util.Join;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$

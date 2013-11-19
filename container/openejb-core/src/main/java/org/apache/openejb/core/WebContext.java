@@ -22,7 +22,6 @@ import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.webbeans.component.InjectionTargetBean;
-import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.context.Dependent;
@@ -38,7 +37,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionListener;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;

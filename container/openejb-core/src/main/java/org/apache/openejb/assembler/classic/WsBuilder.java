@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.Injection;
 
 import javax.xml.namespace.QName;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.List;
 
 public class WsBuilder {
     public static PortData toPortData(PortInfo port, Collection<Injection> injections, URL baseUrl, ClassLoader classLoader) throws OpenEJBException {

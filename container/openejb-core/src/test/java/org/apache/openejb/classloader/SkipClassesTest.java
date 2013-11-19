@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.classloader;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SkipClassesTest {
     @Test

@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.config.rules;
 
+import junit.framework.TestCase;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
+
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -23,13 +28,6 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-
-import junit.framework.TestCase;
-
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$

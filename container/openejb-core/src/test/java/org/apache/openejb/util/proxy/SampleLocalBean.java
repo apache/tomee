@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.util.proxy;
 
+import javax.ejb.LocalBean;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.LocalBean;
 
 @LocalBean
 public class SampleLocalBean extends BaseLocalBean {

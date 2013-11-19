@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.interceptor.AroundInvoke;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
+
+import javax.interceptor.AroundInvoke;
 
 /**
  * @version $Rev$ $Date$

@@ -138,14 +138,14 @@ with a slash.  It may be the empty string. */
     private String normalize(String pathname, int len, int off) {
         if (len == 0) return pathname;
         int n = len;
-        while ((n > 0) && (pathname.charAt(n - 1) == '/')) n--;
+        while (n > 0 && pathname.charAt(n - 1) == '/') n--;
         if (n == 0) return "/";
         StringBuilder sb = new StringBuilder(pathname.length());
         if (off > 0) sb.append(pathname.substring(0, off));
         char prevChar = 0;
         for (int i = off; i < n; i++) {
             char c = pathname.charAt(i);
-            if ((prevChar == '/') && (c == '/')) continue;
+            if (prevChar == '/' && c == '/') continue;
             sb.append(c);
             prevChar = c;
         }
@@ -160,7 +160,7 @@ with a slash.  It may be the empty string. */
         char prevChar = 0;
         for (int i = 0; i < n; i++) {
             char c = pathname.charAt(i);
-            if ((prevChar == '/') && (c == '/'))
+            if (prevChar == '/' && c == '/')
                 return normalize(pathname, n, i - 1);
             prevChar = c;
         }

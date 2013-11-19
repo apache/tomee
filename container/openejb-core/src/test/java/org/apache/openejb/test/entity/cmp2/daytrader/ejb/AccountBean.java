@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.entity.cmp2.daytrader.ejb;
 
+import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
-import javax.ejb.CreateException;
 import javax.ejb.RemoveException;
 
 /**

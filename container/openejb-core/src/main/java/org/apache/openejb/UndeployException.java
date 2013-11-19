@@ -16,10 +16,10 @@
  */
 package org.apache.openejb;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

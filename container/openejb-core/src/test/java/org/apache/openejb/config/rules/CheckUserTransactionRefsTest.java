@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.util.concurrent.Callable;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.transaction.UserTransaction;
-
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.junit.runner.RunWith;
+import java.util.concurrent.Callable;
 
 /**
  * @version $Rev$ $Date$

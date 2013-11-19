@@ -135,7 +135,7 @@ public class InterceptorData {
     }
 
     public int hashCode() {
-        return (clazz != null ? clazz.hashCode() : 0);
+        return clazz != null ? clazz.hashCode() : 0;
     }
 
     public static void cacheScan(final Class<?> clazz) {

@@ -780,7 +780,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
              */
             if (field == Calendar.DAY_OF_WEEK) {
                 
-                if ((beginValue == 8 && endValue == 1)||(endValue == 8 && beginValue == 1)) {
+                if (beginValue == 8 && endValue == 1 || endValue == 8 && beginValue == 1) {
                     beginValue = 1;
                     endValue = 7;
                 } else {
@@ -1123,16 +1123,16 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
 			// Calculate the first day in the month whose weekday is the same as the
 			// one we're looking for
-			int firstWeekday = (currDay % 7) - (currWeekday - weekday);
+			int firstWeekday = currDay % 7 - (currWeekday - weekday);
 			
-            firstWeekday = (firstWeekday == 0) ? 7 : firstWeekday;
+            firstWeekday = firstWeekday == 0 ? 7 : firstWeekday;
 			
 			// Then calculate how many such weekdays there is in this month
 			int numWeekdays = firstWeekday>=0?(maxDay - firstWeekday) / 7 +1:(maxDay - firstWeekday) / 7;
 
 			// Then calculate the Nth of those days, or the last one if ordinal is null
 			int multiplier = ordinal != null ? ordinal : numWeekdays;
-			int nthDay = firstWeekday>=0?(firstWeekday + (multiplier-1) * 7):(firstWeekday + multiplier * 7);
+			int nthDay = firstWeekday>=0? firstWeekday + (multiplier-1) * 7 : firstWeekday + multiplier * 7;
 
 			// Return the calculated day, or null if the day is out of range
 			return nthDay <= maxDay ? nthDay : null;

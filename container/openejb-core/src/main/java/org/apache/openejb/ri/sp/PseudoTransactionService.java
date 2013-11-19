@@ -16,12 +16,10 @@
  */
 package org.apache.openejb.ri.sp;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import org.apache.openejb.spi.TransactionService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
@@ -32,10 +30,12 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-
-import org.apache.openejb.spi.TransactionService;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @org.apache.xbean.XBean element="pseudoTransactionService"

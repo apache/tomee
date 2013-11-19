@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidAnnotatedInterfacesTest {

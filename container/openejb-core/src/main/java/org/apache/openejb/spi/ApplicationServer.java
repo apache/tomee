@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.spi;
 
+import org.apache.openejb.ProxyInfo;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBMetaData;
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-
-import org.apache.openejb.ProxyInfo;
 
 /**
  * <h2><b>LOCAL to REMOTE SERIALIZATION</b></h2> <p>

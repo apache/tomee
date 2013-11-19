@@ -20,11 +20,11 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
+import org.apache.openejb.core.webservices.PortAddress;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ProviderWrapper;
 import org.apache.openejb.core.webservices.ServiceRefData;
-import org.apache.openejb.core.webservices.PortAddressRegistry;
-import org.apache.openejb.core.webservices.PortAddress;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.InitialContext;

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.lang.reflect.Method;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ClientModule;
@@ -32,6 +30,8 @@ import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.SafeToolkit;
+
+import java.lang.reflect.Method;
 
 /**
  * @version $Rev$ $Date$

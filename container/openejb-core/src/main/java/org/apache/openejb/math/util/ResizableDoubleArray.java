@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.math.util;
 
+import org.apache.openejb.math.MathRuntimeException;
+
 import java.io.Serializable;
 import java.util.Arrays;
-
-import org.apache.openejb.math.MathRuntimeException;
 
 /**
  * <p>
@@ -265,10 +265,10 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      */
     public synchronized void addElement(double value) {
         numElements++;
-        if ((startIndex + numElements) > internalArray.length) {
+        if (startIndex + numElements > internalArray.length) {
             expand();
         }
-        internalArray[startIndex + (numElements - 1)] = value;
+        internalArray[startIndex + numElements - 1] = value;
         if (shouldContract()) {
             contract();
         }
@@ -293,14 +293,14 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
     public synchronized double addElementRolling(double value) {
         double discarded = internalArray[startIndex];
 
-        if ((startIndex + (numElements + 1)) > internalArray.length) {
+        if (startIndex + numElements + 1 > internalArray.length) {
             expand();
         }
         // Increment the start index
         startIndex += 1;
 
         // Add the new value
-        internalArray[startIndex + (numElements - 1)] = value;
+        internalArray[startIndex + numElements - 1] = value;
 
         // Check the contraction criteria
         if (shouldContract()) {
@@ -324,9 +324,9 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
                     "cannot substitute an element from an empty array");
         }
 
-        double discarded = internalArray[startIndex + (numElements - 1)];
+        double discarded = internalArray[startIndex + numElements - 1];
 
-        internalArray[startIndex + (numElements - 1)] = value;
+        internalArray[startIndex + numElements - 1] = value;
 
         return discarded;
     }
@@ -674,8 +674,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
         if (index + 1 > numElements) {
             numElements = index + 1;
         }
-        if ((startIndex + index) >= internalArray.length) {
-            expandTo(startIndex + (index + 1));
+        if (startIndex + index >= internalArray.length) {
+            expandTo(startIndex + index + 1);
         }
         internalArray[startIndex + index] = value;
     }
@@ -757,7 +757,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
 
         // Test the new num elements, check to see if the array needs to be
         // expanded to accommodate this new number of elements
-        if ((startIndex + i) > internalArray.length) {
+        if (startIndex + i > internalArray.length) {
             expandTo(startIndex + i);
         }
 
@@ -773,9 +773,9 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      */
     private synchronized boolean shouldContract() {
         if (expansionMode == MULTIPLICATIVE_MODE) {
-            return (internalArray.length / ((float) numElements)) > contractionCriteria;
+            return internalArray.length / (float) numElements > contractionCriteria;
         } else {
-            return (internalArray.length - numElements) > contractionCriteria;
+            return internalArray.length - numElements > contractionCriteria;
         }
     }
 
@@ -859,12 +859,12 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
            synchronized(object) {
                boolean result = true;
                ResizableDoubleArray other = (ResizableDoubleArray) object;
-               result = result && (other.initialCapacity == initialCapacity);
-               result = result && (other.contractionCriteria == contractionCriteria);
-               result = result && (other.expansionFactor == expansionFactor);
-               result = result && (other.expansionMode == expansionMode);
-               result = result && (other.numElements == numElements);
-               result = result && (other.startIndex == startIndex);
+               result = result && other.initialCapacity == initialCapacity;
+               result = result && other.contractionCriteria == contractionCriteria;
+               result = result && other.expansionFactor == expansionFactor;
+               result = result && other.expansionMode == expansionMode;
+               result = result && other.numElements == numElements;
+               result = result && other.startIndex == startIndex;
                if (!result) {
                    return false;
                } else {

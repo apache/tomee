@@ -17,9 +17,9 @@
  */
 package org.apache.openejb.util;
 
-import java.net.URLConnection;
-import java.net.URL;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @version $Revision$ $Date$

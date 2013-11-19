@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.core.managed;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Field;
-import java.util.List;
-
-import javax.ejb.RemoveException;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
+
+import javax.ejb.RemoveException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class ManagedHomeHandler extends EjbHomeProxyHandler {
 

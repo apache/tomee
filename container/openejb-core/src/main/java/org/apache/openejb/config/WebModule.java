@@ -69,7 +69,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     public WebModule(final WebApp webApp, String contextRoot, final ClassLoader classLoader, final String jarLocation, final String moduleId) {
         this.webApp = webApp;
 
-        final File file = (jarLocation == null) ? null : new File(jarLocation);
+        final File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, webApp, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
 
@@ -105,7 +105,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     @Override
     public String getJarLocation() {
-        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+        return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
     @Override

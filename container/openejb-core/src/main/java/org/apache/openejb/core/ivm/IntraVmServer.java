@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.ivm;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ProxyInfo;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBMetaData;
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.ProxyInfo;
 
 public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
 

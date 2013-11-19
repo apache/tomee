@@ -83,7 +83,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             final String[] files = file.list();
 
-            return (null != files && files.length > 0);
+            return null != files && files.length > 0;
         }
 
         return false;
@@ -260,7 +260,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             final boolean isWindows = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
 
             for (final URL url : urlSet.getUrls()) {
-                final String ef = (isWindows ? url.toExternalForm().toLowerCase() : url.toExternalForm());
+                final String ef = isWindows ? url.toExternalForm().toLowerCase() : url.toExternalForm();
                 final URL u = new URL(ef);
                 if (!urls.contains(u)) {
                     urls.add(u);
@@ -271,7 +271,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             if (size == 0 && include.length() > 0) {
                 logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 return;
-            } else if (size == 0 && (!filterDescriptors && prefiltered.getUrls().size() == 0)) {
+            } else if (size == 0 && !filterDescriptors && prefiltered.getUrls().size() == 0) {
                 return;
             } else if (size < 20) {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
@@ -328,11 +328,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
 
             if (time < 1000) {
-                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {
-                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
             } else if (time < 10000) {
-                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
                                CLASSPATH_EXCLUDE +
                                " and " +
@@ -343,7 +343,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                                include +
                                "'");
             } else {
-                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
+                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
                 final List<String> list = new ArrayList<String>();
                 for (final URL url : urls) {

@@ -18,7 +18,6 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.Schedule;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import java.lang.annotation.ElementType;

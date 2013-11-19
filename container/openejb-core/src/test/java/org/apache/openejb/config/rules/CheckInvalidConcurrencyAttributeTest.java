@@ -16,16 +16,15 @@
  */
 package org.apache.openejb.config.rules;
 
+import junit.framework.TestCase;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.SingletonBean;
+import org.junit.runner.RunWith;
+
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Lock;
 import javax.interceptor.AroundInvoke;
-
-import junit.framework.TestCase;
-
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.SingletonBean;
-import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidConcurrencyAttributeTest extends TestCase {

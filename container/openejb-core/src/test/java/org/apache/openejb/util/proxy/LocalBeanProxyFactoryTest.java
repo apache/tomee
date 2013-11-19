@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.junit.Test;
 
+import javax.ejb.EJBException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -28,8 +29,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.ejb.EJBException;
 
 public class LocalBeanProxyFactoryTest extends TestCase {
 	

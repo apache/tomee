@@ -16,22 +16,6 @@
  */
 package org.apache.openejb.core.security;
 
-import static junit.framework.Assert.assertEquals;
-
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.security.auth.Subject;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
@@ -39,6 +23,19 @@ import org.apache.openejb.util.URLs;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.security.auth.Subject;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import static junit.framework.Assert.assertEquals;
 
 public class SQLLoginModuleTest {
 

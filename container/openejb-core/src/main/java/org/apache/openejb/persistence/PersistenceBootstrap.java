@@ -81,8 +81,8 @@ public class PersistenceBootstrap {
     public static void bootstrap(ClassLoader classLoader) {
         Properties args = getAgentArgs(classLoader);
 
-        debug = (args.getProperty("debug", "false").equalsIgnoreCase("true"));
-        boolean enabled = (args.getProperty("enabled", "true").equalsIgnoreCase("true"));
+        debug = args.getProperty("debug", "false").equalsIgnoreCase("true");
+        boolean enabled = args.getProperty("enabled", "true").equalsIgnoreCase("true");
 
         if (!enabled) {
             debug("disabled");
@@ -244,7 +244,7 @@ public class PersistenceBootstrap {
                 }
             }
 
-            debug = (properties.getProperty("debug", "false").equalsIgnoreCase("true"));
+            debug = properties.getProperty("debug", "false").equalsIgnoreCase("true");
 
         }
 

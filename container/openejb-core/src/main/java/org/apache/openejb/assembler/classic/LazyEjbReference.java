@@ -17,16 +17,16 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
+import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Messages;
 
-import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 import java.net.URI;
 
 /**

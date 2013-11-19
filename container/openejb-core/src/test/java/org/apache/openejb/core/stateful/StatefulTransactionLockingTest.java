@@ -17,32 +17,33 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
-
-import javax.ejb.TransactionAttribute;
-import javax.ejb.EJB;
-import javax.ejb.SessionBean;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBHome;
-import javax.ejb.CreateException;
-import javax.ejb.RemoteHome;
-import static javax.ejb.TransactionAttributeType.*;
-import javax.naming.InitialContext;
-
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBObject;
+import javax.ejb.RemoteHome;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.ejb.TransactionAttribute;
+import javax.naming.InitialContext;
+import java.rmi.RemoteException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.rmi.RemoteException;
+
+import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
+import static javax.ejb.TransactionAttributeType.REQUIRED;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * @version $Rev$ $Date$

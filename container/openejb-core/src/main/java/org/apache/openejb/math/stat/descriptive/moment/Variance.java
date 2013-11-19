@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.MathRuntimeException;
-import org.apache.openejb.math.stat.descriptive.WeightedEvaluation;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.openejb.math.stat.descriptive.WeightedEvaluation;
+
+import java.io.Serializable;
 
 /**
  * Computes the variance of the available values.  By default, the unbiased
@@ -172,7 +172,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 if (isBiasCorrected) {
                     return moment.m2 / (moment.n - 1d);
                 } else {
-                    return moment.m2 / (moment.n);
+                    return moment.m2 / moment.n;
                 }
             }
     }
@@ -403,9 +403,9 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 }
                 double len = length;
                 if (isBiasCorrected) {
-                    var = (accum - (accum2 * accum2 / len)) / (len - 1.0);
+                    var = (accum - accum2 * accum2 / len) / (len - 1.0);
                 } else {
-                    var = (accum - (accum2 * accum2 / len)) / len;
+                    var = (accum - accum2 * accum2 / len) / len;
                 }
             }
         }
@@ -500,7 +500,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 double accum2 = 0.0;
                 for (int i = begin; i < begin + length; i++) {
                     dev = values[i] - mean;
-                    accum += weights[i] * (dev * dev);
+                    accum += weights[i] * dev * dev;
                     accum2 += weights[i] * dev;
                 }
 
@@ -510,9 +510,9 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                 }
 
                 if (isBiasCorrected) {
-                    var = (accum - (accum2 * accum2 / sumWts)) / (sumWts - 1.0);
+                    var = (accum - accum2 * accum2 / sumWts) / (sumWts - 1.0);
                 } else {
-                    var = (accum - (accum2 * accum2 / sumWts)) / sumWts;
+                    var = (accum - accum2 * accum2 / sumWts) / sumWts;
                 }
             }
         }

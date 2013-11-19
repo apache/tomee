@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.deployment.entity.cmp.cmr.manytomany;
 
-import java.util.Set;
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
+import java.util.Set;
 
 /**
  *

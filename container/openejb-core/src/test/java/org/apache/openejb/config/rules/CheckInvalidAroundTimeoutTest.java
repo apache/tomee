@@ -17,16 +17,15 @@
 
 package org.apache.openejb.config.rules;
 
-import javax.interceptor.AroundTimeout;
-import javax.interceptor.InvocationContext;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
+
+import javax.interceptor.AroundTimeout;
+import javax.interceptor.InvocationContext;
 
 /**
  * @version $Rev$ $Date$

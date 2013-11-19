@@ -16,14 +16,15 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.openejb.util.Join.join;
 
 /**
  * @version $Rev$ $Date$

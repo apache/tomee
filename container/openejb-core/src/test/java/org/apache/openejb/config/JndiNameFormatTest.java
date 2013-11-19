@@ -17,17 +17,7 @@
 
 package org.apache.openejb.config;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -35,6 +25,14 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
+import java.util.Properties;
 
 public class JndiNameFormatTest extends TestCase {
 

@@ -62,7 +62,7 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
     }
 
     public boolean hasMoreElements() {
-        return (elementsIndex < elements.length);
+        return elementsIndex < elements.length;
     }
 
     public Object nextElement() {

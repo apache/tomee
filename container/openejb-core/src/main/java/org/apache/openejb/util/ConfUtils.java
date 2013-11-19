@@ -24,9 +24,9 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 
 /**
  * @version $Rev$ $Date$

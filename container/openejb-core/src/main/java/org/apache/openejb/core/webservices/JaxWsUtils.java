@@ -71,12 +71,12 @@ public class JaxWsUtils {
     }
 
     public static boolean isWebService(Class clazz) {
-        return ((clazz.isAnnotationPresent(WebService.class) || clazz.isAnnotationPresent(WebServiceProvider.class)) && isProperWebService(clazz));
+        return (clazz.isAnnotationPresent(WebService.class) || clazz.isAnnotationPresent(WebServiceProvider.class)) && isProperWebService(clazz);
     }
 
     private static boolean isProperWebService(Class clazz) {
         int modifiers = clazz.getModifiers();
-        return (Modifier.isPublic(modifiers) && !Modifier.isFinal(modifiers) && !Modifier.isAbstract(modifiers));
+        return Modifier.isPublic(modifiers) && !Modifier.isFinal(modifiers) && !Modifier.isAbstract(modifiers);
     }
 
     public static String getServiceName(Class clazz) {

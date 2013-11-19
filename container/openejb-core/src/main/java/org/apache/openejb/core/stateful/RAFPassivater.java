@@ -63,7 +63,7 @@ public class RAFPassivater implements PassivationStrategy {
                 final long filepointer = ras.getFilePointer();
 
                 if (lastPointer == null)
-                    lastPointer = new Pointer(fileID, filepointer, (int) (filepointer));
+                    lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
                 else
                     lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
 

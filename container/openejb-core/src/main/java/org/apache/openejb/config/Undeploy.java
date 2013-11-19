@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.JarExtractor.delete;
-
-import java.util.Properties;
-import java.io.File;
-import java.io.IOException;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -39,6 +30,14 @@ import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+
+import static org.apache.openejb.util.JarExtractor.delete;
 
 /**
  * UnDeploy EJB beans

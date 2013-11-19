@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.core.transaction;
 
-import javax.transaction.xa.XAResource;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
+
+import javax.transaction.xa.XAResource;
 
 /**
  * TransactionPolicy represents a JEE container managed or bean manage

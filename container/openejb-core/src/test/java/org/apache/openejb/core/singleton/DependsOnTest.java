@@ -17,13 +17,13 @@
 package org.apache.openejb.core.singleton;
 
 import junit.framework.TestCase;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;

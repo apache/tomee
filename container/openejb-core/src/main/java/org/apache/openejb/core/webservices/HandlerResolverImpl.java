@@ -18,7 +18,6 @@ package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
-import static org.apache.openejb.InjectionProcessor.unwrap;
 
 import javax.naming.Context;
 import javax.xml.namespace.QName;
@@ -32,6 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.apache.openejb.InjectionProcessor.unwrap;
 
 public class HandlerResolverImpl implements HandlerResolver {
     private final List<HandlerChainData> handlerChains;
@@ -94,20 +95,20 @@ public class HandlerResolverImpl implements HandlerResolver {
     }
 
     private boolean matchServiceName(PortInfo info, QName namePattern) {
-        return match((info == null ? null : info.getServiceName()), namePattern);
+        return match(info == null ? null : info.getServiceName(), namePattern);
     }
 
     private boolean matchPortName(PortInfo info, QName namePattern) {
-        return match((info == null ? null : info.getPortName()), namePattern);
+        return match(info == null ? null : info.getPortName(), namePattern);
     }
 
     private boolean matchBinding(PortInfo info, List bindings) {
-        return match((info == null ? null : info.getBindingID()), bindings);
+        return match(info == null ? null : info.getBindingID(), bindings);
     }
 
     private boolean match(String binding, List bindings) {
         if (binding == null) {
-            return (bindings == null || bindings.isEmpty());
+            return bindings == null || bindings.isEmpty();
         } else {
             if (bindings == null || bindings.isEmpty()) {
                 return true;
@@ -131,7 +132,7 @@ public class HandlerResolverImpl implements HandlerResolver {
      */
     private boolean match(QName name, QName namePattern) {
         if (name == null) {
-            return (namePattern == null || namePattern.getLocalPart().equals("*"));
+            return namePattern == null || namePattern.getLocalPart().equals("*");
         } else {
             if (namePattern == null) {
                 return true;

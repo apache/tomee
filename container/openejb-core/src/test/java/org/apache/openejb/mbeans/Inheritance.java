@@ -18,7 +18,6 @@ package org.apache.openejb.mbeans;
 
 import javax.management.Description;
 import javax.management.MBean;
-import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
 
 @MBean

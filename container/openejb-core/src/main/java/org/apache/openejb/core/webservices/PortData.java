@@ -20,10 +20,10 @@ import org.apache.openejb.Injection;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.PortInfo;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Properties;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class PortData implements PortInfo {
     private String portId;

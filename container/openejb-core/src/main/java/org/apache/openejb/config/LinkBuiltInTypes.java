@@ -21,7 +21,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.ResourceRef;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EntityContext;

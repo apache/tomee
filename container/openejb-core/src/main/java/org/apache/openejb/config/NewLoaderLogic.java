@@ -525,11 +525,11 @@ public class NewLoaderLogic {
             }
 
             if (time < 1000) {
-                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {
-                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.info("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
             } else if (time < 10000) {
-                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
+                logger.warning("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.");
                 logger.warning("Consider adjusting your " +
                                DeploymentFilterable.CLASSPATH_EXCLUDE +
                                " and " +
@@ -540,7 +540,7 @@ public class NewLoaderLogic {
                                include +
                                "'");
             } else {
-                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.  TOO LONG!");
+                logger.fatal("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + time / urls.size() + " milliseconds per url.  TOO LONG!");
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
                              DeploymentFilterable.CLASSPATH_EXCLUDE +
                              "='" +
@@ -582,7 +582,7 @@ public class NewLoaderLogic {
         @Override
         public boolean accept(final String name) {
             return super.accept(name)
-                   || (name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix));
+                   || name.endsWith(".jar") && name.substring(0, name.length() - ".jar".length()).equals(simplePrefix);
         }
     }
 }

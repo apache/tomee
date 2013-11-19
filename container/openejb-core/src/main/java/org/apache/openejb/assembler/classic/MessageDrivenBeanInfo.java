@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$

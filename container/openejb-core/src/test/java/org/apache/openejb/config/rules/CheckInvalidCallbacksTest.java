@@ -16,8 +16,13 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
+import junit.framework.TestCase;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -33,15 +38,8 @@ import javax.ejb.PrePassivate;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
-
-import junit.framework.TestCase;
-
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.junit.runner.RunWith;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 /**
  * @version $Rev$ $Date$

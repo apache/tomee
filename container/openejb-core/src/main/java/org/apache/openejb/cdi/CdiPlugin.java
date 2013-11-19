@@ -269,7 +269,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         final Map<Class<?>, BeanContext> map = pluginBeans(ctx);
-        return map != null && (map.containsKey(clazz) || (clazz.isInterface() && findBeanContext(ctx, clazz) != null));
+        return map != null && (map.containsKey(clazz) || clazz.isInterface() && findBeanContext(ctx, clazz) != null);
     }
 
     private static WebBeansContext superContext(final WebBeansContext ctx) {

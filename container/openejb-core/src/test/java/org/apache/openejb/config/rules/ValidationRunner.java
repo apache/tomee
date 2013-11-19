@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
@@ -25,6 +23,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+
+import java.util.List;
 
 /**
  * This class is created specifically to write tests which test OpenEjb validation code. Specifically, it is used to check the usage of keys defined in

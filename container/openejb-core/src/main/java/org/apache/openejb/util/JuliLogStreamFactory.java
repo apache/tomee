@@ -25,7 +25,8 @@ import org.apache.openejb.util.reflection.Reflections;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**

@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.ri.sp;
 
-import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyConfiguration;
+import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyContextException;
-import java.security.PermissionCollection;
 import java.security.Permission;
+import java.security.PermissionCollection;
 
 /**
  * @version $Rev$ $Date$

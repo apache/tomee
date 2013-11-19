@@ -17,15 +17,15 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import javax.ejb.EJB;
 import javax.naming.InitialContext;

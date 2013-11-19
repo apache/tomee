@@ -39,9 +39,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;

@@ -18,8 +18,8 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 
 /**
  * @version $Rev$ $Date$

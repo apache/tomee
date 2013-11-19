@@ -816,7 +816,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag
-                if ((clientInfo.remoteClients.size() > 0) || (clientInfo.localClients.size() == 0)) {
+                if (clientInfo.remoteClients.size() > 0 || clientInfo.localClients.size() == 0) {
                     jndiEncBuilder.setClient(true);
 
                 }
@@ -1154,7 +1154,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             // cdi can be off so init with null bean in this case
-            final Bean bean;
+            final Bean<?> bean;
             final BeanManager bm;
             if (wc == null) {
                 bm = null;
@@ -1270,8 +1270,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.sort(deployments, new Comparator<BeanContext>() {
             @Override
             public int compare(final BeanContext a, final BeanContext b) {
-                final int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                final int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                final int aa = a.getComponentType() == BeanType.SINGLETON ? 1 : 0;
+                final int bb = b.getComponentType() == BeanType.SINGLETON ? 1 : 0;
                 return aa - bb;
             }
         });
@@ -1296,8 +1296,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.sort(deployments, new Comparator<BeanContext>() {
             @Override
             public int compare(final BeanContext a, final BeanContext b) {
-                final int aa = (a.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
-                final int bb = (b.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
+                final int aa = a.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
+                final int bb = b.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
                 return aa - bb;
             }
         });
@@ -1746,7 +1746,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     globalContext.unbind(PERSISTENCE_UNIT_NAMING_CONTEXT + unitInfo.id);
 
                     // close EMF so all resources are released
-                    final ReloadableEntityManagerFactory remf = ((ReloadableEntityManagerFactory) object);
+                    final ReloadableEntityManagerFactory remf = (ReloadableEntityManagerFactory) object;
                     remf.close();
                     persistenceClassLoaderHandler.destroy(unitInfo.id);
                     remf.unregister();
@@ -2377,7 +2377,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final int slash = subUrl.indexOf('/');
 
         int end = port;
-        if (end < 0 || (slash > 0 && slash < end)) {
+        if (end < 0 || slash > 0 && slash < end) {
             end = slash;
         }
         if (end > 0) {

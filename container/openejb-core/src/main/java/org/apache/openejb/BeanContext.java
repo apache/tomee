@@ -53,8 +53,16 @@ import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 import org.apache.xbean.recipe.ConstructionException;
 
-import javax.ejb.*;
 import javax.ejb.ApplicationException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.MessageDrivenBean;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Decorator;
@@ -706,7 +714,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public TransactionType getTransactionType() {
-        return (isBeanManagedTransaction) ? TransactionType.BeanManaged : TransactionType.Required;
+        return isBeanManagedTransaction ? TransactionType.BeanManaged : TransactionType.Required;
     }
 
     public TransactionPolicyFactory getTransactionPolicyFactory() {
@@ -734,19 +742,19 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getHomeInterface() {
-        return (legacyView == null) ? null : getLegacyView().homeInterface;
+        return legacyView == null ? null : getLegacyView().homeInterface;
     }
 
     public Class getRemoteInterface() {
-        return (legacyView == null) ? null : getLegacyView().remoteInterface;
+        return legacyView == null ? null : getLegacyView().remoteInterface;
     }
 
     public Class getLocalHomeInterface() {
-        return (legacyView == null) ? null : getLegacyView().localHomeInterface;
+        return legacyView == null ? null : getLegacyView().localHomeInterface;
     }
 
     public Class getLocalInterface() {
-        return (legacyView == null) ? null : getLegacyView().localInterface;
+        return legacyView == null ? null : getLegacyView().localInterface;
     }
 
     public Class getBeanClass() {
@@ -770,7 +778,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getMdbInterface() {
-        return (mdb == null) ? null : getMdb().mdbInterface;
+        return mdb == null ? null : getMdb().mdbInterface;
     }
 
     public Class getServiceEndpointInterface() {
@@ -782,7 +790,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public Class getPrimaryKeyClass() {
-        return (cmp == null) ? null : cmp.pkClass;
+        return cmp == null ? null : cmp.pkClass;
     }
 
     public EJBHome getEJBHome() {
@@ -897,7 +905,7 @@ public class BeanContext extends DeploymentContext {
 
     public Method getMatchingBeanMethod(final Method interfaceMethod) {
         final Method method = methodMap.get(interfaceMethod);
-        return (method == null) ? interfaceMethod : method;
+        return method == null ? interfaceMethod : method;
     }
 
     public MethodContext getMethodContext(final Method method) {
@@ -1435,7 +1443,7 @@ public class BeanContext extends DeploymentContext {
             final Class beanClass = getBeanClass();
 
             final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
-            CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
+            CreationalContext<Object> creationalContext = currentCreationalContext != null ? currentCreationalContext.get() : null;
 
             final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
 
@@ -1676,7 +1684,7 @@ public class BeanContext extends DeploymentContext {
 
     private MethodContext getViewMethodContext(final Method method, final String view) {
         final ViewContext viewContext = this.viewContextMap.get(view);
-        return (viewContext == null) ? null : viewContext.getMethodContext(method);
+        return viewContext == null ? null : viewContext.getMethodContext(method);
     }
 
     private MethodContext initViewMethodContext(final Method method, final String view) {

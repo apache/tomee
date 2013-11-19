@@ -16,9 +16,8 @@
  */
 package org.apache.openejb;
 
-import java.net.URI;
-
 import javax.naming.Context;
+import java.net.URI;
 
 /**
  * @version $Rev$ $Date$

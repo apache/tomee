@@ -17,15 +17,15 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.cmp.CmpContainer;
 import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.InterfaceType;
 
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
 import javax.ejb.EJBObject;
+import javax.ejb.EntityBean;
 import java.lang.reflect.Field;
 
 public class Cmp2Util {

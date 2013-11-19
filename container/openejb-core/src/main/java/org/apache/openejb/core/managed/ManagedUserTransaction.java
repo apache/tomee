@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.core.managed;
 
-import javax.transaction.UserTransaction;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
-
-import org.apache.openejb.persistence.JtaEntityManagerRegistry;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.BeanContext;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 public class ManagedUserTransaction implements UserTransaction {
     private final UserTransaction userTransaction;

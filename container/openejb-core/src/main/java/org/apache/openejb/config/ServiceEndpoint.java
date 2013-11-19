@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.config;
 
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * This is a completely fake annotation and is only a placeholder for the real annotation

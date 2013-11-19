@@ -18,7 +18,6 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.resource.jdbc.dbcp.DbcpManagedDataSource;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -16,25 +16,23 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.ejb.Local;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.Stateful;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
+
+import javax.ejb.Local;
+import javax.ejb.NoSuchEJBException;
+import javax.ejb.Stateful;
+import javax.naming.InitialContext;
+import java.util.concurrent.TimeUnit;
 
 public class StatefulTimeoutTest extends TestCase {
 

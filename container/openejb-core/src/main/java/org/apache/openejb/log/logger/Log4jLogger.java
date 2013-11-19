@@ -18,6 +18,11 @@
  */
 package org.apache.openejb.log.logger;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Priority;
+import org.apache.log4j.spi.LoggingEvent;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -27,11 +32,6 @@ import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Priority;
-import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * java.util.logging.Logger implementation delegating to Log4j.
@@ -191,7 +191,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         @Override
         public boolean isAsSevereAsThreshold(Priority priority) {
             Priority p = getThreshold();
-            return (p == null) || priority.isGreaterOrEqual(p);
+            return p == null || priority.isGreaterOrEqual(p);
         }
     }
 }

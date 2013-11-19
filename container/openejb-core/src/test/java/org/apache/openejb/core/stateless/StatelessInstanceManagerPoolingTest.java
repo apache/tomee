@@ -17,22 +17,7 @@
  */
 package org.apache.openejb.core.stateless;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -42,6 +27,15 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision$ $Date$

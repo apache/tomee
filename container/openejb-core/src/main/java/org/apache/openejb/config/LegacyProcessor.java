@@ -17,17 +17,18 @@
 
 package org.apache.openejb.config;
 
-import javax.ejb.SessionSynchronization;
-import javax.ejb.SessionContext;
-import javax.ejb.MessageDrivenContext;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.SessionBean;
+
+import javax.ejb.MessageDrivenContext;
+import javax.ejb.SessionContext;
+import javax.ejb.SessionSynchronization;
+
 import static org.apache.openejb.jee.SessionType.STATEFUL;
 
 /**

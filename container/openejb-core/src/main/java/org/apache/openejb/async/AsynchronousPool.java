@@ -223,7 +223,7 @@ public class AsynchronousPool {
                 e = new NoSuchEJBException(e.getMessage(), (Exception) e);
             }
 
-            final boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
+            final boolean isExceptionUnchecked = e instanceof Error || e instanceof RuntimeException;
 
             // throw checked excpetion and EJBException directly.
             if (!isExceptionUnchecked || e instanceof EJBException) {
@@ -231,7 +231,7 @@ public class AsynchronousPool {
             }
 
             // wrap unchecked exception with EJBException before throwing.
-            throw (e instanceof Exception) ? new ExecutionException(new EJBException((Exception) e))
+            throw e instanceof Exception ? new ExecutionException(new EJBException((Exception) e))
                     : new ExecutionException(new EJBException(new Exception(e)));
 
         }

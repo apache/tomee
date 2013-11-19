@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collection;
-import java.lang.reflect.Method;
-
 import org.apache.xbean.asm4.Type;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public enum CmrStyle {
     SINGLE(SingleValuedCmr.class, null, null),

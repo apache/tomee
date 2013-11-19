@@ -17,16 +17,10 @@
 package org.apache.openejb.util;
 
 import java.io.Externalizable;
-import java.io.ObjectStreamException;
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.lang.reflect.Field;
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.ObjectStreamException;
 
 /**
  * Works with objects that have a public no-arg constructor

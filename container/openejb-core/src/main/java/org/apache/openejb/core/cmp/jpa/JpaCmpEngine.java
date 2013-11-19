@@ -17,10 +17,23 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.cmp.CmpCallback;
+import org.apache.openejb.core.cmp.CmpEngine;
+import org.apache.openejb.core.cmp.ComplexKeyGenerator;
+import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.core.cmp.SimpleKeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openjpa.event.AbstractLifecycleListener;
+import org.apache.openjpa.event.LifecycleEvent;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerFactorySPI;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
@@ -33,25 +46,13 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.cmp.CmpCallback;
-import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.core.cmp.ComplexKeyGenerator;
-import org.apache.openejb.core.cmp.KeyGenerator;
-import org.apache.openejb.core.cmp.SimpleKeyGenerator;
-import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
-import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.core.transaction.TransactionPolicy;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import org.apache.openjpa.event.AbstractLifecycleListener;
-import org.apache.openjpa.event.LifecycleEvent;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerFactorySPI;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
@@ -257,10 +258,10 @@ public class JpaCmpEngine implements CmpEngine {
             Object arg = args[i];
             // ejb proxies need to be swapped out for real instance classes
             if (arg instanceof EJBObject) {
-                arg = Cmp2Util.getEntityBean(((EJBObject) arg));
+                arg = Cmp2Util.getEntityBean((EJBObject) arg);
             }
             if (arg instanceof EJBLocalObject) {
-                arg = Cmp2Util.getEntityBean(((EJBLocalObject) arg));
+                arg = Cmp2Util.getEntityBean((EJBLocalObject) arg);
             }
             try {
                 query.getParameter(i + 1);
@@ -310,10 +311,10 @@ public class JpaCmpEngine implements CmpEngine {
             Object arg = args[i];
             // ejb proxies need to be swapped out for real instance classes
             if (arg instanceof EJBObject) {
-                arg = Cmp2Util.getEntityBean(((EJBObject) arg));
+                arg = Cmp2Util.getEntityBean((EJBObject) arg);
             }
             if (arg instanceof EJBLocalObject) {
-                arg = Cmp2Util.getEntityBean(((EJBLocalObject) arg));
+                arg = Cmp2Util.getEntityBean((EJBLocalObject) arg);
             }
             query.setParameter(i + 1, arg);
         }

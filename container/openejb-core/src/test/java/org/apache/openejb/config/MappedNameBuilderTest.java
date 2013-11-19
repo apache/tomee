@@ -22,9 +22,9 @@ import junit.framework.TestCase;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.util.List;
 

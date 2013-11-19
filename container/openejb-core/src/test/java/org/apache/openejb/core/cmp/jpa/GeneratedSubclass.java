@@ -17,9 +17,6 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Entity;
 
 @Entity

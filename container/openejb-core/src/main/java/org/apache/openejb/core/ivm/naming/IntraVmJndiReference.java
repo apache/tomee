@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Strings;
+
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 
 public class IntraVmJndiReference extends Reference {
 

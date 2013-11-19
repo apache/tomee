@@ -19,8 +19,8 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InjectionBuilder {
     private final ClassLoader classLoader;

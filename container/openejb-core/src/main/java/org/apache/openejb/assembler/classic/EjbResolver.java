@@ -19,11 +19,11 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.util.LinkResolver;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Arrays;
-import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$

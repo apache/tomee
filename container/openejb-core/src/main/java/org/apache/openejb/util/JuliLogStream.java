@@ -173,7 +173,7 @@ public class JuliLogStream implements LogStream {
         private void initSource() {
             if (!sourceInited) {
                 // search back up the stack for the first use of the OpenEJB Logger
-                StackTraceElement[] elements = (new Throwable()).getStackTrace();
+                StackTraceElement[] elements = new Throwable().getStackTrace();
                 int i = 0;
                 String current = null;
                 for (; i < elements.length; i++) {

@@ -17,13 +17,12 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.config.ConfigurationFactory;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
-
-import org.apache.openejb.config.ConfigurationFactory;
 
 /**
  * @version $Rev$ $Date$

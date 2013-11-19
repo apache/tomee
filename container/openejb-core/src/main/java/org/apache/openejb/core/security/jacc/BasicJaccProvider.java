@@ -84,6 +84,6 @@ public class BasicJaccProvider extends JaccProvider {
             }
         }
 
-        return (systemPolicy != null)? systemPolicy.implies(domain, permission): false;
+        return systemPolicy != null ? systemPolicy.implies(domain, permission): false;
     }
 }

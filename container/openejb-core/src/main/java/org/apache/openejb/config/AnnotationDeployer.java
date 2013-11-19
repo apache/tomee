@@ -912,7 +912,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 		}
 
 		private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
-			Class<?> t = (annotation == null) ? null : annotation.type();
+			Class<?> t = annotation == null ? null : annotation.type();
             if (t == null && type != null) {
                 return type.getName();
             } else if (t == null) {
@@ -1045,7 +1045,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
-            if (webApp != null && (webApp.isMetadataComplete())) return webModule;
+            if (webApp != null && webApp.isMetadataComplete()) return webModule;
 
             try {
                 if (webModule.getFinder() == null) {
@@ -1162,7 +1162,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         // if we are deplying a webapp we don't need to (re)do it
                         // or if this module is another webapp we don't need to look it
                         // otherwise that's a common part of ear we want to scan
-                        if (appModule.isWebapp() || (module.isWebapp() && !module.getModuleId().equals(webModule.getModuleId()))) {
+                        if (appModule.isWebapp() || module.isWebapp() && !module.getModuleId().equals(webModule.getModuleId())) {
                             continue;
                         }
 
@@ -1705,23 +1705,23 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private String getEjbName(MessageDriven mdb, Class<?> beanClass) {
-            return (mdb.name().isEmpty() ? beanClass.getSimpleName() : mdb.name());
+            return mdb.name().isEmpty() ? beanClass.getSimpleName() : mdb.name();
         }
 
         private String getEjbName(Stateful stateful, Class<?> beanClass) {
-            return (stateful.name().isEmpty() ? beanClass.getSimpleName() : stateful.name());
+            return stateful.name().isEmpty() ? beanClass.getSimpleName() : stateful.name();
         }
 
         private String getEjbName(Stateless stateless, Class<?> beanClass) {
-            return (stateless.name().isEmpty() ? beanClass.getSimpleName() : stateless.name());
+            return stateless.name().isEmpty() ? beanClass.getSimpleName() : stateless.name();
         }
 
         private String getEjbName(Singleton singleton, Class<?> beanClass) {
-            return (singleton.name().isEmpty() ? beanClass.getSimpleName() : singleton.name());
+            return singleton.name().isEmpty() ? beanClass.getSimpleName() : singleton.name();
         }
 
         private String getEjbName(ManagedBean managed, Class<?> beanClass) {
-            return (managed.value().isEmpty() ? beanClass.getSimpleName() : managed.value());
+            return managed.value().isEmpty() ? beanClass.getSimpleName() : managed.value();
         }
 
         private boolean isValidEjbAnnotationUsage(Class annotationClass, Annotated<Class<?>> beanClass, String ejbName, EjbModule ejbModule) {
@@ -3404,8 +3404,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 for (javax.ejb.Schedule schedule : scheduleAnnotationList) {
                     Timer timer = new Timer();
                     timer.setPersistent(schedule.persistent());
-                    timer.setInfo((schedule.info() == null || schedule.info().isEmpty()) ? null : schedule.info());
-                    timer.setTimezone((schedule.timezone() == null || schedule.timezone().isEmpty()) ? null : schedule.timezone());
+                    timer.setInfo(schedule.info() == null || schedule.info().isEmpty() ? null : schedule.info());
+                    timer.setTimezone(schedule.timezone() == null || schedule.timezone().isEmpty() ? null : schedule.timezone());
                     //Copy TimerSchedule
                     TimerSchedule timerSchedule = new TimerSchedule();
                     timerSchedule.setSecond(schedule.second());
@@ -3462,7 +3462,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  *  @AroundTimeout
                  */
                 if (apply(override, invokable.getAroundInvoke())) {
-                    for (Annotated<Method> method : sortMethods((annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class)))) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class))) {
                         invokable.getAroundTimeout().add(new AroundTimeout(method.get()));
                     }
                 }
@@ -3851,13 +3851,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             Class<?> interfce = ejb.beanInterface();
             if (interfce.equals(Object.class)) {
-                interfce = (member == null) ? null : member.getType();
+                interfce = member == null ? null : member.getType();
             }
 
             boolean localbean = isKnownLocalBean(interfce);
             boolean dynamicallyImplemented = DynamicProxyImplFactory.isKnownDynamicallyImplemented(interfce);
 
-            if ((!localbean) && interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
+            if (!localbean && interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
                 return;
             }
 
@@ -4100,7 +4100,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getResourceEnvRef().add(resourceEnvRef);
                     }
 
-                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
+                    if (resourceEnvRef.getResourceEnvRefType() == null || "".equals(resourceEnvRef.getResourceEnvRefType())) {
                         resourceEnvRef.setResourceEnvRefType(type.getName());
                     }
                     reference = resourceEnvRef;
@@ -4165,7 +4165,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
-                    if (resourceRef.getResType() == null || ("").equals(resourceRef.getResType())) {
+                    if (resourceRef.getResType() == null || "".equals(resourceRef.getResType())) {
                         resourceRef.setResType(type.getName());
                     }
 
@@ -4381,7 +4381,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 consumer.getPersistenceContextRef().add(persistenceContextRef);
             } else {
-                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
+                if (persistenceContextRef.getPersistenceUnitName() == null || "".equals(persistenceContextRef.getPersistenceUnitName())) {
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 }
                 if (persistenceContextRef.getPersistenceContextType() == null) {
@@ -4548,7 +4548,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             serviceRef.setServiceInterface(serviceInterface.getName());
 
             // reference type
-            if (serviceRef.getServiceRefType() == null || ("").equals(serviceRef.getServiceRefType())) {
+            if (serviceRef.getServiceRefType() == null || "".equals(serviceRef.getServiceRefType())) {
                 if (webService.type() != java.lang.Object.class) {
                     serviceRef.setServiceRefType(webService.type().getName());
                 } else {
@@ -4972,7 +4972,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (methodAttributes == null) return null;
 
             for (MethodAttribute methodAttribute : methodAttributes) {
-                String className = (clazz != null) ? clazz.getName() : null + "";
+                String className = clazz != null ? clazz.getName() : null + "";
 
                 if (className.equals(methodAttribute.getClassName() + "")) {
                     return methodAttribute;

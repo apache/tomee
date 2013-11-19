@@ -88,7 +88,7 @@ public class ExecutorBuilder {
         final boolean allowCoreThreadTimeout = options.get(prefix + ".AllowCoreThreadTimeOut", true);
 
         // If the user explicitly set the QueueSize to 0, we default QueueType to SYNCHRONOUS
-        final QueueType defaultQueueType = (qsize < 1) ? QueueType.SYNCHRONOUS : QueueType.LINKED;
+        final QueueType defaultQueueType = qsize < 1 ? QueueType.SYNCHRONOUS : QueueType.LINKED;
 
         final BlockingQueue<Runnable> queue = options.get(prefix + ".QueueType", defaultQueueType).create(options, prefix, qsize);
 

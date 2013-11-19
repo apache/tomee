@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.core.stateful;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateful;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateful;
+import javax.naming.InitialContext;
 
 /**
  * This test case serves as a nice tiny template for other test cases

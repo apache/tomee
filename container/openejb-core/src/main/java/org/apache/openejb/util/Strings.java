@@ -87,11 +87,11 @@ public class Strings {
     }
 
     public static boolean checkNullBlankString(String stringToCheck) {
-        return (stringToCheck == null || "".equals(stringToCheck.trim()));
+        return stringToCheck == null || "".equals(stringToCheck.trim());
     }
 
     public static String replaceNullOrBlankStringWithNonBreakingSpace(String stringToCheckForNull) {
-        if ((stringToCheckForNull == null) || (stringToCheckForNull.equals(""))) {
+        if (stringToCheckForNull == null || stringToCheckForNull.equals("")) {
             return "&nbsp;";
         } else {
             return stringToCheckForNull;

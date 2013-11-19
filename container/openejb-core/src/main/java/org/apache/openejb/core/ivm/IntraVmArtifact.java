@@ -61,7 +61,7 @@ public class IntraVmArtifact implements Externalizable {
     }
 
     private static Handles getHandles(boolean staticArtifact) {
-        return (staticArtifact) ? staticHandles : threadHandles.get();
+        return staticArtifact ? staticHandles : threadHandles.get();
     }
 
     public IntraVmArtifact() {

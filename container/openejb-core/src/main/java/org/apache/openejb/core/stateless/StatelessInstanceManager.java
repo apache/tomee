@@ -98,7 +98,7 @@ public class StatelessInstanceManager {
             accessTimeout.setUnit(TimeUnit.MILLISECONDS);
         }
 
-        final int qsize = (callbackThreads > 1 ? callbackThreads - 1 : 1);
+        final int qsize = callbackThreads > 1 ? callbackThreads - 1 : 1;
         final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
         this.executor = new ThreadPoolExecutor(
                 callbackThreads, callbackThreads * 2,

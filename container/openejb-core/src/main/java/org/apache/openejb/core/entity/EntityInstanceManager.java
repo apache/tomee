@@ -18,16 +18,16 @@ package org.apache.openejb.core.entity;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.InvalidateReferenceException;
-import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.core.NoSuchObjectException;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.NoSuchObjectException;
-import org.apache.openejb.core.transaction.TransactionRolledbackException;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy.TransactionSynchronization;
+import org.apache.openejb.core.transaction.TransactionRolledbackException;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -36,9 +36,9 @@ import org.apache.openejb.util.Stack;
 import javax.ejb.EJBContext;
 import javax.ejb.EntityBean;
 import javax.ejb.NoSuchEntityException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.rmi.RemoteException;
 
 public class EntityInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -225,7 +225,7 @@ public class EntityInstanceManager {
             reusingBean(bean, callContext);
         }
 
-        if ((callContext.getCurrentOperation() == Operation.BUSINESS) || (callContext.getCurrentOperation() == Operation.REMOVE)) {
+        if (callContext.getCurrentOperation() == Operation.BUSINESS || callContext.getCurrentOperation() == Operation.REMOVE) {
             /*
             * When a bean is retrieved from the bean pool to service a client's business method request it must be
             * notified that its about to enter service by invoking its ejbActivate( ) method. A bean instance

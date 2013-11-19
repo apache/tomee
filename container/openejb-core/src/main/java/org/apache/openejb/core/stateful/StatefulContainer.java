@@ -355,7 +355,7 @@ public class StatefulContainer implements RpcContainer {
 
         final Data data = (Data) beanContext.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
-        methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
+        methodType = methodType != null ? methodType : MethodType.BUSINESS;
 
         switch (methodType) {
             case CREATE:

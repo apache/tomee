@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.cmp;
 
+import org.apache.openejb.OpenEJBException;
+
+import javax.ejb.EJBException;
+import javax.ejb.EntityBean;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.ejb.EJBException;
-import javax.ejb.EntityBean;
-
-import org.apache.openejb.OpenEJBException;
 
 public class ComplexKeyGenerator extends AbstractKeyGenerator {
     protected final List<PkField> fields;

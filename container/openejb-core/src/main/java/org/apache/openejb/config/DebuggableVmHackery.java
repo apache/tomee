@@ -17,28 +17,28 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.MessageDestinationRef;
-import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.MessageDestinationRef;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.Method;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.ResourceLink;
 
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$

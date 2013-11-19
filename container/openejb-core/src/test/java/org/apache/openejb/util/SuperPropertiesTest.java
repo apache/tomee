@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class SuperPropertiesTest extends PropertiesTest {
 

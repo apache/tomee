@@ -18,14 +18,14 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.EjbRef;
 
 /**
  * @version $Rev$ $Date$

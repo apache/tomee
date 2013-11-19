@@ -17,11 +17,11 @@
  */
 package org.apache.openejb.test.entity.cmr.onetomany;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 import org.apache.openejb.core.cmp.cmp2.SetValuedCmr;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
     public static Object deploymentInfo;

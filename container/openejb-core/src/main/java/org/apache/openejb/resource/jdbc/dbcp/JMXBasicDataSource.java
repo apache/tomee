@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.resource.jdbc.dbcp;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
-import javax.management.MBeanServer;
 import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.api.jmx.ManagedOperation;
-import javax.management.ObjectName;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 // @MBean: don't put it since it is not a pojo
 @Internal

@@ -17,9 +17,9 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
+import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 import org.apache.openejb.test.entity.cmp.ComplexCmpBean;
 import org.apache.openejb.test.entity.cmp.UnknownCmpBean;
-import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

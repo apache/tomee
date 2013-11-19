@@ -21,7 +21,6 @@ import org.apache.openejb.assembler.classic.cmd.ConfigurationInfoEjb;
 import org.apache.openejb.assembler.monitoring.JMXDeployer;
 import org.apache.openejb.assembler.util.UserEjb;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.SingletonBean;

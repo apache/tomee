@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.config.sys;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import org.apache.openejb.util.SuperProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,8 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.openejb.util.SuperProperties;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 /**

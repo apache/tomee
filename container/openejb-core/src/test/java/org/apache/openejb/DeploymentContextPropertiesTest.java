@@ -17,7 +17,6 @@
 package org.apache.openejb;
 
 import junit.framework.TestCase;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;

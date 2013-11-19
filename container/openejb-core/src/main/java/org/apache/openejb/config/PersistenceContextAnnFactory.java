@@ -76,7 +76,7 @@ public class PersistenceContextAnnFactory {
 
             String name = persistenceContext.name();
             if (name == null || name.equals("")) {
-                name = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+                name = member == null ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
             AsmPersistenceContext asmPersistenceContext = contexts.get(name);
@@ -259,9 +259,9 @@ public class PersistenceContextAnnFactory {
 
                 public void visit(String n, Object v) {
                     if ("name".equals(n)) {
-                        name = (v == null ? null : v.toString());
+                        name = v == null ? null : v.toString();
                     } else if ("value".equals(n)) {
-                        value = (v == null ? null : v.toString());
+                        value = v == null ? null : v.toString();
                     }
                 }
 

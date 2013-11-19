@@ -17,19 +17,18 @@
  */
 package org.apache.openejb.timer;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.openejb.core.timer.EJBCronTrigger;
+import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
+import org.junit.Test;
 
+import javax.ejb.ScheduleExpression;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.ejb.ScheduleExpression;
-
-import org.apache.openejb.core.timer.EJBCronTrigger;
-import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class EJBCronTriggerTest {

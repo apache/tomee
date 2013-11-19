@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 /**
  * Computes the skewness of the available values.
@@ -108,7 +108,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
             return 0.0d;
         } else {
             double n0 = moment.getN();
-            return  (n0 * moment.m3) /
+            return  n0 * moment.m3 /
             ((n0 - 1) * (n0 -2) * Math.sqrt(variance) * variance);
         }
     }
@@ -168,7 +168,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
                 accum  += d * d;
                 accum2 += d;
             }
-            final double variance = (accum - (accum2 * accum2 / length)) / (length - 1);
+            final double variance = (accum - accum2 * accum2 / length) / (length - 1);
 
             double accum3 = 0.0;
             for (int i = begin; i < begin + length; i++) {
@@ -181,7 +181,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
             double n0 = length;
 
             // Calculate skewness
-            skew = (n0 / ((n0 - 1) * (n0 - 2))) * accum3;
+            skew = n0 / ((n0 - 1) * (n0 - 2)) * accum3;
         }
         return skew;
     }

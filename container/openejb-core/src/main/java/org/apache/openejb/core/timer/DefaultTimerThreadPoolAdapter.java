@@ -74,7 +74,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
             SystemInstance.get().setComponent(TimerExecutor.class, new TimerExecutor(this.executor));
         }
 
-        this.threadPoolExecutorUsed = (this.executor instanceof ThreadPoolExecutor);
+        this.threadPoolExecutorUsed = this.executor instanceof ThreadPoolExecutor;
 
         if (!this.threadPoolExecutorUsed) {
             logger.warning("Unrecognized ThreadPool implementation [" + this.executor.getClass().getName() + "] is used, EJB Timer service may not work correctly");
@@ -101,7 +101,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
         if (this.threadPoolExecutorUsed) {
             final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) this.executor;
             synchronized (this.threadAvailableLock) {
-                while ((threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount()) < 1 && !threadPoolExecutor.isShutdown()) {
+                while (threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount() < 1 && !threadPoolExecutor.isShutdown()) {
                     try {
                         this.threadAvailableLock.wait(500L);
                     } catch (InterruptedException ignore) {

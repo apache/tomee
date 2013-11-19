@@ -17,25 +17,25 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.rules.ValidationAssertions;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.rules.ValidationAssertions;
 
 import javax.ejb.Local;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.io.Serializable;
 
 public class BusinessInterfacesTest extends TestCase {
 

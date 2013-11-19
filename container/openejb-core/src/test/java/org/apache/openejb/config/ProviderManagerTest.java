@@ -18,8 +18,8 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.config.provider.ID;
-import org.apache.openejb.config.provider.ProviderLoader;
 import org.apache.openejb.config.provider.ProviderCircularReferenceException;
+import org.apache.openejb.config.provider.ProviderLoader;
 import org.apache.openejb.config.provider.ProviderManager;
 import org.apache.openejb.config.sys.ServiceProvider;
 

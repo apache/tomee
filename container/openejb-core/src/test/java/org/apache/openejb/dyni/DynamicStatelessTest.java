@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

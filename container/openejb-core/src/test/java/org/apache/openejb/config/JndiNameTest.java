@@ -25,21 +25,20 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.SessionBeanType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.SessionBeanType;
-import org.apache.openejb.loader.SystemInstance;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
 import javax.ejb.EJBHome;
-import javax.ejb.RemoteHome;
-import javax.ejb.EJBObject;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.Local;
 import javax.ejb.LocalHome;
+import javax.ejb.Remote;
+import javax.ejb.RemoteHome;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

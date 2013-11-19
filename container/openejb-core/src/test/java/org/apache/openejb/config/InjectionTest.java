@@ -17,17 +17,7 @@
  */
 package org.apache.openejb.config;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -39,6 +29,14 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.StatelessBean;
+
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$ $Date$

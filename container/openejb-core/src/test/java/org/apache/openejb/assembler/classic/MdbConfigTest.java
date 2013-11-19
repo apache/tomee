@@ -27,15 +27,15 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.test.mdb.BasicMdbBean;
 
 import javax.jms.MessageListener;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.ResourceException;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.InvalidPropertyException;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.UnavailableException;
+import javax.resource.spi.endpoint.MessageEndpoint;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.util.Properties;
 

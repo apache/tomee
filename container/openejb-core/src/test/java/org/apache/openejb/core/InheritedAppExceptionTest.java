@@ -20,14 +20,14 @@
 
 package org.apache.openejb.core;
 
-import java.util.HashMap;
-import java.util.Properties;
-
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 

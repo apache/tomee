@@ -43,7 +43,7 @@ public class IntraVmCopyMonitor {
     }
 
     public static boolean exists() {
-        return (threadMonitor.get() != null);
+        return threadMonitor.get() != null;
     }
 
     public static void release() {

@@ -16,16 +16,6 @@
  */
 package org.apache.openejb.core.asynch;
 
-import java.util.concurrent.Future;
-
-import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.SessionContext;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -41,6 +31,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.SessionContext;
+import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import java.util.concurrent.Future;
 
 /**
  * Testing of the @Asynchronous annotation on beans.

@@ -162,7 +162,7 @@ public class JndiEncInfoBuilder {
 
             } else {
                 final EjbResolver.Scope scope = ejbResolver.getScope(deploymentId);
-                info.externalReference = (scope != EAR && scope != EJBJAR);
+                info.externalReference = scope != EAR && scope != EJBJAR;
 
                 if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
                     EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
@@ -270,7 +270,7 @@ public class JndiEncInfoBuilder {
             info.persistenceUnitName = contextRef.getPersistenceUnitName();
             info.unitId = contextRef.getMappedName();
             info.location = buildLocationInfo(contextRef);
-            info.extended = (contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED);
+            info.extended = contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED;
 
             final List<Property> persistenceProperty = contextRef.getPersistenceProperty();
             for (Property property : persistenceProperty) {

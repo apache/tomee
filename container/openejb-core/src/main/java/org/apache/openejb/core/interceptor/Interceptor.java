@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.interceptor;
 
-import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 
 /**

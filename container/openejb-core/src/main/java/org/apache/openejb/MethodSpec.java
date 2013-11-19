@@ -16,10 +16,10 @@
  */
 package org.apache.openejb;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.Serializable;
 
 /**
  * @version $Revision$ $Date$

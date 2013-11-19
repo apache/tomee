@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.math.stat.descriptive;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-
 import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.moment.GeometricMean;
 import org.apache.openejb.math.stat.descriptive.moment.Kurtosis;
@@ -32,6 +28,10 @@ import org.apache.openejb.math.stat.descriptive.rank.Percentile;
 import org.apache.openejb.math.stat.descriptive.summary.Sum;
 import org.apache.openejb.math.stat.descriptive.summary.SumOfSquares;
 import org.apache.openejb.math.util.ResizableDoubleArray;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 
 /**

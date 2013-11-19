@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.Properties;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.ObserverAdded;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
 
 public class UpdateChecker {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP, UpdateChecker.class);

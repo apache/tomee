@@ -17,28 +17,28 @@
 package org.apache.openejb.core.stateful;
 
 import junit.framework.TestCase;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
-import javax.naming.InitialContext;
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBObject;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.CreateException;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBHome;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
+import javax.naming.InitialContext;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

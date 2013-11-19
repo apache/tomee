@@ -16,13 +16,12 @@
  */
 package org.apache.openejb.deployment.entity.cmp.ejbql;
 
-import java.rmi.RemoteException;
+import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
 import javax.ejb.FinderException;
-
-import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
+import java.rmi.RemoteException;
 
 
 /**

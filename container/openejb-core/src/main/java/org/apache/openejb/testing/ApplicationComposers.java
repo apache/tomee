@@ -602,7 +602,7 @@ public final class ApplicationComposers {
         assembler.buildContainerSystem(openEjbConfiguration);
 
         if ("true".equals(configuration.getProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "false"))
-            || (annotation != null || annotationOld != null)) {
+            || annotation != null || annotationOld != null) {
             try {
                 if (annotation != null) {
                     initFilteredServiceManager(annotation.value());

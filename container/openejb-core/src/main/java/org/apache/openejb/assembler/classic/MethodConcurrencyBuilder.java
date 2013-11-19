@@ -17,20 +17,20 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.MethodContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.ejb.LockType;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-import java.lang.reflect.Method;
 
 /**
  * @version $Rev$ $Date$

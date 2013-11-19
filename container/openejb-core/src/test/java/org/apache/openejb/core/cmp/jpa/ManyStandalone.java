@@ -18,8 +18,8 @@
 package org.apache.openejb.core.cmp.jpa;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class ManyStandalone {

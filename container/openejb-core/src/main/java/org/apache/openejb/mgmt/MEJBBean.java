@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.mgmt;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.ejb.RemoteHome;
 import javax.ejb.Stateless;
 import javax.management.Attribute;
@@ -36,6 +33,8 @@ import javax.management.QueryExp;
 import javax.management.ReflectionException;
 import javax.management.j2ee.ListenerRegistration;
 import javax.management.j2ee.ManagementHome;
+import java.util.List;
+import java.util.Set;
 
 @Stateless(name = "MEJB")
 @RemoteHome(ManagementHome.class)

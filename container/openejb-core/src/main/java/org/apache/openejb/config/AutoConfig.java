@@ -457,7 +457,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private boolean isJms(final MessageDrivenBean mdb) {
         final String messagingType = mdb.getMessagingType();
-        return (messagingType != null && messagingType.startsWith("javax.jms"));
+        return messagingType != null && messagingType.startsWith("javax.jms");
     }
 
     /**
@@ -737,7 +737,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             // skip destinations with a global jndi name
-            final String mappedName = (ref.getMappedName() == null) ? "" : ref.getMappedName();
+            final String mappedName = ref.getMappedName() == null ? "" : ref.getMappedName();
             if (mappedName.startsWith("jndi:")) {
                 continue;
             }
@@ -749,7 +749,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 continue;
             }
 
-            String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
+            String destinationId = mappedName.length() == 0 ? ref.getName() : mappedName;
             try {
                 destinationId = getResourceId(moduleId, destinationId, refType, appResources);
             } catch (OpenEJBException ex) {
@@ -770,7 +770,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             // skip destinations with a global jndi name
-            final String mappedName = (ref.getMappedName() == null) ? "" : ref.getMappedName();
+            final String mappedName = ref.getMappedName() == null ? "" : ref.getMappedName();
             if (mappedName.startsWith("jndi:")) {
                 continue;
             }
@@ -782,7 +782,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 continue;
             }
 
-            String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
+            String destinationId = mappedName.length() == 0 ? ref.getName() : mappedName;
             destinationId = getResourceEnvId(moduleId, destinationId, refType, appResources);
             ref.setMappedName(destinationId);
         }
@@ -795,12 +795,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             // skip destinations with a global jndi name
-            final String mappedName = (ref.getMappedName() == null) ? "" : ref.getMappedName();
+            final String mappedName = ref.getMappedName() == null ? "" : ref.getMappedName();
             if (mappedName.startsWith("jndi:")) {
                 continue;
             }
 
-            String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
+            String destinationId = mappedName.length() == 0 ? ref.getName() : mappedName;
             destinationId = getResourceEnvId(moduleId, destinationId, ref.getType(), appResources);
             ref.setMappedName(destinationId);
         }
@@ -1126,7 +1126,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return;
         }
         // skip destinations with a global jndi name
-        final String mappedName = (ref.getMappedName() == null) ? "" : ref.getMappedName();
+        final String mappedName = ref.getMappedName() == null ? "" : ref.getMappedName();
         if (mappedName.startsWith("jndi:")) {
             return;
         }
@@ -1151,7 +1151,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         try {
             ResourceLink link = ejbDeployment.getResourceLink(refName);
             if (link == null) {
-                String id = (mappedName.length() == 0) ? ref.getName() : mappedName;
+                String id = mappedName.length() == 0 ? ref.getName() : mappedName;
                 if (id.startsWith("java:")) {
                     id = id.substring("java:".length());
                 }
@@ -1200,7 +1200,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return;
         }
         // skip destinations with a global jndi name
-        final String mappedName = (ref.getMappedName() == null) ? "" : ref.getMappedName();
+        final String mappedName = ref.getMappedName() == null ? "" : ref.getMappedName();
         if (mappedName.startsWith("jndi:")) {
             return;
         }
@@ -1216,7 +1216,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         ResourceLink link = ejbDeployment.getResourceLink(refName);
         if (link == null) {
 
-            String id = (mappedName.length() == 0) ? refName : mappedName;
+            String id = mappedName.length() == 0 ? refName : mappedName;
             id = getResourceEnvId(ejbDeployment.getDeploymentId(), id, refType, appResources);
             if (id == null) {
                 // could be a session context ref
@@ -1646,7 +1646,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (nonJtaDataSourceId != null && jtaDataSourceId == null
                 // hibernate uses the fact that this ds is missing to get a non jta em instead of a JTA one
                 && (!resourceLocal || deduceJtaFromNonJta != null)
-                && (deduceJtaFromNonJta == null || (deduceJtaFromNonJta != null && Boolean.parseBoolean(deduceJtaFromNonJta)))) {
+                && (deduceJtaFromNonJta == null || deduceJtaFromNonJta != null && Boolean.parseBoolean(deduceJtaFromNonJta))) {
 
                 final ResourceInfo nonJtaResourceInfo = configFactory.getResourceInfo(nonJtaDataSourceId);
 

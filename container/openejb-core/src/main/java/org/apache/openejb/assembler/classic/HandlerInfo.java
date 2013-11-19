@@ -17,9 +17,9 @@
 package org.apache.openejb.assembler.classic;
 
 import javax.xml.namespace.QName;
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class HandlerInfo extends InfoObject {
     public String handlerName;

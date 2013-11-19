@@ -98,7 +98,7 @@ public class Instance implements Serializable {
     }
 
     public synchronized Transaction getTransaction() {
-        return (transaction.size() > 0)? transaction.peek(): null;
+        return transaction.size() > 0 ? transaction.peek(): null;
     }
 
     public Lock getLock() {

@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.spi;
 
-import java.util.Properties;
+import org.apache.openejb.OpenEJBException;
 
 import javax.transaction.TransactionManager;
-
-import org.apache.openejb.OpenEJBException;
+import java.util.Properties;
 
 public interface Assembler {
 

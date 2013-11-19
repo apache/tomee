@@ -18,7 +18,8 @@ package org.apache.openejb.core.ivm.naming;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.NameNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -309,7 +310,7 @@ public class NameNode implements java.io.Serializable {
         if (grtrTree != null && grtrTree.hasChildren(node)) return true;
         if (lessTree != null && lessTree.hasChildren(node)) return true;
 
-        return (parent == node);
+        return parent == node;
     }
 
     protected void clearCache() {

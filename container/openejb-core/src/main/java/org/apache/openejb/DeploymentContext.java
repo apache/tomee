@@ -19,9 +19,9 @@ package org.apache.openejb;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.SuperProperties;
 
-import java.util.Properties;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

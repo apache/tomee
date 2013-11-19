@@ -17,8 +17,8 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.SystemException;
 
 import javax.ejb.EJBException;
 import javax.resource.spi.ApplicationServerInternalException;
@@ -187,7 +187,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         try {
             container.beforeDelivery(deployment, instance, method, xaResource);
         } catch (SystemException se) {
-            Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throw new ApplicationServerInternalException(throwable);
         }
 
@@ -226,10 +226,10 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             // deliver the message
             value = container.invoke(instance, method, null, args);
         } catch (SystemException se) {
-            throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            throwable = se.getRootCause() != null ? se.getRootCause() : se;
             state = State.SYSTEM_EXCEPTION;
         } catch (ApplicationException ae) {
-            throwable = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
+            throwable = ae.getRootCause() != null ? ae.getRootCause() : ae;
         } finally {
             // if the adapter is not using before/after, we must call afterDelivery to clean up
             if (callBeforeAfter) {
@@ -273,7 +273,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         } catch (SystemException se) {
             exceptionThrown = true;
 
-            Throwable throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
+            Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throwable.printStackTrace();
             throw new ApplicationServerInternalException(throwable);
         } finally {

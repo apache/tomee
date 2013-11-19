@@ -19,7 +19,7 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.junit.*;
+import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;

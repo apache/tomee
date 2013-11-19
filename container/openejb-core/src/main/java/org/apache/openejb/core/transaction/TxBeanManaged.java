@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.rmi.RemoteException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
+
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+import java.rmi.RemoteException;
 
 public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransactionPolicy {
     private Transaction clientTx;

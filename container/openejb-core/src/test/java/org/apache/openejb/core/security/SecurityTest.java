@@ -17,28 +17,27 @@
 package org.apache.openejb.core.security;
 
 import junit.framework.TestCase;
-
-import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.ejb.Stateless;
-import javax.ejb.SessionContext;
-import javax.annotation.security.RolesAllowed;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.RunAs;
-import javax.annotation.security.DeclareRoles;
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.RunAs;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.util.Properties;
 
 /**

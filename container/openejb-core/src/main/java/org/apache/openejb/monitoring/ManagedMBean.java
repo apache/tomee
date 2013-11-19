@@ -28,16 +28,16 @@ import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
+import javax.management.MBeanFeatureInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
 import javax.management.ReflectionException;
-import javax.management.MBeanFeatureInfo;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,8 +46,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -209,7 +209,7 @@ public class ManagedMBean implements DynamicMBean {
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             Object value = args[i];
             Class<?> expectedType = method.getParameterTypes()[i];
-            if (value instanceof String && (expectedType != Object.class)) {
+            if (value instanceof String && expectedType != Object.class) {
                 String stringValue = (String) value;
                 value = PropertyEditors.getValue(expectedType, stringValue);
             }

@@ -18,9 +18,10 @@
 
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.OpenEJBException;
+
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
-import org.apache.openejb.OpenEJBException;
 
 /**
  * @version $Rev:$ $Date:$
