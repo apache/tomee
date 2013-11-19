@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.deployment.entity.cmp.cmr.onetoone;
 
+import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
+
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.ejb.RemoveException;
-
-import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
 /**
  *

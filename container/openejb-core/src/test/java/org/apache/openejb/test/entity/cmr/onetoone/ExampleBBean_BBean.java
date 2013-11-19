@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.test.entity.cmr.onetoone;
 
-import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
+import org.apache.openejb.core.cmp.cmp2.SingleValuedCmr;
 
 public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
     public static Object deploymentInfo;

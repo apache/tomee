@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import javax.ejb.EJBException;
-import javax.transaction.TransactionSynchronizationRegistry;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.ArrayList;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
+
+import javax.ejb.EJBException;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EntityBean;
+import javax.transaction.TransactionSynchronizationRegistry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 //
 // WARNING: Do not refactor this class.  It is used by the Cmp2Generator.

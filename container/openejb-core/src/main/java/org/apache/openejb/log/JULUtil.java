@@ -16,8 +16,9 @@
  */
 package org.apache.openejb.log;
 
-import java.util.logging.Level;
 import org.apache.openejb.loader.SystemInstance;
+
+import java.util.logging.Level;
 
 public final class JULUtil {
     public static final String DEFAULT_LOG_LEVEL = "INFO";

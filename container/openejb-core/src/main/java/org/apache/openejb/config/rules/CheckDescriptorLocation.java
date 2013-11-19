@@ -20,14 +20,16 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.WebModule;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.apache.openejb.util.CollectionsUtil.safe;
 

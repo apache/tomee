@@ -137,7 +137,7 @@ public class JarExtractor {
         if (files == null) {
             files = new String[0];
         }
-        for (int i = 0; (i < files.length) && result; i++) {
+        for (int i = 0; i < files.length && result; i++) {
             final File fileSrc = new File(src, files[i]);
             final File fileDest = new File(dest, files[i]);
 
@@ -150,8 +150,8 @@ public class JarExtractor {
                 FileChannel ic = null;
                 FileChannel oc = null;
                 try {
-                    ic = (new FileInputStream(fileSrc)).getChannel();
-                    oc = (new FileOutputStream(fileDest)).getChannel();
+                    ic = new FileInputStream(fileSrc).getChannel();
+                    oc = new FileOutputStream(fileDest).getChannel();
                     ic.transferTo(0, ic.size(), oc);
                 } catch (IOException e) {
                     logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);

@@ -16,25 +16,26 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.util.Properties;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import java.util.Properties;
 
 @RunWith(ApplicationComposer.class)
 public class PassivationWithEmTest {

@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.openejb.math.stat.descriptive.WeightedEvaluation;
 import org.apache.openejb.math.stat.descriptive.summary.Sum;
+
+import java.io.Serializable;
 
 /**
  * <p>Computes the arithmetic mean of a set of values. Uses the definitional
@@ -164,7 +164,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
             for (int i = begin; i < begin + length; i++) {
                 correction += values[i] - xbar;
             }
-            return xbar + (correction/sampleSize);
+            return xbar + correction/sampleSize;
         }
         return Double.NaN;
     }
@@ -212,7 +212,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
             for (int i = begin; i < begin + length; i++) {
                 correction += weights[i] * (values[i] - xbarw);
             }
-            return xbarw + (correction/sumw);
+            return xbarw + correction/sumw;
         }
         return Double.NaN;
     }

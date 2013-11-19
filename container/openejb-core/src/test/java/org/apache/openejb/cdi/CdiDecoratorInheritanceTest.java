@@ -17,47 +17,16 @@
 package org.apache.openejb.cdi;
 
 import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
-import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Qualifier;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InterceptorBinding;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 @RunWith(ApplicationComposer.class) // OWB-861
 public class CdiDecoratorInheritanceTest extends TestCase {

@@ -18,19 +18,18 @@
 package org.apache.openejb.core.webservices;
 
 import junit.framework.TestCase;
+import org.w3c.dom.Element;
 
-import javax.xml.ws.spi.Provider;
-import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.spi.Provider;
+import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
 import java.net.URL;
 import java.util.List;
-
-import org.w3c.dom.Element;
 
 public class ProviderWrapperTest extends TestCase {
     public void test() throws Exception {

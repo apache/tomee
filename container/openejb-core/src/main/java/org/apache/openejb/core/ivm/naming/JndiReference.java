@@ -16,14 +16,13 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
-
-import java.util.Hashtable;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.util.Hashtable;
 
 public class JndiReference extends Reference {
 

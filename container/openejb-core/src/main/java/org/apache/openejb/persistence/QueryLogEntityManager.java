@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.persistence;
 
-import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -27,6 +26,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.Metamodel;
+import java.util.Map;
 
 public class QueryLogEntityManager implements EntityManager {
     private final EntityManager delegate;

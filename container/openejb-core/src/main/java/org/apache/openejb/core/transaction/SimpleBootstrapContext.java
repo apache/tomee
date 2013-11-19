@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.util.Timer;
+import org.apache.geronimo.connector.work.GeronimoWorkManager;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-
-import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import java.util.Timer;
 
 public class SimpleBootstrapContext implements BootstrapContext {
     private final WorkManager workManager;

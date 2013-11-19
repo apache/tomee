@@ -18,8 +18,8 @@ package org.apache.openejb.util;
 
 import org.apache.xbean.finder.ResourceFinder;
 
-import java.util.Properties;
 import java.io.PrintStream;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

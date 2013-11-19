@@ -16,8 +16,8 @@
  */
 package org.apache.openejb;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 
 /**
  * To run this from your ide, set -Dopenejb.home=target/test-classes/

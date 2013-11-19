@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.io.Serializable;
+import org.apache.openejb.core.ThreadContext;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-
-import org.apache.openejb.core.ThreadContext;
+import java.io.Serializable;
 
 public class EjbUserTransaction implements UserTransaction, Serializable {
     private static final long serialVersionUID = 8369364873055306924L;

@@ -17,23 +17,23 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
-import org.apache.openejb.OpenEJBException;
 
 import javax.interceptor.InvocationContext;
-import java.util.Comparator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -167,7 +167,7 @@ public class InterceptorBindingBuilder {
         List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
 
         for (InterceptorBindingInfo info : methodBindings) {
-            List<String> classes = (info.interceptorOrder.size() > 0) ? info.interceptorOrder : info.interceptors;
+            List<String> classes = info.interceptorOrder.size() > 0 ? info.interceptorOrder : info.interceptors;
             for (String interceptorClassName : classes) {
                 InterceptorData interceptorData = interceptors.get(interceptorClassName);
                 if (interceptorData == null){

@@ -19,7 +19,6 @@ package org.apache.openejb.util;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
-import org.apache.openejb.cdi.logging.Log4jLoggerFactory;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -71,7 +70,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
         //Use the old file name first
         File loggingPropertiesFile = new File(confDir, LOGGING_PROPERTIES_FILE);
 
-        if ((!embedded && confDir.exists()) || (embedded && loggingPropertiesFile.exists())) {
+        if (!embedded && confDir.exists() || embedded && loggingPropertiesFile.exists()) {
 
             if (!loggingPropertiesFile.exists()) {
                 //Use the new file name

@@ -79,7 +79,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         operation = null;
                     }
                 } else {
-                    operation = (m.getParameterTypes().length == 0) ? operation : null;
+                    operation = m.getParameterTypes().length == 0 ? operation : null;
                 }
             }
             if (operation == null || !interfaceType.isComponent()) {
@@ -117,14 +117,14 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             */
         } catch (org.apache.openejb.InvalidateReferenceException ire) {
             invalidateAllHandlers(getRegistryId());
-            exc = (ire.getRootCause() != null) ? ire.getRootCause() : new RemoteException("InvalidateReferenceException: " + ire);
+            exc = ire.getRootCause() != null ? ire.getRootCause() : new RemoteException("InvalidateReferenceException: " + ire);
             throw exc;
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (org.apache.openejb.ApplicationException ae) {
-            exc = (ae.getRootCause() != null) ? ae.getRootCause() : ae;
+            exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
                     throw exc;
@@ -145,11 +145,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             */
         } catch (org.apache.openejb.SystemException se) {
             invalidateReference();
-            exc = (se.getRootCause() != null) ? se.getRootCause() : se;
+            exc = se.getRootCause() != null ? se.getRootCause() : se;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
         } catch (org.apache.openejb.OpenEJBException oe) {
-            exc = (oe.getRootCause() != null) ? oe.getRootCause() : oe;
+            exc = oe.getRootCause() != null ? oe.getRootCause() : oe;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Unknown Container Exception", oe.getRootCause());
         } finally {

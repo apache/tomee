@@ -522,7 +522,7 @@ public class JndiEncBuilder {
     // if the datasource if defined globally in the currently deployed app originAppname hould not be null
     private boolean isNotGobalOrIsHoldByThisApp(final ResourceInfo info, final JndiScope scope) {
         return !info.jndiName.startsWith("global/")
-                || (info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope));
+                || info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope);
     }
 
     private void addSpecialCompBindings(Map<String, Object> bindings) {

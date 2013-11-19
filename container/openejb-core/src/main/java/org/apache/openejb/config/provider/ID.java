@@ -26,7 +26,7 @@ public class ID {
 
     public ID(String namespace, String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null");
-        this.namespace = (namespace != null) ? namespace.toLowerCase() : null;
+        this.namespace = namespace != null ? namespace.toLowerCase() : null;
         this.name = name.toLowerCase();
     }
 

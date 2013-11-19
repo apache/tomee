@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.openejb.math.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.openejb.math.stat.descriptive.summary.SumOfLogs;
+
+import java.io.Serializable;
 
 /**
  * Returns the <a href="http://www.xycoon.com/geometric_mean.htm">

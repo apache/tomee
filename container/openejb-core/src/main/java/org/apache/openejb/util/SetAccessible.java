@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.util;
 
-import java.security.PrivilegedAction;
-import java.security.AccessController;
 import java.lang.reflect.AccessibleObject;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @version $Rev$ $Date$

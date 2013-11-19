@@ -16,22 +16,23 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.lang.reflect.Field;
-import java.util.Properties;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.hsqldb.jdbc.JDBCDataSource;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.lang.reflect.Field;
+import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;

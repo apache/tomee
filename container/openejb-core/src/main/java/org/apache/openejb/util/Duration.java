@@ -17,10 +17,9 @@
 package org.apache.openejb.util;
 
 import java.beans.PropertyEditorManager;
-import java.util.concurrent.TimeUnit;
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Duration {
 

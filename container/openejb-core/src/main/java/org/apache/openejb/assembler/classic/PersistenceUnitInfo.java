@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 

@@ -16,6 +16,15 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm4.FieldVisitor;
+import org.apache.xbean.asm4.Label;
+import org.apache.xbean.asm4.MethodVisitor;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.asm4.Type;
+
+import javax.ejb.EntityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,16 +34,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.ejb.EntityContext;
-
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.xbean.asm4.ClassWriter;
-import org.apache.xbean.asm4.FieldVisitor;
-import org.apache.xbean.asm4.Label;
-import org.apache.xbean.asm4.MethodVisitor;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.asm4.Type;
 
 /**
  * Code generate for CMP level 2 beans.  This will 

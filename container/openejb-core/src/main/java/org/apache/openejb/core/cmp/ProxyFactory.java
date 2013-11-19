@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.core.cmp;
 
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 

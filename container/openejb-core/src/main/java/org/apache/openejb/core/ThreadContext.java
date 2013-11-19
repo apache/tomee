@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.core;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadContext {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");

@@ -17,11 +17,11 @@
 
 package org.apache.openejb.math.util;
 
+import org.apache.openejb.math.MathRuntimeException;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
-
-import org.apache.openejb.math.MathRuntimeException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
@@ -190,10 +190,10 @@ public final class MathUtils {
      */
     public static long binomialCoefficient(final int n, final int k) {
         checkBinomial(n, k);
-        if ((n == k) || (k == 0)) {
+        if (n == k || k == 0) {
             return 1;
         }
-        if ((k == 1) || (k == n - 1)) {
+        if (k == 1 || k == n - 1) {
             return n;
         }
         // Use symmetry for large k
@@ -225,7 +225,7 @@ public final class MathUtils {
                 // is relative prime to (i/d) and is a divisor of
                 // result * (i/d).
                 final long d = gcd(i, j);
-                result = (result / (j / d)) * (i / d);
+                result = result / (j / d) * i / d;
                 i++;
             }
         } else {
@@ -266,10 +266,10 @@ public final class MathUtils {
      */
     public static double binomialCoefficientDouble(final int n, final int k) {
         checkBinomial(n, k);
-        if ((n == k) || (k == 0)) {
+        if (n == k || k == 0) {
             return 1d;
         }
-        if ((k == 1) || (k == n - 1)) {
+        if (k == 1 || k == n - 1) {
             return n;
         }
         if (k > n/2) {
@@ -307,10 +307,10 @@ public final class MathUtils {
      */
     public static double binomialCoefficientLog(final int n, final int k) {
         checkBinomial(n, k);
-        if ((n == k) || (k == 0)) {
+        if (n == k || k == 0) {
             return 0;
         }
-        if ((k == 1) || (k == n - 1)) {
+        if (k == 1 || k == n - 1) {
             return Math.log(n);
         }
 
@@ -411,7 +411,7 @@ public final class MathUtils {
      * @return true if the values are equal or both are NaN
      */
     public static boolean equals(double x, double y) {
-        return (Double.isNaN(x) && Double.isNaN(y)) || x == y;
+        return Double.isNaN(x) && Double.isNaN(y) || x == y;
     }
 
     /**
@@ -427,7 +427,7 @@ public final class MathUtils {
      * @return true if the values are equal or within range of each other
      */
     public static boolean equals(double x, double y, double eps) {
-      return equals(x, y) || (Math.abs(y - x) <= eps);
+      return equals(x, y) || Math.abs(y - x) <= eps;
     }
 
     /**
@@ -474,8 +474,8 @@ public final class MathUtils {
      * @since 1.2
      */
     public static boolean equals(double[] x, double[] y) {
-        if ((x == null) || (y == null)) {
-            return !((x == null) ^ (y == null));
+        if (x == null || y == null) {
+            return !(x == null ^ y == null);
         }
         if (x.length != y.length) {
             return false;
@@ -616,8 +616,8 @@ public final class MathUtils {
     public static int gcd(final int p, final int q) {
         int u = p;
         int v = q;
-        if ((u == 0) || (v == 0)) {
-            if ((u == Integer.MIN_VALUE) || (v == Integer.MIN_VALUE)) {
+        if (u == 0 || v == 0) {
+            if (u == Integer.MIN_VALUE || v == Integer.MIN_VALUE) {
                 throw MathRuntimeException.createArithmeticException(
                         "overflow: gcd({0}, {1}) is 2^31",
                         p, q);
@@ -650,7 +650,7 @@ public final class MathUtils {
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
         // one is odd.
-        int t = ((u & 1) == 1) ? v : -(u / 2)/* B3 */;
+        int t = (u & 1) == 1 ? v : -(u / 2)/* B3 */;
         // t negative: u was odd, v may be even (t replaces v)
         // t positive: u was even, v is odd (t replaces u)
         do {
@@ -705,8 +705,8 @@ public final class MathUtils {
     public static long gcd(final long p, final long q) {
         long u = p;
         long v = q;
-        if ((u == 0) || (v == 0)) {
-            if ((u == Long.MIN_VALUE) || (v == Long.MIN_VALUE)){
+        if (u == 0 || v == 0) {
+            if (u == Long.MIN_VALUE || v == Long.MIN_VALUE){
                 throw MathRuntimeException.createArithmeticException(
                         "overflow: gcd({0}, {1}) is 2^63",
                         p, q);
@@ -739,7 +739,7 @@ public final class MathUtils {
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
         // one is odd.
-        long t = ((u & 1) == 1) ? v : -(u / 2)/* B3 */;
+        long t = (u & 1) == 1 ? v : -(u / 2)/* B3 */;
         // t negative: u was odd, v may be even (t replaces v)
         // t positive: u was even, v is odd (t replaces u)
         do {
@@ -791,7 +791,7 @@ public final class MathUtils {
      * @return (byte)(+1) or (byte)(-1), depending on the sign of x
      */
     public static byte indicator(final byte x) {
-        return (x >= ZB) ? PB : NB;
+        return x >= ZB ? PB : NB;
     }
 
     /**
@@ -806,7 +806,7 @@ public final class MathUtils {
         if (Double.isNaN(x)) {
             return Double.NaN;
         }
-        return (x >= 0.0) ? 1.0 : -1.0;
+        return x >= 0.0 ? 1.0 : -1.0;
     }
 
     /**
@@ -820,7 +820,7 @@ public final class MathUtils {
         if (Float.isNaN(x)) {
             return Float.NaN;
         }
-        return (x >= 0.0F) ? 1.0F : -1.0F;
+        return x >= 0.0F ? 1.0F : -1.0F;
     }
 
     /**
@@ -830,7 +830,7 @@ public final class MathUtils {
      * @return +1 or -1, depending on the sign of x
      */
     public static int indicator(final int x) {
-        return (x >= 0) ? 1 : -1;
+        return x >= 0 ? 1 : -1;
     }
 
     /**
@@ -840,7 +840,7 @@ public final class MathUtils {
      * @return +1L or -1L, depending on the sign of x
      */
     public static long indicator(final long x) {
-        return (x >= 0L) ? 1L : -1L;
+        return x >= 0L ? 1L : -1L;
     }
 
     /**
@@ -851,7 +851,7 @@ public final class MathUtils {
      * @return (short)(+1) or (short)(-1), depending on the sign of x
      */
     public static short indicator(final short x) {
-        return (x >= ZS) ? PS : NS;
+        return x >= ZS ? PS : NS;
     }
 
     /**
@@ -956,7 +956,7 @@ public final class MathUtils {
      * @since 1.1
      */
     public static int mulAndCheck(int x, int y) {
-        long m = ((long)x) * ((long)y);
+        long m = (long)x * (long)y;
         if (m < Integer.MIN_VALUE || m > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: mul");
         }
@@ -1041,7 +1041,7 @@ public final class MathUtils {
         if (Double.isNaN(d) || Double.isInfinite(d)) {
                 return d;
         } else if (d == 0) {
-                return (direction < 0) ? -Double.MIN_VALUE : Double.MIN_VALUE;
+                return direction < 0 ? -Double.MIN_VALUE : Double.MIN_VALUE;
         }
         // special cases MAX_VALUE to infinity and  MIN_VALUE to 0
         // are handled just as normal numbers
@@ -1056,20 +1056,20 @@ public final class MathUtils {
                 // we should increase the mantissa
                 if (mantissa == 0x000fffffffffffffL) {
                         return Double.longBitsToDouble(sign |
-                                        (exponent + 0x0010000000000000L));
+                                exponent + 0x0010000000000000L);
                 } else {
                         return Double.longBitsToDouble(sign |
-                                        exponent | (mantissa + 1));
+                                        exponent | mantissa + 1);
                 }
         } else {
                 // we should decrease the mantissa
                 if (mantissa == 0L) {
                         return Double.longBitsToDouble(sign |
-                                        (exponent - 0x0010000000000000L) |
+                                exponent - 0x0010000000000000L |
                                         0x000fffffffffffffL);
                 } else {
                         return Double.longBitsToDouble(sign |
-                                        exponent | (mantissa - 1));
+                                        exponent | mantissa - 1);
                 }
         }
 
@@ -1087,7 +1087,7 @@ public final class MathUtils {
     public static double scalb(final double d, final int scaleFactor) {
 
         // handling of some important special cases
-        if ((d == 0) || Double.isNaN(d) || Double.isInfinite(d)) {
+        if (d == 0 || Double.isNaN(d) || Double.isInfinite(d)) {
             return d;
         }
 
@@ -1097,7 +1097,7 @@ public final class MathUtils {
         final long rest     = bits & 0x800fffffffffffffL;
 
         // shift the exponent
-        final long newBits = rest | (exponent + (((long) scaleFactor) << 52));
+        final long newBits = rest | exponent + ((long) scaleFactor << 52);
         return Double.longBitsToDouble(newBits);
 
     }
@@ -1209,9 +1209,9 @@ public final class MathUtils {
      */
     public static double round(double x, int scale, int roundingMethod) {
         try {
-            return (new BigDecimal
+            return new BigDecimal
                    (Double.toString(x))
-                   .setScale(scale, roundingMethod))
+                   .setScale(scale, roundingMethod)
                    .doubleValue();
         } catch (NumberFormatException ex) {
             if (Double.isInfinite(x)) {
@@ -1358,7 +1358,7 @@ public final class MathUtils {
      * @return (byte)(+1), (byte)(0), or (byte)(-1), depending on the sign of x
      */
     public static byte sign(final byte x) {
-        return (x == ZB) ? ZB : (x > ZB) ? PB : NB;
+        return x == ZB ? ZB : x > ZB ? PB : NB;
     }
 
     /**
@@ -1377,7 +1377,7 @@ public final class MathUtils {
         if (Double.isNaN(x)) {
             return Double.NaN;
         }
-        return (x == 0.0) ? 0.0 : (x > 0.0) ? 1.0 : -1.0;
+        return x == 0.0 ? 0.0 : x > 0.0 ? 1.0 : -1.0;
     }
 
     /**
@@ -1395,7 +1395,7 @@ public final class MathUtils {
         if (Float.isNaN(x)) {
             return Float.NaN;
         }
-        return (x == 0.0F) ? 0.0F : (x > 0.0F) ? 1.0F : -1.0F;
+        return x == 0.0F ? 0.0F : x > 0.0F ? 1.0F : -1.0F;
     }
 
     /**
@@ -1409,7 +1409,7 @@ public final class MathUtils {
      * @return +1, 0, or -1, depending on the sign of x
      */
     public static int sign(final int x) {
-        return (x == 0) ? 0 : (x > 0) ? 1 : -1;
+        return x == 0 ? 0 : x > 0 ? 1 : -1;
     }
 
     /**
@@ -1423,7 +1423,7 @@ public final class MathUtils {
      * @return +1L, 0L, or -1L, depending on the sign of x
      */
     public static long sign(final long x) {
-        return (x == 0L) ? 0L : (x > 0L) ? 1L : -1L;
+        return x == 0L ? 0L : x > 0L ? 1L : -1L;
     }
 
     /**
@@ -1438,7 +1438,7 @@ public final class MathUtils {
      *         x
      */
     public static short sign(final short x) {
-        return (x == ZS) ? ZS : (x > ZS) ? PS : NS;
+        return x == ZS ? ZS : x > ZS ? PS : NS;
     }
 
     /**

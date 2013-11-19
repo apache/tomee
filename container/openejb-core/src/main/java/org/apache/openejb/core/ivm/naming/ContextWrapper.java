@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import javax.naming.Binding;
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.Name;
+import javax.naming.NameClassPair;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
-import javax.naming.NameClassPair;
-import javax.naming.Binding;
+import javax.naming.NamingException;
 import java.util.Hashtable;
 
 /**

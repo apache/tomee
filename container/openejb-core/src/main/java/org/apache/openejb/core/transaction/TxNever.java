@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.rmi.RemoteException;
-import javax.transaction.TransactionManager;
-import javax.transaction.Transaction;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
+
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import java.rmi.RemoteException;
 
 /**
  * 17.6.2.6 Never

@@ -18,8 +18,6 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;

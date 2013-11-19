@@ -28,12 +28,13 @@ import org.apache.openejb.loader.SystemInstance;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionAttribute;
-import static javax.ejb.TransactionAttributeType.REQUIRED;
 import javax.naming.InitialContext;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static javax.ejb.TransactionAttributeType.REQUIRED;
 
 /**
  * This test case serves as a nice tiny template for other test cases

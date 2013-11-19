@@ -70,7 +70,7 @@ class EnterpriseBeanBuilder {
             ejbType = BeanType.MESSAGE_DRIVEN;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {
             String persistenceType = ((EntityBeanInfo) bean).persistenceType;
-            ejbType = (persistenceType.equalsIgnoreCase("Container")) ? BeanType.CMP_ENTITY : BeanType.BMP_ENTITY;
+            ejbType = persistenceType.equalsIgnoreCase("Container") ? BeanType.CMP_ENTITY : BeanType.BMP_ENTITY;
         } else {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }

@@ -19,12 +19,12 @@ package org.apache.openejb.core.webservices;
 import org.xml.sax.InputSource;
 
 import javax.wsdl.xml.WSDLLocator;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class WsdlResolver implements WSDLLocator {
     private String baseUri;

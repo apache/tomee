@@ -49,7 +49,7 @@ public class WlsConversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbWls.unmarshal(type, IO.read(((URL)altDD)));
+                altDD = JaxbWls.unmarshal(type, IO.read((URL)altDD));
             } catch (Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor

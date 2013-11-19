@@ -18,9 +18,10 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.core.timer.ScheduleData;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
 import java.lang.reflect.Method;

@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.net.URI;
-
 import junit.framework.TestCase;
 import org.apache.openejb.util.LinkResolver;
+
+import java.net.URI;
 
 public class LinkResolverTest extends TestCase {
 

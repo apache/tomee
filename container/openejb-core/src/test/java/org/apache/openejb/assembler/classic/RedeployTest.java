@@ -17,8 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateful.EncStatefulHome;
@@ -29,7 +29,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
-import java.lang.Exception;
 import java.util.Properties;
 
 /**

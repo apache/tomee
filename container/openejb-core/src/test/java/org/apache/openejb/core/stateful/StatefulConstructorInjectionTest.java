@@ -33,7 +33,6 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
-import javax.sql.DataSource;
 
 /**
  * @version $Revision$ $Date$

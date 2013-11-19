@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import static org.apache.openejb.util.References.sort;
+import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.apache.openejb.util.References.sort;
 
 /**
  * @version $Rev$ $Date$

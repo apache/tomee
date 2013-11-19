@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.core.transaction;
 
+import org.apache.openejb.ApplicationException;
+import org.apache.openejb.SystemException;
+
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionRequiredException;
-
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.SystemException;
 
 /**
  * 17.6.2.5 Mandatory

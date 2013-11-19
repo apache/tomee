@@ -19,7 +19,12 @@ package org.apache.openejb.util;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;

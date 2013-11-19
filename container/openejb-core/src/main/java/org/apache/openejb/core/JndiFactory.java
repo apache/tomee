@@ -18,12 +18,10 @@
 
 package org.apache.openejb.core;
 
-import java.util.Map;
+import org.apache.openejb.SystemException;
 
 import javax.naming.Context;
-
-import org.apache.openejb.core.ivm.naming.NamingException;
-import org.apache.openejb.SystemException;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$

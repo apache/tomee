@@ -17,18 +17,6 @@
  */
 package org.apache.openejb.resource.activemq;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import javax.sql.DataSource;
-
 import junit.framework.TestCase;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
@@ -37,14 +25,25 @@ import org.apache.activemq.network.jms.JmsConnector;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
-import org.apache.openejb.util.NetworkUtil;
-import org.apache.openejb.util.URISupport;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.NetworkUtil;
+import org.apache.openejb.util.URISupport;
 import org.apache.xbean.naming.context.ImmutableContext;
 import org.hsqldb.jdbc.JDBCDataSource;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
 public class OpenEjbBrokerFactoryTest extends TestCase {
     private int brokerPort = NetworkUtil.getNextAvailablePort(new int[]{61616, 0});

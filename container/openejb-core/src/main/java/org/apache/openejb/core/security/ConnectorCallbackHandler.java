@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.core.security;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -33,9 +31,10 @@ import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.security.auth.message.callback.PrivateKeyCallback;
 import javax.security.auth.message.callback.SecretKeyCallback;
 import javax.security.auth.message.callback.TrustStoreCallback;
-
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Spec 16.4.1: must support CallerPrincipalCallback, GroupPrincipalCallback, PasswordValidationCallback. Recommended to support CertStoreCallback, PrivateKeyCallback, SecretKeyCallback, and TrustStoreCallback.

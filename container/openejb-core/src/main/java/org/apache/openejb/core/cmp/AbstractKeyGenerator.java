@@ -16,12 +16,11 @@
  */
 package org.apache.openejb.core.cmp;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import org.apache.openejb.OpenEJBException;
 
 import javax.ejb.EJBException;
-
-import org.apache.openejb.OpenEJBException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public abstract class AbstractKeyGenerator implements KeyGenerator {
     public static boolean isValidPkField(Field field) {

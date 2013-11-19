@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.assembler;
 
-import java.util.Collection;
-import java.util.Properties;
-
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.classic.AppInfo;
+
+import java.util.Collection;
+import java.util.Properties;
 
 public interface Deployer {
     String FILENAME = "filename";

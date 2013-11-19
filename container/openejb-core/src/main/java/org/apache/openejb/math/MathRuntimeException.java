@@ -60,7 +60,7 @@ public class MathRuntimeException extends RuntimeException {
      */
     public MathRuntimeException(final String pattern, final Object ... arguments) {
         this.pattern   = pattern;
-        this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
+        this.arguments = arguments == null ? new Object[0] : arguments.clone();
     }
 
     /**
@@ -89,7 +89,7 @@ public class MathRuntimeException extends RuntimeException {
                                 final String pattern, final Object ... arguments) {
         super(rootCause);
         this.pattern   = pattern;
-        this.arguments = (arguments == null) ? new Object[0] : arguments.clone();
+        this.arguments = arguments == null ? new Object[0] : arguments.clone();
     }
 
     /**
@@ -127,7 +127,7 @@ public class MathRuntimeException extends RuntimeException {
      */
     private static String buildMessage(final Locale locale, final String pattern,
                                        final Object ... arguments) {
-        return (pattern == null) ? "" : new MessageFormat(translate(pattern, locale), locale).format(arguments);
+        return pattern == null ? "" : new MessageFormat(translate(pattern, locale), locale).format(arguments);
     }
 
     /** Gets the pattern used to build the message of this throwable.

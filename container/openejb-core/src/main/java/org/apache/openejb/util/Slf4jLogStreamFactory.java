@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.cdi.logging.Slf4jLoggerFactory;
-
 /**
  * Simple Slf4jLogStream, not much configuration needed, as slf4j is just a facade 
  *

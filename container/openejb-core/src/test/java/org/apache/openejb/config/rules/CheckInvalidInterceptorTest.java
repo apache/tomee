@@ -16,17 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.AroundTimeout;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
@@ -34,6 +24,14 @@ import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.AroundTimeout;
+import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
+import java.util.List;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidInterceptorTest extends TestCase {

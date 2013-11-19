@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.config;
 
-import java.util.Arrays;
-
 import junit.framework.TestCase;
+
+import java.util.Arrays;
 
 public class SunQueryFilterTest extends TestCase {
     private SunConversion sunConversion = new SunConversion();

@@ -25,15 +25,15 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
-import javax.jms.Session;
 import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.UUID;
 import java.util.Map;
 import java.util.TreeMap;
-import java.io.Serializable;
+import java.util.UUID;
 
 public class MdbProxy {
     @SuppressWarnings({"unchecked"})

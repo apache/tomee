@@ -16,23 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.AfterBegin;
-import javax.ejb.AfterCompletion;
-import javax.ejb.BeforeCompletion;
-import javax.ejb.Init;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remove;
-import javax.ejb.SessionSynchronization;
-import javax.ejb.Timeout;
-import javax.interceptor.InvocationContext;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.AroundInvoke;
@@ -49,9 +32,22 @@ import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.Timer;
-import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.util.Join;
 import org.apache.xbean.finder.ClassFinder;
+
+import javax.ejb.AfterBegin;
+import javax.ejb.AfterCompletion;
+import javax.ejb.BeforeCompletion;
+import javax.ejb.Init;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remove;
+import javax.ejb.SessionSynchronization;
+import javax.interceptor.InvocationContext;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

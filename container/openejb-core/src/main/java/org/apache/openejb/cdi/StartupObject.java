@@ -18,13 +18,13 @@
 
 package org.apache.openejb.cdi;
 
-import java.util.List;
-
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.core.WebContext;
 import org.apache.webbeans.config.WebBeansContext;
+
+import java.util.List;
 
 /**
  * @version $Rev:$ $Date:$

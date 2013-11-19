@@ -100,7 +100,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
         }
         if (altDD instanceof URL) {
             try {
-                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read(((URL) altDD)), false);
+                altDD = JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, IO.read((URL) altDD), false);
             } catch (Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
@@ -367,19 +367,19 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 final EntityData leftEntityData = entities.get(moduleId + "#" + leftEjbName);
                 final EjbRelationshipRoleType.CmrField cmrField = leftRole.getCmrField();
 
-                final String leftFieldName = (null != cmrField ? cmrField.getCmrFieldName() : null);
+                final String leftFieldName = null != cmrField ? cmrField.getCmrFieldName() : null;
 
                 RelationField field;
                 if (leftRole.isForeignKeyColumnOnSource()) {
 
-                    field = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
+                    field = null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null;
 
                     // todo warn field not found
                     if (field == null) {
                         continue;
                     }
                 } else {
-                    final RelationField other = (null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null);
+                    final RelationField other = null != leftFieldName && null != leftEntityData ? leftEntityData.relations.get(leftFieldName) : null;
                     // todo warn field not found
                     if (other == null) {
                         continue;

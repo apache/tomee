@@ -17,16 +17,19 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
+import junit.framework.TestCase;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.core.TempClassLoader;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
+import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
+import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
+import org.apache.xbean.asm4.ClassReader;
+import org.apache.xbean.asm4.ClassVisitor;
+import org.apache.xbean.asm4.ClassWriter;
+import org.apache.xbean.asm4.Opcodes;
+import org.apache.xbean.naming.context.ImmutableContext;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -38,20 +41,17 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
-import junit.framework.TestCase;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.openejb.core.TempClassLoader;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
-import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
-import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
-import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
-import org.apache.xbean.asm4.Opcodes;
-import org.apache.xbean.naming.context.ImmutableContext;
-import org.apache.xbean.asm4.ClassReader;
-import org.apache.xbean.asm4.ClassVisitor;
-import org.apache.xbean.asm4.ClassWriter;
 import static org.apache.xbean.asm4.Opcodes.ACC_PRIVATE;
 import static org.apache.xbean.asm4.Opcodes.ACC_TRANSIENT;
 

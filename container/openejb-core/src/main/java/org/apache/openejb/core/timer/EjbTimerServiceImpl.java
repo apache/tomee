@@ -325,7 +325,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         boolean defaultScheduler = false;
         final Scheduler ds = SystemInstance.get().getComponent(Scheduler.class);
         try { // == is the faster way to test, we rely on name (key in quartz registry) only for serialization
-            defaultScheduler = (ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName()));
+            defaultScheduler = ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName());
         } catch (Exception e) {
             // no-op: default should be fine
         }
@@ -742,7 +742,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 }
                 // return;
             }
-            for (int tries = 0; tries < (1 + retryAttempts); tries++) {
+            for (int tries = 0; tries < 1 + retryAttempts; tries++) {
                 boolean retry = false;
                 // if transacted, begin the transaction
                 if (transacted) {

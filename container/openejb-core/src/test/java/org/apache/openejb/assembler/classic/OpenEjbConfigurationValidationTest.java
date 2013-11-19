@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import junit.framework.TestCase;
+
+import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,10 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
 
 /**
  * This test verifies that no architectural constraints have been violated

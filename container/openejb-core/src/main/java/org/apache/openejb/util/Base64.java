@@ -275,7 +275,7 @@ public class Base64 {
         if (isChunked) {
 
             nbrChunks =
-                (CHUNK_SEPARATOR.length == 0 ? 0 : (int) Math.ceil((float) encodedDataLength / CHUNK_SIZE));
+                    CHUNK_SEPARATOR.length == 0 ? 0 : (int) Math.ceil((float) encodedDataLength / CHUNK_SIZE);
             encodedDataLength += nbrChunks * CHUNK_SEPARATOR.length;
         }
 
@@ -302,20 +302,20 @@ public class Base64 {
             k = (byte) (b1 & 0x03);
 
             byte val1 =
-                ((b1 & SIGN) == 0) ? (byte) (b1 >> 2) : (byte) ((b1) >> 2 ^ 0xc0);
+                (b1 & SIGN) == 0 ? (byte) (b1 >> 2) : (byte) (b1 >> 2 ^ 0xc0);
             byte val2 =
-                ((b2 & SIGN) == 0) ? (byte) (b2 >> 4) : (byte) ((b2) >> 4 ^ 0xf0);
+                (b2 & SIGN) == 0 ? (byte) (b2 >> 4) : (byte) (b2 >> 4 ^ 0xf0);
             byte val3 =
-                ((b3 & SIGN) == 0) ? (byte) (b3 >> 6) : (byte) ((b3) >> 6 ^ 0xfc);
+                (b3 & SIGN) == 0 ? (byte) (b3 >> 6) : (byte) (b3 >> 6 ^ 0xfc);
 
             encodedData[encodedIndex] = lookUpBase64Alphabet[val1];
             //log.debug( "val2 = " + val2 );
             //log.debug( "k4   = " + (k<<4) );
             //log.debug(  "vak  = " + (val2 | (k<<4)) );
             encodedData[encodedIndex + 1] =
-                lookUpBase64Alphabet[val2 | (k << 4)];
+                lookUpBase64Alphabet[val2 | k << 4];
             encodedData[encodedIndex + 2] =
-                lookUpBase64Alphabet[(l << 2) | val3];
+                lookUpBase64Alphabet[l << 2 | val3];
             encodedData[encodedIndex + 3] = lookUpBase64Alphabet[b3 & 0x3f];
 
             encodedIndex += 4;
@@ -332,8 +332,8 @@ public class Base64 {
                         CHUNK_SEPARATOR.length);
                     chunksSoFar++;
                     nextSeparatorIndex =
-                        (CHUNK_SIZE * (chunksSoFar + 1)) +
-                        (chunksSoFar * CHUNK_SEPARATOR.length);
+                        CHUNK_SIZE * (chunksSoFar + 1) +
+                                chunksSoFar * CHUNK_SEPARATOR.length;
                     encodedIndex += CHUNK_SEPARATOR.length;
                 }
             }
@@ -348,7 +348,7 @@ public class Base64 {
             //log.debug("b1=" + b1);
             //log.debug("b1<<2 = " + (b1>>2) );
             byte val1 =
-                ((b1 & SIGN) == 0) ? (byte) (b1 >> 2) : (byte) ((b1) >> 2 ^ 0xc0);
+                (b1 & SIGN) == 0 ? (byte) (b1 >> 2) : (byte) (b1 >> 2 ^ 0xc0);
             encodedData[encodedIndex] = lookUpBase64Alphabet[val1];
             encodedData[encodedIndex + 1] = lookUpBase64Alphabet[k << 4];
             encodedData[encodedIndex + 2] = PAD;
@@ -361,13 +361,13 @@ public class Base64 {
             k = (byte) (b1 & 0x03);
 
             byte val1 =
-                ((b1 & SIGN) == 0) ? (byte) (b1 >> 2) : (byte) ((b1) >> 2 ^ 0xc0);
+                (b1 & SIGN) == 0 ? (byte) (b1 >> 2) : (byte) (b1 >> 2 ^ 0xc0);
             byte val2 =
-                ((b2 & SIGN) == 0) ? (byte) (b2 >> 4) : (byte) ((b2) >> 4 ^ 0xf0);
+                (b2 & SIGN) == 0 ? (byte) (b2 >> 4) : (byte) (b2 >> 4 ^ 0xf0);
 
             encodedData[encodedIndex] = lookUpBase64Alphabet[val1];
             encodedData[encodedIndex + 1] =
-                lookUpBase64Alphabet[val2 | (k << 4)];
+                lookUpBase64Alphabet[val2 | k << 4];
             encodedData[encodedIndex + 2] = lookUpBase64Alphabet[l << 2];
             encodedData[encodedIndex + 3] = PAD;
         }
@@ -437,7 +437,7 @@ public class Base64 {
 
                 decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
                 decodedData[encodedIndex + 1] =
-                    (byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf));
+                    (byte) ((b2 & 0xf) << 4 | b3 >> 2 & 0xf);
                 decodedData[encodedIndex + 2] = (byte) (b3 << 6 | b4);
             } else if (marker0 == PAD) {
                 //Two PAD e.g. 3c[Pad][Pad]
@@ -448,7 +448,7 @@ public class Base64 {
 
                 decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
                 decodedData[encodedIndex + 1] =
-                    (byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf));
+                    (byte) ((b2 & 0xf) << 4 | b3 >> 2 & 0xf);
             }
             encodedIndex += 3;
         }

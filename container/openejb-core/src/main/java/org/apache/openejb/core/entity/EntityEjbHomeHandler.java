@@ -16,21 +16,20 @@
  */
 package org.apache.openejb.core.entity;
 
-import java.lang.reflect.Method;
-import java.util.Vector;
-import java.util.List;
-
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import javax.ejb.EJBLocalObject;
-import javax.ejb.RemoveException;
 import javax.ejb.EJBObject;
+import javax.ejb.RemoveException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Vector;
 
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
@@ -75,7 +74,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         } else if (retValue instanceof org.apache.openejb.util.ArrayEnumeration) {
             org.apache.openejb.util.ArrayEnumeration enumeration = (org.apache.openejb.util.ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
-                ProxyInfo proxyInfo = ((ProxyInfo) enumeration.get(i));
+                ProxyInfo proxyInfo = (ProxyInfo) enumeration.get(i);
                 enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return enumeration;
@@ -84,7 +83,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
             java.util.List proxies = new java.util.ArrayList();
             while (enumeration.hasMoreElements()) {
-                ProxyInfo proxyInfo = ((ProxyInfo) enumeration.nextElement());
+                ProxyInfo proxyInfo = (ProxyInfo) enumeration.nextElement();
                 proxies.add(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return new org.apache.openejb.util.ArrayEnumeration(proxies);

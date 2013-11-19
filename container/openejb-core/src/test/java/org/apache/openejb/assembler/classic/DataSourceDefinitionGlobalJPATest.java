@@ -16,11 +16,17 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
+import org.apache.commons.dbcp.DelegatingConnection;
+import org.apache.commons.dbcp.managed.ManagedConnection;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.hsqldb.jdbc.JDBCConnection;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import javax.annotation.sql.DataSourceDefinition;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -30,16 +36,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp.DelegatingConnection;
-import org.apache.commons.dbcp.managed.ManagedConnection;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
-import org.hsqldb.jdbc.JDBCConnection;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;

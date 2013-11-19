@@ -236,7 +236,7 @@ public class FailOverRouter extends AbstractRouter {
             for (int i = 0; i < step; i++) {
                 currentIdx = idx.incrementAndGet();
             }
-            Collections.rotate(ds, 1 + (currentIdx % ds.size()));
+            Collections.rotate(ds, 1 + currentIdx % ds.size());
             return ds;
         }
 

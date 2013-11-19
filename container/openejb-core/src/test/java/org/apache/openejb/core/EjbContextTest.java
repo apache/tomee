@@ -17,30 +17,28 @@
 package org.apache.openejb.core;
 
 import junit.framework.TestCase;
-
-import javax.ejb.LocalBean;
-import javax.ejb.SessionBean;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.LocalHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.CreateException;
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.rmi.RemoteException;
-import java.util.Properties;
-
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.osgi.client.LocalInitialContextFactory;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.LocalBean;
+import javax.ejb.LocalHome;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.rmi.RemoteException;
+import java.util.Properties;
 
 
 /**

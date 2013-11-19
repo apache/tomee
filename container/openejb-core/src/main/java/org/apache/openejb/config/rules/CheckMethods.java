@@ -24,13 +24,13 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CheckMethods extends ValidationBase {
 

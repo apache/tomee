@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.util.Join;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MethodPermissionInfo extends MethodAttributeInfo {
 

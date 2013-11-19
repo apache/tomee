@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.log;
 
-import java.util.logging.ConsoleHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.AnsiOutputStream;
 import org.fusesource.jansi.WindowsAnsiOutputStream;
+
+import java.util.logging.ConsoleHandler;
 
 import static org.apache.openejb.log.JULUtil.level;
 

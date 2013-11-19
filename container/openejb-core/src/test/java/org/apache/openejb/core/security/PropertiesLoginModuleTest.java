@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.security;
 
-import static org.apache.openejb.util.URLs.toFilePath;
 import junit.framework.TestCase;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jaas.UserPrincipal;
@@ -27,6 +26,8 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import java.net.URL;
+
+import static org.apache.openejb.util.URLs.toFilePath;
 
 /**
  * @version $Rev$ $Date$

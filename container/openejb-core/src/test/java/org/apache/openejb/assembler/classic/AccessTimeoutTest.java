@@ -17,10 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
-import org.apache.openejb.cdi.ThreadSingletonService;
-import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;

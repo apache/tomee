@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Priority;
 
 import java.io.PrintWriter;
 

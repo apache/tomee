@@ -16,20 +16,17 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.rules.Key;
-import org.apache.openejb.config.rules.KeyType;
-import org.apache.openejb.config.rules.Keys;
-import org.apache.openejb.config.rules.ValidationRunner;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runner.RunWith;
+
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.interceptor.AroundInvoke;
 
 @RunWith(ValidationRunner.class)
 public class LocalBeanAnnotatedLocalTest {

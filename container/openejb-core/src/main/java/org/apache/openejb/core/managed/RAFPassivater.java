@@ -20,11 +20,10 @@ import org.apache.openejb.spi.Serializer;
 
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 // optimization: replace HashTable with HashMap (vc no debug hashmap)
 
@@ -62,7 +61,7 @@ public class RAFPassivater implements PassivationStrategy {
                 byte [] bytes = Serializer.serialize(obj);
                 long filepointer = ras.getFilePointer();
 
-                if (lastPointer == null) lastPointer = new Pointer(fileID, filepointer, (int) (filepointer));
+                if (lastPointer == null) lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
                 else
                     lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
 

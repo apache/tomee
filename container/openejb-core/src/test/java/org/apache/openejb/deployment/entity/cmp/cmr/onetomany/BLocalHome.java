@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.deployment.entity.cmp.cmr.onetomany;
 
+import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
-
-import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
 
 /**

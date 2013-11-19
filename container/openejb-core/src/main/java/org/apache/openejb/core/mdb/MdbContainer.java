@@ -384,7 +384,7 @@ public class MdbContainer implements RpcContainer {
                 if (openEjbException == null) {
                     logger.debug("finished invoking method " + method.getName() + ". Return value:" + returnValue);
                 } else {
-                    Throwable exception = (openEjbException.getRootCause() != null) ? openEjbException.getRootCause() : openEjbException;
+                    Throwable exception = openEjbException.getRootCause() != null ? openEjbException.getRootCause() : openEjbException;
                     logger.debug("finished invoking method " + method.getName() + " with exception " + exception);
                 }
             }

@@ -20,7 +20,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JAXBContextFactory;
-import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;

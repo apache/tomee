@@ -19,8 +19,8 @@ package org.apache.openejb.core.interceptor;
 import org.apache.openejb.core.Operation;
 
 import javax.xml.rpc.handler.MessageContext;
-import java.util.List;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * We could really get by with usinga plain ReflectionInvocationContext

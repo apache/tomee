@@ -168,7 +168,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     }
 
     public boolean inService() throws PolicyContextException {
-        return (state == IN_SERVICE);
+        return state == IN_SERVICE;
     }
 
     //TODO I have no idea what side effects this might have, but it's needed in some form from PolicyConfigurationFactoryImpl.

@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.config;
 
+import java.io.File;
 import java.util.Properties;
 import java.util.Set;
-import java.io.File;
 
 /**
  * @version $Rev$ $Date$

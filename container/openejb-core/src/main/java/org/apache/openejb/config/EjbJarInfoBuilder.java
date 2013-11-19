@@ -539,9 +539,9 @@ public class EjbJarInfoBuilder {
         EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
 
         methodInfo.description = method.getDescription();
-        methodInfo.ejbDeploymentId = (d == null)?null:d.getDeploymentId();
+        methodInfo.ejbDeploymentId = d == null ?null:d.getDeploymentId();
         methodInfo.ejbName = method.getEjbName();
-        methodInfo.methodIntf = (method.getMethodIntf() == null) ? null : method.getMethodIntf().toString();
+        methodInfo.methodIntf = method.getMethodIntf() == null ? null : method.getMethodIntf().toString();
         methodInfo.methodName = method.getMethodName();
         if (methodInfo.methodName == null || methodInfo.methodName.equals("")){
             methodInfo.methodName = "*";
@@ -563,7 +563,7 @@ public class EjbJarInfoBuilder {
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
-            StatefulBeanInfo stateful = ((StatefulBeanInfo) bean);
+            StatefulBeanInfo stateful = (StatefulBeanInfo) bean;
 
             copyCallbacks(s.getPostActivate(), stateful.postActivate);
             copyCallbacks(s.getPrePassivate(), stateful.prePassivate);
@@ -590,7 +590,7 @@ public class EjbJarInfoBuilder {
 
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
-            ManagedBeanInfo managed = ((ManagedBeanInfo) bean);
+            ManagedBeanInfo managed = (ManagedBeanInfo) bean;
             if (s instanceof ManagedBean) { // this way we support managed beans in ejb-jar.xml (not in the spec but can be useful)
                 managed.hidden = ((ManagedBean) s).isHidden();
             } else {
@@ -610,7 +610,7 @@ public class EjbJarInfoBuilder {
         } else if (s.getSessionType() == SessionType.SINGLETON) {
             bean = new SingletonBeanInfo();
             ConcurrencyManagementType type = s.getConcurrencyManagementType();
-            bean.concurrencyType = (type != null) ? type.toString() : ConcurrencyManagementType.CONTAINER.toString();
+            bean.concurrencyType = type != null ? type.toString() : ConcurrencyManagementType.CONTAINER.toString();
             bean.loadOnStartup = s.getInitOnStartup();
 
             copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
@@ -651,8 +651,8 @@ public class EjbJarInfoBuilder {
         bean.containerId = d.getContainerId();
 
         Icon icon = s.getIcon();
-        bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
-        bean.smallIcon = (icon == null) ? null : icon.getSmallIcon();
+        bean.largeIcon = icon == null ? null : icon.getLargeIcon();
+        bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = s.getDescription();
         bean.displayName = s.getDisplayName();
         bean.ejbClass = s.getEjbClass();
@@ -666,7 +666,7 @@ public class EjbJarInfoBuilder {
         bean.businessLocal.addAll(s.getBusinessLocal());
         bean.businessRemote.addAll(s.getBusinessRemote());
         TransactionType txType = s.getTransactionType();
-        bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
 
@@ -719,14 +719,14 @@ public class EjbJarInfoBuilder {
         bean.containerId = d.getContainerId();
 
         Icon icon = mdb.getIcon();
-        bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
-        bean.smallIcon = (icon == null) ? null : icon.getSmallIcon();
+        bean.largeIcon = icon == null ? null : icon.getLargeIcon();
+        bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = mdb.getDescription();
         bean.displayName = mdb.getDisplayName();
         bean.ejbClass = mdb.getEjbClass();
         bean.ejbName = mdb.getEjbName();
         TransactionType txType = mdb.getTransactionType();
-        bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
         bean.properties.putAll(d.getProperties());
 
         if (mdb.getMessagingType() != null) {
@@ -792,8 +792,8 @@ public class EjbJarInfoBuilder {
         bean.containerId = d.getContainerId();
 
         Icon icon = e.getIcon();
-        bean.largeIcon = (icon == null) ? null : icon.getLargeIcon();
-        bean.smallIcon = (icon == null) ? null : icon.getSmallIcon();
+        bean.largeIcon = icon == null ? null : icon.getLargeIcon();
+        bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = e.getDescription();
         bean.displayName = e.getDisplayName();
         bean.ejbClass = e.getEjbClass();

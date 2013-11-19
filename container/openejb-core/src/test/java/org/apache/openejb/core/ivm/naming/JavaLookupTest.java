@@ -22,12 +22,12 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 
-import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.LinkRef;
 import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 
 /**
  * @version $Rev$ $Date$

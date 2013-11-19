@@ -18,14 +18,14 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.MessageDrivenBean;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;

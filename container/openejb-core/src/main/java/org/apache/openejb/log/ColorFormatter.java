@@ -16,14 +16,15 @@
  */
 package org.apache.openejb.log;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.fusesource.jansi.Ansi;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import org.apache.openejb.loader.SystemInstance;
-import org.fusesource.jansi.Ansi;
 
 public class ColorFormatter extends SingleLineFormatter {
     public static final String OPENEJB_LOG_COLOR_PREFIX = "openejb.log.color.";

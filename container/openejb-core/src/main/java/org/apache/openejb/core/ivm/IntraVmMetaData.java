@@ -16,14 +16,13 @@
  */
 package org.apache.openejb.core.ivm;
 
-import java.io.ObjectStreamException;
-
-import javax.ejb.EJBHome;
-
 import org.apache.openejb.BeanType;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
+
+import javax.ejb.EJBHome;
+import java.io.ObjectStreamException;
 
 public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializable {
 

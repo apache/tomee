@@ -216,7 +216,7 @@ public class StatsInterceptor {
         public Stats(Method method, Monitor classAnnotation) {
             Monitor methodAnnotation = method.getAnnotation(Monitor.class);
 
-            int window = (methodAnnotation != null) ? methodAnnotation.sample() : (classAnnotation != null) ? classAnnotation.sample() : 2000;
+            int window = methodAnnotation != null ? methodAnnotation.sample() : classAnnotation != null ? classAnnotation.sample() : 2000;
 
             this.samples = new SynchronizedDescriptiveStatistics(window);
             String s = ",";

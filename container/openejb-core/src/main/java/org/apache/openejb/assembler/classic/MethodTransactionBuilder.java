@@ -16,21 +16,20 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
-import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveViewAttributes;
-
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.Logger;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveViewAttributes;
 
 /**
  * @version $Rev$ $Date$

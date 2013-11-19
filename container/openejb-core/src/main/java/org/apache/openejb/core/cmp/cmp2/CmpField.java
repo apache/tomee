@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import java.lang.reflect.Method; 
-
 import org.apache.xbean.asm4.Type;
+
+import java.lang.reflect.Method;
 
 public class CmpField {
     private final String name;

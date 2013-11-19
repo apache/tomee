@@ -187,8 +187,8 @@ public class LocalBeanProxyFactory implements Opcodes {
                 final String name = method.getName();
 
                 if (Modifier.isPublic(method.getModifiers())
-                    || (method.getParameterTypes().length == 0 && ("finalize".equals(name)
-                                                                   || "clone".equals(name)))) {
+                    || method.getParameterTypes().length == 0 && ("finalize".equals(name)
+                                                                   || "clone".equals(name))) {
                     // forward invocations of any public methods or 
                     // finalize/clone methods to businessHandler 
                     processMethod(cw, method, proxyClassFileName, BUSSINESS_HANDLER_NAME);
@@ -380,7 +380,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         // cast the result
         mv.visitTypeInsn(CHECKCAST, getCastType(returnType));
 
-        if (returnType.isPrimitive() && (!Void.TYPE.equals(returnType))) {
+        if (returnType.isPrimitive() && !Void.TYPE.equals(returnType)) {
             // get the primitive value
             mv.visitMethodInsn(INVOKEVIRTUAL, getWrapperType(returnType), getPrimitiveMethod(returnType), "()" + getPrimitiveLetter(returnType));
         }
@@ -423,7 +423,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 mv.visitInsn(ATHROW);
                 mv.visitLabel(l6);
 
-                if (i == (exceptionTypes.length - 1)) {
+                if (i == exceptionTypes.length - 1) {
                     mv.visitTypeInsn(NEW, "java/lang/reflect/UndeclaredThrowableException");
                     mv.visitInsn(DUP);
                     mv.visitVarInsn(ALOAD, length);

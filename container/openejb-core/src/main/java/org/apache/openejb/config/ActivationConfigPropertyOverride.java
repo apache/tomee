@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -31,6 +27,10 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

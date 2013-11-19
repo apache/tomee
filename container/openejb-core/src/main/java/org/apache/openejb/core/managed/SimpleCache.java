@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.core.managed;
 
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -26,11 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Duration;
 
 public class SimpleCache<K, V> implements Cache<K, V> {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -521,7 +521,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                 return false;
             }
             long now = System.currentTimeMillis();
-            return (now - lastAccess) > timeOut;
+            return now - lastAccess > timeOut;
         }
 
         private void resetTimeOut() {

@@ -634,7 +634,7 @@ public class OpenEjbContainer extends EJBContainer {
             String[] spec = {"java.lang.String", "java.lang.String[]", "java.io.File", "java.io.File[]"};
 //            TODO
 //            String[] vendor = {"java.lang.Class","java.lang.Class[]", "java.net.URL", "java.io.URL[]"};
-            String type = (value == null) ? null : value.getClass().getName();
+            String type = value == null ? null : value.getClass().getName();
             return new InvalidModulesPropertyException(String.format("Invalid '%s' value '%s'. Valid values are: %s", EJBContainer.MODULES, type, Join.join(", ", spec)));
         }
 

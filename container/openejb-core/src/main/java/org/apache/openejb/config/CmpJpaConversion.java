@@ -16,6 +16,52 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
+import org.apache.openejb.jee.CmpField;
+import org.apache.openejb.jee.CmpVersion;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbRelation;
+import org.apache.openejb.jee.EjbRelationshipRole;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.Multiplicity;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.Query;
+import org.apache.openejb.jee.QueryMethod;
+import org.apache.openejb.jee.RelationshipRoleSource;
+import org.apache.openejb.jee.Relationships;
+import org.apache.openejb.jee.jpa.AttributeOverride;
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.CascadeType;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.GeneratedValue;
+import org.apache.openejb.jee.jpa.GenerationType;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.IdClass;
+import org.apache.openejb.jee.jpa.ManyToMany;
+import org.apache.openejb.jee.jpa.ManyToOne;
+import org.apache.openejb.jee.jpa.MappedSuperclass;
+import org.apache.openejb.jee.jpa.Mapping;
+import org.apache.openejb.jee.jpa.NamedQuery;
+import org.apache.openejb.jee.jpa.OneToMany;
+import org.apache.openejb.jee.jpa.OneToOne;
+import org.apache.openejb.jee.jpa.RelationField;
+import org.apache.openejb.jee.jpa.Transient;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Strings;
+
+import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -28,22 +74,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import javax.ejb.EJBLocalObject;
-
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
-import org.apache.openejb.jee.*;
-import org.apache.openejb.jee.jpa.*;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.TransactionType;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Strings;
 
 public class CmpJpaConversion implements DynamicDeployer {
 

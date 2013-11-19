@@ -16,6 +16,14 @@
  */
 package org.apache.openejb.persistence;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
+import javax.persistence.FlushModeType;
+import javax.persistence.LockModeType;
+import javax.persistence.Parameter;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,13 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Parameter;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public class CriteriaLogQuery<T> implements TypedQuery<T> {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_JPA, CriteriaLogQuery.class);

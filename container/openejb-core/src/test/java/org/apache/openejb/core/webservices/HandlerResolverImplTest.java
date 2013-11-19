@@ -18,19 +18,19 @@
 package org.apache.openejb.core.webservices;
 
 import junit.framework.TestCase;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.config.ReadDescriptors;
-import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
-import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.jee.HandlerChains;
 
+import javax.naming.InitialContext;
+import javax.xml.namespace.QName;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.PortInfo;
-import javax.xml.namespace.QName;
-import javax.naming.InitialContext;
-import java.util.List;
 import java.net.URL;
+import java.util.List;
 
 public class HandlerResolverImplTest extends TestCase {
 

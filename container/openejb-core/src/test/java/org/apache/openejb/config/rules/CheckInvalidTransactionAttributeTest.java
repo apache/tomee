@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.interceptor.AroundInvoke;
-
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Method;
@@ -29,6 +23,12 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.junit.runner.RunWith;
+
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.interceptor.AroundInvoke;
 
 /**
  * @version $Rev: 964531 $ $Date: 2010-07-15 14:40:36 -0400 (Thu, 15 Jul 2010) $

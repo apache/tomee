@@ -454,7 +454,7 @@ public class ClassLoaderUtil {
 
         } catch (ConcurrentModificationException e) {
             if (attempt > 0) {
-                clearSunJarFileFactoryCacheImpl(jarLocation, (attempt - 1));
+                clearSunJarFileFactoryCacheImpl(jarLocation, attempt - 1);
             } else {
                 logger.error("Unable to clear Sun JarFileFactory cache after 5 attempts", e);
             }

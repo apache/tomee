@@ -16,24 +16,23 @@
  */
 package org.apache.openejb.config;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.openejb.jee.ManagedBean;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.StringTemplate;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class InitEjbDeployments implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");

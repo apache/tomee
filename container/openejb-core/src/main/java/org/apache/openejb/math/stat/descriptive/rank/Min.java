@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.math.stat.descriptive.rank;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 /**
  * Returns the minimum of the available values.
@@ -130,7 +130,7 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
             min = values[begin];
             for (int i = begin; i < begin + length; i++) {
                 if (!Double.isNaN(values[i])) {
-                    min = (min < values[i]) ? min : values[i];
+                    min = min < values[i] ? min : values[i];
                 }
             }
         }

@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -25,6 +23,9 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.sys.Resource;
 import org.hsqldb.jdbcDriver;
 import org.junit.Test;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;

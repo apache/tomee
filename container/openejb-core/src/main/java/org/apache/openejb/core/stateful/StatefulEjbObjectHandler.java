@@ -17,15 +17,15 @@
 package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.InterfaceType;
 import org.apache.openejb.Container;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.io.Serializable;
 
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 

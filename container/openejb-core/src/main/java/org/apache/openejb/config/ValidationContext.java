@@ -108,7 +108,7 @@ public class ValidationContext implements ValidationResults {
     }
 
     public String getName() {
-        return (module == null) ? name : module.getModuleId();
+        return module == null ? name : module.getModuleId();
     }
 
     public String getModuleType() {

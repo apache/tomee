@@ -21,9 +21,9 @@ package org.apache.openejb.resource;
 import org.apache.geronimo.transaction.log.HOWLLog;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.geronimo.transaction.manager.TransactionLog;
+import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
-import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.openejb.api.internal.Internal;
 import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
@@ -34,7 +34,6 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
 
-import javax.management.ObjectName;
 import javax.transaction.xa.XAResource;
 import java.util.concurrent.TimeUnit;
 

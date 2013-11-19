@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import junit.framework.TestCase;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.concurrent.CancellationException;
@@ -24,8 +26,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import junit.framework.TestCase;
 
 public class AsynchronousRunnerTest extends TestCase {
 

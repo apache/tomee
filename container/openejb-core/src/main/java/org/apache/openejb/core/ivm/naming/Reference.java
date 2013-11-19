@@ -19,9 +19,6 @@ package org.apache.openejb.core.ivm.naming;
 import org.apache.xbean.naming.reference.SimpleReference;
 
 import javax.naming.NamingException;
-import javax.naming.Name;
-import javax.naming.Context;
-import java.util.Hashtable;
 
 
 /**

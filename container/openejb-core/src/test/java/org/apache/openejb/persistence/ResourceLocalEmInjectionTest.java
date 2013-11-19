@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.persistence;
 
-import java.util.Properties;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -33,6 +27,13 @@ import org.apache.openejb.testing.Module;
 import org.apache.webbeans.logger.JULLoggerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;

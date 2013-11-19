@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.math.stat.descriptive.summary;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 /**
  * Returns the sum of the squares of the available values.

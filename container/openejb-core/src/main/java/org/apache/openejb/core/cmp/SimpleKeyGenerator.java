@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.core.cmp;
 
-import java.lang.reflect.Field;
-import javax.ejb.EntityBean;
-
 import org.apache.openejb.OpenEJBException;
+
+import javax.ejb.EntityBean;
+import java.lang.reflect.Field;
 
 public class SimpleKeyGenerator extends AbstractKeyGenerator {
     private final Field pkField;

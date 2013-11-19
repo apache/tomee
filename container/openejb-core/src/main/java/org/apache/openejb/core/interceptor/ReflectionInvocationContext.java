@@ -20,12 +20,12 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.Classes;
 
 import javax.interceptor.InvocationContext;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
-import java.util.TreeMap;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @version $Rev$ $Date$
@@ -252,7 +252,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public String toString() {
-        String methodName = (method != null)? method.getName(): null;
+        String methodName = method != null ? method.getName(): null;
 
         return "InvocationContext(operation=" + operation + ", target="+target.getClass().getName()+", method="+methodName+")";
     }

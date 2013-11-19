@@ -54,8 +54,8 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             }
             EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
 
-            if ((unitInfo.getProperties() != null
-                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER)))
+            if (unitInfo.getProperties() != null
+                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
                     || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
                 emf.createEntityManager().close();
             }

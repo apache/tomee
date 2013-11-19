@@ -33,7 +33,6 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openjpa.persistence.osgi.BundleUtils;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -41,8 +40,8 @@ import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.Properties;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**

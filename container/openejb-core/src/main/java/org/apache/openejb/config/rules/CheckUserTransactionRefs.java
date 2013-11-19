@@ -19,10 +19,10 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import static org.apache.openejb.jee.TransactionType.CONTAINER;
 
 import java.util.Collection;
+
+import static org.apache.openejb.jee.TransactionType.CONTAINER;
 
 /**
  * Excerpt from EJB 3.0 Core spec, chapter <b>16.12. UserTransaction Interface</b>:

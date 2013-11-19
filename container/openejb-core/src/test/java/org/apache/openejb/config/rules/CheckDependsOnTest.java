@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.junit.runner.RunWith;
+
+import javax.ejb.DependsOn;
+import javax.ejb.Singleton;
 
 @RunWith(ValidationRunner.class)
 public class CheckDependsOnTest {

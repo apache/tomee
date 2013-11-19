@@ -138,8 +138,8 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                 if (findAnnotation(m, ManagedAttribute.class) != null) {
                     String methodName = m.getName();
                     String attrName = methodName;
-                    if (((attrName.startsWith("get") && m.getParameterTypes().length == 0)
-                            || (attrName.startsWith("set") && m.getParameterTypes().length == 1))
+                    if ((attrName.startsWith("get") && m.getParameterTypes().length == 0
+                            || attrName.startsWith("set") && m.getParameterTypes().length == 1)
                             && attrName.length() > 3) {
                         attrName = attrName.substring(3);
                         if (attrName.length() > 1) {
@@ -248,7 +248,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
                                            final Annotation[][] annots) {
         final MBeanParameterInfo[] params =
             new MBeanParameterInfo[classes.length];
-        assert(classes.length == annots.length);
+        assert classes.length == annots.length;
 
         String desc = "";
         for (int i = 0; i < classes.length; i++) {

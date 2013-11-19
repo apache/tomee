@@ -16,16 +16,15 @@
  */
 package org.apache.openejb.core.singleton;
 
-import java.security.Principal;
-
-import javax.ejb.SessionContext;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.handler.MessageContext;
-
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.w3c.dom.Element;
+
+import javax.ejb.SessionContext;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+import java.security.Principal;
 
 public class EjbWsContext implements WebServiceContext {
     private SessionContext context;

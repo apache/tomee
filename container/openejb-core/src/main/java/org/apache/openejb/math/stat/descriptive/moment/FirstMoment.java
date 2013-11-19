@@ -16,8 +16,9 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 /**
  * Computes the first moment (arithmetic mean).  Uses the definitional formula:

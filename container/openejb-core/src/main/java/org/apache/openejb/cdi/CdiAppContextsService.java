@@ -238,7 +238,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 || scopeType.equals(ApplicationScoped.class)
                 || scopeType.equals(Dependent.class)
                 || scopeType.equals(Singleton.class)
-                || (scopeType.equals(ConversationScoped.class) && supportsConversation());
+                || scopeType.equals(ConversationScoped.class) && supportsConversation();
 
     }
 

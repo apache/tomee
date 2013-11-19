@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.sys.Resource;
@@ -30,6 +24,13 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.Property;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

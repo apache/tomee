@@ -17,10 +17,9 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 

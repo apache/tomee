@@ -16,29 +16,30 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkEvent;
+import javax.resource.spi.work.WorkException;
+import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
+import javax.resource.spi.work.WorkRejectedException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+
 import static javax.resource.spi.work.WorkEvent.WORK_ACCEPTED;
 import static javax.resource.spi.work.WorkEvent.WORK_COMPLETED;
 import static javax.resource.spi.work.WorkEvent.WORK_REJECTED;
 import static javax.resource.spi.work.WorkEvent.WORK_STARTED;
-import javax.resource.spi.work.WorkException;
 import static javax.resource.spi.work.WorkException.INTERNAL;
 import static javax.resource.spi.work.WorkException.START_TIMED_OUT;
-import javax.resource.spi.work.WorkListener;
-import javax.resource.spi.work.WorkManager;
-import javax.resource.spi.work.WorkRejectedException;
-
 import static org.apache.openejb.core.transaction.SimpleWorkManager.WorkType.DO;
 import static org.apache.openejb.core.transaction.SimpleWorkManager.WorkType.SCHEDULE;
 import static org.apache.openejb.core.transaction.SimpleWorkManager.WorkType.START;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 public class SimpleWorkManager implements WorkManager {
     public enum WorkType {

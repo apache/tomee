@@ -19,10 +19,10 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -33,8 +33,9 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.jws.WebService;
 import javax.naming.InitialContext;
-import static java.util.Arrays.asList;
 import java.io.Serializable;
+
+import static java.util.Arrays.asList;
 
 public class UberInterfaceTest extends TestCase {
 

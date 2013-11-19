@@ -45,7 +45,7 @@ public class ClientModule extends Module implements DeploymentModule {
         setClassLoader(classLoader);
         this.mainClass = mainClass;
         
-        File file = (jarLocation == null) ? null : new File(jarLocation);
+        File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, applicationClient, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
     }
@@ -59,7 +59,7 @@ public class ClientModule extends Module implements DeploymentModule {
     }
 
     public IAnnotationFinder getFinder() {
-        return (finder != null)? finder.get(): null;
+        return finder != null ? finder.get(): null;
     }
 
     public void setFinderReference(AtomicReference<IAnnotationFinder> finder) {
@@ -75,7 +75,7 @@ public class ClientModule extends Module implements DeploymentModule {
     }
 
     public String getJarLocation() {
-        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+        return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
     public void setJarLocation(String jarLocation) {

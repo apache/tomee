@@ -30,7 +30,7 @@ public class Enumerator implements java.io.Serializable, java.util.Enumeration {
     }
 
     public boolean hasMoreElements() {
-        return (index < list.size());
+        return index < list.size();
     }
 
     public Object nextElement() {

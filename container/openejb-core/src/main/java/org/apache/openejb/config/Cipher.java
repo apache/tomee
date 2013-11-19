@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.sql.SQLException;
-import java.util.Map;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -30,9 +27,12 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Messages;
 import org.apache.xbean.finder.ResourceFinder;
+
+import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.cipher.PasswordCipher} interface. Basically,

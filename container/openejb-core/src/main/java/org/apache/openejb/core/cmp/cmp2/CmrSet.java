@@ -22,15 +22,15 @@ import org.apache.openejb.loader.SystemInstance;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
-import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.Synchronization;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
 
 public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> extends AbstractSet {
     private final EntityBean source;

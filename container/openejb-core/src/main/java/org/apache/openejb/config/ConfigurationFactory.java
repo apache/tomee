@@ -100,7 +100,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1010,7 +1009,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             service = JaxbOpenejb.create(defaultService.type);
             service.setType(defaultService.id);
         } catch (Exception e) {
-            final String name = (defaultService.type == null) ? "null" : defaultService.type.getName();
+            final String name = defaultService.type == null ? "null" : defaultService.type.getName();
             throw new OpenEJBException("Cannot instantiate class " + name, e);
         }
         return service;
@@ -1368,7 +1367,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-                if (((type != null && type.equals(resourceInfo.className)) || isResourceType(resourceInfo.service, resourceInfo.types, type)) && implies(required, resourceInfo.properties)) {
+                if ((type != null && type.equals(resourceInfo.className) || isResourceType(resourceInfo.service, resourceInfo.types, type)) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
                     resourceIds.addAll(resourceInfo.aliases);
                 }

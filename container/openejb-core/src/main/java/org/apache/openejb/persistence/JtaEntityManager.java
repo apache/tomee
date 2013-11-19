@@ -84,7 +84,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         this.entityManagerFactory = entityManagerFactory;
         this.properties = properties;
         this.extended = extended;
-        logger = (unitName == null) ? baseLogger : baseLogger.getChildLogger(unitName);
+        logger = unitName == null ? baseLogger : baseLogger.getChildLogger(unitName);
     }
 
     EntityManager getEntityManager() {

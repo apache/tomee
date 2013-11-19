@@ -45,7 +45,6 @@ import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.jee.AdminObject;
-import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ConnectionDefinition;
@@ -638,7 +637,7 @@ class AppInfoBuilder {
                 info.webappName = findRelatedWebApp(appModule, rootUrl);
 
                 final Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
-                info.excludeUnlistedClasses = persistenceUnit.isScanned() || (excludeUnlistedClasses != null && excludeUnlistedClasses);
+                info.excludeUnlistedClasses = persistenceUnit.isScanned() || excludeUnlistedClasses != null && excludeUnlistedClasses;
 
                 info.jtaDataSource = persistenceUnit.getJtaDataSource();
                 info.nonJtaDataSource = persistenceUnit.getNonJtaDataSource();
@@ -983,7 +982,7 @@ class AppInfoBuilder {
     }
     
     private void configureWebserviceScurity(final List<PortInfo> infoList, final Object altDD) {
-        if (altDD == null || (! (altDD instanceof OpenejbJar))) return;
+        if (altDD == null || !(altDD instanceof OpenejbJar)) return;
         
         final OpenejbJar openejbJar = (OpenejbJar) altDD;
         final Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();

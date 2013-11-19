@@ -16,8 +16,9 @@
  */
 package org.apache.openejb.core.timer;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.ThreadContext;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
@@ -26,10 +27,8 @@ import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerHandle;
-
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.ThreadContext;
+import java.io.Serializable;
+import java.util.Date;
 
 public class TimerImpl implements Timer, Serializable {
     private final TimerData timerData;

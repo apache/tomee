@@ -18,9 +18,9 @@ package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
-import org.apache.openejb.resource.jdbc.pool.PoolDataSourceCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.ValidationFailedException;
-import org.apache.openejb.config.ValidationException;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
-
 import junit.framework.Assert;
+import org.apache.openejb.config.ValidationException;
+import org.apache.openejb.config.ValidationFailedException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

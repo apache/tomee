@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import java.util.Hashtable;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.AuthenticationException;
-import javax.security.auth.login.LoginException;
-
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.security.auth.login.LoginException;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * @deprecated Use org.apache.openejb.core.LocalInitialContextFactory

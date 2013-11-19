@@ -96,7 +96,7 @@ public class DirectoryMonitor {
     private void initialize() {
         getLogger().debug("Doing initial scan of " + target.getAbsolutePath());
 
-        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
+        final File[] files = target.isDirectory() ? target.listFiles() : new File[]{target};
 
         if (files != null) {
             for (final File file : files) {
@@ -133,7 +133,7 @@ public class DirectoryMonitor {
      */
     public void scan() {
 
-        final File[] files = (target.isDirectory()) ? target.listFiles() : new File[]{target};
+        final File[] files = target.isDirectory() ? target.listFiles() : new File[]{target};
 
         final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
 

@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.SystemException;
+
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.openejb.SystemException;
 
 public interface PassivationStrategy {
     void init(Properties props) throws SystemException;

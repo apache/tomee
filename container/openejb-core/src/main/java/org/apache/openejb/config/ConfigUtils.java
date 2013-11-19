@@ -19,8 +19,8 @@ package org.apache.openejb.config;
 import org.apache.openejb.EnvProps;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Deployments;
-import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -147,7 +147,7 @@ public class ConfigUtils {
             throw new OpenEJBException("Could not locate config file: ", e);
         }
 
-        return (file == null || !file.exists()) ? null : file.getAbsolutePath();
+        return file == null || !file.exists() ? null : file.getAbsolutePath();
     }
 
     public static String[] deducePaths(final String path) {

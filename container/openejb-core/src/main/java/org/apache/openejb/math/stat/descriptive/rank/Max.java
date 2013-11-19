@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.math.stat.descriptive.rank;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 /**
  * Returns the maximum of the available values.
@@ -130,7 +130,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
             max = values[begin];
             for (int i = begin; i < begin + length; i++) {
                 if (!Double.isNaN(values[i])) {
-                    max = (max > values[i]) ? max : values[i];
+                    max = max > values[i] ? max : values[i];
                 }
             }
         }

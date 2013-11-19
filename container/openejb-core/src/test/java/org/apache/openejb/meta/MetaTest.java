@@ -19,8 +19,6 @@ package org.apache.openejb.meta;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -40,9 +38,6 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Archives;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.MetaAnnotatedClass;
-import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 

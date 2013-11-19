@@ -18,11 +18,11 @@
  */
 package org.apache.openejb.log.logger;
 
+import org.slf4j.spi.LocationAwareLogger;
+
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-
-import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * <p>

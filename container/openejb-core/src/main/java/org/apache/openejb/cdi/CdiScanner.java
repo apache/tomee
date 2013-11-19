@@ -258,7 +258,7 @@ public class CdiScanner implements ScannerService {
         // 1. this classloader is the good one
         // 2. the classloader is the appclassloader one and we are in the ear parent
         if (!filterByClassLoader
-                || comparator.isSame(cl) || (cl.equals(scl) && startupObject.getWebContext() == null)) {
+                || comparator.isSame(cl) || cl.equals(scl) && startupObject.getWebContext() == null) {
             classes.add(clazz);
         } else {
             it.remove();

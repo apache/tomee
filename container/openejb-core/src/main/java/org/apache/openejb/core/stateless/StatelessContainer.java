@@ -153,7 +153,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         Instance bean = null;
         CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
         try {
-            final boolean authorized = (type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type));
+            final boolean authorized = type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type);
             if (!authorized) {
                 throw new org.apache.openejb.ApplicationException(new javax.ejb.EJBAccessException("Unauthorized Access by Principal Denied"));
             }

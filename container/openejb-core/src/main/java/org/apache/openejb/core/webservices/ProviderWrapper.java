@@ -26,17 +26,33 @@ import javax.jws.WebService;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.*;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.spi.Provider;
 import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class ProviderWrapper extends Provider {
@@ -94,7 +110,7 @@ public class ProviderWrapper extends Provider {
 
     public ProviderWrapper() {
         delegate = findProvider();
-        portRefs = (threadPortRefs.get() == null) ? null : threadPortRefs.get().portRefData;
+        portRefs = threadPortRefs.get() == null ? null : threadPortRefs.get().portRefData;
     }
 
     public Provider getDelegate() {
@@ -300,7 +316,7 @@ public class ProviderWrapper extends Provider {
                     } catch (Exception e) {
                     }
                 }
-                if ((qname != null && qname.equals(portRef.getQName())) || (intf != null && intf.isInstance(proxy))) {
+                if (qname != null && qname.equals(portRef.getQName()) || intf != null && intf.isInstance(proxy)) {
                     // set address
                     if (!portRef.getAddresses().isEmpty()) {
                         proxy.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, portRef.getAddresses().get(0));

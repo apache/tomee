@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.ri.sp;
 
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.login.LoginException;
-import java.util.Collection;
-import java.util.Set;
-import java.util.Collections;
-import java.security.Principal;
 import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @org.apache.xbean.XBean element="pseudoSecurityService"

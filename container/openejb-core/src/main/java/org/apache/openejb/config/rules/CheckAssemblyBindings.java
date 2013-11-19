@@ -16,14 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.util.Join.join;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -32,6 +24,14 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodPermission;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.openejb.util.Join.join;
 
 /**
  * @version $Rev$ $Date$

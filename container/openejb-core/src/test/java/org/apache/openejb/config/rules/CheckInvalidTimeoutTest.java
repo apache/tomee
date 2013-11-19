@@ -16,14 +16,12 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.Timeout;
-
 import junit.framework.TestCase;
-
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
-import org.junit.runner.RunWith;
+
+import javax.ejb.Timeout;
 
 //@RunWith(ValidationRunner.class)
 public class CheckInvalidTimeoutTest extends TestCase {

@@ -104,7 +104,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.setBeanContext(beanContext);
 
         if (interfaces == null || interfaces.size() == 0) {
-            final InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
+            final InterfaceType objectInterfaceType = interfaceType.isHome() ? interfaceType.getCounterpart() : interfaceType;
             interfaces = new ArrayList<Class>(beanContext.getInterfaces(objectInterfaceType));
         }
 
@@ -476,7 +476,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             return false;
         }
         try {
-            obj = (ProxyManager.getInvocationHandler(obj));
+            obj = ProxyManager.getInvocationHandler(obj);
         } catch (IllegalArgumentException e) {
             return false;
         }
@@ -521,22 +521,22 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             return null;
         }
         final Class ooc = object.getClass();
-        if ((ooc == int.class) ||
-                (ooc == String.class) ||
-                (ooc == long.class) ||
-                (ooc == boolean.class) ||
-                (ooc == byte.class) ||
-                (ooc == float.class) ||
-                (ooc == double.class) ||
-                (ooc == short.class) ||
-                (ooc == Long.class) ||
-                (ooc == Boolean.class) ||
-                (ooc == Byte.class) ||
-                (ooc == Character.class) ||
-                (ooc == Float.class) ||
-                (ooc == Double.class) ||
-                (ooc == Short.class) ||
-                (ooc == BigDecimal.class)) {
+        if (ooc == int.class ||
+                ooc == String.class ||
+                ooc == long.class ||
+                ooc == boolean.class ||
+                ooc == byte.class ||
+                ooc == float.class ||
+                ooc == double.class ||
+                ooc == short.class ||
+                ooc == Long.class ||
+                ooc == Boolean.class ||
+                ooc == Byte.class ||
+                ooc == Character.class ||
+                ooc == Float.class ||
+                ooc == Double.class ||
+                ooc == Short.class ||
+                ooc == BigDecimal.class) {
             return object;
         }
 

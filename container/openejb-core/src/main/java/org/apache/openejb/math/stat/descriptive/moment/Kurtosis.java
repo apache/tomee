@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.math.stat.descriptive.moment;
 
-import java.io.Serializable;
-
 import org.apache.openejb.math.MathRuntimeException;
 import org.apache.openejb.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+
+import java.io.Serializable;
 
 
 /**
@@ -183,12 +183,12 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
             double n0 = length;
 
             double coefficientOne =
-                (n0 * (n0 + 1)) / ((n0 - 1) * (n0 - 2) * (n0 - 3));
+                n0 * (n0 + 1) / ((n0 - 1) * (n0 - 2) * (n0 - 3));
             double termTwo =
-                (3 * Math.pow(n0 - 1, 2.0)) / ((n0 - 2) * (n0 - 3));
+                3 * Math.pow(n0 - 1, 2.0) / ((n0 - 2) * (n0 - 3));
 
             // Calculate kurtosis
-            kurt = (coefficientOne * accum3) - termTwo;
+            kurt = coefficientOne * accum3 - termTwo;
         }
         return kurt;
     }

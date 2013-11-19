@@ -16,12 +16,13 @@
  */
 package org.apache.openejb.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public final class ObjectRecipeHelper {
     private ObjectRecipeHelper() {

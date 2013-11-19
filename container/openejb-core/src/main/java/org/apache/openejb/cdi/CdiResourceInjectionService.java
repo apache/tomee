@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.cdi;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.lang.annotation.Annotation;
-
-
-import javax.enterprise.inject.spi.Bean;
-
-
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
@@ -36,17 +27,18 @@ import org.apache.webbeans.component.ResourceBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.api.ResourceReference;
-import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.naming.Context;
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 public class CdiResourceInjectionService implements ResourceInjectionService {
     private Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiResourceInjectionService.class);

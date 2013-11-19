@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.config.rules;
 
-import java.rmi.RemoteException;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -30,13 +35,7 @@ import javax.ejb.RemoteHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.PersistenceType;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.junit.runner.RunWith;
+import java.rmi.RemoteException;
 
 @RunWith(ValidationRunner.class)
 public class CheckNoCreateMethodsTest {

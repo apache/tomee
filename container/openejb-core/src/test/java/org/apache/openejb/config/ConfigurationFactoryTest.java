@@ -16,14 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -33,6 +25,14 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * $Rev$ $Date$

@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJBException;
+
+import java.util.Properties;
 
 public interface OpenEjbConfigurationFactory {
 

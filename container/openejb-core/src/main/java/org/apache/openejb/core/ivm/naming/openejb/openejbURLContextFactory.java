@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.core.ivm.naming.openejb;
 
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.spi.ObjectFactory;
-import javax.naming.Name;
 import javax.naming.Context;
+import javax.naming.Name;
 import javax.naming.NamingException;
+import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 
 /**

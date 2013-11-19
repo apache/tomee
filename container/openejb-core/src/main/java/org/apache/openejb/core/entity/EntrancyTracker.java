@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.core.entity;
 
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
 
 import javax.transaction.TransactionSynchronizationRegistry;
-import java.util.Set;
-import java.util.HashSet;
 import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EntrancyTracker {
     /**

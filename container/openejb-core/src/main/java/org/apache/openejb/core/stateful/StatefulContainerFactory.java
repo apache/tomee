@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.Map.Entry;
-
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
+
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class StatefulContainerFactory {
     private Object id;

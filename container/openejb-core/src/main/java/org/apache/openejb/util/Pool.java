@@ -101,7 +101,7 @@ public class Pool<T> {
         if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
         this.executor = executor != null ? executor : createExecutor();
         this.supplier = supplier != null ? supplier : new NoSupplier();
-        this.available = (strict) ? new Semaphore(max) : new Overdraft(max);
+        this.available = strict ? new Semaphore(max) : new Overdraft(max);
         this.minimum = new Semaphore(min);
         this.instances = new Semaphore(max);
         this.maxAge = maxAge;
@@ -304,7 +304,7 @@ public class Pool<T> {
         boolean release = true;
         Event event = Event.FULL;
 
-        final Entry.Instance obj = (entry == null) ? null : entry.active.getAndSet(null);
+        final Entry.Instance obj = entry == null ? null : entry.active.getAndSet(null);
 
         try {
             if (entry == null) return added;
@@ -319,7 +319,7 @@ public class Pool<T> {
             if (aged || flushed) {
                 if (aged) event = Event.AGED;
                 if (flushed) event = Event.FLUSHED;
-                if (entry.hasHardReference() || (aged && replaceAged) || (flushed && replaceFlushed)) {
+                if (entry.hasHardReference() || aged && replaceAged || flushed && replaceFlushed) {
                     // Don't release the lock, this
                     // entry will be directly replaced
                     release = false;
@@ -699,7 +699,7 @@ public class Pool<T> {
             }
 
             for (int i = 0; i < replace.size(); i++) {
-                final long offset = maxAge > 0 ? ((long) (maxAge / replace.size() * i * maxAgeOffset)) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / replace.size() * i * maxAgeOffset) % maxAge : 0l;
                 executor.execute(new Replace(replace.get(i).entry, offset));
             }
         }
@@ -1148,7 +1148,7 @@ public class Pool<T> {
 
         SchedulerThreadFactory() {
             final SecurityManager s = System.getSecurityManager();
-            this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
         }
 
         @Override

@@ -21,21 +21,20 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.SetAccessible;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
-
-import static java.util.Arrays.asList;
-
-import java.util.Comparator;
-import java.util.List;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$
@@ -590,7 +589,7 @@ public class MethodInfoUtil {
     public static String toString(MethodInfo i) {
         String s = i.ejbName;
         s += " : ";
-        s += (i.methodIntf == null) ? "*" : i.methodIntf;
+        s += i.methodIntf == null ? "*" : i.methodIntf;
         s += " : ";
         s += i.className;
         s += " : ";

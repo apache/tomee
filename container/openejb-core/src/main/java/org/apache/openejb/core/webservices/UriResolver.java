@@ -61,7 +61,7 @@ public class UriResolver {
     }
 
     public UriResolver(String baseUriStr, String uriStr, Class calling) throws IOException {
-        this.calling = (calling != null) ? calling : getClass();
+        this.calling = calling != null ? calling : getClass();
         if (uriStr.startsWith("classpath:")) {
             tryClasspath(uriStr);
         } else if (baseUriStr != null && baseUriStr.startsWith("jar:")) {
@@ -75,7 +75,7 @@ public class UriResolver {
 
 
     public void resolve(String baseUriStr, String uriStr, Class callingCls) throws IOException {
-        this.calling = (callingCls != null) ? callingCls : getClass();
+        this.calling = callingCls != null ? callingCls : getClass();
         this.file = null;
         this.uri = null;
 
@@ -321,7 +321,7 @@ public class UriResolver {
             url = callingClass.getResource(resourceName);
         }
 
-        if ((url == null) && (resourceName != null) && (resourceName.charAt(0) != '/')) {
+        if (url == null && resourceName != null && resourceName.charAt(0) != '/') {
             return getResource('/' + resourceName, callingClass);
         }
 

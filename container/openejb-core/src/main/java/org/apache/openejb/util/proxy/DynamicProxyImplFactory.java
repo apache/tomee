@@ -27,7 +27,7 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
 public class DynamicProxyImplFactory {
     public static boolean isKnownDynamicallyImplemented(Class<?> clazz) {

@@ -21,7 +21,8 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.oejb2.*;
+import org.apache.openejb.jee.oejb2.AuthMethodType;
+import org.apache.openejb.jee.oejb2.TransportGuaranteeType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 

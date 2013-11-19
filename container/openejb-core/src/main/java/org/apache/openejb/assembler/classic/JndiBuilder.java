@@ -732,7 +732,7 @@ public class JndiBuilder {
             boolean bIsRmote = java.rmi.Remote.class.isAssignableFrom(b);
 
             if (aIsRmote == bIsRmote) return 0;
-            return (aIsRmote) ? 1 : -1;
+            return aIsRmote ? 1 : -1;
         }
     }
 }

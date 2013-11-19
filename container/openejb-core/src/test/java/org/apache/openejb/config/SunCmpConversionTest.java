@@ -16,31 +16,31 @@
  */
 package org.apache.openejb.config;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.GeneratedValue;
+import org.apache.openejb.jee.jpa.GenerationType;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Arrays;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.JAXBContextFactory;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.jpa.Entity;
-import org.apache.openejb.jee.jpa.GeneratedValue;
-import org.apache.openejb.jee.jpa.GenerationType;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.DetailedDiff;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$

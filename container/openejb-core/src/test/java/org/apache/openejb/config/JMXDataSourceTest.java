@@ -16,21 +16,22 @@
  */
 package org.apache.openejb.config;
 
-import java.lang.management.ManagementFactory;
-import java.util.Properties;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.lang.management.ManagementFactory;
+import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 

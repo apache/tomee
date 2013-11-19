@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.assembler.dynamic;
 
-import java.util.Properties;
-
 import org.apache.openejb.assembler.classic.ServiceInfo;
+
+import java.util.Properties;
 
 public class PassthroughFactory {
     public static Object create(Object object) {

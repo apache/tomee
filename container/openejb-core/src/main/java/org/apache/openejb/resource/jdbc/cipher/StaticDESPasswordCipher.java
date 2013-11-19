@@ -48,7 +48,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
      *             in any case of error.
      */
     public char[] encrypt(String plainPassword) {
-        if ((null == plainPassword) || plainPassword.length() == 0) {
+        if (null == plainPassword || plainPassword.length() == 0) {
             throw new IllegalArgumentException("plainPassword cannot be null nor empty.");
         }
 
@@ -74,7 +74,7 @@ public class StaticDESPasswordCipher implements PasswordCipher {
      *             in any case of error.
      */
     public String decrypt(char[] encodedPassword) {
-        if ((null == encodedPassword) || encodedPassword.length == 0) {
+        if (null == encodedPassword || encodedPassword.length == 0) {
             throw new IllegalArgumentException("encodedPassword cannot be null nor empty.");
         }
 

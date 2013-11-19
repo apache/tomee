@@ -17,9 +17,19 @@
 
 package org.apache.openejb.timer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import junit.framework.TestCase;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.StatelessBean;
 
 import javax.annotation.Resource;
 import javax.ejb.Local;
@@ -31,21 +41,9 @@ import javax.ejb.TimerService;
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.InvocationContext;
 import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
-
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.StatelessBean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

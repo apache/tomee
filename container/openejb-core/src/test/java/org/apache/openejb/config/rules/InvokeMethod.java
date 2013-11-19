@@ -16,21 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.config.rules.ValidationAssertions.assertErrors;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
@@ -45,6 +31,19 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import static org.apache.openejb.config.rules.ValidationAssertions.assertErrors;
+import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
+import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
+import static org.junit.Assert.fail;
 
 /**
  * This Statement is the one which runs the test.

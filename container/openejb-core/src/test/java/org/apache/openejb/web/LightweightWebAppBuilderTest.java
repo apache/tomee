@@ -21,10 +21,10 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Component;
-import org.apache.openejb.testing.Module;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.testing.Component;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

@@ -145,7 +145,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             runAsSubject = getRunAsSubject(oldContext.getBeanContext());
         }
 
-        SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
+        SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) : null;
         if (runAsSubject != null) {
 
             securityContext = new SecurityContext(runAsSubject);
@@ -225,7 +225,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public UUID disassociate() {
         try {
             final Identity identity = clientIdentity.get();
-            return (identity == null) ? null : identity.getToken();
+            return identity == null ? null : identity.getToken();
         } finally {
             clientIdentity.remove();
         }
@@ -283,7 +283,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
             final String ejbName = beanContext.getEjbName();
 
-            String name = (type == null) ? null : type.getSpecName();
+            String name = type == null ? null : type.getSpecName();
             if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
                 name = null;
             }

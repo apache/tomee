@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import org.apache.openejb.core.cmp.CmpEngineFactory;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.CmpEngineFactory;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
