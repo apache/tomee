@@ -25,8 +25,8 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
-import org.apache.cxf.service.Service;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.JaxWsUtils;
@@ -36,14 +36,19 @@ import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.naming.Context;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
+import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.openejb.InjectionProcessor.unwrap;
 
 public class PojoEndpoint extends CxfEndpoint {
-    private InjectionProcessor<Object> injectionProcessor;
+    private static final WebServiceContextResourceResolver WEB_SERVICE_CONTEXT_RESOURCE_RESOLVER = new WebServiceContextResourceResolver();
+
+    private final ResourceInjector injector;
 
     public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
                         HTTPTransportFactory httpTransportFactory,
@@ -66,16 +71,26 @@ public class PojoEndpoint extends CxfEndpoint {
 
         service = doServiceCreate();
 
+        { // cleanup jax-ws injections
+            final Iterator<Injection> injections = port.getInjections().iterator();
+            while (injections.hasNext()) {
+                final Injection next = injections.next();
+                if (WebServiceContext.class.equals(type(loader, next))) {
+                    injections.remove();
+                }
+            }
+        }
+
         // instantiate and inject resources into service using the app classloader to be sure to get the right InitialContext
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
-            injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
+            final InjectionProcessor<Object> injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
             injectionProcessor.createInstance();
-            injectionProcessor.postConstruct();
             implementor = injectionProcessor.getInstance();
-            injectCxfResources(implementor);
-        } catch (Exception e) {
+            injector = injectCxfResources(implementor);
+            injector.invokePostConstruct();
+        } catch (final Exception e) {
             throw new WebServiceException("Service resource injection failed", e);
         } finally {
             Thread.currentThread().setContextClassLoader(old);
@@ -84,13 +99,26 @@ public class PojoEndpoint extends CxfEndpoint {
         service.setInvoker(new JAXWSMethodInvoker(implementor));
     }
 
-    private void injectCxfResources(final Object implementor) {
+    private Type type(final ClassLoader loader, final Injection next) {
+        try {
+            return loader.loadClass(next.getClassname()).getDeclaredField(next.getName()).getGenericType();
+        } catch (final Throwable th) {
+            return null; // ignore
+        }
+    }
+
+    private ResourceInjector injectCxfResources(final Object implementor) {
         ResourceManager resourceManager = bus.getExtension(ResourceManager.class);
-        List<ResourceResolver> resolvers = resourceManager.getResourceResolvers();
+
+        final List<ResourceResolver> resolvers = resourceManager.getResourceResolvers();
         resourceManager = new DefaultResourceManager(resolvers);
-        resourceManager.addResourceResolver(new WebServiceContextResourceResolver());
-        ResourceInjector injector = new ResourceInjector(resourceManager);
+        if (!resourceManager.getResourceResolvers().contains(WEB_SERVICE_CONTEXT_RESOURCE_RESOLVER)) {
+            resourceManager.addResourceResolver(WEB_SERVICE_CONTEXT_RESOURCE_RESOLVER);
+        }
+
+        final ResourceInjector injector = new ResourceInjector(resourceManager);
         injector.inject(implementor);
+        return injector;
     }
 
     protected void init() {
@@ -106,9 +134,8 @@ public class PojoEndpoint extends CxfEndpoint {
         // call handler preDestroy
         destroyHandlers();
 
-        // call service preDestroy
-        if (injectionProcessor != null) {
-            injectionProcessor.preDestroy();
+        if (injector != null) {
+            injector.invokePreDestroy();
         }
 
         // shutdown server
