@@ -160,7 +160,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
-        ThreadContext oldCallContext = null;
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
 
         Instance bean = null;
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
@@ -173,8 +173,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             if (!authorized) {
                 throw new org.apache.openejb.ApplicationException(new javax.ejb.EJBAccessException("Unauthorized Access by Principal Denied"));
             }
-
-            oldCallContext = ThreadContext.enter(callContext);
 
             final Class declaringClass = callMethod.getDeclaringClass();
             if (javax.ejb.EJBHome.class.isAssignableFrom(declaringClass) || javax.ejb.EJBLocalHome.class.isAssignableFrom(declaringClass)) {
