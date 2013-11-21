@@ -72,11 +72,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         Object retValue = null;
         Throwable exc = null;
 
+        final String methodName = m.getName();
         try {
             if (logger.isDebugEnabled()) {
-                logger.debug("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
+                logger.debug("EjbObjectProxyHandler: invoking method " + methodName + " on " + deploymentID + " with identity " + primaryKey);
             }
-            Integer operation = dispatchTable.get(m.getName());
+            Integer operation = dispatchTable.get(methodName);
             if (operation != null) {
                 if (operation == 3) {
                     if (m.getParameterTypes()[0] != EJBObject.class && m.getParameterTypes()[0] != EJBLocalObject.class) {
@@ -159,15 +160,17 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         } finally {
             if (logger.isDebugEnabled()) {
                 if (exc == null) {
-                    String ret;
-                    try { // if it is a CDI (javassit proxy) it doesn't always work....
-                        ret = retValue.toString();
-                    } catch (Exception e) {
-                        ret = "can't get toString() value (" + e.getMessage() + ")";
+                    String ret = "void";
+                    if (null != retValue) {
+                        try {
+                            ret = retValue.toString();
+                        } catch (Exception e) {
+                            ret = "toString() failed on (" + e.getMessage() + ")";
+                        }
                     }
-                    logger.debug("finished invoking method " + m.getName() + ". Return value:" + ret);
+                    logger.debug("EjbObjectProxyHandler: finished invoking method " + methodName + ". Return value:" + ret);
                 } else {
-                    logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
+                    logger.debug("EjbObjectProxyHandler: finished invoking method " + methodName + " with exception " + exc);
                 }
             }
         }
@@ -235,18 +238,20 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected Object businessMethod(final Class<?> interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         final BeanContext beanContext = getBeanContext();
-        final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
 
         if (beanContext.isAsynchronous(method)) {
+
             final SecurityService<?> securityService = SystemInstance.get().getComponent(SecurityService.class);
             final Object state = securityService.currentState();
-            final ThreadContext currentCtx = ThreadContext.getThreadContext();
+            final ThreadContext threadContext = ThreadContext.getThreadContext();
+            final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
+
             return asynchronousPool.invoke(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
                     final ThreadContext oldCtx; // ensure context is the same as for the caller
-                    if (currentCtx != null) {
-                        oldCtx = ThreadContext.enter(new ThreadContext(currentCtx));
+                    if (threadContext != null) {
+                        oldCtx = ThreadContext.enter(new ThreadContext(threadContext));
                     } else {
                         oldCtx = null;
                     }
@@ -255,6 +260,11 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                     securityService.setState(state);
                     try {
                         return synchronizedBusinessMethod(interfce, method, args);
+                    } catch (ApplicationException ae) {
+
+                        logger.warning("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+
+                        throw ae;
                     } finally {
                         securityService.setState(threadState);
                         if (oldCtx != null) {

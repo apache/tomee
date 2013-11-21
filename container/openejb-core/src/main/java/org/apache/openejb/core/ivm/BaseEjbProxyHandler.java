@@ -474,6 +474,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

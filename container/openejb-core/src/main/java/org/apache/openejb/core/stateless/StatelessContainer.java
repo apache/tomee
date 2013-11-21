@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core.stateless;
 
-import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.InterfaceType;
@@ -58,13 +57,19 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
  * @org.apache.xbean.XBean element="statelessContainer"
  */
 public class StatelessContainer implements org.apache.openejb.RpcContainer {
+
     private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
     private final StatelessInstanceManager instanceManager;
     private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
     private final Object containerID;
     private final SecurityService securityService;
 
-    public StatelessContainer(Object id, SecurityService securityService, Duration accessTimeout, Duration closeTimeout, Pool.Builder poolBuilder, int callbackThreads) {
+    public StatelessContainer(final Object id,
+                              final SecurityService securityService,
+                              final Duration accessTimeout,
+                              final Duration closeTimeout,
+                              final Pool.Builder poolBuilder,
+                              final int callbackThreads) {
         this.containerID = id;
         this.securityService = securityService;
         this.instanceManager = new StatelessInstanceManager(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads);
@@ -76,7 +81,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @Override
-    public synchronized BeanContext getBeanContext(Object deploymentID) {
+    public synchronized BeanContext getBeanContext(final Object deploymentID) {
         final String id = (String) deploymentID;
         return deploymentRegistry.get(id);
     }
@@ -92,7 +97,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @Override
-    public void deploy(BeanContext beanContext) throws OpenEJBException {
+    public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final String id = (String) beanContext.getDeploymentID();
         synchronized (this) {
             deploymentRegistry.put(id, beanContext);
@@ -122,7 +127,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @Override
-    public void undeploy(BeanContext beanContext) {
+    public void undeploy(final BeanContext beanContext) {
         this.instanceManager.undeploy(beanContext);
 
         synchronized (this) {
@@ -133,8 +138,14 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+    public Object invoke(final Object deployID,
+                         InterfaceType type,
+                         final Class callInterface,
+                         final Method callMethod,
+                         final Object[] args,
+                         final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = this.getBeanContext(deployID);
 
         if (beanContext == null) {
@@ -149,14 +160,21 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
-        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        ThreadContext oldCallContext = null;
+
         Instance bean = null;
-        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
+        final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
+
         try {
+
+            //Check auth before overriding context
             final boolean authorized = type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type);
+
             if (!authorized) {
                 throw new org.apache.openejb.ApplicationException(new javax.ejb.EJBAccessException("Unauthorized Access by Principal Denied"));
             }
+
+            oldCallContext = ThreadContext.enter(callContext);
 
             final Class declaringClass = callMethod.getDeclaringClass();
             if (javax.ejb.EJBHome.class.isAssignableFrom(declaringClass) || javax.ejb.EJBLocalHome.class.isAssignableFrom(declaringClass)) {
@@ -181,6 +199,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             return _invoke(callMethod, runMethod, args, bean, callContext, type);
 
         } finally {
+
             if (bean != null) {
                 if (callContext.isDiscardInstance()) {
                     this.instanceManager.discardInstance(callContext, bean);
@@ -188,15 +207,20 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                     this.instanceManager.poolInstance(callContext, bean);
                 }
             }
-            ThreadContext.exit(oldCallContext);
+
+            if (null != oldCallContext) {
+                ThreadContext.exit(oldCallContext);
+            }
+
             if (currentCreationalContext != null) {
                 currentCreationalContext.remove();
             }
         }
     }
 
-    private Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType type)
-            throws OpenEJBException {
+    @SuppressWarnings("ThrowFromFinallyBlock")
+    private Object _invoke(final Method callMethod, final Method runMethod, final Object[] args, final Instance instance, final ThreadContext callContext, final InterfaceType type)
+        throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
@@ -232,8 +256,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             } catch (SystemException e) {
                 callContext.setDiscardInstance(true);
                 throw e;
-            } catch (ApplicationException e) {
-                throw e;
             } catch (RuntimeException e) {
                 callContext.setDiscardInstance(true);
                 throw e;
@@ -242,7 +264,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         return returnValue;
     }
 
-    private Object invokeWebService(Object[] args, BeanContext beanContext, Method runMethod, Instance instance) throws Exception {
+    private Object invokeWebService(final Object[] args, final BeanContext beanContext, final Method runMethod, final Instance instance) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor, [arg...]}.");
         }
@@ -290,7 +312,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         return returnValue;
     }
 
-    private List<Method> retrieveAroundInvokes(Class<?> interceptorClass) {
+    private List<Method> retrieveAroundInvokes(final Class<?> interceptorClass) {
         final List<Method> cached = this.interceptorCache.get(interceptorClass);
         if (cached != null) {
             return cached;

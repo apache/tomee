@@ -73,6 +73,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
  * @org.apache.xbean.XBean element="cmpContainer"
  */
 public class CmpContainer implements RpcContainer {
+
     protected final Object containerID;
     protected final SecurityService securityService;
 
@@ -104,7 +105,10 @@ public class CmpContainer implements RpcContainer {
         }
     };
 
-    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory) throws OpenEJBException {
+    public CmpContainer(final Object id,
+                        final TransactionManager transactionManager,
+                        final SecurityService securityService,
+                        final String cmpEngineFactory) throws OpenEJBException {
         this.containerID = id;
         this.securityService = securityService;
         synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
@@ -112,11 +116,13 @@ public class CmpContainer implements RpcContainer {
 
         // create the cmp engine instance
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) classLoader = getClass().getClassLoader();
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
+        }
 
-        CmpEngineFactory factory;
+        final CmpEngineFactory factory;
         try {
-            Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
+            final Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
             factory = (CmpEngineFactory) cmpEngineFactoryClass.newInstance();
         } catch (Exception e) {
             throw new OpenEJBException("Unable to create cmp engine factory " + cmpEngineFactory, e);
@@ -127,19 +133,23 @@ public class CmpContainer implements RpcContainer {
         cmpEngine = factory.create();
     }
 
+    @Override
     public Object getContainerID() {
         return containerID;
     }
 
+    @Override
     public ContainerType getContainerType() {
         return ContainerType.CMP_ENTITY;
     }
 
+    @Override
     public synchronized BeanContext[] getBeanContexts() {
         return deploymentsById.values().toArray(new BeanContext[deploymentsById.size()]);
     }
 
-    public synchronized BeanContext getBeanContext(Object deploymentID) {
+    @Override
+    public synchronized BeanContext getBeanContext(final Object deploymentID) {
         return deploymentsById.get(deploymentID);
     }
 
@@ -153,16 +163,17 @@ public class CmpContainer implements RpcContainer {
         return beanContext;
     }
 
-    public void deploy(BeanContext beanContext) throws OpenEJBException {
+    @Override
+    public void deploy(final BeanContext beanContext) throws OpenEJBException {
         synchronized (this) {
-            Object deploymentId = beanContext.getDeploymentID();
+            final Object deploymentId = beanContext.getDeploymentID();
 
             cmpEngine.deploy(beanContext);
             beanContext.setContainerData(cmpEngine);
             beanContext.set(EJBContext.class, new EntityContext(securityService));
             // try to set deploymentInfo static field on bean implementation class
             try {
-                Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
+                final Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
                 field.set(null, beanContext);
             } catch (Exception e) {
                 // ignore
@@ -175,24 +186,27 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
+    @Override
     public void start(final BeanContext beanContext) throws OpenEJBException {
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
         }
     }
-    
-    public void stop(BeanContext beanContext) throws OpenEJBException {
+
+    @Override
+    public void stop(final BeanContext beanContext) throws OpenEJBException {
         beanContext.stop();
     }
-    
-    public void undeploy(BeanContext beanContext) throws OpenEJBException {
+
+    @Override
+    public void undeploy(final BeanContext beanContext) throws OpenEJBException {
         synchronized (this) {
             deploymentsById.remove(beanContext.getDeploymentID());
             beansByClass.remove(beanContext.getCmpImplClass());
 
             try {
-                Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
+                final Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
                 field.set(null, null);
             } catch (Exception e) {
                 // ignore
@@ -203,38 +217,48 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    public Object getEjbInstance(BeanContext beanContext, Object primaryKey) {
-        ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
+    public Object getEjbInstance(final BeanContext beanContext, final Object primaryKey) {
+        final ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            Object bean = cmpEngine.loadBean(callContext, primaryKey);
-            return bean;
+            return cmpEngine.loadBean(callContext, primaryKey);
         } finally {
             ThreadContext.exit(oldCallContext);
         }
     }
 
-    public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        BeanContext beanContext = this.getBeanContext(deployID);
+    @Override
+    public Object invoke(final Object deployID,
+                         InterfaceType type,
+                         final Class callInterface,
+                         final Method callMethod,
+                         final Object[] args,
+                         final Object primKey) throws OpenEJBException {
+        final BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (beanContext == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        if (beanContext == null) {
+            throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
+        }
 
         // Use the backup way to determine call type if null was supplied.
-        if (type == null) type = beanContext.getInterfaceType(callInterface);
+        if (type == null) {
+            type = beanContext.getInterfaceType(callInterface);
+        }
 
-        ThreadContext callContext = new ThreadContext(beanContext, primKey);
+        final ThreadContext callContext = new ThreadContext(beanContext, primKey);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
 
-            boolean authorized = securityService.isCallerAuthorized(callMethod, type);
+            final boolean authorized = securityService.isCallerAuthorized(callMethod, type);
+
             if (!authorized) {
                 throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
             }
 
-            Class declaringClass = callMethod.getDeclaringClass();
-            String methodName = callMethod.getName();
+            final Class declaringClass = callMethod.getDeclaringClass();
+            final String methodName = callMethod.getName();
 
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
@@ -258,49 +282,49 @@ public class CmpContainer implements RpcContainer {
 
             // business method
             callContext.setCurrentOperation(Operation.BUSINESS);
-            Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
+            final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
 
-            Object retValue = businessMethod(callMethod, runMethod, args, callContext, type);
-
-            return retValue;
+            return businessMethod(callMethod, runMethod, args, callContext, type);
         } finally {
             ThreadContext.exit(oldCallContext);
         }
     }
 
-    private EntityBean createNewInstance(ThreadContext callContext) {
-        BeanContext beanContext = callContext.getBeanContext();
+    private EntityBean createNewInstance(final ThreadContext callContext) {
+        final BeanContext beanContext = callContext.getBeanContext();
         try {
-            EntityBean bean = (EntityBean) beanContext.getCmpImplClass().newInstance();
-            return bean;
+            return (EntityBean) beanContext.getCmpImplClass().newInstance();
         } catch (Exception e) {
             throw new EJBException("Unable to create new entity bean instance " + beanContext.getCmpImplClass(), e);
         }
     }
 
-    private ThreadContext createThreadContext(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private ThreadContext createThreadContext(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        BeanContext beanContext = getBeanContextByClass(entityBean.getClass());
-        KeyGenerator keyGenerator = beanContext.getKeyGenerator();
-        Object primaryKey = keyGenerator.getPrimaryKey(entityBean);
+        final BeanContext beanContext = getBeanContextByClass(entityBean.getClass());
+        final KeyGenerator keyGenerator = beanContext.getKeyGenerator();
+        final Object primaryKey = keyGenerator.getPrimaryKey(entityBean);
 
-        ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
-        return callContext;
+        return new ThreadContext(beanContext, primaryKey);
     }
 
-    private void setEntityContext(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void setEntityContext(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
         // activating entity doen't have a primary key
-        BeanContext beanContext = getBeanContextByClass(entityBean.getClass());
+        final BeanContext beanContext = getBeanContextByClass(entityBean.getClass());
 
-        ThreadContext callContext = new ThreadContext(beanContext, null);
+        final ThreadContext callContext = new ThreadContext(beanContext, null);
         callContext.setCurrentOperation(Operation.SET_CONTEXT);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.setEntityContext(new EntityContext(securityService));
         } catch (RemoteException e) {
@@ -310,13 +334,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void unsetEntityContext(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void unsetEntityContext(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.UNSET_CONTEXT);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.unsetEntityContext();
         } catch (RemoteException e) {
@@ -326,13 +352,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void ejbLoad(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void ejbLoad(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.LOAD);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbLoad();
         } catch (RemoteException e) {
@@ -349,17 +377,20 @@ public class CmpContainer implements RpcContainer {
                 registeredEntities = new LinkedHashSet<EntityBean>();
                 synchronizationRegistry.putResource(ENTITIES_TO_STORE, registeredEntities);
                 synchronizationRegistry.registerInterposedSynchronization(new Synchronization() {
+                    @Override
                     public void beforeCompletion() {
                         //noinspection unchecked
-                        Set<EntityBean> registeredEntities = (LinkedHashSet<EntityBean>) synchronizationRegistry.getResource(ENTITIES_TO_STORE);
+                        final Set<EntityBean> registeredEntities = (LinkedHashSet<EntityBean>) synchronizationRegistry.getResource(ENTITIES_TO_STORE);
                         if (registeredEntities == null) {
                             return;
                         }
-                        for (EntityBean entityBean : registeredEntities) {
+                        for (final EntityBean entityBean : registeredEntities) {
                             ejbStore(entityBean);
                         }
                     }
-                    public void afterCompletion(int i) {
+
+                    @Override
+                    public void afterCompletion(final int i) {
                     }
                 });
             }
@@ -368,13 +399,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void ejbStore(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void ejbStore(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.STORE);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbStore();
         } catch (RemoteException e) {
@@ -384,14 +417,18 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void ejbRemove(EntityBean entityBean) throws RemoveException {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
-        if (isDeleted(entityBean)) return;
+    private void ejbRemove(final EntityBean entityBean) throws RemoveException {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
+        if (isDeleted(entityBean)) {
+            return;
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.REMOVE);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbRemove();
         } catch (RemoteException e) {
@@ -408,9 +445,9 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private boolean isDeleted(EntityBean entityBean) {
+    private boolean isDeleted(final EntityBean entityBean) {
         try {
-            return (Boolean)entityBean.getClass().getMethod("OpenEJB_isDeleted").invoke(entityBean);
+            return (Boolean) entityBean.getClass().getMethod("OpenEJB_isDeleted").invoke(entityBean);
         } catch (NoSuchMethodException e) {
             return false;
         } catch (Exception e) {
@@ -418,13 +455,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void ejbActivate(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void ejbActivate(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.ACTIVATE);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbActivate();
         } catch (RemoteException e) {
@@ -434,13 +473,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void ejbPassivate(EntityBean entityBean) {
-        if (entityBean == null) throw new NullPointerException("entityBean is null");
+    private void ejbPassivate(final EntityBean entityBean) {
+        if (entityBean == null) {
+            throw new NullPointerException("entityBean is null");
+        }
 
-        ThreadContext callContext = createThreadContext(entityBean);
+        final ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.PASSIVATE);
 
-        ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             entityBean.ejbPassivate();
         } catch (RemoteException e) {
@@ -450,12 +491,16 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private Object businessMethod(final Method callMethod,
+                                  final Method runMethod,
+                                  final Object[] args,
+                                  final ThreadContext callContext,
+                                  final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
-        EntityBean bean;
+        final EntityBean bean;
         Object returnValue = null;
 
         entrancyTracker.enter(beanContext, callContext.getPrimaryKey());
@@ -476,7 +521,7 @@ public class CmpContainer implements RpcContainer {
                 e = ((InvocationTargetException) e).getTargetException();
             }
 
-            ExceptionType type = callContext.getBeanContext().getExceptionType(e);
+            final ExceptionType type = callContext.getBeanContext().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 handleSystemException(txPolicy, e, callContext);
@@ -492,12 +537,12 @@ public class CmpContainer implements RpcContainer {
         return returnValue;
     }
 
-    private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private Object homeMethod(final Method callMethod, final Object[] args, final ThreadContext callContext, final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
-        EntityBean bean;
+        final EntityBean bean;
         Object returnValue = null;
         try {
             /*
@@ -511,7 +556,7 @@ public class CmpContainer implements RpcContainer {
             try {
                 callContext.setCurrentOperation(Operation.HOME);
 
-                Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
+                final Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
 
                 try {
                     returnValue = runMethod.invoke(bean, args);
@@ -531,7 +576,7 @@ public class CmpContainer implements RpcContainer {
                 e = ((InvocationTargetException) e).getTargetException();
             }
 
-            ExceptionType type = callContext.getBeanContext().getExceptionType(e);
+            final ExceptionType type = callContext.getBeanContext().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 handleSystemException(txPolicy, e, callContext);
@@ -547,12 +592,12 @@ public class CmpContainer implements RpcContainer {
         return returnValue;
     }
 
-    private ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private ProxyInfo createEJBObject(final Method callMethod, final Object[] args, final ThreadContext callContext, final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
-        EntityBean bean;
+        final EntityBean bean;
         Object primaryKey = null;
 
         try {
@@ -563,7 +608,7 @@ public class CmpContainer implements RpcContainer {
             setEntityContext(bean);
 
             // Obtain the proper ejbCreate() method
-            Method ejbCreateMethod = beanContext.getMatchingBeanMethod(callMethod);
+            final Method ejbCreateMethod = beanContext.getMatchingBeanMethod(callMethod);
 
             // Set current operation for allowed operations
             callContext.setCurrentOperation(Operation.CREATE);
@@ -575,13 +620,13 @@ public class CmpContainer implements RpcContainer {
             primaryKey = cmpEngine.createBean(bean, callContext);
 
             // determine post create callback method
-            Method ejbPostCreateMethod = beanContext.getMatchingPostCreateMethod(ejbCreateMethod);
+            final Method ejbPostCreateMethod = beanContext.getMatchingPostCreateMethod(ejbCreateMethod);
 
             // create a new context containing the pk for the post create call
-            ThreadContext postCreateContext = new ThreadContext(beanContext, primaryKey);
+            final ThreadContext postCreateContext = new ThreadContext(beanContext, primaryKey);
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
 
-            ThreadContext oldContext = ThreadContext.enter(postCreateContext);
+            final ThreadContext oldContext = ThreadContext.enter(postCreateContext);
             try {
                 // Invoke the ejbPostCreate method on the bean instance
                 ejbPostCreateMethod.invoke(bean, args);
@@ -603,7 +648,7 @@ public class CmpContainer implements RpcContainer {
                 e = ((InvocationTargetException) e).getTargetException();
             }
 
-            ExceptionType type = callContext.getBeanContext().getExceptionType(e);
+            final ExceptionType type = callContext.getBeanContext().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
                 handleSystemException(txPolicy, e, callContext);
@@ -618,20 +663,20 @@ public class CmpContainer implements RpcContainer {
         return new ProxyInfo(beanContext, primaryKey);
     }
 
-    private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private Object findByPrimaryKey(final Method callMethod, final Object[] args, final ThreadContext callContext, final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
-            EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
+            final EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
             if (bean == null) {
                 throw new ObjectNotFoundException(beanContext.getDeploymentID() + " : " + args[0]);
             }
 
             // rebuild the primary key
-            KeyGenerator kg = beanContext.getKeyGenerator();
-            Object primaryKey = kg.getPrimaryKey(bean);
+            final KeyGenerator kg = beanContext.getKeyGenerator();
+            final Object primaryKey = kg.getPrimaryKey(bean);
 
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(beanContext, primaryKey);
@@ -645,30 +690,30 @@ public class CmpContainer implements RpcContainer {
         throw new AssertionError("Should not get here");
     }
 
-    private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private Object findEJBObject(final Method callMethod, final Object[] args, final ThreadContext callContext, final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
-            List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
+            final List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
 
-            KeyGenerator kg = beanContext.getKeyGenerator();
+            final KeyGenerator kg = beanContext.getKeyGenerator();
 
             // The following block of code is responsible for returning ProxyInfo object(s) for each
             // matching entity bean found by the query.  If its a multi-value find operation a Vector
             // of ProxyInfo objects will be returned. If its a single-value find operation then a
             // single ProxyInfo object is returned.
             if (callMethod.getReturnType() == Collection.class || callMethod.getReturnType() == Enumeration.class) {
-                List<ProxyInfo> proxies = new ArrayList<ProxyInfo>();
-                for (Object value : results) {
-                    EntityBean bean = (EntityBean) value;
+                final List<ProxyInfo> proxies = new ArrayList<ProxyInfo>();
+                for (final Object value : results) {
+                    final EntityBean bean = (EntityBean) value;
 
                     if (value == null) {
                         proxies.add(null);
                     } else {
                         // get the primary key
-                        Object primaryKey = kg.getPrimaryKey(bean);
+                        final Object primaryKey = kg.getPrimaryKey(bean);
 
                         // create a new ProxyInfo based on the deployment info and primary key and add it to the vector
                         proxies.add(new ProxyInfo(beanContext, primaryKey));
@@ -681,15 +726,19 @@ public class CmpContainer implements RpcContainer {
                 }
             } else {
                 if (results.size() != 1) {
-                    throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " + beanContext.getDeploymentID() + " and primarykey = " + args[0] + " Does not exist");
+                    throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " +
+                                                      beanContext.getDeploymentID() +
+                                                      " and primarykey = " +
+                                                      args[0] +
+                                                      " Does not exist");
                 }
 
                 // create a new ProxyInfo based on the deployment info and primary key
-                EntityBean bean = (EntityBean) results.get(0);
+                final EntityBean bean = (EntityBean) results.get(0);
                 if (bean == null) {
                     return null;
                 } else {
-                    Object primaryKey = kg.getPrimaryKey(bean);
+                    final Object primaryKey = kg.getPrimaryKey(bean);
                     return new ProxyInfo(beanContext, primaryKey);
                 }
             }
@@ -703,19 +752,19 @@ public class CmpContainer implements RpcContainer {
         throw new AssertionError("Should not get here");
     }
 
-    public Object select(BeanContext beanContext, String methodSignature, String returnType, Object... args) throws FinderException {
-        String signature = beanContext.getAbstractSchemaName() + "." + methodSignature;
+    public Object select(final BeanContext beanContext, final String methodSignature, final String returnType, final Object... args) throws FinderException {
+        final String signature = beanContext.getAbstractSchemaName() + "." + methodSignature;
 
         try {
             // execute the select query
-            Collection<Object> results = cmpEngine.queryBeans(beanContext, signature, args);
+            final Collection<Object> results = cmpEngine.queryBeans(beanContext, signature, args);
 
             //
             // process the results
             //
 
             // If we need to return a set...
-            Collection<Object> proxies;
+            final Collection<Object> proxies;
             if (returnType.equals("java.util.Set")) {
                 // we collect values into a LinkedHashSet to preserve ordering
                 proxies = new LinkedHashSet<Object>();
@@ -724,7 +773,7 @@ public class CmpContainer implements RpcContainer {
                 proxies = new ArrayList<Object>();
             }
 
-            boolean isSingleValued = !returnType.equals("java.util.Collection") && !returnType.equals("java.util.Set");
+            final boolean isSingleValued = !returnType.equals("java.util.Collection") && !returnType.equals("java.util.Set");
             ProxyFactory proxyFactory = null;
             for (Object value : results) {
                 // if this is a single valued query and we already have results, throw FinderException
@@ -734,9 +783,9 @@ public class CmpContainer implements RpcContainer {
 
                 // if we have an EntityBean, we need to proxy it
                 if (value instanceof EntityBean) {
-                    EntityBean entityBean = (EntityBean) value;
+                    final EntityBean entityBean = (EntityBean) value;
                     if (proxyFactory == null) {
-                        BeanContext result = getBeanContextByClass(entityBean.getClass());
+                        final BeanContext result = getBeanContextByClass(entityBean.getClass());
                         if (result != null) {
                             proxyFactory = new ProxyFactory(result);
                         }
@@ -764,28 +813,26 @@ public class CmpContainer implements RpcContainer {
             }
 
             // return the single item.... multiple return values was handled in for loop above
-            Object returnValue = proxies.iterator().next();
-            return returnValue;
+            return proxies.iterator().next();
         } catch (RuntimeException e) {
             throw new EJBException(e);
         }
     }
 
-    public int update(BeanContext beanContext, String methodSignature, Object... args) throws FinderException {
-        String signature = beanContext.getAbstractSchemaName() + "." + methodSignature;
+    public int update(final BeanContext beanContext, final String methodSignature, final Object... args) throws FinderException {
+        final String signature = beanContext.getAbstractSchemaName() + "." + methodSignature;
 
         // exectue the update query
-        int result = cmpEngine.executeUpdateQuery(beanContext, signature, args);
-        return result;
+        return cmpEngine.executeUpdateQuery(beanContext, signature, args);
     }
 
-    private void removeEJBObject(Method callMethod, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
+    private void removeEJBObject(final Method callMethod, final ThreadContext callContext, final InterfaceType interfaceType) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
+        final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
-            EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
+            final EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             if (entityBean == null) {
                 throw new NoSuchObjectException(callContext.getBeanContext().getDeploymentID() + " " + callContext.getPrimaryKey());
             }
@@ -800,15 +847,15 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private void cancelTimers(ThreadContext threadContext) {
-        BeanContext beanContext = threadContext.getBeanContext();
-        Object primaryKey = threadContext.getPrimaryKey();
+    private void cancelTimers(final ThreadContext threadContext) {
+        final BeanContext beanContext = threadContext.getBeanContext();
+        final Object primaryKey = threadContext.getPrimaryKey();
 
         // stop timers
         if (primaryKey != null && beanContext.getEjbTimerService() != null) {
-            EjbTimerService timerService = beanContext.getEjbTimerService();
+            final EjbTimerService timerService = beanContext.getEjbTimerService();
             if (timerService != null && timerService instanceof EjbTimerServiceImpl) {
-                for (Timer timer : beanContext.getEjbTimerService().getTimers(primaryKey)) {
+                for (final Timer timer : beanContext.getEjbTimerService().getTimers(primaryKey)) {
                     timer.cancel();
                 }
             }
@@ -816,31 +863,39 @@ public class CmpContainer implements RpcContainer {
     }
 
     private class ContainerCmpCallback implements CmpCallback {
-        public void setEntityContext(EntityBean entity) {
+
+        @Override
+        public void setEntityContext(final EntityBean entity) {
             CmpContainer.this.setEntityContext(entity);
         }
 
-        public void unsetEntityContext(EntityBean entity) {
+        @Override
+        public void unsetEntityContext(final EntityBean entity) {
             CmpContainer.this.unsetEntityContext(entity);
         }
 
-        public void ejbActivate(EntityBean entity) {
+        @Override
+        public void ejbActivate(final EntityBean entity) {
             CmpContainer.this.ejbActivate(entity);
         }
 
-        public void ejbPassivate(EntityBean entity) {
+        @Override
+        public void ejbPassivate(final EntityBean entity) {
             CmpContainer.this.ejbPassivate(entity);
         }
 
-        public void ejbLoad(EntityBean entity) {
+        @Override
+        public void ejbLoad(final EntityBean entity) {
             CmpContainer.this.ejbLoad(entity);
         }
 
-        public void ejbStore(EntityBean entity) {
+        @Override
+        public void ejbStore(final EntityBean entity) {
             CmpContainer.this.ejbStore(entity);
         }
 
-        public void ejbRemove(EntityBean entity) throws RemoveException {
+        @Override
+        public void ejbRemove(final EntityBean entity) throws RemoveException {
             CmpContainer.this.ejbRemove(entity);
         }
     }

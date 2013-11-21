@@ -34,15 +34,15 @@ public class StatelessContainerFactory {
     private int callbackThreads = 5;
     private Duration closeTimeout;
 
-    public void setCallbackThreads(int callbackThreads) {
+    public void setCallbackThreads(final int callbackThreads) {
         this.callbackThreads = callbackThreads;
     }
 
-    public void setId(Object id) {
+    public void setId(final Object id) {
         this.id = id;
     }
 
-    public void setSecurityService(SecurityService securityService) {
+    public void setSecurityService(final SecurityService securityService) {
         this.securityService = securityService;
     }
 
@@ -51,70 +51,72 @@ public class StatelessContainerFactory {
      * backwards compatibility
      *
      * @deprecated use AccessTimeout
-     * @param accessTimeout
+     * @param accessTimeout Duration
      */
-    public void setTimeOut(Duration accessTimeout) {
+    @Deprecated
+    public void setTimeOut(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
     /**
      *
-     * @param accessTimeout
+     * @param accessTimeout Duration
      */
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         if (this.accessTimeout == null) setTimeOut(accessTimeout);
     }
 
-    public void setMaxSize(int max) {
+    public void setMaxSize(final int max) {
         if (this.max == null) setPoolSize(max);
     }
 
     /**
      * @deprecated use MaxSize
-     * @param max
+     * @param max int
      */
-    public void setPoolSize(int max) {
+    @Deprecated
+    public void setPoolSize(final int max) {
         this.max = max;
         pool.setPoolSize(max);
     }
 
-    public void setMinSize(int min) {
+    public void setMinSize(final int min) {
         pool.setMinSize(min);
     }
 
-    public void setStrictPooling(boolean strict) {
+    public void setStrictPooling(final boolean strict) {
         pool.setStrictPooling(strict);
     }
 
-    public void setMaxAge(Duration maxAge) {
+    public void setMaxAge(final Duration maxAge) {
         pool.setMaxAge(maxAge);
     }
 
-    public void setIdleTimeout(Duration idleTimeout) {
+    public void setIdleTimeout(final Duration idleTimeout) {
         pool.setIdleTimeout(idleTimeout);
     }
 
-    public void setSweepInterval(Duration interval) {
+    public void setSweepInterval(final Duration interval) {
         pool.setSweepInterval(interval);
     }
 
-    public void setReplaceAged(boolean replaceAged) {
+    public void setReplaceAged(final boolean replaceAged) {
         pool.setReplaceAged(replaceAged);
     }
 
-    public void setReplaceFlushed(boolean replaceFlushed) {
+    public void setReplaceFlushed(final boolean replaceFlushed) {
         pool.setReplaceFlushed(replaceFlushed);
     }
 
-    public void setGarbageCollection(boolean garbageCollection) {
+    public void setGarbageCollection(final boolean garbageCollection) {
         pool.setGarbageCollection(garbageCollection);
     }
 
-    public void setMaxAgeOffset(double maxAgeOffset) {
+    public void setMaxAgeOffset(final double maxAgeOffset) {
         pool.setMaxAgeOffset(maxAgeOffset);
     }
 
-    public void setCloseTimeout(Duration closeTimeout) {
+    public void setCloseTimeout(final Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
     }
 

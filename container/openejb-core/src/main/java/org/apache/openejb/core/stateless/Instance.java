@@ -31,7 +31,7 @@ public class Instance {
 
     private Pool<Instance>.Entry poolEntry;
 
-    public Instance(Object bean, Map<String, Object> interceptors, CreationalContext creationalContext) {
+    public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {
         this.bean = bean;
         this.interceptors = interceptors;
         this.creationalContext = creationalContext;
@@ -41,7 +41,7 @@ public class Instance {
         return poolEntry;
     }
 
-    public void setPoolEntry(Pool<Instance>.Entry poolEntry) {
+    public void setPoolEntry(final Pool<Instance>.Entry poolEntry) {
         this.poolEntry = poolEntry;
     }
 }

@@ -26,23 +26,25 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Vector;
 
+@SuppressWarnings("UseOfObsoleteCollectionType")
 public final class ArrayEnumeration implements Enumeration, Externalizable {
+
     static final long serialVersionUID = -1194966576855523042L;
 
     private Object[] elements;
     private int elementsIndex;
 
-    public ArrayEnumeration(Vector elements) {
+    public ArrayEnumeration(final Vector elements) {
         this.elements = new Object[elements.size()];
         elements.copyInto(this.elements);
     }
 
-    public ArrayEnumeration(List list) {
+    public ArrayEnumeration(final List list) {
         this.elements = new Object[list.size()];
         list.toArray(this.elements);
     }
 
-    public ArrayEnumeration(Set<?> set) {
+    public ArrayEnumeration(final Set<?> set) {
         this.elements = new Object[set.size()];
         set.toArray(this.elements);
     }
@@ -50,11 +52,11 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
     public ArrayEnumeration() {
     }
 
-    public Object get(int index) {
+    public Object get(final int index) {
         return elements[index];
     }
 
-    public void set(int index, Object o) {
+    public void set(final int index, final Object o) {
         elements[index] = o;
     }
 
@@ -62,24 +64,30 @@ public final class ArrayEnumeration implements Enumeration, Externalizable {
         return elements.length;
     }
 
+    @Override
     public boolean hasMoreElements() {
         return elementsIndex < elements.length;
     }
 
+    @Override
     public Object nextElement() {
-        if (!hasMoreElements()) throw new NoSuchElementException("No more elements exist");
+        if (!hasMoreElements()) {
+            throw new NoSuchElementException("No more elements exist");
+        }
         return elements[elementsIndex++];
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeInt(elements.length);
         out.writeInt(elementsIndex);
-        for (int i = 0; i < elements.length; i++) {
-            out.writeObject(elements[i]);
+        for (final Object element : elements) {
+            out.writeObject(element);
         }
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         elements = new Object[in.readInt()];
         elementsIndex = in.readInt();
         for (int i = 0; i < elements.length; i++) {
