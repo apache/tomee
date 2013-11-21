@@ -56,23 +56,23 @@ public class StatefulTransactionAttributesTest extends TestCase {
     public void test() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
 
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        EjbJar ejbJar = new EjbJar();
+        final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean(Color.class));
         ejbJar.addEnterpriseBean(new StatefulBean(Red.class));
         ejbJar.addEnterpriseBean(new StatefulBean(Crimson.class));
         ejbJar.addEnterpriseBean(new StatefulBean(Scarlet.class));
-        List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+        final List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
 
         declared.add(new ContainerTransaction(TransAttribute.REQUIRED, "*", "Crimson", "*"));
         declared.add(new ContainerTransaction(TransAttribute.REQUIRES_NEW, "*", "Crimson", "create"));
-        ContainerTransaction o = new ContainerTransaction(TransAttribute.SUPPORTS, "*", "Crimson", "create");
+        final ContainerTransaction o = new ContainerTransaction(TransAttribute.SUPPORTS, "*", "Crimson", "create");
         o.getMethod().get(0).setMethodIntf(MethodIntf.HOME);
         declared.add(o);
         declared.add(new ContainerTransaction(TransAttribute.REQUIRES_NEW, "*", "Crimson", "remove"));
@@ -80,13 +80,13 @@ public class StatefulTransactionAttributesTest extends TestCase {
         declared.add(new ContainerTransaction(TransAttribute.NEVER, Red.class.getName(), "Scarlet", "red"));
         declared.add(new ContainerTransaction(TransAttribute.REQUIRED, "Scarlet", Scarlet.class.getMethod("scarlet")));
 
-        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+        final EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
 
-        InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
         {
-            ColorLocal color = (ColorLocal) context.lookup("ColorLocal");
+            final ColorLocal color = (ColorLocal) context.lookup("ColorLocal");
 
             assertEquals("Never", color.color());
             assertEquals("RequiresNew", color.color((Object)null));
@@ -96,7 +96,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ColorRemote color = (ColorRemote) context.lookup("ColorRemote");
+            final ColorRemote color = (ColorRemote) context.lookup("ColorRemote");
 
             assertEquals("Never", color.color());
             assertEquals("RequiresNew", color.color((Object)null));
@@ -106,22 +106,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ColorEjbLocalHome home = (ColorEjbLocalHome) context.lookup("ColorLocalHome");
-            ColorEjbLocalObject color = home.create("Supports");
-
-            assertEquals("Never", color.color());
-            assertEquals("RequiresNew", color.color((Object)null));
-            assertEquals("Supports", color.color((String)null));
-            assertEquals("Supports", color.color((Boolean)null));
-            assertEquals("Supports", color.color((Integer)null));
-
-            expected.set("Supports");
-            color.remove();
-        }
-
-        {
-            ColorEjbHome home = (ColorEjbHome) context.lookup("ColorRemoteHome");
-            ColorEjbObject color = home.create("Supports");
+            final ColorEjbLocalHome home = (ColorEjbLocalHome) context.lookup("ColorLocalHome");
+            final ColorEjbLocalObject color = home.create("Supports");
 
             assertEquals("Never", color.color());
             assertEquals("RequiresNew", color.color((Object)null));
@@ -133,9 +119,23 @@ public class StatefulTransactionAttributesTest extends TestCase {
             color.remove();
         }
 
+        {
+            final ColorEjbHome home = (ColorEjbHome) context.lookup("ColorRemoteHome");
+            final ColorEjbObject color = home.create("Supports");
+
+            assertEquals("Never", color.color());
+            assertEquals("RequiresNew", color.color((Object)null));
+            assertEquals("Supports", color.color((String)null));
+            assertEquals("Supports", color.color((Boolean)null));
+            assertEquals("Supports", color.color((Integer)null));
+
+            expected.set("Supports");
+            color.remove();
+        }
+
 
         {
-            RedLocal red = (RedLocal) context.lookup("RedLocal");
+            final RedLocal red = (RedLocal) context.lookup("RedLocal");
             assertEquals("Never", red.color());
             assertEquals("Required", red.color((Object)null));
             assertEquals("Supports", red.color((String)null));
@@ -147,7 +147,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            RedRemote red = (RedRemote) context.lookup("RedRemote");
+            final RedRemote red = (RedRemote) context.lookup("RedRemote");
             assertEquals("Never", red.color());
             assertEquals("Required", red.color((Object)null));
             assertEquals("Supports", red.color((String)null));
@@ -159,8 +159,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            RedEjbLocalHome home = (RedEjbLocalHome) context.lookup("RedLocalHome");
-            RedEjbLocalObject red = home.create("Supports");
+            final RedEjbLocalHome home = (RedEjbLocalHome) context.lookup("RedLocalHome");
+            final RedEjbLocalObject red = home.create("Supports");
             assertEquals("Never", red.color());
             assertEquals("Required", red.color((Object)null));
             assertEquals("Supports", red.color((String)null));
@@ -175,8 +175,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            RedEjbHome home = (RedEjbHome) context.lookup("RedRemoteHome");
-            RedEjbObject red = home.create("Supports");
+            final RedEjbHome home = (RedEjbHome) context.lookup("RedRemoteHome");
+            final RedEjbObject red = home.create("Supports");
             assertEquals("Never", red.color());
             assertEquals("Required", red.color((Object)null));
             assertEquals("Supports", red.color((String)null));
@@ -191,7 +191,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            CrimsonLocal crimson = (CrimsonLocal) context.lookup("CrimsonLocal");
+            final CrimsonLocal crimson = (CrimsonLocal) context.lookup("CrimsonLocal");
             assertEquals("Required", crimson.color());
             assertEquals("Required", crimson.color((Object)null));
             assertEquals("Required", crimson.color((String)null));
@@ -205,7 +205,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            CrimsonRemote crimson = (CrimsonRemote) context.lookup("CrimsonRemote");
+            final CrimsonRemote crimson = (CrimsonRemote) context.lookup("CrimsonRemote");
             assertEquals("Required", crimson.color());
             assertEquals("Required", crimson.color((Object)null));
             assertEquals("Required", crimson.color((String)null));
@@ -219,8 +219,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            CrimsonEjbLocalHome home = (CrimsonEjbLocalHome) context.lookup("CrimsonLocalHome");
-            CrimsonEjbLocalObject crimson = home.create("RequiresNew");
+            final CrimsonEjbLocalHome home = (CrimsonEjbLocalHome) context.lookup("CrimsonLocalHome");
+            final CrimsonEjbLocalObject crimson = home.create("RequiresNew");
             assertEquals("Required", crimson.color());
             assertEquals("Required", crimson.color((Object)null));
             assertEquals("Required", crimson.color((String)null));
@@ -236,8 +236,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            CrimsonEjbHome home = (CrimsonEjbHome) context.lookup("CrimsonRemoteHome");
-            CrimsonEjbObject crimson = home.create("Supports");
+            final CrimsonEjbHome home = (CrimsonEjbHome) context.lookup("CrimsonRemoteHome");
+            final CrimsonEjbObject crimson = home.create("Supports");
             assertEquals("Required", crimson.color());
             assertEquals("Required", crimson.color((Object)null));
             assertEquals("Required", crimson.color((String)null));
@@ -253,7 +253,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ScarletLocal scarlet = (ScarletLocal) context.lookup("ScarletLocal");
+            final ScarletLocal scarlet = (ScarletLocal) context.lookup("ScarletLocal");
             assertEquals("Never", scarlet.color());
             assertEquals("Required", scarlet.color((Object)null));
             assertEquals("RequiresNew", scarlet.color((String)null));
@@ -267,7 +267,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ScarletRemote scarlet = (ScarletRemote) context.lookup("ScarletRemote");
+            final ScarletRemote scarlet = (ScarletRemote) context.lookup("ScarletRemote");
             assertEquals("Never", scarlet.color());
             assertEquals("Required", scarlet.color((Object)null));
             assertEquals("RequiresNew", scarlet.color((String)null));
@@ -281,8 +281,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ScarletEjbLocalHome home = (ScarletEjbLocalHome) context.lookup("ScarletLocalHome");
-            ScarletEjbLocalObject scarlet = home.create("RequiresNew");
+            final ScarletEjbLocalHome home = (ScarletEjbLocalHome) context.lookup("ScarletLocalHome");
+            final ScarletEjbLocalObject scarlet = home.create("RequiresNew");
             assertEquals("Never", scarlet.color());
             assertEquals("Required", scarlet.color((Object)null));
             assertEquals("RequiresNew", scarlet.color((String)null));
@@ -296,8 +296,8 @@ public class StatefulTransactionAttributesTest extends TestCase {
         }
 
         {
-            ScarletEjbHome home = (ScarletEjbHome) context.lookup("ScarletRemoteHome");
-            ScarletEjbObject scarlet = home.create("RequiresNew");
+            final ScarletEjbHome home = (ScarletEjbHome) context.lookup("ScarletRemoteHome");
+            final ScarletEjbObject scarlet = home.create("RequiresNew");
             assertEquals("Never", scarlet.color());
             assertEquals("Required", scarlet.color((Object)null));
             assertEquals("RequiresNew", scarlet.color((String)null));
@@ -320,12 +320,12 @@ public class StatefulTransactionAttributesTest extends TestCase {
     public static class Color implements ColorLocal, ColorRemote {
 
         public String attribute() {
-            ThreadContext context = ThreadContext.getThreadContext();
+            final ThreadContext context = ThreadContext.getThreadContext();
             return context.getTransactionPolicy().toString();
         }
 
         @Init
-        public void ejbCreate(String s){
+        public void ejbCreate(final String s){
             assertEquals(s, attribute());
         }
 
@@ -342,19 +342,19 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
 
         @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-        public String color(Object o) {
+        public String color(final Object o) {
             return attribute();
         }
 
-        public String color(String s) {
+        public String color(final String s) {
             return attribute();
         }
 
-        public String color(Boolean b) {
+        public String color(final Boolean b) {
             return attribute();
         }
 
-        public String color(Integer i) {
+        public String color(final Integer i) {
             return attribute();
         }
     }
@@ -363,7 +363,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
     @RemoteHome(RedEjbHome.class)
     public static class Red extends Color implements RedLocal, RedRemote {
 
-        public String color(Object o) {
+        public String color(final Object o) {
             return attribute();
         }
 
@@ -372,11 +372,11 @@ public class StatefulTransactionAttributesTest extends TestCase {
             return attribute();
         }
 
-        public String red(Object o) {
+        public String red(final Object o) {
             return attribute();
         }
 
-        public String red(String s) {
+        public String red(final String s) {
             return attribute();
         }
 
@@ -392,7 +392,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
             return attribute();
         }
 
-        public String color(String s) {
+        public String color(final String s) {
             return attribute();
         }
 
@@ -401,7 +401,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
             return attribute();
         }
 
-        public String crimson(String s) {
+        public String crimson(final String s) {
             return attribute();
         }
     }
@@ -416,7 +416,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
             return attribute();
         }
 
-        public String scarlet(String s) {
+        public String scarlet(final String s) {
             return attribute();
         }
     }

@@ -33,21 +33,24 @@ import java.util.Properties;
 /**
  * @deprecated Use org.apache.openejb.core.LocalInitialContextFactory
  */
+@Deprecated
 public class InitContextFactory implements InitialContextFactory {
 
-    public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Context getInitialContext(final Hashtable env) throws javax.naming.NamingException {
         if (!OpenEJB.isInitialized()) {
             initializeOpenEJB(env);
         }
 
-        String user = (String) env.get(Context.SECURITY_PRINCIPAL);
-        String pass = (String) env.get(Context.SECURITY_CREDENTIALS);
-        String realmName = (String) env.get("openejb.authentication.realmName");
+        final String user = (String) env.get(Context.SECURITY_PRINCIPAL);
+        final String pass = (String) env.get(Context.SECURITY_CREDENTIALS);
+        final String realmName = (String) env.get("openejb.authentication.realmName");
 
-        if (user != null && pass != null){
+        if (user != null && pass != null) {
             try {
-                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-                Object identity = null;
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                final Object identity;
                 if (realmName == null) {
                     identity = securityService.login(user, pass);
                 } else {
@@ -55,20 +58,21 @@ public class InitContextFactory implements InitialContextFactory {
                 }
                 securityService.associate(identity);
             } catch (LoginException e) {
-                throw (AuthenticationException) new AuthenticationException("User could not be authenticated: "+user).initCause(e);
+                throw (AuthenticationException) new AuthenticationException("User could not be authenticated: " + user).initCause(e);
             }
         }
 
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Context context = containerSystem.getJNDIContext();
         context = (Context) context.lookup("openejb/local");
         return context;
 
     }
 
-    private void initializeOpenEJB(Hashtable env) throws javax.naming.NamingException {
+    @SuppressWarnings("UseOfObsoleteCollectionType")
+    private void initializeOpenEJB(final Hashtable env) throws javax.naming.NamingException {
         try {
-            Properties props = new Properties();
+            final Properties props = new Properties();
 
             /* DMB: We should get the defaults from the functionality
             *      Alan is working on.  This is temporary.
@@ -85,11 +89,9 @@ public class InitContextFactory implements InitialContextFactory {
 
             OpenEJB.init(props);
 
-        }
-        catch (OpenEJBException e) {
+        } catch (OpenEJBException e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new NamingException("Cannot initailize OpenEJB", e);
         }
     }
