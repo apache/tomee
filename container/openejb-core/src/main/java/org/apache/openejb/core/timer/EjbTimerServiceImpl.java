@@ -165,12 +165,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             scheduler = systemInstance.getComponent(Scheduler.class);
 
             if (scheduler == null || newInstance) {
-                defaultQuartzConfiguration(properties, deployment, newInstance);
+                final boolean useTccl = "true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"));
+
+                defaultQuartzConfiguration(properties, deployment, newInstance, useTccl);
 
                 try {
                     // start in container context to avoid thread leaks
                     final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-                    if ("true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"))) {
+                    if (useTccl) {
                         Thread.currentThread().setContextClassLoader(deployment.getClassLoader());
                     } else {
                         Thread.currentThread().setContextClassLoader(EjbTimerServiceImpl.class.getClassLoader());
@@ -207,7 +209,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         return thisScheduler;
     }
 
-    private static void defaultQuartzConfiguration(final Properties properties, final BeanContext deployment, final boolean newInstance) {
+    private static void defaultQuartzConfiguration(final Properties properties, final BeanContext deployment, final boolean newInstance, final boolean tccl) {
         final String defaultThreadPool = DefaultTimerThreadPoolAdapter.class.getName();
         if (!properties.containsKey(StdSchedulerFactory.PROP_THREAD_POOL_CLASS)) {
             properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, defaultThreadPool);
@@ -241,17 +243,19 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             }
         }
 
-        final String driverDelegate = properties.getProperty("org.quartz.jobStore.driverDelegateClass");
-        if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
-            properties.put("org.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
-        } else if (driverDelegate != null) {
-            log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
-        }
+        if (!tccl) {
+            final String driverDelegate = properties.getProperty("org.quartz.jobStore.driverDelegateClass");
+            if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
+                properties.put("org.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
+            } else if (driverDelegate != null) {
+                log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
+            }
 
-        // adding our custom persister
-        if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
-            properties.put("org.quartz.jobStore.driverDelegateInitString",
-                           "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+            // adding our custom persister
+            if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
+                properties.put("org.quartz.jobStore.driverDelegateInitString",
+                               "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+            }
         }
 
         if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
