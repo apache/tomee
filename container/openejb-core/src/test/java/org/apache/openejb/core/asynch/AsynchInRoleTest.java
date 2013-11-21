@@ -67,11 +67,8 @@ public class AsynchInRoleTest {
         assembler.destroy();
     }
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     @Test
     public void testMethodScopeAsynch() throws Exception {
-        System.out.println(long.class.getName());
-        System.out.println(String[].class.getCanonicalName());
         //Build the application
         final AppModule app = new AppModule(this.getClass().getClassLoader(), "testasynch");
         final EjbJar ejbJar = new EjbJar();
@@ -82,7 +79,10 @@ public class AsynchInRoleTest {
         final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
-        final InitialContext context = new InitialContext();
+        final Properties env = new Properties();
+        env.put(javax.naming.Context.SECURITY_PRINCIPAL, "jonathan");
+        env.put(javax.naming.Context.SECURITY_CREDENTIALS, "secret");
+        final InitialContext context = new InitialContext(env);
 
         final String[] beans = new String[]{"TestBeanCLocal", "TestBeanDLocal"};
         for (final String beanName : beans) {
@@ -100,6 +100,8 @@ public class AsynchInRoleTest {
             testBean.testD(Thread.currentThread().getId());
             Assert.assertEquals("testD was never executed", "testD", testBean.getLastInvokeMethod());
         }
+
+        context.close();
     }
 
     @Test
@@ -134,6 +136,8 @@ public class AsynchInRoleTest {
 
         test.testD(Thread.currentThread().getId());
         Assert.assertEquals("testD was never executed", "testD", test.getLastInvokeMethod());
+
+        context.close();
     }
 
     @Test
@@ -173,6 +177,8 @@ public class AsynchInRoleTest {
         test.testD(Thread.currentThread().getId());
         Thread.sleep(3000L);
         Assert.assertEquals("testD was never executed", "testD", test.getLastInvokeMethod());
+
+        context.close();
     }
 
     public interface TestBean {

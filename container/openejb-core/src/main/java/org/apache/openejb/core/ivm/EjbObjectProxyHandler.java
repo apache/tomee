@@ -241,14 +241,32 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
         if (beanContext.isAsynchronous(method)) {
 
-            final SecurityService<?> securityService = SystemInstance.get().getComponent(SecurityService.class);
-            final Object state = securityService.currentState();
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            Object stateTmp = securityService.currentState();
+            final boolean associate;
+            if (stateTmp == null) {
+                stateTmp = ClientSecurity.getIdentity();
+                associate = stateTmp != null;
+            } else {
+                associate = false;
+            }
+            final Object securityState = stateTmp;
+
             final ThreadContext threadContext = ThreadContext.getThreadContext();
             final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
 
             return asynchronousPool.invoke(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
+                    final Object threadState;
+                    if (associate) {
+                        securityService.associate(securityState);
+                        threadState = null;
+                    } else {
+                        threadState = securityService.currentState();
+                        securityService.setState(securityState);
+                    }
+
                     final ThreadContext oldCtx; // ensure context is the same as for the caller
                     if (threadContext != null) {
                         oldCtx = ThreadContext.enter(new ThreadContext(threadContext));
@@ -256,8 +274,6 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                         oldCtx = null;
                     }
 
-                    final Object threadState = securityService.currentState();
-                    securityService.setState(state);
                     try {
                         return synchronizedBusinessMethod(interfce, method, args);
                     } catch (ApplicationException ae) {
@@ -266,9 +282,13 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
                         throw ae;
                     } finally {
-                        securityService.setState(threadState);
                         if (oldCtx != null) {
                             ThreadContext.exit(oldCtx);
+                        }
+                        if (!associate) {
+                            securityService.setState(threadState);
+                        } else {
+                            securityService.disassociate();
                         }
                     }
                 }
