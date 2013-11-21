@@ -283,7 +283,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             final String ejbName = beanContext.getEjbName();
 
             String name = type == null ? null : type.getSpecName();
-            if ("Local".equals(name) || "LocalHome".equals(name) || "LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+            if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
                 name = null;
             }
 
