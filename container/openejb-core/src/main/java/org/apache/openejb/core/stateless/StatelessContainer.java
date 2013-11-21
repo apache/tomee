@@ -206,9 +206,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 }
             }
 
-            if (null != oldCallContext) {
-                ThreadContext.exit(oldCallContext);
-            }
+            ThreadContext.exit(oldCallContext);
 
             if (currentCreationalContext != null) {
                 currentCreationalContext.remove();
