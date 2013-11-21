@@ -31,6 +31,7 @@ import static org.apache.openejb.util.URLs.toFilePath;
 
 public class ServiceProviderLoginModuleTest extends TestCase {
 
+    @Override
     protected void setUp() throws Exception {
         loadJassLoginConfig();
     }
@@ -38,7 +39,7 @@ public class ServiceProviderLoginModuleTest extends TestCase {
     private static void loadJassLoginConfig() {
         String path = System.getProperty("java.security.auth.login.config");
         if (path == null) {
-            URL resource = ServiceProviderLoginModuleTest.class.getClassLoader().getResource("login.config");
+            final URL resource = ServiceProviderLoginModuleTest.class.getClassLoader().getResource("login.config");
             if (resource != null) {
                 path = toFilePath(resource);
                 System.setProperty("java.security.auth.login.config", path);
@@ -47,10 +48,10 @@ public class ServiceProviderLoginModuleTest extends TestCase {
     }
 
     public void testLogin() throws LoginException {
-        LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("paul", ""));
+        final LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("paul", ""));
         context.login();
 
-        Subject subject = context.getSubject();
+        final Subject subject = context.getSubject();
 
         assertEquals("Should have three principals", 3, subject.getPrincipals().size());
         assertEquals("Should have one user principal", 1, subject.getPrincipals(UserPrincipal.class).size());
@@ -62,7 +63,7 @@ public class ServiceProviderLoginModuleTest extends TestCase {
     }
 
     public void testBadUseridLogin() throws Exception {
-        LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
+        final LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("nobody", "secret"));
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");
@@ -72,7 +73,7 @@ public class ServiceProviderLoginModuleTest extends TestCase {
     }
 
     public void testBadPWLogin() throws Exception {
-        LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("eddie", "panama"));
+        final LoginContext context = new LoginContext("ServiceProviderLogin", new UsernamePasswordCallbackHandler("eddie", "panama"));
         try {
             context.login();
             fail("Should have thrown a FailedLoginException");

@@ -48,19 +48,21 @@ public class JaccPermissionsBuilder {
         System.setProperty("org.apache.security.jacc.EJBMethodPermission.methodInterfaces", "BusinessLocalHome,BusinessRemoteHome,BusinessRemote,BusinessLocal");
     }
 
-    public void install(PolicyContext policyContext) throws OpenEJBException {
-        if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
+    public void install(final PolicyContext policyContext) throws OpenEJBException {
+        if (SystemInstance.get().hasProperty("openejb.geronimo")) {
+            return;
+        }
 
         try {
-            PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
+            final PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
-            PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
+            final PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
 
             policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
 
             policy.addToUncheckedPolicy(policyContext.getUncheckedPermissions());
 
-            for (Map.Entry<String, PermissionCollection> entry : policyContext.getRolePermissions().entrySet()) {
+            for (final Map.Entry<String, PermissionCollection> entry : policyContext.getRolePermissions().entrySet()) {
                 policy.addToRole(entry.getKey(), entry.getValue());
             }
 
@@ -72,16 +74,16 @@ public class JaccPermissionsBuilder {
         }
     }
 
-    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), JaccPermissionsBuilder.class);
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), JaccPermissionsBuilder.class);
 
-    public PolicyContext build(EjbJarInfo ejbJar, HashMap<String, BeanContext> deployments) throws OpenEJBException {
+    public PolicyContext build(final EjbJarInfo ejbJar, final HashMap<String, BeanContext> deployments) throws OpenEJBException {
 
-        List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+        final List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
 
         List<MethodPermissionInfo> perms = ejbJar.methodPermissions;
 
-        for (MethodInfo info : ejbJar.excludeList) {
-            MethodPermissionInfo perm = new MethodPermissionInfo();
+        for (final MethodInfo info : ejbJar.excludeList) {
+            final MethodPermissionInfo perm = new MethodPermissionInfo();
             perm.excluded = true;
             perm.methods.add(info);
             perms.add(perm);
@@ -89,28 +91,28 @@ public class JaccPermissionsBuilder {
 
         perms = MethodInfoUtil.normalizeMethodPermissionInfos(perms);
 
-        for (BeanContext beanContext : deployments.values()) {
-            Map<Method, MethodAttributeInfo> attributes = resolveAttributes(perms, beanContext);
+        for (final BeanContext beanContext : deployments.values()) {
+            final Map<Method, MethodAttributeInfo> attributes = resolveAttributes(perms, beanContext);
 
             if (log.isDebugEnabled()) {
-                for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
-                    Method method = entry.getKey();
-                    MethodPermissionInfo value = (MethodPermissionInfo) entry.getValue();
+                for (final Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+                    final Method method = entry.getKey();
+                    final MethodPermissionInfo value = (MethodPermissionInfo) entry.getValue();
                     log.debug("Security Attribute: " + method + " -- " + MethodInfoUtil.toString(value));
                 }
             }
 
-            for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
-                Method method = entry.getKey();
+            for (final Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+                final Method method = entry.getKey();
 
-                MethodPermissionInfo a = (MethodPermissionInfo) entry.getValue();
-                MethodPermissionInfo b = new MethodPermissionInfo();
+                final MethodPermissionInfo a = (MethodPermissionInfo) entry.getValue();
+                final MethodPermissionInfo b = new MethodPermissionInfo();
                 b.excluded = a.excluded;
                 b.unchecked = a.unchecked;
                 b.roleNames.addAll(a.roleNames);
 
-                MethodInfo am = a.methods.get(0);
-                MethodInfo bm = new MethodInfo();
+                final MethodInfo am = a.methods.get(0);
+                final MethodInfo bm = new MethodInfo();
 
                 bm.ejbName = beanContext.getEjbName();
                 bm.ejbDeploymentId = beanContext.getDeploymentID() + "";
@@ -119,7 +121,7 @@ public class JaccPermissionsBuilder {
                 bm.className = method.getDeclaringClass().getName();
                 bm.methodName = method.getName();
                 bm.methodParams = new ArrayList<String>();
-                for (Class<?> type : method.getParameterTypes()) {
+                for (final Class<?> type : method.getParameterTypes()) {
                     bm.methodParams.add(type.getName());
                 }
                 b.methods.add(bm);
@@ -132,19 +134,21 @@ public class JaccPermissionsBuilder {
         ejbJar.methodPermissions.addAll(normalized);
         ejbJar.excludeList.clear();
 
-        PolicyContext policyContext = new PolicyContext(ejbJar.moduleUri.toString());
+        final PolicyContext policyContext = new PolicyContext(ejbJar.moduleUri.toString());
 
-        for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
-            BeanContext beanContext = deployments.get(enterpriseBean.ejbDeploymentId);
+        for (final EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
+            final BeanContext beanContext = deployments.get(enterpriseBean.ejbDeploymentId);
 
-            PermissionCollection permissions = DelegatePermissionCollection.getPermissionCollection();
+            final PermissionCollection permissions = DelegatePermissionCollection.getPermissionCollection();
 
-            String ejbName = enterpriseBean.ejbName;
+            final String ejbName = enterpriseBean.ejbName;
 
-            for (InterfaceType type : InterfaceType.values()) {
-                if (type == InterfaceType.UNKNOWN) continue;
+            for (final InterfaceType type : InterfaceType.values()) {
+                if (type == InterfaceType.UNKNOWN) {
+                    continue;
+                }
 
-                for (Class interfce : beanContext.getInterfaces(type)) {
+                for (final Class interfce : beanContext.getInterfaces(type)) {
                     addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), interfce);
                 }
             }
@@ -157,25 +161,29 @@ public class JaccPermissionsBuilder {
         return policyContext;
     }
 
-    private void addDeclaredEjbPermissions(EjbJarInfo ejbJar, EnterpriseBeanInfo beanInfo, String defaultRole, PermissionCollection notAssigned, PolicyContext policyContext) throws OpenEJBException {
+    private void addDeclaredEjbPermissions(final EjbJarInfo ejbJar,
+                                           final EnterpriseBeanInfo beanInfo,
+                                           final String defaultRole,
+                                           PermissionCollection notAssigned,
+                                           final PolicyContext policyContext) throws OpenEJBException {
 
-        PermissionCollection uncheckedPermissions = policyContext.getUncheckedPermissions();
-        PermissionCollection excludedPermissions = policyContext.getExcludedPermissions();
-        Map<String, PermissionCollection> rolePermissions = policyContext.getRolePermissions();
+        final PermissionCollection uncheckedPermissions = policyContext.getUncheckedPermissions();
+        final PermissionCollection excludedPermissions = policyContext.getExcludedPermissions();
+        final Map<String, PermissionCollection> rolePermissions = policyContext.getRolePermissions();
 
-        String ejbName = beanInfo.ejbName;
+        final String ejbName = beanInfo.ejbName;
 
         //this can occur in an ear when one ejb module has security and one doesn't.  In this case we still need
         //to make the non-secure one completely unchecked.
         /**
          * JACC v1.0 section 3.1.5.1
          */
-        for (MethodPermissionInfo methodPermission : ejbJar.methodPermissions) {
-            List<String> roleNames = methodPermission.roleNames;
-            boolean unchecked = methodPermission.unchecked;
-            boolean excluded = methodPermission.excluded;
+        for (final MethodPermissionInfo methodPermission : ejbJar.methodPermissions) {
+            final List<String> roleNames = methodPermission.roleNames;
+            final boolean unchecked = methodPermission.unchecked;
+            final boolean excluded = methodPermission.excluded;
 
-            for (MethodInfo method : methodPermission.methods) {
+            for (final MethodInfo method : methodPermission.methods) {
 
                 if (!ejbName.equals(method.ejbName)) {
                     continue;
@@ -189,19 +197,19 @@ public class JaccPermissionsBuilder {
                 }
 
                 // method interface
-                String methodIntf = method.methodIntf;
+                final String methodIntf = method.methodIntf;
 
                 // method parameters
-                String[] methodParams;
+                final String[] methodParams;
                 if (method.methodParams != null) {
-                    List<String> paramList = method.methodParams;
+                    final List<String> paramList = method.methodParams;
                     methodParams = paramList.toArray(new String[paramList.size()]);
                 } else {
                     methodParams = null;
                 }
 
                 // create the permission object
-                EJBMethodPermission permission = new EJBMethodPermission(ejbName, methodName, methodIntf, methodParams);
+                final EJBMethodPermission permission = new EJBMethodPermission(ejbName, methodName, methodIntf, methodParams);
                 notAssigned = cullPermissions(notAssigned, permission);
 
                 // if this is unchecked, mark it as unchecked; otherwise assign the roles
@@ -213,7 +221,7 @@ public class JaccPermissionsBuilder {
                      */
                     excludedPermissions.add(permission);
                 } else {
-                    for (String roleName : roleNames) {
+                    for (final String roleName : roleNames) {
                         PermissionCollection permissions = rolePermissions.get(roleName);
                         if (permissions == null) {
                             permissions = DelegatePermissionCollection.getPermissionCollection();
@@ -229,13 +237,13 @@ public class JaccPermissionsBuilder {
         /**
          * JACC v1.0 section 3.1.5.3
          */
-        for (SecurityRoleReferenceInfo securityRoleRef : beanInfo.securityRoleReferences) {
+        for (final SecurityRoleReferenceInfo securityRoleRef : beanInfo.securityRoleReferences) {
 
             if (securityRoleRef.roleLink == null) {
                 throw new OpenEJBException("Missing role-link");
             }
 
-            String roleLink = securityRoleRef.roleLink;
+            final String roleLink = securityRoleRef.roleLink;
 
             PermissionCollection roleLinks = rolePermissions.get(roleLink);
             if (roleLinks == null) {
@@ -266,9 +274,9 @@ public class JaccPermissionsBuilder {
             }
         }
 
-        Enumeration e = notAssigned.elements();
+        final Enumeration e = notAssigned.elements();
         while (e.hasMoreElements()) {
-            Permission p = (Permission) e.nextElement();
+            final Permission p = (Permission) e.nextElement();
             permissions.add(p);
         }
 
@@ -287,15 +295,18 @@ public class JaccPermissionsBuilder {
      * @param permissions     the permission set to be extended
      * @param ejbName         the name of the EJB
      * @param methodInterface the EJB method interface
-     * @param clazz clazz
-     *
-     * @throws OpenEJBException
-     *          in case a class could not be found
+     * @param clazz           clazz
+     * @throws OpenEJBException in case a class could not be found
      */
-    public void addPossibleEjbMethodPermissions(PermissionCollection permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
-        if (clazz == null) return;
-        for (Method method : clazz.getMethods()) {
-            String methodIface = "LocalBean".equals(methodInterface) || "LocalBeanHome".equals(methodInterface) ? null : methodInterface;
+    public void addPossibleEjbMethodPermissions(final PermissionCollection permissions,
+                                                final String ejbName,
+                                                final String methodInterface,
+                                                final Class clazz) throws OpenEJBException {
+        if (clazz == null) {
+            return;
+        }
+        for (final Method method : clazz.getMethods()) {
+            final String methodIface = "LocalBean".equals(methodInterface) || "LocalBeanHome".equals(methodInterface) ? null : methodInterface;
             permissions.add(new EJBMethodPermission(ejbName, methodIface, method));
         }
     }
@@ -308,11 +319,11 @@ public class JaccPermissionsBuilder {
      * @param permission  the permission that is to be used for culling
      * @return the culled set of permissions that are not implied by <code>permission</code>
      */
-    private PermissionCollection cullPermissions(PermissionCollection toBeChecked, Permission permission) {
-        PermissionCollection result = DelegatePermissionCollection.getPermissionCollection();
+    private PermissionCollection cullPermissions(final PermissionCollection toBeChecked, final Permission permission) {
+        final PermissionCollection result = DelegatePermissionCollection.getPermissionCollection();
 
-        for (Enumeration e = toBeChecked.elements(); e.hasMoreElements();) {
-            Permission test = (Permission) e.nextElement();
+        for (Enumeration e = toBeChecked.elements(); e.hasMoreElements(); ) {
+            final Permission test = (Permission) e.nextElement();
             if (!permission.implies(test)) {
                 result.add(test);
             }

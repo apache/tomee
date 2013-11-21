@@ -33,19 +33,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
+import java.util.Properties;
 import java.util.concurrent.Future;
 
 /**
  * Testing of the @Asynchronous annotation on beans.
- *
  */
-public class AsynchTest{
+public class AsynchInRoleTest {
 
     private Assembler assembler;
 
@@ -60,18 +62,18 @@ public class AsynchTest{
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
     }
 
-	@After
-	public void afterTest() throws Exception{
-	    assembler.destroy();
-	}
+    @After
+    public void afterTest() throws Exception {
+        assembler.destroy();
+    }
 
-	@SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     @Test
-	public void testMethodScopeAsynch() throws Exception{
-	    System.out.println(long.class.getName());
-	    System.out.println(String[].class.getCanonicalName());
-	    //Build the application
-	    final AppModule app = new AppModule(this.getClass().getClassLoader(), "testasynch");
+    public void testMethodScopeAsynch() throws Exception {
+        System.out.println(long.class.getName());
+        System.out.println(String[].class.getCanonicalName());
+        //Build the application
+        final AppModule app = new AppModule(this.getClass().getClassLoader(), "testasynch");
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBeanC.class));
         ejbJar.addEnterpriseBean(new SingletonBean(TestBeanD.class));
@@ -80,29 +82,29 @@ public class AsynchTest{
         final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
-		final InitialContext context = new InitialContext();
+        final InitialContext context = new InitialContext();
 
-		final String[] beans = new String[]{"TestBeanCLocal", "TestBeanDLocal"};
-		for(final String beanName : beans){
-			final TestBean testBean = (TestBean)context.lookup(beanName);
+        final String[] beans = new String[]{"TestBeanCLocal", "TestBeanDLocal"};
+        for (final String beanName : beans) {
+            final TestBean testBean = (TestBean) context.lookup(beanName);
 
-			testBean.testA(Thread.currentThread().getId());
-			Thread.sleep(1000L);
-	        Assert.assertEquals("testA was never executed", "testA" , testBean.getLastInvokeMethod());
-	        final Future<String> future = testBean.testB(Thread.currentThread().getId());
-			Thread.sleep(1000L);
-			Assert.assertTrue("The task should be done", future.isDone());
-	        Assert.assertEquals("testB was never executed", "testB" , testBean.getLastInvokeMethod());
-	        testBean.testC(Thread.currentThread().getId());
-	        Assert.assertEquals("testC was never executed", "testC" , testBean.getLastInvokeMethod());
-	        testBean.testD(Thread.currentThread().getId());
-	        Assert.assertEquals("testD was never executed", "testD" , testBean.getLastInvokeMethod());
-		}
-	}
+            testBean.testA(Thread.currentThread().getId());
+            Thread.sleep(1000L);
+            Assert.assertEquals("testA was never executed", "testA", testBean.getLastInvokeMethod());
+            final Future<String> future = testBean.testB(Thread.currentThread().getId());
+            Thread.sleep(1000L);
+            Assert.assertTrue("The task should be done", future.isDone());
+            Assert.assertEquals("testB was never executed", "testB", testBean.getLastInvokeMethod());
+            testBean.testC(Thread.currentThread().getId());
+            Assert.assertEquals("testC was never executed", "testC", testBean.getLastInvokeMethod());
+            testBean.testD(Thread.currentThread().getId());
+            Assert.assertEquals("testD was never executed", "testD", testBean.getLastInvokeMethod());
+        }
+    }
 
-	@Test
-	public void testClassScopeAsynch() throws Exception {
-	    //Build the application
+    @Test
+    public void testClassScopeAsynch() throws Exception {
+        //Build the application
         final AppModule app = new AppModule(this.getClass().getClassLoader(), "testclassasynch");
         final EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(TestBeanA.class));
@@ -111,24 +113,28 @@ public class AsynchTest{
         final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
-        final InitialContext context = new InitialContext();
-        final TestBean test = (TestBean)context.lookup("TestBeanALocal");
+        final Properties env = new Properties();
+        env.put(javax.naming.Context.SECURITY_PRINCIPAL, "jonathan");
+        env.put(javax.naming.Context.SECURITY_CREDENTIALS, "secret");
+
+        final InitialContext context = new InitialContext(env);
+        final TestBean test = (TestBean) context.lookup("TestBeanALocal");
 
         test.testA(Thread.currentThread().getId());
         Thread.sleep(1000L);
-        Assert.assertEquals("testA was never executed", "testA" , test.getLastInvokeMethod());
+        Assert.assertEquals("testA was never executed", "testA", test.getLastInvokeMethod());
 
         final Future<String> future = test.testB(Thread.currentThread().getId());
         Thread.sleep(1000L);
         Assert.assertTrue("The task should be done", future.isDone());
-        Assert.assertEquals("testB was never executed", "testB" , test.getLastInvokeMethod());
+        Assert.assertEquals("testB was never executed", "testB", test.getLastInvokeMethod());
 
         test.testC(Thread.currentThread().getId());
-        Assert.assertEquals("testC was never executed", "testC" , test.getLastInvokeMethod());
+        Assert.assertEquals("testC was never executed", "testC", test.getLastInvokeMethod());
 
         test.testD(Thread.currentThread().getId());
-        Assert.assertEquals("testD was never executed", "testD" , test.getLastInvokeMethod());
-	}
+        Assert.assertEquals("testD was never executed", "testD", test.getLastInvokeMethod());
+    }
 
     @Test
     public void testSessionContext() throws Exception {
@@ -141,7 +147,12 @@ public class AsynchTest{
         final AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
 
-        final InitialContext context = new InitialContext();
+        final Properties env = new Properties();
+        env.put(javax.naming.Context.SECURITY_PRINCIPAL, "jonathan");
+        env.put(javax.naming.Context.SECURITY_CREDENTIALS, "secret");
+
+        final InitialContext context = new InitialContext(env);
+
         final TestBean test = (TestBean) context.lookup("TestBeanBLocal");
 
         test.testA(Thread.currentThread().getId());
@@ -178,6 +189,8 @@ public class AsynchTest{
     }
 
     @Stateless
+    @DeclareRoles({"committer"})
+    @RolesAllowed({"committer"})
     public static class TestBeanC implements TestBean {
 
         private String lastInvokeMethod;
@@ -217,6 +230,8 @@ public class AsynchTest{
     }
 
     @Singleton
+    @DeclareRoles({"committer"})
+    @RolesAllowed({"committer"})
     public static class TestBeanD implements TestBean {
 
         private String lastInvokeMethod;
@@ -276,10 +291,12 @@ public class AsynchTest{
     }
 
     @Singleton
+    @DeclareRoles({"committer"})
+    @RolesAllowed({"committer"})
     public static class TestBeanA extends AbstractBean implements TestBean {
 
         @Override
-        public  String getLastInvokeMethod() {
+        public String getLastInvokeMethod() {
             return lastInvokeMethod;
         }
 
@@ -298,6 +315,8 @@ public class AsynchTest{
     }
 
     @Stateless
+    @DeclareRoles({"committer"})
+    @RolesAllowed({"committer"})
     public static class TestBeanB implements TestBean {
 
         private String lastInvokeMethod;
