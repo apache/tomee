@@ -296,6 +296,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     IntraVmCopyMonitor.post();
                 }
             }
+
             final IntraVmCopyMonitor.State oldStrategy = strategy;
             if (getBeanContext().isAsynchronous(method) || getBeanContext().getComponentType().equals(BeanType.MANAGED)) {
                 strategy = IntraVmCopyMonitor.State.NONE;
@@ -348,9 +349,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             }
         }
         if (!(Object.class.equals(method.getDeclaringClass())
-                && method.getName().equals("finalize")
-                && method.getExceptionTypes().length == 1
-                && Throwable.class.equals(method.getExceptionTypes()[0]))) {
+              && method.getName().equals("finalize")
+              && method.getExceptionTypes().length == 1
+              && Throwable.class.equals(method.getExceptionTypes()[0]))) {
             getBeanContext(); // will throw an exception if app has been undeployed.
         }
     }
@@ -493,8 +494,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     protected boolean equalHandler(final BaseEjbProxyHandler other) {
         return (primaryKey == null ? other.primaryKey == null : primaryKey.equals(other.primaryKey))
-                && deploymentID.equals(other.deploymentID)
-                && getMainInterface().equals(other.getMainInterface());
+               && deploymentID.equals(other.deploymentID)
+               && getMainInterface().equals(other.getMainInterface());
     }
 
     protected abstract Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable;
@@ -526,21 +527,21 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         }
         final Class ooc = object.getClass();
         if (ooc == int.class ||
-                ooc == String.class ||
-                ooc == long.class ||
-                ooc == boolean.class ||
-                ooc == byte.class ||
-                ooc == float.class ||
-                ooc == double.class ||
-                ooc == short.class ||
-                ooc == Long.class ||
-                ooc == Boolean.class ||
-                ooc == Byte.class ||
-                ooc == Character.class ||
-                ooc == Float.class ||
-                ooc == Double.class ||
-                ooc == Short.class ||
-                ooc == BigDecimal.class) {
+            ooc == String.class ||
+            ooc == long.class ||
+            ooc == boolean.class ||
+            ooc == byte.class ||
+            ooc == float.class ||
+            ooc == double.class ||
+            ooc == short.class ||
+            ooc == Long.class ||
+            ooc == Boolean.class ||
+            ooc == Byte.class ||
+            ooc == Character.class ||
+            ooc == Float.class ||
+            ooc == Double.class ||
+            ooc == Short.class ||
+            ooc == BigDecimal.class) {
             return object;
         }
 
@@ -551,9 +552,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             out.close();
         } catch (NotSerializableException e) {
             throw (IOException) new NotSerializableException(e.getMessage() +
-                    " : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the " +
-                    OPENEJB_LOCALCOPY +
-                    "=false system property.").initCause(e);
+                                                             " : The EJB specification restricts remote interfaces to only serializable data types.  This can be disabled for in-vm use with the " +
+                                                             OPENEJB_LOCALCOPY +
+                                                             "=false system property.").initCause(e);
         }
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

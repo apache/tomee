@@ -25,6 +25,7 @@ import java.io.PrintWriter;
  * Subclass of javax.transaction.TransactionRolledbackException which adds init cause to the exception.
  */
 public class TransactionRolledbackException extends javax.transaction.TransactionRolledbackException {
+
     private Throwable cause = this;
 
     public TransactionRolledbackException() {
@@ -32,7 +33,7 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         fillInStackTrace();
     }
 
-    public TransactionRolledbackException(String detailMessage) {
+    public TransactionRolledbackException(final String detailMessage) {
         super(detailMessage);
     }
 
@@ -41,14 +42,14 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      * cause filled in.
      *
      * @param detailMessage String The detail message for the exception.
-     * @param throwable The cause of this Throwable
+     * @param throwable     The cause of this Throwable
      */
-    public TransactionRolledbackException(String detailMessage, Throwable throwable) {
+    public TransactionRolledbackException(final String detailMessage, final Throwable throwable) {
         super(detailMessage);
         cause = throwable;
     }
 
-    public TransactionRolledbackException(Throwable throwable) {
+    public TransactionRolledbackException(final Throwable throwable) {
         super(throwable == null ? null : throwable.toString());
         cause = throwable;
     }
@@ -61,6 +62,7 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      *
      * @return String The receiver's message.
      */
+    @Override
     public String getLocalizedMessage() {
         return getMessage();
     }
@@ -69,6 +71,7 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      * Outputs a printable representation of the receiver's walkback on the
      * System.err stream.
      */
+    @Override
     public void printStackTrace() {
         printStackTrace(System.err);
     }
@@ -78,15 +81,15 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      * the end of the stack.
      *
      * @param currentStack a stack to compare
-     * @param parentStack a stack to compare
+     * @param parentStack  a stack to compare
      * @return the number of duplicate stack frames.
      */
-    private static int countDuplicates(StackTraceElement[] currentStack,
-            StackTraceElement[] parentStack) {
+    private static int countDuplicates(final StackTraceElement[] currentStack,
+                                       final StackTraceElement[] parentStack) {
         int duplicates = 0;
         int parentIndex = parentStack.length;
-        for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0;) {
-            StackTraceElement parentFrame = parentStack[parentIndex];
+        for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0; ) {
+            final StackTraceElement parentFrame = parentStack[parentIndex];
             if (parentFrame.equals(currentStack[i])) {
                 duplicates++;
             } else {
@@ -102,11 +105,12 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      *
      * @param err PrintStream The stream to write the walkback on.
      */
-    public void printStackTrace(PrintStream err) {
+    @Override
+    public void printStackTrace(final PrintStream err) {
         err.println(toString());
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
-        StackTraceElement[] stack = getStackTrace();
+        final StackTraceElement[] stack = getStackTrace();
         for (int i = 0; i < stack.length; i++) {
             err.println("\tat " + stack[i]);
         }
@@ -116,8 +120,8 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         while (throwable != null) {
             err.print("Caused by: ");
             err.println(throwable);
-            StackTraceElement[] currentStack = throwable.getStackTrace();
-            int duplicates = countDuplicates(currentStack, parentStack);
+            final StackTraceElement[] currentStack = throwable.getStackTrace();
+            final int duplicates = countDuplicates(currentStack, parentStack);
             for (int i = 0; i < currentStack.length - duplicates; i++) {
                 err.println("\tat " + currentStack[i]);
             }
@@ -135,11 +139,12 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      *
      * @param err PrintWriter The writer to write the walkback on.
      */
-    public void printStackTrace(PrintWriter err) {
+    @Override
+    public void printStackTrace(final PrintWriter err) {
         err.println(toString());
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
-        StackTraceElement[] stack = getStackTrace();
+        final StackTraceElement[] stack = getStackTrace();
         for (int i = 0; i < stack.length; i++) {
             err.println("\tat " + stack[i]);
         }
@@ -149,8 +154,8 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         while (throwable != null) {
             err.print("Caused by: ");
             err.println(throwable);
-            StackTraceElement[] currentStack = throwable.getStackTrace();
-            int duplicates = countDuplicates(currentStack, parentStack);
+            final StackTraceElement[] currentStack = throwable.getStackTrace();
+            final int duplicates = countDuplicates(currentStack, parentStack);
             for (int i = 0; i < currentStack.length - duplicates; i++) {
                 err.println("\tat " + currentStack[i]);
             }
@@ -169,12 +174,12 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      * @return String a printable representation for the receiver.
      */
     public String toString() {
-        String msg = getLocalizedMessage();
-        String name = getClass().getName();
+        final String msg = getLocalizedMessage();
+        final String name = getClass().getName();
         if (msg == null) {
             return name;
         }
-        return new StringBuilder(name.length() + 2 + msg.length()).append(name).append(": ").append(msg).toString();
+        return name + ": " + msg;
     }
 
     /**
@@ -183,9 +188,10 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      * @param throwable The cause of this Throwable
      * @return the receiver.
      * @throws IllegalArgumentException when the cause is the receiver
-     * @throws IllegalStateException when the cause has already been initialized
+     * @throws IllegalStateException    when the cause has already been initialized
      */
-    public synchronized TransactionRolledbackException initCause(Throwable throwable) {
+    @Override
+    public synchronized TransactionRolledbackException initCause(final Throwable throwable) {
         cause = throwable;
         return this;
     }
@@ -195,6 +201,7 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
      *
      * @return Throwable The receiver's cause.
      */
+    @Override
     public Throwable getCause() {
         if (cause == this) {
             return null;
