@@ -106,6 +106,7 @@ public class SecurityTest extends TestCase {
         assertTrue("not in role committer", foo.isCallerInRole("committer"));
         assertTrue("not in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
+        assertTrue("Caller is not jonathan", foo.isCaller("jonathan"));
 
         ctx.close();
         assembler.destroy();
@@ -156,6 +157,7 @@ public class SecurityTest extends TestCase {
         assertFalse("in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
         assertTrue("not in role guest", foo.isCallerInRole("guest"));
+        assertTrue("Caller is not guest", foo.isCaller("guest"));
 
         ctx.close();
         assembler.destroy();
@@ -184,7 +186,7 @@ public class SecurityTest extends TestCase {
         assertFalse("in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
         assertFalse("in role guest", foo.isCallerInRole("guest"));
-        assertTrue("not in role public", foo.isCallerInRole("public"));
+        assertTrue("Caller is not public", foo.isCaller("public"));
 
         ctx.close();
         assembler.destroy();
@@ -225,6 +227,11 @@ public class SecurityTest extends TestCase {
         public boolean isCallerInRole(final String role) {
             return context.isCallerInRole(role);
         }
+
+        @Override
+        public boolean isCaller(final String user) {
+            return context.getCallerPrincipal().getName().equals(user);
+        }
     }
 
     @Stateless
@@ -264,6 +271,12 @@ public class SecurityTest extends TestCase {
         public boolean isCallerInRole(final String role) {
             return context.isCallerInRole(role);
         }
+
+        @Override
+        @PermitAll
+        public boolean isCaller(final String user) {
+            return context.getCallerPrincipal().getName().equals(user);
+        }
     }
 
     public static interface Project {
@@ -275,6 +288,8 @@ public class SecurityTest extends TestCase {
         public String svnCheckout(String s);
 
         public String deleteProject(String s);
+
+        public boolean isCaller(String s);
 
         public boolean isCallerInRole(String s);
     }
