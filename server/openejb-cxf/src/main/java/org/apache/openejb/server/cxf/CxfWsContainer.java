@@ -48,7 +48,7 @@ public abstract class CxfWsContainer implements HttpListener {
 
     public void start() {
         endpoint = createEndpoint();
-        endpoint.publish("http://" + getFakeUrl()); // needs to be unique
+        endpoint.publish("http://" + getFakeUrl() + ":80"); // needs to be unique and with a port
         destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
 
         // register an MBean for this endpoint
