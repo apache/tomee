@@ -25,13 +25,17 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.async.AsynchronousPool;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
@@ -51,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
@@ -93,7 +98,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         throw new IllegalStateException("A home reference must never be invalidated!");
     }
 
-    protected static EjbHomeProxyHandler createHomeHandler(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
+    protected static EjbHomeProxyHandler createHomeHandler(final BeanContext beanContext,
+                                                           final InterfaceType interfaceType,
+                                                           final List<Class> interfaces,
+                                                           final Class mainInterface) {
         switch (beanContext.getComponentType()) {
             case STATEFUL:
                 return new StatefulEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
@@ -106,7 +114,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             case CMP_ENTITY:
             case BMP_ENTITY:
                 return new EntityEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            default: throw new IllegalStateException("Component type does not support rpc interfaces: " + beanContext.getComponentType());
+            default:
+                throw new IllegalStateException("Component type does not support rpc interfaces: " + beanContext.getComponentType());
         }
     }
 
@@ -115,8 +124,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     }
 
     public static Object createHomeProxy(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> objectInterfaces, final Class mainInterface) {
-        if (!interfaceType.isHome())
+        if (!interfaceType.isHome()) {
             throw new IllegalArgumentException("InterfaceType is not a Home type: " + interfaceType);
+        }
 
         try {
             final EjbHomeProxyHandler handler = createHomeHandler(beanContext, interfaceType, objectInterfaces, mainInterface);
@@ -153,7 +163,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {
                     interfaces.add(BeanContext.Removable.class);
                 }
-                return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler, handler.getBeanContext().getBeanClass(), interfaces.toArray(new Class<?>[interfaces.size()]));
+                return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(),
+                                                              handler,
+                                                              handler.getBeanContext().getBeanClass(),
+                                                              interfaces.toArray(new Class<?>[interfaces.size()]));
             } else {
                 final List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 2);
                 proxyInterfaces.addAll(handler.getInterfaces());
@@ -175,11 +188,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     @Override
     protected Object _invoke(final Object proxy, final Class interfce, final Method method, final Object[] args) throws Throwable {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("invoking method " + method.getName() + " on " + deploymentID);
-        }
-
         final String methodName = method.getName();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("EjbHomeProxyHandler: invoking method " + methodName + " on " + deploymentID);
+        }
 
         try {
             final Object retValue;
@@ -223,7 +236,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             }
 
             if (logger.isDebugEnabled()) {
-                logger.debug("finished invoking method " + method.getName() + ". Return value:" + retValue);
+                logger.debug("EjbHomeProxyHandler: finished invoking method " + method.getName() + ". Return value:" + retValue);
             }
 
             return retValue;
@@ -289,7 +302,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 throw new RemoteException("Unknown Container Exception", oe.getRootCause());
             }
         } catch (Throwable t) {
-            logger.debug("finished invoking method " + method.getName() + " with exception:" + t, t);
+            logger.debug("EjbHomeProxyHandler: finished invoking method " + method.getName() + " with exception:" + t, t);
             throw t;
         }
     }
@@ -300,6 +313,49 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object homeMethod(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
+
+        final BeanContext beanContext = getBeanContext();
+
+        if (beanContext.isAsynchronous(method)) {
+
+            final SecurityService<?> securityService = SystemInstance.get().getComponent(SecurityService.class);
+            final Object state = securityService.currentState();
+            final ThreadContext currentCtx = ThreadContext.getThreadContext();
+            final AsynchronousPool asynchronousPool = beanContext.getModuleContext().getAppContext().getAsynchronousPool();
+
+            return asynchronousPool.invoke(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    final ThreadContext oldCtx; // ensure context is the same as for the caller
+                    if (currentCtx != null) {
+                        oldCtx = ThreadContext.enter(new ThreadContext(currentCtx));
+                    } else {
+                        oldCtx = null;
+                    }
+
+                    final Object threadState = securityService.currentState();
+                    securityService.setState(state);
+                    try {
+                        return homeMethodInvoke(interfce, method, args);
+                    } catch (ApplicationException ae) {
+
+                        logger.warning("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+
+                        throw ae;
+                    } finally {
+                        securityService.setState(threadState);
+                        if (oldCtx != null) {
+                            ThreadContext.exit(oldCtx);
+                        }
+                    }
+                }
+            }, method.getReturnType() == Void.TYPE);
+        } else {
+            return homeMethodInvoke(interfce, method, args);
+        }
+    }
+
+    private Object homeMethodInvoke(final Class interfce, final Method method, final Object[] args) throws OpenEJBException {
         return container.invoke(deploymentID, interfaceType, interfce, method, args, null);
     }
 
@@ -327,7 +383,10 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object getEJBMetaData(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
-        final IntraVmMetaData metaData = new IntraVmMetaData(getBeanContext().getHomeInterface(), getBeanContext().getRemoteInterface(), getBeanContext().getPrimaryKeyClass(), getBeanContext().getComponentType());
+        final IntraVmMetaData metaData = new IntraVmMetaData(getBeanContext().getHomeInterface(),
+                                                             getBeanContext().getRemoteInterface(),
+                                                             getBeanContext().getPrimaryKeyClass(),
+                                                             getBeanContext().getComponentType());
         metaData.setEJBHome((EJBHome) proxy);
         return metaData;
     }

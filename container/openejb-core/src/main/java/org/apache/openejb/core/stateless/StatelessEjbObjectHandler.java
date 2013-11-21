@@ -27,41 +27,48 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
+
     public Object registryId;
 
-    public StatelessEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public StatelessEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
-    public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {
+    public static Object createRegistryId(final Object primKey, final Object deployId, final Container contnr) {
         return "" + deployId + contnr.getContainerID();
     }
 
+    @Override
     public Object getRegistryId() {
-        if (registryId == null)
+        if (registryId == null) {
             registryId = createRegistryId(primaryKey, deploymentID, container);
+        }
         return registryId;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         try {
-            EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
-            return new Boolean(deploymentID.equals(handler.deploymentID));
+            final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
+            return deploymentID.equals(handler.deploymentID);
         } catch (Throwable t) {
             return Boolean.FALSE;
 
         }
     }
 
+    @Override
     public void invalidateReference() {
         // stateless can't be removed
     }
 
-    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    @Override
+    protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         // stateless can't be removed
         return null;
     }

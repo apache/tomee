@@ -27,17 +27,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadContext {
+
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
     private static final ThreadLocal<AtomicBoolean> asynchronousCancelled = new ThreadLocal<AtomicBoolean>();
 
     public static ThreadContext getThreadContext() {
-        ThreadContext threadContext = threadStorage.get();
-        return threadContext;
+        return threadStorage.get();
     }
 
-    public static ThreadContext enter(ThreadContext newContext) {
+    public static ThreadContext enter(final ThreadContext newContext) {
         if (newContext == null) {
             throw new NullPointerException("newContext is null");
         }
@@ -47,11 +47,11 @@ public class ThreadContext {
         Thread.currentThread().setContextClassLoader(newContext.beanContext.getClassLoader());
 
         // update thread local
-        ThreadContext oldContext = threadStorage.get();
+        final ThreadContext oldContext = threadStorage.get();
         threadStorage.set(newContext);
 
         // notify listeners
-        for (ThreadContextListener listener : listeners) {
+        for (final ThreadContextListener listener : listeners) {
             try {
                 listener.contextEntered(oldContext, newContext);
             } catch (Throwable e) {
@@ -63,8 +63,8 @@ public class ThreadContext {
         return oldContext;
     }
 
-    public static void exit(ThreadContext oldContext) {
-        ThreadContext exitingContext = threadStorage.get();
+    public static void exit(final ThreadContext oldContext) {
+        final ThreadContext exitingContext = threadStorage.get();
         if (exitingContext == null) {
             throw new IllegalStateException("No existing context");
         }
@@ -77,7 +77,7 @@ public class ThreadContext {
         threadStorage.set(oldContext);
 
         // notify listeners
-        for (ThreadContextListener listener : listeners) {
+        for (final ThreadContextListener listener : listeners) {
             try {
                 listener.contextExited(exitingContext, oldContext);
             } catch (Throwable e) {
@@ -86,7 +86,7 @@ public class ThreadContext {
         }
     }
 
-    public static void initAsynchronousCancelled(AtomicBoolean initializeValue) {
+    public static void initAsynchronousCancelled(final AtomicBoolean initializeValue) {
         asynchronousCancelled.set(initializeValue);
     }
 
@@ -98,11 +98,11 @@ public class ThreadContext {
         asynchronousCancelled.remove();
     }
 
-    public static void addThreadContextListener(ThreadContextListener listener) {
+    public static void addThreadContextListener(final ThreadContextListener listener) {
         listeners.add(listener);
     }
 
-    public static void removeThreadContextListener(ThreadContextListener listener) {
+    public static void removeThreadContextListener(final ThreadContextListener listener) {
         listeners.remove(listener);
     }
 
@@ -120,11 +120,11 @@ public class ThreadContext {
      */
     private boolean discardInstance;
 
-    public ThreadContext(BeanContext beanContext, Object primaryKey) {
+    public ThreadContext(final BeanContext beanContext, final Object primaryKey) {
         this(beanContext, primaryKey, null);
     }
 
-    public ThreadContext(BeanContext beanContext, Object primaryKey, Operation operation) {
+    public ThreadContext(final BeanContext beanContext, final Object primaryKey, final Operation operation) {
         if (beanContext == null) {
             throw new NullPointerException("deploymentInfo is null");
         }
@@ -133,7 +133,7 @@ public class ThreadContext {
         this.currentOperation = operation;
     }
 
-    public ThreadContext(ThreadContext that) {
+    public ThreadContext(final ThreadContext that) {
         this.beanContext = that.beanContext;
         this.primaryKey = that.primaryKey;
         this.data.putAll(that.data);
@@ -152,7 +152,7 @@ public class ThreadContext {
         return currentOperation;
     }
 
-    public void setCurrentOperation(Operation operation) {
+    public void setCurrentOperation(final Operation operation) {
         currentOperation = operation;
     }
 
@@ -160,7 +160,7 @@ public class ThreadContext {
         return invokedInterface;
     }
 
-    public void setInvokedInterface(Class invokedInterface) {
+    public void setInvokedInterface(final Class invokedInterface) {
         this.invokedInterface = invokedInterface;
     }
 
@@ -168,7 +168,7 @@ public class ThreadContext {
         return transactionPolicy;
     }
 
-    public void setTransactionPolicy(TransactionPolicy transactionPolicy) {
+    public void setTransactionPolicy(final TransactionPolicy transactionPolicy) {
         this.transactionPolicy = transactionPolicy;
     }
 
@@ -176,22 +176,22 @@ public class ThreadContext {
         return null;
     }
 
-    public BaseContext.State[] setCurrentAllowedStates(BaseContext.State[] newAllowedStates) {
+    public BaseContext.State[] setCurrentAllowedStates(final BaseContext.State[] newAllowedStates) {
         return null;
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T get(Class<T> type) {
-        return (T)data.get(type);
+    public <T> T get(final Class<T> type) {
+        return (T) data.get(type);
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T> T set(Class<T> type, T value) {
+    public <T> T set(final Class<T> type, final T value) {
         return (T) data.put(type, value);
     }
 
-    @SuppressWarnings({ "unchecked" })
-    public <T> T remove(Class<T> type) {
+    @SuppressWarnings({"unchecked"})
+    public <T> T remove(final Class<T> type) {
         return (T) data.remove(type);
     }
 
@@ -199,21 +199,21 @@ public class ThreadContext {
         return discardInstance;
     }
 
-    public void setDiscardInstance(boolean discardInstance) {
+    public void setDiscardInstance(final boolean discardInstance) {
         this.discardInstance = discardInstance;
     }
 
     @Override
     public String toString() {
         return "ThreadContext{" +
-                "beanContext=" + beanContext.getId() +
-                ", primaryKey=" + primaryKey +
-                ", data=" + data.size() +
-                ", oldClassLoader=" + oldClassLoader +
-                ", currentOperation=" + currentOperation +
-                ", invokedInterface=" + invokedInterface +
-                ", transactionPolicy=" + transactionPolicy +
-                ", discardInstance=" + discardInstance +
-                '}';
+               "beanContext=" + beanContext.getId() +
+               ", primaryKey=" + primaryKey +
+               ", data=" + data.size() +
+               ", oldClassLoader=" + oldClassLoader +
+               ", currentOperation=" + currentOperation +
+               ", invokedInterface=" + invokedInterface +
+               ", transactionPolicy=" + transactionPolicy +
+               ", discardInstance=" + discardInstance +
+               '}';
     }
 }

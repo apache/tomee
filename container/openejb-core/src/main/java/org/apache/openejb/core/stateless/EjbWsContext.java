@@ -27,43 +27,48 @@ import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
 
 public class EjbWsContext implements WebServiceContext {
-    private SessionContext context;
+    private final SessionContext context;
     
-    public EjbWsContext(SessionContext context) {
+    public EjbWsContext(final SessionContext context) {
         this.context = context;
     }
     
+    @Override
     public MessageContext getMessageContext() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        MessageContext messageContext = threadContext.get(MessageContext.class);
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final MessageContext messageContext = threadContext.get(MessageContext.class);
         if (messageContext == null) {
             throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
         }
         return messageContext;
     }
 
+    @Override
     public Principal getUserPrincipal() {
         return this.context.getCallerPrincipal();
     }
 
-    public boolean isUserInRole(String roleName) {
+    @Override
+    public boolean isUserInRole(final String roleName) {
         return this.context.isCallerInRole(roleName);
     }
 
     private AddressingSupport getAddressingSupport() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        AddressingSupport wsaSupport = threadContext.get(AddressingSupport.class);
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final AddressingSupport wsaSupport = threadContext.get(AddressingSupport.class);
         if (wsaSupport == null) {
             throw new IllegalStateException("Only calls on the service-endpoint can get the EndpointReference.");
         }
         return wsaSupport;
     }
     
-    public EndpointReference getEndpointReference(Element... referenceParameters) {
+    @Override
+    public EndpointReference getEndpointReference(final Element... referenceParameters) {
         return getAddressingSupport().getEndpointReference(referenceParameters);      
     }
 
-    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+    @Override
+    public <T extends EndpointReference> T getEndpointReference(final Class<T> clazz, final Element... referenceParameters) {
         return getAddressingSupport().getEndpointReference(clazz, referenceParameters);
     }
 }

@@ -430,7 +430,8 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                         // todo warn no such entity in ejb-jar.xml
                         continue;
                     }
-                    left = leftEntityData.relations.get(leftRole.getCmrField().getCmrFieldName());
+                    final EjbRelationshipRoleType.CmrField lcf = leftRole.getCmrField();
+                    left = (null != lcf ? leftEntityData.relations.get(lcf.getCmrFieldName()) : null);
                 }
 
                 if (left != null) {
@@ -453,12 +454,12 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                     // if there wasn't a left cmr field, find the field for the right, so we can add the join table to it
                     if (left == null) {
 
-                        if (rightRole.getCmrField() == null) {
+                        final EjbRelationshipRoleType.CmrField rcf = rightRole.getCmrField();
+
+                        if (rcf == null) {
                             // todo warn no cmr field declared for either role
                             continue;
-                        }
-
-                        if (rightRole.getRelationshipRoleSource() != null) {
+                        } else if (rightRole.getRelationshipRoleSource() != null) {
                             final String rightEjbName = rightRole.getRelationshipRoleSource().getEjbName();
                             final EntityData rightEntityData = entities.get(moduleId + "#" + rightEjbName);
 
@@ -467,7 +468,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                                 continue;
                             }
 
-                            final RelationField right = rightEntityData.relations.get(rightRole.getCmrField().getCmrFieldName());
+                            final RelationField right = rightEntityData.relations.get(rcf.getCmrFieldName());
                             right.setJoinTable(joinTable);
                         }
 

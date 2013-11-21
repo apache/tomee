@@ -54,17 +54,15 @@ public class AsynchronousPool {
     }
 
     public static AsynchronousPool create(final AppContext appContext) {
-
-        final ExecutorBuilder builder = new ExecutorBuilder()
-                .prefix("AsynchronousPool")
-                .size(3)
-                .threadFactory(new DaemonThreadFactory("@Asynchronous", appContext.getId()));
-
         final Options options = appContext.getOptions();
-        final AsynchronousPool asynchronousPool = new AsynchronousPool(
-                builder.build(options),
-                options.get("AsynchronousPool.ShutdownWaitDuration", new Duration(1, TimeUnit.MINUTES)));
-        return asynchronousPool;
+        final ExecutorBuilder builder = new ExecutorBuilder()
+                                            .prefix("AsynchronousPool")
+                                            .size(options.get("AsynchronousPool.Size", 5))
+                                            .threadFactory(new DaemonThreadFactory("@Asynchronous", appContext.getId()));
+
+        return new AsynchronousPool(
+                                       builder.build(options),
+                                       options.get("AsynchronousPool.ShutdownWaitDuration", new Duration(1, TimeUnit.MINUTES)));
     }
 
     public Object invoke(final Callable<Object> callable, final boolean isVoid) throws Throwable {
@@ -74,7 +72,9 @@ public class AsynchronousPool {
 
             final Future<Object> future = executor.submit(new AsynchronousCall(callable, asynchronousCancelled));
 
-            if (isVoid) return null;
+            if (isVoid) {
+                return null;
+            }
 
             return new FutureAdapter<Object>(future, asynchronousCancelled);
         } catch (RejectedExecutionException e) {
@@ -232,7 +232,7 @@ public class AsynchronousPool {
 
             // wrap unchecked exception with EJBException before throwing.
             throw e instanceof Exception ? new ExecutionException(new EJBException((Exception) e))
-                    : new ExecutionException(new EJBException(new Exception(e)));
+                      : new ExecutionException(new EJBException(new Exception(e)));
 
         }
 

@@ -283,6 +283,7 @@ public class StatelessInstanceManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void freeInstance(final ThreadContext callContext, final Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);

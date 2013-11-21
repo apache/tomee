@@ -31,13 +31,13 @@ public class StatelessContext extends BaseSessionContext implements Flushable {
 
     private final Flushable flushable;
 
-    public StatelessContext(SecurityService securityService, Flushable flushable) {
+    public StatelessContext(final SecurityService securityService, final Flushable flushable) {
         super(securityService);
         this.flushable = flushable;
     }
 
     @Override
-    public void check(Call call) {
+    public void check(final Call call) {
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
 
         switch (call) {
@@ -85,6 +85,7 @@ public class StatelessContext extends BaseSessionContext implements Flushable {
         }
     }
 
+    @Override
     public void flush() throws IOException {
         flushable.flush();
     }

@@ -449,7 +449,8 @@ public class ManagedContainer implements RpcContainer {
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();
+            final boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();
+
             if (!internalRemove) {
                 checkAuthorization(callMethod, interfaceType);
             }
@@ -725,7 +726,9 @@ public class ManagedContainer implements RpcContainer {
     }
 
     private void checkAuthorization(final Method callMethod, final InterfaceType interfaceType) throws ApplicationException {
+
         final boolean authorized = securityService.isCallerAuthorized(callMethod, interfaceType);
+
         if (!authorized) {
             throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
         }

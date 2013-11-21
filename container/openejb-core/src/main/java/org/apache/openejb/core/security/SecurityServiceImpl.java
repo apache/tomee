@@ -24,6 +24,7 @@ import org.apache.openejb.util.ConfUtils;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Map;
@@ -40,8 +41,8 @@ public class SecurityServiceImpl extends AbstractSecurityService {
     public SecurityServiceImpl() {
         this(BasicJaccProvider.class.getName());
     }
-    
-    public SecurityServiceImpl(String jaccProviderClass) {
+
+    public SecurityServiceImpl(final String jaccProviderClass) {
         super(jaccProviderClass);
         installJaas();
 
@@ -51,35 +52,42 @@ public class SecurityServiceImpl extends AbstractSecurityService {
             // LoginModules that are configured.
             // They should have a chance to perform any special
             // boot-time code that they may need.
-            login("","");
+            login("", "");
         } catch (Throwable e) {
+            //Ignore
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected static void installJaas() {
-        String path = SystemInstance.get().getOptions().get("java.security.auth.login.config", (String) null);
+        final String path = SystemInstance.get().getOptions().get("java.security.auth.login.config", (String) null);
 
         if (path != null) {
             return;
         }
 
-        URL loginConfig = ConfUtils.getConfResource("login.config");
+        final URL loginConfig = ConfUtils.getConfResource("login.config");
 
-        System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm()));
+        try {
+            System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm(), "UTF8"));
+        } catch (UnsupportedEncodingException e) {
+            System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm()));
+        }
     }
 
-    public UUID login(String realmName, String username, String password) throws LoginException {
-        if (realmName == null){
+    @Override
+    public UUID login(String realmName, final String username, final String password) throws LoginException {
+        if (realmName == null) {
             realmName = getRealmName();
         }
-        LoginContext context = new LoginContext(realmName, new UsernamePasswordCallbackHandler(username, password));
+        final LoginContext context = new LoginContext(realmName, new UsernamePasswordCallbackHandler(username, password));
         context.login();
 
-        Subject subject = context.getSubject();
+        final Subject subject = context.getSubject();
 
-        UUID token =  registerSubject(subject);
+        final UUID token = registerSubject(subject);
         contexts.put(token, context);
-        
+
         return token;
     }
 
@@ -87,8 +95,8 @@ public class SecurityServiceImpl extends AbstractSecurityService {
      * @see org.apache.openejb.core.security.AbstractSecurityService#logout(java.util.UUID)
      */
     @Override
-    public void logout(UUID securityIdentity) throws LoginException {
-        LoginContext context = contexts.remove(securityIdentity);
+    public void logout(final UUID securityIdentity) throws LoginException {
+        final LoginContext context = contexts.remove(securityIdentity);
         if (null == context) {
             throw new IllegalStateException("Unable to logout. Can not recover LoginContext.");
         }

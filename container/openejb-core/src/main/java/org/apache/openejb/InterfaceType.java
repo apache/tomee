@@ -36,7 +36,7 @@ public enum InterfaceType {
 
     private final String specName;
 
-    InterfaceType(String name) {
+    InterfaceType(final String name) {
         this.specName = name;
     }
 
