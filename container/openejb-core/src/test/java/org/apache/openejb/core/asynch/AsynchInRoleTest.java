@@ -45,7 +45,7 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 
 /**
- * Testing of the @Asynchronous annotation on beans.
+ * Testing of the @Asynchronous annotation on beans that are restricted by role.
  */
 public class AsynchInRoleTest {
 

@@ -27,7 +27,7 @@ public class ClientSecurity {
         return clientIdentity;
     }
 
-    public static void setIdentity(Object clientIdentity) {
+    public static void setIdentity(final Object clientIdentity) {
         ClientSecurity.clientIdentity = clientIdentity;
     }
 }

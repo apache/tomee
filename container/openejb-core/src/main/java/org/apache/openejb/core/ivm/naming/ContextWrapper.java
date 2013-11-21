@@ -29,125 +29,155 @@ import java.util.Hashtable;
  * @version $Rev$ $Date$
  */
 public class ContextWrapper implements Context {
+
     protected final Context context;
 
-    public ContextWrapper(Context context) {
+    public ContextWrapper(final Context context) {
         this.context = context;
     }
 
-    public Object addToEnvironment(String propName, Object propVal) throws NamingException {
+    @Override
+    public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         return context.addToEnvironment(propName, propVal);
     }
 
-    public void bind(Name name, Object obj) throws NamingException {
+    @Override
+    public void bind(final Name name, final Object obj) throws NamingException {
         context.bind(name, obj);
     }
 
-    public void bind(String name, Object obj) throws NamingException {
+    @Override
+    public void bind(final String name, final Object obj) throws NamingException {
         context.bind(name, obj);
     }
 
+    @Override
     public void close() throws NamingException {
         context.close();
     }
 
-    public Name composeName(Name name, Name prefix) throws NamingException {
+    @Override
+    public Name composeName(final Name name, final Name prefix) throws NamingException {
         return context.composeName(name, prefix);
     }
 
-    public String composeName(String name, String prefix) throws NamingException {
+    @Override
+    public String composeName(final String name, final String prefix) throws NamingException {
         return context.composeName(name, prefix);
     }
 
-    public Context createSubcontext(Name name) throws NamingException {
+    @Override
+    public Context createSubcontext(final Name name) throws NamingException {
         return context.createSubcontext(name);
     }
 
-    public Context createSubcontext(String name) throws NamingException {
+    @Override
+    public Context createSubcontext(final String name) throws NamingException {
         return context.createSubcontext(name);
     }
 
-    public void destroySubcontext(Name name) throws NamingException {
+    @Override
+    public void destroySubcontext(final Name name) throws NamingException {
         context.destroySubcontext(name);
     }
 
-    public void destroySubcontext(String name) throws NamingException {
+    @Override
+    public void destroySubcontext(final String name) throws NamingException {
         context.destroySubcontext(name);
     }
 
+    @Override
     public Hashtable<?, ?> getEnvironment() throws NamingException {
         return context.getEnvironment();
     }
 
+    @Override
     public String getNameInNamespace() throws NamingException {
         return context.getNameInNamespace();
     }
 
-    public NameParser getNameParser(Name name) throws NamingException {
+    @Override
+    public NameParser getNameParser(final Name name) throws NamingException {
         return context.getNameParser(name);
     }
 
-    public NameParser getNameParser(String name) throws NamingException {
+    @Override
+    public NameParser getNameParser(final String name) throws NamingException {
         return context.getNameParser(name);
     }
 
-    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+    @Override
+    public NamingEnumeration<NameClassPair> list(final Name name) throws NamingException {
         return context.list(name);
     }
 
-    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+    @Override
+    public NamingEnumeration<NameClassPair> list(final String name) throws NamingException {
         return context.list(name);
     }
 
-    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
+    @Override
+    public NamingEnumeration<Binding> listBindings(final Name name) throws NamingException {
         return context.listBindings(name);
     }
 
-    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+    @Override
+    public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
         return context.listBindings(name);
     }
 
-    public Object lookup(Name name) throws NamingException {
+    @Override
+    public Object lookup(final Name name) throws NamingException {
         return context.lookup(name);
     }
 
-    public Object lookup(String name) throws NamingException {
+    @Override
+    public Object lookup(final String name) throws NamingException {
         return context.lookup(name);
     }
 
-    public Object lookupLink(Name name) throws NamingException {
+    @Override
+    public Object lookupLink(final Name name) throws NamingException {
         return context.lookupLink(name);
     }
 
-    public Object lookupLink(String name) throws NamingException {
+    @Override
+    public Object lookupLink(final String name) throws NamingException {
         return context.lookupLink(name);
     }
 
-    public void rebind(Name name, Object obj) throws NamingException {
+    @Override
+    public void rebind(final Name name, final Object obj) throws NamingException {
         context.rebind(name, obj);
     }
 
-    public void rebind(String name, Object obj) throws NamingException {
+    @Override
+    public void rebind(final String name, final Object obj) throws NamingException {
         context.rebind(name, obj);
     }
 
-    public Object removeFromEnvironment(String propName) throws NamingException {
+    @Override
+    public Object removeFromEnvironment(final String propName) throws NamingException {
         return context.removeFromEnvironment(propName);
     }
 
-    public void rename(Name oldName, Name newName) throws NamingException {
+    @Override
+    public void rename(final Name oldName, final Name newName) throws NamingException {
         context.rename(oldName, newName);
     }
 
-    public void rename(String oldName, String newName) throws NamingException {
+    @Override
+    public void rename(final String oldName, final String newName) throws NamingException {
         context.rename(oldName, newName);
     }
 
-    public void unbind(Name name) throws NamingException {
+    @Override
+    public void unbind(final Name name) throws NamingException {
         context.unbind(name);
     }
 
-    public void unbind(String name) throws NamingException {
+    @Override
+    public void unbind(final String name) throws NamingException {
         context.unbind(name);
     }
 }

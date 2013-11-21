@@ -336,6 +336,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 public Object call() throws Exception {
                     final Object threadState;
                     if (associate) {
+                        //noinspection unchecked
                         securityService.associate(securityState);
                         threadState = null;
                     } else {
@@ -353,7 +354,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                         return homeMethodInvoke(interfce, method, args);
                     } catch (ApplicationException ae) {
 
-                        logger.warning("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                        logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
 
                         throw ae;
                     } finally {
