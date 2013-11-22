@@ -1236,7 +1236,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private static void addRestApplicationIfPossible(final WebModule webModule, final Class<? extends Application> app) {
-            if (Modifier.isAbstract(app.getModifiers())) {
+            if (!isInstantiable(app)) {
                 return;
             }
 
@@ -5300,8 +5300,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         List<Annotated<Class<?>>> annotatedClasses = finder.findMetaAnnotatedClasses(Path.class);
         for (Annotated<Class<?>> aClazz : annotatedClasses) {
             Class<?> clazz = aClazz.get();
-            int modifiers = clazz.getModifiers();
-            if (!Modifier.isAbstract(modifiers)) {
+            if (isInstantiable(clazz)) {
                 if (!isEJB(clazz)) {
                     classes.add(clazz.getName());
                 } else {
@@ -5316,8 +5315,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             Method method = aMethod.get();
             Class<?> clazz = method.getDeclaringClass();
 
-            int modifiers = clazz.getModifiers();
-            if (!Modifier.isAbstract(modifiers)) {
+            if (isInstantiable(clazz)) {
                 if (!isEJB(clazz)) {
                     classes.add(clazz.getName());
                 } else {
@@ -5327,6 +5325,12 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         return classes;
+    }
+
+    private static boolean isInstantiable(final Class<?> clazz) {
+        final int modifiers = clazz.getModifiers();
+        return !Modifier.isAbstract(modifiers) && !(clazz.getEnclosingClass() != null && !Modifier.isStatic(modifiers))
+                && Modifier.isPublic(modifiers);
     }
 
     private static boolean isEJB(Class<?> clazz) {
