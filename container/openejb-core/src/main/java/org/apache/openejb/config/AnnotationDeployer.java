@@ -4539,14 +4539,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (serviceRef.getServiceInterface() == null) {
                 serviceInterface = webService.type();
                 if (serviceInterface.equals(Object.class)) {
-                    if (member != null) {
+                    serviceInterface = webService.value();
+                    if ((Service.class.equals(serviceInterface) || Object.class.equals(serviceInterface)) && member != null) {
                         serviceInterface = member.getType();
-                    } else {
-                        serviceInterface = webService.value();
                     }
                 }
             }
-            if (serviceInterface == null || !serviceInterface.isAssignableFrom(Service.class)) {
+            if (serviceInterface == null || !Service.class.isAssignableFrom(serviceInterface)) {
                 serviceInterface = Service.class;
             }
             serviceRef.setServiceInterface(serviceInterface.getName());
