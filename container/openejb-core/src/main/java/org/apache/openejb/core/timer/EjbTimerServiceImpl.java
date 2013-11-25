@@ -39,6 +39,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.jdbcjobstore.JobStoreSupport;
 import org.quartz.impl.jdbcjobstore.StdJDBCDelegate;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.quartz.listeners.SchedulerListenerSupport;
@@ -253,8 +254,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
             // adding our custom persister
             if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
-                properties.put("org.quartz.jobStore.driverDelegateInitString",
-                               "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+                try {
+                    final Class<?> clazz = EjbTimerServiceImpl.class.getClassLoader().loadClass(properties.getProperty("org.quartz.jobStore.class"));
+                    if (JobStoreSupport.class.isAssignableFrom(clazz)) {
+                        properties.put("org.quartz.jobStore.driverDelegateInitString",
+                            "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
+                    }
+                } catch (final Throwable th) {
+                    // no-op
+                }
             }
         }
 
