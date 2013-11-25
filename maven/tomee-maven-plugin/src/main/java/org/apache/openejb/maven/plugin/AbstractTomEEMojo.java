@@ -632,6 +632,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     protected void run() {
+        if (classpaths == null) { // NPE protection when execute is skipped and mojo delegates to run directly
+            classpaths = new ArrayList<String>();
+        }
+
         final String deployOpenEjbAppKey = "openejb.system.apps";
         final String servletCompliance = "org.apache.catalina.STRICT_SERVLET_COMPLIANCE";
 
