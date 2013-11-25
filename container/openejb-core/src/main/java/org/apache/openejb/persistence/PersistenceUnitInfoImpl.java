@@ -346,7 +346,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         if (name.startsWith("java.")) return true;
         if (name.startsWith("javax.")) return true;
         if (name.startsWith("sun.")) return true;
-        if (name.startsWith("com.sun.crypto.")) return true;
+        if (name.startsWith("com.sun.")) return true;
 
         if (name.startsWith("org.")) {
             final String org = name.substring("org.".length());
@@ -413,7 +413,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         }
 
         // other packages
-        if (name.startsWith("com.sun.org.apache.")) return true;
+        if (name.startsWith("com.sun.")) return true;
         if (name.startsWith("javassist")) return true;
         if (name.startsWith("serp.")) return true;
 
