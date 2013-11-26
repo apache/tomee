@@ -50,6 +50,7 @@ public class ConnectionManager {
         registerFactory("failover", new FailoverConnectionFactory());
 
         registerStrategy("sticky", new StickyConnectionStrategy());
+        registerStrategy("direct", new DirectConnectionStrategy());
         registerStrategy("sticky+random", new StickyConnectionStrategy(new RandomConnectionStrategy()));
         registerStrategy("sticky+round", new StickyConnectionStrategy(new RoundRobinConnectionStrategy()));
         registerStrategy("random", new RandomConnectionStrategy());
