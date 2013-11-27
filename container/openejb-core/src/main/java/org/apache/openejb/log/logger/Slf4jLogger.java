@@ -176,8 +176,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
             } else {
                 locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null, t);
             }
-        } else if (Level.OFF.equals(level)) {
-            // don't log
         }
+        // don't log if Level.OFF
     }
 }

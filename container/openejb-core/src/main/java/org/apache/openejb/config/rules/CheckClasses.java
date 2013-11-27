@@ -270,19 +270,14 @@ public class CheckClasses extends ValidationBase {
     }
 
     private void check_isEjbClass(RemoteBean b) {
-
-        if (b instanceof SessionBean) {
-
+        if (b instanceof SessionBean) { //NOPMD
             // DMB: Beans in ejb 3 are not required to implement javax.ejb.SessionBean
             // but it would still be nice to think of some sort of check to do here.
             // compareTypes(b, b.getEjbClass(), javax.ejb.SessionBean.class);
 
         } else if (b instanceof EntityBean) {
-
             compareTypes(b, b.getEjbClass(), javax.ejb.EntityBean.class);
-
         }
-
     }
 
     private Class<?> lookForClass(String clazz, String type, String ejbName) {

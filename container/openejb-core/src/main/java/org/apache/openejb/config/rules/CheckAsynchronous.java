@@ -68,8 +68,6 @@ public class CheckAsynchronous extends ValidationBase {
                         for (Method method : cls.getDeclaredMethods()) {
                             if (Modifier.isPublic(method.getModifiers()) && !method.isSynthetic()) {
                                 checkAsynchronousMethod(session, ejbClass, method, applicationExceptions);
-                            } else {
-                                //warn(session, "asynchronous.methodignored", ejbClass.getName(), method.getName());
                             }
                         }
                     } catch (OpenEJBException e) {

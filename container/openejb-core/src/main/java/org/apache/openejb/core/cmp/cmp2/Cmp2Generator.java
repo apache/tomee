@@ -1134,7 +1134,7 @@ public class Cmp2Generator implements Opcodes {
          * @param to     The target class for the conversion.
          */
         public static void fromObjectTo(MethodVisitor mv, Class to) {
-            if (to.equals(Object.class)) {
+            if (to.equals(Object.class)) { //NOPMD
                 // direct assignment will work
             } else if (!to.isPrimitive()) {
                 mv.visitTypeInsn(CHECKCAST, Type.getInternalName(to));

@@ -653,9 +653,7 @@ public class OpenEjbContainer extends EJBContainer {
             } else {
                 matches = s2.equals(s + ".jar");
             }
-            if (!matches) {
-                //TODO look for ejb-jar.xml with matching module name
-            }
+            // TODO if (!matches) { /* look for ejb-jar.xml with matching module name */ }
             return matches;
         }
     }

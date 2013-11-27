@@ -493,9 +493,6 @@ public class ReadDescriptors implements DynamicDeployer {
             }
         } else if (raw instanceof Beans) {
             ejbModule.setBeans((Beans) raw);
-        } else {
-//            DeploymentLoader.logger.debug("No beans.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
-//            ejbModule.setBeans(new Beans());
         }
     }
 

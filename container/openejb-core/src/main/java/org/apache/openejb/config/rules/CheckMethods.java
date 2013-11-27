@@ -233,9 +233,8 @@ public class CheckMethods extends ValidationBase {
             try {
                 if (javax.ejb.EnterpriseBean.class.isAssignableFrom(bean)) {
                     bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
-                } else {
-                    // TODO: Check for Init method in pojo session bean class
                 }
+                // TODO: else { /* Check for Init method in pojo session bean class */ }
             } catch (NoSuchMethodException e) {
                 result = false;
 
