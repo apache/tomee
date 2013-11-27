@@ -98,26 +98,6 @@ public class WikiGenerator {
         out.flush();
     }
 
-    private void header(String... items) {
-        out.print("<tr>");
-        for (String item : items) {
-            out.print("<th>");
-            out.print(item);
-            out.print("</th>");
-        }
-        out.println("</tr>");
-    }
-
-    private void row(String... items) {
-        out.print("<tr>");
-        for (String item : items) {
-            out.print("<td>");
-            out.print(item);
-            out.print("</td>");
-        }
-        out.println("</tr>");
-    }
-
     private void generateService(ServiceProvider provider, String serviceType) {
         String type = provider.getTypes().get(0);
         out.println("# " + type + " <small>" + serviceType + " </small>");

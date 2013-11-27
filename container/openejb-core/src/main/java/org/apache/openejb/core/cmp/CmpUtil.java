@@ -20,8 +20,7 @@ public class CmpUtil {
     public static String getCmpImplClassName(String abstractSchemaName, String ejbClass) {
         // locate the end of the package portion 
         int packageEnd = ejbClass.lastIndexOf('.'); 
-        String cmpImplClass;
-        // we have a package, pull that out and add "openejb." in front of the package 
+        // we have a package, pull that out and add "openejb." in front of the package
         if (packageEnd != -1) {
             return "openejb." + ejbClass.substring(0, packageEnd + 1) + abstractSchemaName;
         }

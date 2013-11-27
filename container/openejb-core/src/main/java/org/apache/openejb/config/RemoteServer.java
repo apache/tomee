@@ -339,7 +339,7 @@ public class RemoteServer {
     }
 
     // debugging method (mainly for buildbot), don't let it activated when all is fine
-    private void kill3UNIXDebug() {
+    private void kill3UNIXDebug() { //NOPMD
         final Thread t = new Thread() {
             @Override
             public void run() {

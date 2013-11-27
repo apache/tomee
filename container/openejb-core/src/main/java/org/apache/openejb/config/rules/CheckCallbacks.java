@@ -26,13 +26,11 @@ import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.RemoveMethod;
 import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.Timer;
-import org.apache.openejb.util.Join;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.AfterBegin;
@@ -309,7 +307,6 @@ public class CheckCallbacks extends ValidationBase {
             }
             Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
             if (implementsSessionBean(delcaringClass)) {
-                SessionBean sb = (SessionBean) bean;
                 if ("PreDestroy".equals(type)) {
                     if (!callback.getMethodName().equals("ejbRemove"))
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
@@ -405,41 +402,6 @@ public class CheckCallbacks extends ValidationBase {
                     fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
                 }
             }
-        }
-    }
-
-    private void checkTimeOut(Class<?> ejbClass, NamedMethod timeout, EnterpriseBean bean) {
-        if (timeout == null) return;
-        try {
-            Class<?>[] parameterClasses;
-            if (timeout.getMethodParams() == null) {
-                parameterClasses = new Class[0];
-            } else {
-                List<String> methodParams = timeout.getMethodParams().getMethodParam();
-                parameterClasses = new Class[methodParams.size()];
-                for (int i = 0; i < methodParams.size(); i++) {
-                    parameterClasses[i] = loadClass(methodParams.get(i));
-                }
-            }
-            Method method = getMethod(ejbClass, timeout.getMethodName(), parameterClasses);
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes.length != 0 && (parameterTypes.length != 1 || parameterTypes[0] != javax.ejb.Timer.class)) {
-                fail(bean, "timeout.invalidArguments", timeout.getMethodName(), Join.join(",", Join.CLASS_CALLBACK, parameterClasses));
-            }
-            Class<?> returnType = method.getReturnType();
-            if (!returnType.equals(Void.TYPE)) {
-                fail(bean, "timeout.badReturnType", timeout.getMethodName(), returnType.getName());
-            }
-        } catch (NoSuchMethodException e) {
-            List<Method> possibleMethods = getMethods(ejbClass, timeout.getMethodName());
-
-            if (possibleMethods.size() == 0) {
-                fail(bean, "timeout.missing", timeout.getMethodName());
-            } else {
-                fail(bean, "timeout.missing.possibleTypo", timeout.getMethodName(), possibleMethods.size());
-            }
-        } catch(OpenEJBException e){
-            //ignore ? Could not load the class of the parameter
         }
     }
 

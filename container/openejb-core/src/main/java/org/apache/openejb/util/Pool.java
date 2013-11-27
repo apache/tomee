@@ -920,6 +920,7 @@ public class Pool<T> {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateField")
     @Managed
     private class Stats {
 

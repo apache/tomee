@@ -99,7 +99,7 @@ public class ReadDescriptors implements DynamicDeployer {
             }
 
             if (ejbModule.getBeans() == null) {
-                readBeans(ejbModule, appModule);
+                readBeans(ejbModule);
             }
 
             readValidationConfigType(ejbModule);
@@ -239,38 +239,6 @@ public class ReadDescriptors implements DynamicDeployer {
 
         return appModule;
 
-    }
-
-    private static URL getUrl(final Module module, final String name) {
-        URL url = (URL) module.getAltDDs().get(name);
-        if (url == null && module.getClassLoader() != null) {
-            url = module.getClassLoader().getResource("META-INF/" + name);
-            if (url != null) {
-                module.getAltDDs().put(name, url);
-            }
-        }
-        return url;
-    }
-
-    /**
-     * All the readFooXml(URL) methods could simply use this method
-     *
-     * @param module
-     * @param name
-     * @return
-     */
-    private static Source getSource(final Module module, final String name) {
-        final Object o = module.getAltDDs().get(name);
-        if (o != null) return getSource(o);
-
-        if (module.getClassLoader() != null) {
-            final URL url = module.getClassLoader().getResource("META-INF/" + name);
-            if (url != null) {
-                module.getAltDDs().put(name, url);
-                return new UrlSource(url);
-            }
-        }
-        return null;
     }
 
     public static void readResourcesXml(final Module module) {
@@ -478,7 +446,7 @@ public class ReadDescriptors implements DynamicDeployer {
         checkDuplicatedByBeansXml(beans.getInterceptors(), complete.getDuplicatedInterceptors());
     }
 
-    private void readBeans(final EjbModule ejbModule, final AppModule appModule) throws OpenEJBException {
+    private void readBeans(final EjbModule ejbModule) throws OpenEJBException {
         if (ejbModule.getBeans() != null) return;
 
         final Object raw = ejbModule.getAltDDs().get("beans.xml");

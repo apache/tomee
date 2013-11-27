@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
@@ -72,7 +71,6 @@ public class WlsConversion implements DynamicDeployer {
     }
 
     private void mergeEjbConfig(EjbModule ejbModule, WeblogicEjbJar weblogicEjbJar) {
-        EjbJar ejbJar = ejbModule.getEjbJar();
         OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
         if (openejbJar == null) return;

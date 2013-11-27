@@ -594,7 +594,6 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @Description("get all mapping files")
         public TabularData getMappingFiles() {
             return buildTabularData("mappingfile", "mapping file type",
-                    "Mapping file of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getMappingFiles(), Info.FILE);
         }
 
@@ -602,7 +601,6 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @Description("get all jar files")
         public TabularData getJarFiles() {
             return buildTabularData("jarfile", "jar file type",
-                    "Jar file of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getJarFileUrls(), Info.URL);
         }
 
@@ -610,11 +608,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         @Description("get all managed classes")
         public TabularData getManagedClasses() {
             return buildTabularData("managedclass", "managed class type",
-                    "Managed class of " + reloadableEntityManagerFactory.getPUname(),
                     reloadableEntityManagerFactory.getManagedClasses(), Info.CLASS);
         }
 
-        private TabularData buildTabularData(String typeName, String typeDescription, String description, List<?> list, Info info) {
+        private TabularData buildTabularData(String typeName, String typeDescription, List<?> list, Info info) {
             String[] names = new String[list.size()];
             Object[] values = new Object[names.length];
             int i = 0;

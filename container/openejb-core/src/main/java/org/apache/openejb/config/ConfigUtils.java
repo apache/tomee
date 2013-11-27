@@ -33,7 +33,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
 public class ConfigUtils {
 
@@ -42,16 +41,11 @@ public class ConfigUtils {
 
     /**
      * TODO: It should always be assumed that the path input param is a URL or URL-convertible
-     * 
-     * @param path
-     * @param props
-     * @return
-     * @throws OpenEJBException
      */
-    public static String searchForConfiguration(String path, Properties props) throws OpenEJBException {
-        File file = null;
-        if (path != null) {
-            for (final String p : deducePaths(path)) {
+    public static String searchForConfiguration(String rawPath) throws OpenEJBException {
+        File file;
+        if (rawPath != null) {
+            for (final String path : deducePaths(rawPath)) {
                 /*
                  * [1] Try finding the file relative to the current working
                  * directory
@@ -102,7 +96,7 @@ public class ConfigUtils {
                 }
             }
             
-            logger.warning("Cannot find the configuration file [" + path + "], Trying conf/openejb.xml instead.");
+            logger.warning("Cannot find the configuration file [" + rawPath + "], Trying conf/openejb.xml instead.");
         }
 
 

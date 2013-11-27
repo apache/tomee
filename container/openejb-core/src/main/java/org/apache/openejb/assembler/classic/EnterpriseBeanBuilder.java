@@ -223,13 +223,9 @@ class EnterpriseBeanBuilder {
                 
             }
 
-            String moduleId = moduleContext.getId();
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
             for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
-//                    EntityManagerFactory entityManagerFactory = emfLinkResolver.resolveLink(info.persistenceUnitName, moduleId);
-//                    extendedEntityManagerFactories.put(entityManagerFactory, info.properties);
-
                     try {
                         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                         Object o = containerSystem.getJNDIContext().lookup(PersistenceBuilder.getOpenEJBJndiName(info.unitId));
@@ -345,30 +341,6 @@ class EnterpriseBeanBuilder {
 
     public List<Exception> getWarnings() {
         return warnings;
-    }
-
-    private Method getCallback(Class ejbClass, List<CallbackInfo> callbackInfos) {
-        Method callback = null;
-        for (CallbackInfo info : callbackInfos) {
-            try {
-                if (ejbClass.getName().equals(info.className)) {
-                    if (callback != null) {
-                        throw new IllegalStateException("Spec requirements only allow one callback method of a given type per class.  The following callback will be ignored: " + info.className + "." + info.method);
-                    }
-                    try {
-                        callback = ejbClass.getMethod(info.method);
-                    } catch (NoSuchMethodException e) {
-                        throw (IllegalStateException) new IllegalStateException("Callback method does not exist: " + info.className + "." + info.method).initCause(e);
-                    }
-
-                } else {
-                    throw new UnsupportedOperationException("Callback: " + info.className + "." + info.method + " -- We currently do not support callbacks where the callback class is not the bean class.  If you need this feature, please let us know and we will complete it asap.");
-                }
-            } catch (Exception e) {
-                warnings.add(e);
-            }
-        }
-        return callback;
     }
 
     private Method getTimeout(Class ejbClass, NamedMethodInfo info) {

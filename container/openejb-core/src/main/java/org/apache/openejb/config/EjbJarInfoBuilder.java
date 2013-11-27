@@ -194,11 +194,11 @@ public class EjbJarInfoBuilder {
                 }
             }
 
-            initJndiNames(ejbds, bean, beanInfo);
+            initJndiNames(ejbds, beanInfo);
         }
 
         if (jar.getEjbJar().getAssemblyDescriptor() != null) {
-            initInterceptors(jar, ejbJar, infos);
+            initInterceptors(jar, ejbJar);
             initSecurityRoles(jar, ejbJar);
             initMethodPermissions(jar, ejbds, ejbJar);
             initExcludesList(jar, ejbds, ejbJar);
@@ -207,7 +207,7 @@ public class EjbJarInfoBuilder {
             initApplicationExceptions(jar, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                resolveRoleLinks(jar, bean, items.get(bean.ejbName));
+                resolveRoleLinks(bean, items.get(bean.ejbName));
             }
         }
 
@@ -233,7 +233,7 @@ public class EjbJarInfoBuilder {
         return ejbJar;
     }
 
-    private void initJndiNames(Map<String, EjbDeployment> ejbds, EnterpriseBean bean, EnterpriseBeanInfo info) {
+    private void initJndiNames(Map<String, EjbDeployment> ejbds, EnterpriseBeanInfo info) {
         EjbDeployment deployment = ejbds.get(info.ejbName);
         if (deployment != null) for (Jndi jndi : deployment.getJndi()) {
             JndiNameInfo jndiNameInfo = new JndiNameInfo();
@@ -317,7 +317,7 @@ public class EjbJarInfoBuilder {
         return cmrFieldInfo;
     }
 
-    private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar, Map<String, EnterpriseBeanInfo> beanInfos) throws OpenEJBException {
+    private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar) throws OpenEJBException {
         if (jar.getEjbJar().getInterceptors().length == 0) return;
         if (jar.getEjbJar().getAssemblyDescriptor() == null) return;
         if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) return;
@@ -499,7 +499,7 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void resolveRoleLinks(EjbModule jar, EnterpriseBeanInfo bean, JndiConsumer item) {
+    private void resolveRoleLinks(EnterpriseBeanInfo bean, JndiConsumer item) {
         if (!(item instanceof RemoteBean)) {
             return;
         }

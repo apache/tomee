@@ -28,35 +28,27 @@ import java.security.PrivilegedAction;
 public class Handler extends URLStreamHandler {
 
     protected URLConnection openConnection(URL url) throws IOException {
-        String cln = url.getHost();
-
-        String resrce = url.getFile().substring(1);
-
-        URL realURL;
-
+        final String cln = url.getHost();
+        final String resrce = url.getFile().substring(1);
+        final URL realURL;
         if (cln != null && cln.length() != 0) {
-            Class clz;
-            ClassLoader cl = getContextClassLoader();
-
+            final ClassLoader cl = getContextClassLoader();
             try {
-
-                clz = Class.forName(cln, true, cl);
+                Class.forName(cln, true, cl);
             } catch (ClassNotFoundException ex) {
-                throw (IOException)new MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
+                throw (IOException) new MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
             }
-
             realURL = cl.getResource(resrce);
-
-            if (realURL == null)
+            if (realURL == null) {
                 throw new FileNotFoundException("Class resource " + resrce + " of class " + cln + " cannot be found");
+            }
         } else {
-            ClassLoader cl = getContextClassLoader();
+            final ClassLoader cl = getContextClassLoader();
             realURL = cl.getResource(resrce);
-
-            if (realURL == null)
+            if (realURL == null) {
                 throw new FileNotFoundException("System resource " + resrce + " cannot be found");
+            }
         }
-
         return realURL.openConnection();
     }
 

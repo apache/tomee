@@ -59,7 +59,6 @@ public class CheckDescriptorLocation extends ValidationBase {
     }
 
     private void validateWebModule(DeploymentModule webModule) {
-        URL baseUrl = null;
         this.module= webModule;
         List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","faces-config.xml");
         File file = webModule.getFile();
@@ -67,8 +66,7 @@ public class CheckDescriptorLocation extends ValidationBase {
             try {
                 URL rootOfArchive=file.toURI().toURL();
                 URL metaInf=new URL(rootOfArchive.toExternalForm()+"META-INF/");
-                Map<String, URL> incorrectlyLocatedDescriptors
-                        = retrieveDescriptors(file, descriptorsToSearch, rootOfArchive, metaInf);
+                Map<String, URL> incorrectlyLocatedDescriptors = retrieveDescriptors(descriptorsToSearch, rootOfArchive, metaInf);
                 warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"WEB-INF");
             } catch (MalformedURLException ignored) {
                     //ignored
@@ -78,7 +76,6 @@ public class CheckDescriptorLocation extends ValidationBase {
     }
 
     public void validateEjbModule(DeploymentModule deploymentModule) {
-        URL baseUrl = null;
         this.module= deploymentModule;
         List<String> descriptorsToSearch = Arrays.asList("beans.xml","ejb-jar.xml","openejb-jar.xml","env-entries.properties");
         File file = deploymentModule.getFile();
@@ -86,7 +83,7 @@ public class CheckDescriptorLocation extends ValidationBase {
             try {
                 URL rootOfArchive=file.toURI().toURL();
                 Map<String, URL> incorrectlyLocatedDescriptors
-                        = retrieveDescriptors(file, descriptorsToSearch, rootOfArchive);
+                        = retrieveDescriptors(descriptorsToSearch, rootOfArchive);
                 warnIncorrectLocationOfDescriptors(incorrectlyLocatedDescriptors,"META-INF");
             } catch (MalformedURLException ignored) {
                   //ignored
@@ -95,10 +92,8 @@ public class CheckDescriptorLocation extends ValidationBase {
 
     }
 
-    private static Map<String,URL> retrieveDescriptors(File file, List<String> descriptorsToSearch, URL... locationsToSearch ){
+    private static Map<String,URL> retrieveDescriptors(List<String> descriptorsToSearch, URL... locationsToSearch ){
       final Map<String,URL>  descriptorAndWrongLocation = new HashMap<String,URL>();
-
-
             ResourceFinder finder = new ResourceFinder(locationsToSearch);
             for(String descriptor:descriptorsToSearch)
             {

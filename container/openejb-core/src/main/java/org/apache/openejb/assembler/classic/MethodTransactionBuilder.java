@@ -68,17 +68,6 @@ public class MethodTransactionBuilder {
         }
     }
 
-    private static String getMethodInterface(MethodTransactionInfo value) {
-        // We can only do this because we have previously processed all the
-        // MethodTransactionInfo objects so there is one per method
-        // It makes code like this easier to handle
-        for (MethodInfo methodInfo : value.methods) {
-            return methodInfo.methodIntf;
-        }
-
-        return null;
-    }
-
     /**
      * This method splits the MethodTransactionInfo objects so that there is
      * exactly one MethodInfo per MethodTransactionInfo.  A single MethodTransactionInfo
@@ -87,7 +76,6 @@ public class MethodTransactionBuilder {
      *
      * The MethodTransactionInfo list is then sorted from least to most specific.
      *
-     * @param infos
      * @return a normalized list of new MethodTransactionInfo objects
      */
     public static List<MethodTransactionInfo> normalize(List<MethodTransactionInfo> infos){

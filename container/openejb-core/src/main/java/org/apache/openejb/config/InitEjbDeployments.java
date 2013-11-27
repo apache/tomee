@@ -169,10 +169,6 @@ public class InitEjbDeployments implements DynamicDeployer {
         }
     }
 
-    private String get(String s) {
-        return isDefined(s) ? s : null;
-    }
-
     private boolean isDefined(String s) {
         return s != null && !"".equals(s);
     }

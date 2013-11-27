@@ -184,33 +184,19 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
     private void stopImpl() throws Exception {
         super.stop();
-
-        final ActiveMQResourceAdapter ra = this;
-        stopImpl(ra);
-    }
-
-    private static void stopImpl(final org.apache.activemq.ra.ActiveMQResourceAdapter instance) throws Exception {
-
         final Collection<BrokerService> brokers = ActiveMQFactory.getBrokers();
-
         final Iterator<BrokerService> it = brokers.iterator();
-
         while (it.hasNext()) {
-
             final BrokerService bs = it.next();
-
             try {
                 bs.stop();
                 bs.waitUntilStopped();
             } catch (Throwable t) {
                 //Ignore
             }
-
             it.remove();
         }
-
         stopScheduler();
-
         Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").info("Stopped ActiveMQ broker");
     }
 
