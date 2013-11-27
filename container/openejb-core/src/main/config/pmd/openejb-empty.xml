@@ -12,7 +12,6 @@
   <rule ref="rulesets/java/empty.xml">
     <exclude name="EmptyCatchBlock"/>
     <exclude name="EmptyIfStmt"/>
-    <exclude name="EmptyWhileStmt"/>
   </rule>
 
   <!-- overriding EmptyCatchBlock -->

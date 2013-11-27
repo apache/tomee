@@ -184,7 +184,7 @@ public class JuliLogStream implements LogStream {
                 }
 
                 // Skip any internal OpenEJB Logger call
-                while (++i < elements.length && elements[i].getClassName().equals(current)) {
+                while (++i < elements.length && elements[i].getClassName().equals(current)) { //NOPMD
                     // do nothing
                 }
 
