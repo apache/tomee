@@ -43,9 +43,7 @@ public class LocalXAResource implements XAResource {
     @Override
     public void start(final Xid xid, int flag) throws XAException {
         try {
-            if (!lock.tryLock(10, TimeUnit.MINUTES)) {
-
-            }
+            lock.tryLock(10, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             throw (XAException) new XAException("can't get lock").initCause(cantGetLock());
         }

@@ -563,13 +563,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         	// are we allowed to have more than one connector class? Not without a deployment descriptor
         	if (connector.getResourceAdapter() == null || connector.getResourceAdapter().getResourceAdapterClass() == null ||  connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
-        		if (connectorClasses.size() == 0) {
-        			// fail some validation here too
+        		if (connectorClasses.size() == 0) { //NOPMD
+        			// TODO: fail some validation here too
         		}
 
-        		if (connectorClasses.size() > 1) {
+        		if (connectorClasses.size() > 1) { //NOPMD
         			// too many connector classes, this is against the spec
-        			// something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
+        			// TODO: something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
         		}
         	}
 
@@ -680,8 +680,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 				if (outboundResourceAdapter.isReauthenticationSupport() == null) {
 					outboundResourceAdapter.setReauthenticationSupport(connectorAnnotation.reauthenticationSupport());
 				}
-        	} else {
-        		// we couldn't process a connector class - probably a validation issue which we should warn about.
         	}
 
         	// process @ConnectionDescription(s)
@@ -3982,62 +3980,18 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (Modifier.isFinal(clazz.getModifiers())) return false;
 
             return true;
-//            // This limits @LocalBean references to things in the same module
-//            DeploymentModule module = getModule();
-//            if (module instanceof EjbModule) {
-//                Set<String> localbeans = new HashSet<String>();
-//                EjbModule ejbModule = (EjbModule) module;
-//                for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-//                    if (bean instanceof SessionBean) {
-//                        if (((SessionBean) bean).getLocalBean() != null) {
-//                            localbeans.add(bean.getEjbClass());
-//                        }
-//                    }
-//                }
-//
-//                if (localbeans.contains(clazz.getName())) {
-//                    return true;
-//                }
-//            }
-//
-//            return false;
         }
 
         private boolean isValidEjbInterface(String b, Class clazz, String refName) {
-            if (!clazz.isInterface()) {
-
-//                DeploymentModule module = getModule();
-//                if (module instanceof EjbModule) {
-//                    Set<String> beanClasses = new HashSet<String>();
-//                    EjbModule ejbModule = (EjbModule) module;
-//                    for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-//                        beanClasses.add(bean.getEjbClass());
-//                    }
-//
-//                    if (beanClasses.contains(clazz.getName())) {
-//                        fail(b, "ann.ejb.beanClass", clazz.getName(), refName);
-//                    } else {
-//                        fail(b, "ann.ejb.notInterface", clazz.getName(), refName);
-//                    }
-//                } else {
-//                    fail(b, "ann.ejb.notInterface", clazz.getName(), refName);
-//                }
-//
-//                return false;
-
+            if (!clazz.isInterface()) { //NOPMD
+                //It is not an interface. No validation necessary.
             } else if (EJBObject.class.isAssignableFrom(clazz)) {
-
                 fail(b, "ann.ejb.ejbObject", clazz.getName(), refName);
-
                 return false;
-
             } else if (EJBLocalObject.class.isAssignableFrom(clazz)) {
-
                 fail(b, "ann.ejb.ejbLocalObject", clazz.getName(), refName);
-
                 return false;
             }
-
             return true;
         }
 

@@ -65,7 +65,8 @@ public class Duration {
             // skip whitespace
             for (; i < s.length(); i++) {
                 char c = s.charAt(i);
-                if (Character.isWhitespace(c)) {
+                if (Character.isWhitespace(c)) { //NOPMD
+                    // no-op. Just continue the loop
                 } else {
                     break;
                 }

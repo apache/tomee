@@ -66,7 +66,8 @@ public class CheckAssemblyBindings extends ValidationBase {
             for (Method method : permission.getMethod()) {
                 if (method.getEjbName() == null) {
                     fail("MethodPermission", "methodPermission.ejbNameRequired", method.getMethodName(), join(",", permission.getRoleName()));
-                } else if (method.getEjbName().equals("*")){
+                } else if (method.getEjbName().equals("*")) { //NOPMD
+                    // no-op. Just continue the loop.
                 } else if (!ejbsByName.containsKey(method.getEjbName())){
                     fail("MethodPermission", "methodPermission.noSuchEjbName", method.getEjbName(), method.getMethodName(), join(",", permission.getRoleName()));
                 }
@@ -77,7 +78,8 @@ public class CheckAssemblyBindings extends ValidationBase {
             for (Method method : transaction.getMethod()) {
                 if (method.getEjbName() == null) {
                     fail("ContainerTransaction", "containerTransaction.ejbNameRequired", method.getMethodName(), transaction.getTransAttribute());
-                } else if (method.getEjbName().equals("*")){
+                } else if (method.getEjbName().equals("*")) { //NOPMD
+                    // no-op. Just continue the loop.
                 } else if (!ejbsByName.containsKey(method.getEjbName())){
                     fail("ContainerTransaction", "containerTransaction.noSuchEjbName", method.getEjbName(), method.getMethodName(), transaction.getTransAttribute());
                 }

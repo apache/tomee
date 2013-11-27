@@ -1453,8 +1453,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         } else if (ExecutorService.class.isInstance(object)) {
             ExecutorService.class.cast(object).shutdown();
-        } else if (DataSource.class.isInstance(object)) {
-            //Do nothing?
+        } else if (DataSource.class.isInstance(object)) { //NOPMD
+            //no-op. Just don't log the debug message below.
         } else if (logger.isDebugEnabled()) {
             logger.debug("Not processing resource on destroy: " + className);
         }

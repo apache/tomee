@@ -162,7 +162,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 destroySessionContext((HttpSession) endParameters);
             } else if (scopeType.equals(ApplicationScoped.class)) {
                 destroyApplicationContext();
-            } else if (scopeType.equals(Dependent.class)) {
+            } else if (scopeType.equals(Dependent.class)) { //NOPMD
                 // Do nothing
             } else if (scopeType.equals(Singleton.class)) {
                 destroySingletonContext();
@@ -209,7 +209,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 initApplicationContext();
             } else if (scopeType.equals(Dependent.class)) {
                 initSingletonContext();
-            } else if (scopeType.equals(Singleton.class)) {
+            } else if (scopeType.equals(Singleton.class)) { //NOPMD
                 // Do nothing
             } else if (supportsConversation() && scopeType.equals(ConversationScoped.class)) {
                 initConversationContext((ConversationContext) startParameter);

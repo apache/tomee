@@ -282,9 +282,8 @@ public class WsDeployer implements DynamicDeployer {
                 webserviceDescription = new WebserviceDescription();
                 if (JaxWsUtils.isWebService(ejbClass)) {
                     webserviceDescription.setWebserviceDescriptionName(JaxWsUtils.getServiceName(ejbClass));
-                } else {
-                    // todo create webserviceDescription name using some sort of jaxrpc data 
                 }
+                // TODO else { /* create webserviceDescription name using some sort of jaxrpc data */ }
                 webservices.getWebserviceDescription().add(webserviceDescription);
             }
 
@@ -361,9 +360,8 @@ public class WsDeployer implements DynamicDeployer {
                     portComponent.setHandlerChains(handlerChains);
 
                 }
-            } else {
-                // todo location JAX-RPC services comes from wsdl file
             }
+            // TODO else { /* location JAX-RPC services comes from wsdl file */ }
         }
     }
 

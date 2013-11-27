@@ -75,15 +75,14 @@ public class ConnectorCallbackHandler implements CallbackHandler {
 				}
 			}
 			// server to jaspi communication
-			// TODO implement these
-			else if (callback instanceof CertStoreCallback) {
-			
-			} else if (callback instanceof PrivateKeyCallback) {
-			
-			} else if (callback instanceof SecretKeyCallback) {
-			
-			} else if (callback instanceof TrustStoreCallback) {
-			
+			else if (callback instanceof CertStoreCallback) { //NOPMD
+                // TODO implement me
+			} else if (callback instanceof PrivateKeyCallback) { //NOPMD
+                // TODO implement me
+			} else if (callback instanceof SecretKeyCallback) { //NOPMD
+                // TODO implement me
+			} else if (callback instanceof TrustStoreCallback) { //NOPMD
+                // TODO implement me
 			} else {
 				throw new UnsupportedCallbackException(callback);
 			}

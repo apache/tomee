@@ -183,7 +183,7 @@ public class DynamicSubclass implements Opcodes {
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {
-                    if (isOverridden(methods, method)) {
+                    if (isOverridden(methods, method)) { //NOPMD
                         // method is overridden in superclass, so do nothing
                     } else {
                         // method is not overridden, so add it
