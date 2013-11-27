@@ -96,7 +96,7 @@ public class CheckMethods extends ValidationBase {
             String name = interfaceMethods[i].getName();
             try {
                 Class[] params = interfaceMethods[i].getParameterTypes();
-                Method beanMethod = beanClass.getMethod(name, params);
+                beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
                 List<Method> differentArgs = new ArrayList<Method>();
                 List<Method> differentCase = new ArrayList<Method>();
@@ -145,7 +145,7 @@ public class CheckMethods extends ValidationBase {
             String name = interfaceMethods[i].getName();
             try {
                 Class[] params = interfaceMethods[i].getParameterTypes();
-                Method beanMethod = beanClass.getMethod(name, params);
+                beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
                 List<Method> differentArgs = new ArrayList<Method>();
                 List<Method> differentCase = new ArrayList<Method>();

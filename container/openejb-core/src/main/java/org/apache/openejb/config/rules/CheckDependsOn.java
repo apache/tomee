@@ -57,7 +57,6 @@ public class CheckDependsOn extends ValidationBase {
 
         }
 
-        boolean missingBeans = false;
         for (Bean bean : app.values()) {
             EnterpriseBean enterpriseBean = bean.bean;
 
@@ -71,14 +70,11 @@ public class CheckDependsOn extends ValidationBase {
                 Bean referee = bean.resolveLink(ejbName);
                 if (referee == null) {
                     bean.module.getValidation().fail(enterpriseBean.getEjbName(), "dependsOn.noSuchEjb", ejbName);
-                    missingBeans = true;
                 } else {
                     bean.dependsOn.add(referee);
                 }
             }
         }
-
-       // if (missingBeans) return;
 
         try {
             References.sort(new ArrayList<Bean>(app.values()), new References.Visitor<Bean>() {

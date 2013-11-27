@@ -24,7 +24,7 @@ import javax.xml.ws.EndpointReference;
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which
  * uses JaxWS 2.1.  All of the methods throw UnsupportedOperationException.
  */
-@SuppressWarnings({"UnusedDeclaration"})
+@SuppressWarnings({"UnusedDeclaration", "PMD"})
 public final class W3CEndpointReference extends EndpointReference {
     protected static final String NS = "http://www.w3.org/2005/08/addressing";
 

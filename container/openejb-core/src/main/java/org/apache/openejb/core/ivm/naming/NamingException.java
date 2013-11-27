@@ -25,7 +25,7 @@ public class NamingException extends javax.naming.NamingException {
     private OpenEJBException delegate;
 
     public NamingException(String message, OpenEJBException delegateArg) {
-        super();
+        super(message);
         delegate = delegateArg;
     }
 

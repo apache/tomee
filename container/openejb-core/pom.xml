@@ -258,6 +258,7 @@
             <ruleset>${project.basedir}/src/main/config/pmd/openejb-empty.xml</ruleset>
             <ruleset>rulesets/java/finalizers.xml</ruleset>
             <ruleset>rulesets/java/imports.xml</ruleset>
+            <ruleset>rulesets/java/unusedcode.xml</ruleset>
           </rulesets>
         </configuration>
         <executions>

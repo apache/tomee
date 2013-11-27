@@ -416,9 +416,6 @@ public class NewLoaderLogic {
         timer.event("urlset");
 
         final Set<RequireDescriptors> requireDescriptors = options.getAll(DeploymentFilterable.CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
-        final boolean filterDescriptors = options.get(DeploymentFilterable.CLASSPATH_FILTER_DESCRIPTORS, false);
-        final boolean filterSystemApps = options.get(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, true);
-
         try {
             UrlSet urlSet = new UrlSet(classLoader);
 
@@ -443,8 +440,6 @@ public class NewLoaderLogic {
                 for (final URL url : beforeFiltering) {
                     logger.info(String.format("   %s", url.toExternalForm()));
                 }
-                //                throw new IllegalStateException(message);
-
             }
 
             // If they are the same size, than nothing was filtered
@@ -467,31 +462,7 @@ public class NewLoaderLogic {
 
             timer.event("process urls");
 
-            // we should exclude system apps before and apply user properties after
-            //            if (filterSystemApps){
-            //                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
-            //            }
-
             final List<URL> urls = urlSet.getUrls();
-            final int size = urls.size();
-            //            if (size == 0) {
-            //                logger.warning("No classpath URLs matched.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-            //                return;
-            //            } else if (size == 0 && (!filterDescriptors && prefiltered.getUrls().size() == 0)) {
-            //                return;
-            //            } else if (size < 20) {
-            //                logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
-            //            } else {
-            //                // Has the user allowed some module types to be discoverable via scraping?
-            //                boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
-            //
-            //                if (size < 50 && willScrape) {
-            //                    logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-            //                } else if (willScrape) {
-            //                    logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
-            //                    logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-            //                }
-            //            }
 
             final long begin = System.currentTimeMillis();
             DeploymentsResolver.processUrls("NewLoaderLogic2", urls, classLoader, requireDescriptors, base, jarList);
@@ -501,13 +472,7 @@ public class NewLoaderLogic {
             timer.stop(System.out);
 
             final UrlSet unchecked = new UrlSet();
-            //            if (!filterDescriptors){
-            //                unchecked = prefiltered.exclude(urlSet);
-            //                if (filterSystemApps){
-            //                    unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
-            //                }
             DeploymentsResolver.processUrls("NewLoaderLogic3", unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
-            //            }
 
             if (logger.isDebugEnabled()) {
                 final int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();

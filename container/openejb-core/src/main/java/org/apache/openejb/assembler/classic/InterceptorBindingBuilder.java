@@ -51,12 +51,10 @@ public class InterceptorBindingBuilder {
         ADDITION_OR_LOWER_EXCLUSION, SAME_LEVEL_EXCLUSION, SAME_AND_LOWER_EXCLUSION, EXPLICIT_ORDERING
     }
 
-    private final EjbJarInfo ejbJarInfo;
     private final ArrayList<InterceptorBindingInfo> bindings;
     private final Map<String, InterceptorData> interceptors =  new HashMap<String, InterceptorData>();
 
     public InterceptorBindingBuilder(ClassLoader cl, EjbJarInfo ejbJarInfo) throws OpenEJBException {
-        this.ejbJarInfo = ejbJarInfo;
         bindings = new ArrayList<InterceptorBindingInfo>(ejbJarInfo.interceptorBindings);
         Collections.sort(bindings, new IntercpetorBindingComparator());
         Collections.reverse(bindings);

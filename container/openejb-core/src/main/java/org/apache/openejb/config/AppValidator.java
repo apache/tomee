@@ -304,10 +304,6 @@ public class AppValidator {
         return OptionBuilder.withLongOpt(longOpt).withDescription(AppValidator.i18n(description)).create(shortOpt);
     }
 
-    private static Option option(String shortOpt, String longOpt, String argName, String description) {
-        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(AppValidator.i18n(description)).create(shortOpt);
-    }
-
     private static String i18n(String key) {
         return AppValidator._messages.format(key);
     }

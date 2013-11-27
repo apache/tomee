@@ -19,7 +19,6 @@ package org.apache.openejb.core.security;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -60,7 +59,6 @@ public class ConnectorCallbackHandler implements CallbackHandler {
 				groupsArray = ((GroupPrincipalCallback) callback).getGroups();
 			} else if (callback instanceof PasswordValidationCallback) {
 				PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
-				Subject subject = passwordValidationCallback.getSubject();
 				final String userName = passwordValidationCallback.getUsername();
 				final char[] password = passwordValidationCallback.getPassword();
 

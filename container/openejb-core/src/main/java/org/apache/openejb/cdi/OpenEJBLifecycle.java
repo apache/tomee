@@ -21,7 +21,6 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.BeansDeployer;
@@ -70,8 +69,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     protected final ContextsService contextsService;
 
-    private final boolean skipClassNotFoundError;
-
     /**Deploy discovered beans*/
     private final BeansDeployer deployer;
 
@@ -100,8 +97,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();
         this.contextsService = webBeansContext.getContextsService();
-
-        this.skipClassNotFoundError = SystemInstance.get().getOptions().get(OPENEJB_CDI_SKIP_CLASS_NOT_FOUND, false);
 
         initApplication(null);
     }
@@ -215,18 +210,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
 
         logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
-    }
-
-    private static boolean rootCauseIsClassNotFound(final RuntimeException re) {
-        Throwable e = re;
-        e.getStackTrace();
-        while (e != null) {
-            if (e instanceof ClassNotFoundException) {
-                return true;
-            }
-            e = e.getCause();
-        }
-        return false;
     }
 
     @Override

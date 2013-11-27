@@ -2198,8 +2198,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } catch (ClassNotFoundException e) {
                         continue;
                     }
-
-                    final List<Annotated<Class<?>>> found;
                     if (clazz.isAnnotation()) {
                         classes.addAll(metaToClass(finder.findMetaAnnotatedClasses(clazz)));
                     } else if (Modifier.isAbstract(clazz.getModifiers())) {
@@ -2208,7 +2206,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                         classes.addAll(finder.findImplementations(clazz));
                     }
                 }
-
             }
 
             AnnotationFinder annotationFinder = createFinder(classes.toArray(new Class<?>[classes.size()]));
@@ -3158,37 +3155,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (beanClass.isAnnotationPresent(ManagedBean.class)){
                     sessionBean.setLocalBean(new Empty());
                 }
-
-
-                /**
-                 * Track any interfaces we didn't use
-                 */
-                all.unspecified.addAll(interfaces);
             }
 
             // Finally, add all the business interfaces we found
             for (Class interfce : all.local) sessionBean.addBusinessLocal(interfce);
             for (Class interfce : all.remote) sessionBean.addBusinessRemote(interfce);
-
-            // Anything unspecified?  Let's throw it in as local.
-            //
-            // This covers the required case where a bean is declared implementing
-            // one interface and does not use @Local or @Remote anywhere nor does
-            // it specify the business-local or business-remote elements in the ejb-jar.xml
-            //
-            // It goes a little beyond that, but no one has ever complained about having
-            // more local interfaces.
-
-            // TODO allow to be re-enabled with a flag
-            //for (Class interfce : all.unspecified) sessionBean.addBusinessLocal(interfce);
-
-
         }
 
         private static class BusinessInterfaces {
             private Set<Class> local = new LinkedHashSet<Class>();
             private Set<Class> remote = new LinkedHashSet<Class>();
-            private Set<Class> unspecified = new LinkedHashSet<Class>();
 
             public void addLocals(Collection<String> names, ClassLoader loader){
                 add(loader, names, local);

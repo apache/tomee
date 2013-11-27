@@ -17,7 +17,6 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.EnvProps;
-import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 
@@ -89,20 +88,19 @@ public class ConfUtils {
     }
 
     public static File install(URL resource, String name, boolean overwrite) throws IOException {
-        if (resource == null) return null;
-
-        SystemInstance system = SystemInstance.get();
-        FileUtils base = system.getBase();
-        File conf = system.getConf(null);
-
-        if (conf != null && !conf.exists()) return null;
-
-        File file = new File(conf, name);
-
-        if (file.exists() && !overwrite) return file;
-
+        if (resource == null) {
+            return null;
+        }
+        final SystemInstance system = SystemInstance.get();
+        final File conf = system.getConf(null);
+        if (conf != null && !conf.exists()) {
+            return null;
+        }
+        final File file = new File(conf, name);
+        if (file.exists() && !overwrite) {
+            return file;
+        }
         IO.copy(IO.read(resource), file);
-
         return file;
     }
 

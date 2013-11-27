@@ -55,7 +55,6 @@ public class MdbInstanceFactory {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final BeanContext beanContext;
-    private final SecurityService securityService;
     private final int instanceLimit;
     private int instanceCount;
     private final MdbContext mdbContext;
@@ -69,7 +68,6 @@ public class MdbInstanceFactory {
      */
     public MdbInstanceFactory(BeanContext beanContext, SecurityService securityService, int instanceLimit) throws OpenEJBException {
         this.beanContext = beanContext;
-        this.securityService = securityService;
         this.instanceLimit = instanceLimit;
         mdbContext = new MdbContext(securityService);
 

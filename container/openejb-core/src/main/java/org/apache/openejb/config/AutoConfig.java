@@ -192,15 +192,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         for (final ClientModule clientModule : appModule.getClientModules()) {
             deploy(clientModule, appResources);
         }
-        for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
-            deploy(connectorModule);
-        }
         for (final WebModule webModule : appModule.getWebModules()) {
             deploy(webModule, appResources);
         }
         for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
             deploy(appModule, persistenceModule);
         }
+        // Note that there is nothing to process for resource modules.
+        // We dont need to loop over "appModule.getConnectorModules()".
         return appModule;
     }
 
@@ -239,21 +238,17 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         final String componentName = component.getJndiConsumerName();
         final ValidationContext validation = module.getValidation();
-        final AppModule appModule = module.appModule();
-
         for (final PersistenceRef ref : component.getPersistenceUnitRef()) {
 
-            processPersistenceRef(appModule, persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
         }
-
         for (final PersistenceRef ref : component.getPersistenceContextRef()) {
 
-            processPersistenceRef(appModule, persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
         }
     }
 
-    private PersistenceUnit processPersistenceRef(final AppModule appModule,
-                                                  final LinkResolver<PersistenceUnit> persistenceUnits,
+    private PersistenceUnit processPersistenceRef(final LinkResolver<PersistenceUnit> persistenceUnits,
                                                   final PersistenceRef ref,
                                                   final URI moduleURI,
                                                   final String componentName,
@@ -714,11 +709,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private void deploy(final ClientModule clientModule, final AppResources appResources) throws OpenEJBException {
         processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient(), appResources, clientModule.getClassLoader());
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    private void deploy(final ConnectorModule connectorModule) throws OpenEJBException {
-        // Nothing to process for resource modules
     }
 
     private void deploy(final WebModule webModule, final AppResources appResources) throws OpenEJBException {

@@ -63,8 +63,6 @@ public class Deploy {
     private static Messages messages = new Messages(Deploy.class);
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
-    private static final int BUF_SIZE = 8192;
-
 
     public static void main(String... args) throws SystemExitException {
 
