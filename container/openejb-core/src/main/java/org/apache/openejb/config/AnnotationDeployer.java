@@ -243,10 +243,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.util.Arrays.asList;
-import static org.apache.openejb.util.Join.join;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -303,7 +299,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         API_CLASSES.addAll(Arrays.asList(WEB_CLASSES));
     }
 
-    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
+    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
             "javax.ejb.EJBContext",
             "javax.ejb.SessionContext",
             "javax.ejb.EntityContext",
@@ -318,7 +314,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.validation.ValidatorFactory"
     ));
 
-    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
+    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
             "boolean", "java.lang.Boolean",
             "char", "java.lang.Character",
             "byte", "java.lang.Byte",
@@ -1087,7 +1083,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 int modifiers = webServiceClass.getModifiers();
-                if (!Modifier.isPublic(modifiers) || Modifier.isFinal(modifiers) || isAbstract(modifiers)) {
+                if (!Modifier.isPublic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isAbstract(modifiers)) {
                     continue;
                 }
 
@@ -1733,7 +1729,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private boolean isValidEjbAnnotationUsage(Class annotationClass, Annotated<Class<?>> beanClass, String ejbName, EjbModule ejbModule) {
-            List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
+            List<Class<? extends Annotation>> annotations = new ArrayList(Arrays.asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
             boolean b = true;
@@ -1763,7 +1759,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                     return false;
                 }
-            } else if (isAbstract(beanClass.get().getModifiers())) {
+            } else if (Modifier.isAbstract(beanClass.get().getModifiers())) {
                 if (!CheckClasses.isAbstractAllowed(beanClass.get())) {
                     ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                     return false;
@@ -2246,7 +2242,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     for (EnterpriseBean otherBean : enterpriseBeans) {
                         others.add(otherBean.getEjbName());
                     }
-                    fail(ejbName, "xml.noEjbClass", ejbName, join(", ", others));
+                    fail(ejbName, "xml.noEjbClass", ejbName, Join.join(", ", others));
                 }
 
                 final Class<?> clazz;
@@ -2873,7 +2869,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(asList(beanClass)) : Classes.ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(Arrays.asList(beanClass)) : Classes.ancestors(beanClass);
 
             for (Class<?> clazz : classes) {
 
@@ -2959,8 +2955,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * on the interface.
                  */
                 BusinessInterfaces bean = new BusinessInterfaces();
-                if (local != null) bean.local.addAll(asList(local.value()));
-                if (remote != null) bean.remote.addAll(asList(remote.value()));
+                if (local != null) bean.local.addAll(Arrays.asList(local.value()));
+                if (remote != null) bean.remote.addAll(Arrays.asList(remote.value()));
 
                 if (strict) for (Class interfce : bean.local) {
                     if (bean.remote.contains(interfce)) {
@@ -2990,17 +2986,17 @@ public class AnnotationDeployer implements DynamicDeployer {
                         // just warn for @Local since Glassfish supports it even if it is weird
                         // still fail for @Remote!
                         if (impliedLocal && local.value().length == 0 && interfaces.size() == 0 && !strict) {
-                            validation.warn(ejbName, "ann.local.forLocalBean", join(", ", interfaceNames));
+                            validation.warn(ejbName, "ann.local.forLocalBean", Join.join(", ", interfaceNames));
                             // we don't go out to let be deployed
                         } else if (impliedLocal) {
-                            validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
+                            validation.fail(ejbName, "ann.local.noAttributes", Join.join(", ", interfaceNames));
                             /**
                              * This bean is invalid, so do not bother looking at the other interfaces or the superclass
                              */
                             return;
                         }
                         if (impliedRemote) {
-                            validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaceNames));
+                            validation.fail(ejbName, "ann.remote.noAttributes", Join.join(", ", interfaceNames));
                             /**
                              * This bean is invalid, so do not bother looking at the other interfaces or the superclass
                              */
@@ -3252,7 +3248,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     if (rolesAllowed != null) {
                         MethodPermission methodPermission = new MethodPermission();
-                        methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
+                        methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
                         methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
                         assemblyDescriptor.getMethodPermission().add(methodPermission);
 
@@ -3310,7 +3306,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
                 RolesAllowed rolesAllowed = method.getAnnotation(RolesAllowed.class);
                 MethodPermission methodPermission = new MethodPermission();
-                methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
+                methodPermission.getRoleName().addAll(Arrays.asList(rolesAllowed.value()));
                 methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method.get()));
                 assemblyDescriptor.getMethodPermission().add(methodPermission);
 
@@ -3362,14 +3358,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             List<String> annotations = new ArrayList<String>();
-            for (Class<? extends Annotation> annotation : asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
+            for (Class<? extends Annotation> annotation : Arrays.asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
                 if (method.getAnnotation(annotation) != null) {
                     annotations.add("@" + annotation.getSimpleName());
                 }
             }
 
             if (annotations.size() > 1) {
-                ejbModule.getValidation().fail(ejbName, "conflictingSecurityAnnotations", method.get().getName(), join(" and ", annotations), method.get().getDeclaringClass());
+                ejbModule.getValidation().fail(ejbName, "conflictingSecurityAnnotations", method.get().getName(), Join.join(" and ", annotations), method.get().getDeclaringClass());
             }
         }
 
@@ -3403,7 +3399,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 Schedules schedulesAnnotation = method.getAnnotation(Schedules.class);
                 if (schedulesAnnotation != null) {
-                    scheduleAnnotationList.addAll(asList(schedulesAnnotation.value()));
+                    scheduleAnnotationList.addAll(Arrays.asList(schedulesAnnotation.value()));
                 }
 
                 Schedule scheduleAnnotation = method.getAnnotation(Schedule.class);
@@ -3604,7 +3600,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<EJB> ejbList = new ArrayList<EJB>();
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJBs.class)) {
                 EJBs ejbs = clazz.getAnnotation(EJBs.class);
-                ejbList.addAll(asList(ejbs.value()));
+                ejbList.addAll(Arrays.asList(ejbs.value()));
             }
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJB.class)) {
                 EJB e = clazz.getAnnotation(EJB.class);
@@ -3638,7 +3634,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<Resource> resourceList = new ArrayList<Resource>();
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resources.class)) {
                 Resources resources = clazz.getAnnotation(Resources.class);
-                resourceList.addAll(asList(resources.value()));
+                resourceList.addAll(Arrays.asList(resources.value()));
             }
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resource.class)) {
                 Resource resource = clazz.getAnnotation(Resource.class);
@@ -3680,7 +3676,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<WebServiceRef> webservicerefList = new ArrayList<WebServiceRef>();
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRefs.class)) {
                 WebServiceRefs webServiceRefs = clazz.getAnnotation(WebServiceRefs.class);
-                webservicerefList.addAll(asList(webServiceRefs.value()));
+                webservicerefList.addAll(Arrays.asList(webServiceRefs.value()));
             }
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRef.class)) {
                 WebServiceRef webServiceRef = clazz.getAnnotation(WebServiceRef.class);
@@ -3717,7 +3713,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnits.class)) {
                 PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
-                persistenceUnitList.addAll(asList(persistenceUnits.value()));
+                persistenceUnitList.addAll(Arrays.asList(persistenceUnits.value()));
             }
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnit.class)) {
                 PersistenceUnit persistenceUnit = clazz.getAnnotation(PersistenceUnit.class);
@@ -3745,7 +3741,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContexts.class)) {
                 PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
-                persistenceContextList.addAll(asList(persistenceContexts.value()));
+                persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
                 pcFactory.addAnnotations(clazz.get());
             }
             for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContext.class)) {

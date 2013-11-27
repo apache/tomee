@@ -86,11 +86,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import static org.apache.openejb.config.NewLoaderLogic.applyBuiltinExcludes;
-import static org.apache.openejb.config.TldScanner.scanForTagLibs;
-import static org.apache.openejb.config.TldScanner.scanWarForTagLibs;
-import static org.apache.openejb.util.URLs.toFile;
-
 /**
  * @version $Revision$ $Date$
  */
@@ -210,7 +205,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (WebModule.class.equals(moduleClass)) {
-                final File file = toFile(baseUrl);
+                final File file = URLs.toFile(baseUrl);
 
                 // Standalone Web Module
                 final WebModule webModule = createWebModule(file.getAbsolutePath(), baseUrl, getOpenEJBClassLoader(), getContextRoot(), getModuleName());
@@ -475,7 +470,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             for (final Map.Entry<String, URL> entry : resouceModules.entrySet()) {
                 try {
                     // unpack the resource adapter archive
-                    File rarFile = toFile(entry.getValue());
+                    File rarFile = URLs.toFile(entry.getValue());
                     rarFile = unpack(rarFile);
                     entry.setValue(rarFile.toURI().toURL());
 
@@ -528,7 +523,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                             // no-op
                         }
                     }
-                    final File ejbFile = toFile(ejbUrl);
+                    final File ejbFile = URLs.toFile(ejbUrl);
                     final String absolutePath = ejbFile.getAbsolutePath();
 
                     final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
@@ -551,7 +546,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                             // no-op
                         }
                     }
-                    final File clientFile = toFile(clientUrl);
+                    final File clientFile = URLs.toFile(clientUrl);
                     final String absolutePath = clientFile.getAbsolutePath();
 
                     final ClientModule clientModule = createClientModule(clientUrl, absolutePath, appClassLoader, null);
@@ -988,7 +983,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         UrlSet urls = new UrlSet(webUrls);
         try {
-            urls = applyBuiltinExcludes(urls, null, excludeFilter);
+            urls = NewLoaderLogic.applyBuiltinExcludes(urls, null, excludeFilter);
         } catch (MalformedURLException e) {
             return Arrays.asList(webUrls);
         }
@@ -1217,7 +1212,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                     try {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
-                        tldLocations.addAll(scanForTagLibs(file));
+                        tldLocations.addAll(TldScanner.scanForTagLibs(file));
                     } catch (IOException e) {
                         logger.warning("JSP tag library location bad: " + location, e);
                     }
@@ -1226,7 +1221,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // WEB-INF/**/*.tld except in WEB-INF/classes and WEB-INF/lib
-        Set<URL> urls = scanWarForTagLibs(warFile);
+        Set<URL> urls = TldScanner.scanWarForTagLibs(warFile);
         tldLocations.addAll(urls);
 
         // Search all libs
