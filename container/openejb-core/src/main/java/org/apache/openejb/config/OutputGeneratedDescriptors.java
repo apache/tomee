@@ -99,10 +99,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 marshaller.marshal(connector, out);
                 logger.info("Dumping Generated ra.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
+                // no-op
             } finally {
                 IO.close(out);
             }
         } catch (IOException e) {
+            // no-op
         }
     }
 
@@ -142,11 +144,13 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                         JpaJaxbUtil.marshal(Persistence.class, persistence, out);
                         logger.info("Dumping Generated CMP persistence.xml to: " + tempFile.getAbsolutePath());
                     } catch (JAXBException e) {
+                        // no-op
                     } finally {
                         IO.close(out);
                     }
                 }
             } catch (IOException e) {
+                // no-op
             }
         }
         try {
@@ -156,10 +160,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings(), out);
                 logger.info("Dumping Generated CMP mappings.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
+                // no-op
             } finally {
                 IO.close(out);
             }
         } catch (IOException e) {
+            // no-op
         }
     }
 
@@ -180,10 +186,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 JaxbOpenejbJar3.marshal(OpenejbJar.class, openejbJar, out);
                 logger.info("Dumping Generated openejb-jar.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
+                // no-op
             } finally {
                 IO.close(out);
             }
         } catch (Exception e) {
+            // no-op
         }
     }
 
@@ -200,10 +208,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, geronimoEjbJarType, out);
                 logger.info("Dumping Generated geronimo-openejb.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
+                // no-op
             } finally {
                 IO.close(out);
             }
         } catch (Exception e) {
+            // no-op
         }
     }
 
@@ -217,10 +227,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 EjbJarXml.marshal(ejbJar, out);
                 logger.info("Dumping Generated ejb-jar.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
+                // no-op
             } finally {
                 IO.close(out);
             }
         } catch (Exception e) {
+            // no-op
         }
     }
 }

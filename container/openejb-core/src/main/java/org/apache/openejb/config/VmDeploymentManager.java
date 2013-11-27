@@ -292,6 +292,7 @@ public class VmDeploymentManager implements DeploymentManager {
             try {
                 IO.readProperties(planFile, properties);
             } catch (IOException ignored) {
+                // no-op
             }
         }
 
@@ -316,6 +317,7 @@ public class VmDeploymentManager implements DeploymentManager {
             try {
                 properties.load(planStream);
             } catch (IOException ignored) {
+                // no-op
             } finally {
                 close(planStream);
             }

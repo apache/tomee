@@ -72,6 +72,7 @@ public class IntrospectionSupport {
                     rc = true;
 
                 } catch (Throwable ignore) {
+                    // no-op
                 }
 
             }
@@ -275,6 +276,7 @@ public class IntrospectionSupport {
                     try {
                         o = Arrays.asList((Object[]) o);
                     } catch (Throwable e) {
+                        // no-op
                     }
                 }
                 map.put(field.getName(), o);

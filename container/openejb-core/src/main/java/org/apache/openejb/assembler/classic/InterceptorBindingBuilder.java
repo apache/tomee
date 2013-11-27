@@ -300,6 +300,7 @@ public class InterceptorBindingBuilder {
                                 methods.add(method);
                             }
                         } catch (NoSuchMethodException e) {
+                            // no-op
                         }
                     }
                 }
@@ -366,6 +367,7 @@ public class InterceptorBindingBuilder {
                                 methods.add(method);
                             }
                         } catch (NoSuchMethodException e) {
+                            // no-op
                         }
                     }
                 }

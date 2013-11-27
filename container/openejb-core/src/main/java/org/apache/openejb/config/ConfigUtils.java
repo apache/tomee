@@ -70,7 +70,9 @@ public class ConfigUtils {
                         return file.getAbsolutePath();
                     }
                 } catch (FileNotFoundException ignored) {
+                    // no-op
                 } catch (IOException ignored) {
+                    // no-op
                 }
 
                 /*
@@ -82,7 +84,9 @@ public class ConfigUtils {
                         return file.getAbsolutePath();
                     }
                 } catch (FileNotFoundException ignored) {
+                    // no-op
                 } catch (IOException ignored) {
+                    // no-op
                 }
 
                 /*
@@ -94,6 +98,7 @@ public class ConfigUtils {
                     // it's so return it unchanged
                     return path;
                 } catch (MalformedURLException ignored) {
+                    // no-op
                 }
             }
             

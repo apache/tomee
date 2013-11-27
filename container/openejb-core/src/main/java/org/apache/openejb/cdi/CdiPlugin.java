@@ -501,6 +501,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             try {
                 return intface.getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
             } catch (NoSuchMethodException ignore) {
+                // no-op
             }
         }
         return null;

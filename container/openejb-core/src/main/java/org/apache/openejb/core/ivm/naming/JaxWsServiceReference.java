@@ -81,6 +81,7 @@ public class JaxWsServiceReference extends Reference {
             try {
                 wsdlUrl = new URL(portAddress.getAddress() + "?wsdl");
             } catch (MalformedURLException e) {
+                // no-op
             }
             serviceQName = portAddress.getServiceQName();
         }

@@ -131,6 +131,7 @@ public class ManagedContainer implements RpcContainer {
                     final Method method = businessLocal.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException ignore) {
+                    // no-op
                 }
             }
 
@@ -139,6 +140,7 @@ public class ManagedContainer implements RpcContainer {
                     final Method method = businessRemote.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException ignore) {
+                    // no-op
                 }
             }
         }
@@ -149,6 +151,7 @@ public class ManagedContainer implements RpcContainer {
                 final Method method = legacyRemote.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
             } catch (NoSuchMethodException ignore) {
+                // no-op
             }
         }
 
@@ -158,6 +161,7 @@ public class ManagedContainer implements RpcContainer {
                 final Method method = legacyLocal.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
             } catch (NoSuchMethodException ignore) {
+                // no-op
             }
         }
 

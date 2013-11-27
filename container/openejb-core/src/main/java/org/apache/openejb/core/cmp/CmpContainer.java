@@ -396,6 +396,7 @@ public class CmpContainer implements RpcContainer {
             }
             registeredEntities.add(entityBean);
         } catch (Exception e) {
+            // no-op
         }
     }
 
@@ -439,6 +440,7 @@ public class CmpContainer implements RpcContainer {
             try {
                 entityBean.getClass().getMethod("OpenEJB_deleted").invoke(entityBean);
             } catch (Exception ignored) {
+                // no-op
             }
             cancelTimers(callContext);
             ThreadContext.exit(oldCallContext);

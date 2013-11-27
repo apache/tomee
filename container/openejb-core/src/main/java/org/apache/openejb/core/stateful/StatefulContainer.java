@@ -163,6 +163,7 @@ public class StatefulContainer implements RpcContainer {
                 final Method method = legacyRemote.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
             } catch (NoSuchMethodException ignore) {
+                // no-op
             }
         }
 
@@ -172,6 +173,7 @@ public class StatefulContainer implements RpcContainer {
                 final Method method = legacyLocal.getMethod("remove");
                 methods.put(method, MethodType.REMOVE);
             } catch (NoSuchMethodException ignore) {
+                // no-op
             }
         }
 

@@ -286,22 +286,23 @@ public class PseudoTransactionService implements TransactionService, Transaction
                     try {
                         xaRes.commit(null, true);
                     } catch (XAException e) {
-
+                        // no-op
                     }
                     try {
                         xaRes.end(null, XAResource.TMSUCCESS);
                     } catch (XAException e) {
-
+                        // no-op
                     }
                 } else {
                     try {
                         xaRes.rollback(null);
                     } catch (XAException e) {
-
+                        // no-op
                     }
                     try {
                         xaRes.end(null, XAResource.TMFAIL);
                     } catch (XAException e) {
+                        // no-op
                     }
                 }
             }

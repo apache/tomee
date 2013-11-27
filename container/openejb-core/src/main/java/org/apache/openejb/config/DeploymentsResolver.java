@@ -403,6 +403,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } catch (IOException e) {
                 logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
             } catch (UnknownModuleTypeException ignore) {
+                // no-op
             }
         }
     }

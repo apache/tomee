@@ -109,6 +109,7 @@ public class Cipher {
             Map<String, Class<? extends PasswordCipher>> impls = finder.mapAllImplementations(PasswordCipher.class);
             System.out.println("Available ciphers are: "+ Join.join(", ", impls.keySet()));
         } catch (Exception dontCare) {
+            // no-op
         }
     }
 

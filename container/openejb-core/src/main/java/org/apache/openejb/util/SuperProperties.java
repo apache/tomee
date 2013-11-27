@@ -763,6 +763,7 @@ public class SuperProperties extends Properties {
         try {
             store(out, comment);
         } catch (IOException e) {
+            // no-op
         }
     }
 

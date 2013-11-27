@@ -46,6 +46,7 @@ public class ConfUtils {
                 resource = loginConfig.toURI().toURL();
             }
         } catch (IOException e) {
+            // no-op
         }
 
         return resource;

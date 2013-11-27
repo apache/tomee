@@ -182,6 +182,7 @@ public class CheckClasses extends ValidationBase {
         try {
             beanClass = loadClass(b.getEjbClass());
         } catch (OpenEJBException e) {
+            // no-op
         }
 
         if (b instanceof EntityBean){

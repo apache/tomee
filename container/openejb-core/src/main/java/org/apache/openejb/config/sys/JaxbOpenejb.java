@@ -255,6 +255,7 @@ public abstract class JaxbOpenejb {
                 try {
                     out.close();
                 } catch (Exception e) {
+                    // no-op
                 }
             }
         }

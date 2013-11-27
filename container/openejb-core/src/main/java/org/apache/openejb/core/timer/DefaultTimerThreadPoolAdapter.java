@@ -105,6 +105,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
                     try {
                         this.threadAvailableLock.wait(500L);
                     } catch (InterruptedException ignore) {
+                        // no-op
                     }
                 }
                 return threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount();

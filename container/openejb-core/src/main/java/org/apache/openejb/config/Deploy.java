@@ -246,6 +246,7 @@ public class Deploy {
             try {
                 Undeploy.undeploy(path, dest, deployer);
             } catch (NoSuchApplicationException nothingToUndeploy) {
+                // no-op
             }
         }
     }
@@ -325,11 +326,13 @@ public class Deploy {
                 return true;
             }
         } catch (IOException e) {
+            // no-op
         } finally {
             if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (IOException ignored) {
+                    // no-op
                 }
             }
         }

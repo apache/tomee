@@ -136,6 +136,7 @@ public class Undeploy {
         try {
             file = file.getCanonicalFile();
         } catch (IOException e) {
+            // no-op
         }
 
         boolean undeployed = false;
@@ -149,6 +150,7 @@ public class Undeploy {
                     throw new DeploymentTerminatedException(messages.format("cmd.undeploy.cantDelete", file.getAbsolutePath()));
                 }
             } catch (NoSuchApplicationException e) {
+                // no-op
             }
         }
 

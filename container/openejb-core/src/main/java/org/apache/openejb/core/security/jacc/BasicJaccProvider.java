@@ -81,6 +81,7 @@ public class BasicJaccProvider extends JaccProvider {
 
                 return configuration.implies(domain, permission);
             } catch (PolicyContextException e) {
+                // no-op
             }
         }
 

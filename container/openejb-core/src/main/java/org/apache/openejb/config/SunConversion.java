@@ -1076,12 +1076,14 @@ public class SunConversion implements DynamicDeployer {
             ClassLoader.getSystemClassLoader().loadClass(type);
             return type;
         } catch (ClassNotFoundException e) {
+            // no-op
         }
         try {
             String javaLangType = "java.lang" + type;
             ClassLoader.getSystemClassLoader().loadClass(javaLangType);
             return javaLangType;
         } catch (ClassNotFoundException e) {
+            // no-op
         }
         return type;
     }

@@ -356,6 +356,7 @@ public class ReadDescriptors implements DynamicDeployer {
                             }
                         });
                     } catch (Exception dontCare) {
+                        // no-op
                     }
 
                     String filePath = "<error: could not be written>";
@@ -374,9 +375,11 @@ public class ReadDescriptors implements DynamicDeployer {
                         try {
                             IO.copy(source.get(), tempFile);
                         } catch (IOException e) {
+                            // no-op
                         }
                         filePath = tempFile.getAbsolutePath();
                     } catch (IOException e) {
+                        // no-op
                     }
 
                     final Exception e = realIssue[0];
@@ -691,6 +694,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
             });
         } catch (Exception e) {
+            // no-op
         }
 
         return id[0];
