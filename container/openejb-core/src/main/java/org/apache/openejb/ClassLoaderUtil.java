@@ -200,7 +200,7 @@ public class ClassLoaderUtil {
         return files;
     }
 
-    @SuppressWarnings("UseOfObsoleteCollectionType")
+    @SuppressWarnings({"UseOfObsoleteCollectionType", "PMD.AvoidCallingFinalize"})
     public boolean finalizeNativeLibs(final ClassLoader cl) {
 
         boolean res = false;

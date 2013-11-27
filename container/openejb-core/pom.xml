@@ -256,6 +256,8 @@
           <targetJdk>1.6</targetJdk>
           <rulesets>
             <ruleset>${project.basedir}/src/main/config/pmd/openejb-empty.xml</ruleset>
+            <ruleset>rulesets/java/finalizers.xml</ruleset>
+            <ruleset>rulesets/java/imports.xml</ruleset>
           </rulesets>
         </configuration>
         <executions>

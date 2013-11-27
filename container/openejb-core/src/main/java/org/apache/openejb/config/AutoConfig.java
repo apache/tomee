@@ -52,10 +52,13 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.util.IntrospectionSupport;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
@@ -84,6 +87,7 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,15 +99,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import static java.util.Arrays.asList;
-import static org.apache.openejb.config.ServiceUtils.ANY;
-import static org.apache.openejb.config.ServiceUtils.NONE;
-import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
-import static org.apache.openejb.resource.jdbc.DataSourceFactory.trimNotSupportedDataSourceProperties;
-import static org.apache.openejb.util.Join.join;
-import static org.apache.openejb.util.PropertyPlaceHolderHelper.holds;
-import static org.apache.openejb.util.PropertyPlaceHolderHelper.value;
 
 public class AutoConfig implements DynamicDeployer, JndiConstants {
 
@@ -336,7 +331,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 // Print a correct example of unitName in a ref
                 // DMB: Idea, the ability to set a default unit-name in openejb-jar.xml via a property
                 final String sampleUnitName = availableUnits.get(0);
-                validation.fail(componentName, refType + ".noUnitName", refShortName, join(", ", availableUnits), sampleUnitName);
+                validation.fail(componentName, refType + ".noUnitName", refShortName, Join.join(", ", availableUnits), sampleUnitName);
             } else {
                 final Collection<PersistenceUnit> vagueMatches = persistenceUnits.values(ref.getPersistenceUnitName());
                 if (vagueMatches.size() != 0) {
@@ -356,9 +351,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     Collections.sort(possibleUnits);
 
-                    validation.fail(componentName, refType + ".vagueMatches", refShortName, unitName, possibleUnits.size(), join("\n", possibleUnits));
+                    validation.fail(componentName, refType + ".vagueMatches", refShortName, unitName, possibleUnits.size(), Join.join("\n", possibleUnits));
                 } else {
-                    validation.fail(componentName, refType + ".noMatches", refShortName, unitName, join(", ", availableUnits));
+                    validation.fail(componentName, refType + ".noMatches", refShortName, unitName, Join.join(", ", availableUnits));
                 }
             }
         }
@@ -909,7 +904,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
         final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
         for (final Resource resource : resources) {
-            final String originalId = value(resource.getId());
+            final String originalId = PropertyPlaceHolderHelper.value(resource.getId());
             final String modulePrefix = module.getModuleId() + "/";
 
             if ("/".equals(modulePrefix) || originalId.startsWith("global") || originalId.startsWith("/global")) {
@@ -918,8 +913,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 resource.getProperties().setProperty(ORIGINAL_ID, originalId);
                 resource.setId(modulePrefix + replaceJavaAndSlash(originalId));
             }
-            resource.setJndi(value(resource.getJndi()));
-            resource.getProperties().putAll(holds(resource.getProperties()));
+            resource.setJndi(PropertyPlaceHolderHelper.value(resource.getJndi()));
+            resource.getProperties().putAll(PropertyPlaceHolderHelper.holds(resource.getProperties()));
 
             final Collection<String> aliases = resource.getAliases();
             if (!aliases.isEmpty()) {
@@ -935,7 +930,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             if (DataSource.class.getName().equals(resource.getType())
                 || DataSource.class.getSimpleName().equals(resource.getType())) {
-                trimNotSupportedDataSourceProperties(properties);
+                DataSourceFactory.trimNotSupportedDataSourceProperties(properties);
             }
 
             final boolean shouldGenerateJdbcUrl = DataSource.class.getName().equals(resource.getType())
@@ -1399,7 +1394,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  for them.  We give them what they asked for and move on.
             //
             if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
-                required.put("JtaManaged", NONE);
+                required.put("JtaManaged", ServiceUtils.NONE);
 
                 if (!resourceLocal) {
                     jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
@@ -1435,7 +1430,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //  possibly fill in a good value.
             //
 
-            required.put("JtaManaged", ANY);
+            required.put("JtaManaged", ServiceUtils.ANY);
             final String possibleJta = findResourceId(replaceJavaAndSlash(unit.getJtaDataSource()), "DataSource", required, null);
             final String possibleNonJta = findResourceId(replaceJavaAndSlash(unit.getNonJtaDataSource()), "DataSource", required, null);
             if (possibleJta != null && possibleJta.equals(possibleNonJta)) {
@@ -1540,7 +1535,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
                         // Neither jta nor non-jta managed data sources were found. try to find one with it unset
                         required.clear();
-                        required.put("JtaManaged", NONE);
+                        required.put("JtaManaged", ServiceUtils.NONE);
                         jtaDataSourceId = findResourceId(id, "DataSource", required, null);
                     }
 
@@ -1599,7 +1594,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     required.clear();
                     required.put("JtaManaged", "false");
 
-                    for (final String key : asList("JdbcDriver", "JdbcUrl")) {
+                    for (final String key : Arrays.asList("JdbcDriver", "JdbcUrl")) {
                         if (jtaProperties.containsKey(key)) {
                             required.put(key, jtaProperties.get(key));
                         }
@@ -1661,7 +1656,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     required.clear();
                     required.put("JtaManaged", "true");
 
-                    for (final String key : asList("JdbcDriver", "JdbcUrl")) {
+                    for (final String key : Arrays.asList("JdbcDriver", "JdbcUrl")) {
                         if (nonJtaProperties.containsKey(key)) {
                             required.put(key, nonJtaProperties.get(key));
                         }
@@ -1848,19 +1843,19 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return null;
         }
 
-        if (hasServiceProvider(resourceId)) {
+        if (ServiceUtils.hasServiceProvider(resourceId)) {
             return resourceId;
         }
 
         if (resourceId.startsWith("java:")) { // can be an absolute path
             final String jndi = resourceId.substring("java:".length());
-            if (hasServiceProvider(jndi)) {
+            if (ServiceUtils.hasServiceProvider(jndi)) {
                 return jndi;
             }
         }
 
         resourceId = toShortName(resourceId);
-        if (hasServiceProvider(resourceId)) {
+        if (ServiceUtils.hasServiceProvider(resourceId)) {
             return resourceId;
         }
 
@@ -1923,10 +1918,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         logger.debug(message);
 
         // if there is a provider with the specified name. use it
-        if (hasServiceProvider(resourceId)) {
+        if (ServiceUtils.hasServiceProvider(resourceId)) {
             final ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
             return installResource(beanName, resourceInfo);
-        } else if (hasServiceProvider(shortName)) {
+        } else if (ServiceUtils.hasServiceProvider(shortName)) {
             final ResourceInfo resourceInfo = configFactory.configureService(shortName, ResourceInfo.class);
             return installResource(beanName, resourceInfo);
         }

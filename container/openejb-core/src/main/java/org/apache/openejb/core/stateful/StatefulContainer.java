@@ -85,12 +85,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
-import static org.apache.openejb.core.ExceptionType.SYSTEM;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
-
 @SuppressWarnings("unchecked")
 public class StatefulContainer implements RpcContainer {
 
@@ -400,7 +394,7 @@ public class StatefulContainer implements RpcContainer {
             createContext.setCurrentAllowedStates(null);
 
             // Start transaction
-            final TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod, interfaceType), createContext);
+            final TransactionPolicy txPolicy = EjbTransactionUtil.createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod, interfaceType), createContext);
 
             Instance instance = null;
             try {
@@ -414,7 +408,7 @@ public class StatefulContainer implements RpcContainer {
 
                 } catch (Throwable throwable) {
                     final ThreadContext callContext = ThreadContext.getThreadContext();
-                    handleSystemException(callContext.getTransactionPolicy(), throwable, callContext);
+                    EjbTransactionUtil.handleSystemException(callContext.getTransactionPolicy(), throwable, callContext);
                     throw new IllegalStateException(throwable); // should never be reached
                 }
 
@@ -507,7 +501,7 @@ public class StatefulContainer implements RpcContainer {
             }
 
             // Start transaction
-            final TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
+            final TransactionPolicy txPolicy = EjbTransactionUtil.createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             boolean retain = false;
@@ -633,7 +627,7 @@ public class StatefulContainer implements RpcContainer {
             checkAuthorization(callMethod, interfaceType);
 
             // Start transaction
-            final TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
+            final TransactionPolicy txPolicy = EjbTransactionUtil.createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             Instance instance = null;
@@ -834,11 +828,11 @@ public class StatefulContainer implements RpcContainer {
         }
 
         final ExceptionType type = callContext.getBeanContext().getExceptionType(e);
-        if (type == SYSTEM) {
+        if (type == ExceptionType.SYSTEM) {
             discardInstance(callContext);
-            handleSystemException(txPolicy, e, callContext);
+            EjbTransactionUtil.handleSystemException(txPolicy, e, callContext);
         } else {
-            handleApplicationException(txPolicy, e, type == APPLICATION_ROLLBACK);
+            EjbTransactionUtil.handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
         }
     }
 
@@ -851,7 +845,7 @@ public class StatefulContainer implements RpcContainer {
                     final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                     suspendedTransaction = beanTxEnv.suspendUserTransaction();
                 } catch (SystemException e) {
-                    handleSystemException(txPolicy, e, callContext);
+                    EjbTransactionUtil.handleSystemException(txPolicy, e, callContext);
                 } finally {
                     instance.setBeanTransaction(suspendedTransaction);
                 }
@@ -1155,7 +1149,7 @@ public class StatefulContainer implements RpcContainer {
                 interceptorStack.invoke();
             } catch (Throwable callbackException) {
                 discardInstance(threadContext);
-                handleSystemException(threadContext.getTransactionPolicy(), callbackException, threadContext);
+                EjbTransactionUtil.handleSystemException(threadContext.getTransactionPolicy(), callbackException, threadContext);
             } finally {
                 ThreadContext.exit(oldContext);
             }
