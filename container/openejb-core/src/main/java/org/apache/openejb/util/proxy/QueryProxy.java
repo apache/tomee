@@ -246,7 +246,6 @@ public class QueryProxy implements InvocationHandler {
                 Object idValue;
                 try {
                     idValue = BeanUtils.getProperty(entity, idName);
-                    ;
                 } catch (InvocationTargetException e) {
                     throw new IllegalArgumentException("can't invoke to get entity id");
                 } catch (NoSuchMethodException e) {

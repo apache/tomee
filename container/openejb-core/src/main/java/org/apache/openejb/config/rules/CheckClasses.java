@@ -157,7 +157,7 @@ public class CheckClasses extends ValidationBase {
 
         tag = Strings.lcfirst(Strings.camelCase(tag));
 
-        if (isValidInterface(b, interfce, beanClass, tag));
+        isValidInterface(b, interfce, beanClass, tag);
 
         ClassFinder finder = new ClassFinder(interfce);
 
