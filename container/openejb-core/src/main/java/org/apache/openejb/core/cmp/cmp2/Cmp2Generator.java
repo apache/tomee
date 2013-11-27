@@ -112,6 +112,7 @@ public class Cmp2Generator implements Opcodes {
                         continue; 
                     }
                 } catch (NoSuchFieldException e) {
+                    // no-op
                 }
                 throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
             }
@@ -503,6 +504,7 @@ public class Cmp2Generator implements Opcodes {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
             return beanClass.getMethod(getterName, new Class[0]); 
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         
         // we're just going to assume this is the valid name.  Other validation should already have been 
@@ -512,6 +514,7 @@ public class Cmp2Generator implements Opcodes {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
             return beanClass.getMethod(getterName, new Class[0]); 
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         return null; 
     }

@@ -540,6 +540,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         	try {
         		specVersion = Float.parseFloat(connector.getVersion());
         	} catch (Exception e) {
+                // no-op
         	}
 
 			if (specVersion < 1.6 || Boolean.TRUE.equals(connector.isMetadataComplete())) {
@@ -798,6 +799,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 			// grab a list of ConfigProperty objects
 				configProperties = (List<ConfigProperty>) object.getClass().getDeclaredMethod("getConfigProperty").invoke(object);
 			} catch (Exception e) {
+                // no-op
 			}
 
 			if (configProperties == null) {
@@ -843,6 +845,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 							try {
 								value = propertyDescriptor.getReadMethod().invoke(o);
 							} catch (Exception e) {
+                                // no-op
 							}
 
 							javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
@@ -884,6 +887,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 					try {
 						value = field.get(o);
 					} catch (Exception e) {
+                        // no-op
 					}
 
 					if (! containsConfigProperty(configProperties, name)) {
@@ -1355,6 +1359,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         final String ejbName = getEjbName(bean, clazz);
                         bean.setEjbName(ejbName);
                     } catch (Throwable handledInValidation) {
+                        // no-op
                     }
                     ejbModule.getEjbJar().addEnterpriseBean(bean);
                 }
@@ -1704,6 +1709,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (loader.findResource(path) != null) return true;
                 }
             } catch (Exception e) {
+                // no-op
             }
             return false;
         }
@@ -1927,6 +1933,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
                     } catch (ClassNotFoundException ignore) {
+                        // no-op
                     }
                 }
             }
@@ -1941,6 +1948,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             }
                         }
                     } catch (ClassNotFoundException ignore) {
+                        // no-op
                     }
                 }
             }
@@ -4562,6 +4570,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             try {
                 refType = classLoader.loadClass(realClassName(serviceRef.getType()));
             } catch (ClassNotFoundException e) {
+                // no-op
             }
 
             // Set the mappedName

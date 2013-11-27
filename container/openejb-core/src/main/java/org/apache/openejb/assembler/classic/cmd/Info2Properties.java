@@ -268,6 +268,7 @@ public class Info2Properties {
                     query.put("type", info.types.get(0));
                     uri += "?" + URISupport.createQueryString(query);
                 } catch (Exception e) {
+                    // no-op
                 }
             }
 

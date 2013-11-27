@@ -168,7 +168,7 @@ public class MethodInfoUtil {
             try {
                 params.add(getClassForParam(methodParam, cl));
             } catch (ClassNotFoundException cnfe) {
-
+                // no-op
             }
         }
         Method method = null;

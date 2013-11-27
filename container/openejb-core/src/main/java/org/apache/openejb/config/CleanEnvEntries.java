@@ -219,6 +219,7 @@ public class CleanEnvEntries implements DynamicDeployer {
                 final Field field = clazz.getDeclaredField(target.getInjectionTargetName());
                 return field.getType();
             } catch (NoSuchFieldException e) {
+                // no-op
             }
 
             // TODO Technically we should match by case
@@ -240,6 +241,7 @@ public class CleanEnvEntries implements DynamicDeployer {
             }
 
         } catch (Throwable e) {
+            // no-op
         }
 
         return Object.class;

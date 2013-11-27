@@ -189,6 +189,7 @@ public class IvmContext implements Context, Serializable {
                 else if (obj != null)
                     return obj;
             } catch (Exception doNothing) {
+                // no-op
             }
         }
 
@@ -215,6 +216,7 @@ public class IvmContext implements Context, Serializable {
                     ObjectFactory factoryInstance = (ObjectFactory) factoryClass.newInstance();
                     factories.add(factoryInstance);
                 } catch (ClassNotFoundException cnfe) {
+                    // no-op
 
                 } catch (Throwable e) {
                     NamingException ne = new NamingException("Federation failed: Cannot instantiate " + className);
@@ -246,6 +248,7 @@ public class IvmContext implements Context, Serializable {
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 }
             } catch (IOException ignored) {
+                // no-op
             }
         }
 
@@ -259,6 +262,7 @@ public class IvmContext implements Context, Serializable {
                     in = IO.read(propertiesFile);
                     urlPackagePrefixes = getUrlPackagePrefixes(in);
                 } catch (FileNotFoundException ignored) {
+                    // no-op
                 } finally {
                     IO.close(in);
                 }
@@ -307,6 +311,7 @@ public class IvmContext implements Context, Serializable {
         try {
             unbind(name);
         } catch (NameNotFoundException e) {
+            // no-op
         }
         bind(name, obj);
     }

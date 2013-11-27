@@ -143,6 +143,7 @@ public class MemoryTimerStore implements TimerStore {
                 status = transaction.getStatus();
             }
         } catch (SystemException e) {
+            // no-op
         }
 
         if (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK) {

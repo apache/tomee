@@ -46,6 +46,7 @@ public class ManagedHomeHandler extends EjbHomeProxyHandler {
                 field.setAccessible(true);
                 handler = (EjbObjectProxyHandler) field.get(proxy);
             } catch (Exception e1) {
+                // no-op
             }
         }
 

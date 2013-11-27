@@ -324,6 +324,7 @@ public class CheckMethods extends ValidationBase {
                     inLocalHome = true;
                 }
             } catch (NoSuchMethodException e) {
+                // no-op
             }
 
             try {
@@ -332,6 +333,7 @@ public class CheckMethods extends ValidationBase {
                     inHome = true;
                 }
             } catch (NoSuchMethodException e) {
+                // no-op
             }
 
             if (!inLocalHome && !inHome){

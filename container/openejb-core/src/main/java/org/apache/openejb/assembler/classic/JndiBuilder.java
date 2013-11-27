@@ -107,6 +107,7 @@ public class JndiBuilder {
                 Constructor constructor = strategyClass.getConstructor(EjbJarInfo.class, Map.class);
                 return (JndiNameStrategy) constructor.newInstance(ejbJar, deployments);
             } catch (NoSuchMethodException e) {
+                // no-op
             }
 
             Constructor constructor = strategyClass.getConstructor();

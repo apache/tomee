@@ -182,6 +182,7 @@ public class UrlCache {
             try {
                 url = sourceFile.toURI().toURL();
             } catch (MalformedURLException ignored) {
+                // no-op
             }
         }
 
@@ -404,6 +405,7 @@ public class UrlCache {
             try {
                 closeable.close();
             } catch (IOException ignored) {
+                // no-op
             }
         }
     }
@@ -413,6 +415,7 @@ public class UrlCache {
             try {
                 closeable.close();
             } catch (IOException ignored) {
+                // no-op
             }
         }
     }

@@ -314,6 +314,7 @@ public class ProviderWrapper extends Provider {
                     try {
                         intf = proxy.getClass().getClassLoader().loadClass(portRef.getServiceEndpointInterface());
                     } catch (Exception e) {
+                        // no-op
                     }
                 }
                 if (qname != null && qname.equals(portRef.getQName()) || intf != null && intf.isInstance(proxy)) {
@@ -366,16 +367,19 @@ public class ProviderWrapper extends Provider {
                         return provider;
                     }
                 } catch (Exception ignored) {
+                    // no-op
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
                         } catch (IOException e) {
+                            // no-op
                         }
                     }
                 }
             }
         } catch (Exception ingored) {
+            // no-op
         }
 
         // 2. $java.home/lib/jaxws.properties
@@ -391,6 +395,7 @@ public class ProviderWrapper extends Provider {
                     return provider;
                 }
             } catch (Exception ignored) {
+                // no-op
             }
         }
 
@@ -529,6 +534,7 @@ public class ProviderWrapper extends Provider {
                     String.class,
                     List.class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         createW3CEndpointReference = method;
 
@@ -539,6 +545,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         providerGetPort = method;
 
@@ -546,6 +553,7 @@ public class ProviderWrapper extends Provider {
         try {
             method = Provider.class.getMethod("readEndpointReference", Source.class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         readEndpointReference = method;
 
@@ -558,6 +566,7 @@ public class ProviderWrapper extends Provider {
                     Service.Mode.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         createDispatchReferenceJaxB = method;
 
@@ -569,6 +578,7 @@ public class ProviderWrapper extends Provider {
                     Service.Mode.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         createDispatchReferenceClass = method;
 
@@ -580,6 +590,7 @@ public class ProviderWrapper extends Provider {
                     Service.Mode.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         createDispatchJaxBContext = method;
 
@@ -591,6 +602,7 @@ public class ProviderWrapper extends Provider {
                     Service.Mode.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         createDispatchInterface = method;
 
@@ -601,6 +613,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         serviceGetPortByEndpointReference = method;
 
@@ -611,6 +624,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         serviceGetPortByQName = method;
 
@@ -620,6 +634,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
+            // no-op
         }
         serviceGetPortByInterface = method;
 

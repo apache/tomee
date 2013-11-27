@@ -448,6 +448,7 @@ public class WsDeployer implements DynamicDeployer {
                 }
             }
         } catch (Exception e) {
+            // no-op
         }
         return null;
     }
@@ -459,6 +460,7 @@ public class WsDeployer implements DynamicDeployer {
                 declaringClass = classLoader.loadClass(serviceEndpoint);
                 handlerChain = declaringClass.getAnnotation(HandlerChain.class);
             } catch (ClassNotFoundException ignored) {
+                // no-op
             }
         }
         HandlerChains handlerChains = null;

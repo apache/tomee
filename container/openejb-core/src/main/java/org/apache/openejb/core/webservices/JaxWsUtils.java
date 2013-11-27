@@ -289,6 +289,7 @@ public class JaxWsUtils {
                 Class serviceInterfaceClass = loader.loadClass(serviceInterfaceClassName);
                 return getWsdlLocation(serviceInterfaceClass);
             } catch (Exception e) {
+                // no-op
             }
         }
         return null;

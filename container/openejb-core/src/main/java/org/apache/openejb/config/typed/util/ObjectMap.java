@@ -67,6 +67,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
 
                 attributes.put(entry.getKey(), entry);
             } catch (NoSuchMethodException e) {
+                // no-op
             }
         }
 

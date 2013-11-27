@@ -378,6 +378,7 @@ public class ProviderGenerator extends Resource {
                 Long.parseLong(value);
                 return "long";
             } catch (NumberFormatException e) {
+                // no-op
             }
         }
 
@@ -385,6 +386,7 @@ public class ProviderGenerator extends Resource {
             Integer.parseInt(value);
             return "int";
         } catch (NumberFormatException e) {
+            // no-op
         }
 
         if (key.toLowerCase().endsWith("url")) {

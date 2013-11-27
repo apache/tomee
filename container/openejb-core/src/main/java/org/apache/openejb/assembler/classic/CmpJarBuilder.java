@@ -281,6 +281,7 @@ public class CmpJarBuilder {
             try {
                 jarOutputStream.close();
             } catch (Throwable ignored) {
+                // no-op
             }
         }
     }

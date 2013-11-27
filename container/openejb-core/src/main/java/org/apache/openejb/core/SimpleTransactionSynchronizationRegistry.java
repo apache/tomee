@@ -85,6 +85,7 @@ public class SimpleTransactionSynchronizationRegistry implements TransactionSync
         try {
             transaction.registerSynchronization(synchronization);
         } catch (Exception ignored) {
+            // no-op
         }
     }
 

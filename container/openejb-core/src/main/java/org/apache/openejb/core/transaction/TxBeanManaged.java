@@ -95,7 +95,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
                 try {
                     rollbackTransaction(currentTx);
                 } catch (Throwable t) {
-
+                    // no-op
                 }
 
                 /* [3] Throw the RemoteException to the client */

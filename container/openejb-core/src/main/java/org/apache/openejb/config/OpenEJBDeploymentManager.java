@@ -370,6 +370,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
                 return (DConfigBeanVersionType) field.get(null);
             }
         } catch (Exception e) {
+            // no-op
         }
         throw new DeploymentManagerCreationException("Unknown DConfig bean version: " + string);
     }

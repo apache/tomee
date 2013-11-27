@@ -525,6 +525,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                             ejbUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), ejbUrl).toURI().toURL();
 
                         } catch (MalformedURLException ignore) {
+                            // no-op
                         }
                     }
                     final File ejbFile = toFile(ejbUrl);
@@ -547,6 +548,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                             clientUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), clientUrl).toURI().toURL();
 
                         } catch (MalformedURLException ignore) {
+                            // no-op
                         }
                     }
                     final File clientFile = toFile(clientUrl);
@@ -570,6 +572,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                             rarUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), rarUrl).toURI().toURL();
 
                         } catch (MalformedURLException ignore) {
+                            // no-op
                         }
                     }
                     final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
