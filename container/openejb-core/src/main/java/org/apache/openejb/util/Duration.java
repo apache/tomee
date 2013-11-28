@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class Duration {
 
     private long time;
@@ -155,13 +156,6 @@ public class Duration {
 
         Normalize n = new Normalize(this, that);
         return n.a == n.b;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (time ^ (time >>> 32));
-        result = 31 * result + (unit != null ? unit.hashCode() : 0);
-        return result;
     }
 
     public Duration add(Duration that) {
