@@ -16,13 +16,16 @@
  */
 package org.apache.openejb.server.derbynet;
 
+
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceFinder;
 import org.apache.openejb.server.SimpleServiceManager;
 import org.apache.openejb.util.NetworkUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +35,22 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class DerbyNetworkServiceTest {
+
+    private static final long RETRY_TIMEOUT = 10000;
+
+    private void connectSocket(int port) {
+        try {
+            try {
+                new Socket("localhost", port);
+            } catch (ConnectException e) {
+                // OK it didn't fully started yet. Wait a bit and try it again.
+                Thread.sleep(RETRY_TIMEOUT);
+                new Socket("localhost", port);
+            }
+        } catch (Exception e) {
+            Assert.fail("Impossible to connect using port\"" + port + "\". Message: " + e.getMessage());
+        }
+    }
 
     @Test
     public void test() throws Exception {
@@ -53,9 +72,7 @@ public class DerbyNetworkServiceTest {
 
         serviceManager.init();
         serviceManager.start(false);
-
-        final Socket derbyClient = new Socket("localhost", port);
-
+        connectSocket(port);
         serviceManager.stop();
     }
 }
