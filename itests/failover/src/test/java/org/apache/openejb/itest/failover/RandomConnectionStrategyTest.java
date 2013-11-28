@@ -55,6 +55,8 @@ public class RandomConnectionStrategyTest {
 
     static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
+    private static final int CLIENT_DELAY = 60;
+
     static {
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.FINER);
@@ -165,7 +167,7 @@ public class RandomConnectionStrategyTest {
             final URI serverURI = server.getContext().get(URI.class);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(CLIENT_DELAY, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -199,7 +201,7 @@ public class RandomConnectionStrategyTest {
             services.add(serverURI);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(CLIENT_DELAY, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -233,8 +235,8 @@ public class RandomConnectionStrategyTest {
 
             if (!invocations.containsKey(name)) {
                 invocations.put(name, new AtomicInteger());
+                logger.info(String.format("Tracking new Server %s", name));
             }
-
             invocations.get(name).incrementAndGet();
         }
 
