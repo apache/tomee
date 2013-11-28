@@ -25,7 +25,6 @@ import javax.naming.CompositeName;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-import javax.sql.DataSource;
 
 public class TomcatResourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomcatResourceFactory.class);
@@ -73,8 +72,6 @@ public class TomcatResourceFactory {
                     // context is null since it can't be used at this moment (see TomcatWebAppBuilder lifecycle)
                     return ((ObjectFactory) instance).getObjectInstance(reference, new CompositeName(jndiName), null, null);
                 }
-            } else if (reference != null && DataSource.class.equals(reference.getClassName())) {
-
             }
         } catch (final Exception e) {
             LOGGER.error("Can't create resource " + jndiName, e);

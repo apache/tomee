@@ -39,13 +39,6 @@ import java.util.Hashtable;
 public class OpenEJBContext implements Context {
 
     /**
-     * Default constructor.
-     */
-    public OpenEJBContext() {
-        super();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public Object lookup(Name name) throws NamingException {

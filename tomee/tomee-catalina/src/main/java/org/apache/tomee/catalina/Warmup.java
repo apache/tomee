@@ -17,10 +17,7 @@
 package org.apache.tomee.catalina;
 
 import org.apache.openejb.config.TldScanner;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.WebApp;
 
-import javax.xml.bind.JAXBException;
 import java.util.concurrent.Semaphore;
 
 /**

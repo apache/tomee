@@ -24,6 +24,6 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
  */
 public interface WebDeploymentListener {
 
-    public void afterApplicationCreated(final AppInfo appInfo,final WebAppInfo webApp);
+    void afterApplicationCreated(final AppInfo appInfo,final WebAppInfo webApp);
 
 }

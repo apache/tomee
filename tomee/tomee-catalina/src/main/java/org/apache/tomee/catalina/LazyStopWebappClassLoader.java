@@ -211,6 +211,14 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
+    public int hashCode() {
+        int result = (restarting ? 1 : 0);
+        result = 31 * result + (forceStopPhase ? 1 : 0);
+        result = 31 * result + (configurer != null ? configurer.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "LazyStop" + super.toString();
     }

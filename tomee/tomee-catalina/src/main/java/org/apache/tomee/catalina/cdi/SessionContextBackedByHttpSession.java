@@ -44,6 +44,7 @@ public class SessionContextBackedByHttpSession extends SessionContext {
         setComponentSessionInstanceMap(); // override default map (set in super())
     }
 
+    @SuppressWarnings("unchecked")
     public void setComponentSessionInstanceMap() {
         if (session == null) {
             super.setComponentInstanceMap();

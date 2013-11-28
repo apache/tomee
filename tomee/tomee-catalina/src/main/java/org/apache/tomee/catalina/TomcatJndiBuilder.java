@@ -89,25 +89,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.tomee.common.EnumFactory.ENUM_VALUE;
-import static org.apache.tomee.common.NamingUtil.COMPONENT_TYPE;
-import static org.apache.tomee.common.NamingUtil.DEPLOYMENT_ID;
-import static org.apache.tomee.common.NamingUtil.EXTENDED;
-import static org.apache.tomee.common.NamingUtil.EXTERNAL;
-import static org.apache.tomee.common.NamingUtil.JNDI_NAME;
-import static org.apache.tomee.common.NamingUtil.JNDI_PROVIDER_ID;
-import static org.apache.tomee.common.NamingUtil.LOCAL;
-import static org.apache.tomee.common.NamingUtil.LOCALBEAN;
-import static org.apache.tomee.common.NamingUtil.NAME;
-import static org.apache.tomee.common.NamingUtil.RESOURCE_ID;
-import static org.apache.tomee.common.NamingUtil.UNIT;
-import static org.apache.tomee.common.NamingUtil.WSDL_URL;
-import static org.apache.tomee.common.NamingUtil.WS_CLASS;
-import static org.apache.tomee.common.NamingUtil.WS_ID;
-import static org.apache.tomee.common.NamingUtil.WS_PORT_QNAME;
-import static org.apache.tomee.common.NamingUtil.WS_QNAME;
-import static org.apache.tomee.common.NamingUtil.setStaticValue;
-
 public class TomcatJndiBuilder {
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
@@ -170,7 +151,7 @@ public class TomcatJndiBuilder {
     }
 
     public static void mergeJava(StandardContext standardContext) {
-        ContainerSystem cs = SystemInstance.get().getComponent(org.apache.openejb.spi.ContainerSystem.class);
+        ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
         ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
         Context root = null;
         try {
@@ -360,7 +341,7 @@ public class TomcatJndiBuilder {
             resourceEnv.setName(ref.referenceName.replaceAll("^comp/env/", ""));
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
             resourceEnv.setType(ref.type);
-            resourceEnv.setProperty(RESOURCE_ID, ref.value);
+            resourceEnv.setProperty(NamingUtil.RESOURCE_ID, ref.value);
             resourceEnv.setOverride(false);
             naming.addResourceEnvRef(resourceEnv);
 
@@ -376,7 +357,7 @@ public class TomcatJndiBuilder {
                 final ContextResourceEnvRef enumRef = new ContextResourceEnvRef();
                 enumRef.setName(ref.referenceName.replaceAll("^comp/env/", ""));
                 enumRef.setProperty(Constants.FACTORY, EnumFactory.class.getName());
-                enumRef.setProperty(ENUM_VALUE, ref.value);
+                enumRef.setProperty(EnumFactory.ENUM_VALUE, ref.value);
                 enumRef.setType(ref.type);
                 enumRef.setOverride(false);
                 naming.addResourceEnvRef(enumRef);
@@ -422,7 +403,7 @@ public class TomcatJndiBuilder {
 
         lookup.setName(ref.referenceName.replaceAll("^comp/env/", ""));
         lookup.setProperty(Constants.FACTORY, LookupFactory.class.getName());
-        lookup.setProperty(JNDI_NAME, ref.location.jndiName);
+        lookup.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
         lookup.setType(Object.class.getName());
         lookup.setOverride(false);
 
@@ -443,22 +424,22 @@ public class TomcatJndiBuilder {
         }
 
         ejb.setProperty(Constants.FACTORY, EjbFactory.class.getName());
-        ejb.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        ejb.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         ejb.setHome(ref.homeClassName);
         ejb.setRemote(ref.interfaceClassName);
         ejb.setLink(null);
         ejb.setType(ref.interfaceClassName);
         if (useCrossClassLoaderRef) {
-            ejb.setProperty(EXTERNAL, "" + ref.externalReference);
+            ejb.setProperty(NamingUtil.EXTERNAL, "" + ref.externalReference);
         }
 
         if (ref.ejbDeploymentId != null) {
-            ejb.setProperty(DEPLOYMENT_ID, ref.ejbDeploymentId);
+            ejb.setProperty(NamingUtil.DEPLOYMENT_ID, ref.ejbDeploymentId);
         }
 
         if (ref.location != null) {
-            ejb.setProperty(JNDI_NAME, ref.location.jndiName);
-            ejb.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            ejb.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            ejb.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         }
 
         if (addEntry) {
@@ -486,20 +467,20 @@ public class TomcatJndiBuilder {
         }
 
         ejb.setProperty(Constants.FACTORY, EjbFactory.class.getName());
-        ejb.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        ejb.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         ejb.setHome(ref.homeClassName);
         ejb.setRemote(null);
-        ejb.setProperty(ref.localbean ? LOCALBEAN : LOCAL, ref.interfaceClassName);
+        ejb.setProperty(ref.localbean ? NamingUtil.LOCALBEAN : NamingUtil.LOCAL, ref.interfaceClassName);
         ejb.setLink(null);
         ejb.setType(ref.interfaceClassName);
 
         if (ref.ejbDeploymentId != null) {
-            ejb.setProperty(DEPLOYMENT_ID, ref.ejbDeploymentId);
+            ejb.setProperty(NamingUtil.DEPLOYMENT_ID, ref.ejbDeploymentId);
         }
 
         if (ref.location != null) {
-            ejb.setProperty(JNDI_NAME, ref.location.jndiName);
-            ejb.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            ejb.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            ejb.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         }
 
         if (addEntry) {
@@ -527,20 +508,17 @@ public class TomcatJndiBuilder {
         }
 
         resource.setProperty(Constants.FACTORY, PersistenceContextFactory.class.getName());
-        resource.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        resource.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         resource.setType(EntityManager.class.getName());
 
         if (ref.persistenceUnitName != null) {
-            resource.setProperty(UNIT, ref.persistenceUnitName);
+            resource.setProperty(NamingUtil.UNIT, ref.persistenceUnitName);
         }
-        resource.setProperty(EXTENDED, "" + ref.extended);
-        if (ref.properties != null) {
-            // resource.setProperty(NamingConstants.PROPERTIES, ref.properties);
-        }
+        resource.setProperty(NamingUtil.EXTENDED, "" + ref.extended);
 
         if (ref.location != null) {
-            resource.setProperty(JNDI_NAME, ref.location.jndiName);
-            resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
             Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
             EntityManagerFactory factory;
@@ -579,16 +557,16 @@ public class TomcatJndiBuilder {
         }
 
         resource.setProperty(Constants.FACTORY, PersistenceUnitFactory.class.getName());
-        resource.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        resource.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         resource.setType(EntityManagerFactory.class.getName());
 
         if (ref.persistenceUnitName != null) {
-            resource.setProperty(UNIT, ref.persistenceUnitName);
+            resource.setProperty(NamingUtil.UNIT, ref.persistenceUnitName);
         }
 
         if (ref.location != null) {
-            resource.setProperty(JNDI_NAME, ref.location.jndiName);
-            resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
             // TODO: This will not work if webapps don't use AutoConfi
             Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
@@ -625,21 +603,17 @@ public class TomcatJndiBuilder {
         }
 
         resource.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
-        resource.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        resource.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         resource.setType(ref.referenceType);
         resource.setAuth(ref.referenceAuth);
 
         if (ref.resourceID != null) {
-            resource.setProperty(RESOURCE_ID, ref.resourceID);
-        }
-
-        if (ref.properties != null) {
-            // resource.setProperty(NamingConstants.PROPERTIES, ref.properties);
+            resource.setProperty(NamingUtil.RESOURCE_ID, ref.resourceID);
         }
 
         if (ref.location != null) {
-            resource.setProperty(JNDI_NAME, ref.location.jndiName);
-            resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         }
 
         if (addEntry) {
@@ -670,27 +644,27 @@ public class TomcatJndiBuilder {
             resourceEnv.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
         } else if (TransactionManager.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
-            resourceEnv.setProperty(COMPONENT_TYPE, TransactionManager.class.getName());
+            resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, TransactionManager.class.getName());
         } else if (TransactionSynchronizationRegistry.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
-            resourceEnv.setProperty(COMPONENT_TYPE, TransactionSynchronizationRegistry.class.getName());
+            resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, TransactionSynchronizationRegistry.class.getName());
         } else if (ORB.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
-            resourceEnv.setProperty(COMPONENT_TYPE, ORB.class.getName());
+            resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, ORB.class.getName());
         } else if (HandleDelegate.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
-            resourceEnv.setProperty(COMPONENT_TYPE, HandleDelegate.class.getName());
+            resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, HandleDelegate.class.getName());
         } else {
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
-            resourceEnv.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+            resourceEnv.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
 
             if (ref.resourceID != null) {
-                resourceEnv.setProperty(RESOURCE_ID, ref.resourceID);
+                resourceEnv.setProperty(NamingUtil.RESOURCE_ID, ref.resourceID);
             }
 
             if (ref.location != null) {
-                resourceEnv.setProperty(JNDI_NAME, ref.location.jndiName);
-                resourceEnv.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+                resourceEnv.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+                resourceEnv.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
             }
         }
 
@@ -718,7 +692,7 @@ public class TomcatJndiBuilder {
         }
 
         resource.setProperty(Constants.FACTORY, WsFactory.class.getName());
-        resource.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
+        resource.setProperty(NamingUtil.NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         if (ref.referenceType != null) {
             resource.setType(ref.referenceType);
         } else {
@@ -726,29 +700,29 @@ public class TomcatJndiBuilder {
         }
 
         if (ref.location != null) {
-            resource.setProperty(JNDI_NAME, ref.location.jndiName);
-            resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
+            resource.setProperty(NamingUtil.JNDI_NAME, ref.location.jndiName);
+            resource.setProperty(NamingUtil.JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
             // ID
             if (ref.id != null) {
-                resource.setProperty(WS_ID, ref.id);
+                resource.setProperty(NamingUtil.WS_ID, ref.id);
             }
             // Service QName
             if (ref.serviceQName != null) {
-                resource.setProperty(WS_QNAME, ref.serviceQName.toString());
+                resource.setProperty(NamingUtil.WS_QNAME, ref.serviceQName.toString());
             }
             // Service Class
-            resource.setProperty(WS_CLASS, ref.serviceType);
+            resource.setProperty(NamingUtil.WS_CLASS, ref.serviceType);
 
             // Port QName
             if (ref.portQName != null) {
-                resource.setProperty(WS_PORT_QNAME, ref.portQName.toString());
+                resource.setProperty(NamingUtil.WS_PORT_QNAME, ref.portQName.toString());
             }
 
             // add the wsdl url
             URL wsdlURL = getWsdlUrl(ref);
             if (wsdlURL != null) {
-                resource.setProperty(WSDL_URL, wsdlURL.toString());
+                resource.setProperty(NamingUtil.WSDL_URL, wsdlURL.toString());
             }
 
             // add port refs
@@ -829,11 +803,11 @@ public class TomcatJndiBuilder {
     }
 
     private void setResource(ContextResource resource, String name, Object object) {
-        setStaticValue(new Resource(resource), name, object);
+        NamingUtil.setStaticValue(new Resource(resource), name, object);
     }
 
     private void setResource(ContextResource resource, Object object) {
-        setStaticValue(new Resource(resource), object);
+        NamingUtil.setStaticValue(new Resource(resource), object);
     }
 
     public static void importOpenEJBResourcesInTomcat(final Collection<ResourceInfo> resources, final StandardServer server) {
@@ -848,7 +822,7 @@ public class TomcatJndiBuilder {
             final ContextResource resource = new ContextResource();
             resource.setName(name);
             resource.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
-            resource.setProperty(NAME, name);
+            resource.setProperty(NamingUtil.NAME, name);
             resource.setType(info.className);
             resource.setAuth("Container");
 

@@ -281,6 +281,7 @@ public class TomcatLoader implements Loader {
                 cxfService.start();
                 services.add(cxfService);
             } catch (ClassNotFoundException ignored) {
+                // no-op
             } catch (Exception e) {
                 Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
                 logger.error("Webservices failed to start", e);
@@ -293,6 +294,7 @@ public class TomcatLoader implements Loader {
                 restService.start();
                 services.add(restService);
             } catch (ClassNotFoundException ignored) {
+                // no-op
             } catch (Exception e) {
                 logger.error("REST failed to start", e);
             }

@@ -86,6 +86,7 @@ public class SessionNormalScopeBeanHandler extends NormalScopedBeanInterceptorHa
             this.value = value;
         }
 
+        @SuppressWarnings("unchecked")
         protected void updateBean() {
             final HttpSession session = session();
             if (session == null) {
