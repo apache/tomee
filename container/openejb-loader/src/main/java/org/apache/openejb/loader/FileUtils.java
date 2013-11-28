@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
 
+@SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class FileUtils {
 
     private static final java.util.Random _random = new java.util.Random();
@@ -68,11 +69,6 @@ public class FileUtils {
             return false;
         final FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
-    }
-
-    @Override
-    public int hashCode() {
-        return home != null ? home.hashCode() : 0;
     }
 
     public File getDirectory(final String path, final boolean create) throws IOException {
