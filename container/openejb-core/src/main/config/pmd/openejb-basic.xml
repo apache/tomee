@@ -28,7 +28,6 @@
   <!-- All the rules from basic.xml -->
   <rule ref="rulesets/java/basic.xml">
     <exclude name="EmptyCatchBlock"/> <!-- This is covered by the openejb-empty.xml file -->
-    <exclude name="UselessOverridingMethod"/>
     <exclude name="CollapsibleIfStatements"/>
     <exclude name="ReturnFromFinallyBlock"/>
     <exclude name="AvoidBranchingStatementAsLastInLoop"/>
