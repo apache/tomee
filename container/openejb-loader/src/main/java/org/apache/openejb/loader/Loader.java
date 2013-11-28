@@ -20,7 +20,7 @@ import java.util.Properties;
 
 public interface Loader {
 
-    public void init(Properties properties) throws Exception;
+    void init(Properties properties) throws Exception;
 
 }
 

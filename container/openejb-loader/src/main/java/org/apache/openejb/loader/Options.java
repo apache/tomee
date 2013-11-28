@@ -467,24 +467,24 @@ public class Options {
         }
     }
 
-    public static interface Log {
-        public boolean isDebugEnabled();
+    public interface Log {
+        boolean isDebugEnabled();
 
-        public boolean isInfoEnabled();
+        boolean isInfoEnabled();
 
-        public boolean isWarningEnabled();
+        boolean isWarningEnabled();
 
-        public void warning(String message, Throwable t);
+        void warning(String message, Throwable t);
 
-        public void warning(String message);
+        void warning(String message);
 
-        public void debug(String message, Throwable t);
+        void debug(String message, Throwable t);
 
-        public void debug(String message);
+        void debug(String message);
 
-        public void info(String message, Throwable t);
+        void info(String message, Throwable t);
 
-        public void info(String message);
+        void info(String message);
     }
 
     public static class NullLog implements Log {

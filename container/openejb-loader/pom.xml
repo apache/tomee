@@ -19,7 +19,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -30,7 +31,7 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Loader</name>
   <properties>
-      <openejb.osgi.import.pkg />
+    <openejb.osgi.import.pkg/>
   </properties>
   <dependencies>
     <dependency>
@@ -39,4 +40,44 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.0.1</version>
+        <configuration>
+          <linkXRef>true</linkXRef>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <targetJdk>1.6</targetJdk>
+          <rulesets>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-empty.xml</ruleset>
+            <ruleset>rulesets/java/finalizers.xml</ruleset>
+            <ruleset>rulesets/java/imports.xml</ruleset>
+            <ruleset>rulesets/java/unusedcode.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-controversial.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-basic.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-optimizations.xml</ruleset>
+          </rulesets>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
