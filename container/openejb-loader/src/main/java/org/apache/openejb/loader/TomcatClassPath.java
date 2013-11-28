@@ -32,8 +32,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.net.URLDecoder.decode;
-
 /*-------------------------------------------------------*/
 /* Tomcat ClassLoader Support */
 /*-------------------------------------------------------*/
@@ -344,10 +342,10 @@ public class TomcatClassPath extends BasicURLClassPath {
                     final File file = new File(filename);
                     File file2;
                     try {
-                        file2 = new File(decode(filename, "UTF-8"));
+                        file2 = new File(URLDecoder.decode(filename, "UTF-8"));
                     } catch (Exception e) {
                         //noinspection deprecation
-                        file2 = new File(decode(filename));
+                        file2 = new File(URLDecoder.decode(filename));
                     }
                     if (file.exists() || file2.exists()) {
                         return targetURL(currentUrl, fixedResName);

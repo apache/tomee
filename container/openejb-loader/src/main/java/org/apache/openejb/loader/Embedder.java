@@ -127,8 +127,6 @@ public class Embedder {
         }
     }
 
-    private String NO_HOME = "The openejb.home is not set.";
-
     private String BAD_HOME = "Invalid openejb.home: ";
 
     private String NOT_THERE = "The path specified does not exist.";
@@ -181,13 +179,4 @@ public class Embedder {
         System.err.println("---------------------------------------------------");
         throw new Exception(m1 + " " + m2 + " " + m3);
     }
-
-    private void handleError(String m1, String m2) throws Exception {
-        System.err.println("--[PLEASE FIX]-------------------------------------");
-        System.err.println(m1);
-        System.err.println(m2);
-        System.err.println("---------------------------------------------------");
-        throw new Exception(m1 + " " + m2);
-    }
-
 }

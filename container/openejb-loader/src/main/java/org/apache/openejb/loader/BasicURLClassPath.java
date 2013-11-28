@@ -27,7 +27,7 @@ import java.security.PrivilegedAction;
 
 public abstract class BasicURLClassPath implements ClassPath {
     public static ClassLoader getContextClassLoader() {
-        return java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<ClassLoader>() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
             public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
@@ -35,7 +35,7 @@ public abstract class BasicURLClassPath implements ClassPath {
         });
     }
 
-    private java.lang.reflect.Field ucpField;
+    private Field ucpField;
 
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
         final Object cp = getURLClassPath(loader);
@@ -96,12 +96,12 @@ public abstract class BasicURLClassPath implements ClassPath {
         return getUcpField().get(loader);
     }
 
-    private java.lang.reflect.Field getUcpField() throws Exception {
+    private Field getUcpField() throws Exception {
         if (ucpField == null) {
             ucpField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
                 @Override
                 public Field run() {
-                    java.lang.reflect.Field ucp = null;
+                    Field ucp = null;
                     try {
                         ucp = URLClassLoader.class.getDeclaredField("ucp");
                         ucp.setAccessible(true);

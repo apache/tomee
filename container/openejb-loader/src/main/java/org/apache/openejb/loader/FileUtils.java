@@ -62,11 +62,17 @@ public class FileUtils {
         return getDirectory(path, false);
     }
 
+    @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof FileUtils))
             return false;
         final FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
+    }
+
+    @Override
+    public int hashCode() {
+        return home != null ? home.hashCode() : 0;
     }
 
     public File getDirectory(final String path, final boolean create) throws IOException {
@@ -96,11 +102,11 @@ public class FileUtils {
         this.home = dir;
     }
 
-    public File getFile(final String path) throws java.io.FileNotFoundException, java.io.IOException {
+    public File getFile(final String path) throws IOException {
         return getFile(path, true);
     }
 
-    public File getFile(final String path, final boolean validate) throws java.io.FileNotFoundException, java.io.IOException {
+    public File getFile(final String path, final boolean validate) throws IOException {
         File file = new File(path);
 
         if (!file.isAbsolute()) {
@@ -116,20 +122,20 @@ public class FileUtils {
         return file;
     }
 
-    public static File createTempDirectory(final String pathPrefix) throws java.io.IOException {
+    public static File createTempDirectory(final String pathPrefix) throws IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
 
             final String path = pathPrefix + _random.nextLong();
-            final java.io.File tmpDir = new java.io.File(path);
+            final File tmpDir = new File(path);
 
             if (!tmpDir.exists() && tmpDir.mkdirs()) {
                 return tmpDir;
             }
         }
-        throw new java.io.IOException("Cannot create temporary directory at: " + pathPrefix);
+        throw new IOException("Cannot create temporary directory at: " + pathPrefix);
     }
 
-    public static File createTempDirectory() throws java.io.IOException {
+    public static File createTempDirectory() throws IOException {
         final String prefix = System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "openejb";
         return createTempDirectory(prefix);
     }
