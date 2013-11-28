@@ -259,6 +259,9 @@
             <ruleset>rulesets/java/finalizers.xml</ruleset>
             <ruleset>rulesets/java/imports.xml</ruleset>
             <ruleset>rulesets/java/unusedcode.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-controversial.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-basic.xml</ruleset>
+            <ruleset>${project.basedir}/src/main/config/pmd/openejb-optimizations.xml</ruleset>
           </rulesets>
         </configuration>
         <executions>

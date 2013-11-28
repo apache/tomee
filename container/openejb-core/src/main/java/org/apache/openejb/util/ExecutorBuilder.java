@@ -40,9 +40,6 @@ public class ExecutorBuilder {
     private ThreadFactory threadFactory;
     private RejectedExecutionHandler rejectedExecutionHandler;
 
-    public ExecutorBuilder() {
-    }
-
     public ExecutorBuilder size(final int size) {
         this.size = size;
         return this;

@@ -22,19 +22,10 @@ limitations under the License.
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
   <description>
-    Custom empty.xml for openejb-core
+    Custom controversial.xml for openejb-core
   </description>
 
-  <!-- All the rules from empty.xml -->
-  <rule ref="rulesets/java/empty.xml">
-    <exclude name="EmptyCatchBlock"/>
-  </rule>
-
-  <!-- overriding EmptyCatchBlock -->
-  <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
-    <properties>
-      <property name="allowCommentedBlocks" value="true"/>
-    </properties>
-  </rule>
+  <rule ref="rulesets/java/controversial.xml/OneDeclarationPerLine" />
+  <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor" />
 
 </ruleset>

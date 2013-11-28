@@ -22,19 +22,20 @@ limitations under the License.
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
   <description>
-    Custom empty.xml for openejb-core
+    Custom optimizations.xml for openejb-core
   </description>
 
-  <!-- All the rules from empty.xml -->
-  <rule ref="rulesets/java/empty.xml">
-    <exclude name="EmptyCatchBlock"/>
-  </rule>
-
-  <!-- overriding EmptyCatchBlock -->
-  <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
-    <properties>
-      <property name="allowCommentedBlocks" value="true"/>
-    </properties>
+  <!-- All the rules from basic.xml -->
+  <rule ref="rulesets/java/optimizations.xml">
+    <exclude name="PrematureDeclaration"/> <!-- this rule is buggy -->
+    <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    <exclude name="MethodArgumentCouldBeFinal"/>
+    <exclude name="LocalVariableCouldBeFinal"/>
+    <exclude name="RedundantFieldInitializer"/>
+    <exclude name="SimplifyStartsWith"/>
+    <exclude name="UseStringBufferForStringAppends"/>
+    <exclude name="AddEmptyString"/>
+    <exclude name="UseArrayListInsteadOfVector"/>
   </rule>
 
 </ruleset>

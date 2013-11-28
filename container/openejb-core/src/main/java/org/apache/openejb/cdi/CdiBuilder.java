@@ -36,9 +36,6 @@ public class CdiBuilder {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, CdiBuilder.class);
     private static final ThreadSingletonService SINGLETON_SERVICE = new ThreadSingletonServiceImpl();
 
-    public CdiBuilder() {
-    }
-
     public void build(final AppInfo appInfo, final AppContext appContext, final List<BeanContext> allDeployments) {
         initSingleton().initialize(new StartupObject(appContext, appInfo, allDeployments));
     }
