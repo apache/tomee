@@ -16,24 +16,30 @@
  */
 package org.apache.openejb.cdi;
 
+import java.util.Map;
+import java.util.Properties;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
-import java.util.Map;
-import java.util.Properties;
-
 public class WebappWebBeansContext extends WebBeansContext {
-    private final WebBeansContext parent;
-    private final BeanManagerImpl bm;
+    private WebBeansContext parent;
+    private BeanManagerImpl bm;
 
     public WebappWebBeansContext(Map<Class<?>, Object> services, Properties properties, WebBeansContext webBeansContext) {
         super(services, properties);
-        this.parent = webBeansContext;
-        this.bm = new WebappBeanManager(this);
+        parent = webBeansContext;
     }
 
+    @SuppressWarnings("PMD.DoubleCheckedLocking")
     @Override
     public BeanManagerImpl getBeanManagerImpl() {
+        if (bm == null) { // should be done in the constructor
+            synchronized (this) {
+                if (bm == null) {
+                    bm = new WebappBeanManager(this);
+                }
+            }
+        }
         return bm;
     }
 
