@@ -265,6 +265,11 @@
                   <version>1.7.1</version>
                   <type>jar</type>
                 </element>
+                <element>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>openejb-jpa-integration</artifactId>
+                  <version>${openejb.version}</version>
+                </element>
               </classpath>
             </configuration>
           </execution>
@@ -291,6 +296,11 @@
                   <artifactId>ant-nodeps</artifactId>
                   <version>1.7.1</version>
                   <type>jar</type>
+                </element>
+                <element>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>openejb-jpa-integration</artifactId>
+                  <version>${openejb.version}</version>
                 </element>
               </classpath>
             </configuration>
