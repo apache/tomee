@@ -282,7 +282,7 @@ public class ClassLoaderUtil {
                     it.remove();
                     appsByClassLoader.remove(cl);
                     destroyClassLoader(cl);
-                    System.gc();
+                    System.gc(); //NOPMD
                 } else {
                     logger.debug("ClassLoader " + toString(cl) + " held open by the applications: " + apps);
                 }

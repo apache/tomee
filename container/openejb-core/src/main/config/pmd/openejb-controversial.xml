@@ -25,7 +25,22 @@ limitations under the License.
     Custom controversial.xml for openejb-core
   </description>
 
-  <rule ref="rulesets/java/controversial.xml/OneDeclarationPerLine" />
-  <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor" />
+  <rule ref="rulesets/java/controversial.xml">
+    <exclude name="DataflowAnomalyAnalysis"/>
+    <exclude name="OnlyOneReturn"/>
+    <exclude name="AvoidFinalLocalVariable"/>
+    <exclude name="NullAssignment"/>
+    <exclude name="AvoidLiteralsInIfCondition"/>
+    <exclude name="AtLeastOneConstructor"/>
+    <exclude name="UseConcurrentHashMap"/>
+    <exclude name="AvoidPrefixingMethodParameters"/>
+    <exclude name="CallSuperInConstructor"/>
+    <exclude name="DefaultPackage"/>
+    <exclude name="AvoidUsingShortType"/>
+    <exclude name="UseObjectForClearerAPI"/>
+    <exclude name="AvoidUsingVolatile"/>
+    <exclude name="AssignmentInOperand"/>
+    <exclude name="BooleanInversion"/>
+  </rule>
 
 </ruleset>
