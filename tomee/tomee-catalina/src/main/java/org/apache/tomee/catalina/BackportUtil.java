@@ -80,7 +80,7 @@ public class BackportUtil {
         getAPI().removeService(namingContextListener, serviceName);
     }
 
-    public static interface API {
+    public interface API {
         Servlet getServlet(Wrapper wrapper);
 
         String findServiceName(NamingResources naming, String refName);

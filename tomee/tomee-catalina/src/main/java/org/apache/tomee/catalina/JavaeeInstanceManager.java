@@ -16,10 +16,11 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.catalina.core.StandardContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.WebContext;
 import org.apache.tomcat.InstanceManager;
+import org.apache.webbeans.exception.WebBeansConfigurationException;
+import org.apache.webbeans.exception.WebBeansCreationException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,8 +28,6 @@ import javax.naming.NamingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import org.apache.webbeans.exception.WebBeansConfigurationException;
-import org.apache.webbeans.exception.WebBeansCreationException;
 
 /**
  * @version $Rev$ $Date$
@@ -36,11 +35,9 @@ import org.apache.webbeans.exception.WebBeansCreationException;
 public class JavaeeInstanceManager implements InstanceManager {
 
     private final WebContext webContext;
-    private final StandardContext context;
 
-    public JavaeeInstanceManager(WebContext webContext, StandardContext context) {
+    public JavaeeInstanceManager(WebContext webContext) {
         this.webContext = webContext;
-        this.context = context;
     }
 
     @Override

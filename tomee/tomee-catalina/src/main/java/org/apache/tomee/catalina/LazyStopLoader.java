@@ -16,13 +16,14 @@
  */
 package org.apache.tomee.catalina;
 
-import java.beans.PropertyChangeListener;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Loader;
+
+import java.beans.PropertyChangeListener;
 
 public class LazyStopLoader implements Loader, Lifecycle {
     private final Loader delegate;

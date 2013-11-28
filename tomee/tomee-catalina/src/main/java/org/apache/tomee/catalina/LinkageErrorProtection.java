@@ -94,6 +94,7 @@ public class LinkageErrorProtection {
                 try {
                     load(className, standardContext);
                 } catch (Throwable e) {
+                    // no-op
                 }
             }
         } catch (Throwable e) {
@@ -106,10 +107,12 @@ public class LinkageErrorProtection {
         try {
             classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
+            // no-op
         } catch (LinkageError e) {
             try {
                 classLoader.loadClass(className);
             } catch (ClassNotFoundException e2) {
+                // no-op
             }
         }
     }

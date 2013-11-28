@@ -16,11 +16,6 @@
  */
 package org.apache.tomee.catalina;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.util.LogCategory;

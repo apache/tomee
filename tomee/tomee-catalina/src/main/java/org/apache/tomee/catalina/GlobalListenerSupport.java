@@ -315,8 +315,9 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      *
      * @param context tomcat context
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings({"UnusedDeclaration", "PMD.UnusedFormalParameter"})
     private void contextRemoved(StandardContext context) {
+        // TODO what to do?
     }
 
     /**

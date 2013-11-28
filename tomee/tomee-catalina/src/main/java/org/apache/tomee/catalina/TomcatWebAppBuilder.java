@@ -726,8 +726,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private boolean isExtracted(final File extracted) {
-        // do we want to delete it?
+        // TODO: do we want to delete it?
         return false;
     }
 
@@ -1330,7 +1331,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.getBindings().putAll(appContext.getBindings());
                 webContext.getBindings().putAll(getJndiBuilder(classLoader, webAppInfo, injections).buildBindings(JndiEncBuilder.JndiScope.comp));
 
-                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext, standardContext);
+                final JavaeeInstanceManager instanceManager = new JavaeeInstanceManager(webContext);
                 standardContext.setInstanceManager(instanceManager);
                 instanceManagers.put(classLoader, instanceManager);
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
@@ -2158,7 +2159,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     private CoreContainerSystem getContainerSystem() {
         if (containerSystem == null) {
-            containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(org.apache.openejb.spi.ContainerSystem.class);
+            containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         }
         return containerSystem;
     }
