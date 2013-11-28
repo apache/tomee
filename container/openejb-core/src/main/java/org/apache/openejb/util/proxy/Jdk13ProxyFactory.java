@@ -29,9 +29,6 @@ import java.util.Set;
  */
 public class Jdk13ProxyFactory implements ProxyFactory {
 
-    public Jdk13ProxyFactory() {
-    }
-
     public void init(Properties props) throws OpenEJBException {
     }
 

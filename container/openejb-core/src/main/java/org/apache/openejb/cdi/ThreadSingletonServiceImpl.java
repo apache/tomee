@@ -65,10 +65,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
     private static final String WEBBEANS_FAILOVER_ISSUPPORTFAILOVER = "org.apache.webbeans.web.failover.issupportfailover";
 
-    public ThreadSingletonServiceImpl() {
-        // no-op
-    }
-
     @Override
     public void initialize(final StartupObject startupObject) {
         if (sessionContextClass == null) { // done here cause Cdibuilder trigger this class loading and that's from Warmup so we can't init too early config

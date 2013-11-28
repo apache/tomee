@@ -38,9 +38,6 @@ public class TimerServiceWrapper implements TimerService {
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, TimerServiceWrapper.class);
 
-    public TimerServiceWrapper() {
-    }
-
     public Timer createTimer(Date initialExpiration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
         return getTimerService().createTimer(initialExpiration, intervalDuration, info);
     }

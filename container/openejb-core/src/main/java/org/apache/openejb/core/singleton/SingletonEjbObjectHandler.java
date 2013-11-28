@@ -50,10 +50,9 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
         try {
             EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
-            return new Boolean(deploymentID.equals(handler.deploymentID));
+            return deploymentID.equals(handler.deploymentID);
         } catch (Throwable t) {
             return Boolean.FALSE;
-
         }
     }
 

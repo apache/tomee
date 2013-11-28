@@ -249,7 +249,7 @@ public class JndiEncBuilder {
                 } else if (type == Short.class) {
                     obj = new Short(entry.value);
                 } else if (type == Boolean.class) {
-                    obj = new Boolean(entry.value);
+                    obj = Boolean.valueOf(entry.value);
                 } else if (type == Byte.class) {
                     obj = new Byte(entry.value);
                 } else if (type == Character.class) {

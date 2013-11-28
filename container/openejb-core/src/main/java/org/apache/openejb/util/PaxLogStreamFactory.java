@@ -29,7 +29,5 @@ public class PaxLogStreamFactory implements LogStreamFactory {
         return new Log4jLogStream(logCategory);
     }
 
-    public PaxLogStreamFactory() {
-    }
 }
 

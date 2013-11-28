@@ -26,7 +26,8 @@ public final class TimeWatcherExecutor {
     }
 
     public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) throws Throwable {
-        long start = 0, duration = 0;
+        long start = 0;
+        long duration = 0;
         if (watch) {
             start = System.nanoTime();
         }

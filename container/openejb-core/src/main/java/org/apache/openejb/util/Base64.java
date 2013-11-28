@@ -29,6 +29,7 @@ import java.io.IOException;
  * @since 1.0-dev
  * @version $Id$
  */
+@SuppressWarnings("PMD.OneDeclarationPerLine")
 public class Base64 {
 
     /**

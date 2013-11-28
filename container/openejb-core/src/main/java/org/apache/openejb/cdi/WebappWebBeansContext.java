@@ -23,23 +23,17 @@ import java.util.Map;
 import java.util.Properties;
 
 public class WebappWebBeansContext extends WebBeansContext {
-    private WebBeansContext parent;
-    private BeanManagerImpl bm;
+    private final WebBeansContext parent;
+    private final BeanManagerImpl bm;
 
     public WebappWebBeansContext(Map<Class<?>, Object> services, Properties properties, WebBeansContext webBeansContext) {
         super(services, properties);
-        parent = webBeansContext;
+        this.parent = webBeansContext;
+        this.bm = new WebappBeanManager(this);
     }
 
     @Override
     public BeanManagerImpl getBeanManagerImpl() {
-        if (bm == null) { // should be done in the constructor
-            synchronized (this) {
-                if (bm == null) {
-                    bm = new WebappBeanManager(this);
-                }
-            }
-        }
         return bm;
     }
 

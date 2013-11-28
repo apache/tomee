@@ -146,6 +146,7 @@ public class Duration {
         }
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -154,6 +155,13 @@ public class Duration {
 
         Normalize n = new Normalize(this, that);
         return n.a == n.b;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (time ^ (time >>> 32));
+        result = 31 * result + (unit != null ? unit.hashCode() : 0);
+        return result;
     }
 
     public Duration add(Duration that) {
