@@ -55,6 +55,8 @@ public class LegacyServerTest {
 
     static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
+    private static final int CLIENT_DELAY = 60;
+
     static {
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.FINER);
@@ -98,7 +100,8 @@ public class LegacyServerTest {
             multipoint.set("discoveryName", name);
 
             logger.info("Starting Root server");
-            root.start();
+            // Wait for it to start before continuing, otherwise test may fail in slower machines.
+            root.start(1, TimeUnit.MINUTES);
         }
 
         final Services services = new Services();
@@ -163,7 +166,7 @@ public class LegacyServerTest {
             final URI serverURI = server.getContext().get(URI.class);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(CLIENT_DELAY, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -196,7 +199,7 @@ public class LegacyServerTest {
             services.add(serverURI);
 
             logger.info("Waiting for updated list");
-            services.assertServices(30, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
+            services.assertServices(CLIENT_DELAY, TimeUnit.SECONDS, new CalculatorCallable(bean), 500);
 
             logger.info("Asserting balance");
             assertBalance(bean, services.get().size());
@@ -210,8 +213,7 @@ public class LegacyServerTest {
 
         // Verify the work reached all servers
         final Set<Map.Entry<String, AtomicInteger>> entries = invoke(bean, totalInvocations).entrySet();
-
-        Assert.assertEquals(size, entries.size());
+        Assert.assertEquals("Bad number of invocations for the bean \"" + bean.name() + "\".", size, entries.size());
 
         // And each server got a minimum of %10 percent of the traffic
         for (final Map.Entry<String, AtomicInteger> entry : entries) {
@@ -229,6 +231,7 @@ public class LegacyServerTest {
 
             if (!invocations.containsKey(name)) {
                 invocations.put(name, new AtomicInteger());
+                logger.info(String.format("Tracking new Server %s", name));
             }
 
             invocations.get(name).incrementAndGet();
