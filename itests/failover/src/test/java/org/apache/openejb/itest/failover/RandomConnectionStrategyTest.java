@@ -97,7 +97,9 @@ public class RandomConnectionStrategyTest {
             multipoint.set("discoveryName", name);
 
             logger.info("Starting Root server");
-            root.start();
+
+            // Wait for it to start before continuing, otherwise test may fail in slower machines.
+            root.start(1, TimeUnit.MINUTES);
         }
 
         final Services services = new Services();
@@ -209,11 +211,10 @@ public class RandomConnectionStrategyTest {
         final double percent = 0.10;
         final int totalInvocations = size * expectedInvocations;
 
-
         // Verify the work reached all servers
         final Set<Map.Entry<String, AtomicInteger>> entries = invoke(bean, totalInvocations).entrySet();
 
-        Assert.assertEquals(size, entries.size());
+        Assert.assertEquals("Bad number of invocations for the bean \"" + bean.name() + "\".", size, entries.size());
 
         // And each server got a minimum of %10 percent of the traffic
         for (final Map.Entry<String, AtomicInteger> entry : entries) {
