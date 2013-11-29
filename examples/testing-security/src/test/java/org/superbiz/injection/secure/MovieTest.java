@@ -16,7 +16,10 @@
  */
 package org.superbiz.injection.secure;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
@@ -29,7 +32,7 @@ import java.util.concurrent.Callable;
 
 //START SNIPPET: code
 
-public class MovieTest extends TestCase {
+public class MovieTest {
 
     @EJB
     private Movies movies;
@@ -40,15 +43,25 @@ public class MovieTest extends TestCase {
     @EJB(name = "EmployeeBean")
     private Caller employee;
 
-    protected void setUp() throws Exception {
+    private EJBContainer container;
+
+    @Before
+    public void setUp() throws Exception {
         Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
+        this.container = EJBContainer.createEJBContainer(p);
+        this.container.getContext().bind("inject", this);
     }
 
+    @After
+    public void tearDown() {
+        this.container.close();
+    }
+
+    @Test
     public void testAsManager() throws Exception {
         manager.call(new Callable() {
             public Object call() throws Exception {
@@ -58,18 +71,19 @@ public class MovieTest extends TestCase {
                 movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
                 List<Movie> list = movies.getMovies();
-                assertEquals("List.size()", 3, list.size());
+                Assert.assertEquals("List.size()", 3, list.size());
 
                 for (Movie movie : list) {
                     movies.deleteMovie(movie);
                 }
 
-                assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+                Assert.assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
                 return null;
             }
         });
     }
 
+    @Test
     public void testAsEmployee() throws Exception {
         employee.call(new Callable() {
             public Object call() throws Exception {
@@ -79,35 +93,36 @@ public class MovieTest extends TestCase {
                 movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
                 List<Movie> list = movies.getMovies();
-                assertEquals("List.size()", 3, list.size());
+                Assert.assertEquals("List.size()", 3, list.size());
 
                 for (Movie movie : list) {
                     try {
                         movies.deleteMovie(movie);
-                        fail("Employees should not be allowed to delete");
+                        Assert.fail("Employees should not be allowed to delete");
                     } catch (EJBAccessException e) {
                         // Good, Employees cannot delete things
                     }
                 }
 
                 // The list should still be three movies long
-                assertEquals("Movies.getMovies()", 3, movies.getMovies().size());
+                Assert.assertEquals("Movies.getMovies()", 3, movies.getMovies().size());
                 return null;
             }
         });
     }
 
+    @Test
     public void testUnauthenticated() throws Exception {
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
-            fail("Unauthenticated users should not be able to add movies");
+            Assert.fail("Unauthenticated users should not be able to add movies");
         } catch (EJBAccessException e) {
             // Good, guests cannot add things
         }
 
         try {
             movies.deleteMovie(null);
-            fail("Unauthenticated users should not be allowed to delete");
+            Assert.fail("Unauthenticated users should not be allowed to delete");
         } catch (EJBAccessException e) {
             // Good, Unauthenticated users cannot delete things
         }
@@ -115,16 +130,15 @@ public class MovieTest extends TestCase {
         try {
             // Read access should be allowed
 
-            List<Movie> list = movies.getMovies();
+            movies.getMovies();
 
         } catch (EJBAccessException e) {
-            fail("Read access should be allowed");
+            Assert.fail("Read access should be allowed");
         }
 
     }
 
     public static interface Caller {
-
         public <V> V call(Callable<V> callable) throws Exception;
     }
 
@@ -136,21 +150,17 @@ public class MovieTest extends TestCase {
     @Stateless
     @RunAs("Manager")
     public static class ManagerBean implements Caller {
-
         public <V> V call(Callable<V> callable) throws Exception {
             return callable.call();
         }
-
     }
 
     @Stateless
     @RunAs("Employee")
     public static class EmployeeBean implements Caller {
-
         public <V> V call(Callable<V> callable) throws Exception {
             return callable.call();
         }
-
     }
 
 }
