@@ -54,7 +54,7 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy {
 
     public static class RandomIterator<T> implements Iterator<T> {
 
-        private final Random random = new Random(System.currentTimeMillis());
+        private final Random random = new Random();
         private final T[] items;
         private int size;
 
