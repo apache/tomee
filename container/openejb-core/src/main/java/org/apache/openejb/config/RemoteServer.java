@@ -76,7 +76,7 @@ public class RemoteServer {
         this.tries = tries;
         this.verbose = verbose;
         home = getHome();
-        tomcat = home != null && new File(new File(home, "bin"), "catalina.sh").exists();
+        tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
         shutdownPort = options.get(SERVER_SHUTDOWN_PORT, tomcat ? 8005 : 4200);
         command = options.get(SERVER_SHUTDOWN_COMMAND, "SHUTDOWN");
