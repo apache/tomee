@@ -16,7 +16,10 @@
  */
 package org.superbiz.injection.secure;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
@@ -28,10 +31,12 @@ import java.util.List;
 import java.util.Properties;
 
 //START SNIPPET: code
-public class MovieTest extends TestCase {
+public class MovieTest {
 
     @EJB
     private Movies movies;
+
+    private EJBContainer container;
 
     private Context getContext(String user, String pass) throws NamingException {
         Properties p = new Properties();
@@ -43,7 +48,8 @@ public class MovieTest extends TestCase {
         return new InitialContext(p);
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         final ClassLoader ctxCl = Thread.currentThread().getContextClassLoader();
         System.setProperty("openejb.ScriptLoginModule.scriptURI", ctxCl.getResource("loginscript.js").toExternalForm());
 
@@ -52,9 +58,16 @@ public class MovieTest extends TestCase {
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
+        this.container = EJBContainer.createEJBContainer(p);
+        this.container.getContext().bind("inject", this);
     }
 
+    @After
+    public void tearDown() {
+        this.container.close();
+    }
+
+    @Test
     public void testAsManager() throws Exception {
         final Context context = getContext("paul", "michelle");
 
@@ -64,18 +77,19 @@ public class MovieTest extends TestCase {
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
             List<Movie> list = movies.getMovies();
-            assertEquals("List.size()", 3, list.size());
+            Assert.assertEquals("List.size()", 3, list.size());
 
             for (Movie movie : list) {
                 movies.deleteMovie(movie);
             }
 
-            assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+            Assert.assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
         } finally {
             context.close();
         }
     }
 
+    @Test
     public void testAsEmployee() throws Exception {
         final Context context = getContext("eddie", "jump");
 
@@ -85,61 +99,60 @@ public class MovieTest extends TestCase {
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
 
             List<Movie> list = movies.getMovies();
-            assertEquals("List.size()", 3, list.size());
+            Assert.assertEquals("List.size()", 3, list.size());
 
             for (Movie movie : list) {
                 try {
                     movies.deleteMovie(movie);
-                    fail("Employees should not be allowed to delete");
+                    Assert.fail("Employees should not be allowed to delete");
                 } catch (EJBAccessException e) {
                     // Good, Employees cannot delete things
                 }
             }
 
             // The list should still be three movies long
-            assertEquals("Movies.getMovies()", 3, movies.getMovies().size());
+            Assert.assertEquals("Movies.getMovies()", 3, movies.getMovies().size());
         } finally {
             context.close();
         }
     }
 
+    @Test
     public void testUnauthenticated() throws Exception {
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
-            fail("Unauthenticated users should not be able to add movies");
+            Assert.fail("Unauthenticated users should not be able to add movies");
         } catch (EJBAccessException e) {
             // Good, guests cannot add things
         }
 
         try {
             movies.deleteMovie(null);
-            fail("Unauthenticated users should not be allowed to delete");
+            Assert.fail("Unauthenticated users should not be allowed to delete");
         } catch (EJBAccessException e) {
             // Good, Unauthenticated users cannot delete things
         }
 
         try {
             // Read access should be allowed
-
-            List<Movie> list = movies.getMovies();
-
+            movies.getMovies();
         } catch (EJBAccessException e) {
-            fail("Read access should be allowed");
+            Assert.fail("Read access should be allowed");
         }
-
     }
 
+    @Test
     public void testLoginFailure() throws NamingException {
         try {
             getContext("eddie", "panama");
-            fail("supposed to have a login failure here");
+            Assert.fail("supposed to have a login failure here");
         } catch (javax.naming.AuthenticationException e) {
             //expected
         }
 
         try {
             getContext("jimmy", "foxylady");
-            fail("supposed to have a login failure here");
+            Assert.fail("supposed to have a login failure here");
         } catch (javax.naming.AuthenticationException e) {
             //expected
         }
