@@ -211,11 +211,12 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
-    public int hashCode() {
-        int result = (restarting ? 1 : 0);
-        result = 31 * result + (forceStopPhase ? 1 : 0);
-        result = 31 * result + (configurer != null ? configurer.hashCode() : 0);
-        return result;
+    public int hashCode() { // could be improved a bit adding the host and ensuring contextName != null, an alternative is getURLs() but it is longer
+        final String name = getContextName();
+        if (name != null) {
+            return name.hashCode();
+        }
+        return super.hashCode();
     }
 
     @Override

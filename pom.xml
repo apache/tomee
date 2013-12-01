@@ -93,7 +93,7 @@
     <openejb.version>4.6.1-SNAPSHOT</openejb.version>
     <tomee.version>1.6.1-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0-SNAPSHOT</openjpa.version>
+    <openjpa.version>2.3.0</openjpa.version>
     <org.apache.openwebbeans.version>1.2.1</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
