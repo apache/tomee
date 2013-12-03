@@ -49,8 +49,8 @@ public class SingleActionTimerData extends TimerData {
 
     @Override
     public AbstractTrigger<?> initializeTrigger() {
-    	final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
-    	simpleTrigger.setStartTime(expiration);
+        final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
+        simpleTrigger.setStartTime(expiration);
         return simpleTrigger;
     }
 

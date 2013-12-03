@@ -42,56 +42,56 @@ import java.util.List;
  */
 public class ConnectorCallbackHandler implements CallbackHandler {
 
-	private Principal callerPrincipal;
-	private String[] groupsArray;
-	private final String securityRealmName;
+    private Principal callerPrincipal;
+    private String[] groupsArray;
+    private final String securityRealmName;
 
-	public ConnectorCallbackHandler(String securityRealmName) {
-		this.securityRealmName = securityRealmName;
-	}
+    public ConnectorCallbackHandler(String securityRealmName) {
+        this.securityRealmName = securityRealmName;
+    }
 
-	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-		for (Callback callback : callbacks) {
-			// jaspi to server communication
-			if (callback instanceof CallerPrincipalCallback) {
-				callerPrincipal = ((CallerPrincipalCallback) callback).getPrincipal();
-			} else if (callback instanceof GroupPrincipalCallback) {
-				groupsArray = ((GroupPrincipalCallback) callback).getGroups();
-			} else if (callback instanceof PasswordValidationCallback) {
-				PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
-				final String userName = passwordValidationCallback.getUsername();
-				final char[] password = passwordValidationCallback.getPassword();
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (Callback callback : callbacks) {
+            // jaspi to server communication
+            if (callback instanceof CallerPrincipalCallback) {
+                callerPrincipal = ((CallerPrincipalCallback) callback).getPrincipal();
+            } else if (callback instanceof GroupPrincipalCallback) {
+                groupsArray = ((GroupPrincipalCallback) callback).getGroups();
+            } else if (callback instanceof PasswordValidationCallback) {
+                PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
+                final String userName = passwordValidationCallback.getUsername();
+                final char[] password = passwordValidationCallback.getPassword();
 
-				SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-				try {
-					Object loginObj = securityService.login(securityRealmName, userName, password == null ? "" : new String(password));
-					securityService.associate(loginObj);
-					callerPrincipal = securityService.getCallerPrincipal();
-					passwordValidationCallback.setResult(true);
-				} catch (LoginException e) {
-					passwordValidationCallback.setResult(false);
-				}
-			}
-			// server to jaspi communication
-			else if (callback instanceof CertStoreCallback) { //NOPMD
+                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                try {
+                    Object loginObj = securityService.login(securityRealmName, userName, password == null ? "" : new String(password));
+                    securityService.associate(loginObj);
+                    callerPrincipal = securityService.getCallerPrincipal();
+                    passwordValidationCallback.setResult(true);
+                } catch (LoginException e) {
+                    passwordValidationCallback.setResult(false);
+                }
+            }
+            // server to jaspi communication
+            else if (callback instanceof CertStoreCallback) { //NOPMD
                 // TODO implement me
-			} else if (callback instanceof PrivateKeyCallback) { //NOPMD
+            } else if (callback instanceof PrivateKeyCallback) { //NOPMD
                 // TODO implement me
-			} else if (callback instanceof SecretKeyCallback) { //NOPMD
+            } else if (callback instanceof SecretKeyCallback) { //NOPMD
                 // TODO implement me
-			} else if (callback instanceof TrustStoreCallback) { //NOPMD
+            } else if (callback instanceof TrustStoreCallback) { //NOPMD
                 // TODO implement me
-			} else {
-				throw new UnsupportedCallbackException(callback);
-			}
-		}
-	}
+            } else {
+                throw new UnsupportedCallbackException(callback);
+            }
+        }
+    }
 
-	public Principal getCallerPrincipal() {
-		return callerPrincipal;
-	}
+    public Principal getCallerPrincipal() {
+        return callerPrincipal;
+    }
 
-	public List<String> getGroups() {
-		return groupsArray == null ? null : Arrays.asList(groupsArray);
-	}
+    public List<String> getGroups() {
+        return groupsArray == null ? null : Arrays.asList(groupsArray);
+    }
 }

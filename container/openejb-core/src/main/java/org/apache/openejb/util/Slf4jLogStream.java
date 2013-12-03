@@ -20,90 +20,90 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *	Log the output to Slf4j 
+ *    Log the output to Slf4j
  *
  */
 
 public class Slf4jLogStream implements LogStream {
-	private Logger log;
-	
-	public Slf4jLogStream(LogCategory logCategory) {
-		log = LoggerFactory.getLogger(logCategory.getName());
-	}
+    private Logger log;
 
-	@Override
-	public boolean isFatalEnabled() {
-		return log.isErrorEnabled();
-	}
+    public Slf4jLogStream(LogCategory logCategory) {
+        log = LoggerFactory.getLogger(logCategory.getName());
+    }
 
-	@Override
-	public void fatal(String message) {
-		log.error(message);
-	}
+    @Override
+    public boolean isFatalEnabled() {
+        return log.isErrorEnabled();
+    }
 
-	@Override
-	public void fatal(String message, Throwable t) {
-		log.error(message,t);
-	}
+    @Override
+    public void fatal(String message) {
+        log.error(message);
+    }
 
-	@Override
-	public boolean isErrorEnabled() {
-		return log.isErrorEnabled();
-	}
+    @Override
+    public void fatal(String message, Throwable t) {
+        log.error(message,t);
+    }
 
-	@Override
-	public void error(String message) {
-		log.error(message);
-	}
+    @Override
+    public boolean isErrorEnabled() {
+        return log.isErrorEnabled();
+    }
 
-	@Override
-	public void error(String message, Throwable t) {
-		log.error(message,t);
-	}
+    @Override
+    public void error(String message) {
+        log.error(message);
+    }
 
-	@Override
-	public boolean isWarnEnabled() {
-		return log.isWarnEnabled();
-	}
+    @Override
+    public void error(String message, Throwable t) {
+        log.error(message,t);
+    }
 
-	@Override
-	public void warn(String message) {
-		log.warn(message);
-	}
+    @Override
+    public boolean isWarnEnabled() {
+        return log.isWarnEnabled();
+    }
 
-	@Override
-	public void warn(String message, Throwable t) {
-		log.warn(message,t);	
-	}
+    @Override
+    public void warn(String message) {
+        log.warn(message);
+    }
 
-	@Override
-	public boolean isInfoEnabled() {
-		return log.isInfoEnabled();
-	}
+    @Override
+    public void warn(String message, Throwable t) {
+        log.warn(message,t);
+    }
 
-	@Override
-	public void info(String message) {
-		log.info(message);
-	}
+    @Override
+    public boolean isInfoEnabled() {
+        return log.isInfoEnabled();
+    }
 
-	@Override
-	public void info(String message, Throwable t) {
-		log.info(message,t);
-	}
+    @Override
+    public void info(String message) {
+        log.info(message);
+    }
 
-	@Override
-	public boolean isDebugEnabled() {
-		return log.isDebugEnabled();
-	}
+    @Override
+    public void info(String message, Throwable t) {
+        log.info(message,t);
+    }
 
-	@Override
-	public void debug(String message) {
-		log.debug(message);
-	}
+    @Override
+    public boolean isDebugEnabled() {
+        return log.isDebugEnabled();
+    }
 
-	@Override
-	public void debug(String message, Throwable t) {
-		log.debug(message,t);
-	}
+    @Override
+    public void debug(String message) {
+        log.debug(message);
+    }
+
+    @Override
+    public void debug(String message, Throwable t) {
+        log.debug(message,t);
+    }
 
 }

@@ -151,7 +151,7 @@ public class IvmContext implements Context, Serializable {
 
             // don't cache proxies
             if (!(obj instanceof IntraVmProxy) && !(obj instanceof ContextualJndiReference)) {
-            	fastCache.put(compoundName, obj);
+                fastCache.put(compoundName, obj);
             }
         }
 
@@ -396,8 +396,8 @@ public class IvmContext implements Context, Serializable {
         int indx = name.indexOf(":");
         if (indx > -1) {
             /*
-	      The ':' character will be in the path if its an absolute path name starting with the schema
-	      'java:'.  We strip the schema off the path before passing it to the node.resolve method.
+          The ':' character will be in the path if its an absolute path name starting with the schema
+          'java:'.  We strip the schema off the path before passing it to the node.resolve method.
             */
             name = name.substring(indx + 1);
         }

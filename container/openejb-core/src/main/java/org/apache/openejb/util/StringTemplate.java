@@ -22,38 +22,38 @@ import java.util.regex.Pattern;
 
 public class StringTemplate {
 
-	public static final Pattern PATTERN = Pattern.compile("(\\{)((\\.|\\w)+)(})");
-	private final String template;
+    public static final Pattern PATTERN = Pattern.compile("(\\{)((\\.|\\w)+)(})");
+    private final String template;
 
-	public StringTemplate(String template) {
-		this.template = template;
-	}
+    public StringTemplate(String template) {
+        this.template = template;
+    }
 
-	public String apply(Map<String, String> map) {
-    	Matcher matcher = PATTERN.matcher(template);
+    public String apply(Map<String, String> map) {
+        Matcher matcher = PATTERN.matcher(template);
         StringBuffer buf = new StringBuffer();
  
-    	while (matcher.find()) {
-    		String key = matcher.group(2);
+        while (matcher.find()) {
+            String key = matcher.group(2);
 
             if (key == null) throw new IllegalStateException("Key is null. Template '" + template + "'");
 
-    		String value = map.get(key);
-    		
-    		if (key.toLowerCase().endsWith(".lc")) {
-    			value = map.get(key.substring(0, key.length() - 3)).toLowerCase();
-    		} else if (key.toLowerCase().endsWith(".uc")) {
-    			value = map.get(key.substring(0, key.length() - 3)).toUpperCase();
-    		} else if (key.toLowerCase().endsWith(".cc")) {
-    			value = Strings.camelCase(map.get(key.substring(0, key.length() - 3)));
-			}
+            String value = map.get(key);
+
+            if (key.toLowerCase().endsWith(".lc")) {
+                value = map.get(key.substring(0, key.length() - 3)).toLowerCase();
+            } else if (key.toLowerCase().endsWith(".uc")) {
+                value = map.get(key.substring(0, key.length() - 3)).toUpperCase();
+            } else if (key.toLowerCase().endsWith(".cc")) {
+                value = Strings.camelCase(map.get(key.substring(0, key.length() - 3)));
+            }
 
             if (value == null) throw new IllegalStateException("Value is null for key '" + key + "'. Template '" + template + "'. Keys: " + Join.join(", ", map.keySet()));
             matcher.appendReplacement(buf, value);
-    	}
+        }
 
-    	matcher.appendTail(buf);
-    	return buf.toString();
-	}
+        matcher.appendTail(buf);
+        return buf.toString();
+    }
 
 }

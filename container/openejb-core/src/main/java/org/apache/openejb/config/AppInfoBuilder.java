@@ -168,17 +168,17 @@ class AppInfoBuilder {
                      * JRG - there's probably a better way of handling this, but this code handles the case when:
                      * 
                      * A connector with two or more inbound adapter is registered, causing two containers named with the format:
-                     * 	<moduleId>-<message listener interface>
+                     *     <moduleId>-<message listener interface>
                      * 
                      * This code adjusts the container id for the associated MDBs by sticking the message listener interface on the end.
                      * 
                      */
                     if (bean instanceof MessageDrivenBeanInfo && !containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
-                		final MessageDrivenBeanInfo mdb = (MessageDrivenBeanInfo) bean;
-                		final String newContainerId = d.getContainerId() + "-" + mdb.mdbInterface;
-                		if (containerIds.contains(newContainerId)) {
-                			d.setContainerId(newContainerId);
-                		}
+                        final MessageDrivenBeanInfo mdb = (MessageDrivenBeanInfo) bean;
+                        final String newContainerId = d.getContainerId() + "-" + mdb.mdbInterface;
+                        if (containerIds.contains(newContainerId)) {
+                            d.setContainerId(newContainerId);
+                        }
                     }
 
                     if (!containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
@@ -526,7 +526,7 @@ class AppInfoBuilder {
                     }
                     properties.setProperty("TransactionSupport", transactionSupport);
                     if (connectorInfo.resourceAdapter != null) {
-                    	properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                        properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
                     }
 
                     final ResourceInfo resourceInfo = this.configFactory.configureService(resource, ResourceInfo.class);
@@ -977,7 +977,7 @@ class AppInfoBuilder {
      */
     void configureWebserviceSecurity(final EjbJarInfo ejbJarInfo, final EjbModule ejbModule) {
         final Object altDD = ejbModule.getOpenejbJar();
-	final List<PortInfo> infoList = ejbJarInfo.portInfos;
+    final List<PortInfo> infoList = ejbJarInfo.portInfos;
 
         this.configureWebserviceScurity(infoList, altDD);
     }

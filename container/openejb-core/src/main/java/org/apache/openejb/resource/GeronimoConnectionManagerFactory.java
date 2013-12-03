@@ -83,14 +83,14 @@ public class GeronimoConnectionManagerFactory   {
     private ManagedConnectionFactory mcf;
 
     public ManagedConnectionFactory getMcf() {
-		return mcf;
-	}
+        return mcf;
+    }
 
-	public void setMcf(ManagedConnectionFactory mcf) {
-		this.mcf = mcf;
-	}
+    public void setMcf(ManagedConnectionFactory mcf) {
+        this.mcf = mcf;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 

@@ -24,9 +24,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 public class Memoizer<K, V> implements Computable<K, V> {
-	private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
+    private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
 
-	private final Computable<K, V> c;
+    private final Computable<K, V> c;
 
     /**
      * Constructs a new <code>Memoizer</code> with the specified cache source.
@@ -35,33 +35,33 @@ public class Memoizer<K, V> implements Computable<K, V> {
      * @throws NullPointerException
      *             if c is null
      */
-	public Memoizer(Computable<K, V> c) {
+    public Memoizer(Computable<K, V> c) {
         if(c == null) throw new NullPointerException("Computable cache value source algorithm may not be null");
-		this.c = c;
-	}
+        this.c = c;
+    }
 
-	public V compute(final K key) throws InterruptedException {
-		while (true) {
-			Future<V> future = cache.get(key);
-			if (future == null) {
+    public V compute(final K key) throws InterruptedException {
+        while (true) {
+            Future<V> future = cache.get(key);
+            if (future == null) {
 
-				Callable<V> eval = new Callable<V>() {
-					public V call() throws Exception {
-						return c.compute(key);
-					}
-				};
-				FutureTask<V> futureTask = new FutureTask<V>(eval);
-				future = cache.putIfAbsent(key, futureTask);
-				if (future == null) {
-					future = futureTask;
-					futureTask.run();
-				}
-			}
-			try {
-				return future.get();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                Callable<V> eval = new Callable<V>() {
+                    public V call() throws Exception {
+                        return c.compute(key);
+                    }
+                };
+                FutureTask<V> futureTask = new FutureTask<V>(eval);
+                future = cache.putIfAbsent(key, futureTask);
+                if (future == null) {
+                    future = futureTask;
+                    futureTask.run();
+                }
+            }
+            try {
+                return future.get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
