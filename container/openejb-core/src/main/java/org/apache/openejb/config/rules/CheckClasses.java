@@ -210,9 +210,9 @@ public class CheckClasses extends ValidationBase {
             for (Object item : clazz.getAnnotations()) { item.toString(); }
             // checking for any declared enum constants
             for(Class klass: clazz.getClasses()){
-            	if(klass.isEnum()){
-            		klass.toString();
-            	}
+                if(klass.isEnum()){
+                    klass.toString();
+                }
             }
         } catch (ClassNotFoundException e) {
             /*

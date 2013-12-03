@@ -61,8 +61,8 @@ public class SimpleBootstrapContext implements BootstrapContext {
 
     public boolean isContextSupported(Class<? extends WorkContext> cls) {
         if (workManager instanceof GeronimoWorkManager) {
-        	GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
-        	return geronimoWorkManager.isContextSupported(cls);
+            GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
+            return geronimoWorkManager.isContextSupported(cls);
         }
         
         return false;

@@ -524,325 +524,325 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
 
-        	org.apache.openejb.jee.Connector connector = connectorModule.getConnector();
-        	if (connector == null) {
-        		connector = new org.apache.openejb.jee.Connector();
-        	}
+            org.apache.openejb.jee.Connector connector = connectorModule.getConnector();
+            if (connector == null) {
+                connector = new org.apache.openejb.jee.Connector();
+            }
 
-        	// JCA 1.6 - 18.3.1 do not look at annotations if the provided connector
-        	// deployment descriptor is "meta-data complete".
+            // JCA 1.6 - 18.3.1 do not look at annotations if the provided connector
+            // deployment descriptor is "meta-data complete".
 
-        	float specVersion = 0;
-        	try {
-        		specVersion = Float.parseFloat(connector.getVersion());
-        	} catch (Exception e) {
+            float specVersion = 0;
+            try {
+                specVersion = Float.parseFloat(connector.getVersion());
+            } catch (Exception e) {
                 // no-op
-        	}
+            }
 
-			if (specVersion < 1.6 || Boolean.TRUE.equals(connector.isMetadataComplete())) {
-				return connectorModule;
-			}
+            if (specVersion < 1.6 || Boolean.TRUE.equals(connector.isMetadataComplete())) {
+                return connectorModule;
+            }
 
 
-        	IAnnotationFinder finder = connectorModule.getFinder();
-        	if (finder == null) {
-        		try {
-        			finder = FinderFactory.createFinder(connectorModule);
-					connectorModule.setFinder(finder);
-				} catch (Exception e) {
-					// TODO: some sort of error
-					return connectorModule;
-				}
-        	}
+            IAnnotationFinder finder = connectorModule.getFinder();
+            if (finder == null) {
+                try {
+                    finder = FinderFactory.createFinder(connectorModule);
+                    connectorModule.setFinder(finder);
+                } catch (Exception e) {
+                    // TODO: some sort of error
+                    return connectorModule;
+                }
+            }
 
-        	List<Class<?>> connectorClasses = finder.findAnnotatedClasses(Connector.class);
+            List<Class<?>> connectorClasses = finder.findAnnotatedClasses(Connector.class);
 
-        	// are we allowed to have more than one connector class? Not without a deployment descriptor
-        	if (connector.getResourceAdapter() == null || connector.getResourceAdapter().getResourceAdapterClass() == null ||  connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
-        		if (connectorClasses.size() == 0) { //NOPMD
-        			// TODO: fail some validation here too
-        		}
+            // are we allowed to have more than one connector class? Not without a deployment descriptor
+            if (connector.getResourceAdapter() == null || connector.getResourceAdapter().getResourceAdapterClass() == null ||  connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
+                if (connectorClasses.size() == 0) { //NOPMD
+                    // TODO: fail some validation here too
+                }
 
-        		if (connectorClasses.size() > 1) { //NOPMD
-        			// too many connector classes, this is against the spec
-        			// TODO: something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
-        		}
-        	}
+                if (connectorClasses.size() > 1) { //NOPMD
+                    // too many connector classes, this is against the spec
+                    // TODO: something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
+                }
+            }
 
-        	Class<?> connectorClass = null;
-        	if (connectorClasses.size() == 1) {
-        		connectorClass = connectorClasses.get(0);
-        	}
+            Class<?> connectorClass = null;
+            if (connectorClasses.size() == 1) {
+                connectorClass = connectorClasses.get(0);
+            }
 
-        	if (connectorClasses.size() > 1) {
-        		for (Class<?> cls : connectorClasses) {
-        			if (cls.getName().equals(connector.getResourceAdapter().getResourceAdapterClass())) {
-        				connectorClass = cls;
-        				break;
-        			}
-        		}
-        	}
+            if (connectorClasses.size() > 1) {
+                for (Class<?> cls : connectorClasses) {
+                    if (cls.getName().equals(connector.getResourceAdapter().getResourceAdapterClass())) {
+                        connectorClass = cls;
+                        break;
+                    }
+                }
+            }
 
-        	if (connectorClass != null) {
-	    		if (connector.getResourceAdapter() == null) {
-	    			connector.setResourceAdapter(new ResourceAdapter());
-	    		}
+            if (connectorClass != null) {
+                if (connector.getResourceAdapter() == null) {
+                    connector.setResourceAdapter(new ResourceAdapter());
+                }
 
-	    		if (connector.getResourceAdapter().getResourceAdapterClass() == null || connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
-	    			connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName());
-	    		}
+                if (connector.getResourceAdapter().getResourceAdapterClass() == null || connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
+                    connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName());
+                }
 
-	    		Connector connectorAnnotation = connectorClass.getAnnotation(Connector.class);
+                Connector connectorAnnotation = connectorClass.getAnnotation(Connector.class);
 
-	    		connector.setDisplayNames(getTexts(connector.getDisplayNames(), connectorAnnotation.displayName()));
-	    		connector.setDescriptions(getTexts(connector.getDescriptions(), connectorAnnotation.description()));
+                connector.setDisplayNames(getTexts(connector.getDisplayNames(), connectorAnnotation.displayName()));
+                connector.setDescriptions(getTexts(connector.getDescriptions(), connectorAnnotation.description()));
 
-	    		connector.setEisType(getString(connector.getEisType(), connectorAnnotation.eisType()));
-	    		connector.setVendorName(getString(connector.getVendorName(), connectorAnnotation.vendorName()));
-	    		connector.setResourceAdapterVersion(getString(connector.getResourceAdapterVersion(), connectorAnnotation.version()));
+                connector.setEisType(getString(connector.getEisType(), connectorAnnotation.eisType()));
+                connector.setVendorName(getString(connector.getVendorName(), connectorAnnotation.vendorName()));
+                connector.setResourceAdapterVersion(getString(connector.getResourceAdapterVersion(), connectorAnnotation.version()));
 
-	    		if (connector.getIcons().isEmpty()) {
-	    			int smallIcons = connectorAnnotation.smallIcon().length;
-	    			int largeIcons = connectorAnnotation.largeIcon().length;
+                if (connector.getIcons().isEmpty()) {
+                    int smallIcons = connectorAnnotation.smallIcon().length;
+                    int largeIcons = connectorAnnotation.largeIcon().length;
 
-	    			for (int i = 0; i < smallIcons && i < largeIcons; i++) {
-	    				Icon icon = new Icon();
+                    for (int i = 0; i < smallIcons && i < largeIcons; i++) {
+                        Icon icon = new Icon();
                         // locale can't be specified in the annotation and it is en by default
                         // so on other systems it doesn't work because Icon return the default locale
                         icon.setLang(Locale.getDefault().getLanguage());
-	    				if (i < smallIcons) {
-	    					icon.setSmallIcon(connectorAnnotation.smallIcon()[i]);
-	    				}
+                        if (i < smallIcons) {
+                            icon.setSmallIcon(connectorAnnotation.smallIcon()[i]);
+                        }
 
-	    				if (i < largeIcons) {
-	    					icon.setLargeIcon(connectorAnnotation.largeIcon()[i]);
-	    				}
+                        if (i < largeIcons) {
+                            icon.setLargeIcon(connectorAnnotation.largeIcon()[i]);
+                        }
 
-	    				connector.getIcons().add(icon);
-	    			}
-	    		}
+                        connector.getIcons().add(icon);
+                    }
+                }
 
-	    		if (connector.getLicense() == null) {
-	    			License license = new License();
-					connector.setLicense(license);
-					license.setLicenseRequired(connectorAnnotation.licenseRequired());
-	    		}
+                if (connector.getLicense() == null) {
+                    License license = new License();
+                    connector.setLicense(license);
+                    license.setLicenseRequired(connectorAnnotation.licenseRequired());
+                }
 
-	    		connector.getLicense().setDescriptions(getTexts(connector.getLicense().getDescriptions(), connectorAnnotation.licenseDescription()));
-
-
-	    		SecurityPermission[] annotationSecurityPermissions = connectorAnnotation.securityPermissions();
-				List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
-				if (securityPermission == null || securityPermission.size() == 0) {
-					for (SecurityPermission sp : annotationSecurityPermissions) {
-						org.apache.openejb.jee.SecurityPermission permission = new org.apache.openejb.jee.SecurityPermission();
-						permission.setSecurityPermissionSpec(sp.permissionSpec());
-						permission.setDescriptions(stringsToTexts(sp.description()));
-						securityPermission.add(permission);
-					}
-				}
-
-				Class<? extends WorkContext>[] annotationRequiredWorkContexts = connectorAnnotation.requiredWorkContexts();
-				List<String> requiredWorkContext = connector.getRequiredWorkContext();
-				if (requiredWorkContext.size() == 0) {
-					for (Class<? extends WorkContext> cls : annotationRequiredWorkContexts) {
-						requiredWorkContext.add(cls.getName());
-					}
-				}
-
-				OutboundResourceAdapter outboundResourceAdapter = connector.getResourceAdapter().getOutboundResourceAdapter();
-				if (outboundResourceAdapter == null) {
-					outboundResourceAdapter = new OutboundResourceAdapter();
-					connector.getResourceAdapter().setOutboundResourceAdapter(outboundResourceAdapter);
-				}
-
-				List<AuthenticationMechanism> authenticationMechanisms = outboundResourceAdapter.getAuthenticationMechanism();
-				javax.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
-				if (authenticationMechanisms.size() == 0) {
-					for (javax.resource.spi.AuthenticationMechanism am : authMechanisms) {
-						AuthenticationMechanism authMechanism = new AuthenticationMechanism();
-						authMechanism.setAuthenticationMechanismType(am.authMechanism());
-						authMechanism.setCredentialInterface(am.credentialInterface().toString());
-						authMechanism.setDescriptions(stringsToTexts(am.description()));
-
-						authenticationMechanisms.add(authMechanism);
-					}
-				}
-
-				if (outboundResourceAdapter.getTransactionSupport() == null) {
-					outboundResourceAdapter.setTransactionSupport(TransactionSupportType.fromValue(connectorAnnotation.transactionSupport().toString()));
-				}
-
-				if (outboundResourceAdapter.isReauthenticationSupport() == null) {
-					outboundResourceAdapter.setReauthenticationSupport(connectorAnnotation.reauthenticationSupport());
-				}
-        	}
-
-        	// process @ConnectionDescription(s)
-        	List<Class<?>> classes = finder.findAnnotatedClasses(ConnectionDefinitions.class);
-        	for (Class<?> cls : classes) {
-				ConnectionDefinitions connectionDefinitionsAnnotation = cls.getAnnotation(ConnectionDefinitions.class);
-				ConnectionDefinition[] definitions = connectionDefinitionsAnnotation.value();
-
-				for (ConnectionDefinition definition : definitions) {
-					processConnectionDescription(connector.getResourceAdapter(), definition, cls);
-				}
-			}
-
-        	classes = finder.findAnnotatedClasses(ConnectionDefinition.class);
-        	for (Class<?> cls : classes) {
-				ConnectionDefinition connectionDefinitionAnnotation = cls.getAnnotation(ConnectionDefinition.class);
-				processConnectionDescription(connector.getResourceAdapter(), connectionDefinitionAnnotation, cls);
-			}
+                connector.getLicense().setDescriptions(getTexts(connector.getLicense().getDescriptions(), connectorAnnotation.licenseDescription()));
 
 
-        	InboundResourceadapter inboundResourceAdapter = connector.getResourceAdapter().getInboundResourceAdapter();
-        	if (inboundResourceAdapter == null) {
-        		inboundResourceAdapter = new InboundResourceadapter();
-        		connector.getResourceAdapter().setInboundResourceAdapter(inboundResourceAdapter);
-        	}
+                SecurityPermission[] annotationSecurityPermissions = connectorAnnotation.securityPermissions();
+                List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
+                if (securityPermission == null || securityPermission.size() == 0) {
+                    for (SecurityPermission sp : annotationSecurityPermissions) {
+                        org.apache.openejb.jee.SecurityPermission permission = new org.apache.openejb.jee.SecurityPermission();
+                        permission.setSecurityPermissionSpec(sp.permissionSpec());
+                        permission.setDescriptions(stringsToTexts(sp.description()));
+                        securityPermission.add(permission);
+                    }
+                }
 
-        	MessageAdapter messageAdapter = inboundResourceAdapter.getMessageAdapter();
-        	if (messageAdapter == null) {
-        		messageAdapter = new MessageAdapter();
-        		inboundResourceAdapter.setMessageAdapter(messageAdapter);
-        	}
+                Class<? extends WorkContext>[] annotationRequiredWorkContexts = connectorAnnotation.requiredWorkContexts();
+                List<String> requiredWorkContext = connector.getRequiredWorkContext();
+                if (requiredWorkContext.size() == 0) {
+                    for (Class<? extends WorkContext> cls : annotationRequiredWorkContexts) {
+                        requiredWorkContext.add(cls.getName());
+                    }
+                }
 
-        	classes = finder.findAnnotatedClasses(Activation.class);
-        	for (Class<?> cls : classes) {
-        		MessageListener messageListener = null;
-        		Activation activationAnnotation = cls.getAnnotation(Activation.class);
+                OutboundResourceAdapter outboundResourceAdapter = connector.getResourceAdapter().getOutboundResourceAdapter();
+                if (outboundResourceAdapter == null) {
+                    outboundResourceAdapter = new OutboundResourceAdapter();
+                    connector.getResourceAdapter().setOutboundResourceAdapter(outboundResourceAdapter);
+                }
 
-        		List<MessageListener> messageListeners = messageAdapter.getMessageListener();
-				for (MessageListener ml : messageListeners) {
-					if (cls.getName().equals(ml.getActivationSpec().getActivationSpecClass())) {
-						messageListener = ml;
-						break;
-					}
-				}
+                List<AuthenticationMechanism> authenticationMechanisms = outboundResourceAdapter.getAuthenticationMechanism();
+                javax.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
+                if (authenticationMechanisms.size() == 0) {
+                    for (javax.resource.spi.AuthenticationMechanism am : authMechanisms) {
+                        AuthenticationMechanism authMechanism = new AuthenticationMechanism();
+                        authMechanism.setAuthenticationMechanismType(am.authMechanism());
+                        authMechanism.setCredentialInterface(am.credentialInterface().toString());
+                        authMechanism.setDescriptions(stringsToTexts(am.description()));
 
-				if (messageListener == null) {
-					Class<?>[] listeners = activationAnnotation.messageListeners();
-					for (Class<?> listener : listeners) {
-						messageAdapter.addMessageListener(new MessageListener(listener.getName(), cls.getName()));
-					}
-				}
-			}
+                        authenticationMechanisms.add(authMechanism);
+                    }
+                }
 
-        	classes = finder.findAnnotatedClasses(AdministeredObject.class);
-        	List<AdminObject> adminObjects = connector.getResourceAdapter().getAdminObject();
-        	for (Class<?> cls : classes) {
-				AdministeredObject administeredObjectAnnotation = cls.getAnnotation(AdministeredObject.class);
-				Class[] adminObjectInterfaces = administeredObjectAnnotation.adminObjectInterfaces();
+                if (outboundResourceAdapter.getTransactionSupport() == null) {
+                    outboundResourceAdapter.setTransactionSupport(TransactionSupportType.fromValue(connectorAnnotation.transactionSupport().toString()));
+                }
 
-				AdminObject adminObject = null;
-				for (AdminObject admObj : adminObjects) {
-					if (admObj.getAdminObjectClass().equals(cls.getName())) {
-						adminObject = admObj;
-					}
-				}
+                if (outboundResourceAdapter.isReauthenticationSupport() == null) {
+                    outboundResourceAdapter.setReauthenticationSupport(connectorAnnotation.reauthenticationSupport());
+                }
+            }
 
-				if (adminObject == null) {
-					for (Class iface : adminObjectInterfaces) {
-						AdminObject newAdminObject = new AdminObject();
-						newAdminObject.setAdminObjectClass(cls.getName());
-						newAdminObject.setAdminObjectInterface(iface.getName());
-						adminObjects.add(newAdminObject);
-					}
-				}
-			}
+            // process @ConnectionDescription(s)
+            List<Class<?>> classes = finder.findAnnotatedClasses(ConnectionDefinitions.class);
+            for (Class<?> cls : classes) {
+                ConnectionDefinitions connectionDefinitionsAnnotation = cls.getAnnotation(ConnectionDefinitions.class);
+                ConnectionDefinition[] definitions = connectionDefinitionsAnnotation.value();
 
-        	// need to make a list of classes to process for config properties
+                for (ConnectionDefinition definition : definitions) {
+                    processConnectionDescription(connector.getResourceAdapter(), definition, cls);
+                }
+            }
 
-        	// resource adapter
-        	String raCls = connector.getResourceAdapter().getResourceAdapterClass();
-        	process(connectorModule.getClassLoader(), raCls, connector.getResourceAdapter());
+            classes = finder.findAnnotatedClasses(ConnectionDefinition.class);
+            for (Class<?> cls : classes) {
+                ConnectionDefinition connectionDefinitionAnnotation = cls.getAnnotation(ConnectionDefinition.class);
+                processConnectionDescription(connector.getResourceAdapter(), connectionDefinitionAnnotation, cls);
+            }
 
-        	// managedconnectionfactory
-        	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getOutboundResourceAdapter() != null) {
-	        	List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinitions = connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition();
-	        	for (org.apache.openejb.jee.ConnectionDefinition connectionDefinition : connectionDefinitions) {
-	        		process(connectorModule.getClassLoader(), connectionDefinition.getManagedConnectionFactoryClass(), connectionDefinition);
-				}
-        	}
 
-        	// administeredobject
-        	if (connector.getResourceAdapter() != null) {
-	        	List<AdminObject> raAdminObjects = connector.getResourceAdapter().getAdminObject();
-	        	for (AdminObject raAdminObject : raAdminObjects) {
-					process(connectorModule.getClassLoader(), raAdminObject.getAdminObjectClass(), raAdminObject);
-				}
-        	}
+            InboundResourceadapter inboundResourceAdapter = connector.getResourceAdapter().getInboundResourceAdapter();
+            if (inboundResourceAdapter == null) {
+                inboundResourceAdapter = new InboundResourceadapter();
+                connector.getResourceAdapter().setInboundResourceAdapter(inboundResourceAdapter);
+            }
 
-        	// activationspec
-        	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter() != null) {
-	        	List<MessageListener> messageListeners = connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener();
-	        	for (MessageListener messageListener : messageListeners) {
-					ActivationSpec activationSpec = messageListener.getActivationSpec();
-					process(connectorModule.getClassLoader(), activationSpec.getActivationSpecClass(), activationSpec);
-				}
-        	}
+            MessageAdapter messageAdapter = inboundResourceAdapter.getMessageAdapter();
+            if (messageAdapter == null) {
+                messageAdapter = new MessageAdapter();
+                inboundResourceAdapter.setMessageAdapter(messageAdapter);
+            }
+
+            classes = finder.findAnnotatedClasses(Activation.class);
+            for (Class<?> cls : classes) {
+                MessageListener messageListener = null;
+                Activation activationAnnotation = cls.getAnnotation(Activation.class);
+
+                List<MessageListener> messageListeners = messageAdapter.getMessageListener();
+                for (MessageListener ml : messageListeners) {
+                    if (cls.getName().equals(ml.getActivationSpec().getActivationSpecClass())) {
+                        messageListener = ml;
+                        break;
+                    }
+                }
+
+                if (messageListener == null) {
+                    Class<?>[] listeners = activationAnnotation.messageListeners();
+                    for (Class<?> listener : listeners) {
+                        messageAdapter.addMessageListener(new MessageListener(listener.getName(), cls.getName()));
+                    }
+                }
+            }
+
+            classes = finder.findAnnotatedClasses(AdministeredObject.class);
+            List<AdminObject> adminObjects = connector.getResourceAdapter().getAdminObject();
+            for (Class<?> cls : classes) {
+                AdministeredObject administeredObjectAnnotation = cls.getAnnotation(AdministeredObject.class);
+                Class[] adminObjectInterfaces = administeredObjectAnnotation.adminObjectInterfaces();
+
+                AdminObject adminObject = null;
+                for (AdminObject admObj : adminObjects) {
+                    if (admObj.getAdminObjectClass().equals(cls.getName())) {
+                        adminObject = admObj;
+                    }
+                }
+
+                if (adminObject == null) {
+                    for (Class iface : adminObjectInterfaces) {
+                        AdminObject newAdminObject = new AdminObject();
+                        newAdminObject.setAdminObjectClass(cls.getName());
+                        newAdminObject.setAdminObjectInterface(iface.getName());
+                        adminObjects.add(newAdminObject);
+                    }
+                }
+            }
+
+            // need to make a list of classes to process for config properties
+
+            // resource adapter
+            String raCls = connector.getResourceAdapter().getResourceAdapterClass();
+            process(connectorModule.getClassLoader(), raCls, connector.getResourceAdapter());
+
+            // managedconnectionfactory
+            if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getOutboundResourceAdapter() != null) {
+                List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinitions = connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition();
+                for (org.apache.openejb.jee.ConnectionDefinition connectionDefinition : connectionDefinitions) {
+                    process(connectorModule.getClassLoader(), connectionDefinition.getManagedConnectionFactoryClass(), connectionDefinition);
+                }
+            }
+
+            // administeredobject
+            if (connector.getResourceAdapter() != null) {
+                List<AdminObject> raAdminObjects = connector.getResourceAdapter().getAdminObject();
+                for (AdminObject raAdminObject : raAdminObjects) {
+                    process(connectorModule.getClassLoader(), raAdminObject.getAdminObjectClass(), raAdminObject);
+                }
+            }
+
+            // activationspec
+            if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter() != null) {
+                List<MessageListener> messageListeners = connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener();
+                for (MessageListener messageListener : messageListeners) {
+                    ActivationSpec activationSpec = messageListener.getActivationSpec();
+                    process(connectorModule.getClassLoader(), activationSpec.getActivationSpecClass(), activationSpec);
+                }
+            }
 
             return connectorModule;
         }
 
-		void process(ClassLoader cl, String cls, Object object) {
+        void process(ClassLoader cl, String cls, Object object) {
 
-			List<ConfigProperty> configProperties = null;
-			try {
-			// grab a list of ConfigProperty objects
-				configProperties = (List<ConfigProperty>) object.getClass().getDeclaredMethod("getConfigProperty").invoke(object);
-			} catch (Exception e) {
+            List<ConfigProperty> configProperties = null;
+            try {
+            // grab a list of ConfigProperty objects
+                configProperties = (List<ConfigProperty>) object.getClass().getDeclaredMethod("getConfigProperty").invoke(object);
+            } catch (Exception e) {
                 // no-op
-			}
+            }
 
-			if (configProperties == null) {
-				// can't get config properties
-				return;
-			}
+            if (configProperties == null) {
+                // can't get config properties
+                return;
+            }
 
-			ClassLoader classLoader = cl;
-			if (classLoader == null) {
-				classLoader = Thread.currentThread().getContextClassLoader();
-			}
+            ClassLoader classLoader = cl;
+            if (classLoader == null) {
+                classLoader = Thread.currentThread().getContextClassLoader();
+            }
 
-			final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
+            final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
 
-			try {
-				Class<?> clazz = classLoader.loadClass(realClassName(cls));
-				Object o = clazz.newInstance();
+            try {
+                Class<?> clazz = classLoader.loadClass(realClassName(cls));
+                Object o = clazz.newInstance();
 
-				// add any introspected properties
-				BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-				PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+                // add any introspected properties
+                BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 
-				for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-					String name = propertyDescriptor.getName();
-					Class<?> type = propertyDescriptor.getPropertyType();
+                for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                    String name = propertyDescriptor.getName();
+                    Class<?> type = propertyDescriptor.getPropertyType();
                     if (type == null) {
                         continue;
                     }
-					if (type.isPrimitive()) {
-						type = getWrapper(type.getName());
-					}
+                    if (type.isPrimitive()) {
+                        type = getWrapper(type.getName());
+                    }
 
-					if (! allowedTypes.contains(type.getName())) {
-						continue;
-					}
+                    if (! allowedTypes.contains(type.getName())) {
+                        continue;
+                    }
 
-					if (! containsConfigProperty(configProperties, name)) {
-						if (type != null) {
-							ConfigProperty configProperty = new ConfigProperty();
-							configProperties.add(configProperty);
+                    if (! containsConfigProperty(configProperties, name)) {
+                        if (type != null) {
+                            ConfigProperty configProperty = new ConfigProperty();
+                            configProperties.add(configProperty);
 
-							Object value = null;
-							try {
-								value = propertyDescriptor.getReadMethod().invoke(o);
-							} catch (Exception e) {
+                            Object value = null;
+                            try {
+                                value = propertyDescriptor.getReadMethod().invoke(o);
+                            } catch (Exception e) {
                                 // no-op
-							}
+                            }
 
-							javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
+                            javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
                             if (annotation == null) {
                                 try {
                                     // if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
@@ -852,198 +852,198 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 }
                             }
 
-							configProperty.setConfigPropertyName(name);
-							configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
-							if (value != null) {
-								configProperty.setConfigPropertyValue(value.toString());
-							}
+                            configProperty.setConfigPropertyName(name);
+                            configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
+                            if (value != null) {
+                                configProperty.setConfigPropertyValue(value.toString());
+                            }
 
-							if (annotation != null) {
-								if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
-									configProperty.setConfigPropertyValue(annotation.defaultValue());
-								}
-								configProperty.setConfigPropertyConfidential(annotation.confidential());
-								configProperty.setConfigPropertyIgnore(annotation.ignore());
-								configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-								configProperty.setDescriptions(stringsToTexts(annotation.description()));
-							}
-						}
-					}
-				}
+                            if (annotation != null) {
+                                if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
+                                    configProperty.setConfigPropertyValue(annotation.defaultValue());
+                                }
+                                configProperty.setConfigPropertyConfidential(annotation.confidential());
+                                configProperty.setConfigPropertyIgnore(annotation.ignore());
+                                configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+                                configProperty.setDescriptions(stringsToTexts(annotation.description()));
+                            }
+                        }
+                    }
+                }
 
-				// add any annotated fields we haven't already picked up
-				Field[] declaredFields = clazz.getDeclaredFields();
-				for (Field field : declaredFields) {
-					javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
+                // add any annotated fields we haven't already picked up
+                Field[] declaredFields = clazz.getDeclaredFields();
+                for (Field field : declaredFields) {
+                    javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
 
-					String name = field.getName();
-					Object value = null;
-					try {
-						value = field.get(o);
-					} catch (Exception e) {
+                    String name = field.getName();
+                    Object value = null;
+                    try {
+                        value = field.get(o);
+                    } catch (Exception e) {
                         // no-op
-					}
+                    }
 
-					if (! containsConfigProperty(configProperties, name)) {
-						String type = getConfigPropertyType(annotation, field.getType());
+                    if (! containsConfigProperty(configProperties, name)) {
+                        String type = getConfigPropertyType(annotation, field.getType());
 
-						if (type != null) {
-							ConfigProperty configProperty = new ConfigProperty();
-							configProperties.add(configProperty);
+                        if (type != null) {
+                            ConfigProperty configProperty = new ConfigProperty();
+                            configProperties.add(configProperty);
 
-							configProperty.setConfigPropertyName(name);
-							configProperty.setConfigPropertyType(type);
-							if (value != null) {
-								configProperty.setConfigPropertyValue(value.toString());
-							}
+                            configProperty.setConfigPropertyName(name);
+                            configProperty.setConfigPropertyType(type);
+                            if (value != null) {
+                                configProperty.setConfigPropertyValue(value.toString());
+                            }
 
-							if (annotation != null) {
-								if (annotation.defaultValue() != null) {
-									configProperty.setConfigPropertyValue(annotation.defaultValue());
-								}
-								configProperty.setConfigPropertyConfidential(annotation.confidential());
-								configProperty.setConfigPropertyIgnore(annotation.ignore());
-								configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-							}
-						}
-					}
-				}
-			} catch (Exception  e) {
-				e.printStackTrace();
-			}
-		}
+                            if (annotation != null) {
+                                if (annotation.defaultValue() != null) {
+                                    configProperty.setConfigPropertyValue(annotation.defaultValue());
+                                }
+                                configProperty.setConfigPropertyConfidential(annotation.confidential());
+                                configProperty.setConfigPropertyIgnore(annotation.ignore());
+                                configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+                            }
+                        }
+                    }
+                }
+            } catch (Exception  e) {
+                e.printStackTrace();
+            }
+        }
 
-		private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
-			Class<?> t = annotation == null ? null : annotation.type();
+        private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
+            Class<?> t = annotation == null ? null : annotation.type();
             if (t == null && type != null) {
                 return type.getName();
             } else if (t == null) {
                 return null;
             }
 
-			if (t.equals(Object.class)) {
-				t = type;
-			}
+            if (t.equals(Object.class)) {
+                t = type;
+            }
             if (t == null) { // t == null && type == null
                 return null;
             }
 
-			if (t.isPrimitive()) {
-				t = getWrapper(t.getName());
-			}
+            if (t.isPrimitive()) {
+                t = getWrapper(t.getName());
+            }
 
-			return t.getName();
-		}
+            return t.getName();
+        }
 
-		private boolean containsConfigProperty(List<ConfigProperty> configProperties, String name) {
-			for (ConfigProperty configProperty : configProperties) {
-				if (configProperty.getConfigPropertyName().equals(name)) {
-					return true;
-				}
-			}
+        private boolean containsConfigProperty(List<ConfigProperty> configProperties, String name) {
+            for (ConfigProperty configProperty : configProperties) {
+                if (configProperty.getConfigPropertyName().equals(name)) {
+                    return true;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		private Class<?> getWrapper(String primitiveType) {
-			final Map<String,Class<?>> builtInMap = new HashMap<String,Class<?>>();{
-			       builtInMap.put("int", Integer.class);
-			       builtInMap.put("long", Long.class);
-			       builtInMap.put("double", Double.class);
-			       builtInMap.put("float", Float.class);
-			       builtInMap.put("boolean", Boolean.class);
-			       builtInMap.put("char", Character.class);
-			       builtInMap.put("byte", Byte.class);
-			       builtInMap.put("void", Void.class);
-			       builtInMap.put("short", Short.class);
-			}
+        private Class<?> getWrapper(String primitiveType) {
+            final Map<String,Class<?>> builtInMap = new HashMap<String,Class<?>>();{
+                   builtInMap.put("int", Integer.class);
+                   builtInMap.put("long", Long.class);
+                   builtInMap.put("double", Double.class);
+                   builtInMap.put("float", Float.class);
+                   builtInMap.put("boolean", Boolean.class);
+                   builtInMap.put("char", Character.class);
+                   builtInMap.put("byte", Byte.class);
+                   builtInMap.put("void", Void.class);
+                   builtInMap.put("short", Short.class);
+            }
 
-			return builtInMap.get(primitiveType);
-		}
+            return builtInMap.get(primitiveType);
+        }
 
-		private void processConnectionDescription(ResourceAdapter resourceAdapter, ConnectionDefinition connectionDefinitionAnnotation, Class<?> cls) {
-			// try and find the managed connection factory
+        private void processConnectionDescription(ResourceAdapter resourceAdapter, ConnectionDefinition connectionDefinitionAnnotation, Class<?> cls) {
+            // try and find the managed connection factory
 
-			OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.getOutboundResourceAdapter();
-			if (outboundResourceAdapter == null) {
-				outboundResourceAdapter = new OutboundResourceAdapter();
-				resourceAdapter.setOutboundResourceAdapter(outboundResourceAdapter);
-			}
+            OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.getOutboundResourceAdapter();
+            if (outboundResourceAdapter == null) {
+                outboundResourceAdapter = new OutboundResourceAdapter();
+                resourceAdapter.setOutboundResourceAdapter(outboundResourceAdapter);
+            }
 
-			List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinition = outboundResourceAdapter.getConnectionDefinition();
+            List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinition = outboundResourceAdapter.getConnectionDefinition();
 
-			org.apache.openejb.jee.ConnectionDefinition definition = null;
-			for (org.apache.openejb.jee.ConnectionDefinition cd : connectionDefinition) {
-				if (cd.getManagedConnectionFactoryClass().equals(cls.getName())) {
-					definition = cd;
-					break;
-				}
-			}
+            org.apache.openejb.jee.ConnectionDefinition definition = null;
+            for (org.apache.openejb.jee.ConnectionDefinition cd : connectionDefinition) {
+                if (cd.getManagedConnectionFactoryClass().equals(cls.getName())) {
+                    definition = cd;
+                    break;
+                }
+            }
 
-			if (definition == null) {
-				definition = new org.apache.openejb.jee.ConnectionDefinition();
-				outboundResourceAdapter.getConnectionDefinition().add(definition);
-			}
+            if (definition == null) {
+                definition = new org.apache.openejb.jee.ConnectionDefinition();
+                outboundResourceAdapter.getConnectionDefinition().add(definition);
+            }
 
-			if (definition.getManagedConnectionFactoryClass() == null) {
-				definition.setManagedConnectionFactoryClass(cls.getName());
-			}
+            if (definition.getManagedConnectionFactoryClass() == null) {
+                definition.setManagedConnectionFactoryClass(cls.getName());
+            }
 
-			if (definition.getConnectionInterface() == null) {
-				definition.setConnectionInterface(connectionDefinitionAnnotation.connection().getName());
-			}
+            if (definition.getConnectionInterface() == null) {
+                definition.setConnectionInterface(connectionDefinitionAnnotation.connection().getName());
+            }
 
-			if (definition.getConnectionImplClass() == null) {
-				definition.setConnectionImplClass(connectionDefinitionAnnotation.connectionImpl().getName());
-			}
+            if (definition.getConnectionImplClass() == null) {
+                definition.setConnectionImplClass(connectionDefinitionAnnotation.connectionImpl().getName());
+            }
 
-			if (definition.getConnectionFactoryInterface() == null) {
-				definition.setConnectionFactoryInterface(connectionDefinitionAnnotation.connectionFactory().getName());
-			}
+            if (definition.getConnectionFactoryInterface() == null) {
+                definition.setConnectionFactoryInterface(connectionDefinitionAnnotation.connectionFactory().getName());
+            }
 
-			if (definition.getConnectionFactoryImplClass() == null) {
-				definition.setConnectionFactoryImplClass(connectionDefinitionAnnotation.connectionFactoryImpl().getName());
-			}
-		}
+            if (definition.getConnectionFactoryImplClass() == null) {
+                definition.setConnectionFactoryImplClass(connectionDefinitionAnnotation.connectionFactoryImpl().getName());
+            }
+        }
 
-		private Text[] stringsToTexts(String[] strings) {
-			if (strings == null) {
-				return null;
-			}
+        private Text[] stringsToTexts(String[] strings) {
+            if (strings == null) {
+                return null;
+            }
 
-			Text[] result = new Text[strings.length];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = new Text();
-				result[i].setValue(strings[i]);
-			}
+            Text[] result = new Text[strings.length];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = new Text();
+                result[i].setValue(strings[i]);
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		private String getString(String descriptorString, String annotationString) {
-			if (descriptorString != null && descriptorString.length() > 0) {
-				return descriptorString;
-			}
+        private String getString(String descriptorString, String annotationString) {
+            if (descriptorString != null && descriptorString.length() > 0) {
+                return descriptorString;
+            }
 
-			if (annotationString != null && annotationString.length() > 0) {
-				return annotationString;
-			}
+            if (annotationString != null && annotationString.length() > 0) {
+                return annotationString;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		private Text[] getTexts(Text[] originalTexts, String[] newStrings) {
-			if (newStrings != null && newStrings.length > 0 && (originalTexts == null || originalTexts.length == 0)) {
-				Text[] texts = new Text[newStrings.length];
-				for (int i = 0; i < newStrings.length; i++) {
-					texts[i] = new Text(null, newStrings[i]);
-				}
+        private Text[] getTexts(Text[] originalTexts, String[] newStrings) {
+            if (newStrings != null && newStrings.length > 0 && (originalTexts == null || originalTexts.length == 0)) {
+                Text[] texts = new Text[newStrings.length];
+                for (int i = 0; i < newStrings.length; i++) {
+                    texts[i] = new Text(null, newStrings[i]);
+                }
 
-				return texts;
-			} else {
-				return originalTexts;
-			}
-		}
+                return texts;
+            } else {
+                return originalTexts;
+            }
+        }
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
@@ -1854,7 +1854,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // replace all "/" by "."
                 if (clientModule.getMainClass().contains("/")) { // className can't be null here
                     clientModule.setMainClass(className);
-		}
+        }
 
                 Class clazz;
                 try {

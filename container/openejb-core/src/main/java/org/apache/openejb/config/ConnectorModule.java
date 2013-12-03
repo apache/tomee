@@ -39,7 +39,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
 
     private ID id;
 
-	private IAnnotationFinder finder;
+    private IAnnotationFinder finder;
     
     public ConnectorModule(Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
@@ -102,11 +102,11 @@ public class ConnectorModule extends Module implements DeploymentModule {
                 '}';
     }
 
-	public IAnnotationFinder getFinder() {
-		return finder;
-	}
+    public IAnnotationFinder getFinder() {
+        return finder;
+    }
 
-	public void setFinder(IAnnotationFinder finder) {
-		this.finder = finder;
-	}
+    public void setFinder(IAnnotationFinder finder) {
+        this.finder = finder;
+    }
 }

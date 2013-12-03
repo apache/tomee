@@ -112,14 +112,14 @@ public class ReflectionInvocationContext implements InvocationContext {
                         ", but got a parameter that is null");
                 }
             } else {            
-            	//check that types are applicable
-            	Class<?> actual = Classes.deprimitivize(parameterType);
-            	Class<?> given  = Classes.deprimitivize(parameter.getClass());
-            	
-            	if (!actual.isAssignableFrom(given)) {
+                //check that types are applicable
+                Class<?> actual = Classes.deprimitivize(parameterType);
+                Class<?> given  = Classes.deprimitivize(parameter.getClass());
+
+                if (!actual.isAssignableFrom(given)) {
                     throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
-                            ", but got a parameter of type " + parameter.getClass().getName());            		
-            	}
+                            ", but got a parameter of type " + parameter.getClass().getName());
+                }
             }
         }
         System.arraycopy(parameters, 0, this.parameters, 0, parameters.length);

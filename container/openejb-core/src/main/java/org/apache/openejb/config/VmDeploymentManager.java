@@ -105,8 +105,8 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private Deployer getDeployer() {
-    	String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
-    	
+        String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
+
         if (deployer == null) {
             try {
                 Properties p = new Properties();

@@ -295,11 +295,11 @@ public class WsDeployer implements DynamicDeployer {
                     // when to webservices.xml is defined and when we want to
                     // publish more than one port for the same implementation by configuration
                     portComponent.setPortComponentName(sessionBean.getEjbName());
-		    
-		} else { // JAX-WS Metadata specification default
-		    portComponent.setPortComponentName(JaxWsUtils.getPortQName(ejbClass).getLocalPart());
-		    
-		}
+
+        } else { // JAX-WS Metadata specification default
+            portComponent.setPortComponentName(JaxWsUtils.getPortQName(ejbClass).getLocalPart());
+
+        }
                 webserviceDescription.getPortComponent().add(portComponent);
 
                 ServiceImplBean serviceImplBean = new ServiceImplBean();

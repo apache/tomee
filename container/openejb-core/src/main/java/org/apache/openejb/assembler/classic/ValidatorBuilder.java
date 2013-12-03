@@ -91,7 +91,7 @@ public final class ValidatorBuilder {
     }
 
     @SuppressWarnings("unchecked")
-	private static Configuration<?> getConfig(ValidationInfo info) {
+    private static Configuration<?> getConfig(ValidationInfo info) {
         Configuration<?> target = null;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 

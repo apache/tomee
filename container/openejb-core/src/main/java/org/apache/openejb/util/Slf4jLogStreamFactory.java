@@ -22,10 +22,10 @@ package org.apache.openejb.util;
  */
 
 public class Slf4jLogStreamFactory implements LogStreamFactory {
-	@Override
-	public LogStream createLogStream(LogCategory logCategory) {
-		return new Slf4jLogStream(logCategory);
-	}
+    @Override
+    public LogStream createLogStream(LogCategory logCategory) {
+        return new Slf4jLogStream(logCategory);
+    }
 
     public Slf4jLogStreamFactory() {
         System.setProperty("openjpa.Log", "slf4j");
