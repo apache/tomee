@@ -313,7 +313,7 @@ public class FinderFactory {
             return delegate;
         }
 
-        private static abstract class Predicate<T> {
+        private abstract static class Predicate<T> {
             protected final List<String> accepted;
 
             public Predicate(final List<String> list) {

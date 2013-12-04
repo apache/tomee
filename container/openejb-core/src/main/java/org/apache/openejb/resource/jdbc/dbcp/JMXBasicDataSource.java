@@ -36,7 +36,7 @@ import java.sql.Statement;
 @SuppressWarnings("UnusedDeclaration")
 @Description("describe a datasource pool")
 public class JMXBasicDataSource {
-    private transient final BasicDataSource ds;
+    private final transient BasicDataSource ds;
 
     private transient ObjectName objectName;
 

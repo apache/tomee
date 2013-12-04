@@ -18,21 +18,21 @@ package org.apache.openejb.core;
 
 public class EnvProps {
 
-    public final static String IM_CLASS_NAME = "InstanceManager";
+    public static final String IM_CLASS_NAME = "InstanceManager";
 
-    public final static String IM_TIME_OUT = "TimeOut";
+    public static final String IM_TIME_OUT = "TimeOut";
 
-    public final static String IM_PASSIVATOR_PATH_PREFIX = "org/openejb/core/InstanceManager/PASSIVATOR_PATH_PREFIX";
+    public static final String IM_PASSIVATOR_PATH_PREFIX = "org/openejb/core/InstanceManager/PASSIVATOR_PATH_PREFIX";
 
-    public final static String IM_POOL_SIZE = "PoolSize";
+    public static final String IM_POOL_SIZE = "PoolSize";
 
-    public final static String IM_PASSIVATE_SIZE = "BulkPassivate";
+    public static final String IM_PASSIVATE_SIZE = "BulkPassivate";
 
-    public final static String IM_PASSIVATOR = "Passivator";
+    public static final String IM_PASSIVATOR = "Passivator";
 
-    public final static String IM_CONCURRENT_ATTEMPTS = "org/openejb/core/InstanceManager/CONCURRENT_ATTEMPTS";
+    public static final String IM_CONCURRENT_ATTEMPTS = "org/openejb/core/InstanceManager/CONCURRENT_ATTEMPTS";
 
-    public final static String IM_STRICT_POOLING = "StrictPooling";
+    public static final String IM_STRICT_POOLING = "StrictPooling";
 
     /*
     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
@@ -44,7 +44,7 @@ public class EnvProps {
     * This property is, by default, alwasy TRUE but it can be changed to FALSE by setting it as a System property
     * or a property of the Property argument when invoking OpenEJB.init(props).
     */
-    public final static String INTRA_VM_COPY = "org/openejb/core/ivm/BaseEjbProxyHandler/INTRA_VM_COPY";
+    public static final String INTRA_VM_COPY = "org/openejb/core/ivm/BaseEjbProxyHandler/INTRA_VM_COPY";
 
 
     public static final String JDBC_DRIVER = "JdbcDriver";

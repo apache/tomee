@@ -30,7 +30,7 @@ import java.rmi.RemoteException;
 
 public final class EjbTransactionUtil {
 
-    private final static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     static {
         ThreadContext.addThreadContextListener(new ThreadContextListener() {

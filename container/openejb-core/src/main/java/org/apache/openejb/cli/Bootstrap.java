@@ -28,10 +28,10 @@ import java.net.URL;
  */
 public class Bootstrap {
 
-    private final static String OPENEJB_VERSION_PROPERTIES_FILE_NAME = "openejb-version.properties";
-    private final static String OPENEJB_HOME_PROPERTY_NAME = "openejb.home";
-    private final static String OPENEJB_BASE_PROPERTY_NAME = "openejb.base";
-    private final static String OPENEJB_CLI_MAIN_CLASS_NAME = "org.apache.openejb.cli.MainImpl";
+    private static final String OPENEJB_VERSION_PROPERTIES_FILE_NAME = "openejb-version.properties";
+    private static final String OPENEJB_HOME_PROPERTY_NAME = "openejb.home";
+    private static final String OPENEJB_BASE_PROPERTY_NAME = "openejb.base";
+    private static final String OPENEJB_CLI_MAIN_CLASS_NAME = "org.apache.openejb.cli.MainImpl";
 
     private static void setupHome(final String[] args) {
         for (final String arg : args) {

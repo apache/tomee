@@ -572,7 +572,7 @@ public class MethodInfoUtil {
         }
     }
 
-    public static abstract class BaseComparator<T> implements Comparator<T>{
+    public abstract static class BaseComparator<T> implements Comparator<T>{
         public int compare(MethodInfo am, MethodInfo bm) {
             Level levelA = level(am);
             Level levelB = level(bm);

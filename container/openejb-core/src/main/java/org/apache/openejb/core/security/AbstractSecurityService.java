@@ -59,8 +59,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
 
-    static private final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
-    static protected final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
+    private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
+    protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected String defaultUser = "guest";
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;
@@ -356,7 +356,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    protected final static class SecurityContext {
+    protected static final class SecurityContext {
 
         public final Subject subject;
         public final AccessControlContext acc;

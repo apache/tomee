@@ -526,7 +526,7 @@ public class IvmContext implements Context, Serializable {
             buildEnumeration(vect);
         }
 
-        abstract protected void buildEnumeration(Vector<NameNode> vect);
+        protected abstract void buildEnumeration(Vector<NameNode> vect);
 
         protected void gatherNodes(NameNode node, Vector vect) {
             if (node.getLessTree() != null) {

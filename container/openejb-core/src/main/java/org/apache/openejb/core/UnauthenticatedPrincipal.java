@@ -23,7 +23,7 @@ import java.security.Principal;
  */
 public class UnauthenticatedPrincipal implements Principal {
 
-    public final static UnauthenticatedPrincipal INSTANCE = new UnauthenticatedPrincipal();
+    public static final UnauthenticatedPrincipal INSTANCE = new UnauthenticatedPrincipal();
 
     private UnauthenticatedPrincipal() {
     }

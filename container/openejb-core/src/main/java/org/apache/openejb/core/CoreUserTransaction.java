@@ -35,7 +35,7 @@ import java.io.Serializable;
  */
 public class CoreUserTransaction implements UserTransaction, Serializable {
     private static final long serialVersionUID = 9203248912222645965L;
-    private static transient final Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
+    private static final transient Logger transactionLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
     private transient TransactionManager transactionManager;
 
     public CoreUserTransaction(final TransactionManager transactionManager) {
