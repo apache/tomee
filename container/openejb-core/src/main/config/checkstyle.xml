@@ -17,8 +17,8 @@
 
   <!--<module name="FileLength"/>-->
 
-  <!--&lt;!&ndash; Following interprets the header file as regular expressions. &ndash;&gt;-->
-  <!--&lt;!&ndash; <module name="RegexpHeader"/>                                &ndash;&gt;-->
+  <!-- Following interprets the header file as regular expressions. -->
+  <!-- <module name="RegexpHeader"/>                                -->
 
   <module name="FileTabCharacter">
     <property name="eachLine" value="true"/>
