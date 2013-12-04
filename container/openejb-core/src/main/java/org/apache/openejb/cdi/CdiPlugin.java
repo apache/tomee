@@ -247,7 +247,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             final Context context = webBeansContext.getBeanManagerImpl().getContext(scopeClass);
             instance = context.get(bean, cc);
         }
-        bean.setOWBProxy(instance);
+        bean.setOwbProxy(instance);
         return instance;
     }
 
@@ -525,7 +525,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     // /!\ don't extend AbstractOwbBean without checking equals()
     private static class InstanceBean<T> implements OwbBean<T>, PassivationCapable {
         private final CdiEjbBean<T> bean;
-        private T OWBProxy;
+        private T owbProxy;
 
         public InstanceBean(final CdiEjbBean<T> tCdiEjbBean) {
             bean = tCdiEjbBean;
@@ -579,8 +579,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         @Override
         public T create(final CreationalContext<T> creationalContext) {
             final T instance = bean.createEjb(creationalContext);
-            if (OWBProxy != null && SessionBeanType.STATEFUL.equals(bean.getEjbType())) { // we need to be able to remove OWB proxy to remove (statefuls for instance)
-                bean.storeStatefulInstance(OWBProxy, instance);
+            if (owbProxy != null && SessionBeanType.STATEFUL.equals(bean.getEjbType())) { // we need to be able to remove OWB proxy to remove (statefuls for instance)
+                bean.storeStatefulInstance(owbProxy, instance);
             }
             return instance;
         }
@@ -649,8 +649,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             return bean.getWebBeansContext();
         }
 
-        public void setOWBProxy(final T OWBProxy) {
-            this.OWBProxy = OWBProxy;
+        public void setOwbProxy(final T owbProxy) {
+            this.owbProxy = owbProxy;
         }
 
         @Override

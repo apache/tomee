@@ -44,8 +44,8 @@ import static org.apache.openejb.loader.IO.readProperties;
  */
 public class PropertiesLoginModule implements LoginModule {
 
-    private final String USER_FILE = "UsersFile";
-    private final String GROUP_FILE = "GroupsFile";
+    private static final String USER_FILE = "UsersFile";
+    private static final String GROUP_FILE = "GroupsFile";
 
     private static Logger log = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 

@@ -31,10 +31,10 @@ public class Messages {
     static private Map<String, Map<String, MessageFormat>> _rbFormats = new ConcurrentHashMap<String, Map<String, MessageFormat>>();
     static private Locale _globalLocale;
 
-    private ResourceBundle _messages;
-    private Map<String, MessageFormat> _formats;
-    private Locale _locale;
-    private String _resourceName;
+    private ResourceBundle messages;
+    private Map<String, MessageFormat> formats;
+    private Locale locale;
+    private String resourceName;
 
     public Messages(Class clazz) {
         this(packageName(clazz));
@@ -46,36 +46,36 @@ public class Messages {
     }
 
     public Messages(String resourceName) {
-        _resourceName = resourceName + ".Messages";
+        this.resourceName = resourceName + ".Messages";
         synchronized (Messages.class) {
-            _locale = _globalLocale;
+            locale = _globalLocale;
         }
     }
 
     protected void init() {
-        if (_formats != null && _messages != null) {
+        if (formats != null && messages != null) {
             return;
         }
 
-        final ResourceBundle rb = _rbBundles.get(_resourceName);
+        final ResourceBundle rb = _rbBundles.get(resourceName);
         if (rb == null) {
             try {
-                if (_locale == null) {
-                    _messages = ResourceBundle.getBundle(_resourceName);
+                if (locale == null) {
+                    messages = ResourceBundle.getBundle(resourceName);
                 } else {
-                    _messages = ResourceBundle.getBundle(_resourceName, _locale);
+                    messages = ResourceBundle.getBundle(resourceName, locale);
                 }
             } catch (Exception except) {
-                _messages = new EmptyResourceBundle();
+                messages = new EmptyResourceBundle();
             }
 
-            _formats = new ConcurrentHashMap<String, MessageFormat>();
+            formats = new ConcurrentHashMap<String, MessageFormat>();
 
-            _rbBundles.put(_resourceName, _messages);
-            _rbFormats.put(_resourceName, _formats);
+            _rbBundles.put(resourceName, messages);
+            _rbFormats.put(resourceName, formats);
         } else {
-            _messages = rb;
-            _formats = _rbFormats.get(_resourceName);
+            messages = rb;
+            formats = _rbFormats.get(resourceName);
         }
     }
 
@@ -85,7 +85,7 @@ public class Messages {
 
     public String format(String message, Object... args) {
         init();
-        if (_locale != _globalLocale) {
+        if (locale != _globalLocale) {
             synchronized (Messages.class) {
                 init();
             }
@@ -95,15 +95,15 @@ public class Messages {
         String msg;
 
         try {
-            mf = (MessageFormat) _formats.get(message);
+            mf = (MessageFormat) formats.get(message);
             if (mf == null) {
                 try {
-                    msg = _messages.getString(message);
+                    msg = messages.getString(message);
                 } catch (MissingResourceException except) {
                     return message + (args != null ? " " + Arrays.toString(args) : "");
                 }
                 mf = new MessageFormat(msg);
-                _formats.put(message, mf);
+                formats.put(message, mf);
             }
             return mf.format(args);
         } catch (Exception except) {
@@ -113,14 +113,14 @@ public class Messages {
 
     public String message(String message) {
         init();
-        if (_locale != _globalLocale) {
+        if (locale != _globalLocale) {
             synchronized (Messages.class) {
                 init();
             }
         }
 
         try {
-            return _messages.getString(message);
+            return messages.getString(message);
         } catch (MissingResourceException except) {
             return message;
         }

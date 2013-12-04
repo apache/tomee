@@ -56,10 +56,10 @@ public class AppValidator {
 
     protected static final Messages _messages = new Messages("org.apache.openejb.config.rules");
 
-    int LEVEL = 2;
-    boolean PRINT_XML = false;
-    boolean PRINT_WARNINGS = true;
-    boolean PRINT_COUNT = false;
+    private int level = 2;
+    private boolean printXml = false;
+    private boolean printWarnings = true;
+    private boolean printCount = false;
 
     private List<ValidationResults> sets = new ArrayList<ValidationResults>();
     private ValidationBase[] additionalValidators;
@@ -70,11 +70,11 @@ public class AppValidator {
     public AppValidator() throws OpenEJBException {
     }
 
-    public AppValidator(int LEVEL, boolean PRINT_XML, boolean PRINT_WARNINGS, boolean PRINT_COUNT) {
-        this.LEVEL = LEVEL;
-        this.PRINT_XML = PRINT_XML;
-        this.PRINT_WARNINGS = PRINT_WARNINGS;
-        this.PRINT_COUNT = PRINT_COUNT;
+    public AppValidator(int level, boolean printXml, boolean printWarnings, boolean printCount) {
+        this.level = level;
+        this.printXml = printXml;
+        this.printWarnings = printWarnings;
+        this.printCount = printCount;
     }
 
     public AppValidator(final ValidationBase... additionalValidator) {
@@ -144,7 +144,7 @@ public class AppValidator {
 
     // END SNIPPET : code1
     public void printResults(ValidationResults set) {
-        if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
+        if (!set.hasErrors() && !set.hasFailures() && (!printWarnings || !set.hasWarnings())) {
             return;
         }
         System.out.println("------------------------------------------");
@@ -154,7 +154,7 @@ public class AppValidator {
         printValidationExceptions(set.getErrors());
         printValidationExceptions(set.getFailures());
 
-        if (PRINT_WARNINGS) {
+        if (printWarnings) {
             printValidationExceptions(set.getWarnings());
         }
     }
@@ -168,17 +168,17 @@ public class AppValidator {
                 System.out.print(exceptions[i].getComponentName());
                 System.out.print(": ");
             }
-            if (LEVEL > 2) {
+            if (level > 2) {
                 System.out.println(exceptions[i].getMessage(1));
                 System.out.println();
                 System.out.print('\t');
-                System.out.println(exceptions[i].getMessage(LEVEL));
+                System.out.println(exceptions[i].getMessage(level));
                 System.out.println();
             } else {
-                System.out.println(exceptions[i].getMessage(LEVEL));
+                System.out.println(exceptions[i].getMessage(level));
             }
         }
-        if (PRINT_COUNT && exceptions.length > 0) {
+        if (printCount && exceptions.length > 0) {
             System.out.println();
             System.out.print(" " + exceptions.length + " ");
             System.out.println(exceptions[0].getCategory());
@@ -188,7 +188,7 @@ public class AppValidator {
     }
 
     public void printResultsXML(ValidationResults set) {
-        if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
+        if (!set.hasErrors() && !set.hasFailures() && (!printWarnings || !set.hasWarnings())) {
             return;
         }
 
@@ -200,7 +200,7 @@ public class AppValidator {
         printValidationExceptionsXML(set.getErrors());
         printValidationExceptionsXML(set.getFailures());
 
-        if (PRINT_WARNINGS) {
+        if (printWarnings) {
             printValidationExceptionsXML(set.getWarnings());
         }
         System.out.println("</jar>");
@@ -229,7 +229,7 @@ public class AppValidator {
     }
 
     public void displayResults(ValidationResults[] sets) {
-        if (PRINT_XML) {
+        if (printXml) {
             System.out.println("<results>");
             for (int i = 0; i < sets.length; i++) {
                 printResultsXML(sets[i]);
@@ -241,7 +241,7 @@ public class AppValidator {
             }
             for (int i = 0; i < sets.length; i++) {
                 if (sets[i].hasErrors() || sets[i].hasFailures()) {
-                    if (LEVEL < 3) {
+                    if (level < 3) {
                         System.out.println();
                         System.out.println("For more details, use the -vvv option");
                     }
