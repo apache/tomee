@@ -60,8 +60,8 @@ public class QueryProxy implements InvocationHandler {
     public static final String AND = "And";
 
     // cache for finders of the current instance
-    private final Map<String, Class<?>> RETURN_TYPES = new ConcurrentHashMap<String, Class<?>>();
-    private final Map<String, List<String>> CONDITIONS = new ConcurrentHashMap<String, List<String>>();
+    private final Map<String, Class<?>> returnsTypes = new ConcurrentHashMap<String, Class<?>>();
+    private final Map<String, List<String>> conditions = new ConcurrentHashMap<String, List<String>>();
 
     private EntityManager em;
 
@@ -197,11 +197,11 @@ public class QueryProxy implements InvocationHandler {
     private Class<?> getReturnedType(Method method) {
         final String methodName = method.getName();
         Class<?> type;
-        if (RETURN_TYPES.containsKey(methodName)) {
-            type = RETURN_TYPES.get(methodName);
+        if (returnsTypes.containsKey(methodName)) {
+            type = returnsTypes.get(methodName);
         } else {
             type = getGenericType(method.getGenericReturnType());
-            RETURN_TYPES.put(methodName, type);
+            returnsTypes.put(methodName, type);
         }
         return type;
     }
@@ -350,8 +350,8 @@ public class QueryProxy implements InvocationHandler {
 
     private List<String> parseMethodName(final String methodName) {
         List<String> parsed;
-        if (CONDITIONS.containsKey(methodName)) {
-            parsed = CONDITIONS.get(methodName);
+        if (conditions.containsKey(methodName)) {
+            parsed = conditions.get(methodName);
         } else {
             parsed = new ArrayList<String>();
 
@@ -364,7 +364,7 @@ public class QueryProxy implements InvocationHandler {
                 }
             }
 
-            CONDITIONS.put(methodName, parsed);
+            conditions.put(methodName, parsed);
         }
         return parsed;
     }

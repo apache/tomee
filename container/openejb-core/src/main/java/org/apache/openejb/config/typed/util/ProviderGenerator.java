@@ -175,11 +175,11 @@ public class ProviderGenerator extends Resource {
             );
 
             for (Map.Entry<Object, Object> entry : provider.getProperties().entrySet()) {
-                final String key = Strings.lcfirst(entry.getKey().toString());
-                final String Key = Strings.ucfirst(key);
+                final String lcFirstKey = Strings.lcfirst(entry.getKey().toString());
+                final String ucFirstKey = Strings.ucfirst(lcFirstKey);
                 final String value = entry.getValue().toString();
 
-                final String type = guessType(key, value);
+                final String type = guessType(lcFirstKey, value);
 
                 // builder method
 
@@ -190,8 +190,8 @@ public class ProviderGenerator extends Resource {
                                 "    }\n")
                         .apply(
                                 "builder", builder,
-                                "key", key,
-                                "Key", Key,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
                                 "value", value,
                                 "type", type
                         )
@@ -204,8 +204,8 @@ public class ProviderGenerator extends Resource {
                                 "        this.${key} = ${key};\n" +
                                 "    }\n")
                         .apply(
-                                "key", key,
-                                "Key", Key,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
                                 "value", value,
                                 "type", type
                         )
@@ -217,8 +217,8 @@ public class ProviderGenerator extends Resource {
                                 "        return ${key};\n" +
                                 "    }\n")
                         .apply(
-                                "key", key,
-                                "Key", Key,
+                                "key", lcFirstKey,
+                                "Key", ucFirstKey,
                                 "value", value,
                                 "type", type
                         )
@@ -231,8 +231,8 @@ public class ProviderGenerator extends Resource {
                                     "    }\n")
                             .apply(
                                     "builder", builder,
-                                    "key", key,
-                                    "Key", Key,
+                                    "key", lcFirstKey,
+                                    "Key", ucFirstKey,
                                     "value", value,
                                     "type", type
                             )
@@ -243,15 +243,15 @@ public class ProviderGenerator extends Resource {
                                     "        set${Key}(new Duration(time, unit));\n" +
                                     "    }\n")
                             .apply(
-                                    "key", key,
-                                    "Key", Key,
+                                    "key", lcFirstKey,
+                                    "Key", ucFirstKey,
                                     "value", value,
                                     "type", type
                             )
                     );
                 }
 
-                final String s = key.toLowerCase();
+                final String s = lcFirstKey.toLowerCase();
                 if ("long".equals(type) && s.contains("time")) {
                     TimeUnit unit = null;
                     if (s.endsWith("millis")) {
@@ -269,8 +269,8 @@ public class ProviderGenerator extends Resource {
                     if (unit == null) continue;
 
                     final Pattern pattern = Pattern.compile("(millis(econds)?|seconds|minutes|hours)", Pattern.CASE_INSENSITIVE);
-                    final String key2 = pattern.matcher(key).replaceAll("");
-                    final String Key2 = pattern.matcher(Key).replaceAll("");
+                    final String lcFirstKey2 = pattern.matcher(lcFirstKey).replaceAll("");
+                    final String ucFirstKey2 = pattern.matcher(ucFirstKey).replaceAll("");
 
                     out.println(template(
                             "    public ${builder} with${Key2}(long time, TimeUnit unit) {\n" +
@@ -278,10 +278,10 @@ public class ProviderGenerator extends Resource {
                                     "    }\n")
                             .apply(
                                     "builder", builder,
-                                    "key2", key2,
-                                    "Key2", Key2,
-                                    "key", key,
-                                    "Key", Key,
+                                    "key2", lcFirstKey2,
+                                    "Key2", ucFirstKey2,
+                                    "key", lcFirstKey,
+                                    "Key", ucFirstKey,
                                     "value", value,
                                     "unit", unit.name(),
                                     "type", type
@@ -293,10 +293,10 @@ public class ProviderGenerator extends Resource {
                                     "        set${Key}(TimeUnit.${unit}.convert(time, unit));\n" +
                                     "    }\n")
                             .apply(
-                                    "key2", key2,
-                                    "Key2", Key2,
-                                    "key", key,
-                                    "Key", Key,
+                                    "key2", lcFirstKey2,
+                                    "Key2", ucFirstKey2,
+                                    "key", lcFirstKey,
+                                    "Key", ucFirstKey,
                                     "value", value,
                                     "unit", unit.name(),
                                     "type", type

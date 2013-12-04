@@ -231,10 +231,10 @@ public class ClassLoaderUtil {
         }
 
         res = true;
-        final Vector java_lang_ClassLoader_NativeLibrary = (Vector) obj;
+        final Vector javaLangClassLoaderNativeLibrary = (Vector) obj;
         Method finalize;
 
-        for (final Object lib : java_lang_ClassLoader_NativeLibrary) {
+        for (final Object lib : javaLangClassLoaderNativeLibrary) {
 
             try {
                 finalize = lib.getClass().getDeclaredMethod("finalize", new Class[0]);

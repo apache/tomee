@@ -168,8 +168,8 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
             String[] expressions = expr.split(",");
 
-            for (String sub_expression : expressions) {
-                validateExpression(field, sub_expression);
+            for (String subExpression : expressions) {
+                validateExpression(field, subExpression);
             }
 
         } else {
