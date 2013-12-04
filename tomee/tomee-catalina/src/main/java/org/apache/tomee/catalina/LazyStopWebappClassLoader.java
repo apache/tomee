@@ -41,19 +41,21 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     private boolean restarting = false;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
     private ClassLoaderConfigurer configurer = null;
+    private final int hashCode;
 
     public LazyStopWebappClassLoader() {
-        construct();
+        hashCode = construct();
     }
 
     public LazyStopWebappClassLoader(final ClassLoader parent) {
         super(parent);
-        construct();
+        hashCode = construct();
     }
 
-    private void construct() {
+    private int construct() {
         setDelegate(isDelegate());
         configurer = INIT_CONFIGURER.get();
+        return super.hashCode();
     }
 
     @Override
@@ -203,6 +205,16 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return other != null && ClassLoader.class.isInstance(other) && hashCode() == other.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 
     @Override
