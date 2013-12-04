@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class IntrospectionSupport {
     
-    static public boolean getProperties(Object target, Map<String, String> props,
+    public static boolean getProperties(Object target, Map<String, String> props,
             String optionPrefix) {
 
         boolean rc = false;
@@ -81,7 +81,7 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    static public boolean setProperties(Object target, Map props,
+    public static boolean setProperties(Object target, Map props,
             String optionPrefix) {
         boolean rc = false;
         if (target == null)
@@ -215,11 +215,11 @@ public class IntrospectionSupport {
         return false;
     }
 
-    static public String toString(Object target) {
+    public static String toString(Object target) {
         return toString(target, Object.class);
     }
 
-    static public String toString(Object target, Class stopClass) {
+    public static String toString(Object target, Class stopClass) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         addFields(target, target.getClass(), stopClass, map);
         StringBuilder buffer = new StringBuilder(simpleName(target.getClass()));
@@ -245,7 +245,7 @@ public class IntrospectionSupport {
         buffer.append(value);
     }
 
-    static public String simpleName(Class clazz) {
+    public static String simpleName(Class clazz) {
         String name = clazz.getName();
         int p = name.lastIndexOf(".");
         if (p >= 0) {
@@ -254,7 +254,7 @@ public class IntrospectionSupport {
         return name;
     }
 
-    static private void addFields(Object target, Class startClass,
+    private static void addFields(Object target, Class startClass,
             Class stopClass, LinkedHashMap<String, Object> map) {
 
         if (startClass != stopClass)

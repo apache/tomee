@@ -75,10 +75,10 @@ public class DeployerEjb implements Deployer {
 
     public static final ThreadLocal<Boolean> AUTO_DEPLOY = new ThreadLocal<Boolean>();
 
-    private final static File uniqueFile;
-    private final static boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
-    private final static String OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS = "openejb.deployer.save-deployments";
-    private final static boolean SAVE_DEPLOYMENTS = SystemInstance.get().getOptions().get(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, false);
+    private static final File uniqueFile;
+    private static final boolean oldWarDeployer = "old".equalsIgnoreCase(SystemInstance.get().getOptions().get("openejb.deployer.war", "new"));
+    private static final String OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS = "openejb.deployer.save-deployments";
+    private static final boolean SAVE_DEPLOYMENTS = SystemInstance.get().getOptions().get(OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS, false);
 
     static {
         final String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);

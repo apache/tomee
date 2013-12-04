@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Messages {
-    static private Map<String, ResourceBundle> _rbBundles = new ConcurrentHashMap<String, ResourceBundle>();
-    static private Map<String, Map<String, MessageFormat>> _rbFormats = new ConcurrentHashMap<String, Map<String, MessageFormat>>();
-    static private Locale _globalLocale;
+    private static Map<String, ResourceBundle> _rbBundles = new ConcurrentHashMap<String, ResourceBundle>();
+    private static Map<String, Map<String, MessageFormat>> _rbFormats = new ConcurrentHashMap<String, Map<String, MessageFormat>>();
+    private static Locale _globalLocale;
 
     private ResourceBundle messages;
     private Map<String, MessageFormat> formats;
@@ -126,7 +126,7 @@ public class Messages {
         }
     }
 
-    static public void setLocale(Locale locale) {
+    public static void setLocale(Locale locale) {
         synchronized (Messages.class) {
             _globalLocale = locale;
             _rbBundles = new Hashtable();

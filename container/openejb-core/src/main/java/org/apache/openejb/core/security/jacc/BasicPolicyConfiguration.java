@@ -34,9 +34,9 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class BasicPolicyConfiguration implements PolicyConfiguration {
-    final static int OPEN = 1;
-    final static int IN_SERVICE = 2;
-    final static int DELETED = 3;
+    static final int OPEN = 1;
+    static final int IN_SERVICE = 2;
+    static final int DELETED = 3;
 
     private final String contextID;
     private int state;

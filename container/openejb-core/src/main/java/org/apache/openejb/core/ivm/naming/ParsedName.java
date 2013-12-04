@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.StringTokenizer;
 
 public class ParsedName implements Serializable {
-    final static int IS_EQUAL = 0;
-    final static int IS_LESS = -1;
-    final static int IS_GREATER = 1;
+    static final int IS_EQUAL = 0;
+    static final int IS_LESS = -1;
+    static final int IS_GREATER = 1;
 
     String [] components;
     int pos = 0;

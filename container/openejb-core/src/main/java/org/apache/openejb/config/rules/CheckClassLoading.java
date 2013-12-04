@@ -152,7 +152,7 @@ public class CheckClassLoading extends ValidationBase {
         return diff;
     }
 
-    public final static class JarUtil {
+    public static final class JarUtil {
 
         public static final String CLASS_EXT = ".class";
 

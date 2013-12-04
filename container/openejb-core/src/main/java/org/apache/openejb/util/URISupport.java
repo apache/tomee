@@ -326,7 +326,7 @@ public class URISupport {
         return createURIWithQuery(originalURI, s);
     }
 
-    static public URI changeScheme(URI bindAddr, String scheme) throws URISyntaxException {
+    public static URI changeScheme(URI bindAddr, String scheme) throws URISyntaxException {
         return new URI(scheme, bindAddr.getUserInfo(), bindAddr.getHost(), bindAddr.getPort(), bindAddr.getPath(), bindAddr.getQuery(), bindAddr.getFragment());
     }
 

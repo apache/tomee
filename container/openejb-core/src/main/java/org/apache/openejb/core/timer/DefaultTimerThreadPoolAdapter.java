@@ -87,7 +87,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     // If we want to share an Executor across the whole system
     // for @Asynchronous and @Remote execution we should design
     // that specifically and have it explicitly created somewhere
-    public final static class TimerExecutor {
+    public static final class TimerExecutor {
         private final Executor executor;
 
         private TimerExecutor(Executor executor) {

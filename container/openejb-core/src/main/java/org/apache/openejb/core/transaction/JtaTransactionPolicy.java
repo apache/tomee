@@ -41,8 +41,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class JtaTransactionPolicy implements TransactionPolicy {
-    protected final static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-    protected final static Logger txLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
+    protected static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    protected static final Logger txLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
 
     protected final TransactionType transactionType;
 

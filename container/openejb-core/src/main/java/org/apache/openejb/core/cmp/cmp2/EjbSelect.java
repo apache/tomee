@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class EjbSelect {
     // our table of select methods for quick lookup 
-    static private HashMap<Class<?>, Method> selectMethods = new HashMap<Class<?>, Method>(); 
+    private static HashMap<Class<?>, Method> selectMethods = new HashMap<Class<?>, Method>();
     static {
         try {
             selectMethods.put(Object.class, EjbSelect.class.getMethod("execute_Object", Object.class, String.class, String.class, Object[].class));
