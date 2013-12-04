@@ -249,7 +249,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.10</version>
+        <version>2.11</version>
         <configuration>
           <enableRulesSummary>false</enableRulesSummary>
           <configLocation>src/main/config/checkstyle.xml</configLocation>
