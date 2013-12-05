@@ -226,8 +226,8 @@
           <groupId>wsdl4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>quartz</artifactId>
-          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz-openejb-shade</artifactId>
+          <groupId>org.apache.openejb.shade</groupId>
         </exclusion>
         <!-- <exclusion>
           <artifactId>openwebbeans-impl</artifactId>
