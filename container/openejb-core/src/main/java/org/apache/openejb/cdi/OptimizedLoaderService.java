@@ -119,7 +119,7 @@ public class OptimizedLoaderService implements LoaderService {
         return list;
     }
 
-    private static class ClassLoaderAwareHandler implements InvocationHandler {
+    private static final class ClassLoaderAwareHandler implements InvocationHandler {
         private final Object delegate;
         private final ClassLoader loader;
         private final String toString;

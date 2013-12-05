@@ -116,7 +116,7 @@ public class FinderFactory {
         return new AnnotationFinder(archive);
     }
 
-    public static class DebugArchive implements Archive {
+    public static final class DebugArchive implements Archive {
         private final Archive archive;
 
         private DebugArchive(Archive archive) {

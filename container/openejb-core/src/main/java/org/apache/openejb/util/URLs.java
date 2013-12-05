@@ -30,7 +30,7 @@ import java.net.URL;
 /**
  * @version $Rev$ $Date$
  */
-public class URLs {
+public final class URLs {
     public static File toFile(final URL url) {
         return Files.toFile(url);
     }

@@ -439,7 +439,7 @@ public class Pool<T> {
         return TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
     }
 
-    public class Entry {
+    public final class Entry {
         private final long created;
         private long used;
         private final int version;
@@ -711,7 +711,7 @@ public class Pool<T> {
         FULL, IDLE, AGED, FLUSHED, GC
     }
 
-    private class Expired {
+    private final class Expired {
         private final Entry entry;
         private final AtomicBoolean discarded = new AtomicBoolean();
         private final Event event;
@@ -744,7 +744,7 @@ public class Pool<T> {
         }
     }
 
-    private class Replace implements Runnable {
+    private final class Replace implements Runnable {
         private final Entry expired;
         private final long offset;
 
@@ -784,7 +784,7 @@ public class Pool<T> {
         }
     }
 
-    private class Discard implements Runnable {
+    private final class Discard implements Runnable {
         private final T expired;
         private final Event event;
 
@@ -922,7 +922,7 @@ public class Pool<T> {
 
     @SuppressWarnings("PMD.UnusedPrivateField")
     @Managed
-    private class Stats {
+    private final class Stats {
 
         @Managed
         private final org.apache.openejb.monitoring.Event sweeps = new org.apache.openejb.monitoring.Event();

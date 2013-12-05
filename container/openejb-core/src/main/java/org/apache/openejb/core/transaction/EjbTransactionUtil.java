@@ -159,7 +159,7 @@ public final class EjbTransactionUtil {
     private EjbTransactionUtil() {
     }
 
-    private static class CallerTransactionEnvironment {
+    private static final class CallerTransactionEnvironment {
 
         private final TransactionPolicy oldTxPolicy;
 

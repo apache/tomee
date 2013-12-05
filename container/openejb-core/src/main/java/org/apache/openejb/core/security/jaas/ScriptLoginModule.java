@@ -58,7 +58,7 @@ public class ScriptLoginModule implements LoginModule {
 
     private UserData userData;
 
-    private class UserData {
+    private final class UserData {
         public final String user;
         public final String pass;
         public final Set<String> groups = new HashSet<String>();

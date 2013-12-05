@@ -25,7 +25,7 @@ import org.apache.openejb.table.Lines;
 
 import java.util.Arrays;
 
-public class CommandHelper {
+public final class CommandHelper {
     private CommandHelper() {
         // no-op
     }

@@ -363,7 +363,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
      * clears unused conversations.
      *
      */
-    private static class ConversationCleaner implements Runnable
+    private static final class ConversationCleaner implements Runnable
     {
         private final WebBeansContext webBeansContext;
 

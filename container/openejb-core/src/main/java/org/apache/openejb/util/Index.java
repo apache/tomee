@@ -171,7 +171,7 @@ public class Index<K,V> extends AbstractMap<K,V> {
         return values;
     }
 
-    private static class IndexEntry<K,V> implements Map.Entry<K,V> {
+    private static final class IndexEntry<K,V> implements Map.Entry<K,V> {
         private final K key;
         private V value;
 

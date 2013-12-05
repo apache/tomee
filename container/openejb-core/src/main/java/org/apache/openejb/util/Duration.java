@@ -114,20 +114,7 @@ public class Duration {
         this.unit = unit;
     }
 
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        final Duration duration = (Duration) o;
-//
-//        if (time != duration.time) return false;
-//        if (unit != duration.unit) return false;
-//
-//        return true;
-//    }
-
-    //
-    private static class Normalize {
+    private static final class Normalize {
         private long a;
         private long b;
         private TimeUnit base;

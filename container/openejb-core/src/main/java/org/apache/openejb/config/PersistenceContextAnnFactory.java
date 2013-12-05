@@ -151,7 +151,7 @@ public class PersistenceContextAnnFactory {
         }
     }
 
-    private static class PersistenceContextReader extends EmptyVisitor {
+    private static final class PersistenceContextReader extends EmptyVisitor {
         private String className;
         private String currentName;
         private final Map<String, AsmPersistenceContext> contexts;

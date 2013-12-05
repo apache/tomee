@@ -20,7 +20,7 @@ package org.apache.openejb.util;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-public class Contexts {
+public final class Contexts {
     private Contexts() {
         // no-op
     }

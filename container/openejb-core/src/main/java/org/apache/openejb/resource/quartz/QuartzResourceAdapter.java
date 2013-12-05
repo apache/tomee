@@ -347,7 +347,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
      * This is standard OpenEJB practice for all "public storage" maps as it prevents
      * outside code from becoming dependent on or tampering with the private data.
      */
-    private static class Data {
+    private static final class Data {
 
         private final Job job;
 

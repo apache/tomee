@@ -91,7 +91,7 @@ import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
 /**
  * @version $Rev$ $Date$
  */
-public class OpenEjbContainer extends EJBContainer {
+public final class OpenEjbContainer extends EJBContainer {
     static {
         // if tomee embedded was ran we'll lost log otherwise
         final String logManger = System.getProperty("java.util.logging.manager");

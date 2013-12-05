@@ -62,7 +62,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
         destroyContext.contextsService.endContext(RequestScoped.class, null);
     }
 
-    private static class DestroyContext {
+    private static final class DestroyContext {
         private final ContextsService contextsService;
         private final ThreadContext threadContext;
 

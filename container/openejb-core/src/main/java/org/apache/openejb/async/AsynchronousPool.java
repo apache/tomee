@@ -91,7 +91,7 @@ public class AsynchronousPool {
         }
     }
 
-    private class AsynchronousCall implements Callable<Object> {
+    private final class AsynchronousCall implements Callable<Object> {
 
         private final Callable<Object> callable;
 

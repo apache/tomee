@@ -84,7 +84,7 @@ public class TransactionManagerWrapper implements TransactionManager {
         return new TransactionWrapper(delegate.suspend(), name, xaResourceWrapper);
     }
 
-    private static class TransactionWrapper implements Transaction {
+    private static final class TransactionWrapper implements Transaction {
         private final Transaction transaction;
         private final String name;
         private final XAResourceWrapper xaResourceWrapper;

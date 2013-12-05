@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * @version $Rev$ $Date$
  */
-public class OpenEjbVersion {
+public final class OpenEjbVersion {
 
     private final String copyright;//Copyright 1999-X (C) Apache OpenEJB Project, All Rights Reserved.
     private final String url; //http://openejb.apache.org
