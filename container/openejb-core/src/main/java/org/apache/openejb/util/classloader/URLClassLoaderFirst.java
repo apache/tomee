@@ -328,7 +328,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (org.startsWith("w3c.dom")) {
                 return isInJvm(name);
             }
-            if (org.startsWith("quartz")) return true;
             if (org.startsWith("eclipse.jdt.")) return true;
 
             // let an app use its own slf4j impl (so its own api too)
