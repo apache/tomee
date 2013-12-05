@@ -17,7 +17,6 @@
 package org.apache.openejb.util.classloader;
 
 import org.apache.openejb.core.ParentClassLoaderFinder;
-import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
@@ -378,14 +377,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     }
 
-    private static ClassLoader findParent(final ClassLoader loader) {
-        ClassLoader parentLoader = loader.getParent();
-        while (parentLoader != null && TempClassLoader.class.isInstance(parentLoader) && URLClassLoaderFirst.class.getClassLoader() != parentLoader) {
-            parentLoader = parentLoader.getParent();
-        }
-        return parentLoader;
-    }
-
     // in org.apache.openejb.
     private static boolean isWebAppEnrichment(final String openejb) {
         return openejb.startsWith("hibernate.") || openejb.startsWith("jpa.integration.")
@@ -407,21 +398,23 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
+        if (name == null || !name.startsWith("org.slf4j.")) {
+            return true;
+        }
+
         try { // using getResource here just returns randomly the container one so we need getResources
             final Enumeration<URL> resources = loader.getResources(SLF4J_BINDER_CLASS);
             while (resources.hasMoreElements()) {
                 final URL resource = resources.nextElement();
-                if (resource.equals(SLF4J_CONTAINER)) {
-                    continue;
-                }
-                if (!(name != null && name.startsWith("org.slf4j.") && resource != null
-                        && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS)))) {
+                if (!resource.equals(SLF4J_CONTAINER)) {
+                    // applicative slf4j
                     return false;
                 }
             }
         } catch (final Throwable e) {
             // no-op
         }
+
         return true;
     }
 
