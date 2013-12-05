@@ -23,11 +23,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.quartz.Scheduler;
+import org.apache.openejb.quartz.SchedulerException;
+import org.apache.openejb.quartz.Trigger;
+import org.apache.openejb.quartz.TriggerKey;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.EJBException;
 import javax.ejb.Timer;

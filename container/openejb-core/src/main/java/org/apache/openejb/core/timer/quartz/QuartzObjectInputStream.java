@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core.timer.quartz;
 
-import org.quartz.spi.ClassLoadHelper;
+import org.apache.openejb.quartz.spi.ClassLoadHelper;
 
 import java.io.IOException;
 import java.io.InputStream;

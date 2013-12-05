@@ -26,9 +26,9 @@ import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.impl.jdbcjobstore.HSQLDBDelegate;
-import org.quartz.impl.jdbcjobstore.JobStoreCMT;
-import org.quartz.simpl.SimpleThreadPool;
+import org.apache.openejb.quartz.impl.jdbcjobstore.HSQLDBDelegate;
+import org.apache.openejb.quartz.impl.jdbcjobstore.JobStoreCMT;
+import org.apache.openejb.quartz.simpl.SimpleThreadPool;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -74,22 +74,22 @@ public class QuartzPersistenceForEJBTimersTest {
         ejbModule.getEjbJar().addEnterpriseBean(new SingletonBean(MyTimedEjb.class).localBean());
 
         final Properties quartzConfig = new PropertiesBuilder()
-            .p("org.quartz.scheduler.instanceName", "TestScheduler")
-            .p("org.quartz.scheduler.instanceId", "AUTO")
-            .p("org.quartz.threadPool.class", SimpleThreadPool.class.getName())
-            .p("org.quartz.threadPool.threadCount", "4")
-            .p("org.quartz.threadPool.threadPriority", "5")
-            .p("org.quartz.jobStore.class", JobStoreCMT.class.getName())
-            .p("org.quartz.jobStore.driverDelegateClass", HSQLDBDelegate.class.getName())
-            .p("org.quartz.jobStore.dataSource", "QUARTZ")
-            .p("org.quartz.jobStore.nonManagedTXDataSource", "QUARTZ_NOTX")
-            .p("org.quartz.jobStore.tablePrefix", "qrtz_")
-            .p("org.quartz.jobStore.isClustered", "true")
-            .p("org.quartz.jobStore.clusterCheckinInterval", "60000")
-            .p("org.quartz.jobStore.txIsolationLevelSerializable", "true")
-            .p("org.quartz.jobStore.maxMisfiresToHandleAtATime", "100")
-            .p("org.quartz.dataSource.QUARTZ.jndiURL", "openejb:Resource/QuartzPersistenceForEJBTimersDB")
-            .p("org.quartz.dataSource.QUARTZ_NOTX.jndiURL", "openejb:Resource/QuartzPersistenceForEJBTimersDBNoTx")
+            .p("org.apache.openejb.quartz.scheduler.instanceName", "TestScheduler")
+            .p("org.apache.openejb.quartz.scheduler.instanceId", "AUTO")
+            .p("org.apache.openejb.quartz.threadPool.class", SimpleThreadPool.class.getName())
+            .p("org.apache.openejb.quartz.threadPool.threadCount", "4")
+            .p("org.apache.openejb.quartz.threadPool.threadPriority", "5")
+            .p("org.apache.openejb.quartz.jobStore.class", JobStoreCMT.class.getName())
+            .p("org.apache.openejb.quartz.jobStore.driverDelegateClass", HSQLDBDelegate.class.getName())
+            .p("org.apache.openejb.quartz.jobStore.dataSource", "QUARTZ")
+            .p("org.apache.openejb.quartz.jobStore.nonManagedTXDataSource", "QUARTZ_NOTX")
+            .p("org.apache.openejb.quartz.jobStore.tablePrefix", "qrtz_")
+            .p("org.apache.openejb.quartz.jobStore.isClustered", "true")
+            .p("org.apache.openejb.quartz.jobStore.clusterCheckinInterval", "60000")
+            .p("org.apache.openejb.quartz.jobStore.txIsolationLevelSerializable", "true")
+            .p("org.apache.openejb.quartz.jobStore.maxMisfiresToHandleAtATime", "100")
+            .p("org.apache.openejb.quartz.dataSource.QUARTZ.jndiURL", "openejb:Resource/QuartzPersistenceForEJBTimersDB")
+            .p("org.apache.openejb.quartz.dataSource.QUARTZ_NOTX.jndiURL", "openejb:Resource/QuartzPersistenceForEJBTimersDBNoTx")
             .build();
 
 

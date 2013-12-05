@@ -19,14 +19,14 @@ package org.apache.openejb.resource.quartz;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.listeners.SchedulerListenerSupport;
+import org.apache.openejb.quartz.Job;
+import org.apache.openejb.quartz.JobDataMap;
+import org.apache.openejb.quartz.JobExecutionContext;
+import org.apache.openejb.quartz.JobExecutionException;
+import org.apache.openejb.quartz.Scheduler;
+import org.apache.openejb.quartz.SchedulerException;
+import org.apache.openejb.quartz.impl.StdSchedulerFactory;
+import org.apache.openejb.quartz.listeners.SchedulerListenerSupport;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
@@ -73,7 +73,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
             timeout = 60000L;
         }
 
-        //Allow org.quartz.InterruptableJob implementors to be interrupted on shutdown
+        //Allow org.apache.openejb.quartz.InterruptableJob implementors to be interrupted on shutdown
         System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN
                               , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true"));
         System.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT

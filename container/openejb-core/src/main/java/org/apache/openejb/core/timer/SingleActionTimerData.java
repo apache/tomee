@@ -17,8 +17,8 @@
 
 package org.apache.openejb.core.timer;
 
-import org.quartz.impl.triggers.AbstractTrigger;
-import org.quartz.impl.triggers.SimpleTriggerImpl;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.quartz.impl.triggers.SimpleTriggerImpl;
 
 import javax.ejb.TimerConfig;
 import java.lang.reflect.Method;

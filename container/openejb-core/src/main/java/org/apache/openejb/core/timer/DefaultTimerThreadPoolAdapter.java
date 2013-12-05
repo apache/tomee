@@ -21,8 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.quartz.SchedulerConfigException;
-import org.quartz.spi.ThreadPool;
+import org.apache.openejb.quartz.SchedulerConfigException;
+import org.apache.openejb.quartz.spi.ThreadPool;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
@@ -47,12 +47,12 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     private String instanceName;
 
     /**
-     * Mock support for property: org.quartz.threadPool.threadCount
+     * Mock support for property: org.apache.openejb.quartz.threadPool.threadCount
      */
     private int threadCount = 3;
 
     /**
-     * Mock support for property: org.quartz.threadPool.threadPriority
+     * Mock support for property: org.apache.openejb.quartz.threadPool.threadPriority
      */
     private int threadPriority = Thread.NORM_PRIORITY;
 

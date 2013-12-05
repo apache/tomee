@@ -36,9 +36,9 @@ import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.resource.quartz.JobSpec;
 import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.apache.openejb.quartz.Job;
+import org.apache.openejb.quartz.JobExecutionContext;
+import org.apache.openejb.quartz.JobExecutionException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

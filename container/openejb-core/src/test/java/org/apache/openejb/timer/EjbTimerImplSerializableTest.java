@@ -32,8 +32,8 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.JobDataMap;
-import org.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.quartz.JobDataMap;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;

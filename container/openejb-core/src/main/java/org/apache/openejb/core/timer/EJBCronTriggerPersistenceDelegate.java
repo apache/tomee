@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.core.timer;
 
-import org.quartz.JobDetail;
-import org.quartz.ScheduleBuilder;
-import org.quartz.TriggerKey;
-import org.quartz.impl.jdbcjobstore.CronTriggerPersistenceDelegate;
-import org.quartz.impl.jdbcjobstore.Util;
-import org.quartz.spi.MutableTrigger;
-import org.quartz.spi.OperableTrigger;
+import org.apache.openejb.quartz.JobDetail;
+import org.apache.openejb.quartz.ScheduleBuilder;
+import org.apache.openejb.quartz.TriggerKey;
+import org.apache.openejb.quartz.impl.jdbcjobstore.CronTriggerPersistenceDelegate;
+import org.apache.openejb.quartz.impl.jdbcjobstore.Util;
+import org.apache.openejb.quartz.spi.MutableTrigger;
+import org.apache.openejb.quartz.spi.OperableTrigger;
 
 import javax.ejb.ScheduleExpression;
 import java.io.IOException;

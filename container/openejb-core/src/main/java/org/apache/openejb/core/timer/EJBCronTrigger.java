@@ -18,7 +18,7 @@ package org.apache.openejb.core.timer;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.quartz.impl.triggers.CronTriggerImpl;
+import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 
 import javax.ejb.ScheduleExpression;
 import java.io.Serializable;
@@ -40,7 +40,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EJBCronTrigger extends CronTriggerImpl {
+public class    EJBCronTrigger extends CronTriggerImpl {
     private static final long serialVersionUID = 1L;
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, EJBCronTrigger.class);

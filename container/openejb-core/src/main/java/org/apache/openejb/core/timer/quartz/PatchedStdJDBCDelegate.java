@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.core.timer.quartz;
 
-import org.quartz.impl.jdbcjobstore.NoSuchDelegateException;
-import org.quartz.impl.jdbcjobstore.StdJDBCDelegate;
-import org.quartz.spi.ClassLoadHelper;
+import org.apache.openejb.quartz.impl.jdbcjobstore.NoSuchDelegateException;
+import org.apache.openejb.quartz.impl.jdbcjobstore.StdJDBCDelegate;
+import org.apache.openejb.quartz.spi.ClassLoadHelper;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
