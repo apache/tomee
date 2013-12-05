@@ -60,6 +60,8 @@ public class EjbJarBuilder {
         MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
         
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
+            final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(moduleContext.getClassLoader());
             try {
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, moduleContext, moduleInjections);
                 BeanContext bean = deploymentBuilder.build();
@@ -78,6 +80,8 @@ public class EjbJarBuilder {
                 bean.setContainer(container);
             } catch (Throwable e) {
                 throw new OpenEJBException("Error building bean '" + ejbInfo.ejbName + "'.  Exception: " + e.getClass() + ": " + e.getMessage(), e);
+            } finally {
+                Thread.currentThread().setContextClassLoader(loader);
             }
         }
         return deployments;

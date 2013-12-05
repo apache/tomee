@@ -23,11 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.*;
 
 // TODO: look SM usage, find a better name
 public class URLClassLoaderFirst extends URLClassLoader {
@@ -52,6 +48,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static final String SLF4J_BINDER_CLASS = "org/slf4j/impl/StaticLoggerBinder.class";
+    private static final URL SLF4J_CONTAINER = URLClassLoaderFirst.class.getClassLoader().getResource(SLF4J_BINDER_CLASS);
     private static final String CLASS_EXT = ".class";
     public static final ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
 
@@ -410,9 +407,22 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
-        final URL resource = loader.getResource(SLF4J_BINDER_CLASS);
-        return name != null && name.startsWith("org.slf4j.") && resource != null
-                && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS));
+        try { // using getResource here just returns randomly the container one so we need getResources
+            final Enumeration<URL> resources = loader.getResources(SLF4J_BINDER_CLASS);
+            while (resources.hasMoreElements()) {
+                final URL resource = resources.nextElement();
+                if (resource.equals(SLF4J_CONTAINER)) {
+                    continue;
+                }
+                if (!(name != null && name.startsWith("org.slf4j.") && resource != null
+                        && resource.equals(findParent(loader).getResource(SLF4J_BINDER_CLASS)))) {
+                    return false;
+                }
+            }
+        } catch (final Throwable e) {
+            // no-op
+        }
+        return true;
     }
 
     // useful method for SPI
