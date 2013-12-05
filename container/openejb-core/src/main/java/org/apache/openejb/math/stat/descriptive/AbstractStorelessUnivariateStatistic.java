@@ -161,10 +161,10 @@ public abstract class AbstractStorelessUnivariateStatistic
         if (object == this ) {
             return true;
         }
-       if (object instanceof AbstractStorelessUnivariateStatistic == false) {
+       if (!(object instanceof AbstractStorelessUnivariateStatistic)) {
             return false;
         }
-        AbstractStorelessUnivariateStatistic stat = (AbstractStorelessUnivariateStatistic) object;
+        final AbstractStorelessUnivariateStatistic stat = (AbstractStorelessUnivariateStatistic) object;
         return MathUtils.equals(stat.getResult(), this.getResult()) &&
                MathUtils.equals(stat.getN(), this.getN());
     }
