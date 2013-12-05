@@ -74,8 +74,8 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
-    public static final String QUARTZ_JMX = "org.quartz.scheduler.jmx.export";
-    public static final String QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON = "org.quartz.scheduler.makeSchedulerThreadDaemon";
+    public static final String QUARTZ_JMX = "org.apache.openejb.quartz.scheduler.jmx.export";
+    public static final String QUARTZ_MAKE_SCHEDULER_THREAD_DAEMON = "org.apache.openejb.quartz.scheduler.makeSchedulerThreadDaemon";
 
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
@@ -245,19 +245,19 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         if (!tccl) {
-            final String driverDelegate = properties.getProperty("org.quartz.jobStore.driverDelegateClass");
+            final String driverDelegate = properties.getProperty("org.apache.openejb.quartz.jobStore.driverDelegateClass");
             if (driverDelegate != null && StdJDBCDelegate.class.getName().equals(driverDelegate)) {
-                properties.put("org.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
+                properties.put("org.apache.openejb.quartz.jobStore.driverDelegateClass", PatchedStdJDBCDelegate.class.getName());
             } else if (driverDelegate != null) {
                 log.info("You use " + driverDelegate + " driver delegate with quartz, ensure it doesn't use ObjectInputStream otherwise your custom TimerData can induce some issues");
             }
 
             // adding our custom persister
-            if (properties.containsKey("org.quartz.jobStore.class") && !properties.containsKey("org.quartz.jobStore.driverDelegateInitString")) {
+            if (properties.containsKey("org.apache.openejb.quartz.jobStore.class") && !properties.containsKey("org.apache.openejb.quartz.jobStore.driverDelegateInitString")) {
                 try {
-                    final Class<?> clazz = EjbTimerServiceImpl.class.getClassLoader().loadClass(properties.getProperty("org.quartz.jobStore.class"));
+                    final Class<?> clazz = EjbTimerServiceImpl.class.getClassLoader().loadClass(properties.getProperty("org.apache.openejb.quartz.jobStore.class"));
                     if (JobStoreSupport.class.isAssignableFrom(clazz)) {
-                        properties.put("org.quartz.jobStore.driverDelegateInitString",
+                        properties.put("org.apache.openejb.quartz.jobStore.driverDelegateInitString",
                             "triggerPersistenceDelegateClasses=" + EJBCronTriggerPersistenceDelegate.class.getName());
                     }
                 } catch (final Throwable th) {
@@ -267,15 +267,15 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         if (defaultThreadPool.equals(properties.get(StdSchedulerFactory.PROP_THREAD_POOL_CLASS))
-            && properties.containsKey("org.quartz.threadPool.threadCount")
+            && properties.containsKey("org.apache.openejb.quartz.threadPool.threadCount")
             && !properties.containsKey(DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE)) {
-            log.info("Found property 'org.quartz.threadPool.threadCount' for default thread pool, please use '"
+            log.info("Found property 'org.apache.openejb.quartz.threadPool.threadCount' for default thread pool, please use '"
                      + DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE + "' instead");
         }
 
         // to ensure we can shutdown correctly, default doesn't support such a configuration
         if (!properties.getProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, RAMJobStore.class.getName()).equals(RAMJobStore.class.getName())) {
-            properties.put("org.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.quartz.jobStore.makeThreadsDaemon", "true"));
+            properties.put("org.apache.openejb.quartz.jobStore.makeThreadsDaemons", properties.getProperty("org.apache.openejb.quartz.jobStore.makeThreadsDaemon", "true"));
         }
     }
 
@@ -284,6 +284,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         for (final Map.Entry<Object, Object> entry : b.entrySet()) {
             final String key = entry.getKey().toString();
             if (key.startsWith("org.quartz.")
+                || key.startsWith("org.apache.openejb.quartz.")
                 || key.startsWith("openejb.quartz.")
                 || DefaultTimerThreadPoolAdapter.OPENEJB_TIMER_POOL_SIZE.equals(key)
                 || "org.terracotta.quartz.skipUpdateCheck".equals(key)) {
@@ -292,7 +293,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
             final Object value = entry.getValue();
             if (String.class.isInstance(value)) {
-                a.put(entry.getKey(), value);
+                if (!key.startsWith("org.quartz")) {
+                    a.put(key, value);
+                } else {
+                    a.put("org.apache.openejb.quartz" + key.substring("org.quartz".length()), value);
+                }
             }
         }
         return number;
