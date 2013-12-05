@@ -47,12 +47,12 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     private String instanceName;
 
     /**
-     * Mock support for property: org.apache.openejb.quartz.threadPool.threadCount
+     * Mock support for property: org.quartz.threadPool.threadCount
      */
     private int threadCount = 3;
 
     /**
-     * Mock support for property: org.apache.openejb.quartz.threadPool.threadPriority
+     * Mock support for property: org.quartz.threadPool.threadPriority
      */
     private int threadPriority = Thread.NORM_PRIORITY;
 

@@ -34,7 +34,7 @@
     <inbound-resourceadapter>
       <messageadapter>
         <messagelistener>
-          <messagelistener-type>org.quartz.Job</messagelistener-type>
+          <messagelistener-type>org.apache.openejb.quartz.Job</messagelistener-type>
           <activationspec>
             <activationspec-class>org.apache.openejb.resource.quartz.JobSpec</activationspec-class>
           </activationspec>
