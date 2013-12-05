@@ -29,5 +29,6 @@
 
   <modules>
     <module>mbean-annotation-api</module>
+    <module>quartz-openejb-shade</module>
   </modules>
 </project>

@@ -207,9 +207,9 @@
       org.testng;resolution:=optional,
       org.omg.CORBA,
       org.osgi.framework,
-      org.quartz;resolution:=optional,
-      org.quartz.impl;resolution:=optional,
-      org.quartz.spi;resolution:=optional,
+      org.apache.openejb.quartz;resolution:=optional,
+      org.apache.openejb.quartz.impl;resolution:=optional,
+      org.apache.openejb.quartz.spi;resolution:=optional,
       org.slf4j;resolution:=optional;version="[1.6,4)",
       org.w3c.dom,
       org.w3c.dom.ls,
@@ -607,8 +607,9 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
+      <groupId>org.apache.openejb.shade</groupId>
+      <artifactId>quartz-openejb-shade</artifactId>
+      <version>${quartz.version}</version>
     </dependency>
     <!-- Dependency of Quartz -->
     <dependency>

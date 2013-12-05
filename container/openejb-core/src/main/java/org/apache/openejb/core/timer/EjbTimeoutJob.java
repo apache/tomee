@@ -17,10 +17,10 @@
 
 package org.apache.openejb.core.timer;
 
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.apache.openejb.quartz.Job;
+import org.apache.openejb.quartz.JobDataMap;
+import org.apache.openejb.quartz.JobExecutionContext;
+import org.apache.openejb.quartz.JobExecutionException;
 
 /**
  * @version $Rev$ $Date$

@@ -18,7 +18,7 @@
 package org.apache.openejb.core.timer;
 
 import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
-import org.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;

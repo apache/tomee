@@ -1388,6 +1388,7 @@
         <artifactId>tomcat-catalina</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
+	  <!-- we now use our shade
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
@@ -1407,6 +1408,7 @@
           </exclusion>
         </exclusions>
       </dependency>
+	  -->
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>

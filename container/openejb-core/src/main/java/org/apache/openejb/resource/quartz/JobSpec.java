@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.resource.quartz;
 
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
-import org.quartz.impl.triggers.CronTriggerImpl;
+import org.apache.openejb.quartz.CronScheduleBuilder;
+import org.apache.openejb.quartz.JobBuilder;
+import org.apache.openejb.quartz.JobDetail;
+import org.apache.openejb.quartz.JobKey;
+import org.apache.openejb.quartz.Scheduler;
+import org.apache.openejb.quartz.SchedulerException;
+import org.apache.openejb.quartz.Trigger;
+import org.apache.openejb.quartz.TriggerBuilder;
+import org.apache.openejb.quartz.TriggerKey;
+import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.InvalidPropertyException;

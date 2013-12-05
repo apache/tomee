@@ -99,6 +99,7 @@ import org.apache.openejb.monitoring.remote.RemoteResourceMonitor;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.quartz.Scheduler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.resource.PropertiesFactory;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
@@ -138,7 +139,6 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
-import org.quartz.Scheduler;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
