@@ -16,15 +16,15 @@
  */
 package org.superbiz.quartz;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.apache.openejb.quartz.Job;
+import org.apache.openejb.quartz.JobExecutionContext;
+import org.apache.openejb.quartz.JobExecutionException;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 
 @MessageDriven(activationConfig = {
-                                      @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")
+  @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")
 })
 public class QuartzMdb implements Job {
 
