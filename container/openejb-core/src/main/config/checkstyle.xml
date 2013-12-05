@@ -128,8 +128,8 @@
     <!--</module>-->
     <!--<module name="MissingSwitchDefault"/>-->
     <!--<module name="RedundantThrows"/>-->
-    <!--<module name="SimplifyBooleanExpression"/>-->
-    <!--<module name="SimplifyBooleanReturn"/>-->
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
 
     <!-- Checks for class design                         -->
     <!-- See http://checkstyle.sf.net/config_design.html -->

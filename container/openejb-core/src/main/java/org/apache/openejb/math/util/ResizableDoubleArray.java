@@ -852,7 +852,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
         if (object == this ) {
             return true;
         }
-       if (object instanceof ResizableDoubleArray == false) {
+       if (!(object instanceof ResizableDoubleArray)) {
             return false;
         }
        synchronized(this) {
