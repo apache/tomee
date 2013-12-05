@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-public class HexConverter {
+public final class HexConverter {
 
     private HexConverter() {
         // Disallow instantiation

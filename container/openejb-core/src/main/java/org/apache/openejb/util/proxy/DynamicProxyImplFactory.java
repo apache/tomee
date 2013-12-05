@@ -73,7 +73,7 @@ public class DynamicProxyImplFactory {
         return null;
     }
 
-    private static class Handler implements InvocationHandler {
+    private static final class Handler implements InvocationHandler {
         private InvocationHandler handler;
 
         private Handler(InvocationHandler handler) {

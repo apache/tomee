@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // only maps json objects, doesn't handle array, number, true/false/null
-public class SimpleJSonParser {
+public final class SimpleJSonParser {
     public static Object read(final InputStream is) throws IOException {
         Map<String, Object> json = null;
         Collection<Object> array = null;

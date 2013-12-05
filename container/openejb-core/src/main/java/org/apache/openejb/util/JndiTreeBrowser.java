@@ -22,7 +22,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
-public class JndiTreeBrowser {
+public final class JndiTreeBrowser {
     private static final String ROOT = "";
 
     private Context context;

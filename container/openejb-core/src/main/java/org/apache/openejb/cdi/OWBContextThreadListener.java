@@ -43,7 +43,6 @@ public class OWBContextThreadListener implements ThreadContextListener {
         AppContext appContext = moduleContext.getAppContext();
         WebBeansContext owbContext = appContext.getWebBeansContext();
         if (owbContext == null) {
-//            throw new IllegalStateException("WebBeansContext not initialized in appContext " + appContext);
             return;
         }
         Object oldOWBContext = singletonService.contextEntered(owbContext);
@@ -58,7 +57,7 @@ public class OWBContextThreadListener implements ThreadContextListener {
         singletonService.contextExited(oldOWBContext.getContext());
     }
 
-    private static class OWBContextHolder {
+    private static final class OWBContextHolder {
         private final Object context;
 
         private OWBContextHolder(Object context) {

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class JaxWsUtils {
+public final class JaxWsUtils {
 
     private static final Map<String, String> BINDING_MAP = new HashMap<String, String>();
 

@@ -463,7 +463,7 @@ public class DynamicMBeanWrapper implements DynamicMBean {
         }
     }
 
-    private static class CacheInfo {
+    private static final class CacheInfo {
         public final MBeanInfo mBeanInfo;
         public final Map<String, Method> getters;
         public final Map<String, Method> setters;

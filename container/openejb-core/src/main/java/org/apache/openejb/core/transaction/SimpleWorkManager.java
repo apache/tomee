@@ -203,7 +203,7 @@ public class SimpleWorkManager implements WorkManager {
         }
     }
 
-    private static class LoggingWorkListener extends WorkAdapter {
+    private static final class LoggingWorkListener extends WorkAdapter {
         private final WorkType workType;
 
         private LoggingWorkListener(WorkType workType) {

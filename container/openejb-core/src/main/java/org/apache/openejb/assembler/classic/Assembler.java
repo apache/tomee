@@ -2701,7 +2701,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private static class DestroyingResource {
+    private static final class DestroyingResource {
         private final String name;
         private final String clazz;
         private final Object instance;

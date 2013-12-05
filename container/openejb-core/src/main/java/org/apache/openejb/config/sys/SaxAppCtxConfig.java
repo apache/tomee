@@ -157,7 +157,7 @@ public class SaxAppCtxConfig {
             }
         }
 
-        private class Configuration extends Content {
+        private final class Configuration extends Content {
             private final Properties properties;
 
             private final String prefix;
@@ -188,7 +188,7 @@ public class SaxAppCtxConfig {
             }
         }
 
-        private class MultipleConfiguration extends Content {
+        private final class MultipleConfiguration extends Content {
             private final Collection<Properties> properties;
 
             private final String prefix;
@@ -273,7 +273,7 @@ public class SaxAppCtxConfig {
         private class ModuleContext extends DefaultHandler {
             protected final String id;
 
-            private ModuleContext(final String id) {
+            ModuleContext(final String id) {
                 this.id = id;
             }
 
@@ -302,7 +302,7 @@ public class SaxAppCtxConfig {
             }
         }
 
-        private class WebAppContext extends ModuleContext {
+        private final class WebAppContext extends ModuleContext {
             private WebAppContext(final String id) {
                 super(id);
             }

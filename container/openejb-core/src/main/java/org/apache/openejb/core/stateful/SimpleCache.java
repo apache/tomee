@@ -562,7 +562,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         AVAILABLE, CHECKED_OUT, PASSIVATED, REMOVED
     }
 
-    private class Entry {
+    private final class Entry {
         private final K key;
         private final V value;
         private final ReentrantLock lock = new ReentrantLock();

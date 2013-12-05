@@ -116,7 +116,7 @@ public class Debug {
 
         private final List<Event> events = new ArrayList<Event>();
 
-        private static class Event {
+        private static final class Event {
             private final long time = System.currentTimeMillis();
             private final List<StackTraceElement> elements;
 

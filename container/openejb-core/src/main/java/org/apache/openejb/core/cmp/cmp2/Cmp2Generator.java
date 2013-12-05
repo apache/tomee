@@ -1098,7 +1098,7 @@ public class Cmp2Generator implements Opcodes {
      * Helper class to handle common type conversions 
      * in generated code. 
      */
-    private static class Convert {
+    private static final class Convert {
         /**
          * Generate code to performing boxing of primitive types 
          * into a wrapper class instance.  

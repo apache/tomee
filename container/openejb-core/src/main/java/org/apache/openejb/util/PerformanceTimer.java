@@ -47,7 +47,7 @@ public class PerformanceTimer {
         private final Event previous;
         private final String description;
 
-        private Event(final Event previous, final String description) {
+        Event(final Event previous, final String description) {
             this.previous = previous;
             this.description = description;
         }
@@ -61,7 +61,7 @@ public class PerformanceTimer {
         }
     }
 
-    private class Start extends Event {
+    private final class Start extends Event {
 
         private Start() {
             super(null, "start");

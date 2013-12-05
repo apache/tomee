@@ -123,7 +123,7 @@ public class StatelessInstanceManager {
         });
     }
 
-    private class StatelessSupplier implements Pool.Supplier<Instance> {
+    private final class StatelessSupplier implements Pool.Supplier<Instance> {
         private final BeanContext beanContext;
 
         private StatelessSupplier(final BeanContext beanContext) {
@@ -494,7 +494,7 @@ public class StatelessInstanceManager {
         }
     }
 
-    private class InstanceCreatorRunnable implements Runnable {
+    private final class InstanceCreatorRunnable implements Runnable {
         private long maxAge;
         private long iteration;
         private double maxAgeOffset;

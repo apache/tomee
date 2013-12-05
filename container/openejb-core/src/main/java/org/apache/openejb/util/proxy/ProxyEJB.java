@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-public class ProxyEJB {
+public final class ProxyEJB {
     private ProxyEJB() {
         // no-op
     }

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core.ivm;
 
-public class IntraVmCopyMonitor {
+public final class IntraVmCopyMonitor {
     public static enum State {
         NONE, COPY(true), CLASSLOADER_COPY(true), PASSIVATION;
 

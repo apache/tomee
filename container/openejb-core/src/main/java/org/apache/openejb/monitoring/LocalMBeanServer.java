@@ -56,7 +56,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Properties;
 import java.util.Set;
 
-public class LocalMBeanServer implements MBeanServer {
+public final class LocalMBeanServer implements MBeanServer {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LocalMBeanServer.class);
 
     public static final String OPENEJB_JMX_ACTIVE = "openejb.jmx.active";

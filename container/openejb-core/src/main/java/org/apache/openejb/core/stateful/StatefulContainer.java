@@ -963,7 +963,7 @@ public class StatefulContainer implements RpcContainer {
      * <p/>
      * This class also is responsible for calling releaseInstance after the transaction completes.
      */
-    private class SessionSynchronizationCoordinator implements TransactionSynchronization {
+    private final class SessionSynchronizationCoordinator implements TransactionSynchronization {
 
         private final Map<Object, Synchronization> registry = new HashMap<Object, Synchronization>();
         private final TransactionPolicy txPolicy;
@@ -1199,7 +1199,7 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private static class Data {
+    private static final class Data {
 
         private final Index<Method, MethodType> methodIndex;
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
