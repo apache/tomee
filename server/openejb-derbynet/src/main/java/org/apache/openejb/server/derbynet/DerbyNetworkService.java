@@ -59,31 +59,33 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
     @Override
     public void init(final Properties properties) throws Exception {
         final Options options = new Options(properties);
-
         this.port = options.get("port", 1527);
         this.disabled = options.get("disabled", false);
-
-        host = InetAddress.getByName("0.0.0.0");
-        System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
+        this.host = InetAddress.getByName("0.0.0.0");
+        System.setProperty(
+                "derby.system.home",
+                options.get("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath())
+        );
     }
 
     @Override
     public void service(final InputStream inputStream, final OutputStream outputStream) throws ServiceException, IOException {
+        // no-op
     }
 
     @Override
     public void service(final Socket socket) throws ServiceException, IOException {
+        // no-op
     }
 
     @Override
     public void start() throws ServiceException {
-        if (disabled)
+        if (this.disabled) {
             return;
+        }
         try {
-            serverControl = new NetworkServerControl(host, port);
-            //serverControl.setMaxThreads(threads);
-
-            serverControl.start(new LoggingPrintWriter("Derby"));
+            this.serverControl = new NetworkServerControl(host, port);
+            this.serverControl.start(new LoggingPrintWriter("Derby"));
         } catch (Exception e) {
             throw new ServiceException(e);
         }
@@ -91,15 +93,15 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
 
     @Override
     public void stop() throws ServiceException {
-        if (serverControl == null) {
+        if (this.serverControl == null) {
             return;
         }
         try {
-            serverControl.shutdown();
+            this.serverControl.shutdown();
         } catch (Exception e) {
             throw new ServiceException(e);
         } finally {
-            serverControl = null;
+            this.serverControl = null;
         }
     }
 
