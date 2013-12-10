@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -66,9 +68,11 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     public static final String SERVER = "OpenEJB.MCP.Server:";
     public static final String CLIENT = "OpenEJB.MCP.Client:";
+    public static final String BADURI = ":BadUri:";
     public static final String EMPTY = "NoService";
 
-    private final Set<String> ignore = new HashSet<String>();
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Set<String> ignore = Collections.synchronizedSet(new HashSet<String>());
     private final Set<URI> uriSet = new HashSet<URI>();
     private AtomicBoolean running = new AtomicBoolean(false);
     final ArrayList<Future> futures = new ArrayList<Future>();
@@ -84,12 +88,19 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private boolean loopbackOnly = true;
 
     /**
+     * @author Andy Gumbrecht
      * This agent listens for client pulses on a defined multicast channel.
      * On receipt of a valid pulse the agent responds with its own pulse for
      * a defined amount of time and rate. A client can deliver a pulse as often as
      * required until it is happy of the server response.
      * <p/>
      * Both server and client deliver crafted information payloads.
+     * <p/>
+     * The client pulse contains OpenEJB.MCP.Client:(group or *)[:BadUri:URI]
+     * The server will only respond to a request for it's own group or *
+     * The optional :BadUri: is used by clients to notify a server that it is sending out unreachable URI's
+     * <p/>
+     * The server response pulse contains OpenEJB.MCP.Server:(Service|Service)|(Comma separated host list)
      */
     public MulticastPulseAgent() {
     }
@@ -111,7 +122,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 length = 1;
             }
 
-            executor = Executors.newFixedThreadPool(length * 2);
+            executor = Executors.newFixedThreadPool(length * 3);
         }
 
         return executor;
@@ -134,7 +145,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 }
             }
         } catch (Exception e) {
-            log.warning("Invalid ignore parameter. Should be a lowercase single or comma seperated list like: ignore=host1,host2");
+            log.warning("Invalid ignore parameter. Should be a lowercase single host or comma seperated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
         }
 
         this.multicast = o.get("bind", this.multicast);
@@ -148,47 +159,69 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private void buildPacket() throws SocketException {
 
-        this.loopbackOnly = true;
-        for (final URI uri : this.uriSet) {
-            if (!isLoopback(uri.getHost())) {
-                this.loopbackOnly = false;
-                break;
-            }
-        }
+        final ReentrantLock l = this.lock;
+        l.lock();
 
-        final String hosts = getHosts(this.ignore);
-        final StringBuilder sb = new StringBuilder(SERVER);
-        sb.append(this.group);
-        sb.append(':');
-
-        if (this.uriSet.size() > 0) {
+        try {
+            this.loopbackOnly = true;
             for (final URI uri : this.uriSet) {
-                sb.append(uri.toASCIIString());
+                if (!isLoopback(uri.getHost())) {
+                    this.loopbackOnly = false;
+                    break;
+                }
+            }
+
+            final String hosts = getHosts(this.ignore);
+            final StringBuilder sb = new StringBuilder(SERVER);
+            sb.append(this.group);
+            sb.append(':');
+
+            if (this.uriSet.size() > 0) {
+                for (final URI uri : this.uriSet) {
+                    sb.append(uri.toASCIIString());
+                    sb.append('|');
+                }
+            } else {
+                sb.append(EMPTY);
                 sb.append('|');
             }
-        } else {
-            sb.append(EMPTY);
-            sb.append('|');
+
+            sb.append(hosts);
+
+            final byte[] bytes = (sb.toString()).getBytes(UTF8);
+            this.response = new DatagramPacket(bytes, bytes.length, this.address);
+
+            if (log.isDebugEnabled()) {
+                log.debug("MultiPulse packet is: " + sb);
+            }
+
+            if (bytes.length > 2048) {
+                log.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
+                            "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
+            }
+        } finally {
+            l.unlock();
         }
+    }
 
-        sb.append(hosts);
+    public DatagramPacket getResponsePacket() {
+        final ReentrantLock l = this.lock;
+        l.lock();
 
-        final byte[] bytes = (sb.toString()).getBytes(UTF8);
-        this.response = new DatagramPacket(bytes, bytes.length, this.address);
-
-        if (log.isDebugEnabled()) {
-            log.debug("MultiPulse packet is: " + sb);
-        }
-
-        if (bytes.length > 2048) {
-            log.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
-                        "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
+        try {
+            return this.response;
+        } finally {
+            l.unlock();
         }
     }
 
     @Override
     public void setDiscoveryListener(final DiscoveryListener listener) {
         this.listener = listener;
+    }
+
+    public DiscoveryListener getDiscoveryListener() {
+        return listener;
     }
 
     @Override
@@ -267,7 +300,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     continue;
                 }
 
-                final Sender sender = new Sender(this, socketKey, socket, this.response);
+                final Sender sender = new Sender(this, socketKey, socket);
                 this.futures.add(executorService.submit(sender));
 
                 this.futures.add(executorService.submit(new Runnable() {
@@ -289,34 +322,64 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                                     if (req.startsWith(CLIENT)) {
 
-                                        req = (req.replace(CLIENT, ""));
+                                        final int ix = req.indexOf(BADURI);
+                                        String badUri = null;
 
+                                        if (ix > 0) {
+                                            //The client is notifying of a bad uri
+                                            badUri = req.substring(ix).replace(BADURI, "");
+                                            req = req.substring(0, ix).replace(CLIENT, "");
+                                        } else {
+                                            req = (req.replace(CLIENT, ""));
+                                        }
+
+                                        //Is this a group or global pulse request
                                         if (mpg.equals(req) || "*".equals(req)) {
 
-                                            final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+                                            //Is there a bad url and is it this agent broadcasting the bad URI?
+                                            if (null != badUri && getHosts(MulticastPulseAgent.this.ignore).contains(badUri)) {
+                                                final ReentrantLock l = MulticastPulseAgent.this.lock;
+                                                l.lock();
 
-                                            if (isLoopBackOnly) {
-                                                //We only have local services, so make sure the request is from a local source else ignore it
-                                                if (!MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                try {
+                                                    //Remove it and rebuild our broadcast packet
+                                                    if (MulticastPulseAgent.this.ignore.add(badUri)) {
+                                                        MulticastPulseAgent.this.buildPacket();
+
+                                                        MulticastPulseAgent.this.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
+
+                                                        log.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
+                                                                    " this to the 'ignore' property in the multipulse.properties file");
+                                                    }
+
+                                                } finally {
+                                                    l.unlock();
+                                                }
+                                            } else {
+
+                                                //Normal client multicast pulse request
+                                                final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+
+                                                if (isLoopBackOnly && !MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                    //We only have local services, so make sure the request is from a local source else ignore it
                                                     if (log.isDebugEnabled()) {
                                                         log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
                                                                                 client,
                                                                                 req));
                                                     }
-                                                    return;
+                                                } else {
+
+                                                    //We have received a valid pulse request
+                                                    if (log.isDebugEnabled()) {
+                                                        log.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
+                                                    }
+
+                                                    //Renew response pulse
+                                                    sender.pulseResponse();
                                                 }
                                             }
-
-                                            //We have received a valid pulse request
-                                            if (log.isDebugEnabled()) {
-                                                log.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
-                                            }
-
-                                            //Renew response pulse
-                                            sender.pulseResponse();
                                         }
                                     }
-
                                 }
 
                             } catch (Exception e) {
@@ -409,6 +472,27 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     @Override
     public int getPort() {
         return this.port;
+    }
+
+    /**
+     * Lists current broadcast hosts as a comma separated list.
+     * Used principally for testing.
+     *
+     * @return String
+     */
+    public String getHosts() {
+        return getHosts(this.ignore);
+    }
+
+    /**
+     * Remove a host from the ignore list.
+     * Used principally for testing.
+     *
+     * @param host String
+     * @return True if removed, else false
+     */
+    public boolean removeFromIgnore(final String host) {
+        return this.ignore.remove(host);
     }
 
     /**
@@ -612,13 +696,11 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         private final MulticastPulseAgent agent;
         private final String socketKey;
         private final MulticastSocket socket;
-        private final DatagramPacket mpr;
 
-        private Sender(final MulticastPulseAgent agent, final String socketKey, final MulticastSocket socket, final DatagramPacket mpr) {
+        private Sender(final MulticastPulseAgent agent, final String socketKey, final MulticastSocket socket) {
             this.agent = agent;
             this.socketKey = socketKey;
             this.socket = socket;
-            this.mpr = mpr;
         }
 
         @Override
@@ -640,7 +722,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 while (this.counter.decrementAndGet() > 0) {
 
                     try {
-                        this.socket.send(this.mpr);
+                        this.socket.send(this.agent.getResponsePacket());
                     } catch (Exception e) {
                         if (log.isDebugEnabled()) {
                             log.debug("MulticastPulseAgent client error: " + e.getMessage(), e);

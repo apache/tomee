@@ -42,6 +42,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 public class CliRunnable implements Runnable {
+
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, CliRunnable.class);
 
     private static final String BRANDING_FILE = "branding.properties";
@@ -87,8 +88,11 @@ public class CliRunnable implements Runnable {
             UrlSet urlSet = new UrlSet(loader).excludeJvm();
             urlSet = urlSet.exclude(loader.getParent());
 
-            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(new ConfigurableClasspathArchive.FakeModule(loader, Collections.EMPTY_MAP), true, urlSet.getUrls()));
-            for (Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
+            //noinspection unchecked
+            final IAnnotationFinder finder = new AnnotationFinder(new ConfigurableClasspathArchive(new ConfigurableClasspathArchive.FakeModule(loader, Collections.EMPTY_MAP),
+                                                                                                   true,
+                                                                                                   urlSet.getUrls()));
+            for (final Annotated<Class<?>> cmd : finder.findMetaAnnotatedClasses(Command.class)) {
                 try {
                     final Command annotation = cmd.getAnnotation(Command.class);
                     final String key = annotation.name();
@@ -113,15 +117,15 @@ public class CliRunnable implements Runnable {
     private OutputStream err;
     private OutputStream out;
     private InputStream sin;
-    private String username;
-    private String bind;
-    private int port;
+    private final String username;
+    private final String bind;
+    private final int port;
 
-    public CliRunnable(String bind, int port) {
+    public CliRunnable(final String bind, final int port) {
         this(bind, port, PROMPT, null);
     }
 
-    public CliRunnable(String bind, int port, String username, String sep) {
+    public CliRunnable(final String bind, final int port, final String username, final String sep) {
         this.bind = bind;
         this.port = port;
         this.username = username;
@@ -144,15 +148,15 @@ public class CliRunnable implements Runnable {
         }
     }
 
-    public void setInputStream(InputStream in) {
+    public void setInputStream(final InputStream in) {
         sin = in;
     }
 
-    public void setOutputStream(OutputStream out) {
+    public void setOutputStream(final OutputStream out) {
         this.out = out;
     }
 
-    public void setErrorStream(OutputStream err) {
+    public void setErrorStream(final OutputStream err) {
         this.err = err;
     }
 
@@ -165,9 +169,10 @@ public class CliRunnable implements Runnable {
     }
 
     public void clean() {
-        scripter.clearEngines();
+        OpenEJBScripter.clearEngines();
     }
 
+    @Override
     public void run() {
         clean();
 
@@ -180,13 +185,13 @@ public class CliRunnable implements Runnable {
             // TODO : add completers
 
             String line;
-            StringBuilder builtWelcome = new StringBuilder("Apache OpenEJB ")
-                    .append(OpenEjbVersion.get().getVersion())
-                    .append("    build: ")
-                    .append(OpenEjbVersion.get().getDate())
-                    .append("-")
-                    .append(OpenEjbVersion.get().getTime())
-                    .append(lineSep);
+            final StringBuilder builtWelcome = new StringBuilder("Apache OpenEJB ")
+                                                   .append(OpenEjbVersion.get().getVersion())
+                                                   .append("    build: ")
+                                                   .append(OpenEjbVersion.get().getDate())
+                                                   .append("-")
+                                                   .append(OpenEjbVersion.get().getTime())
+                                                   .append(lineSep);
             if (tomee) {
                 builtWelcome.append(OS_LINE_SEP).append(PROPERTIES.getProperty(WELCOME_TOMEE_KEY));
             } else {
@@ -196,10 +201,10 @@ public class CliRunnable implements Runnable {
 
             streamManager.writeOut(OpenEjbVersion.get().getUrl());
             streamManager.writeOut(builtWelcome.toString()
-                    .replace("$bind", bind)
-                    .replace("$port", Integer.toString(port))
-                    .replace("$name", NAME)
-                    .replace(OS_LINE_SEP, lineSep));
+                                               .replace("$bind", bind)
+                                               .replace("$port", Integer.toString(port))
+                                               .replace("$name", NAME)
+                                               .replace(OS_LINE_SEP, lineSep));
 
             while ((line = reader.readLine(prompt())) != null) {
                 // exit simply let us go out of the loop
@@ -210,7 +215,7 @@ public class CliRunnable implements Runnable {
 
                 Class<?> cmdClass = null;
                 String key = null;
-                for (Map.Entry<String, Class<?>> cmd : COMMANDS.entrySet()) {
+                for (final Map.Entry<String, Class<?>> cmd : COMMANDS.entrySet()) {
                     if (line.startsWith(cmd.getKey())) {
                         cmdClass = cmd.getValue();
                         key = cmd.getKey();
@@ -270,8 +275,8 @@ public class CliRunnable implements Runnable {
             prompt.append(PROMPT);
         }
         prompt.append(" @ ")
-            .append(bind).append(":").append(port)
-            .append(PROMPT_SUFFIX);
+              .append(bind).append(":").append(port)
+              .append(PROMPT_SUFFIX);
         return prompt.toString();
     }
 }

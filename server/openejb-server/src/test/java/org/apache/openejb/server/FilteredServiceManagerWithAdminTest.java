@@ -40,12 +40,12 @@ public class FilteredServiceManagerWithAdminTest {
     }
 
     @Test
-    public void numberOfServices () {
+    public void numberOfServices() {
         // when using @EnableServices with the application composer
         // the return value should be a FilteredServiceManager
         assertEquals(FilteredServiceManager.class, ServiceManager.get().getClass());
 
-        FilteredServiceManager manager = (FilteredServiceManager) ServiceManager.get();
+        final FilteredServiceManager manager = (FilteredServiceManager) ServiceManager.get();
         assertEquals(1, manager.getDaemons().length);
         assertEquals("admin", manager.getDaemons()[0].getName());
     }

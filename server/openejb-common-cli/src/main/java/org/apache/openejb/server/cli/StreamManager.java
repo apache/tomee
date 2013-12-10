@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 
 public class StreamManager {
+
     private static final String OS_LINE_SEP = System.getProperty("line.separator");
 
     private String lineSep;
@@ -34,16 +35,16 @@ public class StreamManager {
     private OutputStream out;
     private OutputStream err;
 
-    public StreamManager(OutputStream out, OutputStream err, String lineSep) {
+    public StreamManager(final OutputStream out, final OutputStream err, final String lineSep) {
         this.lineSep = lineSep;
         this.out = out;
         this.err = err;
         this.sout = new OutputStreamWriter(out);
-        this.serr= new OutputStreamWriter(err);
+        this.serr = new OutputStreamWriter(err);
     }
 
     private void write(final OutputStreamWriter writer, final String s) {
-        for (String l : s.split(lineSep)) {
+        for (final String l : s.split(lineSep)) {
             try {
                 writer.write(l);
                 writer.write(lineSep);
@@ -64,7 +65,7 @@ public class StreamManager {
         } else {
             final StringBuilder error = new StringBuilder();
             error.append(e.getMessage()).append(lineSep);
-            for (StackTraceElement elt : e.getStackTrace()) {
+            for (final StackTraceElement elt : e.getStackTrace()) {
                 error.append("    ").append(elt.toString()).append(lineSep);
             }
             write(serr, error.toString());
@@ -77,7 +78,7 @@ public class StreamManager {
         }
         if (out instanceof Collection) {
             final StringBuilder builder = new StringBuilder();
-            for (Object o : (Collection) out) {
+            for (final Object o : (Collection) out) {
                 builder.append(string(o, lineSep)).append(lineSep);
             }
             return builder.toString();
@@ -89,10 +90,10 @@ public class StreamManager {
         if (!out.getClass().getName().startsWith("java")) {
             try {
                 return new GsonBuilder().setPrettyPrinting().create().toJson(out)
-                            .replace(OS_LINE_SEP, lineSep);
+                                        .replace(OS_LINE_SEP, lineSep);
             } catch (RuntimeException re) {
                 return ToStringBuilder.reflectionToString(out, ToStringStyle.SHORT_PREFIX_STYLE)
-                            .replace(OS_LINE_SEP, lineSep);
+                                      .replace(OS_LINE_SEP, lineSep);
             }
         }
         return out.toString();
@@ -123,7 +124,7 @@ public class StreamManager {
     }
 
     public void writeOut(final String text, final String sep) {
-        for (String line : text.split(sep)) {
+        for (final String line : text.split(sep)) {
             writeOut(line);
         }
     }

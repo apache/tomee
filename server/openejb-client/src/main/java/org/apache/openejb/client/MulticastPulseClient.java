@@ -64,6 +64,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
     private static final Logger log = Logger.getLogger("OpenEJB.client");
     private static final String SERVER = "OpenEJB.MCP.Server:";
     private static final String CLIENT = "OpenEJB.MCP.Client:";
+    private static final String BADURI = ":BadUri:";
     private static final String EMPTY = "NoService";
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final int TTL = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_TTL, "32"));
@@ -118,12 +119,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         if (null == uriSet || uriSet.isEmpty()) {
 
-            final Map<String, String> params;
-            try {
-                params = URIs.parseParamters(uri);
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Invalid MultiPulse uri " + uri.toString(), e);
-            }
+            final Map<String, String> params = getUriParameters(uri);
 
             final Set<String> schemes = getSet(params, "schemes", this.getDefaultSchemes());
             final String group = getString(params, "group", "default");
@@ -140,15 +136,37 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         for (final URI serviceURI : uriSet) {
 
+            //Strip serverhost and group and try to connect
+            final URI tryUri = URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart());
+
             try {
-                //Strip serverhost and group and try to connect
-                return ConnectionManager.getConnection(URI.create(URI.create(serviceURI.getSchemeSpecificPart()).getSchemeSpecificPart()));
+                return ConnectionManager.getConnection(tryUri);
             } catch (Exception e) {
+
                 uriSet.remove(serviceURI);
+
+                if (java.net.SocketTimeoutException.class.isInstance(e) || SocketException.class.isInstance(e)) {
+                    //Notify server that this URI is not reachable
+                    MulticastPulseClient.broadcastBadUri(getString(getUriParameters(uri), "group", "default"), tryUri, uri.getHost(), uri.getPort());
+                }
+
+                if (log.isLoggable(Level.FINE)) {
+                    log.fine("Failed connection to: " + serviceURI);
+                }
             }
         }
 
         throw new IOException("Unable to connect an ejb server via the MultiPulse URI: " + uri);
+    }
+
+    private static Map<String, String> getUriParameters(final URI uri) {
+        final Map<String, String> params;
+        try {
+            params = URIs.parseParamters(uri);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid MultiPulse uri " + uri.toString(), e);
+        }
+        return params;
     }
 
     /**
@@ -187,17 +205,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
             throw new Exception("Specify a valid port between 1 and 65535");
         }
 
-        final InetAddress ia;
-
-        try {
-            ia = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
-            throw new Exception(host + " is not a valid address", e);
-        }
-
-        if (null == ia || !ia.isMulticastAddress()) {
-            throw new Exception(host + " is not a valid multicast address");
-        }
+        final InetAddress ia = getAddress(host);
 
         final byte[] bytes = (MulticastPulseClient.CLIENT + forGroup).getBytes(UTF8);
         final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
@@ -492,6 +500,20 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         }
     }
 
+    private static InetAddress getAddress(final String host) throws Exception {
+        final InetAddress ia;
+        try {
+            ia = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new Exception(host + " is not a valid address", e);
+        }
+
+        if (null == ia || !ia.isMulticastAddress()) {
+            throw new Exception(host + " is not a valid multicast address");
+        }
+        return ia;
+    }
+
     /**
      * Is the provided host a local host
      *
@@ -681,7 +703,10 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                 s.connect(new InetSocketAddress(host, port), st);
                                 b = true;
                             } catch (Exception e) {
-                                //Ignore
+                                if (java.net.SocketTimeoutException.class.isInstance(e) || SocketException.class.isInstance(e)) {
+                                    MulticastPulseClient.broadcastBadUri(group, uriSub, mchost, mcport);
+                                    System.out.print("" + e + " : ");
+                                }
                             } finally {
                                 try {
                                     s.close();
@@ -715,5 +740,39 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
         running.set(false);
         t.interrupt();
+    }
+
+    /**
+     * Asynchronous attempt to broadcast a bad URI on our channel.
+     * Hopefully the culprit server will hear this and stop sending it.
+     *
+     * @param uri Bad URI to broadcast
+     */
+    private static void broadcastBadUri(final String group, final URI uri, final String host, final int port) {
+
+        getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final InetAddress ia = getAddress(host);
+
+                    final byte[] bytes = (MulticastPulseClient.CLIENT + group + MulticastPulseClient.BADURI + uri.getHost()).getBytes(UTF8);
+                    final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
+
+                    final MulticastSocket[] multicastSockets = MulticastPulseClient.getSockets(ia, port);
+
+                    for (final MulticastSocket socket : multicastSockets) {
+
+                        try {
+                            socket.send(request);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "Failed to broadcast bad URI: " + uri + " on: " + socket.getInterface().getHostAddress(), e);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Failed to broadcast bad URI: " + uri, e);
+                }
+            }
+        });
     }
 }
