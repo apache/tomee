@@ -61,7 +61,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      *
      * @param webBeansContext the OWB context
      */
-    public BeginWebBeansListener(WebBeansContext webBeansContext) {
+    public BeginWebBeansListener(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
         this.failoverService = this.webBeansContext.getService(FailOverService.class);
         this.contextKey = "org.apache.tomee.catalina.WebBeansListener@" + webBeansContext.hashCode();
@@ -71,7 +71,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      * {@inheritDoc}
      */
     @Override
-    public void requestDestroyed(ServletRequestEvent event) {
+    public void requestDestroyed(final ServletRequestEvent event) {
         // no-op
     }
 
@@ -127,7 +127,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
      * {@inheritDoc}
      */
     @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
+    public void sessionDestroyed(final HttpSessionEvent event) {
         ensureRequestScope();
     }
 
@@ -139,21 +139,20 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
         }
     }
 
-
     @Override
-    public void sessionWillPassivate(HttpSessionEvent event) {
+    public void sessionWillPassivate(final HttpSessionEvent event) {
         ensureRequestScope();
     }
 
     @Override
-    public void sessionDidActivate(HttpSessionEvent event) {
+    public void sessionDidActivate(final HttpSessionEvent event) {
         if (failoverService.isSupportFailOver() || failoverService.isSupportPassivation()) {
             failoverService.sessionDidActivate(event.getSession());
         }
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
+    public void contextInitialized(final ServletContextEvent servletContextEvent) {
         try {
             OpenEJBLifecycle.initializeServletContext(servletContextEvent.getServletContext(), webBeansContext);
         } catch (final Exception e) {
@@ -163,7 +162,7 @@ public class BeginWebBeansListener implements ServletContextListener, ServletReq
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         ensureRequestScope();
     }
 }

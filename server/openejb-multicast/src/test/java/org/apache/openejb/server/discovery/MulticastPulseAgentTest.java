@@ -48,11 +48,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Copyright (c) ORPRO Vision GmbH.
- * Author: Andy Gumbrecht
- * Date: 11.06.12
- */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MulticastPulseAgentTest {
 
@@ -229,7 +224,10 @@ public class MulticastPulseAgentTest {
                                     final String[] serviceList = services.split("\\|");
                                     final String[] hosts = s.split(",");
 
-                                    System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n", group, services, s));
+                                    System.out.println(String.format("\n" + name + " received Server pulse:\n\tGroup: %1$s\n\tServices: %2$s\n\tServer: %3$s\n",
+                                                                     group,
+                                                                     services,
+                                                                     s));
 
                                     for (final String svc : serviceList) {
 
@@ -392,6 +390,69 @@ public class MulticastPulseAgentTest {
         org.junit.Assert.assertTrue(timeout == 1 || set.size() > 0);
     }
 
+    @Test
+    public void testBroadcastBadUri() throws Exception {
+
+        final DiscoveryListener original = agent.getDiscoveryListener();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        final DiscoveryListener listener = new DiscoveryListener() {
+            @Override
+            public void serviceAdded(final URI service) {
+                latch.countDown();
+                System.out.println("added = " + service);
+            }
+
+            @Override
+            public void serviceRemoved(final URI service) {
+                latch.countDown();
+                System.out.println("removed = " + service);
+            }
+        };
+
+        agent.setDiscoveryListener(listener);
+
+        final String[] hosts = agent.getHosts().split(",");
+        final String host = hosts[hosts.length - 1];
+
+        final Future<?> future = executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final InetAddress ia = getAddress(MulticastPulseAgentTest.host);
+
+                    final byte[] bytes = (MulticastPulseAgent.CLIENT + forGroup + MulticastPulseAgent.BADURI + host).getBytes(Charset.forName("UTF-8"));
+                    final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
+
+                    final MulticastSocket[] multicastSockets = MulticastPulseAgent.getSockets(MulticastPulseAgentTest.host, port);
+
+                    for (final MulticastSocket socket : multicastSockets) {
+
+                        try {
+                            socket.send(request);
+                        } catch (Exception e) {
+                            System.out.println("Failed to broadcast bad URI on: " + socket.getInterface().getHostAddress());
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Failed to broadcast bad URI");
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        final Object o = future.get(10, TimeUnit.SECONDS);
+
+        final boolean await = latch.await(20, TimeUnit.SECONDS);
+        final boolean removed = agent.removeFromIgnore(host);
+
+        agent.setDiscoveryListener(original);
+
+        org.junit.Assert.assertTrue("Failed to remove host", removed && await);
+    }
+
     private String ipFormat(final String h) throws UnknownHostException {
 
         final InetAddress ia = InetAddress.getByName(h);
@@ -400,6 +461,20 @@ public class MulticastPulseAgentTest {
         } else {
             return h;
         }
+    }
+
+    private static InetAddress getAddress(final String host) throws Exception {
+        final InetAddress ia;
+        try {
+            ia = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new Exception(host + " is not a valid address", e);
+        }
+
+        if (null == ia || !ia.isMulticastAddress()) {
+            throw new Exception(host + " is not a valid multicast address");
+        }
+        return ia;
     }
 
     private static class MyDiscoveryListener implements DiscoveryListener {

@@ -155,7 +155,7 @@ public class SimpleServiceManager extends ServiceManager {
     @Override
     public synchronized void start(final boolean block) throws ServiceException {
 
-        if(stopped){
+        if (stopped) {
             throw new ServiceException("Stop has already been called on ServiceManager");
         }
 
