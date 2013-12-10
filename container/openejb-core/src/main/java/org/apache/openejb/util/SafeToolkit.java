@@ -76,7 +76,7 @@ public final class SafeToolkit {
 
     private static String getCodebase(URLClassLoader urlClassLoader) {
         StringBuilder codebase = new StringBuilder();
-        URL urlList[] = urlClassLoader.getURLs();
+        URL[] urlList = urlClassLoader.getURLs();
         codebase.append(urlList[0].toString());
         for (int i = 1; i < urlList.length; ++i) {
             codebase.append(';');

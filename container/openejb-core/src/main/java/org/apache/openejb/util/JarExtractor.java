@@ -124,7 +124,7 @@ public class JarExtractor {
 
         boolean result = true;
 
-        String files[];
+        String[] files;
 
         if (src.isDirectory()) {
             files = src.list();

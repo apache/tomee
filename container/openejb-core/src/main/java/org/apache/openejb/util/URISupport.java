@@ -91,7 +91,7 @@ public class URISupport {
     public static class CompositeData {
         String scheme;
         String path;
-        URI components[];
+        URI[] components;
         Map parameters;
         String fragment;
         public String host;
@@ -228,7 +228,7 @@ public class URISupport {
             params="";
         }
 
-        String components[] = splitComponents(componentString);
+        String[] components = splitComponents(componentString);
         rc.components=new URI[components.length];
         for (int i = 0; i < components.length; i++) {
             rc.components[i] = new URI(components[i].trim());
@@ -252,7 +252,7 @@ public class URISupport {
 
         int last=0;
         int depth = 0;
-        char chars[] = str.toCharArray();
+        char[] chars = str.toCharArray();
         for( int i=0; i < chars.length; i ++ ) {
             switch( chars[i] ) {
             case '(':
@@ -274,7 +274,7 @@ public class URISupport {
         if( s.length() !=0 )
             l.add(s);
 
-        String rc[] = new String[l.size()];
+        String[] rc = new String[l.size()];
         l.toArray(rc);
         return rc;
     }

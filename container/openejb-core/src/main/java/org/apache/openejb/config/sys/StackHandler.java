@@ -108,7 +108,7 @@ public class StackHandler extends DefaultHandler {
             characters = new StringBuilder();
         }
 
-        public void characters(char ch[], int start, int length) {
+        public void characters(char[] ch, int start, int length) {
             characters.append(new String(ch, start, length));
         }
 

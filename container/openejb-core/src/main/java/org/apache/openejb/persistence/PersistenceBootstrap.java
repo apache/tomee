@@ -281,7 +281,7 @@ public class PersistenceBootstrap {
                 unit = new Unit(unitName);
             }
 
-            public void characters(char ch[], int start, int length) {
+            public void characters(char[] ch, int start, int length) {
                 String text = new String(ch, start, length);
                 characters.append(text.trim());
             }

@@ -436,7 +436,7 @@ public abstract class JaxbOpenejb {
             servicesJar.getServiceProvider().add(provider);
         }
 
-        public void characters(char ch[], int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) throws SAXException {
             if (content == null) content = new StringBuilder();
             content.append(ch, start, length);
         }
