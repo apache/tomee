@@ -178,7 +178,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     protected Object federate(String compositName) throws NamingException {
-        ObjectFactory factories [] = getFederatedFactories();
+        ObjectFactory[] factories = getFederatedFactories();
         for (ObjectFactory factory : factories) {
             try {
                 CompositeName name = new CompositeName(compositName);

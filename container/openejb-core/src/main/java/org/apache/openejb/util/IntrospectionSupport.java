@@ -52,7 +52,7 @@ public class IntrospectionSupport {
             Method method = methods[i];
             String name = method.getName();
             Class type = method.getReturnType();
-            Class params[] = method.getParameterTypes();
+            Class[] params = method.getParameterTypes();
             if (name.startsWith("get") && params.length == 0 && type != null
                     && isSettableType(type)) {
 
@@ -196,7 +196,7 @@ public class IntrospectionSupport {
         Method[] methods = clazz.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            Class params[] = method.getParameterTypes();
+            Class[] params = method.getParameterTypes();
             if (method.getName().equals(name) && params.length == 1
                     && isSettableType(params[0])) {
                 return method;
