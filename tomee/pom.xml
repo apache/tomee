@@ -195,8 +195,5 @@
     </profile>
   </profiles>
 
-  <properties>
-    <openejb.version>4.6.1-SNAPSHOT</openejb.version>
-  </properties>
 </project>
 

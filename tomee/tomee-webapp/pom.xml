@@ -21,21 +21,23 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>1.6.1-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Webapp</name>
+
   <build>
     <plugins>
       <plugin> <!-- the jar is only for resources and other classes are for the gui -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <includes>
             <include>META-INF/**/*</include>
@@ -45,7 +47,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2.2</version>
         <executions>
           <execution>
             <id>war</id>
@@ -65,7 +66,6 @@
       <plugin>
         <groupId>com.googlecode.jslint4java</groupId>
         <artifactId>jslint4java-maven-plugin</artifactId>
-        <version>2.0.3</version>
         <configuration>
           <failOnError>true</failOnError>
           <options>
@@ -106,12 +106,10 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.1</version>
     </dependency>
     <dependency> <!-- will be moved over endorsed dir so simply adding it alone (= not in javaee-api) -->
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jaxb_2.2_spec</artifactId>
-      <version>1.0.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

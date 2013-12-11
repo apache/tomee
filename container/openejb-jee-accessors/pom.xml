@@ -31,10 +31,10 @@
   <name>OpenEJB :: Container :: Java EE Accessors</name>
 
   <properties>
-      <openejb.osgi.import.pkg>
-        org.apache.geronimo.specs.jpa;resolution:=optional,
-        org.apache.geronimo.specs.activation;resolution:=optional,
-        *
+    <openejb.osgi.import.pkg>
+      org.apache.geronimo.specs.jpa;resolution:=optional,
+      org.apache.geronimo.specs.activation;resolution:=optional,
+      *
     </openejb.osgi.import.pkg>
   </properties>
 
