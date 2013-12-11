@@ -202,7 +202,7 @@
           <groupId>wsdl4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>quartz-openejb-shade</artifactId>
+          <artifactId>openejb-shade-quartz</artifactId>
           <groupId>org.apache.openejb.shade</groupId>
         </exclusion>
         <exclusion>

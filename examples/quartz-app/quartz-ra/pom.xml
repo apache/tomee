@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>quartz-openejb-shade</artifactId>
+      <artifactId>openejb-shade-quartz</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

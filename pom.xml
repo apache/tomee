@@ -143,7 +143,7 @@
 
     <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.9.0</org.apache.activemq.version>
-    <quartz.version>2.2.0-SNAPSHOT</quartz.version>
+    <quartz.version>2.2.1</quartz.version>
     <org.springframework.version>3.1.3.RELEASE</org.springframework.version>
     <junit.version>4.11</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -185,6 +185,11 @@
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>${maven-bundle-plugin.version}</version>
+        </plugin>
+		<plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>2.2</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -231,6 +236,11 @@
           <artifactId>dependency-report-plugin</artifactId>
           <version>1.0.2</version>
         </plugin>
+		<plugin>
+            <groupId>org.metatype.sxc</groupId>
+            <artifactId>sxc-jaxb-maven-plugin</artifactId>
+            <version>0.8</version>
+          </plugin>
       </plugins>
     </pluginManagement>
 
@@ -346,6 +356,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>shade</module>
         <module>itests</module>
         <module>maven</module>
         <module>container</module>
@@ -362,6 +373,7 @@
       <id>quick</id>
       <modules>
         <module>maven</module>
+        <module>shade</module>
         <module>container</module>
         <module>server</module>
         <module>assembly</module>
@@ -373,6 +385,7 @@
     <profile>
       <id>openejb</id>
       <modules>
+        <module>shade</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
@@ -1349,6 +1362,12 @@
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-bundleutils</artifactId>
         <version>${xbeanVersion}</version>
+		<exclusions>
+        <exclusion>
+        <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+		</exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -1733,6 +1752,21 @@
         <artifactId>derbyclient</artifactId>
         <version>10.9.1.0</version>
       </dependency>
+	  <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+	<dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.3</version>
+    </dependency>
+	<dependency>
+      <groupId>org.metatype.sxc</groupId>
+      <artifactId>sxc-jaxb-core</artifactId>
+      <version>0.8</version>
+    </dependency>
     </dependencies>
   </dependencyManagement>
   <distributionManagement>

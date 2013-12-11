@@ -608,8 +608,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>quartz-openejb-shade</artifactId>
-      <version>${quartz.version}</version>
+      <artifactId>openejb-shade-quartz</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <!-- Dependency of Quartz -->
     <dependency>
