@@ -55,7 +55,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>${hibernate.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.hibernate.javax.persistence</groupId>
@@ -74,7 +73,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate-validator.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.validation</groupId>
@@ -89,7 +87,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
-      <version>${hibernate.version}</version>
+      <version>${version.hibernate}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
@@ -121,8 +119,4 @@
     -->
   </dependencies>
 
-  <properties>
-    <hibernate.version>4.1.8.Final</hibernate.version>
-    <hibernate-validator.version>4.3.0.Final</hibernate-validator.version>
-  </properties>
 </project>
