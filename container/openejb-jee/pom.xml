@@ -122,7 +122,6 @@
           <plugin>
             <groupId>org.metatype.sxc</groupId>
             <artifactId>sxc-jaxb-maven-plugin</artifactId>
-            <version>0.8</version>
             <executions>
               <execution>
                 <configuration>
