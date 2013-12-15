@@ -218,7 +218,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 // here we find server classes
                 if (apache.startsWith("bval.")) return true;
                 if (apache.startsWith("openjpa.")) return true;
-                if (apache.startsWith("derby.")) return true;
                 if (apache.startsWith("xbean.")) return true;
                 if (apache.startsWith("geronimo.")) return true;
                 if (apache.startsWith("coyote")) return true;
