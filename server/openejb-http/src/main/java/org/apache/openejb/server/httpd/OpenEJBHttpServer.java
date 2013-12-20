@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -204,7 +205,16 @@ public class OpenEJBHttpServer implements HttpServer {
                     }
                 }
             } catch (Throwable t2) {
-                log.error("Could not write response", t2);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not write response", t2);
+                } else {
+                    //SocketException is something a client can cause, so do not log it (potential DOS)
+                    if (!SocketException.class.isInstance(t2)) {
+                        log.warning("Could not write response:" + t2);
+                    }
+                }
+
             }
         }
     }
@@ -257,8 +267,9 @@ public class OpenEJBHttpServer implements HttpServer {
     }
 
     public static String reformat(final String raw) {
-        if (raw.length() == 0)
+        if (raw.length() == 0) {
             return raw;
+        }
 
         try {
             final TransformerFactory factory = TransformerFactory.newInstance();
