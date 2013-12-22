@@ -1123,6 +1123,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         // skip references such as URLs which are automatically handled by the server
         if (ignoredReferenceTypes.contains(refType)) {
+            final ResourceInfo resourceInfo = configFactory.getResourceInfo(refName.replace("java:", "").replace("comp/env/", ""));
+            if (resourceInfo != null) {
+                ref.setMappedName("jndi:" + (resourceInfo.id.startsWith("java:") ? resourceInfo.id : "openejb:Resource/" + resourceInfo.id));
+            }
             return;
         }
 
