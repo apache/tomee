@@ -398,7 +398,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
         if (name == null || !name.startsWith("org.slf4j.")) {
-            return true;
+            return false;
         }
 
         try { // using getResource here just returns randomly the container one so we need getResources
