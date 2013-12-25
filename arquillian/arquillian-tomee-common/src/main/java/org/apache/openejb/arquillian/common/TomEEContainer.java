@@ -22,6 +22,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -270,12 +271,16 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
 
             String arquillianServlet;
             // Avoids "inconvertible types" error in windows build
-            if (archiveName.endsWith(".war") || (archiveName.endsWith(".ear") && appInfo.webApps.size() == 1)) {
-                arquillianServlet = "/" + getArchiveNameWithoutExtension(archive);
+            if (archiveName.endsWith(".war")) {
+                httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
+            } else if (archiveName.endsWith(".ear") && appInfo.webApps.size() > 0) {
+                for (final WebAppInfo web : appInfo.webApps) {
+                    httpContext.add(new Servlet("ArquillianServletRunner", "/" + web.contextRoot));
+                }
+                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol"));
             } else {
-                arquillianServlet = "/arquillian-protocol";
+                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol"));
             }
-            httpContext.add(new Servlet("ArquillianServletRunner", arquillianServlet));
             addServlets(httpContext, appInfo);
 
             return new ProtocolMetaData().addContext(httpContext);
