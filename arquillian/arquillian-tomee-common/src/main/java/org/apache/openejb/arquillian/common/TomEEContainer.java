@@ -274,12 +274,16 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             if (archiveName.endsWith(".war")) {
                 httpContext.add(new Servlet("ArquillianServletRunner", "/" + getArchiveNameWithoutExtension(archive)));
             } else if (archiveName.endsWith(".ear") && appInfo.webApps.size() > 0) {
-                for (final WebAppInfo web : appInfo.webApps) {
-                    httpContext.add(new Servlet("ArquillianServletRunner", "/" + web.contextRoot));
+                final String contextRoot = System.getProperty("tomee.arquillian.ear.context", configuration.getWebContextToUseWithEars());
+                if (contextRoot != null) {
+                    httpContext.add(new Servlet("ArquillianServletRunner", ("/" + contextRoot).replace("//", "/")));
+                } else {
+                    for (final WebAppInfo web : appInfo.webApps) { // normally a single webapp is supported cause of arquillian resolution
+                        httpContext.add(new Servlet("ArquillianServletRunner", ("/" + web.contextRoot).replace("//", "/")));
+                    }
                 }
-                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol"));
             } else {
-                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol"));
+                httpContext.add(new Servlet("ArquillianServletRunner", "/arquillian-protocol")); // needs another jar to add the fake webapp
             }
             addServlets(httpContext, appInfo);
 
