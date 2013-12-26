@@ -41,6 +41,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected boolean unpackWars = true;
 
     protected String properties = "";
+    protected String webContextToUseWithEars = null;
 
     public boolean isUnpackWars() {
         return unpackWars;
@@ -179,5 +180,13 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setPreloadClasses(final String preloadClasses) {
         this.preloadClasses = preloadClasses;
+    }
+
+    public String getWebContextToUseWithEars() {
+        return webContextToUseWithEars;
+    }
+
+    public void setWebContextToUseWithEars(final String webContextToUseWithEars) {
+        this.webContextToUseWithEars = webContextToUseWithEars;
     }
 }
