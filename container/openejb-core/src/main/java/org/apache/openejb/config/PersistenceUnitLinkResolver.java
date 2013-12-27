@@ -18,6 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UniqueDefaultLinkResolver;
 
@@ -31,6 +33,8 @@ import java.util.Iterator;
 
 // TODO: review if some more info shouldn't be propagated to module tree to make it faster
 public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<PersistenceUnit> {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, PersistenceUnitLinkResolver.class);
+
     private final AppModule module;
 
     public PersistenceUnitLinkResolver(final AppModule appModule) {
@@ -107,14 +111,22 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
 
         final File appModuleFile = new File(module.getJarLocation());
 
-        final File moduleFile;
+        File moduleFile;
         try {
             moduleFile = URLs.toFile(moduleUri.toURL());
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             return null;
+        } catch (final IllegalArgumentException iae) {
+            final File f = new File(appModuleFile, moduleUri.getPath());
+            if (f.exists()) {
+                moduleFile = f;
+            } else {
+                LOGGER.warning("Illegal uri: " + moduleUri, iae);
+                return null;
+            }
         }
 
-        for (WebModule webModule : module.getWebModules()) {
+        for (final WebModule webModule : module.getWebModules()) {
             if (webModule.getJarLocation() != null && isParent(new File(webModule.getJarLocation()), moduleFile, appModuleFile)) {
                 return webModule;
             }
