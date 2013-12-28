@@ -3214,11 +3214,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     RolesAllowed rolesAllowed = clazz.getAnnotation(RolesAllowed.class);
                     PermitAll permitAll = clazz.getAnnotation(PermitAll.class);
+                    DenyAll denyAll = clazz.getAnnotation(DenyAll.class);
 
                     /*
                      * @RolesAllowed
                      */
-                    if (rolesAllowed != null && permitAll != null) {
+                    if ((rolesAllowed != null && permitAll != null)
+                            || (rolesAllowed != null && denyAll != null)
+                            || (permitAll != null && denyAll != null)) {
                         ejbModule.getValidation().fail(ejbName, "permitAllAndRolesAllowedOnClass", clazz.getName());
                     }
 
@@ -3244,6 +3247,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         methodPermission.setUnchecked(true);
                         methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
                         assemblyDescriptor.getMethodPermission().add(methodPermission);
+                    }
+
+                    /**
+                     * @DenyAll
+                     */
+                    if (denyAll != null) {
+                        assemblyDescriptor.getExcludeList()
+                                .addMethod(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
                     }
                 }
 
