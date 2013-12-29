@@ -21,11 +21,17 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.arquillian.common.enrichment.OpenEJBEnricher;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import java.lang.reflect.Method;
 
 public class TomEEInjectionEnricher implements TestEnricher {
+    @Inject
+    private Instance<TestClass> testClass;
+
     @Override
     public void enrich(final Object o) {
         OpenEJBEnricher.enrich(o, getAppContext(o.getClass().getName()));
@@ -41,6 +47,6 @@ public class TomEEInjectionEnricher implements TestEnricher {
 
     @Override
     public Object[] resolve(final Method method) {
-        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()), method);
+        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()), testClass.get(), method);
     }
 }
