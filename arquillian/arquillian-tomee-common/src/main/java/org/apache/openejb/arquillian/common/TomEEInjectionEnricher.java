@@ -41,6 +41,6 @@ public class TomEEInjectionEnricher implements TestEnricher {
 
     @Override
     public Object[] resolve(final Method method) {
-        return new Object[method.getParameterTypes().length];
+        return OpenEJBEnricher.resolve(getAppContext(method.getDeclaringClass().getName()), method);
     }
 }

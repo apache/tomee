@@ -26,17 +26,26 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.OWBInjector;
+import org.apache.webbeans.portable.AnnotatedElementFactory;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class OpenEJBEnricher {
+    private static final Logger LOGGER = Logger.getLogger(OpenEJBEnricher.class.getName());
+
     private OpenEJBEnricher() {
         // no-op
     }
@@ -59,7 +68,7 @@ public final class OpenEJBEnricher {
                 }
                 OWBInjector.inject(bm, testInstance, cc);
             } catch (Throwable t) {
-                Logger.getInstance(LogCategory.OPENEJB, OpenEJBEnricher.class).error("Can't inject in " + testInstance.getClass(), t);
+                LOGGER.log(Level.SEVERE, "Can't inject in " + testInstance.getClass(), t);
                 if (t instanceof RuntimeException) {
                     throw (RuntimeException) t;
                 }
@@ -98,4 +107,41 @@ public final class OpenEJBEnricher {
         return null;
     }
 
+    public static Object[] resolve(final AppContext appContext, final Method method) { // suppose all is a CDI bean...
+        final Object[] values = new Object[method.getParameterTypes().length];
+
+        if (appContext == null) {
+            return values;
+        }
+
+        final BeanManagerImpl beanManager = findBeanManager(appContext);
+        if (beanManager == null) {
+            return values;
+        }
+
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            try {
+                values[i] = getParamInstance(beanManager, i, method);
+            } catch (final Exception e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        }
+        return values;
+    }
+
+    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final Method method) {
+        final AnnotatedElementFactory factory = manager.getWebBeansContext().getAnnotatedElementFactory();
+        final AnnotationManager annotationManager = manager.getWebBeansContext().getAnnotationManager();
+
+        final AnnotatedMethod<?> am = factory.newAnnotatedMethod(method, factory.newAnnotatedType(method.getDeclaringClass()));
+        final AnnotatedParameter<?> ap = am.getParameters().get(position);
+
+        final Type baseType = ap.getBaseType();
+        final Bean<?> bean = manager.resolve(manager.getBeans(baseType, annotationManager.getInterceptorBindingMetaAnnotations(ap.getAnnotations())));
+
+        // note: without a scope it can leak but that's what the user asked!
+        final CreationalContextImpl<?> creational = manager.createCreationalContext(null); // null since we don't want the test class be the owner
+        return (T) manager.getReference(bean, baseType, creational);
+    }
 }
