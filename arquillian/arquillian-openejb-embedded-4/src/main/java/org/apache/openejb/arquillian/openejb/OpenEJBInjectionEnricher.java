@@ -24,6 +24,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.webbeans.inject.OWBInjector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -36,6 +37,9 @@ import java.util.List;
 public class OpenEJBInjectionEnricher implements TestEnricher {
     @Inject
     private Instance<AppContext> appContext;
+
+    @Inject
+    private Instance<TestClass> testClass;
 
     @Override
     public void enrich(final Object testInstance) {
@@ -64,6 +68,6 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
 
     @Override
     public Object[] resolve(final Method method) {
-        return OpenEJBEnricher.resolve(appContext.get(), method);
+        return OpenEJBEnricher.resolve(appContext.get(), testClass.get(), method);
     }
 }

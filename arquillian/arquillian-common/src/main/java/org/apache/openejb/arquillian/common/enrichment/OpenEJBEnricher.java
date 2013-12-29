@@ -32,6 +32,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.portable.AnnotatedElementFactory;
+import org.jboss.arquillian.test.spi.TestClass;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedMethod;
@@ -107,7 +108,7 @@ public final class OpenEJBEnricher {
         return null;
     }
 
-    public static Object[] resolve(final AppContext appContext, final Method method) { // suppose all is a CDI bean...
+    public static Object[] resolve(final AppContext appContext, final TestClass testClass, final Method method) { // suppose all is a CDI bean...
         final Object[] values = new Object[method.getParameterTypes().length];
 
         if (appContext == null) {
@@ -119,10 +120,20 @@ public final class OpenEJBEnricher {
             return values;
         }
 
+        final Class<?> clazz;
+        if (testClass != null) {
+            clazz = testClass.getJavaClass();
+        } else {
+            clazz = method.getDeclaringClass();
+        }
+
+        final AnnotatedElementFactory factory = beanManager.getWebBeansContext().getAnnotatedElementFactory();
+        final AnnotatedMethod<?> am = factory.newAnnotatedMethod(method, factory.newAnnotatedType(clazz));
+
         final Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
             try {
-                values[i] = getParamInstance(beanManager, i, method);
+                values[i] = getParamInstance(beanManager, i, am);
             } catch (final Exception e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
@@ -130,11 +141,9 @@ public final class OpenEJBEnricher {
         return values;
     }
 
-    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final Method method) {
-        final AnnotatedElementFactory factory = manager.getWebBeansContext().getAnnotatedElementFactory();
+    private static <T> T getParamInstance(final BeanManagerImpl manager, final int position, final AnnotatedMethod<?> am) {
         final AnnotationManager annotationManager = manager.getWebBeansContext().getAnnotationManager();
 
-        final AnnotatedMethod<?> am = factory.newAnnotatedMethod(method, factory.newAnnotatedType(method.getDeclaringClass()));
         final AnnotatedParameter<?> ap = am.getParameters().get(position);
 
         final Type baseType = ap.getBaseType();
