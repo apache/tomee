@@ -39,12 +39,12 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
 
     @Override
     public void enrich(final Object testInstance) {
+        new MockitoEnricher().enrich(testInstance);
+
         final AppContext context = appContext.get();
         if (context != null) {
             OpenEJBEnricher.enrich(testInstance, context);
         } else { // try to enrich with all for deployment at startup feature - only once context can be used in a class
-            new MockitoEnricher().enrich(testInstance);
-
             final List<AppContext> appContexts = SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts();
             final Class<?> clazz = testInstance.getClass();
             for (final AppContext appContext : appContexts) {
@@ -64,6 +64,6 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
 
     @Override
     public Object[] resolve(final Method method) {
-        return new Object[method.getParameterTypes().length];
+        return OpenEJBEnricher.resolve(appContext.get(), method);
     }
 }
