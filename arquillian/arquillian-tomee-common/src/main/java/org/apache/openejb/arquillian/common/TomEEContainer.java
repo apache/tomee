@@ -18,11 +18,11 @@ package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Info;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -40,12 +40,8 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Assignable;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,6 +53,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -250,7 +249,22 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             final AppInfo appInfo;
             final String archiveName = archive.getName();
             try {
-                appInfo = deployer().deploy(file.getAbsolutePath());
+                final Properties deployerProperties = getDeployerProperties();
+                if (deployerProperties == null) {
+                    appInfo = deployer().deploy(file.getAbsolutePath());
+                } else {
+                    final Properties props = new Properties();
+                    props.putAll(deployerProperties);
+
+                    if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
+                        final byte[] slurpBinaries = IO.slurp(file).getBytes();
+                        props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
+                        props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
+                    }
+
+                    appInfo = deployer().deploy(file.getAbsolutePath(), props);
+                }
+
                 if (appInfo != null) {
                     moduleIds.put(archiveName, new DeployedApp(appInfo.path, file.getParentFile()));
                     Files.deleteOnExit(file); // "i" folder
@@ -292,6 +306,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
             e.printStackTrace();
             throw new DeploymentException("Unable to deploy", e);
         }
+    }
+
+    protected Properties getDeployerProperties() {
+        return null;
     }
 
     protected File dumpFile(final Archive<?> archive) {
