@@ -18,6 +18,7 @@ package org.apache.tomee.arquillian.remote;
 
 import org.apache.openejb.arquillian.common.Prefixes;
 import org.apache.openejb.arquillian.common.TomEEConfiguration;
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
     private int debugPort = 5005;
     private String catalina_opts = null; // using this format to match the script one
     private boolean simpleLog = false;
+    private String deployerProperties = "";
 
     public String getGroupId() {
         return groupId;
@@ -130,6 +132,18 @@ public class RemoteTomEEConfiguration extends TomEEConfiguration {
 
     public void setLib(String lib) {
         this.lib = lib;
+    }
+
+    public String getDeployerProperties() {
+        return deployerProperties;
+    }
+
+    @Multiline
+    public void setDeployerProperties(final String properties) {
+        deployerProperties = properties;
+        if (deployerProperties != null) {
+            deployerProperties = deployerProperties.replaceAll("\n *", "\n");
+        }
     }
 
     @Override

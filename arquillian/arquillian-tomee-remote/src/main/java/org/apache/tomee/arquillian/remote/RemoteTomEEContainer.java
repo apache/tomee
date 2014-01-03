@@ -30,9 +30,9 @@ import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +43,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 
 public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguration> {
     private static final Logger logger = Logger.getLogger(RemoteTomEEContainer.class.getName());
@@ -53,6 +54,21 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
     private boolean shutdown = false;
     private File tomeeHome;
     private Collection<Archive<?>> containerArchives;
+    private final Properties deployerProperties = new Properties();
+
+    @Override
+    public void setup(final RemoteTomEEConfiguration configuration) {
+        super.setup(configuration);
+
+        if (configuration.getDeployerProperties() != null) {
+            try {
+                final InputStream bytes = IO.read(configuration.getDeployerProperties().getBytes());
+                IO.readProperties(bytes, deployerProperties);
+            } catch (final IOException e) {
+                logger.log(Level.SEVERE, "Can't parse <property name=\"properties\"> value '" + configuration.getProperties() + "'", e);
+            }
+        }
+    }
 
     @Override
     public void start() throws LifecycleException {
@@ -108,6 +124,14 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             resetSystemProperty(RemoteServer.OPENEJB_SERVER_DEBUG, debug);
             resetSystemProperty(RemoteServer.SERVER_DEBUG_PORT, debugPort);
         }
+    }
+
+    @Override
+    protected Properties getDeployerProperties() {
+        if (deployerProperties.isEmpty()) {
+            return null;
+        }
+        return deployerProperties;
     }
 
     private List<String> args() {
