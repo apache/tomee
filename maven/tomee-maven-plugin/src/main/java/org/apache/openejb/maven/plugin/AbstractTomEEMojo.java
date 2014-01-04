@@ -229,6 +229,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.use-console", defaultValue = "true")
     protected boolean useConsole;
 
+    @Parameter(property = "tomee-plugin.exiting", defaultValue = "false")
+    protected boolean tomeeAlreadyInstalled;
+
     /**
      * The current user system settings for use in Maven.
      */
@@ -245,44 +248,46 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             tomeeVersion = "1" + version.substring(1, version.length());
         }
 
-        final Collection<String> existingWebapps; // added before using the plugin with maven dependency plugin or sthg like that
-        if (removeDefaultWebapps) {
-            existingWebapps = webappsAlreadyAdded();
-        } else {
-            existingWebapps = Collections.emptyList();
-        }
+        if (!tomeeAlreadyInstalled) {
+            final Collection<String> existingWebapps; // added before using the plugin with maven dependency plugin or sthg like that
+            if (removeDefaultWebapps) {
+                existingWebapps = webappsAlreadyAdded();
+            } else {
+                existingWebapps = Collections.emptyList();
+            }
 
-        unzip(resolve(), catalinaBase);
-        if (removeDefaultWebapps) { // do it first to let add other war
-            removeDefaultWebapps(removeTomeeWebapp, existingWebapps);
-        }
-        copyLibs(libs, new File(catalinaBase, libDir), "jar");
-        copyLibs(webapps, new File(catalinaBase, webappDir), "war");
-        copyLibs(apps, new File(catalinaBase, appDir), "jar");
-        overrideConf(config, "conf");
-        overrideConf(lib, "lib");
-        final Collection<File> copied = overrideConf(bin, "bin");
+            unzip(resolve(), catalinaBase);
+            if (removeDefaultWebapps) { // do it first to let add other war
+                removeDefaultWebapps(removeTomeeWebapp, existingWebapps);
+            }
+            copyLibs(libs, new File(catalinaBase, libDir), "jar");
+            copyLibs(webapps, new File(catalinaBase, webappDir), "war");
+            copyLibs(apps, new File(catalinaBase, appDir), "jar");
+            overrideConf(config, "conf");
+            overrideConf(lib, "lib");
+            final Collection<File> copied = overrideConf(bin, "bin");
 
-        for (final File copy : copied) {
-            if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
-                if (!copy.setExecutable(true)) {
-                    getLog().warn("can't make " + copy.getPath() + " executable");
+            for (final File copy : copied) {
+                if (copy.getName().endsWith(".bat") || copy.getName().endsWith(".sh")) {
+                    if (!copy.setExecutable(true)) {
+                        getLog().warn("can't make " + copy.getPath() + " executable");
+                    }
                 }
             }
-        }
 
-        if (classpaths == null) { // NPE protection for activateSimpleLog() and run()
-            classpaths = new ArrayList<String>();
-        }
-        if (simpleLog) {
-            activateSimpleLog();
-        }
+            if (classpaths == null) { // NPE protection for activateSimpleLog() and run()
+                classpaths = new ArrayList<String>();
+            }
+            if (simpleLog) {
+                activateSimpleLog();
+            }
 
-        if (!keepServerXmlAsthis) {
-            overrideAddresses();
-        }
-        if (!skipCurrentProject) {
-            copyWar();
+            if (!keepServerXmlAsthis) {
+                overrideAddresses();
+            }
+            if (!skipCurrentProject) {
+                copyWar();
+            }
         }
 
         run();
