@@ -80,9 +80,9 @@ OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar:$OPENEJB_HOME/li
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
 args="$@"
-if [ "x$@" = "xdebug" ]; then
-    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
-    args="start"
+if [ "x$1" = "xdebug" ]; then
+    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $OPENEJB_OPTS"
+	args="start"
 fi
 
 java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CORE_JAR"  org.apache.openejb.cli.Bootstrap "$args"
