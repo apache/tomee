@@ -42,6 +42,9 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -53,9 +56,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 public abstract class TomEEContainer<Configuration extends TomEEConfiguration> implements DeployableContainer<Configuration> {
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
@@ -257,7 +257,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     props.putAll(deployerProperties);
 
                     if ("true".equalsIgnoreCase(deployerProperties.getProperty(DeployerEjb.OPENEJB_USE_BINARIES, "false"))) {
-                        final byte[] slurpBinaries = IO.slurp(file).getBytes();
+                        final byte[] slurpBinaries = IO.slurpBytes(file);
                         props.put(DeployerEjb.OPENEJB_VALUE_BINARIES, slurpBinaries);
                         props.put(DeployerEjb.OPENEJB_PATH_BINARIES, archive.getName());
                     }

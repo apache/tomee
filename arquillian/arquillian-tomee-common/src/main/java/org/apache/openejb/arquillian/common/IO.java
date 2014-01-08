@@ -126,10 +126,14 @@ public class IO {
         return slurp(new File(fileName));
     }
 
-    public static String slurp(File file) throws IOException {
+    public static byte[] slurpBytes(File file) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(file, out);
-        return new String(out.toByteArray());
+        return out.toByteArray();
+    }
+
+    public static String slurp(File file) throws IOException {
+        return new String(slurpBytes(file));
     }
 
     public static String slurp(InputStream in) throws IOException {
