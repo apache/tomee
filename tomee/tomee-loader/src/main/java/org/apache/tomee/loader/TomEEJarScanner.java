@@ -24,7 +24,6 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.startup.TldConfig;
-import org.apache.catalina.startup.XmlErrorHandler;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
@@ -34,6 +33,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomcat.JarScannerCallback;
+import org.apache.tomcat.util.descriptor.XmlErrorHandler;
 import org.apache.tomcat.util.file.Matcher;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.scan.Constants;
@@ -131,6 +131,8 @@ public class TomEEJarScanner extends StandardJarScanner {
                                 return Globals.STRICT_SERVLET_COMPLIANCE;
                             } else if ("getTldValidation".equals(method.getName())) {
                                 return Globals.STRICT_SERVLET_COMPLIANCE;
+                            } else if ("getXmlBlockExternal".equals(method.getName())) {
+                                return Globals.IS_SECURITY_ENABLED;
                             }
                             return null;
                         }
