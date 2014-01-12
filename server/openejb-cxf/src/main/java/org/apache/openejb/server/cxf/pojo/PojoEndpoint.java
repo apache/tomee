@@ -29,12 +29,24 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
+import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.component.AbstractOwbBean;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.util.WebBeansUtil;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionTarget;
+import javax.enterprise.inject.spi.Producer;
 import javax.naming.Context;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
@@ -42,10 +54,12 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.apache.openejb.InjectionProcessor.unwrap;
 
 public class PojoEndpoint extends CxfEndpoint {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, PojoEndpoint.class);
     private static final WebServiceContextResourceResolver WEB_SERVICE_CONTEXT_RESOURCE_RESOLVER = new WebServiceContextResourceResolver();
 
     private final ResourceInjector injector;
@@ -53,7 +67,7 @@ public class PojoEndpoint extends CxfEndpoint {
     public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
                         HTTPTransportFactory httpTransportFactory,
                         Map<String, Object> bindings, ServiceConfiguration config) {
-    	super(bus, port, context, instance, httpTransportFactory, config);
+        super(bus, port, context, instance, httpTransportFactory, config);
 
         String bindingURI = null;
         if (port.getBindingID() != null) {
@@ -81,21 +95,67 @@ public class PojoEndpoint extends CxfEndpoint {
             }
         }
 
+        ResourceInjector injector = null;
+
         // instantiate and inject resources into service using the app classloader to be sure to get the right InitialContext
+        implementor = null;
+
         final ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
-            final InjectionProcessor<Object> injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
-            injectionProcessor.createInstance();
-            implementor = injectionProcessor.getInstance();
-            injector = injectCxfResources(implementor);
-            injector.invokePostConstruct();
+            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+            final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
+            if (bm.isInUse()) { // try cdi bean
+                try {
+                    final Set<Bean<?>> beans = bm.getBeans(instance);
+                    final Bean<?> bean = bm.resolve(beans);
+                    CreationalContextImpl creationalContext = bm.createCreationalContext(bean);
+                    if (bean != null) {
+                        Bean<?> oldBean = creationalContext.putBean(bean);
+                        try {
+                            if (AbstractOwbBean.class.isInstance(bean)) {
+                                final AbstractOwbBean<?> aob = AbstractOwbBean.class.cast(bean);
+
+                                final Producer producer = aob.getProducer();
+                                implementor = producer.produce(creationalContext);
+                                if (producer instanceof InjectionTarget) {
+                                    final InjectionTarget injectionTarget = (InjectionTarget) producer;
+                                    injectionTarget.inject(implementor, creationalContext);
+                                    injector = injectCxfResources(implementor); // we need it before postconstruct
+                                    injectionTarget.postConstruct(implementor);
+                                }
+                                if (aob.getScope().equals(Dependent.class)) {
+                                    creationalContext.addDependent(aob, instance);
+                                }
+                            }
+                        } finally {
+                            creationalContext.putBean(oldBean);
+                        }
+                    } else {
+                        implementor = bm.getReference(bean, instance, creationalContext);
+                        injector = injectCxfResources(implementor);
+                    }
+                    if (WebBeansUtil.isDependent(bean)) { // should be isPseudoScope but should be ok for jaxws
+                        CdiAppContextsService.pushRequestReleasable(new RealeaseCreationalContextRunnable(creationalContext));
+                    }
+                } catch (final Exception ie) {
+                    LOGGER.info("Can't use cdi to create " + instance + " webservice: " + ie.getMessage());
+                }
+            }
+            if (implementor == null) { // old pojo style
+                final InjectionProcessor<Object> injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
+                injectionProcessor.createInstance();
+                implementor = injectionProcessor.getInstance();
+                injector = injectCxfResources(implementor);
+                injector.invokePostConstruct();
+            }
         } catch (final Exception e) {
             throw new WebServiceException("Service resource injection failed", e);
         } finally {
             Thread.currentThread().setContextClassLoader(old);
         }
 
+        this.injector = injector;
         service.setInvoker(new JAXWSMethodInvoker(implementor));
     }
 
@@ -140,5 +200,18 @@ public class PojoEndpoint extends CxfEndpoint {
 
         // shutdown server
         super.stop();
+    }
+
+    private static class RealeaseCreationalContextRunnable implements Runnable {
+        private final CreationalContextImpl<?> cc;
+
+        public RealeaseCreationalContextRunnable(final CreationalContextImpl<?> creationalContext) {
+            this.cc = creationalContext;
+        }
+
+        @Override
+        public void run() {
+            cc.release();
+        }
     }
 }
