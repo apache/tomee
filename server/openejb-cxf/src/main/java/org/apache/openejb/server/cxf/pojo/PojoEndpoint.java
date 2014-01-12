@@ -29,9 +29,9 @@ import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
-import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
@@ -41,6 +41,7 @@ import org.apache.webbeans.component.AbstractOwbBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.Dependent;
@@ -61,8 +62,10 @@ import static org.apache.openejb.InjectionProcessor.unwrap;
 public class PojoEndpoint extends CxfEndpoint {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, PojoEndpoint.class);
     private static final WebServiceContextResourceResolver WEB_SERVICE_CONTEXT_RESOURCE_RESOLVER = new WebServiceContextResourceResolver();
+    private static final boolean JAXWS_AS_CDI_BEANS = SystemInstance.get().getOptions().get("openejb.cxf.cdi", true);
 
     private final ResourceInjector injector;
+    private CreationalContextImpl toClean = null;
 
     public PojoEndpoint(ClassLoader loader, Bus bus, PortData port, Context context, Class<?> instance,
                         HTTPTransportFactory httpTransportFactory,
@@ -106,40 +109,42 @@ public class PojoEndpoint extends CxfEndpoint {
             final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
             final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
             if (bm.isInUse()) { // try cdi bean
-                try {
-                    final Set<Bean<?>> beans = bm.getBeans(instance);
-                    final Bean<?> bean = bm.resolve(beans);
-                    CreationalContextImpl creationalContext = bm.createCreationalContext(bean);
-                    if (bean != null) {
-                        Bean<?> oldBean = creationalContext.putBean(bean);
-                        try {
-                            if (AbstractOwbBean.class.isInstance(bean)) {
-                                final AbstractOwbBean<?> aob = AbstractOwbBean.class.cast(bean);
+                if (JAXWS_AS_CDI_BEANS) {
+                    try {
+                        final Set<Bean<?>> beans = bm.getBeans(instance);
+                        final Bean<?> bean = bm.resolve(beans);
+                        CreationalContextImpl creationalContext = bm.createCreationalContext(bean);
+                        if (bean != null) {
+                            Bean<?> oldBean = creationalContext.putBean(bean);
+                            try {
+                                if (AbstractOwbBean.class.isInstance(bean)) {
+                                    final AbstractOwbBean<?> aob = AbstractOwbBean.class.cast(bean);
 
-                                final Producer producer = aob.getProducer();
-                                implementor = producer.produce(creationalContext);
-                                if (producer instanceof InjectionTarget) {
-                                    final InjectionTarget injectionTarget = (InjectionTarget) producer;
-                                    injectionTarget.inject(implementor, creationalContext);
-                                    injector = injectCxfResources(implementor); // we need it before postconstruct
-                                    injectionTarget.postConstruct(implementor);
+                                    final Producer producer = aob.getProducer();
+                                    implementor = producer.produce(creationalContext);
+                                    if (producer instanceof InjectionTarget) {
+                                        final InjectionTarget injectionTarget = (InjectionTarget) producer;
+                                        injectionTarget.inject(implementor, creationalContext);
+                                        injector = injectCxfResources(implementor); // we need it before postconstruct
+                                        injectionTarget.postConstruct(implementor);
+                                    }
+                                    if (aob.getScope().equals(Dependent.class)) {
+                                        creationalContext.addDependent(aob, instance);
+                                    }
                                 }
-                                if (aob.getScope().equals(Dependent.class)) {
-                                    creationalContext.addDependent(aob, instance);
-                                }
+                            } finally {
+                                creationalContext.putBean(oldBean);
                             }
-                        } finally {
-                            creationalContext.putBean(oldBean);
+                        } else {
+                            implementor = bm.getReference(bean, instance, creationalContext);
+                            injector = injectCxfResources(implementor);
                         }
-                    } else {
-                        implementor = bm.getReference(bean, instance, creationalContext);
-                        injector = injectCxfResources(implementor);
+                        if (WebBeansUtil.isDependent(bean)) { // should be isPseudoScope but should be ok for jaxws
+                            toClean = creationalContext;
+                        }
+                    } catch (final Exception ie) {
+                        LOGGER.info("Can't use cdi to create " + instance + " webservice: " + ie.getMessage());
                     }
-                    if (WebBeansUtil.isDependent(bean)) { // should be isPseudoScope but should be ok for jaxws
-                        CdiAppContextsService.pushRequestReleasable(new RealeaseCreationalContextRunnable(creationalContext));
-                    }
-                } catch (final Exception ie) {
-                    LOGGER.info("Can't use cdi to create " + instance + " webservice: " + ie.getMessage());
                 }
             }
             if (implementor == null) { // old pojo style
@@ -147,6 +152,11 @@ public class PojoEndpoint extends CxfEndpoint {
                 injectionProcessor.createInstance();
                 implementor = injectionProcessor.getInstance();
                 injector = injectCxfResources(implementor);
+                if (!JAXWS_AS_CDI_BEANS && bm.isInUse()) {
+                    final CreationalContextImpl creationalContext = bm.createCreationalContext(null);
+                    OWBInjector.inject(bm, implementor, null);
+                    toClean = creationalContext;
+                }
                 injector.invokePostConstruct();
             }
         } catch (final Exception e) {
@@ -198,20 +208,11 @@ public class PojoEndpoint extends CxfEndpoint {
             injector.invokePreDestroy();
         }
 
+        if (toClean != null) {
+            toClean.release();
+        }
+
         // shutdown server
         super.stop();
-    }
-
-    private static class RealeaseCreationalContextRunnable implements Runnable {
-        private final CreationalContextImpl<?> cc;
-
-        public RealeaseCreationalContextRunnable(final CreationalContextImpl<?> creationalContext) {
-            this.cc = creationalContext;
-        }
-
-        @Override
-        public void run() {
-            cc.release();
-        }
     }
 }
