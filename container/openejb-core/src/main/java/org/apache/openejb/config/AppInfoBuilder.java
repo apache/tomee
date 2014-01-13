@@ -757,14 +757,19 @@ class AppInfoBuilder {
                 }
 
                 if (className == null || className.startsWith("org.hibernate.transaction") || className.startsWith("org.hibernate.service.jta.platform")){
-                    // hibernate 4
+                    // hibernate 4.3
                     String key = HIBERNATE_JTA_PLATFORM;
-                    String value = MakeTxLookup.HIBERNATE_NEW_FACTORY;
+                    String value = MakeTxLookup.HIBERNATE_NEW_FACTORY2;
 
-                    if (classLoader.getResource(ClassLoaderUtil.resourceName("org.hibernate.service.jta.platform.spi.JtaPlatform")) == null) {
-                        // hibernate 3. In the worse case it is set with a hibernate 4 and hibernate will convert it.
-                        key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
-                        value = MakeTxLookup.HIBERNATE_FACTORY;
+                    if (classLoader.getResource(ClassLoaderUtil.resourceName("org.hibernate.engine.transaction.jta.platform.spi.JtaPlatform")) == null) {
+                        // previous hibernate 4
+                        value = MakeTxLookup.HIBERNATE_NEW_FACTORY;
+
+                        if (classLoader.getResource(ClassLoaderUtil.resourceName("org.hibernate.service.jta.platform.spi.JtaPlatform")) == null) {
+                            // hibernate 3. In the worse case it is set with a hibernate 4 and hibernate will convert it.
+                            key = HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS;
+                            value = MakeTxLookup.HIBERNATE_FACTORY;
+                        }
                     }
 
                     if (classLoader.getResource(ClassLoaderUtil.resourceName(value)) != null) {

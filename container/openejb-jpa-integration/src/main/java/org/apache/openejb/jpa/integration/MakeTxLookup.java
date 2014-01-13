@@ -30,6 +30,7 @@ public class MakeTxLookup implements Opcodes {
 
     public static final String HIBERNATE_FACTORY = "org.apache.openejb.hibernate.TransactionManagerLookup";
     public static final String HIBERNATE_NEW_FACTORY = "org.apache.openejb.hibernate.OpenEJBJtaPlatform";
+    public static final String HIBERNATE_NEW_FACTORY2 = "org.apache.openejb.hibernate.OpenEJBJtaPlatform2";
     public static final String TOPLINK_FACTORY = "org.apache.openejb.toplink.JTATransactionController";
     public static final String ECLIPSELINK_FACTORY = "org.apache.openejb.eclipselink.JTATransactionController";
 
@@ -37,23 +38,25 @@ public class MakeTxLookup implements Opcodes {
 
         File file = new File(args[0]);
 
-        createHibernteStrategy(file);
-        createNewHibernateStrategy(file);
         createTopLinkStrategy(file);
         createEclipseLinkStrategy(file);
+        createHibernteStrategy(file);
+        // hibernate repackaged its SPI...keeping all the same excepted packages
+        createNewHibernateStrategy(file, HIBERNATE_NEW_FACTORY, "org/hibernate/service/jta/platform/internal");
+        createNewHibernateStrategy(file, HIBERNATE_NEW_FACTORY2, "org/hibernate/engine/transaction/jta/platform/internal");
     }
 
-    private static void createNewHibernateStrategy(File basedir) throws Exception {
+    private static void createNewHibernateStrategy(final File basedir, final String target, final String abstractJtaPlatformPackage) throws Exception {
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
-        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, "org/apache/openejb/hibernate/OpenEJBJtaPlatform", null, "org/hibernate/service/jta/platform/internal/AbstractJtaPlatform", null);
+        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, target.replace('.', '/'), null, abstractJtaPlatformPackage + "/AbstractJtaPlatform", null);
 
         {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/hibernate/service/jta/platform/internal/AbstractJtaPlatform", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, abstractJtaPlatformPackage + "/AbstractJtaPlatform", "<init>", "()V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -94,9 +97,7 @@ public class MakeTxLookup implements Opcodes {
         }
         cw.visitEnd();
 
-        String factory = HIBERNATE_NEW_FACTORY;
-        String classFilePath = factory.replace('.', '/');
-        write(basedir, cw, classFilePath);
+        write(basedir, cw, target.replace('.', '/'));
     }
 
     private static void createHibernteStrategy(File baseDir) throws Exception {
