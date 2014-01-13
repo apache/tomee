@@ -735,7 +735,7 @@ class AppInfoBuilder {
             // DMB: This whole block could be a map, but I left it this way just
             // in case we decided we wanted to do other custom handing for the
             // providers listed.
-            if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider)){
+            if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider) || "org.hibernate.jpa.HibernatePersistenceProvider".equals(info.provider)) {
 
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "hibernate");
