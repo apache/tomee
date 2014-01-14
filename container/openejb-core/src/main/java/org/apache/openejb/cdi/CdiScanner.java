@@ -210,12 +210,12 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
-            addContainerCdiClasses(classLoader, appInfo, ejbJar);
+            addContainerCdiClasses(classLoader, appInfo);
         }
 
     }
 
-    private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app, final EjbJarInfo ejbJar) {
+    private void addContainerCdiClasses(final ClassLoader loader, final AppInfo app) {
         if (!"true".equalsIgnoreCase(app.properties.getProperty("CdiContainer", "true"))) {
             return;
         }
