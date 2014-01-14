@@ -222,11 +222,11 @@ public class CdiScanner implements ScannerService {
 
         addContainerClasses(app.properties, loader, "BVal");
 
-		/* useless since MyFaces uses Extension to register beans
+        /* useless since MyFaces uses Extension to register beans
         if (ejbJar.webapp && "true".equalsIgnoreCase(app.properties.getProperty("Jsf.MyFaces", "true"))) {
             addContainerClasses(app.properties, loader, "MyFaces");
         }
-		*/
+        */
     }
 
 
