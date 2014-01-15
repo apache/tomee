@@ -221,6 +221,18 @@ public class NewLoaderLogic {
         // reinit the filter
         filter = null;
         getFilter();
+
+        logExclusions(exclusionArray);
+    }
+
+    private static void logExclusions(final String[] exclusionArray) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Exclusion prefixes: [");
+            for (final String ex : exclusionArray) {
+                logger.debug("-" + ex);
+            }
+            logger.debug("]");
+        }
     }
 
     public static String[] getExclusions() {
@@ -272,7 +284,11 @@ public class NewLoaderLogic {
 
         getFilter(); // ensure filter is initialized
 
-        return excludes.toArray(new String[excludes.size()]);
+        final String[] asArray = excludes.toArray(new String[excludes.size()]);
+
+        logExclusions(asArray);
+
+        return asArray;
     }
 
     @SuppressWarnings("unchecked")
