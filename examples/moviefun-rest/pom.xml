@@ -23,6 +23,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>1.6.1-SNAPSHOT</tomee.version>
+    <version.shrinkwrap.resolver>2.0.0-alpha-5</version.shrinkwrap.resolver>
   </properties>
   <repositories>
     <repository>
@@ -31,13 +32,6 @@
       <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache-m2-snapshot-plugin</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <finalName>moviefun</finalName>
     <defaultGoal>install</defaultGoal>
@@ -69,6 +63,38 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>copy-test-libs</id>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>javax.servlet</groupId>
+                  <artifactId>jstl</artifactId>
+                  <version>1.2</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>taglibs</groupId>
+                  <artifactId>standard</artifactId>
+                  <version>1.1.2</version>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>
+                ${project.build.directory}/test-libs
+              </outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.13</version>
         <configuration>
@@ -85,16 +111,48 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.8</version>
+        <configuration>
+          <configuration>
+            <wtpapplicationxml>true</wtpapplicationxml>
+            <wtpversion>2.0</wtpversion>
+          </configuration>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>1.6.1-SNAPSHOT</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
+          <config>${project.basedir}/src/main/tomee/</config>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Override dependency resolver with test version. This must go *BEFORE*
+        the Arquillian BOM. -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${version.shrinkwrap.resolver}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <!-- Now pull in our server-based unit testing framework -->
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.0.3.Final</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -109,21 +167,43 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <artifactId>openejb-core</artifactId>
       <version>4.6.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <version>1.1.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-jaxrs</artifactId>
-      <version>${tomee.version}</version>
+      <artifactId>tomee-embedded</artifactId>
+      <version>1.6.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-depchain</artifactId>
+      <type>pom</type>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -135,42 +215,42 @@
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-backbone</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-bootstrap</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-jquery</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-handlebars</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-json2</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-lessjs</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-requirejs</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.staticweb</groupId>
       <artifactId>static-tomee-underscorejs</artifactId>
-      <version>${tomee.version}</version>
+      <version>1.6.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <!-- This section allows you to configure where to publish libraries for
@@ -186,4 +266,31 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+  <profiles>
+    <profile>
+      <id>arquillian-tomee-embedded</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>arquillian-tomee-embedded</artifactId>
+          <version>1.6.1-SNAPSHOT</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>arquillian-tomee-remote</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>1.6.1-SNAPSHOT</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

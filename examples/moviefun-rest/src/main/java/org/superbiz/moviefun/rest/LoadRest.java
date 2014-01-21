@@ -20,8 +20,6 @@ import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.MoviesBean;
 
 import javax.ejb.EJB;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
