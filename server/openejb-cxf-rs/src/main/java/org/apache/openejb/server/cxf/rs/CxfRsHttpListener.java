@@ -79,15 +79,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -113,8 +105,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     private AbstractHTTPDestination destination;
     private Server server;
     private String context = "";
-    private Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
-    private List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<Pattern>();
+    private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
     static {
         STATIC_CONTENT_TYPES = new HashMap<String, String>();
@@ -137,6 +129,14 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
         }
+
+        for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
+            final RequestHandler provider = rh.getProvider();
+            if (WadlGenerator.class.isInstance(provider)) {
+                final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
+                wadlGenerator.setIgnoreRequests(false);
+            }
+        }
     }
 
     public CxfRsHttpListener(final HTTPTransportFactory httpTransportFactory, final String star) {
@@ -157,6 +157,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
 
         String baseURL = BaseUrlHelper.getBaseURL(httpRequest);
+
         if (!baseURL.endsWith("/")) {
             baseURL += "/";
         }
@@ -174,10 +175,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 // this is just a workaround waiting for something better
                 @Override
                 public String getRequestURI() {
+
                     if (httpRequest instanceof HttpRequestImpl) {
                         return strip(context, ((HttpRequestImpl) httpRequest).requestRawPath());
+                    } else {
+                        return strip(context, super.getRequestURI());
                     }
-                    return strip(context, super.getRequestURI());
                 }
             }, httpResponse);
         } finally {
@@ -223,7 +226,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             final ServletOutputStream os = response.getOutputStream();
             IOUtils.copy(is, os);
             os.flush();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
         }
 
@@ -254,7 +257,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-               null, app, null, additionalProviders, configuration);
+                null, app, null, additionalProviders, configuration);
     }
 
     @Override
@@ -266,7 +269,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-               proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
+                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration);
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
@@ -403,7 +406,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             final Level level = SERVER_IMPL_LOGGER.getLevel();
             try {
                 SERVER_IMPL_LOGGER.setLevel(Level.OFF);
-            } catch (UnsupportedOperationException e) {
+            } catch (final UnsupportedOperationException e) {
                 //ignore
             }
             try {
@@ -411,7 +414,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             } finally {
                 try {
                     SERVER_IMPL_LOGGER.setLevel(level);
-                } catch (UnsupportedOperationException e) {
+                } catch (final UnsupportedOperationException e) {
                     //ignore
                 }
             }
@@ -501,29 +504,29 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             // Init and register MBeans
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-                                                  .set("j2eeType", "JAX-RS")
-                                                  .set("J2EEServer", "openejb")
-                                                  .set("J2EEApplication", base)
-                                                  .set("EndpointType", resource.type)
-                                                  .set("name", resource.classname);
+                    .set("j2eeType", "JAX-RS")
+                    .set("J2EEServer", "openejb")
+                    .set("J2EEApplication", base)
+                    .set("EndpointType", resource.type)
+                    .set("name", resource.classname);
 
             final ObjectName jmxObjectName = jmxName.build();
             LocalMBeanServer.registerDynamicWrapperSilently(
-                                                               new RestServiceMBean(resource),
-                                                               jmxObjectName);
+                    new RestServiceMBean(resource),
+                    jmxObjectName);
 
             jmxNames.add(jmxObjectName);
 
             LOGGER.info("     Service URI: "
-                        + Logs.forceLength(resource.address, addressSize, true) + " -> "
-                        + Logs.forceLength(resource.type, 4, false) + " "
-                        + Logs.forceLength(resource.classname, classSize, true));
+                    + Logs.forceLength(resource.address, addressSize, true) + " -> "
+                    + Logs.forceLength(resource.type, 4, false) + " "
+                    + Logs.forceLength(resource.classname, classSize, true));
 
             for (final Logs.LogOperationEndpointInfo log : resource.operations) {
                 LOGGER.info("          "
-                            + Logs.forceLength(log.http, resource.methodSize, false) + " "
-                            + Logs.forceLength(log.address, addressSize, true) + " ->      "
-                            + Logs.forceLength(log.method, resource.methodStrSize, true));
+                        + Logs.forceLength(log.http, resource.methodSize, false) + " "
+                        + Logs.forceLength(log.address, addressSize, true) + " ->      "
+                        + Logs.forceLength(log.method, resource.methodStrSize, true));
             }
 
             resource.operations.clear();
@@ -556,10 +559,10 @@ public class CxfRsHttpListener implements RsHttpListener {
                 ResourceComparator instance = (ResourceComparator) ServiceInfos.resolve(services, resourceComparator);
                 if (instance == null) {
                     instance = (ResourceComparator) Thread.currentThread().getContextClassLoader()
-                                                          .loadClass(resourceComparator).newInstance();
+                            .loadClass(resourceComparator).newInstance();
                 }
                 factory.setResourceComparator(instance);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("Can't create the resource comparator " + resourceComparator, e);
             }
         }
@@ -670,15 +673,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @MBean
     @Internal
     @Description("JAX-RS service information")
     public class RestServiceMBean {
 
-        private String type;
-        private String address;
-        private String classname;
-        private TabularData operations;
+        private final String type;
+        private final String address;
+        private final String classname;
+        private final TabularData operations;
 
         public RestServiceMBean(final Logs.LogResourceEndpointInfo jmxName) {
             this.type = jmxName.type;

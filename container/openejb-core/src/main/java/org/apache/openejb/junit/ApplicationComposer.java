@@ -70,7 +70,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                         if (throwable instanceof Exception) {
                             throw (Exception) throwable;
                         }
-                        throw new OpenEJBRuntimeException("can't evaluate statement", throwable);
+                        throw new OpenEJBRuntimeException("Failed test evaluation", throwable);
                     }
                     return null;
                 }

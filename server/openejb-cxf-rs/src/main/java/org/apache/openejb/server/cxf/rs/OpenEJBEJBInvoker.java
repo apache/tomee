@@ -31,12 +31,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
@@ -46,11 +41,11 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             final Collection<Class<?>> classes = new HashSet<Class<?>>();
             Contexts.findContextFields(context.getBeanClass(), classes);
             for (final Collection<InterceptorData> list :
-                        Arrays.asList(
-                                context.getInterceptorData(),
-                                context.getInstanceScopedInterceptors(),
-                                context.getCallbackInterceptors())) {
-                for (InterceptorData id : list) {
+                    Arrays.asList(
+                            context.getInterceptorData(),
+                            context.getInstanceScopedInterceptors(),
+                            context.getCallbackInterceptors())) {
+                for (final InterceptorData id : list) {
                     final Class<?> interceptorClass = id.getInterceptorClass();
                     if (!StatsInterceptor.class.equals(interceptorClass)) {
                         Contexts.findContextFields(interceptorClass, classes);
@@ -91,7 +86,7 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
                                        final Method m, final Object[] paramArray) throws Exception {
         try {
             return m.invoke(serviceObject, insertExchange(m, paramArray, exchange));
-        } catch (InvocationTargetException ite) {
+        } catch (final InvocationTargetException ite) {
             Throwable cause = ite.getTargetException();
             // unwrap to get ExceptionMapper working
             if (cause instanceof InvalidateReferenceException) {
