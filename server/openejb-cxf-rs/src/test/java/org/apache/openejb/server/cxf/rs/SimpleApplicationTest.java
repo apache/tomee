@@ -20,13 +20,7 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.beans.HookedRest;
-import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
-import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
-import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
+import org.apache.openejb.server.cxf.rs.beans.*;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
@@ -36,10 +30,10 @@ import org.junit.runner.RunWith;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @EnableServices("jax-rs")
 @RunWith(ApplicationComposer.class)
@@ -47,7 +41,7 @@ public class SimpleApplicationTest {
     public static final String BASE_URL = "http://localhost:4204/foo/my-app";
 
     @Module
-    @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class })
+    @Classes(cdi = true, value = {MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class})
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo")
@@ -56,24 +50,76 @@ public class SimpleApplicationTest {
     }
 
     @Test
+    public void wadlXML() throws IOException {
+        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "xml").get();
+
+        final StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader((InputStream) response.getEntity()));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    //Ignore
+                }
+            }
+        }
+
+        final String wadl = sb.toString();
+        assertTrue("Failed to get WADL", wadl.startsWith("<application xmlns"));
+    }
+
+    @Test
+    public void wadlJSON() throws IOException {
+        final Response response = WebClient.create(BASE_URL).path("/first/hi").query("_wadl").query("_type", "json").get();
+
+        final StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader((InputStream) response.getEntity()));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    //Ignore
+                }
+            }
+        }
+
+        final String wadl = sb.toString();
+        assertTrue("Failed to get WADL", wadl.startsWith("{\"application\":"));
+    }
+
+    @Test
     public void first() {
-        String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/first/hi").get(String.class);
         assertEquals("Hi from REST World!", hi);
     }
 
     @Test
     public void second() {
-        String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
+        final String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
         assertEquals("hi 2nd", hi);
     }
 
     @Test
     public void expert() throws Exception {
-        Response response = WebClient.create(BASE_URL).path("/expert/still-hi").post("Pink Floyd");
+        final Response response = WebClient.create(BASE_URL).path("/expert/still-hi").post("Pink Floyd");
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
-        InputStream is = (InputStream) response.getEntity();
-        StringWriter writer = new StringWriter();
+        final InputStream is = (InputStream) response.getEntity();
+        final StringWriter writer = new StringWriter();
         int c;
         while ((c = is.read()) != -1) {
             writer.write(c);

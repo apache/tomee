@@ -41,11 +41,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -83,7 +79,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
             try {
                 final Set<Bean<?>> beans = bm.getBeans(clazz);
                 bean = bm.resolve(beans);
-            } catch (InjectionException ie) {
+            } catch (final InjectionException ie) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
@@ -137,7 +133,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             return creator.create();
-        } catch (NoBeanFoundException nbfe) {
+        } catch (final NoBeanFoundException nbfe) {
             creator = new DefaultBeanCreator(m);
             return creator.create();
         } finally {
@@ -163,14 +159,14 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     }
 
     private static class InitialContextWrapper implements InvocationHandler {
-        private Context ctx;
+        private final Context ctx;
 
-        public InitialContextWrapper(Context initialContext) {
+        public InitialContextWrapper(final Context initialContext) {
             ctx = initialContext;
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             if (method.getName().equals("lookup")) {
                 final String name = "java:" + String.class.cast(args[0]);
                 if (args[0].getClass().equals(String.class)) {
@@ -180,10 +176,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                     if (ctx != null) {
                         try {
                             return ctx.lookup(name);
-                        } catch (Exception ne) {
+                        } catch (final Exception ne) {
                             try {
                                 return ctx.lookup(String.class.cast(args[0]));
-                            } catch (Exception ignored) {
+                            } catch (final Exception ignored) {
                                 // no-op
                             }
                         }
@@ -191,10 +187,10 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                     final Context initialContext = new InitialContext();
                     try {
                         return initialContext.lookup(name);
-                    } catch (Exception swallowed) {
+                    } catch (final Exception swallowed) {
                         try {
                             return initialContext.lookup(String.class.cast(args[0]));
-                        } catch (Exception ignored) {
+                        } catch (final Exception ignored) {
                             // no-op
                         }
                     }
@@ -206,6 +202,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
     private static interface BeanCreator {
         Object create();
+
         void release();
     }
 
@@ -214,7 +211,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
         private final Bean<?> bean;
         private CreationalContext<?> toClean;
 
-        public CdiBeanCreator(BeanManager bm, final Bean<?> bean) {
+        public CdiBeanCreator(final BeanManager bm, final Bean<?> bean) {
             this.bm = bm;
             this.bean = bean;
         }
@@ -230,7 +227,7 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
                         toClean = null; // will be released by the container
                     }
                 }
-            } catch (InjectionException ie) {
+            } catch (final InjectionException ie) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }
@@ -245,12 +242,12 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
     }
 
     private class DefaultBeanCreator implements BeanCreator {
-        private Message m;
+        private final Message m;
         private InjectionProcessor<?> injector;
         private CreationalContext creationalContext;
         private Object instance;
 
-        public DefaultBeanCreator(Message m) {
+        public DefaultBeanCreator(final Message m) {
             this.m = m;
         }
 
@@ -268,26 +265,26 @@ public class OpenEJBPerRequestPojoResourceProvider implements ResourceProvider {
 
                 try {
                     OWBInjector.inject(bm, instance, creationalContext);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // ignored
                 }
 
                 // injector.postConstruct(); // it doesn't know it
                 InjectionUtils.invokeLifeCycleMethod(instance, postConstructMethod);
                 return instance;
-            } catch (InstantiationException ex) {
+            } catch (final InstantiationException ex) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
-            } catch (IllegalAccessException ex) {
+            } catch (final IllegalAccessException ex) {
                 final String msg = "Resource class " + constructor.getDeclaringClass().getName() + " can not be instantiated"
                         + " due to IllegalAccessException";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
-            } catch (InvocationTargetException ex) {
+            } catch (final InvocationTargetException ex) {
                 final String msg = "Resource class "
                         + constructor.getDeclaringClass().getName() + " can not be instantiated"
                         + " due to InvocationTargetException";
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }

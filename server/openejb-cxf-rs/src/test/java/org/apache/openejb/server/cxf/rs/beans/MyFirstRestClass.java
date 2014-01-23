@@ -16,12 +16,17 @@
  */
 package org.apache.openejb.server.cxf.rs.beans;
 
+import org.apache.cxf.jaxrs.model.wadl.Description;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Path("/first")
+@Description("MyFirstRestClass service")
 public class MyFirstRestClass {
-    @Path("/hi") @GET public String hi() {
+    @Path("/hi")
+    @GET
+    public String hi() {
         return "Hi from REST World!";
     }
 }

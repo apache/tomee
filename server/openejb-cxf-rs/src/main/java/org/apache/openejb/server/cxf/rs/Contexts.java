@@ -32,21 +32,12 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class Contexts {
     private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<Exchange>();
@@ -60,7 +51,7 @@ public final class Contexts {
             return Collections.emptyList();
         }
         for (final Field f : cls.getDeclaredFields()) {
-            for (Annotation a : f.getAnnotations()) {
+            for (final Annotation a : f.getAnnotations()) {
                 if (a.annotationType() == Context.class || a.annotationType() == Resource.class
                         && AnnotationUtils.isContextClass(f.getType())) {
                     types.add(f.getType());
@@ -71,6 +62,7 @@ public final class Contexts {
         return types;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static void bind(final Exchange exchange) {
         if (exchange == null) {
             return;
@@ -90,34 +82,34 @@ public final class Contexts {
     /**
      * Using a set ensures we don't set the thread local twice or more,
      * there may be super classes with injection points of identical types
-     *
+     * <p/>
      * Also allows us to get context references from other sources such as interceptors
      *
-     * @param exchange
-     * @param types
+     * @param exchange Exchange
+     * @param types    Collection
      */
-    public static void bind(Exchange exchange, Collection<Class<?>> types) {
+    public static void bind(final Exchange exchange, final Collection<Class<?>> types) {
         EXCHANGE.set(exchange); // used in lazy mode by RESTResourceFinder if cdi beans uses @Context, === initThreadLocal
         CdiAppContextsService.pushRequestReleasable(CleanUpThreadLocal.INSTANCE);
 
-        for (Class<?> type : types) {
+        for (final Class<?> type : types) {
             if (Request.class.equals(type)) {
-                Request binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Request.class);
+                final Request binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Request.class);
                 ThreadLocalContextManager.REQUEST.set(binding);
             } else if (UriInfo.class.equals(type)) {
-                UriInfo binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, UriInfo.class);
+                final UriInfo binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, UriInfo.class);
                 ThreadLocalContextManager.URI_INFO.set(binding);
             } else if (HttpHeaders.class.equals(type)) {
-                HttpHeaders binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpHeaders.class);
+                final HttpHeaders binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpHeaders.class);
                 ThreadLocalContextManager.HTTP_HEADERS.set(binding);
             } else if (SecurityContext.class.equals(type)) {
-                SecurityContext binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, SecurityContext.class);
+                final SecurityContext binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, SecurityContext.class);
                 ThreadLocalContextManager.SECURITY_CONTEXT.set(binding);
             } else if (ContextResolver.class.equals(type)) {
-                ContextResolver<?> binding = JAXRSUtils.createContextValue(exchange.getInMessage(), type, ContextResolver.class);
+                final ContextResolver<?> binding = JAXRSUtils.createContextValue(exchange.getInMessage(), type, ContextResolver.class);
                 ThreadLocalContextManager.CONTEXT_RESOLVER.set(binding);
             } else if (Providers.class.equals(type)) {
-                Providers providers = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Providers.class);
+                final Providers providers = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Providers.class);
                 ThreadLocalContextManager.PROVIDERS.set(providers);
             } else if (ServletRequest.class.equals(type)) {
                 ServletRequest servletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletRequest.class);
@@ -126,13 +118,13 @@ public final class Contexts {
                 }
                 ThreadLocalContextManager.SERVLET_REQUEST.set(servletRequest);
             } else if (HttpServletRequest.class.equals(type)) {
-                HttpServletRequest httpServletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletRequest.class);
+                final HttpServletRequest httpServletRequest = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletRequest.class);
                 ThreadLocalContextManager.HTTP_SERVLET_REQUEST.set(httpServletRequest);
             } else if (HttpServletResponse.class.equals(type)) {
-                HttpServletResponse httpServletResponse = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletResponse.class);
+                final HttpServletResponse httpServletResponse = JAXRSUtils.createContextValue(exchange.getInMessage(), null, HttpServletResponse.class);
                 ThreadLocalContextManager.HTTP_SERVLET_RESPONSE.set(httpServletResponse);
             } else if (ServletConfig.class.equals(type)) {
-                ServletConfig servletConfig = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletConfig.class);
+                final ServletConfig servletConfig = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ServletConfig.class);
                 ThreadLocalContextManager.SERVLET_CONFIG.set(servletConfig);
             } else {
                 final Message message = exchange.getInMessage();
