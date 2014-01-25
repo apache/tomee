@@ -198,8 +198,9 @@
               <source>
                 // goal: manage the profile-under-test property
                 // -> set to webprofile use all distributions
-                // -> set to jaxrs just jaxrs and plus should be used
+                // -> set to jaxrs just jaxrs, plus and plume should be used
                 // -> set to plus use only plus
+                // -> set to plume use only plume
                 def props = project.properties
 
                 def skip = props['maven.test.skip']
@@ -208,9 +209,11 @@
                 props['skip.remote.webprofile'] = 'true'
                 props['skip.remote.jaxrs'] = 'true'
                 props['skip.remote.plus'] = 'true'
+                props['skip.remote.plume'] = 'true'
                 props['skip.webapp.webprofile'] = 'true'
                 props['skip.webapp.jaxrs'] = 'true'
                 props['skip.webapp.plus'] = 'true'
+                props['skip.webapp.plume'] = 'true'
 
                 if ("true" != skip) {
                   def minProfile = props['profile-under-test']
@@ -223,16 +226,22 @@
                     props['skip.webapp.jaxrs'] = 'false'
                     props['skip.remote.plus'] = 'false'
                     props['skip.webapp.plus'] = 'false'
+                    props['skip.remote.plume'] = 'false'
+                    props['skip.webapp.plume'] = 'false'
                   } else if ("jaxrs" == minProfile) {
                     props['skip.embedded'] = 'false'
                     props['skip.remote.jaxrs'] = 'false'
                     props['skip.webapp.jaxrs'] = 'false'
                     props['skip.remote.plus'] = 'false'
                     props['skip.webapp.plus'] = 'false'
+                    props['skip.remote.plume'] = 'false'
+                    props['skip.webapp.plume'] = 'false'
                   } else if ("plus" == minProfile) {
                     props['skip.embedded'] = 'false'
                     props['skip.remote.plus'] = 'false'
                     props['skip.webapp.plus'] = 'false'
+                    props['skip.remote.plume'] = 'false'
+                    props['skip.webapp.plume'] = 'false'
                   }
                 }
 
@@ -240,9 +249,11 @@
                 println("Remote webprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.webprofile']))
                 println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
                 println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
+                println("Remote plume adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plume']))
                 println("Webapp weprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.webprofile']))
                 println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
                 println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
+                println("Webapp plume adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plume']))
               </source>
             </configuration>
           </plugin>
@@ -318,6 +329,23 @@
                 </configuration>
               </execution>
               <execution>
+                <id>test-tomee-remote-plume</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${skip.remote.plume}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>plume</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
                 <id>test-tomee-webapp-remote</id>
                 <phase>test</phase>
                 <goals>
@@ -363,6 +391,23 @@
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
+                    <arquillian.launch>tomee-webapp</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-webapp-remote-plume</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${skip.webapp.plume}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
+                    <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -422,6 +467,13 @@
           <classifier>plus</classifier>
           <type>zip</type>
         </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <version>${tomee.version}</version>
+          <classifier>plume</classifier>
+          <type>zip</type>
+        </dependency>
 
         <dependency>
           <groupId>org.apache.openejb</groupId>
@@ -438,6 +490,12 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>tomee-plus-webapp</artifactId>
+          <version>${tomee.version}</version>
+          <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>tomee-plume-webapp</artifactId>
           <version>${tomee.version}</version>
           <type>war</type>
         </dependency>
@@ -519,7 +577,24 @@
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
                     <tomee.version>${tomee.version}</tomee.version>
-                    <tomee.classifier>jaxrs</tomee.classifier>
+                    <tomee.classifier>plus</tomee.classifier>
+                    <arquillian.launch>tomee-remote</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-remote-plume</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -574,6 +649,23 @@
                     <tomee.version>${tomee.version}</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
+                    <arquillian.launch>tomee-webapp</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>test-tomee-webapp-remote-plume</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${maven.test.skip}</skip>
+                  <systemPropertyVariables>
+                    <tomee.version>${tomee.version}</tomee.version>
+                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
+                    <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
