@@ -81,6 +81,13 @@
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-plume-webapp</artifactId>
+      <version>${tomee.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency> <!-- to be sure to have it -->
+      <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-jaxrs-webapp</artifactId>
       <version>${tomee.version}</version>
       <type>war</type>
@@ -178,6 +185,25 @@
                   <version>${tomcat.version}</version>
                   <type>zip</type>
                   <outputDirectory>${plus.work-dir}</outputDirectory>
+                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-tomcat-for-plume</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${plume.work-dir}</outputDirectory>
                   <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
                 </artifactItem>
               </artifactItems>
@@ -305,6 +331,38 @@
               </classpath>
             </configuration>
           </execution>
+          <execution>
+            <id>execute-plume-installer</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>new commands.SetupCommand(this).execute()</source>
+              <properties>
+                <tomee.workdir>${plume.work-dir}</tomee.workdir>
+                <tomee.webapp>tomee-plume-webapp</tomee.webapp>
+              </properties>
+              <classpath>
+                <element>
+                  <groupId>jline</groupId>
+                  <artifactId>jline</artifactId>
+                  <version>0.9.94</version>
+                </element>
+                <element>
+                  <groupId>org.apache.ant</groupId>
+                  <artifactId>ant-nodeps</artifactId>
+                  <version>1.7.1</version>
+                  <type>jar</type>
+                </element>
+                <element>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>openejb-jpa-integration</artifactId>
+                  <version>${openejb.version}</version>
+                </element>
+              </classpath>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -357,6 +415,21 @@
               <goal>single</goal>
             </goals>
           </execution>
+          <execution>
+            <id>plume</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/tomee-plume.xml</descriptor>
+              </descriptors>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>apache-tomee-plume-${project.version}</finalName>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
 
@@ -403,6 +476,16 @@
                   <type>tar.gz</type>
                   <classifier>plus</classifier>
                 </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-plume-${project.version}.zip</file>
+                  <type>zip</type>
+                  <classifier>plume</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-plume-${project.version}.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>plume</classifier>
+                </artifact>
               </artifacts>
             </configuration>
           </execution>
@@ -421,6 +504,7 @@
 
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
+    <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>
     <jaxrs.work-dir>${project.build.directory}/jaxrs-work-dir</jaxrs.work-dir>
   </properties>
 

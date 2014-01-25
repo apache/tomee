@@ -40,6 +40,7 @@
     <module>tomee-webapp</module>
     <module>tomee-webaccess</module>
     <module>tomee-plus-webapp</module>
+    <module>tomee-plume-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
     <module>tomee-jaxrs</module>
