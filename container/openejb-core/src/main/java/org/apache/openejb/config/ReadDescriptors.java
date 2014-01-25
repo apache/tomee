@@ -86,6 +86,8 @@ public class ReadDescriptors implements DynamicDeployer {
 
     private static final boolean ROOT_URL_FROM_WEBINF = SystemInstance.get().getOptions().get("openejb.jpa.root-url-from-webinf", false);
 
+    public static final TldTaglib SKIP_TAGLIB = new TldTaglib();
+
     @SuppressWarnings({"unchecked"})
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
@@ -754,8 +756,10 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static TldTaglib readTldTaglib(final URL url) throws OpenEJBException {
         // TOMEE-164 Optimization on reading built-in tld files
-        if (url.getPath().contains("jstl-1.2.jar")) return new TldTaglib();
-        if (url.getPath().contains("myfaces-impl")) {
+        if (url.getPath().contains("jstl-1.2.jar")) {
+            return SKIP_TAGLIB;
+        }
+        if (url.getPath().contains("myfaces-impl")) { // we should return SKIP_TAGLIB too
             final TldTaglib taglib = new TldTaglib();
             final Listener listener = new Listener();
             listener.setListenerClass("org.apache.myfaces.webapp.StartupServletContextListener");
@@ -766,14 +770,23 @@ public class ReadDescriptors implements DynamicDeployer {
         try {
             return TldTaglibXml.unmarshal(url);
         } catch (SAXException e) {
-            throw new OpenEJBException("Cannot parse the JSP tag library definition file: " + url.toExternalForm(), e);
+            final String message = "Cannot parse the JSP tag library definition file: " + url.toExternalForm();
+            logger.warning(message);
+            logger.debug(message, e);
         } catch (JAXBException e) {
-            throw new OpenEJBException("Cannot unmarshall the JSP tag library definition file: " + url.toExternalForm(), e);
+            final String message = "Cannot unmarshall the JSP tag library definition file: " + url.toExternalForm();
+            logger.warning(message);
+            logger.debug(message, e);
         } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the JSP tag library definition file: " + url.toExternalForm(), e);
+            final String message = "Cannot read the JSP tag library definition file: " + url.toExternalForm();
+            logger.warning(message);
+            logger.debug(message, e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the JSP tag library definition file: " + url.toExternalForm(), e);
+            final String message = "Encountered unknown error parsing the JSP tag library definition file: " + url.toExternalForm();
+            logger.warning(message);
+            logger.debug(message, e);
         }
+        return SKIP_TAGLIB;
     }
 
     public static FacesConfig readFacesConfig(final URL url) throws OpenEJBException {
