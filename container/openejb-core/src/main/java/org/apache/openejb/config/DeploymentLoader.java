@@ -1232,9 +1232,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         // load the tld files
         for (final URL location : tldLocations) {
             final TldTaglib taglib = ReadDescriptors.readTldTaglib(location);
-            webModule.getTaglibs().add(taglib);
-            if ("file".equals(location.getProtocol())) {
-                webModule.getWatchedResources().add(URLs.toFilePath(location));
+            if (taglib != null && taglib != ReadDescriptors.SKIP_TAGLIB) {
+                webModule.getTaglibs().add(taglib);
+                if ("file".equals(location.getProtocol())) {
+                    webModule.getWatchedResources().add(URLs.toFilePath(location));
+                }
             }
         }
 
