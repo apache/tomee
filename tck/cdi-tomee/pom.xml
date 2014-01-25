@@ -27,7 +27,7 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
 
   <properties>
-    <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${tomee.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${tomee.classifier}-${tomee.version}</openejb.home>
     <openejb.deployer.jndiname>openejb/DeployerBusinessRemote</openejb.deployer.jndiname>
     <org.jboss.testharness.spi.Containers>org.apache.openejb.tck.impl.ContainersImplTomEE</org.jboss.testharness.spi.Containers>
     <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
@@ -54,13 +54,34 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>apache-tomee</artifactId>
-      <type>zip</type>
-      <version>1.6.1-SNAPSHOT</version>
-      <classifier>webprofile</classifier>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>apache-tomee</artifactId>-->
+      <!--<type>zip</type>-->
+      <!--<version>1.6.1-SNAPSHOT</version>-->
+      <!--<classifier>webprofile</classifier>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>apache-tomee</artifactId>-->
+      <!--<type>zip</type>-->
+      <!--<version>1.6.1-SNAPSHOT</version>-->
+      <!--<classifier>jaxrs</classifier>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>apache-tomee</artifactId>-->
+      <!--<type>zip</type>-->
+      <!--<version>1.6.1-SNAPSHOT</version>-->
+      <!--<classifier>plus</classifier>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.openejb</groupId>-->
+      <!--<artifactId>apache-tomee</artifactId>-->
+      <!--<type>zip</type>-->
+      <!--<version>1.6.1-SNAPSHOT</version>-->
+      <!--<classifier>plume</classifier>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper-el</artifactId>
@@ -122,7 +143,7 @@
           </execution>
         </executions>
       </plugin>
-	  
+
 	  <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -132,7 +153,7 @@
 		  <disableXmlReport>true</disableXmlReport>
         </configuration>
       </plugin>
-	  
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -151,7 +172,7 @@
                   <artifactId>apache-tomee</artifactId>
                   <version>${tomee.version}</version>
                   <type>zip</type>
-                  <classifier>webprofile</classifier>
+                  <classifier>${tomee.classifier}</classifier>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -276,6 +297,74 @@
         <!--suiteXmlFile>src/test/resources/webapps-passing.xml</suiteXmlFile-->
       </properties>
     </profile>
+
+    <profile>
+      <id>webprofile</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <tomee.classifier>webprofile</tomee.classifier>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <type>zip</type>
+          <version>1.6.1-SNAPSHOT</version>
+          <classifier>${tomee.classifier}</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>jaxrs</id>
+      <properties>
+        <tomee.classifier>jaxrs</tomee.classifier>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <type>zip</type>
+          <version>1.6.1-SNAPSHOT</version>
+          <classifier>${tomee.classifier}</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>plus</id>
+      <properties>
+        <tomee.classifier>plus</tomee.classifier>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <type>zip</type>
+          <version>1.6.1-SNAPSHOT</version>
+          <classifier>${tomee.classifier}</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>plume</id>
+      <properties>
+        <tomee.classifier>plume</tomee.classifier>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <type>zip</type>
+          <version>1.6.1-SNAPSHOT</version>
+          <classifier>${tomee.classifier}</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+
   </profiles>
 
 </project>
