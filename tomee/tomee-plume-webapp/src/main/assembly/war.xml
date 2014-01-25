@@ -68,6 +68,10 @@
         <include>**/*.js</include>
         <include>lib/*.jar</include>
       </includes>
+      <excludes>
+        <exclude>lib/myfaces*.jar</exclude>
+        <exclude>lib/tomee-myfaces*.jar</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
@@ -77,6 +81,7 @@
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
+        <exclude>org.apache.myfaces:*</exclude>
 
         <!-- exclude all the static web content -->
         <exclude>org.apache.openejb.staticweb:*</exclude>
