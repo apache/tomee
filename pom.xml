@@ -176,7 +176,7 @@
     <version.axiom>1.2.14</version.axiom>
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.8.Final</version.hibernate>
-    <version.eclipselink>2.5.1</version.eclipselink>
+    <version.eclipselink>2.4.2</version.eclipselink>
   </properties>
 
   <build>
