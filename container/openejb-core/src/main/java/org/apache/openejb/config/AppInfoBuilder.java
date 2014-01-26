@@ -703,7 +703,9 @@ class AppInfoBuilder {
         private static final String HIBERNATE_EJB_NAMING_STRATEGY = "org.apache.openejb.jpa.integration.hibernate.PrefixNamingStrategy";
 
         private static final String ECLIPSELINK_SESSION_CUSTOMIZER = "eclipselink.session.customizer";
+        private static final String ECLIPSELINK_TARGET_SERVER = "eclipselink.target-server";
         private static final String PREFIX_SESSION_CUSTOMIZER = "org.apache.openejb.jpa.integration.eclipselink.PrefixSessionCustomizer";
+        private static final String OPENEJB_TARGET_SERVER = "org.apache.openejb.jpa.integration.eclipselink.OpenEJBServerPlatform";
 
         private static String providerEnv;
         private static boolean forceProviderEnv;
@@ -806,17 +808,14 @@ class AppInfoBuilder {
                 // Apply the overrides that apply to all persistence units of this provider
                 override(info, "eclipselink");
 
-                final String lookupProperty = "eclipselink.target-server";
-                final String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
-
-                final String className = info.properties.getProperty(lookupProperty);
+                final String className = info.properties.getProperty(ECLIPSELINK_TARGET_SERVER);
 
                 if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
-                    if (classLoader.getResource(ClassLoaderUtil.resourceName(openejbLookupClass)) != null) {
-                        info.properties.setProperty(lookupProperty, openejbLookupClass);
-                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    if (classLoader.getResource(ClassLoaderUtil.resourceName(OPENEJB_TARGET_SERVER)) != null) {
+                        info.properties.setProperty(ECLIPSELINK_TARGET_SERVER, OPENEJB_TARGET_SERVER);
+                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to " + ECLIPSELINK_TARGET_SERVER + "="+ OPENEJB_TARGET_SERVER);
                     } else {
-                        logger.debug("Can't adjusting PersistenceUnit(name="+info.name+") property to " + lookupProperty + "=" + openejbLookupClass + ", using default one");
+                        logger.debug("Can't adjusting PersistenceUnit(name="+info.name+") property to " + ECLIPSELINK_TARGET_SERVER + "=" + OPENEJB_TARGET_SERVER + ", using default one");
                     }
                 }
 
