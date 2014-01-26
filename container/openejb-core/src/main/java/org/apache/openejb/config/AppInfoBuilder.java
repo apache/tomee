@@ -73,6 +73,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.jpa.integration.MakeTxLookup;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.PersistenceBootstrap;
 import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -693,7 +694,7 @@ class AppInfoBuilder {
         public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
         public static final String JTADATASOURCE_PROP = "javax.persistence.jtaDataSource";
         public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
-        private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+        private static final String DEFAULT_PERSISTENCE_PROVIDER = PersistenceBootstrap.DEFAULT_PROVIDER;
         public static final String FORCE_PROVIDER_ENV = "openejb.jpa.force." + PROVIDER_PROP;
 
         public static final String HIBERNATE_TRANSACTION_MANAGER_LOOKUP_CLASS = "hibernate.transaction.manager_lookup_class";

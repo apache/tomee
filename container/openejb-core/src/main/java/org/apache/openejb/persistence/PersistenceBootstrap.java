@@ -20,6 +20,8 @@ import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.apache.xbean.finder.ClassLoaders;
 import org.xml.sax.Attributes;
@@ -56,7 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import static org.apache.openejb.loader.JarLocation.decode;
 
@@ -75,7 +76,28 @@ import static org.apache.openejb.loader.JarLocation.decode;
  */
 public class PersistenceBootstrap {
 
-    private static final String defaultProvider = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, PersistenceBootstrap.class);
+
+    public static final String DEFAULT_PROVIDER = getDefaultProvider();
+
+    private static String getDefaultProvider() {
+        final Class<PersistenceBootstrap> clzz = PersistenceBootstrap.class;
+        final String name = "/META-INF/" + clzz.getName() + ".provider";
+
+        try {
+            final URL provider = clzz.getResource(name);
+            if (provider != null) {
+                final String trim = IO.slurp(provider).trim();
+                logger.info("Default JPA Provider changed to " + trim);
+                return trim;
+            }
+        } catch (Exception e) {
+            logger.warning("Could not read " + name, e);
+        }
+
+        return "org.apache.openjpa.persistence.PersistenceProviderImpl";
+    }
+
     private static boolean debug;
 
     public static void bootstrap(ClassLoader classLoader) {
@@ -299,7 +321,7 @@ public class PersistenceBootstrap {
                     debug("adding unit " + unit.name);
 
                     if (unit.provider == null) {
-                        unit.provider = defaultProvider;
+                        unit.provider = DEFAULT_PROVIDER;
                     }
 
                     Unit u = units.get(unit.provider);
@@ -410,7 +432,7 @@ public class PersistenceBootstrap {
             return null;
         }
 
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
             return null;
         }
 
