@@ -32,14 +32,12 @@ public class MakeTxLookup implements Opcodes {
     public static final String HIBERNATE_NEW_FACTORY = "org.apache.openejb.hibernate.OpenEJBJtaPlatform";
     public static final String HIBERNATE_NEW_FACTORY2 = "org.apache.openejb.hibernate.OpenEJBJtaPlatform2";
     public static final String TOPLINK_FACTORY = "org.apache.openejb.toplink.JTATransactionController";
-    public static final String ECLIPSELINK_FACTORY = "org.apache.openejb.eclipselink.JTATransactionController";
 
     public static void main(String[] args) throws Exception {
 
         File file = new File(args[0]);
 
         createTopLinkStrategy(file);
-        createEclipseLinkStrategy(file);
         createHibernteStrategy(file);
         // hibernate repackaged its SPI...keeping all the same excepted packages
         createNewHibernateStrategy(file, HIBERNATE_NEW_FACTORY, "org/hibernate/service/jta/platform/internal");
@@ -175,45 +173,6 @@ public class MakeTxLookup implements Opcodes {
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKESPECIAL, "oracle/toplink/essentials/transaction/JTATransactionController", "<init>", "()V");
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(1, 1);
-            mv.visitEnd();
-        }
-        {
-            mv = cw.visitMethod(ACC_PROTECTED, "acquireTransactionManager", "()Ljavax/transaction/TransactionManager;", null, new String[]{"java/lang/Exception"});
-            mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;");
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(1, 1);
-            mv.visitEnd();
-        }
-        cw.visitEnd();
-
-
-        write(baseDir, cw, classFilePath);
-    }
-
-    private static void createEclipseLinkStrategy(File baseDir) throws Exception {
-
-        String factory = ECLIPSELINK_FACTORY;
-
-        String classFilePath = factory.replace('.', '/');
-
-        String sourceFileName = factory.substring(factory.lastIndexOf('.') + 1, factory.length()) + ".java";
-
-
-        ClassWriter cw = new ClassWriter(0);
-        MethodVisitor mv;
-
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "org/eclipse/persistence/transaction/JTATransactionController", null);
-
-        cw.visitSource(sourceFileName, null);
-
-        {
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/eclipse/persistence/transaction/JTATransactionController", "<init>", "()V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
