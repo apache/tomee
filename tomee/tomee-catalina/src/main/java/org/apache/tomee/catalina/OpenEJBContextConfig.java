@@ -280,7 +280,8 @@ public class OpenEJBContextConfig extends ContextConfig {
         String[] ids = null;
         if (foundResources != null) {
             for (final ContextResource resource : foundResources) {
-                if ("javax.sql.DataSource".equals(resource.getType())) {
+                if ("javax.sql.DataSource".equals(resource.getType())
+                        && !ResourceFactory.class.getName().equals(resource.getProperty(Constants.FACTORY))) {
                     String jndiName = (String) resource.getProperty("mappedName");
                     if (jndiName == null) {
                         jndiName = resource.getName();
