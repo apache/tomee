@@ -30,6 +30,7 @@
   <modules>
     <module>webdeployer</module>
     <module>openejb-core-hibernate</module>
+    <module>openejb-core-eclipselink</module>
     <module>openejb-provisionning</module>
     <module>openejb-mockito</module>
   </modules>

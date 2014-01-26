@@ -32,6 +32,13 @@
   <packaging>war</packaging>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core-eclipselink</artifactId>
+      <version>${openejb.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.faces</artifactId>
