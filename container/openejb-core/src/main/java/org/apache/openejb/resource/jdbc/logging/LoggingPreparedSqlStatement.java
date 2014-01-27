@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.resource.jdbc.logging;
 
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,10 +48,25 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
         final String mtdName = method.getName();
         final boolean execute = mtdName.startsWith("execute");
 
+        final boolean debug = false;
+        if (debug){
+            LOGGER.info(String.format("PreparedStatement.%s(%s)", method.getName(),
+                    (args == null)?"":
+                    Join.join(", ", args)
+            ));
+            if (execute) {
+                logDebug();
+            }
+        }
+
         final TimeWatcherExecutor.TimerWatcherResult result = TimeWatcherExecutor.execute(method, delegate, args, execute);
 
         if (mtdName.startsWith("set") && args.length >= 2 && (args[0].getClass().equals(Integer.TYPE) || args[0].getClass().equals(Integer.class))) {
-            parameters.add(new Parameter(mtdName.substring(3), parameterIndex, (Integer) args[0], args[1]));
+            final Parameter param = new Parameter(mtdName.substring(3), parameterIndex, (Integer) args[0], args[1]);
+
+            if (debug) logParam(param);
+
+            parameters.add(param);
         } else if (execute) {
             String str = sql;
             if (str.contains("?")) {
@@ -101,6 +119,37 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
         if (result.getThrowable() != null) throw result.getThrowable();
         return result.getResult();
+    }
+
+    private void logDebug() {
+        try {
+            LOGGER.info("SQL " +sql);
+            for (Parameter parameter : parameters) {
+                logParam(parameter);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logParam(Parameter parameter) throws SQLException {
+        logParam(this.delegate.getParameterMetaData(), parameter);
+    }
+
+    private void logParam(ParameterMetaData md, Parameter parameter) throws SQLException {
+        final int i = parameter.key;
+        final String format = String.format(" - PARAM  index=%s, type%s, typeName=%s, className=%s, nullable=%s, mode=%s, precision=%s, value=%s",
+                i,
+                md.getParameterType(i),
+                md.getParameterTypeName(i),
+                md.getParameterClassName(i),
+                md.isNullable(i),
+                md.getParameterMode(i),
+                md.getPrecision(i),
+                parameter.value
+        );
+
+        LOGGER.info(format);
     }
 
     protected static class Parameter implements Comparable<Parameter> {
