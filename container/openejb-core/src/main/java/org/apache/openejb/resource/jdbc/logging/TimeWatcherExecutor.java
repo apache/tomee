@@ -25,33 +25,44 @@ public final class TimeWatcherExecutor {
         // no-op
     }
 
-    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) throws Throwable {
-        long start = 0;
-        long duration = 0;
-        if (watch) {
-            start = System.nanoTime();
-        }
+    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) {
+        final long start = (watch) ? System.nanoTime() : 0;
 
-        final Object result;
         try {
-            result = mtd.invoke(instance, args);
-        } catch (InvocationTargetException ite) {
-            throw ite.getCause();
-        }
 
-        if (watch) {
-            duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+            final Object result = mtd.invoke(instance, args);
+
+            return new TimerWatcherResult(start, result, null);
+
+        } catch (InvocationTargetException ite) {
+
+            return new TimerWatcherResult(start, null, ite.getCause());
+
+        } catch (Throwable throwable) {
+
+            return new TimerWatcherResult(start, null, throwable);
         }
-        return new TimerWatcherResult(duration, result);
     }
 
     public static class TimerWatcherResult {
         private final Object result;
+        private final Throwable throwable;
         private final long duration;
 
-        public TimerWatcherResult(long duration, Object result) {
-            this.duration = duration;
+        public TimerWatcherResult(long start, final Object result, final Throwable throwable) {
+            this.duration = (start == 0) ? 0 : TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
             this.result = result;
+            this.throwable = throwable;
+        }
+
+        public String format(String query) {
+            String message = query + " --> " + this.getDuration() + "ms";
+
+            if (throwable != null) {
+                message += " - FAILED";
+            }
+
+            return message;
         }
 
         public Object getResult() {
@@ -60,6 +71,10 @@ public final class TimeWatcherExecutor {
 
         public long getDuration() {
             return duration;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
         }
     }
 }

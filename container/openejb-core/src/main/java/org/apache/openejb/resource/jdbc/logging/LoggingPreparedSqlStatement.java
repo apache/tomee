@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements InvocationHandler {
+public class LoggingPreparedSqlStatement implements InvocationHandler {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SQL, LoggingPreparedSqlStatement.class);
 
     private final PreparedStatement delegate;
@@ -36,7 +36,7 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
 
     public LoggingPreparedSqlStatement(final PreparedStatement result, final String query) {
         delegate = result;
-        sql= query;
+        sql = query;
         parameterIndex = 0;
     }
 
@@ -91,7 +91,7 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
                     }
                 }
             }
-            LOGGER.info(format(str, result.getDuration()));
+            LOGGER.info(result.format(str));
         } else if ("clearParameters".equals(mtdName)) {
             parameters.clear();
             parameterIndex = 0;
@@ -99,6 +99,7 @@ public class LoggingPreparedSqlStatement extends AbstractSQLLogger implements In
             parameterIndex++;
         }
 
+        if (result.getThrowable() != null) throw result.getThrowable();
         return result.getResult();
     }
 
