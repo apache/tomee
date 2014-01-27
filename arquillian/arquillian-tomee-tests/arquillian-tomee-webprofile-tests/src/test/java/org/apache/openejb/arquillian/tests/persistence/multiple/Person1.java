@@ -32,7 +32,7 @@ public class Person1 {
     }
 
     public Person1() {
-        // no-op
+        this.id = System.currentTimeMillis();
     }
 
     public long getId() {
