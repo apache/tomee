@@ -20,11 +20,19 @@ import org.eclipse.persistence.platform.server.JMXServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
+import javax.management.MBeanServer;
 import javax.transaction.TransactionManager;
 
 public class OpenEJBServerPlatform extends JMXServerPlatformBase {
     public OpenEJBServerPlatform(final DatabaseSession newDatabaseSession) {
         super(newDatabaseSession);
+        try {
+            mBeanServer = MBeanServer.class.cast(
+                    OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring")
+                        .getMethod("get").invoke(null));
+        } catch (final Exception e) {
+            // no-op
+        }
     }
 
     @Override
