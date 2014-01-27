@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.io.IOException;
 
@@ -34,6 +35,9 @@ import static org.junit.Assert.assertNotNull;
 public class MultiplePUServlet extends HttpServlet {
     @Resource
     private UserTransaction transaction;
+
+    @Resource
+    private TransactionManager txMgr;
 
     @PersistenceContext(name = "pu1")
     private EntityManager entityManager1;
@@ -56,8 +60,19 @@ public class MultiplePUServlet extends HttpServlet {
 
     private void testEm(final EntityManager em, final Object person) throws Exception {
         assertNotNull(em);
-        transaction.begin();
+        // start debug
+        System.out.flush();
+        System.out.println("[DEBUG] Tx status = " + transaction.getStatus() + ", " + txMgr.getTransaction());
+        System.out.flush();
+        // end debug
+
+        final boolean start = txMgr.getTransaction() == null; // should be false
+        if (start) {
+            transaction.begin();
+        }
         em.persist(person);
-        transaction.commit();
+        if (start) {
+            transaction.commit();
+        }
     }
 }
