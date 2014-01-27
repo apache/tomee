@@ -22,7 +22,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Person2 {
-    @Id @GeneratedValue
+    @Id
     private long id;
 
     private String name;
