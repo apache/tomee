@@ -20,21 +20,28 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
+import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
+import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+import org.apache.activemq.util.URISupport;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.xbean.propertyeditor.PropertyEditorException;
+import org.apache.xbean.propertyeditor.PropertyEditors;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,68 +67,98 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
-            final URI uri = URLs.uri(brokerURI.getRawSchemeSpecificPart());
+            String rawSchemeSpecificPart = brokerURI.getRawSchemeSpecificPart();
+
+            final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(rawSchemeSpecificPart));
+            final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
+            final PersistenceAdapter persistenceAdapter;
+            if ("true".equals(params.remove("usekahadb"))) {
+                rawSchemeSpecificPart = rawSchemeSpecificPart.replace("usekahadb=true&", "").replace("usekahadb=true", "");
+
+                persistenceAdapter = new KahaDBPersistenceAdapter();
+                for (final Method m : KahaDBPersistenceAdapter.class.getDeclaredMethods()) {
+                    if (m.getName().startsWith("set") && m.getParameterTypes().length == 1 && Modifier.isPublic(m.getModifiers())) {
+                        final String key = "kahadb." + m.getName().substring(3).toLowerCase(Locale.ENGLISH);
+                        final Object field = params.remove(key);
+                        if (field != null) {
+                            rawSchemeSpecificPart = rawSchemeSpecificPart.replace(key + "=" + field.toString(), "").replace(key + "=" + field.toString() + "&", "");
+                            try {
+                                final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
+                                m.invoke(persistenceAdapter, toSet);
+                            } catch (final PropertyEditorException cantConvertException) {
+                                throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);
+                            }
+                        }
+                    }
+                }
+            } else {
+                persistenceAdapter = null;
+            }
+
+            final URI uri = URLs.uri(rawSchemeSpecificPart);
             broker = BrokerFactory.createBroker(uri);
             brokers.put(brokerURI, broker);
 
-            if (!uri.getScheme().toLowerCase().startsWith("xbean")) {
+            if (persistenceAdapter != null) {
+                broker.setPersistenceAdapter(persistenceAdapter);
+                broker.setPersistent(true);
+                tomeeConfig(broker);
+            } else {
+                final boolean notXbean = !uri.getScheme().toLowerCase().startsWith("xbean");
+                if (notXbean) {
 
-                Object value = properties.get("datasource");
+                    Object value = properties.get("datasource");
 
-                if (String.class.isInstance(value) && value.toString().length() == 0) {
-                    value = null;
-                }
+                    if (String.class.isInstance(value) && value.toString().length() == 0) {
+                        value = null;
+                    }
 
-                final DataSource dataSource;
+                    final DataSource dataSource;
 
-                if (value != null) {
+                    if (value != null) {
 
-                    if (DataSource.class.isInstance(value)) {
-                        dataSource = DataSource.class.cast(value);
-                    } else if (String.class.isInstance(value)) {
-                        final String resouceId = String.class.cast(value);
+                        if (DataSource.class.isInstance(value)) {
+                            dataSource = DataSource.class.cast(value);
+                        } else if (String.class.isInstance(value)) {
+                            final String resouceId = String.class.cast(value);
 
-                        try {
-                            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                            final Context context = containerSystem.getJNDIContext();
-                            final Object obj = context.lookup("openejb/Resource/" + resouceId);
-                            if (!(obj instanceof DataSource)) {
-                                throw new IllegalArgumentException("Resource with id " + resouceId
-                                                                   + " is not a DataSource, but is " + obj.getClass().getName());
+                            try {
+                                final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                                final Context context = containerSystem.getJNDIContext();
+                                final Object obj = context.lookup("openejb/Resource/" + resouceId);
+                                if (!(obj instanceof DataSource)) {
+                                    throw new IllegalArgumentException("Resource with id " + resouceId
+                                                                       + " is not a DataSource, but is " + obj.getClass().getName());
+                                }
+                                dataSource = (DataSource) obj;
+                            } catch (NamingException e) {
+                                throw new IllegalArgumentException("Unknown datasource " + resouceId);
                             }
-                            dataSource = (DataSource) obj;
-                        } catch (NamingException e) {
-                            throw new IllegalArgumentException("Unknown datasource " + resouceId);
+                        } else {
+                            throw new IllegalArgumentException("Unexpected datasource definition: " + value);
                         }
+
                     } else {
-                        throw new IllegalArgumentException("Unexpected datasource definition: " + value);
+                        dataSource = null;
                     }
 
-                } else {
-                    dataSource = null;
-                }
+                    if (null != dataSource) {
+                        final JDBCPersistenceAdapter adapter = new JDBCPersistenceAdapter();
 
-                if (null != dataSource) {
-                    final JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
+                        if (properties.containsKey("usedatabaselock")) {
+                            //This must be false for hsqldb
+                            adapter.setUseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
+                        }
 
-                    if (properties.containsKey("usedatabaselock")) {
-                        //This must be false for hsqldb
-                        persistenceAdapter.setUseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
+                        adapter.setDataSource(dataSource);
+                        broker.setPersistent(true);
+                        broker.setPersistenceAdapter(adapter);
+                    } else {
+                        broker.setPersistenceAdapter(new MemoryPersistenceAdapter());
                     }
 
-                    persistenceAdapter.setDataSource(dataSource);
-                    broker.setPersistent(true);
-                    broker.setPersistenceAdapter(persistenceAdapter);
-                } else {
-                    final MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
-                    broker.setPersistenceAdapter(persistenceAdapter);
+                    tomeeConfig(broker);
                 }
-
-                //New since 5.4.x
-                disableScheduler(broker);
-
-                //Notify when an error occurs on shutdown.
-                broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
             }
 
             //We must close the broker
@@ -215,6 +252,14 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         }
 
         return broker;
+    }
+
+    private void tomeeConfig(BrokerService broker) {
+        //New since 5.4.x
+        disableScheduler(broker);
+
+        //Notify when an error occurs on shutdown.
+        broker.setUseLoggingForShutdownErrors(Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQ5Factory.class).isErrorEnabled());
     }
 
     private static void disableScheduler(final BrokerService broker) {
