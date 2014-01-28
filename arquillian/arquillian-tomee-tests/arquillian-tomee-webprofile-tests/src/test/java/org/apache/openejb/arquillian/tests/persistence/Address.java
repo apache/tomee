@@ -18,9 +18,19 @@
 package org.apache.openejb.arquillian.tests.persistence;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
 
 @Entity
 public class Address {
+    @Id
+    private long id;
+
+    @PrePersist
+	private void forceId() {
+		id = System.currentTimeMillis();
+	}
+
     public String getStreet() {
         return street;
     }
