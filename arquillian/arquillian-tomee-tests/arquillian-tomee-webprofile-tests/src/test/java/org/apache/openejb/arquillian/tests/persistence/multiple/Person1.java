@@ -19,6 +19,7 @@ package org.apache.openejb.arquillian.tests.persistence.multiple;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 
 @Entity
 public class Person1 {
@@ -31,9 +32,14 @@ public class Person1 {
         this.name = name;
     }
 
-    public Person1() {
-        this.id = System.currentTimeMillis();
-    }
+	public Person1() {
+		// no-op
+	}
+
+	@PrePersist
+	private void forceId() {
+		id = System.currentTimeMillis();
+	}
 
     public long getId() {
         return id;
