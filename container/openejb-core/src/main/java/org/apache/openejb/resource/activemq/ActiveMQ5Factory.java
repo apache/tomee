@@ -29,13 +29,13 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.URLs;
 import org.apache.xbean.propertyeditor.PropertyEditorException;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
@@ -67,35 +67,22 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         if (null == broker || !broker.isStarted()) {
 
             final Properties properties = getLowerCaseProperties();
-            String rawSchemeSpecificPart = brokerURI.getRawSchemeSpecificPart();
 
-            final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(rawSchemeSpecificPart));
+            final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerURI.getRawSchemeSpecificPart()));
             final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
             final PersistenceAdapter persistenceAdapter;
             if ("true".equals(params.remove("usekahadb"))) {
-                rawSchemeSpecificPart = rawSchemeSpecificPart.replace("usekahadb=true&", "").replace("usekahadb=true", "");
-
-                persistenceAdapter = new KahaDBPersistenceAdapter();
-                for (final Method m : KahaDBPersistenceAdapter.class.getDeclaredMethods()) {
-                    if (m.getName().startsWith("set") && m.getParameterTypes().length == 1 && Modifier.isPublic(m.getModifiers())) {
-                        final String key = "kahadb." + m.getName().substring(3).toLowerCase(Locale.ENGLISH);
-                        final Object field = params.remove(key);
-                        if (field != null) {
-                            rawSchemeSpecificPart = rawSchemeSpecificPart.replace(key + "=" + field.toString(), "").replace(key + "=" + field.toString() + "&", "");
-                            try {
-                                final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
-                                m.invoke(persistenceAdapter, toSet);
-                            } catch (final PropertyEditorException cantConvertException) {
-                                throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);
-                            }
-                        }
-                    }
-                }
+                persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter", "kahadb", params);
+            } else if ("true".equals(params.remove("useleveldb"))) {
+                persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.leveldb.LevelDBPersistenceAdapter", "leveldb", params);
+            } else if (params.get("persistenceadapter") != null) {
+                final String adapter = params.remove("persistenceadapter");
+                persistenceAdapter = createPersistenceAdapter(adapter, "persistence", params);
             } else {
                 persistenceAdapter = null;
             }
 
-            final URI uri = URLs.uri(rawSchemeSpecificPart);
+            final URI uri = new URI(cleanUpUri(brokerURI.getSchemeSpecificPart(), compositeData.getParameters(), params));
             broker = BrokerFactory.createBroker(uri);
             brokers.put(brokerURI, broker);
 
@@ -252,6 +239,44 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         }
 
         return broker;
+    }
+
+    private static String cleanUpUri(final String schemeSpecificPart, final Map<String, String> parameters, final Map<String, String> params) {
+        String uri = schemeSpecificPart;
+        for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+            if (!params.containsKey(entry.getKey())) {
+                final String kv = entry.getKey() + "=" + entry.getValue();
+                final int idx = uri.indexOf(kv);
+                if (idx >= 0) {
+                    final int andIdx = idx + kv.length();
+                    if (andIdx < uri.length() && uri.charAt(andIdx) == '&') {
+                        uri = uri.replace(kv + "&", "");
+                    } else {
+                        uri = uri.replace(kv, "");
+                    }
+                }
+            }
+        }
+        return uri;
+    }
+
+    private static PersistenceAdapter createPersistenceAdapter(final String clazz, final String prefix, final Map<String, String> params) throws IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+        final PersistenceAdapter persistenceAdapter = PersistenceAdapter.class.cast(Thread.currentThread().getContextClassLoader().loadClass(clazz).newInstance());
+        for (final Method m : KahaDBPersistenceAdapter.class.getDeclaredMethods()) {
+            if (m.getName().startsWith("set") && m.getParameterTypes().length == 1 && Modifier.isPublic(m.getModifiers())) {
+                final String key = prefix + "." + m.getName().substring(3).toLowerCase(Locale.ENGLISH);
+                final Object field = params.remove(key);
+                if (field != null) {
+                    try {
+                        final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
+                        m.invoke(persistenceAdapter, toSet);
+                    } catch (final PropertyEditorException cantConvertException) {
+                        throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);
+                    }
+                }
+            }
+        }
+        return persistenceAdapter;
     }
 
     private void tomeeConfig(BrokerService broker) {
