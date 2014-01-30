@@ -205,8 +205,11 @@ public class LocalBeanProxyFactory implements Opcodes {
     private static void getNonPrivateMethods(Class<?> clazz, final Map<String, List<Method>> methodMap) {
         while (clazz != null) {
             for (final Method method : clazz.getDeclaredMethods()) {
-                final int modifiers = method.getModifiers();
+                if (method.isBridge()) {
+                    continue;
+                }
 
+                final int modifiers = method.getModifiers();
                 if (Modifier.isFinal(modifiers)
                     || Modifier.isPrivate(modifiers)
                     || Modifier.isStatic(modifiers)) {
