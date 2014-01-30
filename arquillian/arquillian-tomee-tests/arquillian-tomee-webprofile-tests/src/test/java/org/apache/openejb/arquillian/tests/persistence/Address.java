@@ -31,6 +31,10 @@ public class Address {
 		id = System.currentTimeMillis();
 	}
 
+    public long getId() {
+        return id;
+    }
+
     public String getStreet() {
         return street;
     }
