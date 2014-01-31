@@ -37,6 +37,7 @@ public class StopTomEEMojo extends AbstractTomEEMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        fixConfig();
         run(); // skip other processings which are useless for a stop
     }
 
