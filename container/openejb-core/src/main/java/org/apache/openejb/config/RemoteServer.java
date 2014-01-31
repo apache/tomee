@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.Options;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.Pipe;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,6 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Pipe;
 
 /**
  * @version $Rev$ $Date$
@@ -156,6 +156,9 @@ public class RemoteServer {
                 final File openejbJar = lib("openejb-core", lib, webapplib);
                 final File javaagentJar = lib("openejb-javaagent", lib, webapplib);
 
+                final File conf = new File(home, "conf");
+                final File loggingProperties = new File(conf, "logging.properties");
+
                 //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
 
                 final String java;
@@ -167,30 +170,62 @@ public class RemoteServer {
                     java = new File(System.getProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
+                final List<String> argsList = new ArrayList<String>(20);
+                argsList.add(java);
+                argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
+
+                if (debug) {
+                    argsList.add("-Xdebug");
+                    argsList.add("-Xnoagent");
+                    argsList.add("-Djava.compiler=NONE");
+                    argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + options.get(SERVER_DEBUG_PORT, 5005));
+                }
+
+                if (profile) {
+                    String yourkitHome = options.get("yourkit.home", "/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
+                    if (!yourkitHome.endsWith("/"))
+                        yourkitHome += "/";
+                    final String yourkitOpts = options.get("yourkit.opts", "disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
+                    argsList.add("-agentpath:" + yourkitHome + "libyjpagent.jnilib=" + yourkitOpts);
+                }
+
+                if (javaOpts != null) {
+                    Collections.addAll(argsList, javaOpts.split(" +"));
+                }
+
+                final Map<String, String> addedArgs = new HashMap<String, String>();
+                if (additionalArgs != null) {
+                    for (final String arg : additionalArgs) {
+                        final String[] values = arg.split("=");
+                        if (values.length == 1) {
+                            addedArgs.put(values[0], "null");
+                        } else {
+                            addedArgs.put(values[0], values[1]);
+                        }
+                        argsList.add(arg);
+                    }
+                }
+
+                if (!addedArgs.containsKey("-Djava.util.logging.config.file") && loggingProperties.exists()) {
+                    argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
+                }
+
+                argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
+
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
+                final String ps = File.pathSeparator;
+
                 final String[] args;
-                final int debugPort = options.get(SERVER_DEBUG_PORT, 5005);
                 if (!tomcat) {
-                    if (debug) {
-                        args = new String[]{java,
-                                            "-XX:+HeapDumpOnOutOfMemoryError",
-                                            "-Xdebug",
-                                            "-Xnoagent",
-                                            "-Djava.compiler=NONE",
-                                            "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort,
-
-                                            "-javaagent:" + javaagentJar.getAbsolutePath(),
-
-                                            "-jar", openejbJar.getAbsolutePath(), "start"
-                        };
-                    } else {
-                        args = new String[]{java,
-                                            "-XX:+HeapDumpOnOutOfMemoryError",
-                                            "-javaagent:" + javaagentJar.getAbsolutePath(),
-                                            "-jar", openejbJar.getAbsolutePath(), "start"
-                        };
+                    final StringBuilder cp = new StringBuilder(openejbJar.getAbsolutePath());
+                    if (additionalClasspath != null) {
+                        cp.append(ps).append(additionalClasspath);
                     }
+
+                    argsList.add("-cp");
+                    argsList.add(cp.toString());
+                    argsList.add("org.apache.openejb.cli.Bootstrap");
                 } else {
                     final File bin = new File(home, "bin");
                     final File tlib = new File(home, "lib");
@@ -198,57 +233,14 @@ public class RemoteServer {
                     final File juliJar = new File(bin, "tomcat-juli.jar");
                     final File commonsLoggingJar = new File(bin, "commons-logging-api.jar");
 
-                    final File conf = new File(home, "conf");
-                    final File loggingProperties = new File(conf, "logging.properties");
-
                     final File endorsed = new File(home, "endorsed");
                     final File temp = new File(home, "temp");
 
-                    final List<String> argsList = new ArrayList<String>();
-                    argsList.add(java);
-                    argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
-
-                    if (debug) {
-                        argsList.add("-Xdebug");
-                        argsList.add("-Xnoagent");
-                        argsList.add("-Djava.compiler=NONE");
-                        argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort);
-                    }
-
-                    if (profile) {
-                        String yourkitHome = options.get("yourkit.home", "/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
-                        if (!yourkitHome.endsWith("/"))
-                            yourkitHome += "/";
-                        final String yourkitOpts = options.get("yourkit.opts", "disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
-                        argsList.add("-agentpath:" + yourkitHome + "libyjpagent.jnilib=" + yourkitOpts);
-                    }
-
-                    if (javaOpts != null) {
-                        Collections.addAll(argsList, javaOpts.split(" +"));
-                    }
-
-                    final Map<String, String> addedArgs = new HashMap<String, String>();
-                    if (additionalArgs != null) {
-                        for (final String arg : additionalArgs) {
-                            final String[] values = arg.split("=");
-                            if (values.length == 1) {
-                                addedArgs.put(values[0], "null");
-                            } else {
-                                addedArgs.put(values[0], values[1]);
-                            }
-                            argsList.add(arg);
-                        }
-                    }
-
-                    argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
                     if (!addedArgs.containsKey("-Dcom.sun.management.jmxremote")) {
                         argsList.add("-Dcom.sun.management.jmxremote");
                     }
                     if (!addedArgs.containsKey("-Djava.util.logging.manager")) {
                         argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
-                    }
-                    if (!addedArgs.containsKey("-Djava.util.logging.config.file") && loggingProperties.exists()) {
-                        argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
                     }
                     if (!addedArgs.containsKey("-Djava.io.tmpdir")) {
                         argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
@@ -281,7 +273,7 @@ public class RemoteServer {
 
                     argsList.add("-ea");
                     argsList.add("-classpath");
-                    final String ps = File.pathSeparator;
+
                     final StringBuilder cp = new StringBuilder(bootstrapJar.getAbsolutePath()).append(ps).append(juliJar.getAbsolutePath());
                     if (commonsLoggingJar.exists()) {
                         cp.append(ps).append(commonsLoggingJar.getAbsolutePath());
@@ -292,14 +284,14 @@ public class RemoteServer {
                     argsList.add(cp.toString());
 
                     argsList.add("org.apache.catalina.startup.Bootstrap");
-                    if (cmd == null) {
-                        argsList.add("start");
-                    } else {
-                        argsList.add(cmd);
-                    }
-
-                    args = argsList.toArray(new String[argsList.size()]);
                 }
+
+                if (cmd == null) {
+                    argsList.add("start");
+                } else {
+                    argsList.add(cmd);
+                }
+                args = argsList.toArray(new String[argsList.size()]);
 
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
@@ -308,11 +300,7 @@ public class RemoteServer {
                 // kill3UNIXDebug();
 
                 final Process process = Runtime.getRuntime().exec(args);
-                if (tomcat) {
-                    Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
-                } else {
-                    Pipe.pipe(process);
-                }
+                Pipe.pipeOut(process); // why would we need to redirect System.in to the process, TomEE doesn't use it
 
                 if ("start".equals(cmd)) {
                     server = process;
