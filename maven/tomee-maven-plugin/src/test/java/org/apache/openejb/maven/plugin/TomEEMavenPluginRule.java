@@ -193,6 +193,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         tomEEMojo.tomeeHttpPort = NetworkUtil.getNextAvailablePort();
         tomEEMojo.tomeeAjpPort = NetworkUtil.getNextAvailablePort();
         tomEEMojo.tomeeShutdownPort = NetworkUtil.getNextAvailablePort();
+        tomEEMojo.tomeeShutdownCommand = "SHUTDOWN";
         tomEEMojo.tomeeHost = "localhost";
 
         tomEEMojo.useConsole = true;

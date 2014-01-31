@@ -121,6 +121,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.shutdown", defaultValue = "8005")
     protected int tomeeShutdownPort;
 
+    @Parameter(property = "tomee-plugin.shutdown-command", defaultValue = "SHUTDOWN")
+    protected String tomeeShutdownCommand;
+
     @Parameter(property = "tomee-plugin.ajp", defaultValue = "8009")
     protected int tomeeAjpPort;
 
@@ -240,6 +243,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     protected File deployedFile = null;
     protected RemoteServer server = null;
+    protected String container = "TomEE";
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -327,8 +331,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         final File loggingProperties = new File(catalinaBase, "conf/logging.properties");
         if (loggingProperties.exists() && !new File(config, "conf/logging.properties").exists()) {
             try {
-                final String content = IO.slurp(loggingProperties)
-                    .replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
+                String content = IO.slurp(loggingProperties);
+                if (!content.contains("java.util.logging.ConsoleHandler.formatter")) {
+                    content += System.getProperty("line.separator") + "java.util.logging.ConsoleHandler.formatter = " + SimpleTomEEFormatter.class.getName();
+                } else {
+                    content = content.replace(SimpleFormatter.class.getName(), SimpleTomEEFormatter.class.getName());
+                }
+
                 final FileWriter writer = new FileWriter(loggingProperties);
                 try {
                     writer.write(content);
@@ -537,6 +546,10 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private void overrideAddresses() {
         final File serverXml = new File(catalinaBase, "conf/server.xml");
+        if (!serverXml.exists()) { // openejb
+            return;
+        }
+
         final QuickServerXmlParser parser = QuickServerXmlParser.parse(serverXml);
 
         String value = read(serverXml);
@@ -697,6 +710,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             System.setProperty("server.debug.port", Integer.toString(debugPort));
         }
         System.setProperty("server.shutdown.port", Integer.toString(tomeeShutdownPort));
+        System.setProperty("server.shutdown.command", tomeeShutdownCommand);
 
         server = new RemoteServer(getConnectAttempts(), false);
         server.setAdditionalClasspath(getAdditionalClasspath());
@@ -707,9 +721,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             strings.add("-Dtomee.noshutdownhook=true");
         }
 
-        getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
-            + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
-            + " (plugin shutdown port is " + tomeeShutdownPort + ")");
+        if ("TomEE".equals(container)) {
+            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH)
+                + "'. Configured TomEE in plugin is " + tomeeHost + ":" + tomeeHttpPort
+                + " (plugin shutdown port is " + tomeeShutdownPort + ")");
+        } else {
+            getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
+        }
 
         final InputStream originalIn = System.in; // piped when starting resmote server so saving it
 
@@ -770,9 +788,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
         try {
             server.getServer().waitFor();
-            getLog().info("TomEE stopped");
+            getLog().info(container + " stopped");
         } catch (Exception e) {
-            getLog().error("Can't stop TomEE", e);
+            getLog().error("Can't stop " + container, e);
         }
 
         server = null;
@@ -826,6 +844,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             remoteRepos = new ArrayList<ArtifactRepository>();
         }
 
+        if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))
+                || ("org.apache.openejb".equals(tomeeGroupId) && "openejb-standalone".equals(tomeeArtifactId))) {
+            tomeeClassifier = null;
+        }
+
         try {
             final Artifact artifact = factory.createDependencyArtifact(tomeeGroupId, tomeeArtifactId, createFromVersion(tomeeVersion), tomeeType, tomeeClassifier, SCOPE_COMPILE);
             resolver.resolve(artifact, remoteRepos, local);
@@ -845,7 +868,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                if (name.startsWith("apache-tomee-")) {
+                if (name.startsWith("apache-tomee-") || name.startsWith("apache-openejb-")) {
                     int idx = name.indexOf("/");
                     if (idx < 0) {
                         idx = name.indexOf(File.separator);
@@ -880,16 +903,31 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 }
             }
 
-            final FileWriter writer = new FileWriter(new File(catalinaBase, "conf/tomee.xml"));
+            File file = new File(catalinaBase, "conf/tomee.xml");
+            if (file.exists()) {
+                container = "TomEE";
+            } else {
+                container = "OpenEJB";
+                file = new File(catalinaBase, "conf/openejb.xml");
+                if (file.exists()) {
+                    webappDir = "apps";
+                }
+            }
+
+            final FileWriter writer = new FileWriter(file);
+            final String rootTag = container.toLowerCase(Locale.ENGLISH);
             writer.write("<?xml version=\"1.0\"?>\n" +
-                "<tomee>\n" +
+                "<" + rootTag + ">\n" +
                 "  <Deployments dir=\"apps\" />\n" +
-                "</tomee>\n");
+                "</" + rootTag + ">\n");
             writer.close();
 
-            new File(catalinaBase, "apps").mkdirs();
+            final File appsFolder = new File(catalinaBase, "apps");
+            if (!appsFolder.exists()) {
+                appsFolder.mkdirs();
+            }
 
-            getLog().info("TomEE was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
+            getLog().info(container + " was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (Exception e) {
             throw new TomEEException(e.getMessage(), e);
         } finally {
