@@ -169,6 +169,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(defaultValue = "lib")
     protected String libDir;
 
+    @Parameter(defaultValue = "${project.basedir}/src/main")
+    protected File mainDir;
+
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File target;
+
     @Parameter(property = "tomee-plugin.conf", defaultValue = "${project.basedir}/src/main/tomee/conf")
     protected File config;
 
@@ -241,12 +247,20 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(defaultValue = "${settings}", readonly = true)
     protected Settings settings;
 
+    /**
+     * use openejb-standalone automatically instead of TomEE
+     */
+    @Parameter(property = "tomee-plugin.openejb", defaultValue = "false")
+    protected boolean useOpenEJB;
+
     protected File deployedFile = null;
     protected RemoteServer server = null;
     protected String container = "TomEE";
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        fixConfig();
+
         if ("-1".equals(tomeeVersion)) {
             final String version = OpenEjbVersion.get().getVersion();
             tomeeVersion = "1" + version.substring(1, version.length());
@@ -295,6 +309,34 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
 
         run();
+    }
+
+    protected void fixConfig() {
+        if (useOpenEJB) {
+            tomeeGroupId = "org.apache.openejb";
+            tomeeArtifactId = "openejb-standalone";
+            tomeeClassifier = null;
+            tomeeShutdownCommand = "Q";
+            if (8005 == tomeeShutdownPort) { // default admin port
+                tomeeShutdownPort = 4200;
+            }
+            if (tomeeVersion.startsWith("1.")) {
+                tomeeVersion = OpenEjbVersion.get().getVersion();
+            }
+
+            if (catalinaBase.getName().equals("apache-tomee") && catalinaBase.getParentFile().equals(target)) {
+                catalinaBase = new File(target, "apache-openejb");
+            }
+            if (config.getParentFile().getName().equals("tomee") && config.getParentFile().getParentFile().equals(mainDir)) {
+                config = new File(mainDir, "openejb/conf");
+            }
+            if (lib.getParentFile().getName().equals("tomee") && lib.getParentFile().getParentFile().equals(mainDir)) {
+                lib = new File(mainDir, "openejb/lib");
+            }
+            if (bin.getParentFile().getName().equals("tomee") && bin.getParentFile().getParentFile().equals(mainDir)) {
+                bin = new File(mainDir, "openejb/bin");
+            }
+        }
     }
 
     protected String getAdditionalClasspath() {
