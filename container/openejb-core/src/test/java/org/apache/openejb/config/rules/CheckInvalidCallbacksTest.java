@@ -17,6 +17,7 @@
 package org.apache.openejb.config.rules;
 
 import junit.framework.TestCase;
+
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.SingletonBean;
@@ -38,6 +39,8 @@ import javax.ejb.PrePassivate;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
+import javax.interceptor.InvocationContext;
+
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
@@ -82,6 +85,13 @@ public class CheckInvalidCallbacksTest extends TestCase {
         StatefulBean meteor = ejbJar.addEnterpriseBean(new StatefulBean("MeteorStateful", Meteor.class));
         meteor.setLocal(SunLocal.class.getName());
         meteor.setLocalHome(SunLocalHome.class.getName());
+        return ejbJar;
+    }
+
+    @Keys(@Key(value = "callback.invocationcontext.notallowed", count = 4))
+    public EjbJar test3() {
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatefulBean(CallbackViolatorBean.class));
         return ejbJar;
     }
 
@@ -251,5 +261,23 @@ public class CheckInvalidCallbacksTest extends TestCase {
 
         @AfterCompletion
         public void afterCompletion(boolean committed) {}
+    }
+
+    public class CallbackViolatorBean {
+        @PostConstruct
+        public void postConstruct(InvocationContext ic) {
+        }
+
+        @PreDestroy
+        public void preDestroy(InvocationContext ic) {
+        }
+
+        @PrePassivate
+        public void prePassivate(InvocationContext ic) {
+        }
+
+        @PostActivate
+        public void postActivate(InvocationContext ic) {
+        }
     }
 }
