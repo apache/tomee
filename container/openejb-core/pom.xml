@@ -124,7 +124,7 @@
       org.apache.commons.cli;version="[1.2,2)",
       org.apache.commons.dbcp;resolution:=optional;version="[1.4,2)",
       org.apache.commons.dbcp.managed;resolution:=optional;version="[1.4,2)",
-      org.apache.commons.lang;version="[3.1,4)",
+      org.apache.commons.lang3;version="[3.1,4)",
       org.apache.commons.lang.math;version="[2.6,3)",
       org.apache.geronimo.connector;version="[3.0,4)",
       org.apache.geronimo.connector.outbound;version="[3.0,4)",
