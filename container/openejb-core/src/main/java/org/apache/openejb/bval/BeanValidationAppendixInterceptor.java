@@ -36,7 +36,6 @@ import java.util.Set;
 /**
  * A simple interceptor to validate parameters and returned value using
  * bean validation spec. It doesn't use group for now.
- *
  */
 public class BeanValidationAppendixInterceptor {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanValidationAppendixInterceptor.class);
@@ -50,6 +49,7 @@ public class BeanValidationAppendixInterceptor {
     };
 
     private static final boolean ON;
+
     static {
         boolean on = true;
         try {
@@ -66,13 +66,13 @@ public class BeanValidationAppendixInterceptor {
 
     @AroundInvoke
     public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
-        if (!ON) return ejbContext.proceed();
+        if (!BeanValidationAppendixInterceptor.ON) return ejbContext.proceed();
 
         Object validatorObject = null;
         Validator validator = null;
         try {
             validator = (Validator) new InitialContext().lookup("java:comp/Validator");
-        } catch (NamingException ne) {
+        } catch (final NamingException ne) {
             // no-op
         }
 
@@ -117,7 +117,7 @@ public class BeanValidationAppendixInterceptor {
             throw buildValidationException((Set<ConstraintViolation<?>>) violations);
         }
 
-        Object returnedValue = ejbContext.proceed();
+        final Object returnedValue = ejbContext.proceed();
 
         violations = Collections.emptySet();
         if (validatorObject != null && APACHE_BVAL_METHOD_CLASS != null) {
@@ -147,11 +147,11 @@ public class BeanValidationAppendixInterceptor {
 
 
     // just a simple EJBException for now
-    private RuntimeException buildValidationException(Set<ConstraintViolation<?>> violations) {
+    private RuntimeException buildValidationException(final Set<ConstraintViolation<?>> violations) {
         return new ConstraintViolationException(violations);
     }
 
-    private static <T> T call(Class<T> returnedType, Object o, String methodName, Object[] params, Class<?>[] types) {
+    private static <T> T call(final Class<T> returnedType, final Object o, final String methodName, final Object[] params, final Class<?>[] types) {
         Method method = null;
         boolean accessible = true;
         try {
@@ -162,7 +162,7 @@ public class BeanValidationAppendixInterceptor {
                 method.setAccessible(true);
             }
             return returnedType.cast(method.invoke(o, params));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new ValidationException("can't call method " + methodName + " on " + o, e);
         } finally {
@@ -183,7 +183,7 @@ public class BeanValidationAppendixInterceptor {
     private static Class<?> initApache() {
         try {
             return getClassLaoder().loadClass("org.apache.bval.jsr303.extensions.MethodValidator");
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }
@@ -191,7 +191,7 @@ public class BeanValidationAppendixInterceptor {
     private static Class<?> initHibernate() {
         try {
             return getClassLaoder().loadClass("org.hibernate.validator.method.MethodValidator");
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
         }
     }
