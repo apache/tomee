@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.common;
 
 import org.apache.openejb.loader.ProvisioningUtil;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 public class MavenCache {
@@ -31,6 +33,13 @@ public class MavenCache {
 
     public static File getArtifact(final String artifactInfo, final String altUrl) {
         LOGGER.info("Downloading " + artifactInfo + " please wait...");
+
+        // initializing the SystemInstance because we'll need it for configuration
+        try {
+            SystemInstance.get().init(new Properties());
+        } catch (Exception e) {
+            // no-op
+        }
 
         try {
             return new File(ProvisioningUtil.realLocation(artifactInfo.startsWith("mvn") ? "" : "mvn:" + artifactInfo));
