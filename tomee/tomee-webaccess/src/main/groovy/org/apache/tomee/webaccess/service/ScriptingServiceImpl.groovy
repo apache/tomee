@@ -32,7 +32,7 @@ import javax.script.SimpleScriptContext
 @RolesAllowed('tomee-admin')
 class ScriptingServiceImpl {
 
-    static ScriptingResultDto execute(String engine, String script) {
+    ScriptingResultDto execute(String engine, String script) {
         ScriptingResultDto result = new ScriptingResultDto(
                 output: ''
         )

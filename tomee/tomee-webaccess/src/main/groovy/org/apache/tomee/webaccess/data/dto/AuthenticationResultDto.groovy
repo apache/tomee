@@ -15,27 +15,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.apache.tomee.webaccess.data.dto
 
-package org.apache.tomee.webaccess.rest
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-import org.apache.tomee.webaccess.data.dto.WsListResultDto
-import org.apache.tomee.webaccess.service.WsServiceImpl
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+class AuthenticationResultDto {
 
-import javax.ejb.EJB
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
+    @XmlElement
+    Boolean success
 
-@Path("/ws")
-class WebServices {
+    @XmlElement
+    String info
 
-    @EJB
-    private WsServiceImpl service
-
-    @GET
-    @Produces("application/json")
-    WsListResultDto list() {
-        service.list()
-    }
+    @XmlElement
+    String sessionId
 
 }

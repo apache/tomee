@@ -33,36 +33,46 @@ import java.lang.management.ManagementFactory
 @RolesAllowed('tomee-admin')
 class SessionServiceImpl {
 
-    static void expireSession(String context, String sessionId) {
-        def server = ManagementFactory.getPlatformMBeanServer()
+    void expireSession(String context, String sessionId) {
+        def server = ManagementFactory.platformMBeanServer
         def name = "Catalina:type=Manager,context=/$context,host=localhost" as String
         try {
             def contextBean = server.getObjectInstance(new ObjectName(name))
-            server.invoke(contextBean.objectName, 'expireSession', [sessionId] as Object[], [String.class.name] as String[])
+            server.invoke(contextBean.objectName, 'expireSession', [sessionId] as Object[], ['java.lang.String'] as String[])
         } catch (InstanceNotFoundException ignore) {
             // no-op
         }
     }
 
-    static List<SessionResultDto> listSessions() {
-        def server = ManagementFactory.getPlatformMBeanServer()
-        def localhostBean = server.getObjectInstance(new ObjectName('Catalina:type=Host,host=localhost'))
+    List<SessionResultDto> listSessions() {
+        def server = ManagementFactory.platformMBeanServer
+        def localhostBean
+        def prefix = 'Catalina'
+        try {
+            localhostBean = server.getObjectInstance(new ObjectName("${prefix}:type=Host,host=localhost"))
+        } catch (InstanceNotFoundException ignore) {
+            prefix = 'Tomcat'
+            localhostBean = server.getObjectInstance(new ObjectName("${prefix}:type=Host,host=localhost"))
+        }
         def children = server.getAttribute(localhostBean.objectName, 'children')
         def baseNames = children.collect { ObjectName objectName ->
             server.getAttribute(objectName, 'baseName')
         }
         def result = []
         baseNames.each { baseName ->
-            def name = "Catalina:type=Manager,context=/$baseName,host=localhost" as String
+            def name = "${prefix}:type=Manager,context=/$baseName,host=localhost" as String
             try {
                 def contextBean = server.getObjectInstance(new ObjectName(name))
                 def maxInactiveInterval = server.getAttribute(contextBean.objectName, 'maxInactiveInterval') as Long
-
                 def getValue = { String operationName, String sessionId ->
-                    server.invoke(contextBean.objectName, operationName, [sessionId] as Object[], [String.class.name] as String[])
+                    try {
+                        server.invoke(contextBean.objectName, operationName, [sessionId] as Object[], ['java.lang.String'] as String[])
+                    } catch (IllegalStateException ignore) {
+                        // Session invalidated. Just ignore it.
+                    }
                 }
-
-                server.invoke(contextBean.objectName, 'listSessionIds', null, null).split(' ').each { String sessionId ->
+                String listSessionIds = server.invoke(contextBean.objectName, 'listSessionIds', null, null)
+                listSessionIds.split(' ').each { String sessionId ->
                     if (sessionId != '') {
                         def accessedTs = getValue('getLastAccessedTimestamp', sessionId) as Long
                         def expirationTs = maxInactiveInterval * 1000 + accessedTs

@@ -25,22 +25,22 @@ import org.apache.tomee.webaccess.service.LogServiceImpl
 import javax.ejb.EJB
 import javax.ws.rs.*
 
-@Path("/log")
+@Path('/log')
 class Log {
 
     @EJB
     private LogServiceImpl service
 
     @GET
-    @Path("/list-files")
-    @Produces("application/json")
+    @Path('/list-files')
+    @Produces('application/json')
     ListFilesResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
         service.listFiles()
     }
 
     @GET
-    @Path("/load/{fileName}")
-    @Produces("application/json")
+    @Path('/load/{fileName}')
+    @Produces('application/json')
     LogFileResultDto load(@PathParam('fileName') String fileName) {
         service.load(fileName)
     }

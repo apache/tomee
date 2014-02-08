@@ -31,27 +31,23 @@ import javax.ejb.TransactionAttributeType
 @RolesAllowed('tomee-admin')
 class LogServiceImpl {
 
-    static ListFilesResultDto listFiles() {
-        def logFolder = new File(System.getProperty("catalina.base"), "logs")
+    ListFilesResultDto listFiles() {
+        def logFolder = new File(System.getProperty('catalina.base'), 'logs')
         def files = logFolder.listFiles()
         def names = new TreeSet<String>()
-        files.each {
-            if (it.length() > 0) {
-                names << it.name
-            }
-        }
+        names.addAll(files.findAll({ it.length() > 0 })*.name)
         new ListFilesResultDto(
                 files: names
         )
     }
 
-    static LogFileResultDto load(String fileName) {
-        def logFolder = new File(System.getProperty("catalina.base"), "logs")
+    LogFileResultDto load(String fileName) {
+        def logFolder = new File(System.getProperty('catalina.base'), 'logs')
         def file = new File(logFolder, fileName)
         def text
         try {
             text = file.text
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException ignore) {
             text = "'$fileName' not found."
         }
         new LogFileResultDto(

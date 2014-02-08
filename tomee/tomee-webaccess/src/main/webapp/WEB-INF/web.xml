@@ -46,6 +46,12 @@
 
   <security-constraint>
     <web-resource-collection>
+      <web-resource-name>Authentication Rest</web-resource-name>
+      <url-pattern>/rest/authentication</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
       <web-resource-name>Secure Content</web-resource-name>
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
