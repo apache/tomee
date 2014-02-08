@@ -1,0 +1,208 @@
+Feb 07, 2014 10:40:03 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Feb 07, 2014 10:40:03 PM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-bio-8080"]
+Feb 07, 2014 10:40:03 PM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["ajp-bio-8009"]
+Feb 07, 2014 10:40:05 PM org.apache.openejb.util.OptionsLog info
+INFO: Using 'tomee.remote.support=true'
+Feb 07, 2014 10:40:05 PM org.apache.openejb.util.OptionsLog info
+INFO: Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+Feb 07, 2014 10:40:05 PM org.apache.tomee.catalina.TomcatLoader optionalService
+INFO: Optional service not installed: org.apache.tomee.webservices.TomeeJaxWsService
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: ********************************************************************************
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: OpenEJB http://openejb.apache.org/
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: Startup: Fri Feb 07 22:40:05 EST 2014
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: Version: 4.6.1-SNAPSHOT
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: Build date: 20140207
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: Build time: 04:10
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: ********************************************************************************
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: openejb.home = /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee
+Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
+INFO: openejb.base = /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee
+Feb 07, 2014 10:40:06 PM org.apache.openejb.cdi.CdiBuilder initializeOWB
+INFO: Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@217bd515
+Feb 07, 2014 10:40:06 PM org.apache.openejb.cdi.CdiBuilder initializeOWB
+INFO: Succeeded in installing singleton service
+Feb 07, 2014 10:40:06 PM org.apache.openejb.config.ConfigurationFactory init
+INFO: openejb configuration file is '/home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/conf/tomee.xml'
+Feb 07, 2014 10:40:06 PM org.apache.openejb.config.ConfigurationFactory configureService
+INFO: Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+Feb 07, 2014 10:40:06 PM org.apache.openejb.config.ConfigurationFactory configureService
+INFO: Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+Feb 07, 2014 10:40:06 PM org.apache.openejb.util.OptionsLog info
+INFO: Using 'openejb.system.apps=false'
+Feb 07, 2014 10:40:06 PM org.apache.openejb.util.OptionsLog info
+INFO: Using 'openejb.deployments.classpath=false'
+Feb 07, 2014 10:40:06 PM org.apache.openejb.assembler.classic.Assembler createRecipe
+INFO: Creating TransactionManager(id=Default Transaction Manager)
+Feb 07, 2014 10:40:06 PM org.apache.openejb.assembler.classic.Assembler createRecipe
+INFO: Creating SecurityService(id=Tomcat Security Service)
+Feb 07, 2014 10:40:07 PM org.apache.openejb.server.ServiceManager initServer
+INFO: Creating ServerService(id=cxf-rs)
+Feb 07, 2014 10:40:07 PM org.apache.openejb.server.SimpleServiceManager start
+INFO:   ** Bound Services **
+Feb 07, 2014 10:40:07 PM org.apache.openejb.server.SimpleServiceManager printRow
+INFO:   NAME                 IP              PORT  
+Feb 07, 2014 10:40:07 PM org.apache.openejb.server.SimpleServiceManager start
+INFO: -------
+Feb 07, 2014 10:40:07 PM org.apache.openejb.server.SimpleServiceManager start
+INFO: Ready!
+Feb 07, 2014 10:40:07 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 5226 ms
+Feb 07, 2014 10:40:07 PM org.apache.tomee.catalina.OpenEJBNamingContextListener bindResource
+INFO: Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+Feb 07, 2014 10:40:07 PM org.apache.openejb.assembler.classic.Assembler createRecipe
+INFO: Creating Resource(id=UserDatabase)
+Feb 07, 2014 10:40:07 PM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service Catalina
+Feb 07, 2014 10:40:07 PM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet Engine: Apache Tomcat (TomEE)/7.0.50 (1.6.1-SNAPSHOT)
+Feb 07, 2014 10:40:08 PM org.apache.catalina.startup.HostConfig deployWAR
+INFO: Deploying web application archive /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess.war
+Feb 07, 2014 10:40:08 PM org.apache.tomee.catalina.TomcatWebAppBuilder init
+INFO: ------------------------- localhost -> /webaccess
+Feb 07, 2014 10:40:08 PM org.apache.openejb.util.JarExtractor extract
+INFO: Extracting jar: /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess.war
+Feb 07, 2014 10:40:08 PM org.apache.openejb.util.JarExtractor extract
+INFO: Extracted path: /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess
+Feb 07, 2014 10:40:08 PM org.apache.openejb.util.OptionsLog info
+INFO: Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+Feb 07, 2014 10:40:09 PM org.apache.openejb.config.ConfigurationFactory configureApplication
+INFO: Configuring enterprise application: /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.InitEjbDeployments deploy
+INFO: Auto-deploying ejb WsServiceImpl: EjbDeployment(deployment-id=WsServiceImpl)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.InitEjbDeployments deploy
+INFO: Auto-deploying ejb ScriptingServiceImpl: EjbDeployment(deployment-id=ScriptingServiceImpl)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.InitEjbDeployments deploy
+INFO: Auto-deploying ejb LogServiceImpl: EjbDeployment(deployment-id=LogServiceImpl)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.InitEjbDeployments deploy
+INFO: Auto-deploying ejb SessionServiceImpl: EjbDeployment(deployment-id=SessionServiceImpl)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.ConfigurationFactory configureService
+INFO: Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.AutoConfig createContainer
+INFO: Auto-creating a container for bean WsServiceImpl: Container(type=STATELESS, id=Default Stateless Container)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.assembler.classic.Assembler createRecipe
+INFO: Creating Container(id=Default Stateless Container)
+Feb 07, 2014 10:40:11 PM org.apache.openejb.config.AppInfoBuilder build
+INFO: Enterprise application "/home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess" loaded.
+Feb 07, 2014 10:40:11 PM org.apache.openejb.assembler.classic.Assembler createApplication
+INFO: Assembling app: /home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=WsServiceImplLocalBean) --> Ejb(deployment-id=WsServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/WsServiceImpl!org.apache.tomee.webaccess.service.WsServiceImpl) --> Ejb(deployment-id=WsServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/WsServiceImpl) --> Ejb(deployment-id=WsServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=ScriptingServiceImplLocalBean) --> Ejb(deployment-id=ScriptingServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/ScriptingServiceImpl!org.apache.tomee.webaccess.service.ScriptingServiceImpl) --> Ejb(deployment-id=ScriptingServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/ScriptingServiceImpl) --> Ejb(deployment-id=ScriptingServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=LogServiceImplLocalBean) --> Ejb(deployment-id=LogServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/LogServiceImpl!org.apache.tomee.webaccess.service.LogServiceImpl) --> Ejb(deployment-id=LogServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/LogServiceImpl) --> Ejb(deployment-id=LogServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=SessionServiceImplLocalBean) --> Ejb(deployment-id=SessionServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/SessionServiceImpl!org.apache.tomee.webaccess.service.SessionServiceImpl) --> Ejb(deployment-id=SessionServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/webaccess/SessionServiceImpl) --> Ejb(deployment-id=SessionServiceImpl)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.cdi.CdiBuilder initSingleton
+INFO: Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@217bd515
+Feb 07, 2014 10:40:12 PM org.apache.openejb.cdi.OpenEJBLifecycle startApplication
+INFO: OpenWebBeans Container is starting...
+Feb 07, 2014 10:40:12 PM org.apache.webbeans.plugins.PluginLoader startUp
+INFO: Adding OpenWebBeansPlugin : [CdiPlugin]
+Feb 07, 2014 10:40:12 PM org.apache.webbeans.plugins.PluginLoader startUp
+INFO: Adding OpenWebBeansPlugin : [OpenWebBeansJsfPlugin]
+Feb 07, 2014 10:40:12 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
+INFO: All injection points were validated successfully.
+Feb 07, 2014 10:40:12 PM org.apache.openejb.cdi.OpenEJBLifecycle startApplication
+INFO: OpenWebBeans Container has started, it took 185 ms.
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Created Ejb(deployment-id=WsServiceImpl, ejb-name=WsServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Created Ejb(deployment-id=SessionServiceImpl, ejb-name=SessionServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Created Ejb(deployment-id=ScriptingServiceImpl, ejb-name=ScriptingServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Created Ejb(deployment-id=LogServiceImpl, ejb-name=LogServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Started Ejb(deployment-id=WsServiceImpl, ejb-name=WsServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:12 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Started Ejb(deployment-id=SessionServiceImpl, ejb-name=SessionServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:13 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Started Ejb(deployment-id=ScriptingServiceImpl, ejb-name=ScriptingServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:13 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Started Ejb(deployment-id=LogServiceImpl, ejb-name=LogServiceImpl, container=Default Stateless Container)
+Feb 07, 2014 10:40:13 PM org.apache.openejb.assembler.classic.Assembler createApplication
+INFO: Deployed Application(path=/home/tveronezi/dev/ws/tomee/trunk/tomee/tomee-webaccess/target/apache-tomee/webapps/webaccess)
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO: REST Application: http://localhost:8080/webaccess/rest                                      -> org.apache.tomee.webaccess.rest.ApplicationConfig
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/authentication                       -> Pojo org.apache.tomee.webaccess.rest.Authentication
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:              POST http://localhost:8080/webaccess/rest/authentication/                      ->      AuthenticationResultDto postUser(String, String, HttpServletRequest)
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/keep-alive                           -> Pojo org.apache.tomee.webaccess.rest.KeepAlive     
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/webaccess/rest/keep-alive/                          ->      Response ping()
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/log                                  -> Pojo org.apache.tomee.webaccess.rest.Log           
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/webaccess/rest/log/list-files                       ->      ListFilesResultDto execute(String, String)
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/webaccess/rest/log/load/{fileName}                  ->      LogFileResultDto load(String)             
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/scripting                            -> Pojo org.apache.tomee.webaccess.rest.Scripting     
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:              POST http://localhost:8080/webaccess/rest/scripting/                           ->      ScriptingResultDto execute(String, String)
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/session                              -> Pojo org.apache.tomee.webaccess.rest.Session       
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:            DELETE http://localhost:8080/webaccess/rest/session/expire/{context}/{sessionId} ->      void expireSession(String, String)
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/webaccess/rest/session/                             ->      List<SessionResultDto> list()     
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/webaccess/rest/ws                                   -> Pojo org.apache.tomee.webaccess.rest.WebServices   
+Feb 07, 2014 10:40:16 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/webaccess/rest/ws/                                  ->      WsListResultDto list()
+Feb 07, 2014 10:40:16 PM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-bio-8080"]
+Feb 07, 2014 10:40:16 PM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["ajp-bio-8009"]
+Feb 07, 2014 10:40:16 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 8381 ms
+Feb 07, 2014 10:43:19 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:22 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:24 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:25 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:26 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:28 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:29 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:30 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+Feb 07, 2014 10:43:30 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
