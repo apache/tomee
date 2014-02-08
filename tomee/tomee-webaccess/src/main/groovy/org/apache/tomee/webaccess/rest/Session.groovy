@@ -24,20 +24,20 @@ import org.apache.tomee.webaccess.service.SessionServiceImpl
 import javax.ejb.EJB
 import javax.ws.rs.*
 
-@Path("/session")
+@Path('/session')
 class Session {
 
     @EJB
     private SessionServiceImpl service
 
     @DELETE
-    @Path("/expire/{context}/{sessionId}")
-    void expireSession(@PathParam("context") String context, @PathParam("sessionId") String sessionId) {
+    @Path('/expire/{context}/{sessionId}')
+    void expireSession(@PathParam('context') String context, @PathParam('sessionId') String sessionId) {
         service.expireSession(context, sessionId)
     }
 
     @GET
-    @Produces("application/json")
+    @Produces('application/json')
     List<SessionResultDto> list() {
         service.listSessions()
     }

@@ -20,13 +20,14 @@ package org.apache.tomee.webaccess.rest
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
+import javax.ws.rs.core.Response
 
-@Path("/keep-alive")
+@Path('/keep-alive')
 class KeepAlive {
 
     @GET
-    void ping() {
-        // no-op
+    Response ping() {
+        Response.ok().build()
     }
 
 }

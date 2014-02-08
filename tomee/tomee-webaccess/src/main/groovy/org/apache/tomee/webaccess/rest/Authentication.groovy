@@ -18,25 +18,37 @@
 
 package org.apache.tomee.webaccess.rest
 
-import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
-import org.apache.tomee.webaccess.service.ScriptingServiceImpl
+import org.apache.tomee.webaccess.data.dto.AuthenticationResultDto
 
-import javax.ejb.EJB
+import javax.servlet.ServletException
+import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.FormParam
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
+import javax.ws.rs.core.Context
 
-@Path('/scripting')
-class Scripting {
-
-    @EJB
-    private ScriptingServiceImpl service
+@Path('/authentication')
+class Authentication {
 
     @POST
     @Produces('application/json')
-    ScriptingResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.execute(engine, script)
+    AuthenticationResultDto postUser(
+            @FormParam('user') String user,
+            @FormParam('password') String password, @Context HttpServletRequest request) {
+        def dto = new AuthenticationResultDto(
+                sessionId: request.session.id,
+                success: true
+        )
+        try {
+            request.login(user, password)
+            request.session.setAttribute('authenticated', Boolean.TRUE)
+        } catch (ServletException ignore) {
+            dto.success = false
+            dto.info = 'bad.username.or.password'
+            request.session.setAttribute('authenticated', Boolean.FALSE)
+        }
+        dto
     }
 
 }
