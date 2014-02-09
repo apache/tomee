@@ -34,7 +34,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(Arquillian.class)
+@RunWith(Arquillian)
 class LogTest {
 
     @ArquillianResource
@@ -46,7 +46,7 @@ class LogTest {
         Utilities.copyFile('test/login.config', 'conf/login.config')
         Utilities.copyFile('test/log/catalina.2014-02-07.log', 'logs/catalina.2014-02-07.log')
         Utilities.copyFile('test/log/localhost_access_log.2014-02-07.txt', 'logs/localhost_access_log.2014-02-07.txt')
-        ShrinkWrap.create(WebArchive.class, 'webaccess.war').addClasses(
+        ShrinkWrap.create(WebArchive, 'webaccess.war').addClasses(
                 Log,
                 ApplicationConfig,
                 Authentication,
@@ -62,7 +62,7 @@ class LogTest {
             Assert.assertEquals('{"listFilesResultDto":{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}}',
                     Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/log/list-files")))
             )
-            client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive"))
+            Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive")))
         })
     }
 

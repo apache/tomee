@@ -34,7 +34,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(Arquillian.class)
+@RunWith(Arquillian)
 class ScriptingTest {
 
     @ArquillianResource
@@ -44,7 +44,7 @@ class ScriptingTest {
     static WebArchive createDeployment() {
         Utilities.copyFile('test/loginScript.js', 'conf/loginScript.js')
         Utilities.copyFile('test/login.config', 'conf/login.config')
-        ShrinkWrap.create(WebArchive.class, 'webaccess.war').addClasses(
+        ShrinkWrap.create(WebArchive, 'webaccess.war').addClasses(
                 ApplicationConfig,
                 Authentication,
                 Scripting,
