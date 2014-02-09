@@ -154,7 +154,7 @@
     <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang3.version>3.1</commons-lang3.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-io.version>1.4</commons-io.version>
+    <commons-io.version>2.0.1</commons-io.version>
     <commons-net.version>3.2</commons-net.version>
 
     <bval.version>0.5</bval.version>
@@ -177,6 +177,10 @@
     <version.xalan>2.7.1</version.xalan>
     <version.hibernate>4.2.8.Final</version.hibernate>
     <version.eclipselink>2.4.2</version.eclipselink>
+
+    <!-- arquillian related -->
+    <version.arquillian.bom>1.1.2.Final</version.arquillian.bom>
+    <version.shrinkwrap.resolver.bom>2.0.1</version.shrinkwrap.resolver.bom>
   </properties>
 
   <build>
@@ -273,6 +277,11 @@
           <groupId>com.googlecode.jslint4java</groupId>
           <artifactId>jslint4java-maven-plugin</artifactId>
           <version>2.0.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.gmaven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
