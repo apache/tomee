@@ -149,13 +149,12 @@
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <commons-pool.version>1.5.7</commons-pool.version>
     <commons-collections.version>3.2.1</commons-collections.version>
-    <commons-codec.version>1.7</commons-codec.version>
+    <commons-codec.version>1.9</commons-codec.version>
     <commons-fileupload.version>1.2.2</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.1</commons-lang3.version>
-    <commons-lang.version>2.6</commons-lang.version>
+    <commons-lang3.version>3.2.1</commons-lang3.version>
     <commons-io.version>2.0.1</commons-io.version>
-    <commons-net.version>3.2</commons-net.version>
+    <commons-net.version>3.3</commons-net.version>
 
     <bval.version>0.5</bval.version>
     <org.apache.activemq.version>5.9.0</org.apache.activemq.version>
