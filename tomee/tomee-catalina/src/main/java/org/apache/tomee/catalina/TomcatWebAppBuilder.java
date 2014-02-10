@@ -2064,7 +2064,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      * @param standardContext tomcat context instance
      */
     private void loadWebModule(final AppModule appModule, final StandardContext standardContext) {
-        final WebModule webModule = appModule.getWebModules().get(0);
+        final List<WebModule> webModules = appModule.getWebModules();
+
+        if (webModules.isEmpty()) {
+            final File file = appModule.getFile();
+            logger.error("Failed to find a single module in: " + file);
+            return;
+        }
+
+        final WebModule webModule = webModules.get(0);
         final WebApp webApp = webModule.getWebApp();
 
         // create the web module
