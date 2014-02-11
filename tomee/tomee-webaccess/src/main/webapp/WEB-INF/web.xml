@@ -32,6 +32,10 @@
     <servlet-name>default</servlet-name>
     <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/webjars/*</url-pattern>
+  </servlet-mapping>
 
   <!-- Any other request will point to the "index.jsp" page. This way Backbone knows how to manage page transitions
    at the client side in case the user starts the application from a permalink. -->

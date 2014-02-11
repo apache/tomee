@@ -108,57 +108,63 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-backbone</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>backbonejs</artifactId>
+      <version>1.0.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-bootstrap</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>3.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-jquery</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>jquery</artifactId>
+      <version>2.1.0-1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-handlebars</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>handlebars</artifactId>
+      <version>1.2.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-json2</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>json2</artifactId>
+      <version>20110223</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-lessjs</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>less</artifactId>
+      <version>1.6.0-1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-requirejs</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>requirejs</artifactId>
+      <version>2.1.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-underscorejs</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>requirejs-text</artifactId>
+      <version>2.0.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-codemirror</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>underscorejs</artifactId>
+      <version>1.5.2-2</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>codemirror</artifactId>
+      <version>3.21</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -235,7 +241,9 @@
         <executions>
           <execution>
             <goals>
+              <goal>generateStubs</goal>
               <goal>compile</goal>
+              <goal>generateTestStubs</goal>
               <goal>testCompile</goal>
             </goals>
           </execution>
