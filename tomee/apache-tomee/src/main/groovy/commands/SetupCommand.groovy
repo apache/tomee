@@ -37,14 +37,6 @@ class SetupCommand {
         this.project = project
         this.ant = ant
         this.properties = properties
-
-        this.log.info('Build properties...')
-        this.project.properties.each { key, value ->
-            this.log.info("  project.properties[${key}] = ${value}")
-        }
-        this.properties.each { key, value ->
-            this.log.info("  properties[${key}] = ${value}")
-        }
     }
 
     def get(name) {
