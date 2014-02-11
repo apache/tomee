@@ -82,14 +82,14 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-bootstrap</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.staticweb</groupId>
-      <artifactId>static-tomee-jquery</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.webjars</groupId>
+      <artifactId>jquery</artifactId>
+      <version>2.1.0-1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

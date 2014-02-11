@@ -100,8 +100,8 @@
       <includes>
         <include>org.apache.openejb:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>
-        <include>org.apache.openejb.staticweb:static-tomee-bootstrap</include>
-        <include>org.apache.openejb.staticweb:static-tomee-jquery</include>
+        <include>org.webjars:bootstrap</include>
+        <include>org.webjars:jquery</include>
       </includes>
     </dependencySet>
   </dependencySets>
