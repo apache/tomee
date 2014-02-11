@@ -250,7 +250,7 @@
                 <tomee.webapp>tomee-webapp</tomee.webapp>
               </properties>
               <source>
-                new commands.SetupCommand(this, log,project,ant,properties).execute()
+                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
               </source>
             </configuration>
           </execution>
@@ -265,7 +265,9 @@
                 <tomee.workdir>${jaxrs.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-jaxrs-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
+              <source>
+                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
+              </source>
             </configuration>
           </execution>
           <execution>
@@ -279,7 +281,9 @@
                 <tomee.workdir>${plus.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plus-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
+              <source>
+                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
+              </source>
             </configuration>
           </execution>
           <execution>
@@ -293,7 +297,9 @@
                 <tomee.workdir>${plume.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plume-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
+              <source>
+                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
+              </source>
             </configuration>
           </execution>
         </executions>
@@ -428,13 +434,6 @@
   </build>
 
   <properties>
-      <localRepository>${settings.localRepository}</localRepository>
-      <http.proxy.host>${settings.activeProxy.host}</http.proxy.host>
-      <http.proxy.port>${settings.activeProxy.port}</http.proxy.port>
-      <http.proxy.username>${settings.activeProxy.username}</http.proxy.username>
-      <http.proxy.password>${settings.activeProxy.password}</http.proxy.password>
-      <http.proxy.nonProxyHosts>${settings.activeProxy.nonProxyHosts}</http.proxy.nonProxyHosts>
-
       <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
       <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
       <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>
