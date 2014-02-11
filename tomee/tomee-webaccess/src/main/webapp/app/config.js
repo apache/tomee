@@ -20,31 +20,31 @@ var APP_CONFIG = {
     baseUrl: window.ux.ROOT_URL,
     paths: {
         // https://github.com/requirejs/text
-        'text': 'app/lib/require/text',
+        'text': 'webjars/requirejs-text/2.0.10/text',
 
         // http://lesscss.org/
-        'lib/less': 'app/lib/less/less.min',
+        'lib/less': 'webjars/less/1.6.0/less.min',
 
-        'lib/codemirror': 'app/lib/codemirror/lib/codemirror',
-        'lib/show-hint': 'app/lib/codemirror/addon/hint/show-hint',
-        'lib/anyword-hint': 'app/lib/codemirror/addon/hint/anyword-hint',
-        'lib/javascript-mode': 'app/lib/codemirror/mode/javascript/javascript',
-        'lib/groovy-mode': 'app/lib/codemirror/mode/groovy/groovy',
+        'lib/codemirror': 'webjars/codemirror/3.21/lib/codemirror',
+        'lib/show-hint': 'webjars/codemirror/3.21/addon/hint/show-hint',
+        'lib/anyword-hint': 'webjars/codemirror/3.21/addon/hint/anyword-hint',
+        'lib/javascript-mode': 'webjars/codemirror/3.21/mode/javascript/javascript',
+        'lib/groovy-mode': 'webjars/codemirror/3.21/mode/groovy/groovy',
 
         // http://jquery.com/
-        'lib/jquery': 'app/lib/jquery/jquery.min',
+        'lib/jquery': 'webjars/jquery/2.1.0/jquery.min',
 
         // http://twitter.github.com/bootstrap/
-        'lib/bootstrap': 'app/lib/bootstrap/js/bootstrap.min',
+        'lib/bootstrap': 'webjars/bootstrap/3.1.0/js/bootstrap.min',
 
         // http://handlebarsjs.com/
-        'lib/handlebars': 'app/lib/handlebars/handlebars',
+        'lib/handlebars': 'webjars/handlebars/1.2.1/handlebars.min',
 
-        'lib/underscore': 'app/lib/underscorejs/underscore-min',
+        'lib/underscore': 'webjars/underscorejs/1.5.2/underscore-min',
 
-        'lib/json2': 'app/lib/json2/json2',
+        'lib/json2': 'webjars/json2/20110223/json2.min',
 
-        'lib/backbone': 'app/lib/backbone/backbone-min'
+        'lib/backbone': 'webjars/backbonejs/1.0.0/backbone'
     },
     shim: {
         'lib/show-hint': {
