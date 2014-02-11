@@ -47,7 +47,6 @@
     <module>tomee-jaxrs-webapp</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
-    <module>tomee-static-content</module>
   </modules>
 
   <repositories>
