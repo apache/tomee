@@ -19,14 +19,14 @@
 var APP_CONFIG = {
     baseUrl: window.ux.ROOT_URL,
     paths: {
-        'text': 'app/lib/require/text',
-        'lib/less': 'app/lib/less/less.min',
-        'lib/jquery': 'app/lib/jquery/jquery.min',
-        'lib/bootstrap': 'app/lib/bootstrap/js/bootstrap.min',
-        'lib/handlebars': 'app/lib/handlebars/handlebars',
-        'lib/underscore': 'app/lib/underscorejs/underscore-min',
-        'lib/json2': 'app/lib/json2/json2',
-        'lib/backbone': 'app/lib/backbone/backbone-min'
+        'text': 'webjars/requirejs-text/2.0.10/text',
+        'lib/less': 'webjars/less/1.6.0/less.min',
+        'lib/jquery': 'webjars/jquery/2.1.0/jquery.min',
+        'lib/bootstrap': 'webjars/bootstrap/3.1.0/js/bootstrap.min',
+        'lib/handlebars': 'webjars/handlebars/1.2.1/handlebars.min',
+        'lib/underscore': 'webjars/underscorejs/1.4.3/underscore-min',
+        'lib/json2': 'webjars/json2/20110223/json2.min',
+        'lib/backbone': 'webjars/backbonejs/1.0.0/backbone'
     },
     shim: {
         'lib/bootstrap': {
