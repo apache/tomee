@@ -34,6 +34,5 @@
     <module>less</module>
     <module>require</module>
     <module>underscorejs</module>
-    <module>codemirror</module>
   </modules>
 </project>
