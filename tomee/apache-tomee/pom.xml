@@ -250,7 +250,7 @@
                 <tomee.webapp>tomee-webapp</tomee.webapp>
               </properties>
               <source>
-                new commands.SetupCommand(log,project,ant,properties).execute()
+                new commands.SetupCommand(this, log,project,ant,properties).execute()
               </source>
             </configuration>
           </execution>
@@ -265,7 +265,7 @@
                 <tomee.workdir>${jaxrs.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-jaxrs-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(log,project,ant,properties).execute()</source>
+              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
             </configuration>
           </execution>
           <execution>
@@ -279,7 +279,7 @@
                 <tomee.workdir>${plus.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plus-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(log,project,ant,properties).execute()</source>
+              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
             </configuration>
           </execution>
           <execution>
@@ -293,7 +293,7 @@
                 <tomee.workdir>${plume.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plume-webapp</tomee.webapp>
               </properties>
-              <source>new commands.SetupCommand(log,project,ant,properties).execute()</source>
+              <source>new commands.SetupCommand(this, log,project,ant,properties).execute()</source>
             </configuration>
           </execution>
         </executions>

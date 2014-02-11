@@ -25,16 +25,26 @@ import org.apache.tools.ant.taskdefs.optional.net.SetProxy
 
 class SetupCommand {
 
+    def pom
     def log
     def project
     def ant
     def properties
 
-    def SetupCommand(def log, def project, def ant, def properties) {
+    def SetupCommand(def pom, def log, def project, def ant, def properties) {
+        this.pom = pom
         this.log = log
         this.project = project
         this.ant = ant
         this.properties = properties
+
+        this.log.info('Build properties...')
+        this.project.properties.each { key, value ->
+            this.log.info("  project.properties[${key}] = ${value}")
+        }
+        this.properties.each { key, value ->
+            this.log.info("  properties[${key}] = ${value}")
+        }
     }
 
     def get(name) {
@@ -94,7 +104,7 @@ class SetupCommand {
 
         String openejbVersion = require('openejb.version')
         System.setProperty('openejb.version', openejbVersion)
-        def localRepo = require('localRepository')
+        def localRepo = pom.settings.localRepository
 
         def proxyHost = get('http.proxy.host', '')
         String proxyPort = get('http.proxy.port', '')
