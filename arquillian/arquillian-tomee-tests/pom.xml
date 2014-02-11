@@ -149,7 +149,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.13</version>
             <executions>
               <execution>
                 <id>test-tomee-embedded</id>
@@ -183,8 +182,8 @@
         <plugins>
           <plugin>
             <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <version>1.3</version>
+            <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.0</version>
             <executions>
               <execution>
                 <id>configure-adapters</id>
@@ -192,33 +191,31 @@
                 <goals>
                   <goal>execute</goal>
                 </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <source>
-                // goal: manage the profile-under-test property
-                // -> set to webprofile use all distributions
-                // -> set to jaxrs just jaxrs, plus and plume should be used
-                // -> set to plus use only plus
-                // -> set to plume use only plume
-                def props = project.properties
+                <configuration>
+                  <source>
+                    // goal: manage the profile-under-test property
+                    // -> set to webprofile use all distributions
+                    // -> set to jaxrs just jaxrs, plus and plume should be used
+                    // -> set to plus use only plus
+                    // -> set to plume use only plume
+                    def props = project.properties
 
-                def skip = props['maven.test.skip']
+                    def skip = props['maven.test.skip']
 
-                props['skip.embedded'] = 'true'
-                props['skip.remote.webprofile'] = 'true'
-                props['skip.remote.jaxrs'] = 'true'
-                props['skip.remote.plus'] = 'true'
-                props['skip.remote.plume'] = 'true'
-                props['skip.webapp.webprofile'] = 'true'
-                props['skip.webapp.jaxrs'] = 'true'
-                props['skip.webapp.plus'] = 'true'
-                props['skip.webapp.plume'] = 'true'
+                    props['skip.embedded'] = 'true'
+                    props['skip.remote.webprofile'] = 'true'
+                    props['skip.remote.jaxrs'] = 'true'
+                    props['skip.remote.plus'] = 'true'
+                    props['skip.remote.plume'] = 'true'
+                    props['skip.webapp.webprofile'] = 'true'
+                    props['skip.webapp.jaxrs'] = 'true'
+                    props['skip.webapp.plus'] = 'true'
+                    props['skip.webapp.plume'] = 'true'
 
-                if ("true" != skip) {
-                  def minProfile = props['profile-under-test']
+                    if ("true" != skip) {
+                    def minProfile = props['profile-under-test']
 
-                  if ("webprofile" == minProfile) {
+                    if ("webprofile" == minProfile) {
                     props['skip.embedded'] = 'false'
                     props['skip.remote.webprofile'] = 'false'
                     props['skip.webapp.webprofile'] = 'false'
@@ -228,7 +225,7 @@
                     props['skip.webapp.plus'] = 'false'
                     props['skip.remote.plume'] = 'false'
                     props['skip.webapp.plume'] = 'false'
-                  } else if ("jaxrs" == minProfile) {
+                    } else if ("jaxrs" == minProfile) {
                     props['skip.embedded'] = 'false'
                     props['skip.remote.jaxrs'] = 'false'
                     props['skip.webapp.jaxrs'] = 'false'
@@ -236,31 +233,34 @@
                     props['skip.webapp.plus'] = 'false'
                     props['skip.remote.plume'] = 'false'
                     props['skip.webapp.plume'] = 'false'
-                  } else if ("plus" == minProfile) {
+                    } else if ("plus" == minProfile) {
                     props['skip.embedded'] = 'false'
                     props['skip.remote.plus'] = 'false'
                     props['skip.webapp.plus'] = 'false'
                     props['skip.remote.plume'] = 'false'
                     props['skip.webapp.plume'] = 'false'
-                  }
-                }
+                    }
+                    }
 
-                println("Embedded adapter activated ? " + !Boolean.parseBoolean(props['skip.embedded']))
-                println("Remote webprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.webprofile']))
-                println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
-                println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
-                println("Remote plume adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plume']))
-                println("Webapp weprofile adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.webprofile']))
-                println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
-                println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
-                println("Webapp plume adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plume']))
-              </source>
-            </configuration>
+                    println("Embedded adapter activated ? " + !Boolean.parseBoolean(props['skip.embedded']))
+                    println("Remote webprofile adapter activated ? " +
+                    !Boolean.parseBoolean(props['skip.remote.webprofile']))
+                    println("Remote jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.jaxrs']))
+                    println("Remote plus adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plus']))
+                    println("Remote plume adapter activated ? " + !Boolean.parseBoolean(props['skip.remote.plume']))
+                    println("Webapp weprofile adapter activated ? " +
+                    !Boolean.parseBoolean(props['skip.webapp.webprofile']))
+                    println("Webapp jaxrs adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.jaxrs']))
+                    println("Webapp plus adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plus']))
+                    println("Webapp plume adapter activated ? " + !Boolean.parseBoolean(props['skip.webapp.plume']))
+                  </source>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.13</version>
             <executions>
               <execution>
                 <id>test-tomee-embedded</id>
@@ -512,7 +512,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.13</version>
             <executions>
               <execution>
                 <id>test-tomee-embedded</id>
@@ -689,8 +688,8 @@
       -->
       <id>glassfish-embedded</id>
       <properties>
-        <version.glassfish>3.1.2-b16</version.glassfish>
-        <version.arquillian.glassfish.embedded>1.0.0.CR2</version.arquillian.glassfish.embedded>
+        <version.glassfish>3.1.2.2</version.glassfish>
+        <version.arquillian.glassfish.embedded>1.0.0.CR4</version.arquillian.glassfish.embedded>
         <version.mockito>1.9.0</version.mockito>
         <version.maven.embedded.glassfish.plugin>3.1.1</version.maven.embedded.glassfish.plugin>
         <version.maven.war.plugin>2.1.1</version.maven.war.plugin>
