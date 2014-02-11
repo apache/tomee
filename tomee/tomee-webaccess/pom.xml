@@ -193,7 +193,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-jsr223</artifactId>
-      <version>2.1.7</version>
+      <version>2.2.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -233,21 +233,23 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
+        <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <providerSelection>2.0</providerSelection>
+          <compilerId>groovy-eclipse-compiler</compilerId>
+          <verbose>true</verbose>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generateStubs</goal>
-              <goal>compile</goal>
-              <goal>generateTestStubs</goal>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-compiler</artifactId>
+            <version>2.8.0-01</version>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-eclipse-batch</artifactId>
+            <version>2.1.8-01</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
@@ -265,7 +267,7 @@
         <version>0.18-1</version>
         <configuration>
           <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
-          <groovyVersion>2.0.0</groovyVersion>
+          <groovyVersion>2.2.1</groovyVersion>
           <codeNarcVersion>0.20</codeNarcVersion>
           <maxPriority1Violations>0</maxPriority1Violations>
           <maxPriority2Violations>0</maxPriority2Violations>
