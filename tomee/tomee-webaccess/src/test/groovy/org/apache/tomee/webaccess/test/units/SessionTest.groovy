@@ -57,11 +57,13 @@ class SessionTest {
     void test() throws Exception {
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            Assert.assertEquals(1, (content =~ /context/).count)
+            def numberOfSessions = (content =~ /context/).count
+            Assert.assertEquals("Expecting 1 session. Resulting content: $content", 1, numberOfSessions)
         })
         Utilities.withClient(deploymentURL, { CloseableHttpClient client ->
             def content = Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/session")))
-            Assert.assertEquals(2, (content =~ /context/).count)
+            def numberOfSessions = (content =~ /context/).count
+            Assert.assertEquals("Expecting 2 sessions. Resulting content: $content", 2, numberOfSessions)
         })
     }
 

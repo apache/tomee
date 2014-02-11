@@ -63,10 +63,12 @@ class ScriptingTest {
                             new BasicNameValuePair('script', 'print("Hi there!");')
                     )
             )
-            Assert.assertTrue(Utilities.post(deploymentURL, client, 'rest/scripting',
+            def result = Utilities.post(deploymentURL, client, 'rest/scripting',
                     new BasicNameValuePair('engine', 'js'),
                     new BasicNameValuePair('script', 'throw "my bad!";')
-            ).contains('javax.script.ScriptException: my bad!'))
+            )
+            Assert.assertTrue("Expecting to have the 'my bad!' message. Resulting message: ${result}",
+                    result.contains('javax.script.ScriptException: my bad!'))
         })
     }
 
