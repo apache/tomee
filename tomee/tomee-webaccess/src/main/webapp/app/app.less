@@ -116,6 +116,13 @@ body {
       > div.panel-heading > button {
         position: absolute;
         top: 4px;
+      }
+
+      > div.panel-heading > button.ux-clean {
+        right: (@offset + 38);
+      }
+
+      > div.panel-heading > button.ux-maximize {
         right: @offset;
       }
 
@@ -129,9 +136,13 @@ body {
       }
     }
 
+    .ux-script-output.ux-fullscreen {
+      left: @offset;
+      z-index: 5000;
+    }
+
     .ux-script-source {
       left: @offset;
-      width: @sourceWidth;
 
       .ux-commands {
         position: absolute;
@@ -139,14 +150,30 @@ body {
         right: (@offset * 2);
       }
 
+      > div.panel-heading > button {
+        position: absolute;
+        top: 4px;
+        right: @offset;
+      }
+
       > div.panel-body {
         position: absolute;
         top: @topOffset;
         bottom: @offset;
         left: @offset;
-        width: (@sourceWidth - (@offset * 2));
+        right: @offset;
         overflow: auto;
       }
+    }
+
+    .ux-script-source.ux-normal {
+      width: @sourceWidth;
+    }
+
+    .ux-script-source.ux-fullscreen {
+      left: @offset;
+      right: @offset;
+      z-index: 5000;
     }
   }
 
