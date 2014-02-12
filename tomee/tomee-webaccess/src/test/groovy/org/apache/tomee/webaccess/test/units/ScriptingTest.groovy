@@ -67,8 +67,10 @@ class ScriptingTest {
                     new BasicNameValuePair('engine', 'js'),
                     new BasicNameValuePair('script', 'throw "my bad!";')
             )
+            Assert.assertTrue("Expecting to have a 'javax.script.ScriptException'. Resulting message: ${result}",
+                    result.contains('javax.script.ScriptException'))
             Assert.assertTrue("Expecting to have the 'my bad!' message. Resulting message: ${result}",
-                    result.contains('javax.script.ScriptException: my bad!'))
+                    result.contains('my bad!'))
         })
     }
 
