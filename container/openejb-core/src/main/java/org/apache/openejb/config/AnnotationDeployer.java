@@ -5339,6 +5339,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } else {
                         list.add(classLocation(loadedClass).toExternalForm());
                     }
+                } else if (url.endsWith(".jar") && url.startsWith("file:")) {
+                    list.add("jar:" + url + "!/" + name.replace('.', '/') + ".class");
                 } else {
                     list.add(classLocation(loadedClass).toExternalForm());
                 }
