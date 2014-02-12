@@ -32,7 +32,9 @@
         };
 
         var executeScript = function (evt) {
-            evt.preventDefault();
+            if (evt) {
+                evt.preventDefault();
+            }
             var me = this;
             me.trigger('execute-action', {
                 engine: me.editor.getOption("mode"),
@@ -48,11 +50,41 @@
             pre.empty();
         };
 
+        var toggleMaximization = function (panel) {
+            var btn = panel.find('.ux-maximize > span');
+            if (panel.hasClass('ux-fullscreen')) {
+                panel.removeClass('ux-fullscreen');
+                panel.addClass('ux-normal');
+                btn.addClass('glyphicon-fullscreen');
+                btn.removeClass('glyphicon-minus');
+            } else {
+                panel.addClass('ux-fullscreen');
+                panel.removeClass('ux-normal');
+                btn.removeClass('glyphicon-fullscreen');
+                btn.addClass('glyphicon-minus');
+            }
+        };
+
+        var maximizePanelOutput = function () {
+            var me = this;
+            var panel = $(me.$el.find('.ux-script-output').get(0));
+            toggleMaximization(panel);
+        };
+
+        var maximizePanelSource = function () {
+            var me = this;
+            var panel = $(me.$el.find('.ux-script-source').get(0));
+            toggleMaximization(panel);
+            me.fitCodeField();
+        };
+
         var View = Backbone.View.extend({
             tagName: 'div',
             className: 'ux-scripting',
             events: {
-                'click .ux-script-output>div.panel-heading>button': cleanOutput,
+                'click .ux-script-output>div.panel-heading>button.ux-clean': cleanOutput,
+                'click .ux-script-output>div.panel-heading>button.ux-maximize': maximizePanelOutput,
+                'click .ux-script-source>div.panel-heading>button.ux-maximize': maximizePanelSource,
                 'click .ux-execute-script': function (evt) {
                     var me = this;
                     executeScript.call(me, evt);
@@ -123,6 +155,11 @@
                 contentArea.animate({
                     scrollTop: contentArea.prop("scrollHeight")
                 }, 250);
+                var sourcePanel = $(me.$el.find('.ux-script-source').get(0));
+                if (sourcePanel.hasClass('ux-fullscreen')) {
+                    toggleMaximization(sourcePanel);
+                    me.fitCodeField();
+                }
             },
 
             render: function () {
@@ -141,7 +178,7 @@
                     });
                 }
                 me.editor.focus();
-                return this;
+                return me;
             }
         });
         return new View();
