@@ -615,7 +615,6 @@ public class OpenEJBContextConfig extends ContextConfig {
         final File file = URLs.toFile(new URL(filePath));
 
         File current = classAsFile;
-        boolean webInf = false;
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
@@ -628,16 +627,21 @@ public class OpenEJBContextConfig extends ContextConfig {
                 }
                 return true;
             }
-            if (current.getName().equals("WEB-INF")) {
-                webInf = true; // if class loaded from JVM classloader we'll not find it in the war
-            }
             current = current.getParentFile();
             if (BASE.equals(current)) {
                 return false;
             }
         }
 
-        return !(classAsFile != null && classAsFile.getName().endsWith(".jar") && file.getName().endsWith(".jar")) && !webInf;
+        return false;
+        /* classAsFile s
+        if (current != null && current.isDirectory()) {
+            return false;
+        }
+        return (classAsFile == null
+                    || !classAsFile.getName().endsWith(".jar") || !file.getName().endsWith(".jar"))
+                && !webInf;
+                */
 
     }
 }

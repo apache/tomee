@@ -149,6 +149,7 @@ openejb-loader
 openejb-openwebbeans
 openejb-provisionning
 openejb-rest
+openejb-shade
 openejb-server
 openejb-webservices
 openjpa-
@@ -193,12 +194,19 @@ surefire-
 swizzle-
 sxc-
 testng-
+tomcat-annotations
 tomcat-api
+tomcat-catalina
 tomcat-coyote
 tomcat-dbcp
+tomcat-el
 tomcat-i18n
+tomcat-jasper
 tomcat-jdbc
+tomcat-jsp
 tomcat-juli
+tomcat-tribes
+tomcat-servlet
 tomcat-util
 tomee-
 tools.jar
