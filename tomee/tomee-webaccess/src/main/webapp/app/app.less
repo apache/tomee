@@ -44,18 +44,14 @@ body {
     left: @offset;
     right: @offset;
     margin-bottom: 0;
-    overflow: auto;
 
-    > div {
-      margin: 0;
-
-      > div.panel-body {
-        margin: 5px;
-      }
-    }
-
-    table {
-      margin: 0;
+    .panel-body {
+      position: absolute;
+      top: 40px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: auto;
     }
   }
 

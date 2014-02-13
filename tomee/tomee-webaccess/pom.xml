@@ -163,6 +163,12 @@
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
+      <artifactId>underscore.string</artifactId>
+      <version>2.3.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
       <artifactId>codemirror</artifactId>
       <version>3.21</version>
       <scope>runtime</scope>

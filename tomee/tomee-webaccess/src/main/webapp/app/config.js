@@ -42,6 +42,8 @@ var APP_CONFIG = {
 
         'lib/underscore': 'webjars/underscorejs/1.5.2/underscore-min',
 
+        'underscore.string': 'webjars/underscore.string/2.3.0/underscore.string',
+
         'lib/json2': 'webjars/json2/20110223/json2.min',
 
         'lib/backbone': 'webjars/backbonejs/1.0.0/backbone'
@@ -64,6 +66,10 @@ var APP_CONFIG = {
         // http://requirejs.org/docs/api.html#config-shim
         'lib/bootstrap': {
             deps: ['lib/jquery']
+        },
+
+        'underscore.string': {
+            deps: ['lib/underscore']
         },
 
         'lib/underscore': {

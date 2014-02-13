@@ -20,11 +20,11 @@
     'use strict';
 
     var deps = ['app/js/templates', 'lib/underscore', 'lib/backbone'];
-    define(deps, function (templates, underscore) {
+    define(deps, function (templates) {
 
         var View = Backbone.View.extend({
             tagName: 'div',
-            className: 'ux-sessions',
+            className: 'ux-sessions panel panel-default',
             events: {
                 'click .ux-refresh-btn': function (evt) {
                     evt.preventDefault();
