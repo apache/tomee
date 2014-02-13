@@ -19,8 +19,12 @@
 (function () {
     'use strict';
 
-    var deps = ['app/js/templates', 'app/js/i18n', 'lib/backbone'];
-    define(deps, function (templates) {
+    var deps = ['app/js/templates', 'underscore.string', 'app/js/i18n', 'lib/backbone'];
+    define(deps, function (templates, str) {
+
+        function getPanelMainClassName(clsName) {
+            return str.clean(clsName).split(' ')[0];
+        }
 
         var View = Backbone.View.extend({
             el: 'body',
@@ -38,7 +42,7 @@
                     view.renderCallback();
                 }
                 me.$('.ux-app-menu-item').removeClass('active');
-                var myMenuItem = me.$('li.ux-app-menu-item.' + view.className);
+                var myMenuItem = me.$('li.ux-app-menu-item.' + getPanelMainClassName(view.className));
                 myMenuItem.addClass('active');
             },
 
