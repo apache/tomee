@@ -125,12 +125,10 @@ public class MultithreadTest {
             t.start();
         }
 
-        final boolean success = invocations.await(10000, TimeUnit.MILLISECONDS);
-
-        assertTrue(success);
-
+        final boolean success = invocations.await(10, TimeUnit.SECONDS);
+        final int count = CounterBean.discardedInstances.get();
+        assertTrue("Timeout after 10s. CountDownLatch: " + count + " of 30 invocations", success);
         assertEquals(30, CounterBean.discardedInstances.get());
-
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
