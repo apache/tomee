@@ -589,7 +589,7 @@ public class StatefulContainer implements RpcContainer {
                         callContext.setCurrentOperation(Operation.REMOVE);
                     }
 
-                    discardInstance(callContext);
+                    discardInstance(primKey, instance);
                 }
 
                 // un register EntityManager
@@ -799,19 +799,24 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private void discardInstance(final ThreadContext threadContext) {
-        final Object primaryKey = threadContext.getPrimaryKey();
+    private void discardInstance(final Object primaryKey, final Instance instance) {
         if (primaryKey == null) {
             return;
         }
 
-        final Instance instance = checkedOutInstances.remove(primaryKey);
-        if (instance != null && !containsExtendedPersistenceContext(instance.beanContext)) {
-            cache.remove(primaryKey);
+        final Instance i;
+        if (instance == null) {
+            i = checkedOutInstances.remove(primaryKey);
+        } else {
+            checkedOutInstances.remove(primaryKey);
+            i = instance;
         }
 
-        if (null != instance && null != instance.creationalContext) {
-            instance.creationalContext.release();
+        if (!containsExtendedPersistenceContext(instance.beanContext)) {
+            cache.remove(primaryKey);
+        }
+        if (i != null && null != i.creationalContext) {
+            i.creationalContext.release();
         }
     }
 
@@ -829,7 +834,7 @@ public class StatefulContainer implements RpcContainer {
 
         final ExceptionType type = callContext.getBeanContext().getExceptionType(e);
         if (type == ExceptionType.SYSTEM) {
-            discardInstance(callContext);
+            discardInstance(callContext.getPrimaryKey(), null);
             EjbTransactionUtil.handleSystemException(txPolicy, e, callContext);
         } else {
             EjbTransactionUtil.handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
@@ -1074,7 +1079,7 @@ public class StatefulContainer implements RpcContainer {
                     txPolicy.setRollbackOnly(e);
 
                     // [3] Discard the instance
-                    discardInstance(callContext);
+                    discardInstance(callContext.getPrimaryKey(), instance);
 
                     // [4] throw the java.rmi.RemoteException to the client
                     throw new OpenEJBRuntimeException(message, e);
@@ -1116,7 +1121,7 @@ public class StatefulContainer implements RpcContainer {
                     // Transaction is complete so can not be rolled back
 
                     // [3] Discard the instance
-                    discardInstance(callContext);
+                    discardInstance(callContext.getPrimaryKey(), instance);
 
                     // [4] throw throw first exception to the client
                     if (firstException == null)
@@ -1148,7 +1153,7 @@ public class StatefulContainer implements RpcContainer {
 
                 interceptorStack.invoke();
             } catch (Throwable callbackException) {
-                discardInstance(threadContext);
+                discardInstance(threadContext.getPrimaryKey(), instance);
                 EjbTransactionUtil.handleSystemException(threadContext.getTransactionPolicy(), callbackException, threadContext);
             } finally {
                 ThreadContext.exit(oldContext);
