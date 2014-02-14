@@ -31,6 +31,26 @@
             groovy: templates.getValue('script-sample-groovy', {})
         };
 
+        var UserForm = Backbone.View.extend({
+            tagName: 'div',
+            className: 'ux-scripting',
+
+            getValue: function (cls) {
+                var me = this;
+                var field = $(me.$el.find(cls).get(0));
+                return field.val();
+            },
+
+            render: function () {
+                var me = this;
+                me.$el.empty();
+                me.$el.append(templates.getValue('scripting-user', {}));
+                return me;
+            }
+        });
+        var userForm = new UserForm();
+        userForm.render();
+
         var executeScript = function (evt) {
             if (evt) {
                 evt.preventDefault();
@@ -38,7 +58,10 @@
             var me = this;
             me.trigger('execute-action', {
                 engine: me.editor.getOption("mode"),
-                script: me.editor.getValue()
+                script: me.editor.getValue(),
+                user: userForm.getValue('.ux-context-user'),
+                password: userForm.getValue('.ux-context-password'),
+                realm: userForm.getValue('.ux-context-realm')
             });
             me.$el.find('.ux-execute-script').addClass('disabled');
             me.$el.find('.ux-clean-execute-script').addClass('disabled');
@@ -175,6 +198,17 @@
                     this.options.isRendered = true;
                     $(window).resize(function () {
                         me.fitCodeField();
+                    });
+                    var userBtn = $(me.$el.find('.ux-script-source>div.panel-heading>button.ux-user').get(0));
+                    userBtn.popover({
+                        html: true,
+                        placement: 'bottom',
+                        content: '<div class="ux-user-form"/>'
+                    });
+                    userBtn.on('shown.bs.popover', function () {
+                        var form = $(me.$el.find('.ux-user-form').get(0));
+                        userForm.$el.detach();
+                        form.append(userForm.$el);
                     });
                 }
                 me.editor.focus();

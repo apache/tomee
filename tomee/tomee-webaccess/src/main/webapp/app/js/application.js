@@ -104,7 +104,10 @@
                     dataType: 'json',
                     data: {
                         engine: data.engine,
-                        script: data.script
+                        script: data.script,
+                        user: data.user,
+                        password: data.password,
+                        realm: data.realm
                     },
                     success: function (data) {
                         scriptingView.appendOutput(data.scriptingResultDto.output);

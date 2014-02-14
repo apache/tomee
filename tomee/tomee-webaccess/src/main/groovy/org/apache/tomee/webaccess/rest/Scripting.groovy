@@ -35,8 +35,14 @@ class Scripting {
 
     @POST
     @Produces('application/json')
-    ScriptingResultDto execute(@FormParam('engine') String engine, @FormParam('script') String script) {
-        service.execute(engine, script)
+    ScriptingResultDto execute(
+            @FormParam('engine') String engine,
+            @FormParam('script') String script,
+            @FormParam('user') String user,
+            @FormParam('password') String password,
+            @FormParam('realm') String realm
+    ) {
+        service.execute(engine, script, user, password, realm)
     }
 
 }

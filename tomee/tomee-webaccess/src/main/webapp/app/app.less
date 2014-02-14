@@ -140,6 +140,11 @@ body {
     .ux-script-source {
       left: @offset;
 
+      .ux-user-form {
+        height: 135px;
+        width: 240px;
+      }
+
       .ux-commands {
         position: absolute;
         bottom: (@offset * 2);
@@ -149,6 +154,13 @@ body {
       > div.panel-heading > button {
         position: absolute;
         top: 4px;
+      }
+
+      > div.panel-heading > button.ux-user {
+        right: (@offset + 38);
+      }
+
+      > div.panel-heading > button.ux-maximize {
         right: @offset;
       }
 
