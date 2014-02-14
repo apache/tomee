@@ -24,6 +24,9 @@ import javax.annotation.security.RolesAllowed
 import javax.ejb.Stateless
 import javax.ejb.TransactionAttribute
 import javax.ejb.TransactionAttributeType
+import javax.naming.Context
+import javax.naming.InitialContext
+import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 
@@ -32,22 +35,39 @@ import javax.script.SimpleScriptContext
 @RolesAllowed('tomee-admin')
 class ScriptingServiceImpl {
 
-    ScriptingResultDto execute(String engine, String script) {
-        ScriptingResultDto result = new ScriptingResultDto(
-                output: ''
-        )
+    @SuppressWarnings('CatchThrowable')
+    ScriptingResultDto execute(String engineName, String script, String user, String pass, String realm) {
+        def result = new ScriptingResultDto(output: '')
         if (script && '' != script.trim()) {
             def factory = new ScriptEngineManager()
             def sw = new StringWriter()
             def pw = new PrintWriter(sw)
+            def engine = factory.getEngineByName(engineName?.trim()?.toLowerCase() ?: 'js')
+            def scriptContext = new SimpleScriptContext()
+            scriptContext.writer = pw
+            scriptContext.errorWriter = pw
+
+            // Creating a local context
+            def props = new Properties()
+            props[Context.INITIAL_CONTEXT_FACTORY] = 'org.apache.openejb.client.LocalInitialContextFactory'
+            if (realm?.trim()) {
+                props['openejb.authentication.realmName'] = realm.trim()
+            }
+            if (user) {
+                props[Context.SECURITY_PRINCIPAL] = user
+                props[Context.SECURITY_CREDENTIALS] = pass?.trim() ?: ''
+            }
             try {
-                def engineImpl = factory.getEngineByName(engine && '' != engine.trim() ? engine.trim().toLowerCase() : 'js')
-                def ctx = new SimpleScriptContext()
-                ctx.writer = pw
-                ctx.errorWriter = pw
-                engineImpl.eval(script, ctx)
-            } catch (exception) {
-                exception.printStackTrace(pw)
+                def ctx = new InitialContext(props)
+                try {
+                    scriptContext.setAttribute('ctx', ctx, ScriptContext.ENGINE_SCOPE)
+                    engine.eval(script, scriptContext)
+                } finally {
+                    // closing newly created context
+                    ctx.close()
+                }
+            } catch (Throwable throwable) {
+                throwable.printStackTrace(pw)
             }
             result.output = sw.toString()
         }

@@ -265,6 +265,7 @@
           <simpleLog>true</simpleLog>
           <context>webaccess</context>
           <tomeeClassifier>jaxrs</tomeeClassifier>
+          <config>${project.basedir}/src/main/tomee/conf</config>
         </configuration>
       </plugin>
       <plugin>

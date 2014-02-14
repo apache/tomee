@@ -26,6 +26,7 @@
         'scripting',
         'script-sample-javascript',
         'script-sample-groovy',
+        'scripting-user',
         'logfiles',
         'logfile-link',
         'sessions'
