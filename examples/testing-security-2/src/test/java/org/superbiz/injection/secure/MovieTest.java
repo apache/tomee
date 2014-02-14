@@ -21,8 +21,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
+import javax.ejb.SessionContext;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,6 +33,9 @@ import java.util.Properties;
 
 //START SNIPPET: code
 public class MovieTest {
+
+    @EJB
+    private UserInfo userInfo;
 
     @EJB
     private Movies movies;
@@ -64,6 +69,9 @@ public class MovieTest {
         p.put(Context.SECURITY_CREDENTIALS, "waterfall");
 
         InitialContext context = new InitialContext(p);
+        Assert.assertEquals("Wrong user", "jane", userInfo.getUserName());
+        Assert.assertTrue("jane is supposed to be a Manager", userInfo.isCallerInRole("Manager"));
+        Assert.assertTrue("jane is supposed to be an Employee", userInfo.isCallerInRole("Employee"));
 
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -91,6 +99,9 @@ public class MovieTest {
         p.put(Context.SECURITY_CREDENTIALS, "cool");
 
         InitialContext context = new InitialContext(p);
+        Assert.assertEquals("Wrong user", "joe", userInfo.getUserName());
+        Assert.assertTrue("joe is supposed to be an Employee", userInfo.isCallerInRole("Employee"));
+
 
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
@@ -120,7 +131,7 @@ public class MovieTest {
     public void testUnauthenticated() throws Exception {
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
-            Assert.fail("Unauthenticated users should not be able to add movies");
+            Assert.fail("Unauthenticated users should not be able to add movies. User: " + userInfo.getUserName());
         } catch (EJBAccessException e) {
             // Good, guests cannot add things
         }

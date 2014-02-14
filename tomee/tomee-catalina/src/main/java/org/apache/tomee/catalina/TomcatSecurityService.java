@@ -19,11 +19,11 @@ package org.apache.tomee.catalina;
 
 import org.apache.catalina.Engine;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
@@ -32,13 +32,12 @@ import org.apache.tomee.loader.TomcatHelper;
 import javax.security.auth.Subject;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.LoginException;
+import javax.security.jacc.EJBMethodPermission;
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.security.AccessControlException;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class TomcatSecurityService extends AbstractSecurityService {
     static protected final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
@@ -63,41 +62,46 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     @Override
-    public boolean isCallerInRole(final String role) {
-        if (super.isCallerInRole(role)) {
-            return true;
-        }
-
+    public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
-        final SecurityContext securityContext = threadContext.get(SecurityContext.class);
-        final Set<TomcatUser> users = securityContext.subject.getPrincipals(TomcatUser.class);
-        for (final TomcatUser user : users) {
-            final Principal pcp = user.getTomcatPrincipal();
-            if (pcp instanceof  GenericPrincipal) {
-                for (String r : ((GenericPrincipal) pcp).getRoles()) {
-                    if(r.equals(role)) {
+        try {
+            final BeanContext beanContext = threadContext.getBeanContext();
+            final String ejbName = beanContext.getEjbName();
+            String name = type == null ? null : type.getSpecName();
+            if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+                name = null;
+            }
+            final Identity currentIdentity = clientIdentity.get();
+            final SecurityContext securityContext;
+            if(currentIdentity == null) {
+                securityContext= threadContext.get(SecurityContext.class);
+            } else {
+                securityContext = new SecurityContext(currentIdentity.getSubject());
+            }
+            securityContext.acc.checkPermission(new EJBMethodPermission(ejbName, name, method));
+        } catch (AccessControlException e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isCallerInRole(final String role) {
+        final Principal principal = getCallerPrincipal();
+        if (TomcatUser.class.isInstance(principal)) {
+            final TomcatUser tomcatUser = (TomcatUser) principal;
+            final GenericPrincipal genericPrincipal = (GenericPrincipal) tomcatUser.getTomcatPrincipal();
+            final String[] roles = genericPrincipal.getRoles();
+            if (roles != null) {
+                for (String userRole : roles) {
+                    if (userRole.equals(role)) {
                         return true;
                     }
                 }
-            } else if (pcp instanceof org.apache.catalina.Group) {
-                if (((org.apache.catalina.Group) pcp).getGroupname().equals(role)) {
-                    return true;
-                }
-            } else if (pcp instanceof Role) {
-                if (((Role) pcp).getRolename().equals(role)) {
-                    return true;
-                }
-            } // else ?
-        }
-
-        final Set<RunAsRole> runAsRoles = securityContext.subject.getPrincipals(RunAsRole.class);
-        for (RunAsRole runAsRole : runAsRoles) {
-            if (role.equals(runAsRole.getName())) {
-                return true;
             }
+            return false;
         }
-
-        return false;
+        return super.isCallerInRole(role);
     }
 
     public UUID login(String realmName, String username, String password) throws LoginException {
