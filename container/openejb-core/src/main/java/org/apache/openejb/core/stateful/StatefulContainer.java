@@ -812,11 +812,13 @@ public class StatefulContainer implements RpcContainer {
             i = instance;
         }
 
-        if (!containsExtendedPersistenceContext(instance.beanContext)) {
-            cache.remove(primaryKey);
-        }
-        if (i != null && null != i.creationalContext) {
-            i.creationalContext.release();
+        if (i != null) {
+            if (!containsExtendedPersistenceContext(i.beanContext)) {
+                cache.remove(primaryKey);
+            }
+            if (null != i.creationalContext) {
+                i.creationalContext.release();
+            }
         }
     }
 
