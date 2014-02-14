@@ -120,21 +120,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
 
-        // CXF-5319: bug in CXF? it prevents to get the wadl as json otherwise
-        if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false"))) {
-            for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
-                final RequestHandler provider = rh.getProvider();
-                if (WadlGenerator.class.isInstance(provider)) {
-                    WadlGenerator.class.cast(provider).setIgnoreMessageWriters(false);
-                }
-            }
-        }
-
         for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
             final RequestHandler provider = rh.getProvider();
             if (WadlGenerator.class.isInstance(provider)) {
                 final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
-                wadlGenerator.setIgnoreRequests(false);
+
+                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreRequests", "false"))) {
+                    wadlGenerator.setIgnoreRequests(false);
+                }
+                // CXF-5319: bug in CXF? it prevents to get the wadl as json otherwise
+                if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false"))) {
+                    wadlGenerator.setIgnoreMessageWriters(false);
+                }
             }
         }
     }
