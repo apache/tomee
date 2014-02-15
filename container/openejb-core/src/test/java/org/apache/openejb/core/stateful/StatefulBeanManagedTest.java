@@ -70,12 +70,13 @@ public class StatefulBeanManagedTest {
 
     @Test
     public void testExpected() throws Exception {
-        final MyBean beanOne = (MyBean) new InitialContext().lookup("MyBeanLocalBean");
+        MyBean beanOne = (MyBean) new InitialContext().lookup("MyBeanLocalBean");
 
         beanOne.one("bob");
         assertEquals("bob", beanOne.two());
         beanOne.three();
 
+        beanOne = (MyBean) new InitialContext().lookup("MyBeanLocalBean");
         beanOne.one("sally");
         assertEquals("sally", beanOne.two());
         beanOne.three();
