@@ -26,7 +26,8 @@ define(['app/js/i18n', 'underscore.string', 'lib/handlebars'], function (i18n, s
 
     Handlebars.registerHelper('timeStampToDate', function (value) {
         var date = new Date(value);
-        return str.sprintf('%d-%d-%d %d:%d:%d',
+        return str.sprintf(
+            '%d-%d-%d %d:%d:%d',
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
