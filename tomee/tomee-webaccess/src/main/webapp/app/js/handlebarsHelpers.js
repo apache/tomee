@@ -17,7 +17,7 @@
  "use strict";
  */
 
-define(['app/js/i18n', 'lib/handlebars'], function (i18n) {
+define(['app/js/i18n', 'underscore.string', 'lib/handlebars'], function (i18n, str) {
     'use strict';
 
     Handlebars.registerHelper('i18n', function (key) {
@@ -26,7 +26,14 @@ define(['app/js/i18n', 'lib/handlebars'], function (i18n) {
 
     Handlebars.registerHelper('timeStampToDate', function (value) {
         var date = new Date(value);
-        return date.toUTCString();
+        return str.sprintf('%d-%d-%d %d:%d:%d',
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
+        );
     });
 
 });
