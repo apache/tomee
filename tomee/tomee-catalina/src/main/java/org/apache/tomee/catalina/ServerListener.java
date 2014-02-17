@@ -31,6 +31,7 @@ import org.apache.tomee.loader.TomcatHelper;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,96 +40,99 @@ import java.util.logging.Logger;
 public class ServerListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(ServerListener.class.getName());
 
-    static private boolean listenerInstalled;
+    static private final AtomicBoolean listenerInstalled = new AtomicBoolean(false);
 
-    public void lifecycleEvent(LifecycleEvent event) {
+    public void lifecycleEvent(final LifecycleEvent event) {
         if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType()) && StandardServer.class.isInstance(event.getSource())) {
             installServerInfo();
         }
 
-        // only install once
-        if (listenerInstalled || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
-        if (!(event.getSource() instanceof StandardServer)) return;
+        synchronized (listenerInstalled) {
 
-        try {
-            final StandardServer server = (StandardServer) event.getSource();
+            // only install once
+            if (listenerInstalled.get() || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) return;
+            if (!(event.getSource() instanceof StandardServer)) return;
 
-            TomcatHelper.setServer(server);
-
-            final Properties properties = new Properties();
-            System.getProperties().setProperty("openejb.embedder.source", getClass().getSimpleName());
-            properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
-
-
-            // if SystemInstance is already initialized, then return
-            if (SystemInstance.isInitialized()) {
-                return;
-            }
-
-            // set the openejb.loader property to tomcat-system
-            properties.setProperty("openejb.loader", "tomcat-system");
-
-            // Get the value of catalina.home and set it to openejb.home
-            String catalinaHome = System.getProperty("catalina.home");
-            properties.setProperty("openejb.home", catalinaHome);
-
-            //Sets system property for openejb.home
-            System.setProperty("openejb.home", catalinaHome);
-
-            //get the value of catalina.base and set it to openejb.base
-            String catalinaBase = System.getProperty("catalina.base");
-            properties.setProperty("openejb.base", catalinaBase);
-
-            //Sets system property for openejb.base
-            System.setProperty("openejb.base", catalinaBase);
-
-
-            // System.setProperty("tomcat.version", "x.y.z.w");
-            // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
-            // set the System properties, tomcat.version, tomcat.built
             try {
-                ClassLoader classLoader = ServerListener.class.getClassLoader();
-                Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
+                final StandardServer server = (StandardServer) event.getSource();
 
-                String serverNumber = tomcatServerInfo.getProperty("server.number");
-                if (serverNumber == null) {
-                    // Tomcat5 only has server.info
-                    String serverInfo = tomcatServerInfo.getProperty("server.info");
-                    if (serverInfo != null) {
-                        int slash = serverInfo.indexOf('/');
-                        serverNumber = serverInfo.substring(slash + 1);
+                TomcatHelper.setServer(server);
+
+                final Properties properties = new Properties();
+                System.getProperties().setProperty("openejb.embedder.source", getClass().getSimpleName());
+                properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
+
+
+                // if SystemInstance is already initialized, then return
+                if (SystemInstance.isInitialized()) {
+                    return;
+                }
+
+                // set the openejb.loader property to tomcat-system
+                properties.setProperty("openejb.loader", "tomcat-system");
+
+                // Get the value of catalina.home and set it to openejb.home
+                final String catalinaHome = System.getProperty("catalina.home");
+                properties.setProperty("openejb.home", catalinaHome);
+
+                //Sets system property for openejb.home
+                System.setProperty("openejb.home", catalinaHome);
+
+                //get the value of catalina.base and set it to openejb.base
+                final String catalinaBase = System.getProperty("catalina.base");
+                properties.setProperty("openejb.base", catalinaBase);
+
+                //Sets system property for openejb.base
+                System.setProperty("openejb.base", catalinaBase);
+
+
+                // System.setProperty("tomcat.version", "x.y.z.w");
+                // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
+                // set the System properties, tomcat.version, tomcat.built
+                try {
+                    final ClassLoader classLoader = ServerListener.class.getClassLoader();
+                    final Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
+
+                    String serverNumber = tomcatServerInfo.getProperty("server.number");
+                    if (serverNumber == null) {
+                        // Tomcat5 only has server.info
+                        final String serverInfo = tomcatServerInfo.getProperty("server.info");
+                        if (serverInfo != null) {
+                            final int slash = serverInfo.indexOf('/');
+                            serverNumber = serverInfo.substring(slash + 1);
+                        }
                     }
-                }
-                if (serverNumber != null) {
-                    System.setProperty("tomcat.version", serverNumber);
+                    if (serverNumber != null) {
+                        System.setProperty("tomcat.version", serverNumber);
+                    }
+
+                    final String serverBuilt = tomcatServerInfo.getProperty("server.built");
+                    if (serverBuilt != null) {
+                        System.setProperty("tomcat.built", serverBuilt);
+                    }
+                } catch (final Throwable e) {
+                    // no-op
                 }
 
-                String serverBuilt = tomcatServerInfo.getProperty("server.built");
-                if (serverBuilt != null) {
-                    System.setProperty("tomcat.built", serverBuilt);
+                // manage additional libraries
+                try {
+                    ProvisioningUtil.addAdditionalLibraries();
+                } catch (final IOException e) {
+                    // ignored
                 }
-            } catch (Throwable e) {
-                // no-op
+
+                final TomcatLoader loader = new TomcatLoader();
+                loader.init(properties);
+
+                listenerInstalled.set(true);
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
+                // e.printStackTrace(System.err);
             }
-
-            // manage additional libraries
-            try {
-                ProvisioningUtil.addAdditionalLibraries();
-            } catch (IOException e) {
-                // ignored
-            }
-
-            TomcatLoader loader = new TomcatLoader();
-            loader.init(properties);
-
-            listenerInstalled = true;
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "TomEE Listener can't start OpenEJB", e);
-            // e.printStackTrace(System.err);
         }
     }
 
-    private void installServerInfo() {
+    private synchronized void installServerInfo() {
         if (SystemInstance.get().getOptions().get("tomee.keep-server-info", false)) {
             return;
         }
@@ -146,7 +150,7 @@ public class ServerListener implements LifecycleListener {
             final String version = OpenEjbVersion.get().getVersion();
             final String tomeeVersion = (Integer.parseInt("" + version.charAt(0)) - 3) + version.substring(1, version.length());
             field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash) + " (" + tomeeVersion + ")");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         } finally {
             if (field != null) {
