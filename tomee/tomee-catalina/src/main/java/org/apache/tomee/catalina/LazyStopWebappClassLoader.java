@@ -21,6 +21,7 @@ import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -30,7 +31,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 public class LazyStopWebappClassLoader extends WebappClassLoader {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LazyStopWebappClassLoader.class.getName());
@@ -204,6 +209,16 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
+        if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
+            final Collection<URL> list = new ArrayList<URL>(Collections.list(super.getResources(name)));
+            final Iterator<URL> it = list.iterator();
+            while (it.hasNext()) {
+                if (NewLoaderLogic.skip(it.next())) {
+                    it.remove();
+                }
+            }
+            return Collections.enumeration(list);
+        }
         return URLClassLoaderFirst.filterResources(name, super.getResources(name));
     }
 

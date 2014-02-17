@@ -60,6 +60,7 @@ import org.apache.tomee.loader.TomcatHelper;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import javax.servlet.ServletContainerInitializer;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
@@ -412,10 +413,10 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override // called before processAnnotationsFile so using it as hook to init webInfClassesAnnotationsProcessed
-    protected void processServletContainerInitializers(final Set<WebXml> fragments) {
+    protected void processServletContainerInitializers(final ServletContext ctx) {
         webInfClassesAnnotationsProcessed = false;
         try {
-            super.processServletContainerInitializers(fragments);
+            super.processServletContainerInitializers(ctx);
 
             final ClassLoader loader = context.getLoader().getClassLoader();
 
