@@ -133,7 +133,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (WadlGenerator.class.isInstance(provider)) {
                 final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
                 final String ignoreRequests = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreRequests");
-                final String ignoreMessageWriters = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", false);
+                final String ignoreMessageWriters = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false");
 
                 if (ignoreRequests != null) {
                     wadlGenerator.setIgnoreRequests(Boolean.parseBoolean(ignoreRequests));
