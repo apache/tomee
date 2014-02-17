@@ -6,6 +6,7 @@ import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
@@ -122,7 +123,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 length = 1;
             }
 
-            executor = Executors.newFixedThreadPool(length * 3);
+            executor = Executors.newFixedThreadPool(length * 3, new DaemonThreadFactory("multicast-pulse-agent-"));
         }
 
         return executor;
