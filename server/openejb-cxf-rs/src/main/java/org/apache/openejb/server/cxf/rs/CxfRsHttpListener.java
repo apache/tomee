@@ -133,14 +133,24 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         if (!"default".equals(clazz)) {
 
+            /*
+            TODO:
+            The idea here is that if this property is set then it should
+            prevent later dynamic overrides by apps
+             */
+
             final String[] classes = clazz.split(",");
+            final ArrayList list = new ArrayList(classes.length);
+
             for (final String aClass : classes) {
                 try {
-                    factory.setUserProviders(Arrays.asList(Class.forName(clazz).newInstance()));
+                    list.add(Class.forName(aClass).newInstance());
                 } catch (final Exception e) {
                     LOGGER.warning("Failed to load class: " + clazz + " - " + e.getMessage());
                 }
             }
+
+            factory.setUserProviders(list);
         }
 
         for (final ProviderInfo<RequestHandler> rh : factory.getRequestHandlers()) {
