@@ -79,7 +79,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -120,7 +128,22 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
 
-        for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
+        final String clazz = SystemInstance.get().getProperty("openejb.cxf-rs.provider.classes", "default");
+        final org.apache.cxf.jaxrs.provider.ProviderFactory factory = org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance();
+
+        if (!"default".equals(clazz)) {
+
+            final String[] classes = clazz.split(",");
+            for (final String aClass : classes) {
+                try {
+                    factory.setUserProviders(Arrays.asList(Class.forName(clazz).newInstance()));
+                } catch (final Exception e) {
+                    LOGGER.warning("Failed to load class: " + clazz + " - " + e.getMessage());
+                }
+            }
+        }
+
+        for (final ProviderInfo<RequestHandler> rh : factory.getRequestHandlers()) {
             final RequestHandler provider = rh.getProvider();
             if (WadlGenerator.class.isInstance(provider)) {
                 final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
