@@ -128,32 +128,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
         STATIC_CONTENT_TYPES.put("xsd", "application/xml");
 
-        final String clazz = SystemInstance.get().getProperty("openejb.cxf-rs.provider.classes", "default");
-        final org.apache.cxf.jaxrs.provider.ProviderFactory factory = org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance();
-
-        if (!"default".equals(clazz)) {
-
-            /*
-            TODO:
-            The idea here is that if this property is set then it should
-            prevent later dynamic overrides by apps
-             */
-
-            final String[] classes = clazz.split(",");
-            final ArrayList list = new ArrayList(classes.length);
-
-            for (final String aClass : classes) {
-                try {
-                    list.add(Class.forName(aClass).newInstance());
-                } catch (final Exception e) {
-                    LOGGER.warning("Failed to load class: " + clazz + " - " + e.getMessage());
-                }
-            }
-
-            factory.setUserProviders(list);
-        }
-
-        for (final ProviderInfo<RequestHandler> rh : factory.getRequestHandlers()) {
+        for (final ProviderInfo<RequestHandler> rh : org.apache.cxf.jaxrs.provider.ProviderFactory.getSharedInstance().getRequestHandlers()) {
             final RequestHandler provider = rh.getProvider();
             if (WadlGenerator.class.isInstance(provider)) {
                 final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
