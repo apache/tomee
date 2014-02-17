@@ -132,13 +132,15 @@ public class CxfRsHttpListener implements RsHttpListener {
             final RequestHandler provider = rh.getProvider();
             if (WadlGenerator.class.isInstance(provider)) {
                 final WadlGenerator wadlGenerator = WadlGenerator.class.cast(provider);
+                final String ignoreRequests = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreRequests");
+                final String ignoreMessageWriters = SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", false);
 
-                if ("false".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreRequests", "false"))) {
-                    wadlGenerator.setIgnoreRequests(false);
+                if (ignoreRequests != null) {
+                    wadlGenerator.setIgnoreRequests(Boolean.parseBoolean(ignoreRequests));
                 }
                 // CXF-5319: bug in CXF? it prevents to get the wadl as json otherwise
-                if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf-rs.wadl-generator.ignoreMessageWriters", "false"))) {
-                    wadlGenerator.setIgnoreMessageWriters(false);
+                if (ignoreMessageWriters != null) {
+                    wadlGenerator.setIgnoreMessageWriters(Boolean.parseBoolean(ignoreMessageWriters));
                 }
             }
         }
