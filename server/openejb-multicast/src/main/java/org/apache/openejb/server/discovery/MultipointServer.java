@@ -19,6 +19,7 @@ package org.apache.openejb.server.discovery;
 import org.apache.openejb.monitoring.Event;
 import org.apache.openejb.monitoring.Managed;
 import org.apache.openejb.server.ServerRuntimeException;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -1213,7 +1214,7 @@ public class MultipointServer {
         return colors[(int) index];
     }
 
-    private final Executor dnsResolutionQueue = Executors.newFixedThreadPool(2);
+    private final Executor dnsResolutionQueue = Executors.newFixedThreadPool(2, new DaemonThreadFactory("multipoint-server-"));
 
     private class Host {
 

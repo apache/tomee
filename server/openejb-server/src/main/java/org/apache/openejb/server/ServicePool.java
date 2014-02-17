@@ -92,71 +92,69 @@ public class ServicePool extends ServerServiceFilter {
          is true then a final attempt is made to run the runnable in the current thread (the service thread).
          */
 
-        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue));
-        threadPool.setThreadFactory(new ThreadFactory() {
-
-            private final AtomicInteger i = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(final Runnable r) {
-                final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
-                t.setDaemon(true);
-                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(final Thread t, final Throwable e) {
-                        log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
-                    }
-                });
-
-                return t;
-            }
-
-        });
-
         final int c = threadCore;
         final int t = threads;
         final int q = queue;
 
-        threadPool.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue),
+                new ThreadFactory() {
+                    private final AtomicInteger i = new AtomicInteger(0);
 
-                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                    return;
-                }
+                    @Override
+                    public Thread newThread(final Runnable r) {
+                        final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
+                        t.setDaemon(true);
+                        t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                            @Override
+                            public void uncaughtException(final Thread t, final Throwable e) {
+                                log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
+                            }
+                        });
 
-                if (log.isWarningEnabled()) {
-                    log.warning(String.format("ServicePool '" + ServicePool.this.getName() + "' with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s"
-                                              + "\nConsider increasing the 'threadCore','threads' and 'queue' size properties.", c, t, q, r));
-                }
-
-                boolean offer = false;
-                try {
-                    offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    //Ignore
-                }
-
-                if (!offer) {
-
-                    if (block) {
-                        try {
-                            //Last ditch effort to run the process in the current thread
-                            r.run();
-
-                            log.warning("ServicePool '" + ServicePool.this.getName() + "' forced execution on the current server thread: " + r
-                                        + "\nIt is highly recommended that the service 'threadCore','threads' and 'queue' size properties are increased!");
-
-                        } catch (Throwable e) {
-                            log.error("ServicePool '" + ServicePool.this.getName() + "' failed to run a process in the current server thread: " + r);
-                        }
-                    } else {
-                        log.error("ServicePool '" + ServicePool.this.getName() + "' rejected asynchronous process: " + r
-                                  + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
+                        return t;
                     }
-                }
-            }
-        });
+
+                },
+                new RejectedExecutionHandler() {
+                    @Override
+                    public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+
+                        if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                            return;
+                        }
+
+                        if (log.isWarningEnabled()) {
+                            log.warning(String.format("ServicePool '" + ServicePool.this.getName() + "' with (%1$s) threads is at capicity (%2$s) for queue (%3$s) on process: %4$s"
+                                                      + "\nConsider increasing the 'threadCore','threads' and 'queue' size properties.", c, t, q, r));
+                        }
+
+                        boolean offer = false;
+                        try {
+                            offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
+                        } catch (InterruptedException e) {
+                            //Ignore
+                        }
+
+                        if (!offer) {
+
+                            if (block) {
+                                try {
+                                    //Last ditch effort to run the process in the current thread
+                                    r.run();
+
+                                    log.warning("ServicePool '" + ServicePool.this.getName() + "' forced execution on the current server thread: " + r
+                                                + "\nIt is highly recommended that the service 'threadCore','threads' and 'queue' size properties are increased!");
+
+                                } catch (Throwable e) {
+                                    log.error("ServicePool '" + ServicePool.this.getName() + "' failed to run a process in the current server thread: " + r);
+                                }
+                            } else {
+                                log.error("ServicePool '" + ServicePool.this.getName() + "' rejected asynchronous process: " + r
+                                          + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
+                            }
+                        }
+                    }
+                });
 
         SystemInstance.get().setComponent(ServicePool.class, this);
 
