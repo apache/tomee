@@ -700,9 +700,16 @@ public class Installer {
                 systemPropertiesWriter.write("# javax.persistence.jtaDataSource = \n");
                 systemPropertiesWriter.write("# javax.persistence.nonJtaDataSource = \n");
 
+                systemPropertiesWriter.write("#\n");
+                systemPropertiesWriter.write("# Properties for JAS RS\n");
+                systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
+                systemPropertiesWriter.write("# openejb.jaxrs.providers.auto = \n");
+                systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
+                systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
+
+                systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
                 systemPropertiesWriter.write("# If you don't use special tricks and sun default implementation, uncommenting these 4 lines forces TomEE to use it without overhead at all = \n");
-                systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MessageFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
