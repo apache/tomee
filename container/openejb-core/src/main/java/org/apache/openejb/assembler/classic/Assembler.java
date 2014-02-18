@@ -109,7 +109,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
-import org.apache.openejb.util.EventHelper;
+import org.apache.openejb.Extensions;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -315,7 +315,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private void installExtensions() {
         try {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(Assembler.class.getClassLoader()).excludeJvm()).getUrls();
-            EventHelper.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
+            Extensions.installExtensions(new ResourceFinder("META-INF", urls.toArray(new URL[urls.size()])));
             return;
         } catch (MalformedURLException e) {
             // no-op
@@ -323,8 +323,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // no-op
         }
 
-        // if an error occured do it brutely
-        EventHelper.installExtensions(new ResourceFinder("META-INF"));
+        // if an error occurred do it brutely
+        Extensions.installExtensions(new ResourceFinder("META-INF"));
     }
 
     private void setConfiguration(final OpenEjbConfiguration config) {
@@ -624,7 +624,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             appInfo.path = appInfo.appId;
         }
 
-        EventHelper.addEventClasses(classLoader, appInfo.eventClassesNeedingAppClassloader);
+        Extensions.addExtensions(classLoader, appInfo.eventClassesNeedingAppClassloader);
 
         logger.info("createApplication.start", appInfo.path);
 
