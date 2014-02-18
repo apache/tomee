@@ -81,7 +81,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.resource.jdbc.pool.DataSourceCreator;
 import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
-import org.apache.openejb.util.EventHelper;
+import org.apache.openejb.Extensions;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -898,7 +898,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final List<URL> libs = appModule.getAdditionalLibraries();
         if (libs != null && libs.size() > 0) {
             final ResourceFinder finder = new ResourceFinder("META-INF", libs.toArray(new URL[libs.size()]));
-            extensions.addAll(EventHelper.findExtensions(finder));
+            extensions.addAll(Extensions.findExtensions(finder));
             notLoaded.addAll(finder.getResourcesNotLoaded());
         }
         for (final EjbModule ejb : appModule.getEjbModules()) {
@@ -908,7 +908,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     final URL url = uri.toURL();
                     if (libs != null && !libs.contains(url)) {
                         final ResourceFinder finder = new ResourceFinder("META-INF", url);
-                        extensions.addAll(EventHelper.findExtensions(finder));
+                        extensions.addAll(Extensions.findExtensions(finder));
                         notLoaded.addAll(finder.getResourcesNotLoaded());
                     }
                 }
@@ -924,13 +924,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final List<URL> webLibs = web.getScannableUrls();
             if (webLibs != null && webLibs.size() > 0) {
                 final ResourceFinder finder = new ResourceFinder("META-INF", webLibs.toArray(new URL[webLibs.size()]));
-                extensions.addAll(EventHelper.findExtensions(finder));
+                extensions.addAll(Extensions.findExtensions(finder));
                 notLoaded.addAll(finder.getResourcesNotLoaded());
             }
         }
 
         // add it as early as possible, the ones needing the app classloader will be added later
-        EventHelper.addEventClasses(extensions);
+        Extensions.addExtensions(extensions);
 
         final String location = appModule.getJarLocation();
         logger.info("config.configApp", null != location ? location : appModule.getModuleId());
