@@ -22,6 +22,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -232,13 +233,15 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
 
-    @Override
+
     public Enumeration<URL> getResources(final String name) throws IOException {
         if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
             final Collection<URL> list = new ArrayList<URL>(Collections.list(super.getResources(name)));
             final Iterator<URL> it = list.iterator();
             while (it.hasNext()) {
-                if (NewLoaderLogic.skip(it.next())) {
+                final URL next = it.next();
+                final File file = Files.toFile(next);
+                if (!file.isFile() && NewLoaderLogic.skip(next)) {
                     it.remove();
                 }
             }
