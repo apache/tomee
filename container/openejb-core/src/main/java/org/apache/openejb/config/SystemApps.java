@@ -19,7 +19,6 @@ package org.apache.openejb.config;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.cmd.ConfigurationInfoEjb;
 import org.apache.openejb.assembler.monitoring.JMXDeployer;
-import org.apache.openejb.assembler.util.UserEjb;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
@@ -42,7 +41,6 @@ public class SystemApps {
         final OpenejbJar openejbJar = module.getOpenejbJar();
         final EjbJar ejbJar = module.getEjbJar();
 
-        ejbJar.addEnterpriseBean(new StatelessBean(null, UserEjb.class));
         ejbJar.addEnterpriseBean(new StatelessBean(null, DeployerEjb.class));
         ejbJar.addEnterpriseBean(new StatelessBean(null, ConfigurationInfoEjb.class));
         ejbJar.addEnterpriseBean(new StatelessBean(null, MEJBBean.class));
