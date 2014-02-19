@@ -100,12 +100,12 @@ import java.util.TreeMap;
 //
 
 public class SunConversion implements DynamicDeployer {
-    public AppModule deploy(AppModule appModule) {
-        SunApplication sunApplication = getSunApplication(appModule);
+    public AppModule deploy(final AppModule appModule) {
+        final SunApplication sunApplication = getSunApplication(appModule);
         if (sunApplication != null) {
-            for (Web web : sunApplication.getWeb()) {
-                String webUri = web.getWebUri();
-                for (WebModule webModule : appModule.getWebModules()) {
+            for (final Web web : sunApplication.getWeb()) {
+                final String webUri = web.getWebUri();
+                for (final WebModule webModule : appModule.getWebModules()) {
                     if (webUri.equals(webModule.getModuleId()))  {
                         webModule.setContextRoot(web.getContextRoot());
                         break;
@@ -113,24 +113,24 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
-            for (ClientModule clientModule : appModule.getClientModules()) {
-                ApplicationClient applicationClient = clientModule.getApplicationClient();
+            for (final ClientModule clientModule : appModule.getClientModules()) {
+                final ApplicationClient applicationClient = clientModule.getApplicationClient();
                 if (applicationClient == null) {
                     continue;
                 }
 
                 // map ejb-refs
-                Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
+                final Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
 
                 // map ejb-ref jndi name declaration to deploymentId
-                for (EjbRef ref : sunApplication.getEjbRef()) {
+                for (final EjbRef ref : sunApplication.getEjbRef()) {
                     if (ref.getJndiName() != null) {
                         String refName = ref.getEjbRefName();
                         refName = normalize(refName);
                         org.apache.openejb.jee.EjbRef ejbRef = refMap.get(refName);
 
                         // try to match from lookup name
-                        for (Map.Entry<String, org.apache.openejb.jee.EjbRef> aRef : refMap.entrySet()) {
+                        for (final Map.Entry<String, org.apache.openejb.jee.EjbRef> aRef : refMap.entrySet()) {
                             if (refName.equals(aRef.getValue().getLookupName())) {
                                 ejbRef = aRef.getValue();
                                 break;
@@ -148,81 +148,81 @@ public class SunConversion implements DynamicDeployer {
                 }
 
                 // map resource-env-refs and message-destination-refs
-                Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+                final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
                 resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
                 resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
-                for (ResourceRef ref : sunApplication.getResourceRef()) {
+                for (final ResourceRef ref : sunApplication.getResourceRef()) {
                     if (ref.getJndiName() != null) {
                         String refName = ref.getResRefName();
                         refName = normalize(refName);
-                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        final JndiReference resEnvRef = resEnvMap.get(refName);
                         if (resEnvRef != null) {
                             resEnvRef.setMappedName(ref.getJndiName());
                         }
                     }
                 }
-                for (ResourceEnvRef ref : sunApplication.getResourceEnvRef()) {
+                for (final ResourceEnvRef ref : sunApplication.getResourceEnvRef()) {
                     if (ref.getJndiName() != null) {
                         String refName = ref.getResourceEnvRefName();
                         refName = normalize(refName);
-                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        final JndiReference resEnvRef = resEnvMap.get(refName);
                         if (resEnvRef != null) {
                             resEnvRef.setMappedName(ref.getJndiName());
                         }
                     }
                 }
-                for (MessageDestinationRef ref : sunApplication.getMessageDestinationRef()) {
+                for (final MessageDestinationRef ref : sunApplication.getMessageDestinationRef()) {
                     if (ref.getJndiName() != null) {
                         String refName = ref.getMessageDestinationRefName();
                         refName = normalize(refName);
-                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        final JndiReference resEnvRef = resEnvMap.get(refName);
                         if (resEnvRef != null) {
                             resEnvRef.setMappedName(ref.getJndiName());
                         }
                     }
                 }
-                for (MessageDestination destination : sunApplication.getMessageDestination()) {
+                for (final MessageDestination destination : sunApplication.getMessageDestination()) {
                     if (destination.getJndiName() != null) {
                         String name = destination.getMessageDestinationName();
                         name = normalize(name);
-                        JndiReference ref = resEnvMap.get(name);
+                        final JndiReference ref = resEnvMap.get(name);
                         if (ref != null) {
                             ref.setMappedName(destination.getJndiName());
                         }
                     }
                 }
 
-                Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
-                for (org.apache.openejb.jee.sun.ServiceRef ref : sunApplication.getServiceRef()) {
+                final Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
+                for (final org.apache.openejb.jee.sun.ServiceRef ref : sunApplication.getServiceRef()) {
                     String refName = ref.getServiceRefName();
                     refName = normalize(refName);
-                    ServiceRef serviceRef = serviceRefMap.get(refName);
+                    final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
-                        for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                        final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
 
-                        for (PortInfo portInfo : ref.getPortInfo()) {
-                            PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                        for (final PortInfo portInfo : ref.getPortInfo()) {
+                            final PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
                             if (portComponentRef != null) {
-                                WsdlPort wsdlPort = portInfo.getWsdlPort();
+                                final WsdlPort wsdlPort = portInfo.getWsdlPort();
                                 if (wsdlPort != null) {
-                                    QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
+                                    final QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
                                     portComponentRef.setQName(qname);
                                 }
-                                for (StubProperty stubProperty : portInfo.getStubProperty()) {
-                                    String name = stubProperty.getName();
-                                    String value = stubProperty.getValue();
+                                for (final StubProperty stubProperty : portInfo.getStubProperty()) {
+                                    final String name = stubProperty.getName();
+                                    final String value = stubProperty.getValue();
                                     portComponentRef.getProperties().setProperty(name, value);
                                 }
                             }
                         }
 
-                        String wsdlOverride = ref.getWsdlOverride();
+                        final String wsdlOverride = ref.getWsdlOverride();
                         if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                            String serviceId = extractServiceId(wsdlOverride);
+                            final String serviceId = extractServiceId(wsdlOverride);
                             serviceRef.setMappedName(serviceId);
                         }
                     }
@@ -230,31 +230,31 @@ public class SunConversion implements DynamicDeployer {
             }
         }
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             convertModule(ejbModule, appModule.getCmpMappings());
         }
-        for (ClientModule clientModule : appModule.getClientModules()) {
+        for (final ClientModule clientModule : appModule.getClientModules()) {
             convertModule(clientModule);
         }
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             convertModule(webModule);
         }
         return appModule;
     }
 
-    private SunApplication getSunApplication(AppModule appModule) {
+    private SunApplication getSunApplication(final AppModule appModule) {
         Object altDD = appModule.getAltDDs().get("sun-application.xml");
         if (altDD instanceof String) {
             try {
                 altDD = JaxbSun.unmarshal(SunApplication.class, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbSun.unmarshal(SunApplication.class, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
@@ -264,19 +264,19 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    private SunApplicationClient getSunApplicationClient(ClientModule clientModule) {
+    private SunApplicationClient getSunApplicationClient(final ClientModule clientModule) {
         Object altDD = clientModule.getAltDDs().get("sun-application-client.xml");
         if (altDD instanceof String) {
             try {
                 altDD = JaxbSun.unmarshal(SunApplicationClient.class, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbSun.unmarshal(SunApplicationClient.class, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
@@ -286,19 +286,19 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    private SunWebApp getSunWebApp(WebModule webModule) {
+    private SunWebApp getSunWebApp(final WebModule webModule) {
         Object altDD = webModule.getAltDDs().get("sun-web.xml");
         if (altDD instanceof String) {
             try {
                 altDD = JaxbSun.unmarshal(SunWebApp.class, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbSun.unmarshal(SunWebApp.class, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
             }
@@ -309,19 +309,19 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    private SunEjbJar getSunEjbJar(EjbModule ejbModule) {
+    private SunEjbJar getSunEjbJar(final EjbModule ejbModule) {
         Object altDD = ejbModule.getAltDDs().get("sun-ejb-jar.xml");
         if (altDD instanceof String) {
             try {
                 altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbSun.unmarshal(SunEjbJar.class, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
             }
@@ -332,19 +332,19 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    private SunCmpMappings getSunCmpMappings(EjbModule ejbModule) {
+    private SunCmpMappings getSunCmpMappings(final EjbModule ejbModule) {
         Object altDD = ejbModule.getAltDDs().get("sun-cmp-mappings.xml");
         if (altDD instanceof String) {
             try {
                 altDD = JaxbSun.unmarshal(SunCmpMappings.class, new ByteArrayInputStream(((String)altDD).getBytes()));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // todo warn about not being able to parse sun descriptor
             }
         }
         if (altDD instanceof URL) {
             try {
                 altDD = JaxbSun.unmarshal(SunCmpMappings.class, IO.read((URL)altDD));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
                 // todo warn about not being able to parse sun descriptor
             }
@@ -355,25 +355,25 @@ public class SunConversion implements DynamicDeployer {
         return null;
     }
 
-    public void convertModule(ClientModule clientModule) {
+    public void convertModule(final ClientModule clientModule) {
         if (clientModule == null) {
             return;
         }
 
-        ApplicationClient applicationClient = clientModule.getApplicationClient();
+        final ApplicationClient applicationClient = clientModule.getApplicationClient();
         if (applicationClient == null) {
             return;
         }
-        SunApplicationClient sunApplicationClient = getSunApplicationClient(clientModule);
+        final SunApplicationClient sunApplicationClient = getSunApplicationClient(clientModule);
         if (sunApplicationClient == null) {
             return;
         }
 
         // map ejb-refs
-        Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
+        final Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
 
         // map ejb-ref jndi name declaration to deploymentId
-        for (EjbRef ref : sunApplicationClient.getEjbRef()) {
+        for (final EjbRef ref : sunApplicationClient.getEjbRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getEjbRefName();
                 refName = normalize(refName);
@@ -389,71 +389,71 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
         resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
         resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
-        for (ResourceRef ref : sunApplicationClient.getResourceRef()) {
+        for (final ResourceRef ref : sunApplicationClient.getResourceRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
-        for (ResourceEnvRef ref : sunApplicationClient.getResourceEnvRef()) {
+        for (final ResourceEnvRef ref : sunApplicationClient.getResourceEnvRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResourceEnvRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
-        for (MessageDestinationRef ref : sunApplicationClient.getMessageDestinationRef()) {
+        for (final MessageDestinationRef ref : sunApplicationClient.getMessageDestinationRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getMessageDestinationRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
 
-        Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
-        for (org.apache.openejb.jee.sun.ServiceRef ref : sunApplicationClient.getServiceRef()) {
+        final Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
+        for (final org.apache.openejb.jee.sun.ServiceRef ref : sunApplicationClient.getServiceRef()) {
             String refName = ref.getServiceRefName();
             refName = normalize(refName);
-            ServiceRef serviceRef = serviceRefMap.get(refName);
+            final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
-                for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
 
-                for (PortInfo portInfo : ref.getPortInfo()) {
-                    PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                for (final PortInfo portInfo : ref.getPortInfo()) {
+                    final PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
                     if (portComponentRef != null) {
-                        WsdlPort wsdlPort = portInfo.getWsdlPort();
+                        final WsdlPort wsdlPort = portInfo.getWsdlPort();
                         if (wsdlPort != null) {
-                            QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
+                            final QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
                             portComponentRef.setQName(qname);
                         }
-                        for (StubProperty stubProperty : portInfo.getStubProperty()) {
-                            String name = stubProperty.getName();
-                            String value = stubProperty.getValue();
+                        for (final StubProperty stubProperty : portInfo.getStubProperty()) {
+                            final String name = stubProperty.getName();
+                            final String value = stubProperty.getValue();
                             portComponentRef.getProperties().setProperty(name, value);
                         }
                     }
                 }
 
-                String wsdlOverride = ref.getWsdlOverride();
+                final String wsdlOverride = ref.getWsdlOverride();
                 if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                    String serviceId = extractServiceId(wsdlOverride);
+                    final String serviceId = extractServiceId(wsdlOverride);
                     serviceRef.setMappedName(serviceId);
                 }
             }
@@ -465,16 +465,16 @@ public class SunConversion implements DynamicDeployer {
         return refName;
     }
 
-    public void convertModule(WebModule webModule) {
+    public void convertModule(final WebModule webModule) {
         if (webModule == null) {
             return;
         }
 
-        WebApp webApp = webModule.getWebApp();
+        final WebApp webApp = webModule.getWebApp();
         if (webApp == null) {
             return;
         }
-        SunWebApp sunWebApp = getSunWebApp(webModule);
+        final SunWebApp sunWebApp = getSunWebApp(webModule);
         if (sunWebApp == null) {
             return;
         }
@@ -484,14 +484,14 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        Map<String,JndiReference> refMap = new TreeMap<String,JndiReference>();
+        final Map<String,JndiReference> refMap = new TreeMap<String,JndiReference>();
         refMap.putAll(webApp.getEjbRefMap());
         refMap.putAll(webApp.getEjbLocalRefMap());
 
         // map ejb-ref jndi name declaration to deploymentId
-        for (EjbRef ref : sunWebApp.getEjbRef()) {
+        for (final EjbRef ref : sunWebApp.getEjbRef()) {
             if (ref.getJndiName() != null) {
-                String refName = ref.getEjbRefName();
+                final String refName = ref.getEjbRefName();
                 JndiReference ejbRef = refMap.get(refName);
                 if (ejbRef == null) {
                     ejbRef = new org.apache.openejb.jee.EjbRef();
@@ -504,72 +504,72 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+        final Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
         resEnvMap.putAll(webApp.getResourceRefMap());
         resEnvMap.putAll(webApp.getResourceEnvRefMap());
         resEnvMap.putAll(webApp.getMessageDestinationRefMap());
 
-        for (ResourceRef ref : sunWebApp.getResourceRef()) {
+        for (final ResourceRef ref : sunWebApp.getResourceRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
-        for (ResourceEnvRef ref : sunWebApp.getResourceEnvRef()) {
+        for (final ResourceEnvRef ref : sunWebApp.getResourceEnvRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResourceEnvRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
-        for (MessageDestinationRef ref : sunWebApp.getMessageDestinationRef()) {
+        for (final MessageDestinationRef ref : sunWebApp.getMessageDestinationRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getMessageDestinationRefName();
                 refName = normalize(refName);
-                JndiReference resEnvRef = resEnvMap.get(refName);
+                final JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
                 }
             }
         }
 
-        Map<String, ServiceRef> serviceRefMap = webApp.getServiceRefMap();
-        for (org.apache.openejb.jee.sun.ServiceRef ref : sunWebApp.getServiceRef()) {
+        final Map<String, ServiceRef> serviceRefMap = webApp.getServiceRefMap();
+        for (final org.apache.openejb.jee.sun.ServiceRef ref : sunWebApp.getServiceRef()) {
             String refName = ref.getServiceRefName();
             refName = normalize(refName);
-            ServiceRef serviceRef = serviceRefMap.get(refName);
+            final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
-                for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
 
-                for (PortInfo portInfo : ref.getPortInfo()) {
-                    PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                for (final PortInfo portInfo : ref.getPortInfo()) {
+                    final PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
                     if (portComponentRef != null) {
-                        WsdlPort wsdlPort = portInfo.getWsdlPort();
+                        final WsdlPort wsdlPort = portInfo.getWsdlPort();
                         if (wsdlPort != null) {
-                            QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
+                            final QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
                             portComponentRef.setQName(qname);
                         }
-                        for (StubProperty stubProperty : portInfo.getStubProperty()) {
-                            String name = stubProperty.getName();
-                            String value = stubProperty.getValue();
+                        for (final StubProperty stubProperty : portInfo.getStubProperty()) {
+                            final String name = stubProperty.getName();
+                            final String value = stubProperty.getValue();
                             portComponentRef.getProperties().setProperty(name, value);
                         }
                     }
                 }
 
-                String wsdlOverride = ref.getWsdlOverride();
+                final String wsdlOverride = ref.getWsdlOverride();
                 if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                    String serviceId = extractServiceId(wsdlOverride);
+                    final String serviceId = extractServiceId(wsdlOverride);
                     serviceRef.setMappedName(serviceId);
                 }
             }
@@ -577,12 +577,12 @@ public class SunConversion implements DynamicDeployer {
 
         // map wsdl locations
         if (webModule.getWebservices() != null) {
-            Map<String, WebserviceDescription> descriptions = webModule.getWebservices().getWebserviceDescriptionMap();
-            for (org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunWebApp.getWebserviceDescription()) {
-                WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
+            final Map<String, WebserviceDescription> descriptions = webModule.getWebservices().getWebserviceDescriptionMap();
+            for (final org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunWebApp.getWebserviceDescription()) {
+                final WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
                 if (description == null) continue;
 
-                String serviceId = extractSerivceId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                final String serviceId = extractSerivceId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
                 if (serviceId != null) {
                     description.setId(serviceId);
                 }
@@ -591,7 +591,7 @@ public class SunConversion implements DynamicDeployer {
     }
 
 
-    public static String extractServiceId(String location) {
+    public static String extractServiceId(final String location) {
         return extractSerivceId(location, null);
     }
 
@@ -619,37 +619,37 @@ public class SunConversion implements DynamicDeployer {
         return location;
     }
 
-    public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
-        Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
-        if (entityMappings != null ) for (Entity entity : entityMappings.getEntity()) {
+    public void convertModule(final EjbModule ejbModule, final EntityMappings entityMappings) {
+        final Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
+        if (entityMappings != null ) for (final Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new SunConversion.EntityData(entity));
         }
 
         // merge data from sun-ejb-jar.xml file
-        SunEjbJar sunEjbJar = getSunEjbJar(ejbModule);
+        final SunEjbJar sunEjbJar = getSunEjbJar(ejbModule);
         mergeEjbConfig(ejbModule, sunEjbJar);
         mergeEntityMappings(entities, ejbModule.getModuleId(), ejbModule.getEjbJar(), ejbModule.getOpenejbJar(), sunEjbJar);
 
         // merge data from sun-cmp-mappings.xml file
-        SunCmpMappings sunCmpMappings = getSunCmpMappings(ejbModule);
+        final SunCmpMappings sunCmpMappings = getSunCmpMappings(ejbModule);
         if (sunCmpMappings != null) {
-            for (SunCmpMapping sunCmpMapping : sunCmpMappings.getSunCmpMapping()) {
+            for (final SunCmpMapping sunCmpMapping : sunCmpMappings.getSunCmpMapping()) {
                 mergeEntityMappings(entities, ejbModule.getModuleId(), ejbModule, entityMappings, sunCmpMapping);
             }
         }
     }
 
-    private void mergeEjbConfig(EjbModule ejbModule, SunEjbJar sunEjbJar) {
-        EjbJar ejbJar = ejbModule.getEjbJar();
-        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+    private void mergeEjbConfig(final EjbModule ejbModule, final SunEjbJar sunEjbJar) {
+        final EjbJar ejbJar = ejbModule.getEjbJar();
+        final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
         if (openejbJar == null) return;
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
 
-        Map<String,Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String,Map<String, WebserviceEndpoint>>();
-        for (Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
-            EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
+        final Map<String,Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String,Map<String, WebserviceEndpoint>>();
+        for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
+            final EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
             if (deployment == null) {
                 // warn no matching deployment
                 continue;
@@ -661,8 +661,8 @@ public class SunConversion implements DynamicDeployer {
             }
 
             // map ejb-ref jndi name declaration to deploymentId
-            Map<String, EjbLink> linksMap = deployment.getEjbLinksMap();
-            for (EjbRef ref : ejb.getEjbRef()) {
+            final Map<String, EjbLink> linksMap = deployment.getEjbLinksMap();
+            for (final EjbRef ref : ejb.getEjbRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getEjbRefName();
                     refName = normalize(refName);
@@ -677,8 +677,8 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
-            Map<String, ResourceLink> resourceLinksMap = deployment.getResourceLinksMap();
-            for (ResourceRef ref : ejb.getResourceRef()) {
+            final Map<String, ResourceLink> resourceLinksMap = deployment.getResourceLinksMap();
+            for (final ResourceRef ref : ejb.getResourceRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getResRefName();
                     refName = normalize(refName);
@@ -693,7 +693,7 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
-            for (ResourceEnvRef ref : ejb.getResourceEnvRef()) {
+            for (final ResourceEnvRef ref : ejb.getResourceEnvRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getResourceEnvRefName();
                     refName = normalize(refName);
@@ -708,7 +708,7 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
-            for (MessageDestinationRef ref : ejb.getMessageDestinationRef()) {
+            for (final MessageDestinationRef ref : ejb.getMessageDestinationRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getMessageDestinationRefName();
                     refName = normalize(refName);
@@ -723,38 +723,38 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
 
-            EnterpriseBean bean = ejbJar.getEnterpriseBeansByEjbName().get(ejb.getEjbName());
+            final EnterpriseBean bean = ejbJar.getEnterpriseBeansByEjbName().get(ejb.getEjbName());
             if (bean != null) {
-                Map<String, ServiceRef> serviceRefMap = bean.getServiceRefMap();
-                for (org.apache.openejb.jee.sun.ServiceRef ref : ejb.getServiceRef()) {
+                final Map<String, ServiceRef> serviceRefMap = bean.getServiceRefMap();
+                for (final org.apache.openejb.jee.sun.ServiceRef ref : ejb.getServiceRef()) {
                     String refName = ref.getServiceRefName();
                     refName = normalize(refName);
-                    ServiceRef serviceRef = serviceRefMap.get(refName);
+                    final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
-                        for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                        final Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
 
-                        for (PortInfo portInfo : ref.getPortInfo()) {
-                            PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                        for (final PortInfo portInfo : ref.getPortInfo()) {
+                            final PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
                             if (portComponentRef != null) {
-                                WsdlPort wsdlPort = portInfo.getWsdlPort();
+                                final WsdlPort wsdlPort = portInfo.getWsdlPort();
                                 if (wsdlPort != null) {
-                                    QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
+                                    final QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
                                     portComponentRef.setQName(qname);
                                 }
-                                for (StubProperty stubProperty : portInfo.getStubProperty()) {
-                                    String name = stubProperty.getName();
-                                    String value = stubProperty.getValue();
+                                for (final StubProperty stubProperty : portInfo.getStubProperty()) {
+                                    final String name = stubProperty.getName();
+                                    final String value = stubProperty.getValue();
                                     portComponentRef.getProperties().setProperty(name, value);
                                 }
                             }
                         }
 
-                        String wsdlOverride = ref.getWsdlOverride();
+                        final String wsdlOverride = ref.getWsdlOverride();
                         if (wsdlOverride != null && wsdlOverride.length() > 0) {
-                            String serviceId = extractServiceId(wsdlOverride);
+                            final String serviceId = extractServiceId(wsdlOverride);
                             serviceRef.setMappedName(serviceId);
                         }
                     }
@@ -763,7 +763,7 @@ public class SunConversion implements DynamicDeployer {
 
             if (ejb.getMdbResourceAdapter() != null) {
                 // resource adapter id is the MDB container ID
-                String resourceAdapterId = ejb.getMdbResourceAdapter().getResourceAdapterMid();
+                final String resourceAdapterId = ejb.getMdbResourceAdapter().getResourceAdapterMid();
                 deployment.setContainerId(resourceAdapterId);
             }
 
@@ -772,9 +772,9 @@ public class SunConversion implements DynamicDeployer {
 
         // map wsdl locations
         if (ejbModule.getWebservices() != null) {
-            Map<String, org.apache.openejb.jee.sun.WebserviceDescription> sunDescriptions = sunEjbJar.getEnterpriseBeans().getWebserviceDescriptionMap();
-            for (WebserviceDescription description : ejbModule.getWebservices().getWebserviceDescription()) {
-                org.apache.openejb.jee.sun.WebserviceDescription sunDescription = sunDescriptions.get(description.getWebserviceDescriptionName());
+            final Map<String, org.apache.openejb.jee.sun.WebserviceDescription> sunDescriptions = sunEjbJar.getEnterpriseBeans().getWebserviceDescriptionMap();
+            for (final WebserviceDescription description : ejbModule.getWebservices().getWebserviceDescription()) {
+                final org.apache.openejb.jee.sun.WebserviceDescription sunDescription = sunDescriptions.get(description.getWebserviceDescriptionName());
 
                 // get the serviceId if specified
                 String serviceId = null;
@@ -785,13 +785,13 @@ public class SunConversion implements DynamicDeployer {
                     description.setId(serviceId);
                 }
 
-                for (PortComponent port : description.getPortComponent()) {
+                for (final PortComponent port : description.getPortComponent()) {
                     // set the ejb bind location
-                    ServiceImplBean bean = port.getServiceImplBean();
+                    final ServiceImplBean bean = port.getServiceImplBean();
                     if (bean != null && bean.getEjbLink() != null) {
-                        Map<String, WebserviceEndpoint> endpoints = endpointMap.get(bean.getEjbLink());
+                        final Map<String, WebserviceEndpoint> endpoints = endpointMap.get(bean.getEjbLink());
                         if (endpoints != null) {
-                            WebserviceEndpoint endpoint = endpoints.get(port.getPortComponentName());
+                            final WebserviceEndpoint endpoint = endpoints.get(port.getPortComponentName());
                             if (endpoint != null && endpoint.getEndpointAddressUri() != null) {
                                 port.setLocation(endpoint.getEndpointAddressUri());
                             }
@@ -802,51 +802,51 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    private void mergeEntityMappings(Map<String, EntityData> entities, String moduleId, EjbJar ejbJar, OpenejbJar openejbJar, SunEjbJar sunEjbJar) {
+    private void mergeEntityMappings(final Map<String, EntityData> entities, final String moduleId, final EjbJar ejbJar, final OpenejbJar openejbJar, final SunEjbJar sunEjbJar) {
         if (openejbJar == null) return;
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
 
-        for (Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
-            Cmp cmp = ejb.getCmp();
+        for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
+            final Cmp cmp = ejb.getCmp();
             if (cmp == null) {
                 // skip non cmp beans
                 continue;
             }
 
             // skip all non-CMP beans
-            EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejb.getEjbName());
+            final EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejb.getEjbName());
             if (!(enterpriseBean instanceof EntityBean) ||
                     ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
                 continue;
             }
-            EntityBean bean = (EntityBean) enterpriseBean;
-            EntityData entityData = entities.get(moduleId + "#" + ejb.getEjbName());
+            final EntityBean bean = (EntityBean) enterpriseBean;
+            final EntityData entityData = entities.get(moduleId + "#" + ejb.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
 
-            Collection<String> cmpFields = new ArrayList<String>(bean.getCmpField().size());
-            for (CmpField cmpField : bean.getCmpField()) {
+            final Collection<String> cmpFields = new ArrayList<String>(bean.getCmpField().size());
+            for (final CmpField cmpField : bean.getCmpField()) {
                 cmpFields.add(cmpField.getFieldName());
             }
 
-            OneOneFinders oneOneFinders = cmp.getOneOneFinders();
+            final OneOneFinders oneOneFinders = cmp.getOneOneFinders();
             if (oneOneFinders != null) {
-                for (Finder finder : oneOneFinders.getFinder()) {
-                    List<List<String>> params = parseQueryParamters(finder.getQueryParams());
-                    String queryFilter = finder.getQueryFilter();
-                    String ejbQl = convertToEjbQl(entityData.entity.getName(), cmpFields, finder.getQueryParams(), queryFilter);
+                for (final Finder finder : oneOneFinders.getFinder()) {
+                    final List<List<String>> params = parseQueryParamters(finder.getQueryParams());
+                    final String queryFilter = finder.getQueryFilter();
+                    final String ejbQl = convertToEjbQl(entityData.entity.getName(), cmpFields, finder.getQueryParams(), queryFilter);
 
-                    NamedQuery namedQuery = new NamedQuery();
+                    final NamedQuery namedQuery = new NamedQuery();
 
-                    StringBuilder name = new StringBuilder();
+                    final StringBuilder name = new StringBuilder();
                     name.append(entityData.entity.getName()).append(".").append(finder.getMethodName());
                     if (!params.isEmpty()) {
                         name.append('(');
                         boolean first = true;
-                        for (List<String> methodParam : params) {
+                        for (final List<String> methodParam : params) {
                             if (!first) name.append(",");
                             name.append(methodParam.get(0));
                             first = false;
@@ -861,56 +861,56 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    public void mergeEntityMappings(Map<String, EntityData> entities, String moduleId, EjbModule ejbModule, EntityMappings entityMappings, SunCmpMapping sunCmpMapping) {
-        for (EntityMapping bean : sunCmpMapping.getEntityMapping()) {
-            SunConversion.EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
+    public void mergeEntityMappings(final Map<String, EntityData> entities, final String moduleId, final EjbModule ejbModule, final EntityMappings entityMappings, final SunCmpMapping sunCmpMapping) {
+        for (final EntityMapping bean : sunCmpMapping.getEntityMapping()) {
+            final SunConversion.EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
             }
 
-            Table table = new Table();
+            final Table table = new Table();
             // table.setSchema(schema);
             table.setName(bean.getTableName());
             entityData.entity.setTable(table);
 
             // warn about no equivalent of the consistence modes in sun file
 
-            for (org.apache.openejb.jee.sun.SecondaryTable sunSecondaryTable : bean.getSecondaryTable()) {
-                SecondaryTable secondaryTable = new SecondaryTable();
+            for (final org.apache.openejb.jee.sun.SecondaryTable sunSecondaryTable : bean.getSecondaryTable()) {
+                final SecondaryTable secondaryTable = new SecondaryTable();
                 secondaryTable.setName(sunSecondaryTable.getTableName());
-                for (ColumnPair columnPair : sunSecondaryTable.getColumnPair()) {
+                for (final ColumnPair columnPair : sunSecondaryTable.getColumnPair()) {
                     SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
                     SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                     // if user specified in reverse order, swap
                     if (localColumnName.table != null) {
-                        SunColumnName temp = localColumnName;
+                        final SunColumnName temp = localColumnName;
                         localColumnName = referencedColumnName;
                         referencedColumnName = temp;
                     }
 
-                    PrimaryKeyJoinColumn primaryKeyJoinColumn = new PrimaryKeyJoinColumn();
+                    final PrimaryKeyJoinColumn primaryKeyJoinColumn = new PrimaryKeyJoinColumn();
                     primaryKeyJoinColumn.setName(localColumnName.column);
                     primaryKeyJoinColumn.setReferencedColumnName(referencedColumnName.column);
                     secondaryTable.getPrimaryKeyJoinColumn().add(primaryKeyJoinColumn);
                 }
             }
 
-            for (CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
-                String fieldName = cmpFieldMapping.getFieldName();
-                Field field = entityData.fields.get(fieldName);
+            for (final CmpFieldMapping cmpFieldMapping : bean.getCmpFieldMapping()) {
+                final String fieldName = cmpFieldMapping.getFieldName();
+                final Field field = entityData.fields.get(fieldName);
 
                 if (field == null) {
                     // todo warn no such cmp-field in the ejb-jar.xml
                     continue;
                 }
 
-                boolean readOnly = cmpFieldMapping.getReadOnly() != null;
+                final boolean readOnly = cmpFieldMapping.getReadOnly() != null;
 
-                for (ColumnName columnName : cmpFieldMapping.getColumnName()) {
-                    SunColumnName sunColumnName = new SunColumnName(columnName, table.getName());
-                    Column column = new Column();
+                for (final ColumnName columnName : cmpFieldMapping.getColumnName()) {
+                    final SunColumnName sunColumnName = new SunColumnName(columnName, table.getName());
+                    final Column column = new Column();
                     column.setTable(sunColumnName.table);
                     column.setName(sunColumnName.column);
                     if (readOnly) {
@@ -923,34 +923,34 @@ public class SunConversion implements DynamicDeployer {
                 // FetchedWith fetchedWith = cmpFieldMapping.getFetchedWith();
             }
 
-            for (CmrFieldMapping cmrFieldMapping : bean.getCmrFieldMapping()) {
-                String fieldName = cmrFieldMapping.getCmrFieldName();
+            for (final CmrFieldMapping cmrFieldMapping : bean.getCmrFieldMapping()) {
+                final String fieldName = cmrFieldMapping.getCmrFieldName();
                 cmrFieldMapping.getColumnPair();
-                RelationField field = entityData.relations.get(fieldName);
+                final RelationField field = entityData.relations.get(fieldName);
                 if (field == null) {
                     // todo warn no such cmr-field in the ejb-jar.xml
                     continue;
                 }
 
                 if (field instanceof OneToOne) {
-                    for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
+                    for (final ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
                         SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
                         SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
-                            SunColumnName temp = localColumnName;
+                            final SunColumnName temp = localColumnName;
                             localColumnName = referencedColumnName;
                             referencedColumnName = temp;
                         }
 
-                        boolean isFk = !entityData.hasPkColumnMapping(localColumnName.column);
+                        final boolean isFk = !entityData.hasPkColumnMapping(localColumnName.column);
                         if (isFk) {
                             // Make sure that the field with the FK is marked as the owning field
                             field.setMappedBy(null);
                             field.getRelatedField().setMappedBy(field.getName());
 
-                            JoinColumn joinColumn = new JoinColumn();
+                            final JoinColumn joinColumn = new JoinColumn();
                             joinColumn.setName(localColumnName.column);
                             joinColumn.setReferencedColumnName(referencedColumnName.column);
                             field.getJoinColumn().add(joinColumn);
@@ -962,18 +962,18 @@ public class SunConversion implements DynamicDeployer {
                         continue;
                     }
 
-                    for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
+                    for (final ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
                         SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
                         SunColumnName otherColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
-                            SunColumnName temp = localColumnName;
+                            final SunColumnName temp = localColumnName;
                             localColumnName = otherColumnName;
                             otherColumnName = temp;
                         }
 
-                        JoinColumn joinColumn = new JoinColumn();
+                        final JoinColumn joinColumn = new JoinColumn();
                         // for OneToMany the join column name is the other (fk) column
                         joinColumn.setName(otherColumnName.column);
                         // and the referenced column is the local (pk) column
@@ -981,18 +981,18 @@ public class SunConversion implements DynamicDeployer {
                         field.getRelatedField().getJoinColumn().add(joinColumn);
                     }
                 } else if (field instanceof ManyToOne) {
-                    for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
+                    for (final ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
                         SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
                         SunColumnName referencedColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         // if user specified in reverse order, swap
                         if (localColumnName.table != null) {
-                            SunColumnName temp = localColumnName;
+                            final SunColumnName temp = localColumnName;
                             localColumnName = referencedColumnName;
                             referencedColumnName = temp;
                         }
 
-                        JoinColumn joinColumn = new JoinColumn();
+                        final JoinColumn joinColumn = new JoinColumn();
                         joinColumn.setName(localColumnName.column);
                         joinColumn.setReferencedColumnName(referencedColumnName.column);
                         field.getJoinColumn().add(joinColumn);
@@ -1001,16 +1001,16 @@ public class SunConversion implements DynamicDeployer {
                     // skip the non owning side
                     if (field.getMappedBy() != null) continue;
 
-                    JoinTable joinTable = new JoinTable();
+                    final JoinTable joinTable = new JoinTable();
                     field.setJoinTable(joinTable);
-                    for (ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
+                    for (final ColumnPair columnPair : cmrFieldMapping.getColumnPair()) {
                         SunColumnName localColumnName = new SunColumnName(columnPair.getColumnName().get(0), table.getName());
                         SunColumnName joinTableColumnName = new SunColumnName(columnPair.getColumnName().get(1), table.getName());
 
                         if (localColumnName.table == null || joinTableColumnName.table == null) {
                             // if user specified in reverse order, swap
                             if (localColumnName.table != null) {
-                                SunColumnName temp = localColumnName;
+                                final SunColumnName temp = localColumnName;
                                 localColumnName = joinTableColumnName;
                                 joinTableColumnName = temp;
                             }
@@ -1018,19 +1018,19 @@ public class SunConversion implements DynamicDeployer {
                             // join table is the table name of the referenced column
                             joinTable.setName(joinTableColumnName.table);
 
-                            JoinColumn joinColumn = new JoinColumn();
+                            final JoinColumn joinColumn = new JoinColumn();
                             joinColumn.setName(joinTableColumnName.column);
                             joinColumn.setReferencedColumnName(localColumnName.column);
                             joinTable.getJoinColumn().add(joinColumn);
                         } else {
                             // if user specified in reverse order, swap
                             if (localColumnName.table.equals(joinTable.getName())) {
-                                SunColumnName temp = localColumnName;
+                                final SunColumnName temp = localColumnName;
                                 localColumnName = joinTableColumnName;
                                 joinTableColumnName = temp;
                             }
 
-                            JoinColumn joinColumn = new JoinColumn();
+                            final JoinColumn joinColumn = new JoinColumn();
                             joinColumn.setName(joinTableColumnName.column);
                             joinColumn.setReferencedColumnName(localColumnName.column);
                             joinTable.getInverseJoinColumn().add(joinColumn);
@@ -1042,74 +1042,74 @@ public class SunConversion implements DynamicDeployer {
         }
     }
 
-    public String convertToEjbQl(String abstractSchemaName, String queryParams, String queryFilter) {
+    public String convertToEjbQl(final String abstractSchemaName, final String queryParams, final String queryFilter) {
         return convertToEjbQl(abstractSchemaName, Collections.<String>emptyList(), queryParams, queryFilter);
     }
 
-    public String convertToEjbQl(String abstractSchemaName, Collection<String>  cmpFields, String queryParams, String queryFilter) {
-        List<List<String>> variableNames = parseQueryParamters(queryParams);
+    public String convertToEjbQl(final String abstractSchemaName, final Collection<String>  cmpFields, final String queryParams, final String queryFilter) {
+        final List<List<String>> variableNames = parseQueryParamters(queryParams);
 
-        StringBuilder ejbQl = new StringBuilder();
+        final StringBuilder ejbQl = new StringBuilder();
         ejbQl.append("SELECT OBJECT(o) FROM ").append(abstractSchemaName).append(" AS o");
-        String filter = convertToEjbQlFilter(cmpFields, variableNames, queryFilter);
+        final String filter = convertToEjbQlFilter(cmpFields, variableNames, queryFilter);
         if (filter != null) {
             ejbQl.append(" WHERE ").append(filter);
         }
         return ejbQl.toString();
     }
 
-    private List<List<String>> parseQueryParamters(String queryParams) {
+    private List<List<String>> parseQueryParamters(final String queryParams) {
         if (queryParams == null) return Collections.emptyList();
 
-        List bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
-        List<List<String>> params = new ArrayList<List<String>>(bits.size() / 2);
+        final List bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
+        final List<List<String>> params = new ArrayList<List<String>>(bits.size() / 2);
         for (int i = 0; i < bits.size(); i++) {
-            String type = resolveType((String) bits.get(i));
-            String param = (String) bits.get(++i);
+            final String type = resolveType((String) bits.get(i));
+            final String param = (String) bits.get(++i);
             params.add(Arrays.asList(type, param));
         }
         return params;
     }
 
-    private String resolveType(String type) {
+    private String resolveType(final String type) {
         try {
             ClassLoader.getSystemClassLoader().loadClass(type);
             return type;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // no-op
         }
         try {
-            String javaLangType = "java.lang" + type;
+            final String javaLangType = "java.lang" + type;
             ClassLoader.getSystemClassLoader().loadClass(javaLangType);
             return javaLangType;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // no-op
         }
         return type;
     }
 
-    private String convertToEjbQlFilter(Collection<String> cmpFields, List<List<String>> queryParams, String queryFilter) {
+    private String convertToEjbQlFilter(final Collection<String> cmpFields, final List<List<String>> queryParams, final String queryFilter) {
         if (queryFilter == null) return null;
 
-        Map<String, String> variableMap = new TreeMap<String, String>();
-        for (String cmpField : cmpFields) {
+        final Map<String, String> variableMap = new TreeMap<String, String>();
+        for (final String cmpField : cmpFields) {
             variableMap.put(cmpField, "o." + cmpField);
         }
         for (int i = 0; i < queryParams.size(); i++) {
-            List<String> param = queryParams.get(i);
+            final List<String> param = queryParams.get(i);
             variableMap.put(param.get(1), "?" + (i + 1));
         }
 
-        Map<String, String> symbolMap = new TreeMap<String, String>();
+        final Map<String, String> symbolMap = new TreeMap<String, String>();
         symbolMap.put("&&", "and");
         symbolMap.put("||", "or");
         symbolMap.put("!", "not");
         symbolMap.put("==", "=");
         symbolMap.put("!=", "<>");
 
-        StringBuilder ejbQlFilter = new StringBuilder(queryFilter.length() * 2);
-        List<String> tokens = tokenize(queryFilter);
-        for (String token : tokens) {
+        final StringBuilder ejbQlFilter = new StringBuilder(queryFilter.length() * 2);
+        final List<String> tokens = tokenize(queryFilter);
+        for (final String token : tokens) {
             String mappedToken = symbolMap.get(token);
             if (mappedToken == null) {
                 mappedToken = variableMap.get(token);
@@ -1122,7 +1122,7 @@ public class SunConversion implements DynamicDeployer {
             }
             ejbQlFilter.append(" ");
         }
-        String filter = ejbQlFilter.toString().trim();
+        final String filter = ejbQlFilter.toString().trim();
         if (filter.equalsIgnoreCase("true")) {
             return null;
         } else {
@@ -1134,15 +1134,15 @@ public class SunConversion implements DynamicDeployer {
         WHITESPACE, SYMBOL, NORMAL
     }
 
-    private List<String> tokenize(String queryFilter) {
-        LinkedList<String> tokens = new LinkedList<String>();
-        List bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
+    private List<String> tokenize(final String queryFilter) {
+        final LinkedList<String> tokens = new LinkedList<String>();
+        final List bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
 
         boolean inWitespace = false;
         String currentSymbol = "";
         for (int i = 0; i < bits.size(); i++) {
-            TokenType tokenType;
-            String bit = (String) bits.get(i);
+            final TokenType tokenType;
+            final String bit = (String) bits.get(i);
             switch (bit.charAt(0)) {
                 case ' ':
                 case '\t':
@@ -1193,14 +1193,14 @@ public class SunConversion implements DynamicDeployer {
         private final String table;
         private final String column;
 
-        public SunColumnName(ColumnName columnName, String primaryTableName) {
+        public SunColumnName(final ColumnName columnName, final String primaryTableName) {
             this(columnName.getvalue(), primaryTableName);
         }
 
-        public SunColumnName(String fullName, String primaryTableName) {
-            int dot = fullName.indexOf('.');
+        public SunColumnName(final String fullName, final String primaryTableName) {
+            final int dot = fullName.indexOf('.');
             if (dot > 0) {
-                String t = fullName.substring(0, dot);
+                final String t = fullName.substring(0, dot);
                 if (primaryTableName.equals(t)) {
                     table = null;
                 } else {
@@ -1220,53 +1220,53 @@ public class SunConversion implements DynamicDeployer {
         private final Map<String, Field> fields = new TreeMap<String, Field>();
         private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
 
-        public EntityData(Entity entity) {
+        public EntityData(final Entity entity) {
             if (entity == null) throw new NullPointerException("entity is null");
             this.entity = entity;
 
-            Attributes attributes = entity.getAttributes();
+            final Attributes attributes = entity.getAttributes();
             if (attributes != null) {
-                for (Id id : attributes.getId()) {
-                    String name = id.getName();
+                for (final Id id : attributes.getId()) {
+                    final String name = id.getName();
                     ids.put(name, id);
                     fields.put(name, id);
                 }
 
-                for (Basic basic : attributes.getBasic()) {
-                    String name = basic.getName();
+                for (final Basic basic : attributes.getBasic()) {
+                    final String name = basic.getName();
                     fields.put(name, basic);
                 }
 
-                for (RelationField relationField : attributes.getOneToOne()) {
-                    String name = relationField.getName();
+                for (final RelationField relationField : attributes.getOneToOne()) {
+                    final String name = relationField.getName();
                     relations.put(name, relationField);
                 }
 
-                for (RelationField relationField : attributes.getOneToMany()) {
-                    String name = relationField.getName();
+                for (final RelationField relationField : attributes.getOneToMany()) {
+                    final String name = relationField.getName();
                     relations.put(name, relationField);
                 }
 
-                for (RelationField relationField : attributes.getManyToOne()) {
-                    String name = relationField.getName();
+                for (final RelationField relationField : attributes.getManyToOne()) {
+                    final String name = relationField.getName();
                     relations.put(name, relationField);
                 }
 
-                for (RelationField relationField : attributes.getManyToMany()) {
-                    String name = relationField.getName();
+                for (final RelationField relationField : attributes.getManyToMany()) {
+                    final String name = relationField.getName();
                     relations.put(name, relationField);
                 }
             }
 
-            for (AttributeOverride attributeOverride : entity.getAttributeOverride()) {
-                String name = attributeOverride.getName();
+            for (final AttributeOverride attributeOverride : entity.getAttributeOverride()) {
+                final String name = attributeOverride.getName();
                 fields.put(name, attributeOverride);
             }
         }
 
-        public boolean hasPkColumnMapping(String column) {
+        public boolean hasPkColumnMapping(final String column) {
             if (ids.size() > 1) return false;
-            for (Id id : ids.values()) {
+            for (final Id id : ids.values()) {
                 if (column.equals(id.getColumn().getName())) {
                     return true;
                 }

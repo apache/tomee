@@ -33,7 +33,7 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
         return transactionManager;
     }
 
-    public void setTransactionManager(TransactionManager transactionManager) {
+    public void setTransactionManager(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -41,7 +41,7 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
         return transactionSynchronizationRegistry;
     }
 
-    public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry transactionSynchronizationRegistry) {
+    public void setTransactionSynchronizationRegistry(final TransactionSynchronizationRegistry transactionSynchronizationRegistry) {
         this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
     }
 
@@ -49,7 +49,7 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
         return cmpCallback;
     }
 
-    public void setCmpCallback(CmpCallback cmpCallback) {
+    public void setCmpCallback(final CmpCallback cmpCallback) {
         this.cmpCallback = cmpCallback;
     }
 

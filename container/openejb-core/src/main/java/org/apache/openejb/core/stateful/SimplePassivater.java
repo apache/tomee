@@ -66,7 +66,7 @@ public class SimplePassivater implements PassivationStrategy {
 
             logger.info("Using directory " + sessionDirectory + " for stateful session passivation");
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SystemException(getClass().getName() + ".init(): can't use directory prefix " + dir + ":" + e, e);
         }
     }
@@ -87,10 +87,10 @@ public class SimplePassivater implements PassivationStrategy {
                 IO.close(oos);
             }
 
-        } catch (NotSerializableException nse) {
+        } catch (final NotSerializableException nse) {
             logger.error("Passivation failed ", nse);
             throw (SystemException) new SystemException("The type " + nse.getMessage() + " is not serializable as mandated by the EJB specification.").initCause(nse);
-        } catch (Exception t) {
+        } catch (final Exception t) {
             logger.error("Passivation failed ", t);
             throw new SystemException(t);
         }
@@ -126,7 +126,7 @@ public class SimplePassivater implements PassivationStrategy {
                 logger.info("Activation failed: file not found " + sessionFile);
                 return null;
             }
-        } catch (Exception t) {
+        } catch (final Exception t) {
             logger.info("Activation failed ", t);
 
             throw new SystemException(t);

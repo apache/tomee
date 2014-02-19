@@ -96,7 +96,7 @@ public class EndpointFactory implements MessageEndpointFactory {
             try {
                 messageEndpoint = createEndpoint(xaResource);
                 break;
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 // ignore so we can keep trying
             }
         }

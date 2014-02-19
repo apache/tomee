@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
     private Throwable cause = this;
 
-    public NoSuchObjectException(String detailMessage) {
+    public NoSuchObjectException(final String detailMessage) {
         super(detailMessage);
     }
 
@@ -36,12 +36,12 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * @param detailMessage String The detail message for the exception.
      * @param throwable The cause of this Throwable
      */
-    public NoSuchObjectException(String detailMessage, Throwable throwable) {
+    public NoSuchObjectException(final String detailMessage, final Throwable throwable) {
         super(detailMessage);
         cause = throwable;
     }
 
-    public NoSuchObjectException(Throwable throwable) {
+    public NoSuchObjectException(final Throwable throwable) {
         super(throwable == null ? null : throwable.toString());
         cause = throwable;
     }
@@ -74,12 +74,12 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * @param parentStack a stack to compare
      * @return the number of duplicate stack frames.
      */
-    private static int countDuplicates(StackTraceElement[] currentStack,
-            StackTraceElement[] parentStack) {
+    private static int countDuplicates(final StackTraceElement[] currentStack,
+            final StackTraceElement[] parentStack) {
         int duplicates = 0;
         int parentIndex = parentStack.length;
         for (int i = currentStack.length; --i >= 0 && --parentIndex >= 0;) {
-            StackTraceElement parentFrame = parentStack[parentIndex];
+            final StackTraceElement parentFrame = parentStack[parentIndex];
             if (parentFrame.equals(currentStack[i])) {
                 duplicates++;
             } else {
@@ -95,11 +95,11 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      *
      * @param err PrintStream The stream to write the walkback on.
      */
-    public void printStackTrace(PrintStream err) {
+    public void printStackTrace(final PrintStream err) {
         err.println(toString());
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
-        StackTraceElement[] stack = getStackTrace();
+        final StackTraceElement[] stack = getStackTrace();
         for (int i = 0; i < stack.length; i++) {
             err.println("\tat " + stack[i]);
         }
@@ -109,8 +109,8 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
         while (throwable != null) {
             err.print("Caused by: ");
             err.println(throwable);
-            StackTraceElement[] currentStack = throwable.getStackTrace();
-            int duplicates = countDuplicates(currentStack, parentStack);
+            final StackTraceElement[] currentStack = throwable.getStackTrace();
+            final int duplicates = countDuplicates(currentStack, parentStack);
             for (int i = 0; i < currentStack.length - duplicates; i++) {
                 err.println("\tat " + currentStack[i]);
             }
@@ -128,11 +128,11 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      *
      * @param err PrintWriter The writer to write the walkback on.
      */
-    public void printStackTrace(PrintWriter err) {
+    public void printStackTrace(final PrintWriter err) {
         err.println(toString());
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
-        StackTraceElement[] stack = getStackTrace();
+        final StackTraceElement[] stack = getStackTrace();
         for (int i = 0; i < stack.length; i++) {
             err.println("\tat " + stack[i]);
         }
@@ -142,8 +142,8 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
         while (throwable != null) {
             err.print("Caused by: ");
             err.println(throwable);
-            StackTraceElement[] currentStack = throwable.getStackTrace();
-            int duplicates = countDuplicates(currentStack, parentStack);
+            final StackTraceElement[] currentStack = throwable.getStackTrace();
+            final int duplicates = countDuplicates(currentStack, parentStack);
             for (int i = 0; i < currentStack.length - duplicates; i++) {
                 err.println("\tat " + currentStack[i]);
             }
@@ -162,8 +162,8 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * @return String a printable representation for the receiver.
      */
     public String toString() {
-        String msg = getLocalizedMessage();
-        String name = getClass().getName();
+        final String msg = getLocalizedMessage();
+        final String name = getClass().getName();
         if (msg == null) {
             return name;
         }
@@ -178,7 +178,7 @@ public class NoSuchObjectException extends java.rmi.NoSuchObjectException {
      * @throws IllegalArgumentException when the cause is the receiver
      * @throws IllegalStateException when the cause has already been initialized
      */
-    public synchronized NoSuchObjectException initCause(Throwable throwable) {
+    public synchronized NoSuchObjectException initCause(final Throwable throwable) {
         cause = throwable;
         return this;
     }

@@ -30,7 +30,7 @@ public class UpdatableSessionContextManager extends SessionContextManager {
         try {
             scField = SessionContextManager.class.getDeclaredField("sessionContexts");
             scField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new OpenEJBRuntimeException("sessionContexts attribute of SessionContextManager not found, you probably use a not compatible version of OWB");
         }
     }
@@ -40,7 +40,7 @@ public class UpdatableSessionContextManager extends SessionContextManager {
     public UpdatableSessionContextManager() {
         try {
             contextById = (Map<String, SessionContext>) scField.get(this);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new OpenEJBRuntimeException("can't get session contexts", e);
         }
     }

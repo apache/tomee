@@ -66,11 +66,11 @@ public class SystemApps {
         return module;
     }
 
-    private static boolean exists(String className) {
+    private static boolean exists(final String className) {
         try {
             SystemApps.class.getClassLoader().loadClass(className);
             return true;
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             return false;
         }
     }

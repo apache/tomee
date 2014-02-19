@@ -40,26 +40,26 @@ public class IvmJndiFactory implements JndiFactory {
             jndiRootContext.bind("openejb/client/.", "");
             jndiRootContext.bind("openejb/Deployment/.", "");
             jndiRootContext.bind("openejb/global/.", "");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBRuntimeException("this should not happen", e);
         }
     }
 
-    public Context createComponentContext(Map<String, Object> bindings) throws SystemException {
-        IvmContext context = new IvmContext();
+    public Context createComponentContext(final Map<String, Object> bindings) throws SystemException {
+        final IvmContext context = new IvmContext();
         try {
             context.bind("java:comp/env/dummy", "dummy");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new SystemException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
         }
-        for (Map.Entry<String, Object> entry:  bindings.entrySet()) {
-            String name = entry.getKey();
-            Object value = entry.getValue();
+        for (final Map.Entry<String, Object> entry:  bindings.entrySet()) {
+            final String name = entry.getKey();
+            final Object value = entry.getValue();
             if (value == null) continue;
 
             try {
                 context.bind(name, value);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 throw new SystemException("Unable to bind '" + name + "' into bean's enc.", e);
             }
         }

@@ -38,7 +38,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     private final BeanContext relatedInfo;
     private final TransactionSynchronizationRegistry transactionRegistry;
 
-    public SetValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
+    public SetValuedCmr(final EntityBean source, final String sourceProperty, final Class<Bean> relatedType, final String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
         if (relatedType == null) throw new NullPointerException("relatedType is null");
 
@@ -51,7 +51,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         transactionRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
     }
 
-    public Set<Proxy> get(Set<Bean> others) {
+    public Set<Proxy> get(final Set<Bean> others) {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
                     "this entity does not have a cmr field for the relationship");
@@ -66,7 +66,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         CmrSet<Bean, Proxy> cmrSet = null;
         try {
             cmrSet = (CmrSet<Bean, Proxy>) transactionRegistry.getResource(this);
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
             // no tx, which is fine
         }
         
@@ -74,14 +74,14 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
             cmrSet = new CmrSet<Bean, Proxy>(source, sourceProperty, relatedInfo, relatedProperty, others);
             try {
                 transactionRegistry.putResource(this, cmrSet);
-            } catch (IllegalStateException ignored) {
+            } catch (final IllegalStateException ignored) {
                 // we tried but there is no tx
             }
         }
         return cmrSet;
     }
 
-    public void set(Set<Bean> relatedBeans, Collection newProxies) {
+    public void set(final Set<Bean> relatedBeans, final Collection newProxies) {
         if (sourceProperty == null) {
             throw new EJBException("Internal error: this container managed relationship is unidirectional and, " +
                     "this entity does not have a cmr field for the relationship");
@@ -95,7 +95,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
 
         // clear back reference in the old related beans
         if (relatedProperty != null) {
-            for (Bean oldBean : relatedBeans) {
+            for (final Bean oldBean : relatedBeans) {
                 if (oldBean != null) {
                     toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
                 }
@@ -103,9 +103,9 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
         relatedBeans.clear();
 
-        for (Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext();) {
-            Proxy newProxy = (Proxy) iterator.next();
-            Bean newBean = Cmp2Util.<Bean>getEntityBean(newProxy);
+        for (final Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext();) {
+            final Proxy newProxy = (Proxy) iterator.next();
+            final Bean newBean = Cmp2Util.<Bean>getEntityBean(newProxy);
 
             if (newProxy != null) {
                 // set the back reference in the new related bean
@@ -126,8 +126,8 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
     }
 
-    public void deleted(Set<Bean> relatedBeans) {
-        CmrSet<Bean, Proxy> cmrSet = (CmrSet<Bean, Proxy>) transactionRegistry.getResource(this);
+    public void deleted(final Set<Bean> relatedBeans) {
+        final CmrSet<Bean, Proxy> cmrSet = (CmrSet<Bean, Proxy>) transactionRegistry.getResource(this);
         if (cmrSet != null) {
             transactionRegistry.putResource(this, null);
             cmrSet.entityDeleted();
@@ -135,7 +135,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
 
         // clear back reference in the old related beans
         if (relatedProperty != null) {
-            for (Bean oldBean : relatedBeans) {
+            for (final Bean oldBean : relatedBeans) {
                 if (oldBean != null) {
                     toCmp2Entity(oldBean).OpenEJB_removeCmr(relatedProperty, source);
                 }
@@ -143,7 +143,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
     }
 
-    private Cmp2Entity toCmp2Entity(Object object) {
+    private Cmp2Entity toCmp2Entity(final Object object) {
         return (Cmp2Entity) object;
     }
 }

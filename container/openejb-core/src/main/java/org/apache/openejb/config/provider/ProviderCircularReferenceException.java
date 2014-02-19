@@ -27,7 +27,7 @@ public class ProviderCircularReferenceException extends IllegalStateException {
 
     private final Set<ID> ids;
 
-    public ProviderCircularReferenceException(Set<ID> ids) {
+    public ProviderCircularReferenceException(final Set<ID> ids) {
         super(String.format("Circular reference: %s -> %s", Join.join(" -> ", ids), ids.iterator().next()));
         this.ids = ids;
     }

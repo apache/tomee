@@ -41,7 +41,7 @@ public class Module {
     private final Set<String> mbeans = new HashSet<String>();
     private final Properties properties = new SuperProperties().caseInsensitive(true);
 
-    public Module(boolean needId) {
+    public Module(final boolean needId) {
         if (needId) {
             uniqueId = Integer.toString(currentId++);
         }
@@ -59,7 +59,7 @@ public class Module {
         return validationConfig;
     }
 
-    public void setValidationConfig(ValidationConfigType v) {
+    public void setValidationConfig(final ValidationConfigType v) {
         validationConfig = v;
     }
 
@@ -75,7 +75,7 @@ public class Module {
         return isStandaloneModule;
     }
     
-    public void setStandaloneModule(boolean isStandalone) {
+    public void setStandaloneModule(final boolean isStandalone) {
         isStandaloneModule = isStandalone;
     }    
 
@@ -83,11 +83,11 @@ public class Module {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
-    public void initAppModule(AppModule appModule) {
+    public void initAppModule(final AppModule appModule) {
         if (this.appModule == appModule) {
             return;
         }
@@ -107,7 +107,7 @@ public class Module {
         return appModule;
     }
 
-    public void initResources(Resources resources) {
+    public void initResources(final Resources resources) {
         if (this.resources != null) {
             throw new UnsupportedOperationException("resources.xml is already set");
         }

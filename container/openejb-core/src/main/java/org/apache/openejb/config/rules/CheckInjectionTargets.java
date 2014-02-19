@@ -28,10 +28,10 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class CheckInjectionTargets extends ValidationBase {
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
 
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            List<JndiReference> entries = new ArrayList<JndiReference>();
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+            final List<JndiReference> entries = new ArrayList<JndiReference>();
             entries.addAll(bean.getEjbLocalRef());
             entries.addAll(bean.getEjbRef());
             entries.addAll(bean.getEnvEntry());
@@ -42,9 +42,9 @@ public class CheckInjectionTargets extends ValidationBase {
             entries.addAll(bean.getResourceRef());
             entries.addAll(bean.getServiceRef());
 
-            for (JndiReference reference : entries) {
+            for (final JndiReference reference : entries) {
                 // check injection target
-                for (InjectionTarget target : reference.getInjectionTarget()) {
+                for (final InjectionTarget target : reference.getInjectionTarget()) {
                     boolean classPrefix = false;
 
                     String name = target.getInjectionTargetName();
@@ -53,13 +53,13 @@ public class CheckInjectionTargets extends ValidationBase {
                         name = name.substring(target.getInjectionTargetClass().length() + 1);
                     }
 
-                    String shortNameInvalid = name;
+                    final String shortNameInvalid = name;
 
                     if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-                        StringBuilder correctName = new StringBuilder(name);
+                        final StringBuilder correctName = new StringBuilder(name);
                         correctName.delete(0, 3);
                         correctName.setCharAt(0, Character.toLowerCase(correctName.charAt(0)));
-                        String shortNameCorrect = correctName.toString();
+                        final String shortNameCorrect = correctName.toString();
                         if (classPrefix) correctName.insert(0, target.getInjectionTargetClass() + "/");
 
                         warn(bean, "injectionTarget.nameContainsSet", target.getInjectionTargetName(), shortNameInvalid, shortNameCorrect, correctName, reference.getName(), reference.getClass().getSimpleName());

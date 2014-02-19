@@ -59,7 +59,7 @@ public class Deployments {
         return autoDeploy;
     }
 
-    public void setAutoDeploy(boolean autoDeploy) {
+    public void setAutoDeploy(final boolean autoDeploy) {
         this.autoDeploy = autoDeploy;
     }
 
@@ -79,12 +79,12 @@ public class Deployments {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setDir(String value) {
+    public void setDir(final String value) {
         this.dir = value;
     }
 
 
-    public Deployments dir(String name) {
+    public Deployments dir(final String name) {
         setDir(name);
         return this;
     }
@@ -105,11 +105,11 @@ public class Deployments {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setFile(String value) {
+    public void setFile(final String value) {
         this.file = value;
     }
 
-    public Deployments file(String name) {
+    public Deployments file(final String name) {
         setFile(name);
         return this;
     }
@@ -119,7 +119,7 @@ public class Deployments {
         return classpath;
     }
 
-    public void setClasspath(ClassLoader classpath) {
+    public void setClasspath(final ClassLoader classpath) {
         this.classpath = classpath;
     }
 }

@@ -44,7 +44,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public Object getAttribute(String string) {
+    public Object getAttribute(final String string) {
         return get().getAttribute(string);
     }
 
@@ -104,7 +104,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public String getParameter(String string) {
+    public String getParameter(final String string) {
         return get().getParameter(string);
     }
 
@@ -114,7 +114,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public String[] getParameterValues(String string) {
+    public String[] getParameterValues(final String string) {
         return get().getParameterValues(string);
     }
 
@@ -134,7 +134,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public String getRealPath(String string) {
+    public String getRealPath(final String string) {
         return get().getRealPath(string);
     }
 
@@ -154,7 +154,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public RequestDispatcher getRequestDispatcher(String string) {
+    public RequestDispatcher getRequestDispatcher(final String string) {
         return get().getRequestDispatcher(string);
     }
 
@@ -194,17 +194,17 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public void removeAttribute(String string) {
+    public void removeAttribute(final String string) {
         get().removeAttribute(string);
     }
 
     @Override
-    public void setAttribute(String string, Object object) {
+    public void setAttribute(final String string, final Object object) {
         get().setAttribute(string, object);
     }
 
     @Override
-    public void setCharacterEncoding(String string) throws UnsupportedEncodingException {
+    public void setCharacterEncoding(final String string) throws UnsupportedEncodingException {
         get().setCharacterEncoding(string);
     }
 
@@ -214,7 +214,7 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+    public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         return get().startAsync(servletRequest, servletResponse);
     }
 }

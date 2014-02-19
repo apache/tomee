@@ -49,7 +49,7 @@ public class AbstractRestThreadLocalProxy<T> implements Serializable {
         infos.remove();
     }
 
-    public void set(T value) {
+    public void set(final T value) {
         infos.set(value);
     }
 }

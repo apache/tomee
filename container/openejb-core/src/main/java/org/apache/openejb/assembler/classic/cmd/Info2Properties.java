@@ -69,7 +69,7 @@ public class Info2Properties {
         try {
             // parse the command line arguments
             line = parser.parse(options, args);
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             help(options);
             System.exit(-1);
         }
@@ -92,11 +92,11 @@ public class Info2Properties {
         try {
             final InitialContext ctx = new InitialContext(p);
             configInfo = (ConfigurationInfo) ctx.lookup("openejb/ConfigurationInfoBusinessRemote");
-        } catch (ServiceUnavailableException e) {
+        } catch (final ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(messages.format("cmd.deploy.serverOffline"));
             System.exit(1);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             System.out.println("ConfigurationInfo does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
             System.exit(2);
         }
@@ -105,7 +105,7 @@ public class Info2Properties {
         try {
             try {
                 tempFile = File.createTempFile("configrequest", "txt");
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -117,7 +117,7 @@ public class Info2Properties {
             if (!tempFile.exists()) {
                 throw new IllegalStateException("Failed to create tmp file: " + tempFile.getAbsolutePath());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("Temp file creation failed.");
             e.printStackTrace();
             System.exit(1);
@@ -126,7 +126,7 @@ public class Info2Properties {
         OpenEjbConfiguration configuration = null;
         try {
             configuration = configInfo.getOpenEjbConfiguration(tempFile);
-        } catch (ConfigurationInfo.UnauthorizedException e) {
+        } catch (final ConfigurationInfo.UnauthorizedException e) {
             System.err.println("This tool is currently crippled to only work with server's on the same physical machine.  See this JIRA issue for details: http://issues.apache.org/jira/browse/OPENEJB-621");
             System.exit(10);
         }
@@ -214,7 +214,7 @@ public class Info2Properties {
             for (final String prop : misc) {
                 comment(out, cr, prop + "=" + p2.get(prop));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace(new PrintWriter(new CommentsFilter(out)));
         }
     }
@@ -267,7 +267,7 @@ public class Info2Properties {
                     final Map query = new HashMap();
                     query.put("type", info.types.get(0));
                     uri += "?" + URISupport.createQueryString(query);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // no-op
                 }
             }
@@ -287,7 +287,7 @@ public class Info2Properties {
             }
             p.store(out, null);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             out.println("# Printing service(id=" + info.id + ") failed.");
             e.printStackTrace(new PrintWriter(new CommentsFilter(out)));
         }

@@ -46,9 +46,9 @@ public class OpenEJBScripter {
 
     static {
         final ScriptEngineManager mgr = new ScriptEngineManager();
-        for (ScriptEngineFactory factory : mgr.getEngineFactories()) {
+        for (final ScriptEngineFactory factory : mgr.getEngineFactories()) {
             if (factory.getParameter("THREADING") != null) { // thread safe
-                for (String ext : factory.getExtensions()) {
+                for (final String ext : factory.getExtensions()) {
                     ENGINE_FACTORIES.put(ext, factory);
                 }
             }
@@ -107,7 +107,7 @@ public class OpenEJBScripter {
             final Class<?> clazz;
             try {
                 clazz = appContext.getClassLoader().loadClass(classname);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new OpenEJBRuntimeException(e);
             }
             final Set<Bean<?>> beans = bm.getBeans(clazz);

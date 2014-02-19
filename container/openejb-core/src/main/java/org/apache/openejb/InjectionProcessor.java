@@ -51,7 +51,7 @@ public class InjectionProcessor<T> {
     private final Map<String, Object> bindings = new HashMap<String, Object>();
 
 
-    public InjectionProcessor(T suppliedInstance, Collection<Injection> injections, Context context) {
+    public InjectionProcessor(final T suppliedInstance, final Collection<Injection> injections, final Context context) {
         this.beanClass = null;
         this.suppliedInstance = suppliedInstance;
         this.injections = injections;
@@ -60,7 +60,7 @@ public class InjectionProcessor<T> {
         preDestroyMethods = null;
     }
 
-    public InjectionProcessor(Class<? extends T> beanClass, Collection<Injection> injections, Context context) {
+    public InjectionProcessor(final Class<? extends T> beanClass, final Collection<Injection> injections, final Context context) {
         this.beanClass = beanClass;
         this.injections = injections;
         this.context = context;
@@ -68,7 +68,7 @@ public class InjectionProcessor<T> {
         preDestroyMethods = null;
     }
 
-    public InjectionProcessor(Class<? extends T> beanClass, Collection<Injection> injections, List<Method> postConstructMethods, List<Method> preDestroyMethods, Context context) {
+    public InjectionProcessor(final Class<? extends T> beanClass, final Collection<Injection> injections, final List<Method> postConstructMethods, final List<Method> preDestroyMethods, final Context context) {
         this.beanClass = beanClass;
         this.injections = injections;
         this.postConstructMethods = postConstructMethods;
@@ -76,12 +76,12 @@ public class InjectionProcessor<T> {
         this.context = context;
     }
 
-    public InjectionProcessor(Class<? extends T> beanClass, Collection<Injection> injections, List<Method> postConstructMethods, List<Method> preDestroyMethods, Context context, Map<String, Object> bindings) {
+    public InjectionProcessor(final Class<? extends T> beanClass, final Collection<Injection> injections, final List<Method> postConstructMethods, final List<Method> preDestroyMethods, final Context context, final Map<String, Object> bindings) {
         this(beanClass, injections, postConstructMethods, preDestroyMethods, context);
         this.bindings.putAll(bindings);
     }
 
-    public void setProperty(String name, Object value) {
+    public void setProperty(final String name, final Object value) {
         properties.put(name, value);
     }
 
@@ -101,7 +101,7 @@ public class InjectionProcessor<T> {
 
         Class<? extends T> clazz = beanClass;
 
-        ObjectRecipe objectRecipe;
+        final ObjectRecipe objectRecipe;
         if (suppliedInstance != null) {
             clazz = (Class<? extends T>) suppliedInstance.getClass();
             objectRecipe = PassthroughFactory.recipe(suppliedInstance);
@@ -118,20 +118,20 @@ public class InjectionProcessor<T> {
 
         bindings.clear();
 
-        for (Entry<String, Object> entry : properties.entrySet()) {
+        for (final Entry<String, Object> entry : properties.entrySet()) {
             objectRecipe.setProperty(entry.getKey(), entry.getValue());
         }
 
-        Object object;
+        final Object object;
         try {
             object = objectRecipe.create(clazz.getClassLoader());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Error while creating bean " + clazz.getName(), e);
         }
 
-        Map unsetProperties = objectRecipe.getUnsetProperties();
+        final Map unsetProperties = objectRecipe.getUnsetProperties();
         if (unsetProperties.size() > 0) {
-            for (Object property : unsetProperties.keySet()) {
+            for (final Object property : unsetProperties.keySet()) {
                 logger.warning("Injection: No such property '" + property + "' in class " + clazz.getName());
             }
         }
@@ -141,7 +141,7 @@ public class InjectionProcessor<T> {
     public void postConstruct() throws OpenEJBException {
         if (instance == null) throw new IllegalStateException("Instance has not been constructed");
         if (postConstructMethods == null) return;
-        for (Method postConstruct : postConstructMethods) {
+        for (final Method postConstruct : postConstructMethods) {
             try {
                 postConstruct.invoke(instance);
             } catch (Exception e) {
@@ -156,7 +156,7 @@ public class InjectionProcessor<T> {
     public void preDestroy() {
         if (instance == null) return;
         if (preDestroyMethods == null) return;
-        for (Method preDestroy : preDestroyMethods) {
+        for (final Method preDestroy : preDestroyMethods) {
             try {
                 preDestroy.invoke(instance);
             } catch (Exception e) {
@@ -168,13 +168,13 @@ public class InjectionProcessor<T> {
         }
     }
 
-    private void fillInjectionProperties(ObjectRecipe objectRecipe) {
+    private void fillInjectionProperties(final ObjectRecipe objectRecipe) {
         if (injections == null) return;
         
         boolean usePrefix = true;
         try {
             if (beanClass != null) beanClass.getConstructor();
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // Using constructor injection
             // xbean can't handle the prefix yet
             usePrefix = false;
@@ -185,25 +185,25 @@ public class InjectionProcessor<T> {
         if (suppliedInstance != null) clazz = suppliedInstance.getClass();
 
         if (context != null) {
-            for (Injection injection : injections) {
+            for (final Injection injection : injections) {
                 if (injection.getTarget() == null) continue;
                 if (!injection.getTarget().isAssignableFrom(clazz)) continue;
 
-                String jndiName = injection.getJndiName();
+                final String jndiName = injection.getJndiName();
                 Object value;
                 try {
                     value = context.lookup(jndiName);
-                } catch (NamingException ne) { // some fallback
+                } catch (final NamingException ne) { // some fallback
                     value = bindings.get(jndiName);
                     if (value instanceof SimpleReference) {
                         try {
                             value = ((SimpleReference) value).getContent();
-                        } catch (NamingException e) {
+                        } catch (final NamingException e) {
                             if (value instanceof JndiUrlReference) {
                                 try {
                                     value = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
                                                     .lookup(((JndiUrlReference) value).getJndiName());
-                                } catch (NamingException e1) {
+                                } catch (final NamingException e1) {
                                     value = null;
                                 }
                             }
@@ -234,7 +234,7 @@ public class InjectionProcessor<T> {
         }
     }
 
-    public static Context unwrap(Context context) {
+    public static Context unwrap(final Context context) {
 //        if (context == null) return null;
 //        try {
 //            context = (Context) context.lookup("comp/env/");

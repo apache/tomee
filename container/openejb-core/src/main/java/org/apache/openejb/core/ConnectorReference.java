@@ -39,16 +39,16 @@ public class ConnectorReference extends Reference {
     private ConnectionManager conMngr;
     private ManagedConnectionFactory mngedConFactory;
 
-    public ConnectorReference(ConnectionManager manager, ManagedConnectionFactory factory) {
+    public ConnectorReference(final ConnectionManager manager, final ManagedConnectionFactory factory) {
         conMngr = manager;
         mngedConFactory = factory;
     }
 
     public Object getObject() throws NamingException {
         try {
-            Object connection = mngedConFactory.createConnectionFactory(conMngr);
+            final Object connection = mngedConFactory.createConnectionFactory(conMngr);
             return connection;
-        } catch (ResourceException re) {
+        } catch (final ResourceException re) {
             throw (NamingException) new NamingException("Could not create ConnectionFactory from " + mngedConFactory.getClass()).initCause(re);
         }
     }

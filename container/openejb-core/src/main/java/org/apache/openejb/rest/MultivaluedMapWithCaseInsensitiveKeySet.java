@@ -27,22 +27,22 @@ import java.util.TreeSet;
 public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMap<String, V> {
     private MultivaluedMap<String, V> delegate;
 
-    public MultivaluedMapWithCaseInsensitiveKeySet(MultivaluedMap<String, V> map) {
+    public MultivaluedMapWithCaseInsensitiveKeySet(final MultivaluedMap<String, V> map) {
         delegate = map;
     }
 
     @Override
-    public void add(String key, V value) {
+    public void add(final String key, final V value) {
         delegate.add(key, value);
     }
 
     @Override
-    public V getFirst(String key) {
+    public V getFirst(final String key) {
         return delegate.getFirst(realKey(key));
     }
 
     @Override
-    public void putSingle(String key, V value) {
+    public void putSingle(final String key, final V value) {
         delegate.putSingle(key, value);
     }
 
@@ -57,32 +57,32 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return getInsensitiveKeySet(delegate.keySet()).contains(key.toString());
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return delegate.containsValue(value);
     }
 
     @Override
-    public List<V> get(Object key) {
+    public List<V> get(final Object key) {
         return delegate.get(realKey(key));
     }
 
     @Override
-    public List<V> put(String key, List<V> value) {
+    public List<V> put(final String key, final List<V> value) {
         return delegate.put(key, value);
     }
 
     @Override
-    public List<V> remove(Object key) {
+    public List<V> remove(final Object key) {
         return delegate.remove(realKey(key));
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends List<V>> m) {
+    public void putAll(final Map<? extends String, ? extends List<V>> m) {
         delegate.putAll(m);
     }
 
@@ -106,21 +106,21 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
         return delegate.entrySet();
     }
 
-    private static Set<String> getInsensitiveKeySet(Set<String> values) {
-        Set<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+    private static Set<String> getInsensitiveKeySet(final Set<String> values) {
+        final Set<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         set.addAll(values);
         return set;
     }
 
-    private static Object lowerCase(Object key) {
+    private static Object lowerCase(final Object key) {
         if (key instanceof String) {
             return ((String) key).toLowerCase();
         }
         return key;
     }
 
-    private String realKey(Object key) {
-        for (Map.Entry<String, ?> entry : delegate.entrySet()) {
+    private String realKey(final Object key) {
+        for (final Map.Entry<String, ?> entry : delegate.entrySet()) {
             if (entry.getKey().toLowerCase().equals(lowerCase(key))) {
                 return entry.getKey();
             }

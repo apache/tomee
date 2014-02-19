@@ -30,7 +30,7 @@ import java.io.File;
 @Remote(ConfigurationInfo.class)
 public class ConfigurationInfoEjb implements ConfigurationInfo {
 
-    public OpenEjbConfiguration getOpenEjbConfiguration(File tmpFile) throws UnauthorizedException {
+    public OpenEjbConfiguration getOpenEjbConfiguration(final File tmpFile) throws UnauthorizedException {
         if (tmpFile.exists()) {
             return SystemInstance.get().getComponent(OpenEjbConfiguration.class);
         }

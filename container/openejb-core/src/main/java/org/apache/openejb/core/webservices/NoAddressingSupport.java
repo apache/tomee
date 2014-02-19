@@ -28,11 +28,11 @@ public class NoAddressingSupport implements AddressingSupport {
     
     public static final NoAddressingSupport INSTANCE = new NoAddressingSupport();
     
-    public EndpointReference getEndpointReference(Element... referenceParameters) {
+    public EndpointReference getEndpointReference(final Element... referenceParameters) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported.");
     }
 
-    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+    public <T extends EndpointReference> T getEndpointReference(final Class<T> clazz, final Element... referenceParameters) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported.");
     }
     

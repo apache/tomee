@@ -179,7 +179,7 @@ public class ReadDescriptors implements DynamicDeployer {
                         persistenceModule.getWatchedResources().add(path);
                     }
                     appModule.addPersistenceModule(persistenceModule);
-                } catch (Exception e1) {
+                } catch (final Exception e1) {
                     DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
                 }
             }
@@ -233,7 +233,7 @@ public class ReadDescriptors implements DynamicDeployer {
                             }
                         }
                     }
-                } catch (Exception e1) {
+                } catch (final Exception e1) {
                     DeploymentLoader.logger.error("Unable to load Persistence Unit Fragment from EAR: " + appModule.getJarLocation() + ", fragment: " + persistenceFragmentUrl.toString() + ". Exception: " + e1.getMessage(), e1);
                 }
             }
@@ -250,7 +250,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 try {
                     final Resources openejb = JaxbOpenejb.unmarshal(Resources.class, url.get());
                     module.initResources(openejb);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
                 }
             }
@@ -261,7 +261,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 try {
                     final Resources openejb = JSonConfigReader.read(Resources.class, url.get());
                     module.initResources(openejb);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warning("can't read " + url.toString() + " to load resources for module " + module.toString(), e);
                 }
             }
@@ -278,7 +278,7 @@ public class ReadDescriptors implements DynamicDeployer {
             try {
                 final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, ((Source) value).get(), false);
                 module.setValidationConfig(validationConfigType);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
             }
         }
@@ -325,7 +325,7 @@ public class ReadDescriptors implements DynamicDeployer {
                                 }
                             }
                         });
-                    } catch (Exception dontCare) {
+                    } catch (final Exception dontCare) {
                         // no-op
                     }
 
@@ -334,7 +334,7 @@ public class ReadDescriptors implements DynamicDeployer {
                         File tempFile = null;
                         try {
                             tempFile = File.createTempFile("openejb-jar-", ".xml");
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             final File tmp = new File("tmp");
                             if (!tmp.exists() && !tmp.mkdirs()) {
                                 throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -344,11 +344,11 @@ public class ReadDescriptors implements DynamicDeployer {
                         }
                         try {
                             IO.copy(source.get(), tempFile);
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             // no-op
                         }
                         filePath = tempFile.getAbsolutePath();
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         // no-op
                     }
 
@@ -389,7 +389,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     }
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", geronimoEjbJarType);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException("Failed parsing geronimo-openejb.xml", e);
             }
         }
@@ -422,7 +422,7 @@ public class ReadDescriptors implements DynamicDeployer {
             try {
                 final EjbJar ejbJar = readEjbJar(data.get());
                 ejbModule.setEjbJar(ejbJar);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBException(e);
             }
         } else {
@@ -458,7 +458,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 final Beans beans = readBeans(data.get());
                 checkDuplicatedByBeansXml(beans, beans);
                 ejbModule.setBeans(beans);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBException(e);
             }
         } else if (raw instanceof Beans) {
@@ -475,13 +475,13 @@ public class ReadDescriptors implements DynamicDeployer {
             try {
                 final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
                 ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
-            } catch (SAXException e) {
+            } catch (final SAXException e) {
                 throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (JAXBException e) {
+            } catch (final JAXBException e) {
                 throw new OpenEJBException("Cannot unmarshall the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBException("Cannot read the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException("Encountered unknown error parsing the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
             }
         }
@@ -566,13 +566,13 @@ public class ReadDescriptors implements DynamicDeployer {
         final ApplicationClient applicationClient;
         try {
             applicationClient = ApplicationClientXml.unmarshal(url);
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the application-client.xml file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the application-client.xml file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the application-client.xml file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the application-client.xml file: " + url.toExternalForm(), e);
         }
         return applicationClient;
@@ -586,11 +586,11 @@ public class ReadDescriptors implements DynamicDeployer {
                 return new EjbJar(id);
             }
             return EjbJarXml.unmarshal(new ByteArrayInputStream(content.getBytes()));
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered error parsing the ejb-jar.xml"); // file: " + url.toExternalForm(), e);
         }
     }
@@ -600,14 +600,14 @@ public class ReadDescriptors implements DynamicDeployer {
             final String content = IO.slurp(inputStream);
             if (isEmptyBeansXml(new ByteArrayInputStream(content.getBytes()))) return new Beans();
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml");// file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             e.printStackTrace();
             throw new OpenEJBException("Cannot unmarshall the beans.xml");// file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the beans.xml");// file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the beans.xml");// file: " + url.toExternalForm(), e);
         }
     }
@@ -637,7 +637,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
             });
             return true;
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             return in.getLength() == 0;
         }
     }
@@ -660,7 +660,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     return new InputSource(new ByteArrayInputStream(new byte[0]));
                 }
             });
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
@@ -670,13 +670,13 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Webservices readWebservices(final URL url) throws OpenEJBException {
         try {
             return WebservicesXml.unmarshal(url);
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the webservices.xml file: " + url.toExternalForm(), e);
         }
     }
@@ -684,13 +684,13 @@ public class ReadDescriptors implements DynamicDeployer {
     public static HandlerChains readHandlerChains(final URL url) throws OpenEJBException {
         try {
             return HandlerChainsXml.unmarshal(url);
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the webservices.xml file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the webservices.xml file: " + url.toExternalForm(), e);
         }
     }
@@ -699,13 +699,13 @@ public class ReadDescriptors implements DynamicDeployer {
         final JavaWsdlMapping wsdlMapping;
         try {
             wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshalJavaee(JavaWsdlMapping.class, IO.read(url));
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the JaxRPC mapping file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the JaxRPC mapping file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the JaxRPC mapping file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the JaxRPC mapping file: " + url.toExternalForm(), e);
         }
         return wsdlMapping;
@@ -715,24 +715,24 @@ public class ReadDescriptors implements DynamicDeployer {
         Connector connector;
         try {
             connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector.class, IO.read(url));
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             try {
                 final Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, IO.read(url));
                 connector = Connector.newConnector(connector10);
-            } catch (ParserConfigurationException e1) {
+            } catch (final ParserConfigurationException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
-            } catch (SAXException e1) {
+            } catch (final SAXException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
-            } catch (JAXBException e1) {
+            } catch (final JAXBException e1) {
                 throw new OpenEJBException("Cannot unmarshall the ra.xml file: " + url.toExternalForm(), e);
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
                 throw new OpenEJBException("Cannot read the ra.xml file: " + url.toExternalForm(), e);
             }
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the ra.xml file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the ra.xml file: " + url.toExternalForm(), e);
         }
         return connector;
@@ -742,13 +742,13 @@ public class ReadDescriptors implements DynamicDeployer {
         final WebApp webApp;
         try {
             webApp = (WebApp) WebXml.unmarshal(url);
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the web.xml file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the web.xml file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the web.xml file: " + url.toExternalForm(), e);
         }
         return webApp;
@@ -769,19 +769,19 @@ public class ReadDescriptors implements DynamicDeployer {
 
         try {
             return TldTaglibXml.unmarshal(url);
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             final String message = "Cannot parse the JSP tag library definition file: " + url.toExternalForm();
             logger.warning(message);
             logger.debug(message, e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             final String message = "Cannot unmarshall the JSP tag library definition file: " + url.toExternalForm();
             logger.warning(message);
             logger.debug(message, e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             final String message = "Cannot read the JSP tag library definition file: " + url.toExternalForm();
             logger.warning(message);
             logger.debug(message, e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             final String message = "Encountered unknown error parsing the JSP tag library definition file: " + url.toExternalForm();
             logger.warning(message);
             logger.debug(message, e);
@@ -801,13 +801,13 @@ public class ReadDescriptors implements DynamicDeployer {
                 return new FacesConfig();
             }
             return FacesConfigXml.unmarshal(new ByteArrayInputStream(content.getBytes()));
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBException("Cannot unmarshall the faces configuration file: " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("Cannot read the faces configuration file: " + url.toExternalForm(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the faces configuration file: " + url.toExternalForm(), e);
         }
     }

@@ -61,7 +61,7 @@ public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     }
 
     @Override
-    public <T> T unwrap(Class<T> tClass) {
+    public <T> T unwrap(final Class<T> tClass) {
         return factory().unwrap(tClass);
     }
 }

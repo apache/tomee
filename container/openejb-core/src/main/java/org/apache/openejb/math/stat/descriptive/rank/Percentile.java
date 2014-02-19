@@ -98,7 +98,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      *
      * @param original the {@code Percentile} instance to copy
      */
-    public Percentile(Percentile original) {
+    public Percentile(final Percentile original) {
         copy(original, this);
     }
 
@@ -207,12 +207,12 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         if (length == 1) {
             return values[begin]; // always return single value for n = 1
         }
-        double n = length;
-        double pos = p * (n + 1) / 100;
-        double fpos = Math.floor(pos);
-        int intPos = (int) fpos;
-        double dif = pos - fpos;
-        double[] sorted = new double[length];
+        final double n = length;
+        final double pos = p * (n + 1) / 100;
+        final double fpos = Math.floor(pos);
+        final int intPos = (int) fpos;
+        final double dif = pos - fpos;
+        final double[] sorted = new double[length];
         System.arraycopy(values, begin, sorted, 0, length);
         Arrays.sort(sorted);
 
@@ -222,8 +222,8 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
         if (pos >= n) {
             return sorted[length - 1];
         }
-        double lower = sorted[intPos - 1];
-        double upper = sorted[intPos];
+        final double lower = sorted[intPos - 1];
+        final double upper = sorted[intPos];
         return lower + dif * (upper - lower);
     }
 
@@ -258,7 +258,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      */
     @Override
     public Percentile copy() {
-        Percentile result = new Percentile();
+        final Percentile result = new Percentile();
         copy(this, result);
         return result;
     }
@@ -271,7 +271,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * @param dest Percentile to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Percentile source, Percentile dest) {
+    public static void copy(final Percentile source, final Percentile dest) {
         dest.quantile = source.quantile;
     }
 

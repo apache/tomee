@@ -34,57 +34,57 @@ public class GeronimoMappedName implements DynamicDeployer {
 
     private static final String MAPPED_NAME_PREFIX = "jndi:java:comp/geronimo/env/";
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         mapReferences(appModule);
         return appModule;
     }
 
-    private void mapReferences(AppModule appModule) {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+    private void mapReferences(final AppModule appModule) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             mapReferences(ejbModule.getEjbJar());
         }
     }
 
-    private void mapReferences(EjbJar ejbJar) {
+    private void mapReferences(final EjbJar ejbJar) {
         if (ejbJar == null){
             return;
         }
 
-        for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
-            for (EjbRef ref : enterpriseBean.getEjbRef()) {
+        for (final EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+            for (final EjbRef ref : enterpriseBean.getEjbRef()) {
                 // remap only corba references
-                String mappedName = ref.getMappedName();
+                final String mappedName = ref.getMappedName();
                 if (mappedName != null &&
                         (mappedName.startsWith("jndi:corbaloc") || mappedName.startsWith("jndi:corbaname"))) {
-                    String refName = ref.getEjbRefName();
+                    final String refName = ref.getEjbRefName();
                     ref.setMappedName(MAPPED_NAME_PREFIX + refName);
                 }
                 if (null == mappedName && ref.getEjbRefName().equals("ejb/MEJB")) {
                     ref.setMappedName("mejb/ejb/mgmt/MEJB");
                 }
             }
-            for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
-                String refName = ref.getMessageDestinationRefName();
+            for (final MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
+                final String refName = ref.getMessageDestinationRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
-            for (PersistenceContextRef ref : enterpriseBean.getPersistenceContextRef()) {
-                String refName = ref.getPersistenceContextRefName();
+            for (final PersistenceContextRef ref : enterpriseBean.getPersistenceContextRef()) {
+                final String refName = ref.getPersistenceContextRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
-            for (PersistenceUnitRef ref : enterpriseBean.getPersistenceUnitRef()) {
-                String refName = ref.getPersistenceUnitRefName();
+            for (final PersistenceUnitRef ref : enterpriseBean.getPersistenceUnitRef()) {
+                final String refName = ref.getPersistenceUnitRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
-            for (ResourceRef ref : enterpriseBean.getResourceRef()) {
-                String refName = ref.getResRefName();
+            for (final ResourceRef ref : enterpriseBean.getResourceRef()) {
+                final String refName = ref.getResRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
-            for (ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
-                String refName = ref.getResourceEnvRefName();
+            for (final ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
+                final String refName = ref.getResourceEnvRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
-            for (ServiceRef ref : enterpriseBean.getServiceRef()) {
-                String refName = ref.getServiceRefName();
+            for (final ServiceRef ref : enterpriseBean.getServiceRef()) {
+                final String refName = ref.getServiceRefName();
                 ref.setMappedName(MAPPED_NAME_PREFIX + refName);
             }
         }

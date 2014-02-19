@@ -40,10 +40,10 @@ public class CheckRestMethodArePublic implements ValidationRule {
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            for (EjbModule ejb : appModule.getEjbModules()) {
+            for (final EjbModule ejb : appModule.getEjbModules()) {
                 Thread.currentThread().setContextClassLoader(ejb.getClassLoader());
 
-                for (EnterpriseBean bean : ejb.getEjbJar().getEnterpriseBeans()) {
+                for (final EnterpriseBean bean : ejb.getEjbJar().getEnterpriseBeans()) {
                     if (bean instanceof SessionBean && ((SessionBean) bean).isRestService()) {
                         standAloneClasses.add(bean.getEjbClass());
                         valid(ejb.getValidation(), ejb.getClassLoader(), bean.getEjbClass());
@@ -51,7 +51,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 }
             }
 
-            for (WebModule web : appModule.getWebModules()) {
+            for (final WebModule web : appModule.getWebModules()) {
                 Thread.currentThread().setContextClassLoader(web.getClassLoader());
 
                 // build the list of classes to validate
@@ -59,29 +59,29 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 classes.addAll(web.getRestClasses());
                 classes.addAll(web.getEjbRestServices());
 
-                for (String app : web.getRestApplications()) {
-                    Class<?> clazz;
+                for (final String app : web.getRestApplications()) {
+                    final Class<?> clazz;
                     try {
                         clazz = web.getClassLoader().loadClass(app);
-                    } catch (ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException e) {
                         continue; // managed elsewhere, here we just check methods
                     }
 
                     final Application appInstance;
                     try {
                         appInstance = (Application) clazz.newInstance();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         continue; // managed elsewhere
                     }
 
                     try {
-                        for (Class<?> rsClass : appInstance.getClasses()) {
+                        for (final Class<?> rsClass : appInstance.getClasses()) {
                             classes.add(rsClass.getName());
                         }
-                        for (Object rsSingleton : appInstance.getSingletons()) {
+                        for (final Object rsSingleton : appInstance.getSingletons()) {
                             classes.add(rsSingleton.getClass().getName());
                         }
-                    } catch (RuntimeException npe) {
+                    } catch (final RuntimeException npe) {
                         if (appInstance == null) {
                             throw npe;
                         }
@@ -99,7 +99,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 }
 
                 // valid
-                for (String classname : classes) {
+                for (final String classname : classes) {
                     valid(web.getValidation(), web.getClassLoader(), classname);
                 }
 
@@ -116,15 +116,15 @@ public class CheckRestMethodArePublic implements ValidationRule {
         Class<?> clazz;
         try {
             clazz = classLoader.loadClass(classname);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return; // managed elsewhere
         }
 
         int publicMethodNumber = 0;
         int nonPublicMethods = 0;
         while (!Object.class.equals(clazz) && clazz != null) {
-            for (Method mtd : clazz.getDeclaredMethods()) {
-                boolean isPublic = Modifier.isPublic(mtd.getModifiers());
+            for (final Method mtd : clazz.getDeclaredMethods()) {
+                final boolean isPublic = Modifier.isPublic(mtd.getModifiers());
                 if (mtd.getAnnotation(Path.class) != null && !isPublic) {
                     final String name = mtd.toGenericString();
                     validation.warn(name, "rest.method.visibility", name);

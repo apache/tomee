@@ -23,15 +23,15 @@ public class NoSuchApplicationException extends OpenEJBException {
     public NoSuchApplicationException() {
     }
 
-    public NoSuchApplicationException(String message) {
+    public NoSuchApplicationException(final String message) {
         super(message);
     }
 
-    public NoSuchApplicationException(String message, Throwable rootCause) {
+    public NoSuchApplicationException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public NoSuchApplicationException(Throwable rootCause) {
+    public NoSuchApplicationException(final Throwable rootCause) {
         super(rootCause);
     }
 }

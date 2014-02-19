@@ -114,7 +114,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + brokerXmlConfig);
                 }
 
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new ResourceAdapterInternalException("Invalid BrokerXmlConfig", e);
             }
 
@@ -129,7 +129,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             //The returned broker should be started, but calling start is harmless.
             //We do not need to track the instance as the factory takes care of this.
             ActiveMQFactory.createBroker(URLs.uri(getBrokerXmlConfig())).start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").fatal("Failed to start ActiveMQ", e);
         } finally {
             ActiveMQFactory.setThreadProperties(null);
@@ -157,7 +157,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             public void run() {
                 try {
                     stopImpl();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").error("ActiveMQ shutdown failed", t);
                 }
             }
@@ -170,14 +170,14 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         try {
             timeout = Integer.parseInt(this.startupTimeout);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
 
         try {
             //Block for a maximum of timeout milliseconds waiting for this thread to die.
             stopThread.join(timeout);
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
             Logger.getInstance(LogCategory.OPENEJB_STARTUP, ActiveMQResourceAdapter.class).getChildLogger("service").warning("Gave up on ActiveMQ shutdown after " + timeout + "ms", ex);
         }
     }
@@ -191,7 +191,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             try {
                 bs.stop();
                 bs.waitUntilStopped();
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 //Ignore
             }
             it.remove();
@@ -205,7 +205,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             final Class<?> clazz = Class.forName("org.apache.kahadb.util.Scheduler");
             final Method method = clazz.getMethod("shutdown");
             method.invoke(null);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }

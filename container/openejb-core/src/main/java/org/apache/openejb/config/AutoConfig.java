@@ -338,7 +338,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             URI unitURI = URLs.uri(persistenceUnit.getId());
                             unitURI = URISupport.relativize(moduleURI, unitURI);
                             possibleUnits.add(unitURI.toString());
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // id is typically not a valid URI
                             possibleUnits.add(persistenceUnit.getId());
                         }
@@ -739,7 +739,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             String destinationId = mappedName.length() == 0 ? ref.getName() : mappedName;
             try {
                 destinationId = getResourceId(moduleId, destinationId, refType, appResources);
-            } catch (OpenEJBException ex) {
+            } catch (final OpenEJBException ex) {
                 if (!(ref instanceof ContextRef)) {
                     throw ex;
                 } else { // let jaxrs provider manage it
@@ -800,7 +800,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             try {
                 final Class<?> type = loader.loadClass(typeName);
                 return type.isAnnotationPresent(ManagedBean.class);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // ignore
             }
         }
@@ -864,7 +864,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     try {
                         final String destinationId = getResourceEnvId(bean.getEjbName(), resourceLink.getResId(), mdb.getMessageDestinationType(), appResources);
                         resourceLink.setResId(destinationId);
-                    } catch (OpenEJBException e) {
+                    } catch (final OpenEJBException e) {
                         // The MDB doesn't need the auto configured "openejb/destination" env entry
                         ejbDeployment.removeResourceLink("openejb/destination");
                     }
@@ -1005,7 +1005,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         try {
             classLoader.loadClass(type);
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return false;
         }
     }
@@ -1072,10 +1072,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     private static int getInt(final Object number) {
         try {
             return (Integer) number;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 return Integer.parseInt(number + "");
-            } catch (NumberFormatException e1) {
+            } catch (final NumberFormatException e1) {
                 return -1;
             }
         }
@@ -1135,7 +1135,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             if (clazz.isAnnotationPresent(ManagedBean.class)) {
                 return;
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             // no-op
         }
 
@@ -1161,7 +1161,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     } else {
                         id = getResourceId(ejbDeployment.getDeploymentId(), id, refType, appResources);
                     }
-                } catch (OpenEJBException e) { // changing the message to be explicit
+                } catch (final OpenEJBException e) { // changing the message to be explicit
                     throw new OpenEJBException("Can't find resource for " + ref.getOrigin() + ". (" + e.getMessage() + ")", e.getCause());
                 }
                 logger.info("Auto-linking resource-ref '" + refName + "' in bean " + ejbDeployment.getDeploymentId() + " to Resource(id=" + id + ")");
@@ -1175,7 +1175,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 link.setResId(id);
                 link.setResRefName(refName);
             }
-        } catch (OpenEJBException ex) {
+        } catch (final OpenEJBException ex) {
             if (!(ref instanceof ContextRef)) {
                 throw ex;
             }
@@ -1237,9 +1237,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     final Class target = classLoader.loadClass(injection.getInjectionTargetClass().trim());
                     final Class type = IntrospectionSupport.getPropertyType(target, injection.getInjectionTargetName().trim());
                     return type.getName();
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     // ignore
-                } catch (NoSuchFieldException e) {
+                } catch (final NoSuchFieldException e) {
                     // ignore
                 }
             }
@@ -1732,7 +1732,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                                            + " DataSource to avoid too much network bandwidth usage."
                                            + " If you want to keep it please define the DataSource explicitely.");
                         }
-                    } catch (NumberFormatException nfe) {
+                    } catch (final NumberFormatException nfe) {
                         // no-op
                     }
                 }

@@ -55,7 +55,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
     private LocationAwareLogger locationAwareLogger;
 
 
-    public Slf4jLogger(String name, String resourceBundleName) {
+    public Slf4jLogger(final String name, final String resourceBundleName) {
         super(name, resourceBundleName);
         logger = org.slf4j.LoggerFactory.getLogger(name);
         if (logger instanceof LocationAwareLogger) {
@@ -69,7 +69,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
 
     @Override
     public Level getLevel() {
-        Level level;
+        final Level level;
         // Verify from the wider (trace) to the narrower (error)
         if (logger.isTraceEnabled()) {
             level = Level.FINEST;
@@ -89,7 +89,7 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
     }
 
     @Override
-    public boolean isLoggable(Level level) {
+    public boolean isLoggable(final Level level) {
         final int i = level.intValue();
         if (i == Level.OFF.intValue()) {
             return false;
@@ -107,14 +107,14 @@ public class Slf4jLogger extends AbstractDelegatingLogger {
 
 
     @Override
-    protected void internalLogFormatted(String msg, LogRecord record) {
+    protected void internalLogFormatted(final String msg, final LogRecord record) {
 
-        Level level = record.getLevel();
-        Throwable t = record.getThrown();
+        final Level level = record.getLevel();
+        final Throwable t = record.getThrown();
 
-        Handler[] targets = getHandlers();
+        final Handler[] targets = getHandlers();
         if (targets != null) {
-            for (Handler h : targets) {
+            for (final Handler h : targets) {
                 h.publish(record);
             }
         }

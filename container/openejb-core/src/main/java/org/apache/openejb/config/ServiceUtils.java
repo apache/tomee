@@ -46,17 +46,17 @@ public class ServiceUtils {
     static {
         String defaultValue = "org.apache.openejb";
         try {
-            SystemInstance system = SystemInstance.get();
+            final SystemInstance system = SystemInstance.get();
             if (system.getProperty("openejb.embedded") != null){
                 defaultValue = "org.apache.openejb.embedded";
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             // no-op
         }
         DEFAULT_PROVIDER_URL = defaultValue;
     }
 
-    private static String currentDefaultProviderUrl(String defaultValue) {
+    private static String currentDefaultProviderUrl(final String defaultValue) {
         return SystemInstance.get().getProperty("openejb.provider.default", defaultValue);
     }
 
@@ -75,7 +75,7 @@ public class ServiceUtils {
         private final String packageName;
         private final String serviceName;
 
-        public ProviderInfo(String providerName, String serviceName) {
+        public ProviderInfo(final String providerName, final String serviceName) {
             this.packageName = providerName;
             this.serviceName = serviceName;
         }
@@ -89,26 +89,26 @@ public class ServiceUtils {
         }
     }
 
-    public static boolean hasServiceProvider(String id) {
+    public static boolean hasServiceProvider(final String id) {
         try {
-            ProviderInfo info = getProviderInfo(id);
+            final ProviderInfo info = getProviderInfo(id);
 
-            List<ServiceProvider> services = getServiceProviders(info.getPackageName());
+            final List<ServiceProvider> services = getServiceProviders(info.getPackageName());
 
-            for (ServiceProvider service : services) {
+            for (final ServiceProvider service : services) {
                 if (service.getId().equals(id)) {
                     return true;
                 }
             }
-        } catch (OpenEJBException ignored) {
+        } catch (final OpenEJBException ignored) {
             // someone else will load the file and get the exception
-        } catch (IllegalStateException ise) {
+        } catch (final IllegalStateException ise) {
             // can happen if nothing is found, same
         }
         return false;
     }
 
-    public static ServiceProvider getServiceProvider(String idString) throws OpenEJBException {
+    public static ServiceProvider getServiceProvider(final String idString) throws OpenEJBException {
         final ID id = ID.parse(idString, currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
         {
@@ -119,24 +119,24 @@ public class ServiceUtils {
         throw new NoSuchProviderException(messages.format("conf.4901", id.getName(), id.getNamespace()));
     }
 
-    public static String getServiceProviderId(String type) throws OpenEJBException {
+    public static String getServiceProviderId(final String type) throws OpenEJBException {
         return getServiceProviderId(type, null);
     }
 
-    public static String getServiceProviderId(String type, Properties required) throws OpenEJBException {
-        ServiceProvider provider = getServiceProviderByType(type, required);
+    public static String getServiceProviderId(final String type, final Properties required) throws OpenEJBException {
+        final ServiceProvider provider = getServiceProviderByType(type, required);
 
         return provider != null? provider.getId(): null;
     }
 
 
-    public static List<ServiceProvider> getServiceProvidersByServiceType(String type) throws OpenEJBException {
-        ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+    public static List<ServiceProvider> getServiceProvidersByServiceType(final String type) throws OpenEJBException {
+        final ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
         if (type == null) return providers;
 
-        List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
+        final List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
-        for (ServiceProvider service : services) {
+        for (final ServiceProvider service : services) {
             if (service.getService().equals(type)) {
                 providers.add(service);
             }
@@ -145,13 +145,13 @@ public class ServiceUtils {
         return providers;
     }
 
-    public static ServiceProvider getServiceProviderByType(String type, Properties required) throws OpenEJBException {
+    public static ServiceProvider getServiceProviderByType(final String type, Properties required) throws OpenEJBException {
         if (type == null) return null;
         if (required == null) required = new Properties();
 
-        List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
+        final List<ServiceProvider> services = getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
 
-        for (ServiceProvider service : services) {
+        for (final ServiceProvider service : services) {
             if (service.getTypes().contains(type) && implies(required, service.getProperties())) {
                 return service;
             }
@@ -160,12 +160,12 @@ public class ServiceUtils {
         return null;
     }
 
-    public static boolean implies(Properties required, Properties available) {
+    public static boolean implies(final Properties required, final Properties available) {
         if (available.containsKey("openejb.connector")) { // created from a connector so our JtaManaged etc can't be used
             return true;
         }
 
-        for (Map.Entry<Object, Object> entry : required.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : required.entrySet()) {
             Object value = available.get(entry.getKey());
 
             Object expected = entry.getValue();
@@ -186,12 +186,12 @@ public class ServiceUtils {
     }
 
 
-    public static ServiceProvider getServiceProviderByType(String providerType, String serviceType) throws OpenEJBException {
+    public static ServiceProvider getServiceProviderByType(final String providerType, final String serviceType) throws OpenEJBException {
         if (serviceType == null) return null;
 
-        List<ServiceProvider> services = getServiceProvidersByServiceType(providerType);
+        final List<ServiceProvider> services = getServiceProvidersByServiceType(providerType);
 
-        for (ServiceProvider service : services) {
+        for (final ServiceProvider service : services) {
             if (service.getTypes().contains(serviceType)) {
                 return service;
             }
@@ -204,15 +204,15 @@ public class ServiceUtils {
         return getServiceProviders(currentDefaultProviderUrl(DEFAULT_PROVIDER_URL));
     }
 
-    public static List<ServiceProvider> getServiceProviders(String packageName) throws OpenEJBException {
+    public static List<ServiceProvider> getServiceProviders(final String packageName) throws OpenEJBException {
         return getManager().load(packageName);
     }
 
-    public static void registerServiceProvider(String packageName, ServiceProvider provider) {
+    public static void registerServiceProvider(final String packageName, final ServiceProvider provider) {
         getManager().register(packageName, provider);
     }
 
-    private static ProviderInfo getProviderInfo(String id) {
+    private static ProviderInfo getProviderInfo(final String id) {
         String providerName = null;
         String serviceName = null;
 

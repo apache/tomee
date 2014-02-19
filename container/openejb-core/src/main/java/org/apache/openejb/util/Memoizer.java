@@ -35,7 +35,7 @@ public class Memoizer<K, V> implements Computable<K, V> {
      * @throws NullPointerException
      *             if c is null
      */
-    public Memoizer(Computable<K, V> c) {
+    public Memoizer(final Computable<K, V> c) {
         if(c == null) throw new NullPointerException("Computable cache value source algorithm may not be null");
         this.c = c;
     }
@@ -45,12 +45,12 @@ public class Memoizer<K, V> implements Computable<K, V> {
             Future<V> future = cache.get(key);
             if (future == null) {
 
-                Callable<V> eval = new Callable<V>() {
+                final Callable<V> eval = new Callable<V>() {
                     public V call() throws Exception {
                         return c.compute(key);
                     }
                 };
-                FutureTask<V> futureTask = new FutureTask<V>(eval);
+                final FutureTask<V> futureTask = new FutureTask<V>(eval);
                 future = cache.putIfAbsent(key, futureTask);
                 if (future == null) {
                     future = futureTask;
@@ -59,7 +59,7 @@ public class Memoizer<K, V> implements Computable<K, V> {
             }
             try {
                 return future.get();
-            } catch (ExecutionException e) {
+            } catch (final ExecutionException e) {
                 e.printStackTrace();
             }
         }

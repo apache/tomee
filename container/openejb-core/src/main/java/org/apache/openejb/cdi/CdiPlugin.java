@@ -103,7 +103,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -116,7 +116,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
     }
 
-    public void configureDeployments(List<BeanContext> ejbDeployments) {
+    public void configureDeployments(final List<BeanContext> ejbDeployments) {
         beans = new WeakHashMap<Class<?>, BeanContext>();
         for (final BeanContext deployment : ejbDeployments) {
             if (deployment.getComponentType().isSession()) {
@@ -135,7 +135,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     public void stop() throws OpenEJBException {
-        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {
             // Setting context class loader for cleaning
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -159,13 +159,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             webBeansContext.getAnnotatedElementFactory().clear();
 
             // Clear the resource injection service
-            CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
+            final CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
             injectionServices.clear();
 
             // Clear singleton list
             WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException(e);
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
@@ -173,21 +173,21 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     @Override
-    public <T> T getSupportedService(Class<T> serviceClass) {
+    public <T> T getSupportedService(final Class<T> serviceClass) {
         return supportService(serviceClass) ? serviceClass.cast(this) : null;
     }
 
     @Override
-    public void isManagedBean(Class<?> clazz) {
+    public void isManagedBean(final Class<?> clazz) {
     }
 
     @Override
-    public boolean supportService(Class<?> serviceClass) {
+    public boolean supportService(final Class<?> serviceClass) {
         return serviceClass == TransactionService.class || serviceClass == SecurityService.class;
     }
 
     @Override
-    public Object getSessionBeanProxy(Bean<?> inBean, Class<?> interfce, CreationalContext<?> creationalContext) {
+    public Object getSessionBeanProxy(final Bean<?> inBean, final Class<?> interfce, final CreationalContext<?> creationalContext) {
         Object instance = cacheProxies.get(inBean);
         if (instance != null) {
             return instance;
@@ -337,7 +337,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         final Set<ProducerFieldBean<?>> producerFields = new ProducerFieldBeansBuilder(bean.getWebBeansContext(), bean.getAnnotatedType()).defineProducerFields(bean);
 
         final Map<ProducerMethodBean<?>,AnnotatedMethod<?>> annotatedMethods = new HashMap<ProducerMethodBean<?>, AnnotatedMethod<?>>();
-        for(ProducerMethodBean<?> producerMethod : producerMethods) {
+        for(final ProducerMethodBean<?> producerMethod : producerMethods) {
             final AnnotatedMethod<?> method = webBeansContext.getAnnotatedElementFactory().newAnnotatedMethod(producerMethod.getCreatorMethod(), annotatedType);
             webBeansUtil.inspectErrorStack("There are errors that are added by ProcessProducer event observers for "
                     + "ProducerMethods. Look at logs for further details");
@@ -476,7 +476,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     @Override
-    public boolean isSingletonBean(Class<?> clazz) {
+    public boolean isSingletonBean(final Class<?> clazz) {
         throw new IllegalStateException("Statement should never be reached");
     }
 
@@ -486,21 +486,21 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     @Override
-    public boolean isStatelessBean(Class<?> clazz) {
+    public boolean isStatelessBean(final Class<?> clazz) {
         throw new IllegalStateException("Statement should never be reached");
     }
 
-    public static Method doResolveViewMethod(Bean<?> component, Method declaredMethod) {
+    public static Method doResolveViewMethod(final Bean<?> component, final Method declaredMethod) {
         if (!(component instanceof CdiEjbBean)) return declaredMethod;
 
-        CdiEjbBean cdiEjbBean = (CdiEjbBean) component;
+        final CdiEjbBean cdiEjbBean = (CdiEjbBean) component;
 
         final BeanContext beanContext = cdiEjbBean.getBeanContext();
 
-        for (Class intface : beanContext.getBusinessLocalInterfaces()) {
+        for (final Class intface : beanContext.getBusinessLocalInterfaces()) {
             try {
                 return intface.getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
-            } catch (NoSuchMethodException ignore) {
+            } catch (final NoSuchMethodException ignore) {
                 // no-op
             }
         }
@@ -508,7 +508,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     @Override
-    public Method resolveViewMethod(Bean<?> component, Method declaredMethod) {
+    public Method resolveViewMethod(final Bean<?> component, final Method declaredMethod) {
         final Method m = doResolveViewMethod(component, declaredMethod);
         if (m == null) {
             return declaredMethod;
@@ -610,7 +610,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         @Override
-        public void setSpecializedBean(boolean specialized) {
+        public void setSpecializedBean(final boolean specialized) {
             // no-op
         }
 
@@ -620,7 +620,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         @Override
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(final boolean enabled) {
             // no-op
         }
 
@@ -677,12 +677,12 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         @Override
-        public T produce(CreationalContext<T> creationalContext) {
+        public T produce(final CreationalContext<T> creationalContext) {
             return instance.create(creationalContext);
         }
 
         @Override
-        public void dispose(T instance) {
+        public void dispose(final T instance) {
             ejb.destroyComponentInstance(instance);
         }
 

@@ -77,27 +77,27 @@ public class JpaCmpEngine implements CmpEngine {
      */
     protected Object entityManagerListener;
 
-    public JpaCmpEngine(CmpCallback cmpCallback) {
+    public JpaCmpEngine(final CmpCallback cmpCallback) {
         this.cmpCallback = cmpCallback;
     }
 
-    public synchronized void deploy(BeanContext beanContext) throws OpenEJBException {
+    public synchronized void deploy(final BeanContext beanContext) throws OpenEJBException {
         configureKeyGenerator(beanContext);
     }
 
-    public synchronized void undeploy(BeanContext beanContext) throws OpenEJBException {
+    public synchronized void undeploy(final BeanContext beanContext) throws OpenEJBException {
         beanContext.setKeyGenerator(null);
     }
 
-    private EntityManager getEntityManager(BeanContext beanContext) {
+    private EntityManager getEntityManager(final BeanContext beanContext) {
         EntityManager entityManager = null;
         try {
             entityManager = (EntityManager) beanContext.getJndiEnc().lookup(CMP_PERSISTENCE_CONTEXT_REF_NAME);
-        } catch (NamingException ignored) {
+        } catch (final NamingException ignored) {
             //TODO see OPENEJB-1259 temporary hack until geronimo jndi integration works better
             try {
                 entityManager = (EntityManager) new InitialContext().lookup("java:" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
-            } catch (NamingException ignored2) {
+            } catch (final NamingException ignored2) {
                 //ignore
             }
         }
@@ -111,10 +111,10 @@ public class JpaCmpEngine implements CmpEngine {
         return entityManager;
     }
 
-    private synchronized void registerListener(EntityManager entityManager) {
+    private synchronized void registerListener(final EntityManager entityManager) {
         if (entityManager instanceof OpenJPAEntityManagerSPI) {
-            OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
-            OpenJPAEntityManagerFactorySPI openjpaEMF = (OpenJPAEntityManagerFactorySPI) openjpaEM.getEntityManagerFactory();
+            final OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
+            final OpenJPAEntityManagerFactorySPI openjpaEMF = (OpenJPAEntityManagerFactorySPI) openjpaEM.getEntityManagerFactory();
 
             if (entityManagerListener == null) {
                 entityManagerListener = new OpenJPALifecycleListener();
@@ -123,27 +123,27 @@ public class JpaCmpEngine implements CmpEngine {
             return;
         }
 
-        Object delegate = entityManager.getDelegate();
+        final Object delegate = entityManager.getDelegate();
         if (delegate != entityManager && delegate instanceof EntityManager) {
             registerListener((EntityManager) delegate);
         }
     }
 
-    public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
+    public Object createBean(EntityBean bean, final ThreadContext callContext) throws CreateException {
         // TODO verify that extract primary key requires a flush followed by a merge
-        TransactionPolicy txPolicy = startTransaction("persist", callContext);
+        final TransactionPolicy txPolicy = startTransaction("persist", callContext);
         creating.get().add(bean);
         try {
-            BeanContext beanContext = callContext.getBeanContext();
-            EntityManager entityManager = getEntityManager(beanContext);
+            final BeanContext beanContext = callContext.getBeanContext();
+            final EntityManager entityManager = getEntityManager(beanContext);
 
             entityManager.persist(bean);
             entityManager.flush();
             bean = entityManager.merge(bean);
 
             // extract the primary key from the bean
-            KeyGenerator kg = beanContext.getKeyGenerator();
-            Object primaryKey = kg.getPrimaryKey(bean);
+            final KeyGenerator kg = beanContext.getKeyGenerator();
+            final Object primaryKey = kg.getPrimaryKey(bean);
 
             return primaryKey;
         } finally {
@@ -152,31 +152,31 @@ public class JpaCmpEngine implements CmpEngine {
         }
     }
 
-    public Object loadBean(ThreadContext callContext, Object primaryKey) {
-        TransactionPolicy txPolicy = startTransaction("load", callContext);
+    public Object loadBean(final ThreadContext callContext, final Object primaryKey) {
+        final TransactionPolicy txPolicy = startTransaction("load", callContext);
         try {
-            BeanContext beanContext = callContext.getBeanContext();
-            Class<?> beanClass = beanContext.getCmpImplClass();
+            final BeanContext beanContext = callContext.getBeanContext();
+            final Class<?> beanClass = beanContext.getCmpImplClass();
 
             // Try to load it from the entity manager
-            EntityManager entityManager = getEntityManager(beanContext);
+            final EntityManager entityManager = getEntityManager(beanContext);
             return entityManager.find(beanClass, primaryKey);
         } finally {
             commitTransaction("load", callContext, txPolicy);
         }
     }
 
-    public void storeBeanIfNoTx(ThreadContext callContext, Object bean) {
-        TransactionPolicy callerTxPolicy = callContext.getTransactionPolicy();
+    public void storeBeanIfNoTx(final ThreadContext callContext, final Object bean) {
+        final TransactionPolicy callerTxPolicy = callContext.getTransactionPolicy();
         if (callerTxPolicy != null && callerTxPolicy.isTransactionActive()) {
             return;
         }
 
-        TransactionPolicy txPolicy = startTransaction("store", callContext);
+        final TransactionPolicy txPolicy = startTransaction("store", callContext);
         try {
             // only store if we started a new transaction
             if (txPolicy.isNewTransaction()) {
-                EntityManager entityManager = getEntityManager(callContext.getBeanContext());
+                final EntityManager entityManager = getEntityManager(callContext.getBeanContext());
                 entityManager.merge(bean);
             }
         } finally {
@@ -184,17 +184,17 @@ public class JpaCmpEngine implements CmpEngine {
         }
     }
 
-    public void removeBean(ThreadContext callContext) {
-        TransactionPolicy txPolicy = startTransaction("remove", callContext);
+    public void removeBean(final ThreadContext callContext) {
+        final TransactionPolicy txPolicy = startTransaction("remove", callContext);
         try {
-            BeanContext deploymentInfo = callContext.getBeanContext();
-            Class<?> beanClass = deploymentInfo.getCmpImplClass();
+            final BeanContext deploymentInfo = callContext.getBeanContext();
+            final Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
-            EntityManager entityManager = getEntityManager(deploymentInfo);
-            Object primaryKey = callContext.getPrimaryKey();
+            final EntityManager entityManager = getEntityManager(deploymentInfo);
+            final Object primaryKey = callContext.getPrimaryKey();
 
                 // Try to load it from the entity manager
-            Object bean = entityManager.find(beanClass, primaryKey);
+            final Object bean = entityManager.find(beanClass, primaryKey);
             // remove the bean
             entityManager.remove(bean);
         } finally {
@@ -202,17 +202,17 @@ public class JpaCmpEngine implements CmpEngine {
         }
     }
 
-    public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-        BeanContext deploymentInfo = callContext.getBeanContext();
-        EntityManager entityManager = getEntityManager(deploymentInfo);
+    public List<Object> queryBeans(final ThreadContext callContext, final Method queryMethod, final Object[] args) throws FinderException {
+        final BeanContext deploymentInfo = callContext.getBeanContext();
+        final EntityManager entityManager = getEntityManager(deploymentInfo);
 
-        StringBuilder queryName = new StringBuilder();
+        final StringBuilder queryName = new StringBuilder();
         queryName.append(deploymentInfo.getAbstractSchemaName()).append(".").append(queryMethod.getName());
-        String shortName = queryName.toString();
+        final String shortName = queryName.toString();
         if (queryMethod.getParameterTypes().length > 0) {
             queryName.append('(');
             boolean first = true;
-            for (Class<?> parameterType : queryMethod.getParameterTypes()) {
+            for (final Class<?> parameterType : queryMethod.getParameterTypes()) {
                 if (!first) queryName.append(',');
                 queryName.append(parameterType.getCanonicalName());
                 first = false;
@@ -221,7 +221,7 @@ public class JpaCmpEngine implements CmpEngine {
 
         }
 
-        String fullName = queryName.toString();
+        final String fullName = queryName.toString();
         Query query = createNamedQuery(entityManager, fullName);
         if (query == null) {
             query = createNamedQuery(entityManager, shortName);
@@ -232,14 +232,14 @@ public class JpaCmpEngine implements CmpEngine {
         return executeSelectQuery(query, args);
     }
 
-    public List<Object> queryBeans(BeanContext beanContext, String signature, Object[] args) throws FinderException {
-        EntityManager entityManager = getEntityManager(beanContext);
+    public List<Object> queryBeans(final BeanContext beanContext, final String signature, final Object[] args) throws FinderException {
+        final EntityManager entityManager = getEntityManager(beanContext);
 
         Query query = createNamedQuery(entityManager, signature);
         if (query == null) {
-            int parenIndex = signature.indexOf('(');
+            final int parenIndex = signature.indexOf('(');
             if (parenIndex > 0) {
-                String shortName = signature.substring(0, parenIndex);
+                final String shortName = signature.substring(0, parenIndex);
                 query = createNamedQuery(entityManager, shortName);
             }
             if (query == null) {
@@ -249,7 +249,7 @@ public class JpaCmpEngine implements CmpEngine {
         return executeSelectQuery(query, args);
     }
 
-    private List<Object> executeSelectQuery(Query query, Object[] args) {
+    private List<Object> executeSelectQuery(final Query query, Object[] args) {
         // process args
         if (args == null) {
             args = NO_ARGS;
@@ -265,7 +265,7 @@ public class JpaCmpEngine implements CmpEngine {
             }
             try {
                 query.getParameter(i + 1);
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 // IllegalArgumentException means that the parameter with the
                 // specified position does not exist
                 continue;
@@ -275,11 +275,11 @@ public class JpaCmpEngine implements CmpEngine {
 
         // todo results should not be iterated over, but should instead
         // perform all work in a wrapper list on demand by the application code
-        List results = query.getResultList();
-        for (Object value : results) {
+        final List results = query.getResultList();
+        for (final Object value : results) {
             if (value instanceof EntityBean) {
                 // todo don't activate beans already activated
-                EntityBean entity = (EntityBean) value;
+                final EntityBean entity = (EntityBean) value;
                 cmpCallback.setEntityContext(entity);
                 cmpCallback.ejbActivate(entity);
             }
@@ -288,14 +288,14 @@ public class JpaCmpEngine implements CmpEngine {
         return results;
     }
 
-    public int executeUpdateQuery(BeanContext beanContext, String signature, Object[] args) throws FinderException {
-        EntityManager entityManager = getEntityManager(beanContext);
+    public int executeUpdateQuery(final BeanContext beanContext, final String signature, Object[] args) throws FinderException {
+        final EntityManager entityManager = getEntityManager(beanContext);
 
         Query query = createNamedQuery(entityManager, signature);
         if (query == null) {
-            int parenIndex = signature.indexOf('(');
+            final int parenIndex = signature.indexOf('(');
             if (parenIndex > 0) {
-                String shortName = signature.substring(0, parenIndex);
+                final String shortName = signature.substring(0, parenIndex);
                 query = createNamedQuery(entityManager, shortName);
             }
             if (query == null) {
@@ -319,43 +319,43 @@ public class JpaCmpEngine implements CmpEngine {
             query.setParameter(i + 1, arg);
         }
 
-        int result = query.executeUpdate();
+        final int result = query.executeUpdate();
         return result;
     }
 
-    private Query createNamedQuery(EntityManager entityManager, String name) {
+    private Query createNamedQuery(final EntityManager entityManager, final String name) {
         try {
             return entityManager.createNamedQuery(name);
-        } catch (IllegalArgumentException ignored) {
+        } catch (final IllegalArgumentException ignored) {
             // soooo lame that jpa throws an exception instead of returning null....
             ignored.printStackTrace();
             return null;
         }
     }
 
-    private TransactionPolicy startTransaction(String operation, ThreadContext callContext) {
+    private TransactionPolicy startTransaction(final String operation, final ThreadContext callContext) {
         try {
-            TransactionPolicy txPolicy = createTransactionPolicy(TransactionType.Required, callContext);
+            final TransactionPolicy txPolicy = createTransactionPolicy(TransactionType.Required, callContext);
             return txPolicy;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Unable to start transaction for " + operation + " operation", e);
         }
     }
 
-    private void commitTransaction(String operation, ThreadContext callContext, TransactionPolicy txPolicy) {
+    private void commitTransaction(final String operation, final ThreadContext callContext, final TransactionPolicy txPolicy) {
         try {
             afterInvoke(txPolicy, callContext);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new EJBException("Unable to complete transaction for " + operation + " operation", e);
         }
     }
 
-    private void configureKeyGenerator(BeanContext di) throws OpenEJBException {
+    private void configureKeyGenerator(final BeanContext di) throws OpenEJBException {
         if (di.isCmp2()) {
             di.setKeyGenerator(new Cmp2KeyGenerator());
         } else {
-            String primaryKeyField = di.getPrimaryKeyField();
-            Class cmpBeanImpl = di.getCmpImplClass();
+            final String primaryKeyField = di.getPrimaryKeyField();
+            final Class cmpBeanImpl = di.getCmpImplClass();
             if (primaryKeyField != null) {
                 di.setKeyGenerator(new SimpleKeyGenerator(cmpBeanImpl, primaryKeyField));
             } else if (Object.class.equals(di.getPrimaryKeyClass())) {
@@ -431,9 +431,9 @@ public class JpaCmpEngine implements CmpEngine {
 //            super.eventOccurred(event);
 //        }
 
-        public void afterLoad(LifecycleEvent lifecycleEvent) {
+        public void afterLoad(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
-            Object bean = lifecycleEvent.getSource();
+            final Object bean = lifecycleEvent.getSource();
             // This may seem a bit strange to call ejbActivate immedately followed by ejbLoad,
             // but it is completely legal.  Since the ejbActivate method is not allowed to access
             // persistent state of the bean (EJB 3.0fr 8.5.2) there should be no concern that the
@@ -443,51 +443,51 @@ public class JpaCmpEngine implements CmpEngine {
             cmpCallback.ejbLoad((EntityBean) bean);
         }
 
-        public void beforeStore(LifecycleEvent lifecycleEvent) {
+        public void beforeStore(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
-            EntityBean bean = (EntityBean) lifecycleEvent.getSource();
+            final EntityBean bean = (EntityBean) lifecycleEvent.getSource();
             if (!creating.get().contains(bean)) {
                 cmpCallback.ejbStore(bean);
             }
         }
 
-        public void afterAttach(LifecycleEvent lifecycleEvent) {
+        public void afterAttach(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
-            Object bean = lifecycleEvent.getSource();
+            final Object bean = lifecycleEvent.getSource();
             cmpCallback.setEntityContext((EntityBean) bean);
         }
 
-        public void beforeDelete(LifecycleEvent lifecycleEvent) {
+        public void beforeDelete(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
             try {
-                Object bean = lifecycleEvent.getSource();
+                final Object bean = lifecycleEvent.getSource();
                 cmpCallback.ejbRemove((EntityBean) bean);
-            } catch (RemoveException e) {
+            } catch (final RemoveException e) {
                 throw new PersistenceException(e);
             }
         }
 
-        public void afterDetach(LifecycleEvent lifecycleEvent) {
+        public void afterDetach(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
             // todo detach is called after ejbRemove which does not need ejbPassivate
-            Object bean = lifecycleEvent.getSource();
+            final Object bean = lifecycleEvent.getSource();
             cmpCallback.ejbPassivate((EntityBean) bean);
             cmpCallback.unsetEntityContext((EntityBean) bean);
         }
 
-        public void beforePersist(LifecycleEvent lifecycleEvent) {
+        public void beforePersist(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
         }
 
-        public void afterRefresh(LifecycleEvent lifecycleEvent) {
+        public void afterRefresh(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
         }
 
-        public void beforeDetach(LifecycleEvent lifecycleEvent) {
+        public void beforeDetach(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
         }
 
-        public void beforeAttach(LifecycleEvent lifecycleEvent) {
+        public void beforeAttach(final LifecycleEvent lifecycleEvent) {
             eventOccurred(lifecycleEvent);
         }
     }

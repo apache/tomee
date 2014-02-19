@@ -26,7 +26,7 @@ public class HandlerChainData {
     private final List<String> protocolBindings = new ArrayList<String>();
     private final List<HandlerData> handlers = new ArrayList<HandlerData>();
 
-    public HandlerChainData(QName serviceNamePattern, QName portNamePattern, List<String> protocolBindings, List<HandlerData> handlers) {
+    public HandlerChainData(final QName serviceNamePattern, final QName portNamePattern, final List<String> protocolBindings, final List<HandlerData> handlers) {
         this.serviceNamePattern = serviceNamePattern;
         this.portNamePattern = portNamePattern;
         this.protocolBindings.addAll(protocolBindings);

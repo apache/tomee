@@ -50,15 +50,15 @@ public class EjbModule extends Module implements WsModule {
     private ClientModule clientModule;
     private ID id;
 
-    public EjbModule(EjbJar ejbJar) {
+    public EjbModule(final EjbJar ejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
     }
 
-    public EjbModule(EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(final EjbJar ejbJar, final OpenejbJar openejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, openejbJar);
     }
 
-    public EjbModule(ClassLoader classLoader, String moduleId, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(final ClassLoader classLoader, final String moduleId, final String jarURI, final EjbJar ejbJar, final OpenejbJar openejbJar) {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");
         }
@@ -77,7 +77,7 @@ public class EjbModule extends Module implements WsModule {
         this.validation = new ValidationContext(this);
     }
 
-    public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
+    public EjbModule(final ClassLoader classLoader, final String jarURI, final EjbJar ejbJar, final OpenejbJar openejbJar) {
         this(classLoader, null, jarURI, ejbJar, openejbJar);
     }
 
@@ -85,7 +85,7 @@ public class EjbModule extends Module implements WsModule {
         return beans;
     }
 
-    public void setBeans(Beans beans) {
+    public void setBeans(final Beans beans) {
         this.beans = beans;
     }
 
@@ -93,11 +93,11 @@ public class EjbModule extends Module implements WsModule {
         return finder.get();
     }
 
-    public void setFinder(IAnnotationFinder finder) {
+    public void setFinder(final IAnnotationFinder finder) {
         this.finder.set(finder);
     }
 
-    public EjbModule finder(IAnnotationFinder finder) {
+    public EjbModule finder(final IAnnotationFinder finder) {
         this.finder.set(finder);
         return this;
     }
@@ -106,7 +106,7 @@ public class EjbModule extends Module implements WsModule {
         return clientModule;
     }
 
-    public void setClientModule(ClientModule clientModule) {
+    public void setClientModule(final ClientModule clientModule) {
         this.clientModule = clientModule;
         if (clientModule != null) {
             clientModule.setEjbModuleGenerated(true);
@@ -122,7 +122,7 @@ public class EjbModule extends Module implements WsModule {
         return ejbJar;
     }
 
-    public void setEjbJar(EjbJar ejbJar) {
+    public void setEjbJar(final EjbJar ejbJar) {
         this.ejbJar = ejbJar;
     }
 
@@ -130,7 +130,7 @@ public class EjbModule extends Module implements WsModule {
         return id.getLocation() != null ? id.getLocation().getAbsolutePath() : null;
     }
 
-    public void setJarLocation(String jarLocation) {
+    public void setJarLocation(final String jarLocation) {
         this.id = new ID(openejbJar, ejbJar, id.getName(), new File(jarLocation), id.getUri(), this);
     }
 
@@ -142,7 +142,7 @@ public class EjbModule extends Module implements WsModule {
         return id.getLocation();
     }
     
-    public void setModuleId(String moduleId) {
+    public void setModuleId(final String moduleId) {
         if (openejbJar == null) openejbJar = new OpenejbJar();
         openejbJar.setModuleName(moduleId);
         
@@ -153,7 +153,7 @@ public class EjbModule extends Module implements WsModule {
         return id.getUri();
     }
 
-    public void setModuleUri(URI moduleUri) {
+    public void setModuleUri(final URI moduleUri) {
         this.id = new ID(openejbJar, ejbJar, id.getName(), id.getLocation(), moduleUri, this);
     }
 
@@ -161,7 +161,7 @@ public class EjbModule extends Module implements WsModule {
         return openejbJar;
     }
 
-    public void setOpenejbJar(OpenejbJar openejbJar) {
+    public void setOpenejbJar(final OpenejbJar openejbJar) {
         this.openejbJar = openejbJar;
     }
 
@@ -169,7 +169,7 @@ public class EjbModule extends Module implements WsModule {
         return webservices;
     }
 
-    public void setWebservices(Webservices webservices) {
+    public void setWebservices(final Webservices webservices) {
         this.webservices = webservices;
     }
 
@@ -181,7 +181,7 @@ public class EjbModule extends Module implements WsModule {
         return webapp;
     }
 
-    public void setWebapp(boolean webapp) {
+    public void setWebapp(final boolean webapp) {
         this.webapp = webapp;
     }
 

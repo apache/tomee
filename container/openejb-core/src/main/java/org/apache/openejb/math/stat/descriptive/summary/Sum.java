@@ -61,7 +61,7 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      *
      * @param original the {@code Sum} instance to copy
      */
-    public Sum(Sum original) {
+    public Sum(final Sum original) {
         copy(original, this);
     }
 
@@ -198,7 +198,7 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      */
     @Override
     public Sum copy() {
-        Sum result = new Sum();
+        final Sum result = new Sum();
         copy(this, result);
         return result;
     }
@@ -211,7 +211,7 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      * @param dest Sum to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Sum source, Sum dest) {
+    public static void copy(final Sum source, final Sum dest) {
         dest.n = source.n;
         dest.value = source.value;
     }

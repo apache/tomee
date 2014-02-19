@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class Slf4jLogStream implements LogStream {
     private Logger log;
 
-    public Slf4jLogStream(LogCategory logCategory) {
+    public Slf4jLogStream(final LogCategory logCategory) {
         log = LoggerFactory.getLogger(logCategory.getName());
     }
 
@@ -37,12 +37,12 @@ public class Slf4jLogStream implements LogStream {
     }
 
     @Override
-    public void fatal(String message) {
+    public void fatal(final String message) {
         log.error(message);
     }
 
     @Override
-    public void fatal(String message, Throwable t) {
+    public void fatal(final String message, final Throwable t) {
         log.error(message,t);
     }
 
@@ -52,12 +52,12 @@ public class Slf4jLogStream implements LogStream {
     }
 
     @Override
-    public void error(String message) {
+    public void error(final String message) {
         log.error(message);
     }
 
     @Override
-    public void error(String message, Throwable t) {
+    public void error(final String message, final Throwable t) {
         log.error(message,t);
     }
 
@@ -67,12 +67,12 @@ public class Slf4jLogStream implements LogStream {
     }
 
     @Override
-    public void warn(String message) {
+    public void warn(final String message) {
         log.warn(message);
     }
 
     @Override
-    public void warn(String message, Throwable t) {
+    public void warn(final String message, final Throwable t) {
         log.warn(message,t);
     }
 
@@ -82,12 +82,12 @@ public class Slf4jLogStream implements LogStream {
     }
 
     @Override
-    public void info(String message) {
+    public void info(final String message) {
         log.info(message);
     }
 
     @Override
-    public void info(String message, Throwable t) {
+    public void info(final String message, final Throwable t) {
         log.info(message,t);
     }
 
@@ -97,12 +97,12 @@ public class Slf4jLogStream implements LogStream {
     }
 
     @Override
-    public void debug(String message) {
+    public void debug(final String message) {
         log.debug(message);
     }
 
     @Override
-    public void debug(String message, Throwable t) {
+    public void debug(final String message, final Throwable t) {
         log.debug(message,t);
     }
 

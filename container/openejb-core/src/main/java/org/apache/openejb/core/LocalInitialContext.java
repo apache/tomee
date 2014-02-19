@@ -131,7 +131,7 @@ public class LocalInitialContext extends ContextWrapper {
                     clientIdentity = securityService.login(realmName, user, pass);
                 }
                 ClientSecurity.setIdentity(clientIdentity);
-            } catch (LoginException e) {
+            } catch (final LoginException e) {
                 throw (AuthenticationException) new AuthenticationException("User could not be authenticated: " + user).initCause(e);
             }
         }
@@ -148,7 +148,7 @@ public class LocalInitialContext extends ContextWrapper {
                 securityService.logout(clientIdentity);
                 ClientSecurity.setIdentity(null);
             }
-        } catch (LoginException e) {
+        } catch (final LoginException e) {
             throw new OpenEJBRuntimeException("User could not be logged out.", e);
         }
     }
@@ -161,7 +161,7 @@ public class LocalInitialContext extends ContextWrapper {
         try {
             serviceManager = new ServiceManagerProxy();
             serviceManager.start();
-        } catch (ServiceManagerProxy.AlreadyStartedException e) {
+        } catch (final ServiceManagerProxy.AlreadyStartedException e) {
             logger.debug("Network services already started.  Ignoring option " + OPENEJB_EMBEDDED_REMOTABLE);
         }
     }
@@ -189,7 +189,7 @@ public class LocalInitialContext extends ContextWrapper {
     private void inject(final Object obj) throws NamingException {
         try {
             ClientInjections.clientInjector(obj).createInstance();
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw (NamingException) new NamingException("Injection failed").initCause(e);
         }
     }

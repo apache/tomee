@@ -31,31 +31,31 @@ public class ServerFederation implements ApplicationServer {
 
     private static final ThreadLocal<ApplicationServer> applicationServer = new ThreadLocal<ApplicationServer>();
 
-    public Handle getHandle(ProxyInfo proxyInfo) {
+    public Handle getHandle(final ProxyInfo proxyInfo) {
         return getApplicationServer().getHandle(proxyInfo);
     }
 
-    public EJBMetaData getEJBMetaData(ProxyInfo proxyInfo) {
+    public EJBMetaData getEJBMetaData(final ProxyInfo proxyInfo) {
         return getApplicationServer().getEJBMetaData(proxyInfo);
     }
 
-    public HomeHandle getHomeHandle(ProxyInfo proxyInfo) {
+    public HomeHandle getHomeHandle(final ProxyInfo proxyInfo) {
         return getApplicationServer().getHomeHandle(proxyInfo);
     }
 
-    public EJBObject getEJBObject(ProxyInfo proxyInfo) {
+    public EJBObject getEJBObject(final ProxyInfo proxyInfo) {
         return getApplicationServer().getEJBObject(proxyInfo);
     }
 
-    public EJBHome getEJBHome(ProxyInfo proxyInfo) {
+    public EJBHome getEJBHome(final ProxyInfo proxyInfo) {
         return getApplicationServer().getEJBHome(proxyInfo);
     }
 
-    public Object getBusinessObject(ProxyInfo proxyInfo) {
+    public Object getBusinessObject(final ProxyInfo proxyInfo) {
         return getApplicationServer().getBusinessObject(proxyInfo);
     }
 
-    public static void setApplicationServer(ApplicationServer server) {
+    public static void setApplicationServer(final ApplicationServer server) {
         // todo why do we restrict null?  This makes call to setApplicationServer non symetrical. Throw an exception?
         if (server != null) {
             applicationServer.set(server);
@@ -63,7 +63,7 @@ public class ServerFederation implements ApplicationServer {
     }
 
     public static ApplicationServer getApplicationServer() {
-        ApplicationServer server = applicationServer.get();
+        final ApplicationServer server = applicationServer.get();
         if (server == null) {
             // todo: consider making this the thread local intialValue
             return localServer;

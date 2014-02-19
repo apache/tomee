@@ -87,7 +87,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         this(WebBeansContext.currentInstance(), WebBeansContext.currentInstance().getOpenWebBeansConfiguration().supportsConversation());
     }
 
-    public CdiAppContextsService(WebBeansContext wbc, boolean supportsConversation) {
+    public CdiAppContextsService(final WebBeansContext wbc, final boolean supportsConversation) {
         if (wbc != null) {
             webBeansContext = wbc;
         } else {
@@ -120,7 +120,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     @Override
-    public void init(Object initializeObject) {
+    public void init(final Object initializeObject) {
         //Start application context
         startContext(ApplicationScoped.class, initializeObject);
 
@@ -153,7 +153,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     @Override
-    public void endContext(Class<? extends Annotation> scopeType, Object endParameters) {
+    public void endContext(final Class<? extends Annotation> scopeType, final Object endParameters) {
 
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
@@ -180,7 +180,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     @Override
-    public Context getCurrentContext(Class<? extends Annotation> scopeType) {
+    public Context getCurrentContext(final Class<? extends Annotation> scopeType) {
         if (scopeType.equals(RequestScoped.class)) {
             return getRequestContext();
         } else if (scopeType.equals(SessionScoped.class)) {
@@ -199,7 +199,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     @Override
-    public void startContext(Class<? extends Annotation> scopeType, Object startParameter) throws ContextException {
+    public void startContext(final Class<? extends Annotation> scopeType, final Object startParameter) throws ContextException {
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
                 initRequestContext((ServletRequestEvent) startParameter);
@@ -232,7 +232,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     }
 
     @Override
-    public boolean supportsContext(Class<? extends Annotation> scopeType) {
+    public boolean supportsContext(final Class<? extends Annotation> scopeType) {
         return scopeType.equals(RequestScoped.class)
                 || scopeType.equals(SessionScoped.class)
                 || scopeType.equals(ApplicationScoped.class)
@@ -242,18 +242,18 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     }
 
-    private void initRequestContext(ServletRequestEvent event) {
-        RequestContext rq = new ServletRequestContext();
+    private void initRequestContext(final ServletRequestEvent event) {
+        final RequestContext rq = new ServletRequestContext();
         rq.setActive(true);
 
         requestContext.set(rq);// set thread local
         if (event != null) {
-            HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+            final HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
             ((ServletRequestContext) rq).setServletRequest(request);
 
             if (request != null) {
                 //Re-initialize thread local for session
-                HttpSession session = request.getSession(false);
+                final HttpSession session = request.getSession(false);
 
                 if (session != null) {
                     initSessionContext(session);
@@ -320,13 +320,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param session http session object
      */
-    private void initSessionContext(HttpSession session) {
+    private void initSessionContext(final HttpSession session) {
         if (session == null) {
             // no session -> no SessionContext
             return;
         }
 
-        String sessionId = session.getId();
+        final String sessionId = session.getId();
         //Current context
         SessionContext currentSessionContext = sessionCtxManager.getSessionContextWithSessionId(sessionId);
 
@@ -350,11 +350,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 try {
                     final Constructor<?> constr = clazz.getConstructor(HttpSession.class);
                     return (SessionContext)constr.newInstance(session);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     return (SessionContext) clazz.newInstance();
                 }
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Can't instantiate " + classname + ", using default session context", e);
             }
         }
@@ -367,10 +367,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param session http session object
      */
-    private void destroySessionContext(HttpSession session) {
+    private void destroySessionContext(final HttpSession session) {
         if (session != null) {
             //Get current session context
-            SessionContext context = sessionContext.get();
+            final SessionContext context = sessionContext.get();
 
             //Destroy context
             if (context != null) {
@@ -401,14 +401,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
      *
      * @param context context
      */
-    private void initConversationContext(ConversationContext context) {
+    private void initConversationContext(final ConversationContext context) {
         if (webBeansContext.getService(ConversationService.class) == null) {
             return;
         }
 
         if (context == null) {
             if (conversationContext.get() == null) {
-                ConversationContext newContext = new ConversationContext();
+                final ConversationContext newContext = new ConversationContext();
                 newContext.setActive(true);
 
                 conversationContext.set(newContext);
@@ -430,7 +430,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             return;
         }
 
-        ConversationContext context = getConversationContext();
+        final ConversationContext context = getConversationContext();
 
         if (context != null) {
             context.destroy();
@@ -489,14 +489,14 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             logger.debug(">lazyStartSessionContext");
         }
 
-        Context webContext = null;
-        Context context = getCurrentContext(RequestScoped.class);
+        final Context webContext = null;
+        final Context context = getCurrentContext(RequestScoped.class);
         if (context instanceof ServletRequestContext) {
-            ServletRequestContext requestContext = (ServletRequestContext) context;
-            HttpServletRequest servletRequest = requestContext.getServletRequest();
+            final ServletRequestContext requestContext = (ServletRequestContext) context;
+            final HttpServletRequest servletRequest = requestContext.getServletRequest();
             if (null != servletRequest) { // this could be null if there is no active request context
                 try {
-                    HttpSession currentSession = servletRequest.getSession();
+                    final HttpSession currentSession = servletRequest.getSession();
                     initSessionContext(currentSession);
 
                     /*
@@ -509,7 +509,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                     if (logger.isDebugEnabled()) {
                         logger.debug("Lazy SESSION context initialization SUCCESS");
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error(OWBLogConst.ERROR_0013, e);
                 }
 

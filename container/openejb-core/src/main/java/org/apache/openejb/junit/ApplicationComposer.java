@@ -33,16 +33,16 @@ import java.util.concurrent.Callable;
 public class ApplicationComposer extends BlockJUnit4ClassRunner {
     private final ApplicationComposers delegate;
 
-    public ApplicationComposer(Class<?> klass) throws InitializationError {
+    public ApplicationComposer(final Class<?> klass) throws InitializationError {
         super(klass);
         delegate = new ApplicationComposers(klass);
     }
 
     @Override
-    protected List<MethodRule> rules(Object test) {
+    protected List<MethodRule> rules(final Object test) {
         final List<MethodRule> rules = super.rules(test);
         rules.add(new MethodRule(){
-            public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
                 return new DeployApplication(target, base);
             }
         });
@@ -54,7 +54,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
         private final Object testInstance;
         private final Statement next;
 
-        public DeployApplication(Object testInstance, Statement next) {
+        public DeployApplication(final Object testInstance, final Statement next) {
             this.testInstance = testInstance;
             this.next = next;
         }
@@ -66,7 +66,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 public Void call() throws Exception {
                     try {
                         next.evaluate();
-                    } catch (Throwable throwable) {
+                    } catch (final Throwable throwable) {
                         if (throwable instanceof Exception) {
                             throw (Exception) throwable;
                         }

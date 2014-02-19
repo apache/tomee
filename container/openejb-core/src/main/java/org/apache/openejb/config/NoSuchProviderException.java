@@ -23,7 +23,7 @@ import org.apache.openejb.OpenEJBException;
  */
 public class NoSuchProviderException extends OpenEJBException {
 
-    public NoSuchProviderException(String message) {
+    public NoSuchProviderException(final String message) {
         super(message);
     }
 

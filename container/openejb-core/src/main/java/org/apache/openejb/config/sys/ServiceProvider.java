@@ -84,11 +84,11 @@ public class ServiceProvider {
     public ServiceProvider() {
     }
 
-    public ServiceProvider(Class clazz, String id, String service) {
+    public ServiceProvider(final Class clazz, final String id, final String service) {
         this(clazz.getName(), id, service);
     }
 
-    public ServiceProvider(String className, String id, String service) {
+    public ServiceProvider(final String className, final String id, final String service) {
         this.className = className;
         this.id = id;
         this.service = service;
@@ -137,7 +137,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setClassName(String value) {
+    public void setClassName(final String value) {
         this.className = value;
     }
 
@@ -157,7 +157,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setConstructor(String value) {
+    public void setConstructor(final String value) {
         this.constructor = value;
     }
 
@@ -177,7 +177,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -197,7 +197,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setDisplayName(String value) {
+    public void setDisplayName(final String value) {
         this.displayName = value;
     }
 
@@ -217,7 +217,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setFactoryName(String value) {
+    public void setFactoryName(final String value) {
         this.factoryName = value;
     }
 
@@ -237,7 +237,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -257,7 +257,7 @@ public class ServiceProvider {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -273,7 +273,7 @@ public class ServiceProvider {
         return parent;
     }
 
-    public void setParent(String parent) {
+    public void setParent(final String parent) {
         this.parent = parent;
     }
 

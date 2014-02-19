@@ -51,17 +51,17 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
 
     }
 
-    public ActiveMQResourceAdapterBuilder id(String id) {
+    public ActiveMQResourceAdapterBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public ActiveMQResourceAdapterBuilder withBrokerXmlConfig(String brokerXmlConfig) {
+    public ActiveMQResourceAdapterBuilder withBrokerXmlConfig(final String brokerXmlConfig) {
         this.brokerXmlConfig = brokerXmlConfig;
         return this;
     }
 
-    public void setBrokerXmlConfig(String brokerXmlConfig) {
+    public void setBrokerXmlConfig(final String brokerXmlConfig) {
         this.brokerXmlConfig = brokerXmlConfig;
     }
 
@@ -69,12 +69,12 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return brokerXmlConfig;
     }
 
-    public ActiveMQResourceAdapterBuilder withServerUrl(URI serverUrl) {
+    public ActiveMQResourceAdapterBuilder withServerUrl(final URI serverUrl) {
         this.serverUrl = serverUrl;
         return this;
     }
 
-    public void setServerUrl(URI serverUrl) {
+    public void setServerUrl(final URI serverUrl) {
         this.serverUrl = serverUrl;
     }
 
@@ -82,12 +82,12 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return serverUrl;
     }
 
-    public ActiveMQResourceAdapterBuilder withDataSource(String dataSource) {
+    public ActiveMQResourceAdapterBuilder withDataSource(final String dataSource) {
         this.dataSource = dataSource;
         return this;
     }
 
-    public void setDataSource(String dataSource) {
+    public void setDataSource(final String dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -95,12 +95,12 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return dataSource;
     }
 
-    public ActiveMQResourceAdapterBuilder withStartupTimeout(Duration startupTimeout) {
+    public ActiveMQResourceAdapterBuilder withStartupTimeout(final Duration startupTimeout) {
         this.startupTimeout = startupTimeout;
         return this;
     }
 
-    public void setStartupTimeout(Duration startupTimeout) {
+    public void setStartupTimeout(final Duration startupTimeout) {
         this.startupTimeout = startupTimeout;
     }
 
@@ -108,11 +108,11 @@ public class ActiveMQResourceAdapterBuilder extends Resource {
         return startupTimeout;
     }
 
-    public ActiveMQResourceAdapterBuilder withStartupTimeout(long time, TimeUnit unit) {
+    public ActiveMQResourceAdapterBuilder withStartupTimeout(final long time, final TimeUnit unit) {
         return withStartupTimeout(new Duration(time, unit));
     }
 
-    public void setStartupTimeout(long time, TimeUnit unit) {
+    public void setStartupTimeout(final long time, final TimeUnit unit) {
         setStartupTimeout(new Duration(time, unit));
     }
 

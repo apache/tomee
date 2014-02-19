@@ -83,7 +83,7 @@ public class MdbContainer implements RpcContainer {
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
-    public MdbContainer(Object containerID, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
+    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
@@ -98,7 +98,7 @@ public class MdbContainer implements RpcContainer {
         return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
-    public BeanContext getBeanContext(Object deploymentID) {
+    public BeanContext getBeanContext(final Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
@@ -122,8 +122,8 @@ public class MdbContainer implements RpcContainer {
         return activationSpecClass;
     }
 
-    public void deploy(BeanContext beanContext) throws OpenEJBException {
-        Object deploymentId = beanContext.getDeploymentID();
+    public void deploy(final BeanContext beanContext) throws OpenEJBException {
+        final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
                     beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
@@ -131,17 +131,17 @@ public class MdbContainer implements RpcContainer {
         }
 
         // create the activation spec
-        ActivationSpec activationSpec = createActivationSpec(beanContext);
+        final ActivationSpec activationSpec = createActivationSpec(beanContext);
 
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
         }
         
-        Options options = new Options(beanContext.getProperties());
-        int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
+        final Options options = new Options(beanContext.getProperties());
+        final int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
-        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
+        final MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
+        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
@@ -151,12 +151,12 @@ public class MdbContainer implements RpcContainer {
 
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
-            StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+            final StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
             beanContext.addFirstSystemInterceptor(stats);
 
-            MBeanServer server = LocalMBeanServer.get();
+            final MBeanServer server = LocalMBeanServer.get();
 
-            ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
             jmxName.set("J2EEServer", "openejb");
             jmxName.set("J2EEApplication", null);
             jmxName.set("EJBModule", beanContext.getModuleID());
@@ -166,13 +166,13 @@ public class MdbContainer implements RpcContainer {
 
             // register the invocation stats interceptor
             try {
-                ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+                final ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
                 if (server.isRegistered(objectName)) {
                     server.unregisterMBean(objectName);
                 }
                 server.registerMBean(new ManagedMBean(stats), objectName);
                 endpointFactory.jmxNames.add(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to register MBean ", e);
             }
         }
@@ -180,7 +180,7 @@ public class MdbContainer implements RpcContainer {
         // activate the endpoint
         try {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
-        } catch (ResourceException e) {
+        } catch (final ResourceException e) {
             // activation failed... clean up
             beanContext.setContainer(null);
             beanContext.setContainerData(null);
@@ -190,24 +190,24 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    private ActivationSpec createActivationSpec(BeanContext beanContext)throws OpenEJBException {
+    private ActivationSpec createActivationSpec(final BeanContext beanContext)throws OpenEJBException {
         try {
             // initialize the object recipe
-            ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
+            final ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-            Map<String, String> activationProperties = beanContext.getActivationProperties();
-            for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();
+            for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 
             // create the activationSpec
-            ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
+            final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
 
             // verify all properties except "destination" and "destinationType" were consumed
-            Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
+            final Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
             unusedProperties.remove("destination");
             unusedProperties.remove("destinationType");
             unusedProperties.remove("beanClass");
@@ -219,18 +219,18 @@ public class MdbContainer implements RpcContainer {
             // validate the activation spec
             try {
                 activationSpec.validate();
-            } catch (UnsupportedOperationException uoe) {
+            } catch (final UnsupportedOperationException uoe) {
                 logger.info("ActivationSpec does not support validate. Implementation of validate is optional");
             }
             // also try validating using Bean Validation if there is a Validator available in the context.
             try {
-                Validator validator = (Validator)beanContext.getJndiContext().lookup("comp/Validator");
+                final Validator validator = (Validator)beanContext.getJndiContext().lookup("comp/Validator");
 
-                Set generalSet = validator.validate(activationSpec);
+                final Set generalSet = validator.validate(activationSpec);
                 if (!generalSet.isEmpty()) {
                     throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet); 
                 }
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 logger.debug("No Validator bound to JNDI context");
             }
 
@@ -239,7 +239,7 @@ public class MdbContainer implements RpcContainer {
             activationSpec.setResourceAdapter(resourceAdapter);
 
             return activationSpec;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Unable to create activation spec", e);
         }
     }
@@ -251,25 +251,25 @@ public class MdbContainer implements RpcContainer {
         }
     }
     
-    public void stop(BeanContext info) throws OpenEJBException {
+    public void stop(final BeanContext info) throws OpenEJBException {
         info.stop();
     }
     
-    public void undeploy(BeanContext beanContext) throws OpenEJBException {
+    public void undeploy(final BeanContext beanContext) throws OpenEJBException {
         if (!(beanContext instanceof BeanContext)) {
             return;
         }
 
         try {
-            EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
+            final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
             if (endpointFactory != null) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
 
-                MBeanServer server = LocalMBeanServer.get();
-                for (ObjectName objectName : endpointFactory.jmxNames) {
+                final MBeanServer server = LocalMBeanServer.get();
+                for (final ObjectName objectName : endpointFactory.jmxNames) {
                     try {
                         server.unregisterMBean(objectName);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         logger.error("Unable to unregister MBean "+objectName);
                     }
                 }
@@ -281,21 +281,21 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public Object invoke(Object deploymentId, InterfaceType type, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
-        BeanContext beanContext = getBeanContext(deploymentId);
+    public Object invoke(final Object deploymentId, final InterfaceType type, final Class callInterface, final Method method, final Object[] args, final Object primKey) throws OpenEJBException {
+        final BeanContext beanContext = getBeanContext(deploymentId);
 
-        EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
-        MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
-        Instance instance;
+        final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
+        final MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
+        final Instance instance;
         try {
             instance = (Instance) instanceFactory.createInstance(true);
-        } catch (UnavailableException e) {
+        } catch (final UnavailableException e) {
             throw new SystemException("Unable to create instance for invocation", e);
         }
 
         try {
             beforeDelivery(beanContext, instance, method, null);
-            Object value = invoke(instance, method, type, args);
+            final Object value = invoke(instance, method, type, args);
             afterDelivery(instance);
             return value;
         } finally {
@@ -303,13 +303,13 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public void beforeDelivery(BeanContext deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
+    public void beforeDelivery(final BeanContext deployInfo, final Object instance, final Method method, final XAResource xaResource) throws SystemException {
         // intialize call context
-        ThreadContext callContext = new ThreadContext(deployInfo, null);
-        ThreadContext oldContext = ThreadContext.enter(callContext);
+        final ThreadContext callContext = new ThreadContext(deployInfo, null);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         // create mdb context
-        MdbCallContext mdbCallContext = new MdbCallContext();
+        final MdbCallContext mdbCallContext = new MdbCallContext();
         callContext.set(MdbCallContext.class, mdbCallContext);
         mdbCallContext.deliveryMethod = method;
         mdbCallContext.oldCallContext = oldContext;
@@ -322,27 +322,27 @@ public class MdbContainer implements RpcContainer {
             if (xaResource != null && mdbCallContext.txPolicy.isNewTransaction()) {
                 mdbCallContext.txPolicy.enlistResource(xaResource);
             }
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             ThreadContext.exit(oldContext);
             throw new SystemException("Should never get an Application exception", e);
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             ThreadContext.exit(oldContext);
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             ThreadContext.exit(oldContext);
             throw new SystemException("Unable to enlist xa resource in the transaction", e);
         }
     }
 
-    public Object invoke(Object instance, Method method, InterfaceType type, Object... args) throws SystemException, ApplicationException {
+    public Object invoke(final Object instance, final Method method, final InterfaceType type, Object... args) throws SystemException, ApplicationException {
         if (args == null) {
             args = NO_ARGS;
         }
 
         // get the context data
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        BeanContext deployInfo = callContext.getBeanContext();
-        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
+        final ThreadContext callContext = ThreadContext.getThreadContext();
+        final BeanContext deployInfo = callContext.getBeanContext();
+        final MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         if (mdbCallContext == null) {
             throw new IllegalStateException("beforeDelivery was not called");
@@ -357,7 +357,7 @@ public class MdbContainer implements RpcContainer {
         // remember the return value or exception so it can be logged
         Object returnValue = null;
         OpenEJBException openEjbException = null;
-        Operation oldOperation = callContext.getCurrentOperation();
+        final Operation oldOperation = callContext.getCurrentOperation();
         callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
         try {
             if (logger.isDebugEnabled()) {
@@ -371,10 +371,10 @@ public class MdbContainer implements RpcContainer {
             // invoke the target method
             returnValue = _invoke(instance, targetMethod, args, deployInfo, type, mdbCallContext);
             return returnValue;
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             openEjbException = e;
             throw e;
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             openEjbException = e;
             throw e;
         } finally {
@@ -384,19 +384,19 @@ public class MdbContainer implements RpcContainer {
                 if (openEjbException == null) {
                     logger.debug("finished invoking method " + method.getName() + ". Return value:" + returnValue);
                 } else {
-                    Throwable exception = openEjbException.getRootCause() != null ? openEjbException.getRootCause() : openEjbException;
+                    final Throwable exception = openEjbException.getRootCause() != null ? openEjbException.getRootCause() : openEjbException;
                     logger.debug("finished invoking method " + method.getName() + " with exception " + exception);
                 }
             }
         }
     }
 
-    private Object _invoke(Object instance, Method runMethod, Object[] args, BeanContext beanContext, InterfaceType interfaceType, MdbCallContext mdbCallContext) throws SystemException,
+    private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
             ApplicationException {
-        Object returnValue;
+        final Object returnValue;
         try {
-            List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
-            InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
+            final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
+            final InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
                     interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
             return returnValue;
@@ -412,7 +412,7 @@ public class MdbContainer implements RpcContainer {
             //    IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
             //    NullPointerException - if the specified object is null and the method is an instance method.
             //    ExceptionInInitializerError - if the initialization provoked by this method fails.
-            ExceptionType type = beanContext.getExceptionType(e);
+            final ExceptionType type = beanContext.getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 //
                 /// System Exception ****************************
@@ -426,22 +426,22 @@ public class MdbContainer implements RpcContainer {
         throw new AssertionError("Should not get here");
     }
 
-    public void afterDelivery(Object instance) throws SystemException {
+    public void afterDelivery(final Object instance) throws SystemException {
         // get the mdb call context
-        ThreadContext callContext = ThreadContext.getThreadContext();
-        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
+        final ThreadContext callContext = ThreadContext.getThreadContext();
+        final MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         // invoke the tx after method
         try {
             afterInvoke(mdbCallContext.txPolicy, callContext);
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             throw new SystemException("Should never get an Application exception", e);
         } finally {
             ThreadContext.exit(mdbCallContext.oldCallContext);
         }
     }
 
-    public void release(BeanContext deployInfo, Object instance) {
+    public void release(final BeanContext deployInfo, final Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
         boolean contextExitRequired = false;
@@ -453,14 +453,14 @@ public class MdbContainer implements RpcContainer {
         }
         try {
             // if we have an mdb call context we need to invoke the after invoke method
-            MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
+            final MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
             if (mdbCallContext != null) {
                 try {
                     afterInvoke(mdbCallContext.txPolicy, callContext);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("error while releasing message endpoint", e);
                 } finally {
-                    EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
+                    final EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
                     endpointFactory.getInstanceFactory().freeInstance((Instance) instance, false);
                 }
             }

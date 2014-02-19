@@ -41,7 +41,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     private boolean mutable = true;
     private Collection<Bean> relatedBeans;
 
-    public CmrSet(EntityBean source, String sourceProperty, BeanContext relatedInfo, String relatedProperty, Collection<Bean> relatedBeans) {
+    public CmrSet(final EntityBean source, final String sourceProperty, final BeanContext relatedInfo, final String relatedProperty, final Collection<Bean> relatedBeans) {
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedInfo = relatedInfo;
@@ -49,17 +49,17 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         this.relatedBeans = relatedBeans;
 
         relatedLocal = relatedInfo.getLocalInterface();
-        TransactionSynchronizationRegistry transactionRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        final TransactionSynchronizationRegistry transactionRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         try {
             transactionRegistry.registerInterposedSynchronization(new Synchronization() {
                 public void beforeCompletion() {
                 }
 
-                public void afterCompletion(int i) {
+                public void afterCompletion(final int i) {
                     mutable = false;
                 }
             });
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
             // no tx so not mutable
             mutable = false;
         }
@@ -78,31 +78,31 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return getRelatedBeans(false, false).size();
     }
 
-    public boolean contains(Object o) {
+    public boolean contains(final Object o) {
         if (relatedLocal.isInstance(o)) {
-            Bean entity = getEntityBean((EJBLocalObject) o);
+            final Bean entity = getEntityBean((EJBLocalObject) o);
             return entity != null && getRelatedBeans(false, false).contains(entity);
         }
         return false;
     }
 
-    public boolean addAll(Collection c) {
-        Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
+    public boolean addAll(final Collection c) {
+        final Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
-        for (Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext();) {
-            Bean bean = iterator.next();
+        for (final Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext();) {
+            final Bean bean = iterator.next();
             changed = add(bean) || changed;
         }
         return changed;
     }
 
-    public boolean add(Object proxy) {
+    public boolean add(final Object proxy) {
         if (!relatedLocal.isInstance(proxy)) {
             throw new IllegalArgumentException("Object is not an instance of " + relatedLocal.getName() +
                                 ": " + (proxy == null ? "null" : proxy.getClass().getName()));
         }
         
-        Bean newEntity = getEntityBean((EJBLocalObject) proxy);
+        final Bean newEntity = getEntityBean((EJBLocalObject) proxy);
         if (newEntity == null) {
             throw new IllegalArgumentException("Ejb has been deleted");
         }
@@ -110,12 +110,12 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return add(newEntity);
     }
 
-    private boolean add(Bean newEntity) {
-        boolean changed = getRelatedBeans(true, true).add(newEntity);
+    private boolean add(final Bean newEntity) {
+        final boolean changed = getRelatedBeans(true, true).add(newEntity);
         if (changed && relatedProperty != null) {
             // set the back reference in the new related bean
             if (source == null) throw new IllegalStateException("source is null");
-            Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
+            final Object oldBackRef = toCmp2Entity(newEntity).OpenEJB_addCmr(relatedProperty, source);
 
             // if the new related beas was related to another bean, we need
             // to clear the back reference in that old bean
@@ -126,25 +126,25 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return changed;
     }
 
-    public boolean remove(Object o) {
+    public boolean remove(final Object o) {
         if (!relatedLocal.isInstance(o)) {
             return false;
         }
 
-        Bean entity = getEntityBean((EJBLocalObject) o);
-        boolean changed = entity != null && getRelatedBeans(false, true).remove(entity);
+        final Bean entity = getEntityBean((EJBLocalObject) o);
+        final boolean changed = entity != null && getRelatedBeans(false, true).remove(entity);
         if (changed && relatedProperty != null) {
             toCmp2Entity(entity).OpenEJB_removeCmr(relatedProperty, source);
         }
         return changed;
     }
 
-    public boolean retainAll(Collection c) {
-        Set entityBeans = getEntityBeans(c, null);
+    public boolean retainAll(final Collection c) {
+        final Set entityBeans = getEntityBeans(c, null);
 
         boolean changed = false;
-        for (Iterator<Bean> iterator = getRelatedBeans(false, true).iterator(); iterator.hasNext();) {
-            Bean entity = iterator.next();
+        for (final Iterator<Bean> iterator = getRelatedBeans(false, true).iterator(); iterator.hasNext();) {
+            final Bean entity = iterator.next();
             if (!entityBeans.contains(entity)) {
                 iterator.remove();
                 if (relatedProperty != null) {
@@ -188,30 +188,30 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         };
     }
 
-    private Proxy getEjbProxy(Bean entity) throws EJBException {
+    private Proxy getEjbProxy(final Bean entity) throws EJBException {
         if (entity == null) return null;
 
-        Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
+        final Proxy ejbProxy = Cmp2Util.<Proxy>getEjbProxy(relatedInfo, entity);
         return ejbProxy;
     }
 
-    private Bean getEntityBean(EJBLocalObject proxy) {
+    private Bean getEntityBean(final EJBLocalObject proxy) {
         if (proxy == null) return null;
 
-        Bean bean = Cmp2Util.<Bean>getEntityBean(proxy);
+        final Bean bean = Cmp2Util.<Bean>getEntityBean(proxy);
         return bean;
     }
 
-    private static <Bean extends EntityBean> Set<Bean> getEntityBeans(Collection<?> proxies, Class type) {
+    private static <Bean extends EntityBean> Set<Bean> getEntityBeans(final Collection<?> proxies, final Class type) {
         if (proxies == null) return null;
 
-        Set<Bean> entities = new HashSet<Bean>();
-        for (Object value : proxies) {
+        final Set<Bean> entities = new HashSet<Bean>();
+        for (final Object value : proxies) {
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalArgumentException("Object is not an instance of " + type.getName() +
                                     ": " + (value == null ? "null" : value.getClass().getName()));
             }
-            Bean entity = Cmp2Util.<Bean>getEntityBean((EJBLocalObject) value);
+            final Bean entity = Cmp2Util.<Bean>getEntityBean((EJBLocalObject) value);
             if (entity == null) {
                 throw new IllegalArgumentException("Entity has been deleted");
             }
@@ -220,11 +220,11 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
         return entities;
     }
 
-    private Cmp2Entity toCmp2Entity(Object object) {
+    private Cmp2Entity toCmp2Entity(final Object object) {
         return (Cmp2Entity) object;
     }
 
-    private Collection<Bean> getRelatedBeans(boolean mustExist, boolean mutateOpation) {
+    private Collection<Bean> getRelatedBeans(final boolean mustExist, final boolean mutateOpation) {
         if (relatedBeans == null) {
             if (mustExist) {
                 throw new IllegalStateException("Entity has been deleted therefore this cmr collection can no longer be modified");

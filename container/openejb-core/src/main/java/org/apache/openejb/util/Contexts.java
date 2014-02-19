@@ -40,34 +40,34 @@ public final class Contexts {
         for (int i = 0; i < parts.length - 1; i++) { // browse it this way to do the same than createSubcontexts
             try {
                 lastContext = (Context) lastContext.lookup(parts[i]);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 return;
             }
         }
 
         try {
             lastContext.unbind(name);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             // no-op
         }
     }
 
-    public static Context createSubcontexts(Context context, String key) {
+    public static Context createSubcontexts(final Context context, final String key) {
         final String[] parts = key.split("/");
 
         int i = 0;
         Context lastContext = context;
-        for (String part : parts) {
+        for (final String part : parts) {
             if (++i == parts.length) {
                 return lastContext;
             }
 
             try {
                 lastContext = lastContext.createSubcontext(part);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 try {
                     lastContext = (Context) lastContext.lookup(part);
-                } catch (NamingException e1) {
+                } catch (final NamingException e1) {
                     return lastContext;
                 }
             }

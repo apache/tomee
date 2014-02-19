@@ -83,8 +83,8 @@ public class VmDeploymentManager implements DeploymentManager {
     private boolean deployerLocal;
 
     public VmDeploymentManager() {
-        String openejbHome = System.getProperty("openejb.home");
-        File openejbHomeDir = new File(openejbHome);
+        final String openejbHome = System.getProperty("openejb.home");
+        final File openejbHomeDir = new File(openejbHome);
         if (!openejbHomeDir.exists()) {
             throw new IllegalArgumentException("OpenEJB home dir does not exist: " + openejbHomeDir);
         }
@@ -96,7 +96,7 @@ public class VmDeploymentManager implements DeploymentManager {
         if (openejbUri == null) {
             try {
                 openejbUri = new URI("ejbd", null, "localhost", 4201, null, null, null).toString();
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }
@@ -105,17 +105,17 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private Deployer getDeployer() {
-        String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
+        final String deployerJndi = System.getProperty("openejb.deployer.jndiname", "openejb/DeployerBusinessRemote");
 
         if (deployer == null) {
             try {
-                Properties p = new Properties();
+                final Properties p = new Properties();
                 p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
                 p.put("java.naming.provider.url", openejbUri);
 
-                InitialContext ctx = new InitialContext(p);
+                final InitialContext ctx = new InitialContext(p);
                 deployer = (Deployer) ctx.lookup(deployerJndi);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }
@@ -143,21 +143,21 @@ public class VmDeploymentManager implements DeploymentManager {
 
 
     @Override
-    public TargetModuleID[] getAvailableModules(ModuleType moduleType, Target[] targetList) throws TargetException {
+    public TargetModuleID[] getAvailableModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         if (!containsDefaultTarget(targetList)) {
             return null;
         }
 
-        Set<TargetModuleID> targetModuleIds = toTargetModuleIds(getDeployer().getDeployedApps(), moduleType);
+        final Set<TargetModuleID> targetModuleIds = toTargetModuleIds(getDeployer().getDeployedApps(), moduleType);
         return targetModuleIds.toArray(new TargetModuleID[targetModuleIds.size()]);
     }
 
-    private static Set<TargetModuleID> toTargetModuleIds(Collection<AppInfo> deployedApps, ModuleType allowedModuleType) {
-        Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(deployedApps.size());
-        for (AppInfo deployedApp : deployedApps) {
-            TargetModuleID moduleId = toTargetModuleId(deployedApp, allowedModuleType);
+    private static Set<TargetModuleID> toTargetModuleIds(final Collection<AppInfo> deployedApps, final ModuleType allowedModuleType) {
+        final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(deployedApps.size());
+        for (final AppInfo deployedApp : deployedApps) {
+            final TargetModuleID moduleId = toTargetModuleId(deployedApp, allowedModuleType);
             // moduleID will be null if the module was filtered
             if (moduleId != null) {
                 targetModuleIds.add(moduleId);
@@ -166,8 +166,8 @@ public class VmDeploymentManager implements DeploymentManager {
         return targetModuleIds;
     }
 
-    private static TargetModuleID toTargetModuleId(AppInfo appInfo, ModuleType allowedModuleType) {
-        List<InfoObject> infos = new ArrayList<InfoObject>();
+    private static TargetModuleID toTargetModuleId(final AppInfo appInfo, final ModuleType allowedModuleType) {
+        final List<InfoObject> infos = new ArrayList<InfoObject>();
         infos.addAll(appInfo.clients);
         infos.addAll(appInfo.ejbJars);
         infos.addAll(appInfo.webApps);
@@ -175,9 +175,9 @@ public class VmDeploymentManager implements DeploymentManager {
 
         // if the module id is the same as the appInfo, then it is a standalone module
         if (infos.size() == 1) {
-            InfoObject infoObject = infos.get(0);
+            final InfoObject infoObject = infos.get(0);
             if (infoObject instanceof ClientInfo) {
-                ClientInfo clientInfo = (ClientInfo) infoObject;
+                final ClientInfo clientInfo = (ClientInfo) infoObject;
                 if (null != appInfo.path && appInfo.path.equals(clientInfo.path)) {
                     // are client modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.CAR)) {
@@ -189,7 +189,7 @@ public class VmDeploymentManager implements DeploymentManager {
                 }
             }
             if (infoObject instanceof EjbJarInfo) {
-                EjbJarInfo ejbJarInfo = (EjbJarInfo) infoObject;
+                final EjbJarInfo ejbJarInfo = (EjbJarInfo) infoObject;
                 if (null != appInfo.path && appInfo.path.equals(ejbJarInfo.path)) {
                     // are ejb modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
@@ -201,7 +201,7 @@ public class VmDeploymentManager implements DeploymentManager {
                 }
             }
             if (infoObject instanceof ConnectorInfo) {
-                ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
+                final ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
                 if (null != appInfo.path&&appInfo.path.equals(connectorInfo.path)) {
                     // are connector modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
@@ -213,7 +213,7 @@ public class VmDeploymentManager implements DeploymentManager {
                 }
             }
             if (infoObject instanceof WebAppInfo) {
-                WebAppInfo webAppInfo = (WebAppInfo) infoObject;
+                final WebAppInfo webAppInfo = (WebAppInfo) infoObject;
                 if (null !=appInfo.path&&appInfo.path.equals(webAppInfo.path)) {
                     // are web app modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
@@ -233,21 +233,21 @@ public class VmDeploymentManager implements DeploymentManager {
             return null;
         }
 
-        TargetModuleIDImpl earModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, appInfo.path);
-        for (ClientInfo clientInfo : appInfo.clients) {
-            TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
+        final TargetModuleIDImpl earModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, appInfo.path);
+        for (final ClientInfo clientInfo : appInfo.clients) {
+            final TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
             clientModuleId.setParentTargetModuleID(earModuleId);
         }
-        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            TargetModuleIDImpl ejbJarModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleName);
+        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+            final TargetModuleIDImpl ejbJarModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleName);
             ejbJarModuleId.setParentTargetModuleID(earModuleId);
         }
-        for (ConnectorInfo connectorInfo : appInfo.connectors) {
-            TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
+        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
+            final TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
             clientModuleId.setParentTargetModuleID(earModuleId);
         }
-        for (WebAppInfo webAppInfo : appInfo.webApps) {
-            TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId, webAppInfo.contextRoot);
+        for (final WebAppInfo webAppInfo : appInfo.webApps) {
+            final TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId, webAppInfo.contextRoot);
             clientModuleId.setParentTargetModuleID(earModuleId);
         }
 
@@ -255,7 +255,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public TargetModuleID[] getNonRunningModules(ModuleType moduleType, Target[] targetList) throws TargetException {
+    public TargetModuleID[] getNonRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         if (!containsDefaultTarget(targetList)) {
@@ -266,19 +266,19 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public TargetModuleID[] getRunningModules(ModuleType moduleType, Target[] targetList) throws TargetException {
+    public TargetModuleID[] getRunningModules(final ModuleType moduleType, final Target[] targetList) throws TargetException {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         if (!containsDefaultTarget(targetList)) {
             return null;
         }
 
-        Set<TargetModuleID> targetModuleIds = toTargetModuleIds(getDeployer().getDeployedApps(), moduleType);
+        final Set<TargetModuleID> targetModuleIds = toTargetModuleIds(getDeployer().getDeployedApps(), moduleType);
         return targetModuleIds.toArray(new TargetModuleID[targetModuleIds.size()]);
     }
 
     @Override
-    public ProgressObject distribute(Target[] targetList, File moduleFile, File planFile) {
+    public ProgressObject distribute(final Target[] targetList, final File moduleFile, final File planFile) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         if (!isDeployerLocal()) {
@@ -287,11 +287,11 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         // load properties
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         if (planFile != null) {
             try {
                 IO.readProperties(planFile, properties);
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             }
         }
@@ -300,7 +300,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public ProgressObject distribute(Target[] targetList, InputStream moduleStream, InputStream planStream) {
+    public ProgressObject distribute(final Target[] targetList, final InputStream moduleStream, final InputStream planStream) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         // consume module stream
@@ -312,11 +312,11 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         // load properties
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         if (planStream != null) {
             try {
                 properties.load(planStream);
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             } finally {
                 close(planStream);
@@ -326,7 +326,7 @@ public class VmDeploymentManager implements DeploymentManager {
         return deploy(targetList, properties);
     }
 
-    private ProgressObject deploy(Target[] targetList, Properties properties) {
+    private ProgressObject deploy(final Target[] targetList, final Properties properties) {
         if (targetList == null) return new ProgressObjectImpl(CommandType.DISTRIBUTE, new NullPointerException("targetList is null"));
 
         if (!containsDefaultTarget(targetList)) {
@@ -334,16 +334,16 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         try {
-            AppInfo appInfo = getDeployer().deploy(properties);
-            TargetModuleID targetModuleId = toTargetModuleId(appInfo, null);
+            final AppInfo appInfo = getDeployer().deploy(properties);
+            final TargetModuleID targetModuleId = toTargetModuleId(appInfo, null);
 
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.singleton(targetModuleId));
         } catch (ValidationFailedException e) {
-            String s = System.getProperty(ReportValidationResults.VALIDATION_LEVEL, "3");
-            int level = Integer.parseInt(s);
+            final String s = System.getProperty(ReportValidationResults.VALIDATION_LEVEL, "3");
+            final int level = Integer.parseInt(s);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream out = new PrintStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final PrintStream out = new PrintStream(baos);
             out.println(e.getMessage());
             print(e.getErrors(), out, level);
             print(e.getFailures(), out, level);
@@ -351,12 +351,12 @@ public class VmDeploymentManager implements DeploymentManager {
             out.close();
             e = new ValidationFailedException(new String(baos.toByteArray()), e);
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, e);
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, e);
         }
     }
 
-    protected void print(ValidationException[] exceptions, PrintStream out, int level) {
+    protected void print(final ValidationException[] exceptions, final PrintStream out, final int level) {
 
         for (final ValidationException exception : exceptions) {
             out.print(" ");
@@ -371,46 +371,46 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
 
-    private boolean containsDefaultTarget(Target[] targetList) {
-        for (Target target : targetList) {
+    private boolean containsDefaultTarget(final Target[] targetList) {
+        for (final Target target : targetList) {
             if (DEFAULT_TARGET.equals(target)) return true;
         }
         return false;
     }
 
     @Override
-    public ProgressObject start(TargetModuleID[] moduleIdList) {
+    public ProgressObject start(final TargetModuleID[] moduleIdList) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
-        Set<TargetModuleID> deployedModules = toTargetModuleIds(getDeployer().getDeployedApps(), null);
-        Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(Arrays.asList(moduleIdList));
+        final Set<TargetModuleID> deployedModules = toTargetModuleIds(getDeployer().getDeployedApps(), null);
+        final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(Arrays.asList(moduleIdList));
         targetModuleIds.retainAll(deployedModules);
 
         return new ProgressObjectImpl(CommandType.START, targetModuleIds);
     }
 
     @Override
-    public ProgressObject stop(TargetModuleID[] moduleIdList) {
+    public ProgressObject stop(final TargetModuleID[] moduleIdList) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         return new ProgressObjectImpl(CommandType.START, Collections.<TargetModuleID>emptySet());
     }
 
     @Override
-    public ProgressObject undeploy(TargetModuleID[] moduleIdList) {
+    public ProgressObject undeploy(final TargetModuleID[] moduleIdList) {
         if (!connected) throw new IllegalStateException("Deployment manager is disconnected");
 
         UndeployException undeployException = null;
-        Set<TargetModuleID> results = new TreeSet<TargetModuleID>();
-        for (TargetModuleID targetModuleId : moduleIdList) {
+        final Set<TargetModuleID> results = new TreeSet<TargetModuleID>();
+        for (final TargetModuleID targetModuleId : moduleIdList) {
             try {
                 getDeployer().undeploy(targetModuleId.getModuleID());
                 results.add(targetModuleId);
-            } catch (UndeployException e) {
+            } catch (final UndeployException e) {
                 if (undeployException == null) {
                     undeployException = e;
                 }
-            } catch (NoSuchApplicationException e) {
+            } catch (final NoSuchApplicationException e) {
                 // app was not deployed... this should be ignored by jsr88
             }
         }
@@ -428,12 +428,12 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public ProgressObject redeploy(TargetModuleID[] moduleIDList, File moduleArchive, File deploymentPlan) {
+    public ProgressObject redeploy(final TargetModuleID[] moduleIDList, final File moduleArchive, final File deploymentPlan) {
         throw new UnsupportedOperationException("redeploy is not supported");
     }
 
     @Override
-    public ProgressObject redeploy(TargetModuleID[] moduleIDList, InputStream moduleArchive, InputStream deploymentPlan) {
+    public ProgressObject redeploy(final TargetModuleID[] moduleIDList, final InputStream moduleArchive, final InputStream deploymentPlan) {
         throw new UnsupportedOperationException("redeploy is not supported");
     }
 
@@ -453,12 +453,12 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public boolean isLocaleSupported(Locale locale) {
+    public boolean isLocaleSupported(final Locale locale) {
         return getDefaultLocale().equals(locale);
     }
 
     @Override
-    public void setLocale(Locale locale) {
+    public void setLocale(final Locale locale) {
         if (!isLocaleSupported(locale)) {
             throw new UnsupportedOperationException("Unsupported locale");
         }
@@ -470,19 +470,19 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     @Override
-    public boolean isDConfigBeanVersionSupported(DConfigBeanVersionType version) {
+    public boolean isDConfigBeanVersionSupported(final DConfigBeanVersionType version) {
         return DCONFIG_BEAN_VERSION.equals(version);
     }
 
     @Override
-    public void setDConfigBeanVersion(DConfigBeanVersionType version) throws DConfigBeanVersionUnsupportedException {
+    public void setDConfigBeanVersion(final DConfigBeanVersionType version) throws DConfigBeanVersionUnsupportedException {
         if (!isDConfigBeanVersionSupported(version)) {
             throw new DConfigBeanVersionUnsupportedException("Version not supported " + version);
         }
     }
 
     @Override
-    public DeploymentConfiguration createConfiguration(DeployableObject deployableObject) throws InvalidModuleException {
+    public DeploymentConfiguration createConfiguration(final DeployableObject deployableObject) throws InvalidModuleException {
         throw new InvalidModuleException("Not supported: " + deployableObject.getType());
     }
 
@@ -500,11 +500,11 @@ public class VmDeploymentManager implements DeploymentManager {
         private final String name;
         private final String description;
 
-        public TargetImpl(String name) {
+        public TargetImpl(final String name) {
             this(name, null);
         }
 
-        public TargetImpl(String name, String description) {
+        public TargetImpl(final String name, final String description) {
             if (name == null) throw new NullPointerException("name is null");
             this.name = name;
             this.description = description;
@@ -524,11 +524,11 @@ public class VmDeploymentManager implements DeploymentManager {
             return name;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (!(o instanceof TargetImpl)) return false;
 
-            TargetImpl target = (TargetImpl) o;
+            final TargetImpl target = (TargetImpl) o;
             return name.equals(target.name);
         }
 
@@ -537,8 +537,8 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         @Override
-        public int compareTo(Object o) {
-            TargetImpl target = (TargetImpl) o;
+        public int compareTo(final Object o) {
+            final TargetImpl target = (TargetImpl) o;
             return name.compareTo(target.name);
         }
     }
@@ -552,11 +552,11 @@ public class VmDeploymentManager implements DeploymentManager {
         private TargetModuleID parentTargetModuleId;
         private Set<TargetModuleID> children = new TreeSet<TargetModuleID>();
 
-        public TargetModuleIDImpl(Target target, String moduleId) {
+        public TargetModuleIDImpl(final Target target, final String moduleId) {
             this(target, moduleId, null);
         }
 
-        public TargetModuleIDImpl(Target target, String moduleId, String webUrl) {
+        public TargetModuleIDImpl(final Target target, final String moduleId, String webUrl) {
             if (target == null) throw new NullPointerException("target is null");
             if (moduleId == null) throw new NullPointerException("moduleId is null");
             this.target = target;
@@ -580,7 +580,7 @@ public class VmDeploymentManager implements DeploymentManager {
             return parentTargetModuleId;
         }
 
-        public void setParentTargetModuleID(TargetModuleIDImpl parentTargetModuleId) {
+        public void setParentTargetModuleID(final TargetModuleIDImpl parentTargetModuleId) {
             this.parentTargetModuleId = parentTargetModuleId;
             parentTargetModuleId.children.add(this);
         }
@@ -599,11 +599,11 @@ public class VmDeploymentManager implements DeploymentManager {
             return target + "/" + moduleId + (webUrl == null ? " " : webUrl);
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (!(o instanceof TargetModuleIDImpl)) return false;
 
-            TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
+            final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
                     moduleId.equals(targetModuleID.moduleId);
         }
@@ -616,11 +616,11 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         @Override
-        public int compareTo(Object o) {
-            TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
+        public int compareTo(final Object o) {
+            final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
 
             // compare target name
-            int val = target.getName().compareTo(targetModuleID.target.getName());
+            final int val = target.getName().compareTo(targetModuleID.target.getName());
             if (val != 0) return val;
 
             // compare moduleId
@@ -633,13 +633,13 @@ public class VmDeploymentManager implements DeploymentManager {
         private final ProgressEvent event;
         private final DeploymentStatus deploymentStatus;
 
-        public ProgressObjectImpl(CommandType command, Set<TargetModuleID> targetModuleIds) {
+        public ProgressObjectImpl(final CommandType command, final Set<TargetModuleID> targetModuleIds) {
             this.targetModuleIds = targetModuleIds;
             deploymentStatus = new DeploymentStatusImpl(command);
             event = new ProgressEvent(this, null, deploymentStatus);
         }
 
-        public ProgressObjectImpl(CommandType command, Exception exception) {
+        public ProgressObjectImpl(final CommandType command, final Exception exception) {
             this.targetModuleIds = null;
             deploymentStatus = new DeploymentStatusImpl(command, exception);
             event = new ProgressEvent(this, null, deploymentStatus);
@@ -657,7 +657,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         @Override
-        public ClientConfiguration getClientConfiguration(TargetModuleID id) {
+        public ClientConfiguration getClientConfiguration(final TargetModuleID id) {
             return null;
         }
 
@@ -682,12 +682,12 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         @Override
-        public void addProgressListener(ProgressListener pol) {
+        public void addProgressListener(final ProgressListener pol) {
             pol.handleProgressEvent(event);
         }
 
         @Override
-        public void removeProgressListener(ProgressListener pol) {
+        public void removeProgressListener(final ProgressListener pol) {
         }
 
     }
@@ -697,17 +697,17 @@ public class VmDeploymentManager implements DeploymentManager {
         private final StateType state;
         private final String message;
 
-        public DeploymentStatusImpl(CommandType command) {
+        public DeploymentStatusImpl(final CommandType command) {
             this.command = command;
             this.state = StateType.COMPLETED;
             this.message = null;
         }
 
-        public DeploymentStatusImpl(CommandType command, Exception exception) {
+        public DeploymentStatusImpl(final CommandType command, final Exception exception) {
             this.command = command;
             this.state = StateType.FAILED;
 
-            StringWriter writer = new StringWriter();
+            final StringWriter writer = new StringWriter();
             exception.printStackTrace(new PrintWriter(writer, true));
             this.message = writer.toString();
         }
@@ -748,7 +748,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         public String toString() {
-            StringBuilder buf = new StringBuilder();
+            final StringBuilder buf = new StringBuilder();
             buf.append("DeploymentStatus[").append(command).append(',');
             buf.append(state);
             if (message != null) {

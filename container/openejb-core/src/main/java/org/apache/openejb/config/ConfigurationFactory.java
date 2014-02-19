@@ -182,7 +182,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             } else {
                 try {
                     SystemInstance.get().setComponent(DataSourceCreator.class, DataSourceFactory.creator(creator, false));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("can't load " + creator + " will use the default creator", e);
                     SystemInstance.get().setComponent(DataSourceCreator.class, new DefaultDataSourceCreator());
                 }
@@ -351,7 +351,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     final Class<?> ejbClass;
                     try {
                         ejbClass = module.getClassLoader().loadClass(bean.getEjbClass());
-                    } catch (ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException e) {
                         logger.warning("can't load " + bean.getEjbClass());
                         continue;
                     }
@@ -513,7 +513,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 // 2) will let embedded containers (tomee-embedded mainly) not be noised by it in our singleton service
                 appInfo.properties.put("openejb.cdi.activated", "false");
                 sys.containerSystem.applications.add(appInfo);
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 logger.error("Unable to load the system applications.", e);
             }
         } else if (options.get(DEPLOYMENTS_CLASSPATH_PROPERTY, !embedded)) {
@@ -541,7 +541,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     logger.warning("config.noModulesFoundToDeploy");
                 }
 
-            } catch (OpenEJBException alreadyHandled) {
+            } catch (final OpenEJBException alreadyHandled) {
                 logger.debug("config.alreadyHandled");
             }
         }
@@ -592,13 +592,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     fis = IO.read(additionalDeploymentFile);
                     final AdditionalDeployments additionalDeployments = JaxbOpenejb.unmarshal(AdditionalDeployments.class, fis);
                     additionalDeploymentsList = additionalDeployments.getDeployments();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("can't read " + ADDITIONAL_DEPLOYMENTS, e);
                 } finally {
                     IO.close(fis);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.info("No additional deployments found: " + e);
         }
 
@@ -615,7 +615,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 DeploymentsResolver.loadFrom(deployment, base, declaredAppsUrls);
                 if (deployment.isAutoDeploy())
                     autoDeploy.add(deployment);
-            } catch (SecurityException se) {
+            } catch (final SecurityException se) {
                 logger.warning("Security check failed on deployment: " + deployment.getFile(), se);
             }
         }
@@ -686,9 +686,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 final Object service = toConfigDeclaration(name, value);
 
                 openejb.add(service);
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 logger.error("Error declaring service '" + name + "'. Invalid Service URI '" + value + "'.  java.net.URISyntaxException: " + e.getMessage());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 logger.error(e.getMessage());
             }
         }
@@ -711,14 +711,14 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final Object object;
             try {
                 object = JaxbOpenejb.create(serviceType);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException("Invalid URI '" + uri + "'. " + e.getMessage());
             }
 
             final Map<String, String> map;
             try {
                 map = URISupport.parseParamters(uri);
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 throw new OpenEJBException("Unable to parse URI parameters '" + uri + "'. URISyntaxException: " + e.getMessage());
             }
             if (object instanceof AbstractService) {
@@ -754,7 +754,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             return object;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException("Error declaring service '" + id + "'. Unable to create Service definition from URI '" + uri.toString() + "'", e);
         }
     }
@@ -770,10 +770,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             appInfo.paths.add(appInfo.path);
             appInfo.paths.add(jarFile.getAbsolutePath());
             return appInfo;
-        } catch (ValidationFailedException e) {
+        } catch (final ValidationFailedException e) {
             logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
             throw e;
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
             // removing this message causes NO messages to be printed when embedded
             logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
@@ -796,10 +796,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final AppInfo appInfo;
         try {
             appInfo = configureApplication(collection);
-        } catch (ValidationFailedException e) {
+        } catch (final ValidationFailedException e) {
             logger.warning("configureApplication.loadFailed", collection.getModuleId(), e.getMessage()); // DO not include the stacktrace in the message
             throw e;
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
             // removing this message causes NO messages to be printed when embedded
             logger.warning("configureApplication.loadFailed", e, collection.getModuleId(), e.getMessage());
@@ -853,10 +853,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     }
                 }
 
-            } catch (ValidationFailedException e) {
+            } catch (final ValidationFailedException e) {
                 logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
                 throw e;
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
                 // removing this message causes NO messages to be printed when embedded
                 logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
@@ -912,11 +912,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         notLoaded.addAll(finder.getResourcesNotLoaded());
                     }
                 }
-            } catch (IllegalArgumentException iae) {
+            } catch (final IllegalArgumentException iae) {
                 logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), iae);
-            } catch (MalformedURLException mue) {
+            } catch (final MalformedURLException mue) {
                 logger.debug("can't look for server event listener for module " + ejb.getModuleUri(), mue);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("can't look for server event listener for module " + ejb.getJarLocation());
             }
         }
@@ -1008,7 +1008,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         try {
             service = JaxbOpenejb.create(defaultService.type);
             service.setType(defaultService.id);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             final String name = defaultService.type == null ? "null" : defaultService.type.getName();
             throw new OpenEJBException("Cannot instantiate class " + name, e);
         }
@@ -1120,7 +1120,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             final T info;
             try {
                 info = infoType.newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new OpenEJBException(messages.format("configureService.cannotInstantiateClass", infoType.getName()), e);
             }
 
@@ -1141,10 +1141,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             specialProcessing(info);
 
             return info;
-        } catch (NoSuchProviderException e) {
+        } catch (final NoSuchProviderException e) {
             final String message = logger.fatal("configureService.failed", e, service.getId());
             throw new OpenEJBException(message + ": " + e.getMessage());
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             final String message = logger.fatal("configureService.failed", e, service.getId());
             throw new OpenEJBException(message, e);
         }
@@ -1230,7 +1230,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (service.getId() != null) {
             try {
                 return ServiceUtils.getServiceProvider(service.getId());
-            } catch (NoSuchProviderException e) {
+            } catch (final NoSuchProviderException e) {
                 logger.debug("resolveServiceProvider", e);
             }
         }
@@ -1277,7 +1277,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         final org.apache.openejb.config.Service service;
         try {
             service = serviceClass.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBException(messages.format("configureService.cannotInstantiateClass", serviceClass.getName()), e);
         }
         service.setId(serviceId);
@@ -1561,7 +1561,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         public String getReference(final ResourceInfo info) {
-            for (Object value : info.properties.values()) {
+            for (final Object value : info.properties.values()) {
                 if (String.class.isInstance(value)) {
                     final String string = String.class.cast(value).trim();
                     if (string.isEmpty()) {

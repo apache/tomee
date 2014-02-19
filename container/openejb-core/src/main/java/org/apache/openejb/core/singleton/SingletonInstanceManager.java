@@ -72,36 +72,36 @@ public class SingletonInstanceManager {
     private final SingletonContext sessionContext;
     private final WebServiceContext webServiceContext;
 
-    public SingletonInstanceManager(SecurityService securityService) {
+    public SingletonInstanceManager(final SecurityService securityService) {
         this.securityService = securityService;
         sessionContext = new SingletonContext(this.securityService);
         webServiceContext = new EjbWsContext(sessionContext);
     }
 
-    protected void start(BeanContext beanContext) throws OpenEJBException {
+    protected void start(final BeanContext beanContext) throws OpenEJBException {
         if (beanContext.isLoadOnStartup()) {
             initialize(beanContext);
         }
     }
 
-    private void initialize(BeanContext beanContext) throws OpenEJBException {
+    private void initialize(final BeanContext beanContext) throws OpenEJBException {
         try {
-            ThreadContext callContext = new ThreadContext(beanContext, null);
-            ThreadContext old = ThreadContext.enter(callContext);
+            final ThreadContext callContext = new ThreadContext(beanContext, null);
+            final ThreadContext old = ThreadContext.enter(callContext);
             try {
                 getInstance(callContext);
             } finally{
                 ThreadContext.exit(old);
             }
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new OpenEJBException("Singleton startup failed: "+ beanContext.getDeploymentID(), e);
         }
     }
 
     public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
-        Data data = (Data) beanContext.getContainerData();
-        AtomicReference<Future<Instance>> singleton = data.singleton;
+        final Data data = (Data) beanContext.getContainerData();
+        final AtomicReference<Future<Instance>> singleton = data.singleton;
         try {
             // Has the singleton been created yet?
             // If there is a Future object in the AtomicReference, then
@@ -112,7 +112,7 @@ public class SingletonInstanceManager {
             // The singleton has not been created nor is being created
             // We will construct this FutureTask and compete with the
             // other threads for the right to create the singleton
-            FutureTask<Instance> task = new FutureTask<Instance>(new Callable<Instance>() {
+            final FutureTask<Instance> task = new FutureTask<Instance>(new Callable<Instance>() {
                 public Instance call() throws Exception {
                     return createInstance(callContext, beanContext);
                 }
@@ -135,11 +135,11 @@ public class SingletonInstanceManager {
             // At this point we can safely return the singleton
             return singletonFuture.get();
 
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             throw new ApplicationException(new NoSuchEJBException("Singleton initialization interrupted").initCause(e));
-        } catch (ExecutionException e) {
-            Throwable throwable = e.getCause();
+        } catch (final ExecutionException e) {
+            final Throwable throwable = e.getCause();
             if (throwable instanceof ApplicationException) {
                 throw (ApplicationException) throwable;
             }
@@ -148,11 +148,11 @@ public class SingletonInstanceManager {
         }
     }
 
-    private void initializeDependencies(BeanContext beanContext) throws OpenEJBException {
-        SystemInstance systemInstance = SystemInstance.get();
-        ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
-        for (String dependencyId : beanContext.getDependsOn()) {
-            BeanContext dependencyContext = containerSystem.getBeanContext(dependencyId);
+    private void initializeDependencies(final BeanContext beanContext) throws OpenEJBException {
+        final SystemInstance systemInstance = SystemInstance.get();
+        final ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
+        for (final String dependencyId : beanContext.getDependsOn()) {
+            final BeanContext dependencyContext = containerSystem.getBeanContext(dependencyId);
             if (dependencyContext == null) {
                 throw new OpenEJBException("Deployment does not exist. Deployment(id='"+dependencyContext+"')");
             }
@@ -162,14 +162,14 @@ public class SingletonInstanceManager {
             // Bean may not be a singleton or may be a singleton
             // managed by a different container implementation
             if (containerData instanceof Data) {
-                Data data = (Data) containerData;
+                final Data data = (Data) containerData;
 
                 data.initialize();
             }
         }
     }
 
-    private Instance createInstance(ThreadContext callContext, BeanContext beanContext) throws ApplicationException {
+    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
         try {
             initializeDependencies(beanContext);
 
@@ -188,7 +188,7 @@ public class SingletonInstanceManager {
                 }
             }
 
-            ReadWriteLock lock;
+            final ReadWriteLock lock;
             if (beanContext.isBeanManagedConcurrency()){
                 // Bean-Managed Concurrency
                 lock = new BeanManagedLock();
@@ -202,28 +202,28 @@ public class SingletonInstanceManager {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
-            String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
+            final String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
             throw new ApplicationException(new NoSuchEJBException("Singleton failed to initialize").initCause(e));
         }
     }
 
-    public void freeInstance(ThreadContext callContext) {
-        BeanContext beanContext = callContext.getBeanContext();
-        Data data = (Data) beanContext.getContainerData();
-        Future<Instance> instanceFuture = data.singleton.get();
+    public void freeInstance(final ThreadContext callContext) {
+        final BeanContext beanContext = callContext.getBeanContext();
+        final Data data = (Data) beanContext.getContainerData();
+        final Future<Instance> instanceFuture = data.singleton.get();
 
         // Possible the instance was never created
         if (instanceFuture == null) return;
 
-        Instance instance;
+        final Instance instance;
         try {
             instance = instanceFuture.get();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
             logger.error("Singleton shutdown failed because the thread was interrupted: "+beanContext.getDeploymentID(), e);
             return;
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             // Instance was never initialized
             return;
         }
@@ -232,16 +232,16 @@ public class SingletonInstanceManager {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(null);
 
-            Method remove = instance.bean instanceof SessionBean? beanContext.getCreateMethod(): null;
+            final Method remove = instance.bean instanceof SessionBean? beanContext.getCreateMethod(): null;
 
-            List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
+            final List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
+            final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             //Transaction Demarcation for Singleton PostConstruct method
             TransactionType transactionType;
 
             if (beanContext.getComponentType() == BeanType.SINGLETON) {
-                Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
+                final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
@@ -253,7 +253,7 @@ public class SingletonInstanceManager {
             } else {
                 transactionType = beanContext.isBeanManagedTransaction()? TransactionType.BeanManaged: TransactionType.NotSupported;
             }
-            TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
+            final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try{
                 //Call the chain
                 final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);
@@ -265,7 +265,7 @@ public class SingletonInstanceManager {
                 if (instance.creationalContext != null) {
                     instance.creationalContext.release();
                 }
-            } catch(Throwable e) {
+            } catch(final Throwable e) {
                 //RollBack Transaction
                 EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
             }
@@ -273,7 +273,7 @@ public class SingletonInstanceManager {
                 EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
             }
 
-        } catch (Throwable re) {
+        } catch (final Throwable re) {
             logger.error("Singleton shutdown failed: "+beanContext.getDeploymentID(), re);
         }
     }
@@ -286,12 +286,12 @@ public class SingletonInstanceManager {
      * @param callContext
      * @param bean
      */
-    public void discardInstance(ThreadContext callContext, Object bean) {
+    public void discardInstance(final ThreadContext callContext, final Object bean) {
 
     }
 
-    public void deploy(BeanContext beanContext) throws OpenEJBException {
-        Data data = new Data(beanContext);
+    public void deploy(final BeanContext beanContext) throws OpenEJBException {
+        final Data data = new Data(beanContext);
         beanContext.setContainerData(data);
 
         beanContext.set(EJBContext.class, this.sessionContext);
@@ -301,7 +301,7 @@ public class SingletonInstanceManager {
             final StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
             beanContext.addFirstSystemInterceptor(stats);
 
-            ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
             jmxName.set("J2EEServer", "openejb");
             jmxName.set("J2EEApplication", null);
             jmxName.set("EJBModule", beanContext.getModuleID());
@@ -312,13 +312,13 @@ public class SingletonInstanceManager {
             // register the invocation stats interceptor
             final MBeanServer server = LocalMBeanServer.get();
             try {
-                ObjectName objectName = jmxName.build();
+                final ObjectName objectName = jmxName.build();
                 if (server.isRegistered(objectName)) {
                     server.unregisterMBean(objectName);
                 }
                 server.registerMBean(new ManagedMBean(stats), objectName);
                 data.add(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to register MBean ", e);
             }
         }
@@ -328,20 +328,20 @@ public class SingletonInstanceManager {
             context.bind("comp/EJBContext", sessionContext);
             context.bind("comp/WebServiceContext", webServiceContext);
             context.bind("comp/TimerService", new TimerServiceWrapper());
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
         }
     }
 
-    public void undeploy(BeanContext beanContext) {
-        Data data = (Data) beanContext.getContainerData();
+    public void undeploy(final BeanContext beanContext) {
+        final Data data = (Data) beanContext.getContainerData();
         if (data == null) return;
 
-        MBeanServer server = LocalMBeanServer.get();
-        for (ObjectName objectName : data.jmxNames) {
+        final MBeanServer server = LocalMBeanServer.get();
+        for (final ObjectName objectName : data.jmxNames) {
             try {
                 server.unregisterMBean(objectName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unable to unregister MBean "+objectName);
             }
         }
@@ -354,11 +354,11 @@ public class SingletonInstanceManager {
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
         private final BeanContext info;
 
-        public Data(BeanContext info) {
+        public Data(final BeanContext info) {
             this.info = info;
         }
 
-        public ObjectName add(ObjectName name) {
+        public ObjectName add(final ObjectName name) {
             jmxNames.add(name);
             return name;
         }
@@ -386,7 +386,7 @@ public class SingletonInstanceManager {
                 return true;
             }
 
-            public boolean tryLock(long time, TimeUnit unit) {
+            public boolean tryLock(final long time, final TimeUnit unit) {
                 return true;
             }
 

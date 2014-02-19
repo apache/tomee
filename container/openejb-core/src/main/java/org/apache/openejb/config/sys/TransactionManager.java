@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "TransactionManager")
 public class TransactionManager extends AbstractService {
-    public TransactionManager(String id) {
+    public TransactionManager(final String id) {
         super(id);
     }
 
-    public TransactionManager(String id, String type, String provider) {
+    public TransactionManager(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

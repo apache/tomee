@@ -43,10 +43,10 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
     }
 
     @Override
-    public void setJdbcUrl(String url) {
+    public void setJdbcUrl(final String url) {
         try {
             DataSourceHelper.setUrl(this.ds, url);
-        } catch (Throwable e1) {
+        } catch (final Throwable e1) {
             super.setUrl(url);
         }
     }
@@ -56,16 +56,16 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
         if (ds instanceof XADataSource) {
 
             // Create the XAConectionFactory using the XA data source
-            XADataSource xaDataSourceInstance = (XADataSource) ds;
-            XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, username, password);
+            final XADataSource xaDataSourceInstance = (XADataSource) ds;
+            final XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, username, password);
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
             return xaConnectionFactory;
 
         }
 
         // If xa data source is not specified a DriverConnectionFactory is created and wrapped with a LocalXAConnectionFactory
-        ConnectionFactory connectionFactory = new DataSourceConnectionFactory(DataSource.class.cast(ds), username, password);
-        XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
+        final ConnectionFactory connectionFactory = new DataSourceConnectionFactory(DataSource.class.cast(ds), username, password);
+        final XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
         setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
         return xaConnectionFactory;
     }
@@ -75,7 +75,7 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
             final Field field = org.apache.commons.dbcp.managed.BasicManagedDataSource.class.getDeclaredField("transactionRegistry");
             field.setAccessible(true);
             field.set(this, registry);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new IllegalStateException(e);
         }
     }

@@ -27,7 +27,7 @@ public enum TransactionType {
     Supports,
     BeanManaged;
 
-    public static TransactionType get(TransactionAttributeType type) {
+    public static TransactionType get(final TransactionAttributeType type) {
         switch (type) {
             case REQUIRED: return Required;
             case REQUIRES_NEW: return RequiresNew;
@@ -39,8 +39,8 @@ public enum TransactionType {
         }
     }
 
-    public static TransactionType get(String name) {
-        for (TransactionType type : values()) {
+    public static TransactionType get(final String name) {
+        for (final TransactionType type : values()) {
             if (type.name().equalsIgnoreCase(name)) return type;
         }
 

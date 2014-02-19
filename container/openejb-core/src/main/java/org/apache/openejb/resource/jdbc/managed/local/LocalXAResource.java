@@ -41,10 +41,10 @@ public class LocalXAResource implements XAResource {
     }
 
     @Override
-    public void start(final Xid xid, int flag) throws XAException {
+    public void start(final Xid xid, final int flag) throws XAException {
         try {
             lock.tryLock(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw (XAException) new XAException("can't get lock").initCause(cantGetLock());
         }
 
@@ -56,13 +56,13 @@ public class LocalXAResource implements XAResource {
             // save off the current auto commit flag so it can be restored after the transaction completes
             try {
                 originalAutoCommit = connection.getAutoCommit();
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 originalAutoCommit = true;
             }
 
             try {
                 connection.setAutoCommit(false);
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 throw (XAException) new XAException("Count not turn off auto commit for a XA transaction").initCause(e);
             }
 
@@ -81,7 +81,7 @@ public class LocalXAResource implements XAResource {
     }
 
     @Override
-    public void end(final Xid xid, int flag) throws XAException {
+    public void end(final Xid xid, final int flag) throws XAException {
         try {
             if (xid == null) {
                 throw new NullPointerException("xid is null");
@@ -103,7 +103,7 @@ public class LocalXAResource implements XAResource {
                 connection.setAutoCommit(originalAutoCommit);
                 return XAResource.XA_RDONLY;
             }
-        } catch (SQLException ignored) {
+        } catch (final SQLException ignored) {
             // no-op
         }
 
@@ -111,7 +111,7 @@ public class LocalXAResource implements XAResource {
     }
 
     @Override
-    public void commit(final Xid xid, boolean flag) throws XAException {
+    public void commit(final Xid xid, final boolean flag) throws XAException {
         checkLock();
 
         if (xid == null) {
@@ -129,12 +129,12 @@ public class LocalXAResource implements XAResource {
             if (!connection.isReadOnly()) {
                 connection.commit();
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw (XAException) new XAException().initCause(e);
         } finally {
             try {
                 connection.setAutoCommit(originalAutoCommit);
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 // no-op
             }
             currentXid = null;
@@ -154,12 +154,12 @@ public class LocalXAResource implements XAResource {
 
         try {
             connection.rollback();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw (XAException) new XAException().initCause(e);
         } finally {
             try {
                 connection.setAutoCommit(originalAutoCommit);
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 // no-op
             }
             this.currentXid = null;
@@ -180,7 +180,7 @@ public class LocalXAResource implements XAResource {
     }
 
     @Override
-    public Xid[] recover(int flag) {
+    public Xid[] recover(final int flag) {
         return new Xid[0];
     }
 
@@ -190,7 +190,7 @@ public class LocalXAResource implements XAResource {
     }
 
     @Override
-    public boolean setTransactionTimeout(int transactionTimeout) {
+    public boolean setTransactionTimeout(final int transactionTimeout) {
         return false;
     }
 

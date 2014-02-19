@@ -234,7 +234,7 @@ public class EntityContainer implements RpcContainer {
             returnValue = runMethod.invoke(bean, args);
             ejbStore_If_No_Transaction(callContext, bean);
             instanceManager.poolInstance(callContext, bean, callContext.getPrimaryKey());
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             handleException(txPolicy, e, callContext, bean);
         } finally {
             entrancyTracker.exit(callContext.getBeanContext(), callContext.getPrimaryKey());
@@ -261,10 +261,10 @@ public class EntityContainer implements RpcContainer {
                     callContext.setCurrentOperation(Operation.LOAD);
                     bean.ejbLoad();
                 }
-            } catch (NoSuchEntityException e) {
+            } catch (final NoSuchEntityException e) {
                 instanceManager.discardInstance(callContext, bean);
                 throw new ApplicationException(new NoSuchObjectException("Entity not found: " + callContext.getPrimaryKey())/*.initCause(e)*/);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 instanceManager.discardInstance(callContext, bean);
                 throw e;
             } finally {
@@ -292,7 +292,7 @@ public class EntityContainer implements RpcContainer {
                     callContext.setCurrentOperation(Operation.STORE);
                     bean.ejbStore();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 instanceManager.discardInstance(callContext, bean);
                 throw e;
             } finally {
@@ -364,7 +364,7 @@ public class EntityContainer implements RpcContainer {
 
             // update pool
             instanceManager.poolInstance(callContext, bean, primaryKey);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             handleException(txPolicy, e, callContext, bean);
         } finally {
             afterInvoke(txPolicy, callContext);
@@ -448,7 +448,7 @@ public class EntityContainer implements RpcContainer {
             bean.ejbRemove();
             didRemove(bean, callContext);
             instanceManager.poolInstance(callContext, bean, callContext.getPrimaryKey());
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             handleException(txPolicy, e, callContext, bean);
         } finally {
             afterInvoke(txPolicy, callContext);
@@ -475,7 +475,7 @@ public class EntityContainer implements RpcContainer {
             if (bean != null) {
                 try {
                     instanceManager.discardInstance(callContext, bean);
-                } catch (SystemException e1) {
+                } catch (final SystemException e1) {
                     logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key " +
                                  callContext.getPrimaryKey());
                 }

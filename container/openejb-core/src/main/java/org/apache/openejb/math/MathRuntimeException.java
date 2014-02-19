@@ -101,14 +101,14 @@ public class MathRuntimeException extends RuntimeException {
      */
     private static String translate(final String s, final Locale locale) {
         try {
-            ResourceBundle bundle =
+            final ResourceBundle bundle =
                     ResourceBundle.getBundle("org.apache.commons.math.MessagesResources", locale);
             if (bundle.getLocale().getLanguage().equals(locale.getLanguage())) {
                 // the value of the resource is the translated string
                 return bundle.getString(s);
             }
 
-        } catch (MissingResourceException mre) {
+        } catch (final MissingResourceException mre) {
             // do nothing here
         }
 
@@ -184,7 +184,7 @@ public class MathRuntimeException extends RuntimeException {
     @Override
     public void printStackTrace(final PrintStream out) {
         synchronized (out) {
-            PrintWriter pw = new PrintWriter(out, false);
+            final PrintWriter pw = new PrintWriter(out, false);
             printStackTrace(pw);
             // Flush the PrintWriter before it's GC'ed.
             pw.flush();
@@ -290,7 +290,7 @@ public class MathRuntimeException extends RuntimeException {
      * @return built exception
      */
     public static IOException createIOException(final Throwable rootCause) {
-        IOException ioe = new IOException(rootCause.getLocalizedMessage());
+        final IOException ioe = new IOException(rootCause.getLocalizedMessage());
         ioe.initCause(rootCause);
         return ioe;
     }
@@ -332,7 +332,7 @@ public class MathRuntimeException extends RuntimeException {
      * @return built exception
      */
     public static IllegalArgumentException createIllegalArgumentException(final Throwable rootCause) {
-        IllegalArgumentException iae = new IllegalArgumentException(rootCause.getLocalizedMessage());
+        final IllegalArgumentException iae = new IllegalArgumentException(rootCause.getLocalizedMessage());
         iae.initCause(rootCause);
         return iae;
     }

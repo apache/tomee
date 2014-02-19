@@ -53,7 +53,7 @@ public class AssemblerTool {
         System.setProperty("noBanner", "true");
     }
 
-    protected static void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
+    protected static void checkImplementation(final Class intrfce, final Class factory, final String serviceType, final String serviceName) throws OpenEJBException {
         if (!intrfce.isAssignableFrom(factory)) {
             throw new OpenEJBException(messages.format("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName()));
         }

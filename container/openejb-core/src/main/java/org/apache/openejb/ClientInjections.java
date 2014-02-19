@@ -40,7 +40,7 @@ public final class ClientInjections {
         try {
             clients = (Context) SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext()
                                               .lookup("openejb/client/");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException(object.getClass().getName(), e);
         }
 
@@ -54,7 +54,7 @@ public final class ClientInjections {
                 ctx = (Context) clients.lookup(moduleId);
                 injections = (List<Injection>) ctx.lookup("info/injections");
                 break;
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 current = current.getSuperclass();
             }
         }

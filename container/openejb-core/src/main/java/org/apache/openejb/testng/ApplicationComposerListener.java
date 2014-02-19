@@ -30,7 +30,7 @@ public class ApplicationComposerListener implements IInvokedMethodListener {
         delegate = new ApplicationComposers(method.getTestMethod().getRealClass());
         try {
             delegate.before(testResult.getInstance());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
@@ -39,7 +39,7 @@ public class ApplicationComposerListener implements IInvokedMethodListener {
     public void afterInvocation(final IInvokedMethod method, final ITestResult testResult) {
         try {
             delegate.after();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }

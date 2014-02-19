@@ -52,132 +52,132 @@ import java.util.List;
  */
 public class CheckCallbacks extends ValidationBase {
 
-    public void validate(EjbModule module) {
-        for (EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
+    public void validate(final EjbModule module) {
+        for (final EnterpriseBean bean : module.getEjbJar().getEnterpriseBeans()) {
             Class ejbClass = null;
             try {
                 ejbClass = loadClass(bean.getEjbClass());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 continue;
             }
 
             if (bean instanceof Invokable) {
-                Invokable invokable = (Invokable) bean;
+                final Invokable invokable = (Invokable) bean;
                 
-                for (AroundInvoke aroundInvoke : invokable.getAroundInvoke()) {
+                for (final AroundInvoke aroundInvoke : invokable.getAroundInvoke()) {
                     checkAroundInvoke(ejbClass, aroundInvoke, bean.getEjbName());
                 }
                 
-                for (AroundTimeout aroundTimeout : invokable.getAroundTimeout()) {
+                for (final AroundTimeout aroundTimeout : invokable.getAroundTimeout()) {
                     checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
                 }
             }
 
-            for (LifecycleCallback callback : bean.getPostConstruct()) {
+            for (final LifecycleCallback callback : bean.getPostConstruct()) {
                 checkCallback(ejbClass, "PostConstruct", callback, bean);
             }
 
-            for (LifecycleCallback callback : bean.getPreDestroy()) {
+            for (final LifecycleCallback callback : bean.getPreDestroy()) {
                 checkCallback(ejbClass, "PreDestroy", callback, bean);
             }
 
-            ClassFinder finder = new ClassFinder(ejbClass);
+            final ClassFinder finder = new ClassFinder(ejbClass);
 
             if (bean instanceof Session ) {
-                SessionBean session = (SessionBean) bean;
+                final SessionBean session = (SessionBean) bean;
 
                 if (session.getSessionType() == SessionType.STATEFUL ) {
 
-                    for (LifecycleCallback callback : session.getPrePassivate()) {
+                    for (final LifecycleCallback callback : session.getPrePassivate()) {
                         checkCallback(ejbClass, "PrePassivate", callback, bean);
                     }
 
-                    for (LifecycleCallback callback : session.getPostActivate()) {
+                    for (final LifecycleCallback callback : session.getPostActivate()) {
                         checkCallback(ejbClass, "PostActivate", callback, bean);
                     }
 
                     checkSessionSynchronization(ejbClass, session);
 
-                    for (LifecycleCallback callback : session.getAfterBegin()) {
+                    for (final LifecycleCallback callback : session.getAfterBegin()) {
                         checkCallback(ejbClass, "AfterBegin", callback, bean);
                     }
 
-                    for (LifecycleCallback callback : session.getBeforeCompletion()) {
+                    for (final LifecycleCallback callback : session.getBeforeCompletion()) {
                         checkCallback(ejbClass, "BeforeCompletion", callback, bean);
                     }
 
-                    for (LifecycleCallback callback : session.getAfterCompletion()) {
+                    for (final LifecycleCallback callback : session.getAfterCompletion()) {
                         checkCallback(ejbClass, "AfterCompletion", callback, bean, boolean.class);
                     }
 //                    for (LifecycleCallback callback : session.getAfterCompletion()) {
 //                        checkCallback(ejbClass, "Init", callback, bean, boolean.class);
 //                    }
 
-                    for (AroundTimeout aroundTimeout : session.getAroundTimeout()) {
+                    for (final AroundTimeout aroundTimeout : session.getAroundTimeout()) {
                         ignoredMethodAnnotation("AroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
                     }
 
-                    for (Timer timer : session.getTimer()) {
+                    for (final Timer timer : session.getTimer()) {
                         ignoredMethodAnnotation("Schedule/Schedules", bean, bean.getEjbClass(), timer.getTimeoutMethod().getMethodName(), SessionType.STATEFUL.getName());
                     }
 
                 } else {
 
-                    for (LifecycleCallback callback : session.getAfterBegin()) {
+                    for (final LifecycleCallback callback : session.getAfterBegin()) {
                         ignoredMethodAnnotation("AfterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (LifecycleCallback callback : session.getBeforeCompletion()) {
+                    for (final LifecycleCallback callback : session.getBeforeCompletion()) {
                         ignoredMethodAnnotation("BeforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (LifecycleCallback callback : session.getAfterCompletion()) {
+                    for (final LifecycleCallback callback : session.getAfterCompletion()) {
                         ignoredMethodAnnotation("AfterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (LifecycleCallback callback : session.getPrePassivate()) {
+                    for (final LifecycleCallback callback : session.getPrePassivate()) {
                         ignoredMethodAnnotation("PrePassivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (LifecycleCallback callback : session.getPostActivate()) {
+                    for (final LifecycleCallback callback : session.getPostActivate()) {
                         ignoredMethodAnnotation("PostActivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (RemoveMethod method : session.getRemoveMethod()) {
+                    for (final RemoveMethod method : session.getRemoveMethod()) {
                         ignoredMethodAnnotation("Remove", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
 
-                    for (InitMethod method : session.getInitMethod()) {
+                    for (final InitMethod method : session.getInitMethod()) {
                         ignoredMethodAnnotation("Init", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
                 }
             } else {
 
-                for (Method method : finder.findAnnotatedMethods(PrePassivate.class)) {
+                for (final Method method : finder.findAnnotatedMethods(PrePassivate.class)) {
                     ignoredMethodAnnotation("PrePassivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(PostActivate.class)) {
+                for (final Method method : finder.findAnnotatedMethods(PostActivate.class)) {
                     ignoredMethodAnnotation("PostActivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(Remove.class)) {
+                for (final Method method : finder.findAnnotatedMethods(Remove.class)) {
                     ignoredMethodAnnotation("Remove", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(Init.class)) {
+                for (final Method method : finder.findAnnotatedMethods(Init.class)) {
                     ignoredMethodAnnotation("Init", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
+                for (final Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
                     ignoredMethodAnnotation("AfterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
+                for (final Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
                     ignoredMethodAnnotation("BeforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
+                for (final Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
                     ignoredMethodAnnotation("AfterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
             }
@@ -197,71 +197,71 @@ public class CheckCallbacks extends ValidationBase {
 //            }
         }
 
-        for (Interceptor interceptor : module.getEjbJar().getInterceptors()) {
+        for (final Interceptor interceptor : module.getEjbJar().getInterceptors()) {
             Class interceptorClass = null;
             try {
                 interceptorClass = loadClass(interceptor.getInterceptorClass());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 continue;
             }
 
-            for (AroundInvoke aroundInvoke : interceptor.getAroundInvoke()) {
+            for (final AroundInvoke aroundInvoke : interceptor.getAroundInvoke()) {
                 checkAroundInvoke(interceptorClass, aroundInvoke, "Interceptor");
             }
 
-            for (AroundTimeout aroundTimeout : interceptor.getAroundTimeout()) {
+            for (final AroundTimeout aroundTimeout : interceptor.getAroundTimeout()) {
                 checkAroundTimeout(interceptorClass, aroundTimeout, "Interceptor");
             }
 
-            for (LifecycleCallback callback : interceptor.getPostConstruct()) {
+            for (final LifecycleCallback callback : interceptor.getPostConstruct()) {
                 checkCallback(interceptorClass, "PostConstruct", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getPreDestroy()) {
+            for (final LifecycleCallback callback : interceptor.getPreDestroy()) {
                 checkCallback(interceptorClass, "PreDestroy", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getPrePassivate()) {
+            for (final LifecycleCallback callback : interceptor.getPrePassivate()) {
                 checkCallback(interceptorClass, "PrePassivate", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getPostActivate()) {
+            for (final LifecycleCallback callback : interceptor.getPostActivate()) {
                 checkCallback(interceptorClass, "PostActivate", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getAfterBegin()) {
+            for (final LifecycleCallback callback : interceptor.getAfterBegin()) {
                 checkCallback(interceptorClass, "AfterBegin", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getBeforeCompletion()) {
+            for (final LifecycleCallback callback : interceptor.getBeforeCompletion()) {
                 checkCallback(interceptorClass, "BeforeCompletion", callback, interceptor);
             }
 
-            for (LifecycleCallback callback : interceptor.getAfterCompletion()) {
+            for (final LifecycleCallback callback : interceptor.getAfterCompletion()) {
                 checkCallback(interceptorClass, "AfterCompletion", callback, interceptor);
             }
         }
     }
 
-    private void checkAroundTypeInvoke(String aroundType, Class ejbClass, String declaringClassName, String declaringMethodName, String componentName) {
+    private void checkAroundTypeInvoke(final String aroundType, final Class ejbClass, final String declaringClassName, final String declaringMethodName, final String componentName) {
         try {
             Class<?> declaringClass = null;
             try {
                 declaringClass = declaringClassName == null ? ejbClass : loadClass(declaringClassName);
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 fail(componentName, "missing.class", declaringClassName, aroundType, ejbClass.getName());
                 return;
             }
-            Method method = getMethod(declaringClass, declaringMethodName, InvocationContext.class);
+            final Method method = getMethod(declaringClass, declaringMethodName, InvocationContext.class);
 
-            Class<?> returnType = method.getReturnType();
+            final Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Object.class)) {
                 fail(componentName, "aroundInvoke.badReturnType", aroundType, declaringMethodName, returnType.getName(), declaringClassName);
             }
 
             boolean throwsException = false;
-            for (Class<?> exceptionType : method.getExceptionTypes()) {
+            for (final Class<?> exceptionType : method.getExceptionTypes()) {
                 if (exceptionType.getName().equals(Exception.class.getName())) {
                     throwsException = true;
                 }
@@ -271,14 +271,14 @@ public class CheckCallbacks extends ValidationBase {
                 fail(componentName, "aroundInvoke.mustThrowException", aroundType, declaringMethodName, declaringClassName);
             }
 
-        } catch (NoSuchMethodException e) {
-            List<Method> possibleMethods = getMethods(ejbClass, declaringMethodName);
+        } catch (final NoSuchMethodException e) {
+            final List<Method> possibleMethods = getMethods(ejbClass, declaringMethodName);
 
             if (possibleMethods.size() == 0) {
                 fail(componentName, "aroundInvoke.missing", aroundType, declaringMethodName, declaringClassName);
             } else if (possibleMethods.size() == 1) {
                 fail(componentName, "aroundInvoke.invalidArguments", aroundType, declaringMethodName, getParameters(possibleMethods.get(0)), declaringClassName);
-                Class<?> returnType = possibleMethods.get(0).getReturnType();
+                final Class<?> returnType = possibleMethods.get(0).getReturnType();
                 if (!returnType.equals(Object.class)) {
                     fail(componentName, "aroundInvoke.badReturnType", aroundType, declaringMethodName, returnType.getName(), declaringClassName);
                 }
@@ -288,24 +288,24 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
-    private void checkAroundInvoke(Class<?> ejbClass, AroundInvoke aroundInvoke, String componentName) {
+    private void checkAroundInvoke(final Class<?> ejbClass, final AroundInvoke aroundInvoke, final String componentName) {
         checkAroundTypeInvoke("AroundInvoke", ejbClass, aroundInvoke.getClassName(), aroundInvoke.getMethodName(), componentName);
     }
 
-    private void checkAroundTimeout(Class<?> ejbClass, AroundTimeout aroundTimeout, String componentName) {
+    private void checkAroundTimeout(final Class<?> ejbClass, final AroundTimeout aroundTimeout, final String componentName) {
         checkAroundTypeInvoke("AroundTimeout", ejbClass, aroundTimeout.getClassName(), aroundTimeout.getMethodName(), componentName);
     }
 
-    private void checkCallback(Class<?> ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
+    private void checkCallback(final Class<?> ejbClass, final String type, final CallbackMethod callback, final EnterpriseBean bean, final Class... parameterTypes) {
         try {
             Class<?> delcaringClass = null;
             try {
                 delcaringClass = callback.getClassName() == null ? ejbClass : loadClass(callback.getClassName());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 fail(type, "missing.class", callback.getClassName(), type, bean.getEjbName());
                 return;
             }
-            Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
+            final Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
             if (implementsSessionBean(delcaringClass)) {
                 if ("PreDestroy".equals(type)) {
                     if (!callback.getMethodName().equals("ejbRemove"))
@@ -325,23 +325,23 @@ public class CheckCallbacks extends ValidationBase {
                 }
                 // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing javax.ejb.SessionBean
             }
-            Class<?> returnType = method.getReturnType();
+            final Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
                 fail(bean, "callback.badReturnType", type, callback.getMethodName(), returnType.getName(), callback.getClassName());
             }
 
-            int methodModifiers = method.getModifiers();
+            final int methodModifiers = method.getModifiers();
             if (Modifier.isFinal(methodModifiers) || Modifier.isStatic(methodModifiers)) {
                 fail(bean, "callback.badModifier", type, callback.getMethodName(), callback.getClassName());
             }
-        } catch (NoSuchMethodException e) {
-            List<Method> possibleMethods = getMethods(ejbClass, callback.getMethodName());
+        } catch (final NoSuchMethodException e) {
+            final List<Method> possibleMethods = getMethods(ejbClass, callback.getMethodName());
 
             if (possibleMethods.size() == 0) {
                 fail(bean, "callback.missing", type, callback.getMethodName(), callback.getClassName());
             } else if (possibleMethods.size() == 1) {
-                Class<?>[] parameters = possibleMethods.get(0).getParameterTypes();
+                final Class<?>[] parameters = possibleMethods.get(0).getParameterTypes();
                 if (parameters.length == 1 && parameters[0].equals(InvocationContext.class)) {
                     fail(bean.getEjbName(), "callback.invocationcontext.notallowed", type,
                             callback.getMethodName());
@@ -354,39 +354,39 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
-    private boolean implementsSessionBean(Class<?> ejbClass) {
-        Class<?>[] interfaces = ejbClass.getInterfaces();
-        for (Class<?> interfce : interfaces) {
+    private boolean implementsSessionBean(final Class<?> ejbClass) {
+        final Class<?>[] interfaces = ejbClass.getInterfaces();
+        for (final Class<?> interfce : interfaces) {
             if(interfce.equals(javax.ejb.SessionBean.class))
                 return true;
         }
         return false;
     }
 
-    private void checkCallback(Class interceptorClass, String type, CallbackMethod callback, Interceptor interceptor) {
+    private void checkCallback(final Class interceptorClass, final String type, final CallbackMethod callback, final Interceptor interceptor) {
         try {
             Class<?> delcaringClass = null;
             try {
                 delcaringClass = callback.getClassName() == null ? interceptorClass : loadClass(callback.getClassName());
-            } catch (OpenEJBException e) {
+            } catch (final OpenEJBException e) {
                 fail(type, "missing.class", callback.getClassName(), type, interceptor.getInterceptorClass());
                 return;
             }
-            Method method = getMethod(delcaringClass, callback.getMethodName(), InvocationContext.class);
+            final Method method = getMethod(delcaringClass, callback.getMethodName(), InvocationContext.class);
 
-            Class<?> returnType = method.getReturnType();
+            final Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
                 fail("Interceptor", "interceptor.callback.badReturnType", interceptorClass, type, callback.getMethodName(), returnType.getName());
             }
-        } catch (NoSuchMethodException e) {
-            List<Method> possibleMethods = getMethods(interceptorClass, callback.getMethodName());
+        } catch (final NoSuchMethodException e) {
+            final List<Method> possibleMethods = getMethods(interceptorClass, callback.getMethodName());
 
             if (possibleMethods.size() == 0) {
                 fail("Interceptor", "interceptor.callback.missing", type, callback.getMethodName(), interceptorClass.getName());
             } else if (possibleMethods.size() == 1) {
                 fail("Interceptor", "interceptor.callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), interceptorClass.getName());
-                Class<?> returnType = possibleMethods.get(0).getReturnType();
+                final Class<?> returnType = possibleMethods.get(0).getReturnType();
 
                 if (!returnType.equals(Void.TYPE)) {
                     fail("Interceptor", "interceptor.callback.badReturnType", interceptorClass, type, callback.getMethodName(), returnType.getName());
@@ -397,12 +397,12 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
-    private void checkSessionSynchronization(Class ejbClass, SessionBean bean) {
+    private void checkSessionSynchronization(final Class ejbClass, final SessionBean bean) {
         if (SessionSynchronization.class.isAssignableFrom(ejbClass)) {
             if (bean.getAfterBeginMethod() != null || bean.getBeforeCompletionMethod() != null || bean.getAfterCompletionMethod() != null) {
                 fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
             } else {
-                ClassFinder classFinder = new ClassFinder(ejbClass);
+                final ClassFinder classFinder = new ClassFinder(ejbClass);
                 if (classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0 || classFinder.findAnnotatedMethods(BeforeCompletion.class).size() > 0
                         || classFinder.findAnnotatedMethods(AfterCompletion.class).size() > 0) {
                     fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
@@ -411,12 +411,12 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
-    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+    private Method getMethod(Class clazz, final String methodName, final Class... parameterTypes) throws NoSuchMethodException {
         NoSuchMethodException original = null;
         while (clazz != null){
             try {
                 return clazz.getDeclaredMethod(methodName, parameterTypes);
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 if (original == null) original = e;
             }
             clazz = clazz.getSuperclass();
@@ -424,10 +424,10 @@ public class CheckCallbacks extends ValidationBase {
         throw original;
     }
 
-    private List<Method> getMethods(Class clazz, String methodName) {
-        List<Method> methods = new ArrayList<Method>();
+    private List<Method> getMethods(Class clazz, final String methodName) {
+        final List<Method> methods = new ArrayList<Method>();
         while (clazz != null){
-            for (Method method : clazz.getDeclaredMethods()) {
+            for (final Method method : clazz.getDeclaredMethods()) {
                 if (method.getName().equals(methodName)){
                     methods.add(method);
                 }

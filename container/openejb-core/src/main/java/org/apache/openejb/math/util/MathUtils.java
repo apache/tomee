@@ -95,8 +95,8 @@ public final class MathUtils {
      *         int
      * @since 1.1
      */
-    public static int addAndCheck(int x, int y) {
-        long s = (long)x + (long)y;
+    public static int addAndCheck(final int x, final int y) {
+        final long s = (long)x + (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: add");
         }
@@ -113,7 +113,7 @@ public final class MathUtils {
      *         long
      * @since 1.2
      */
-    public static long addAndCheck(long a, long b) {
+    public static long addAndCheck(final long a, final long b) {
         return addAndCheck(a, b, "overflow: add");
     }
 
@@ -128,8 +128,8 @@ public final class MathUtils {
      *         long
      * @since 1.2
      */
-    private static long addAndCheck(long a, long b, String msg) {
-        long ret;
+    private static long addAndCheck(final long a, final long b, final String msg) {
+        final long ret;
         if (a > b) {
             // use symmetry to reduce boundary cases
             ret = addAndCheck(b, a, msg);
@@ -382,7 +382,7 @@ public final class MathUtils {
      *       <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
      *       <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
      */
-    public static int compareTo(double x, double y, double eps) {
+    public static int compareTo(final double x, final double y, final double eps) {
         if (equals(x, y, eps)) {
             return 0;
         } else if (x < y) {
@@ -398,7 +398,7 @@ public final class MathUtils {
      * @param x double value for which to find the hyperbolic cosine
      * @return hyperbolic cosine of x
      */
-    public static double cosh(double x) {
+    public static double cosh(final double x) {
         return (Math.exp(x) + Math.exp(-x)) / 2.0;
     }
 
@@ -410,7 +410,7 @@ public final class MathUtils {
      * @param y second value
      * @return true if the values are equal or both are NaN
      */
-    public static boolean equals(double x, double y) {
+    public static boolean equals(final double x, final double y) {
         return Double.isNaN(x) && Double.isNaN(y) || x == y;
     }
 
@@ -426,7 +426,7 @@ public final class MathUtils {
      * @param eps the amount of absolute error to allow
      * @return true if the values are equal or within range of each other
      */
-    public static boolean equals(double x, double y, double eps) {
+    public static boolean equals(final double x, final double y, final double eps) {
       return equals(x, y) || Math.abs(y - x) <= eps;
     }
 
@@ -444,7 +444,7 @@ public final class MathUtils {
      * @return {@code true} if there are less than {@code maxUlps} floating
      * point values between {@code x} and {@code y}
      */
-    public static boolean equals(double x, double y, int maxUlps) {
+    public static boolean equals(final double x, final double y, final int maxUlps) {
         // Check that "maxUlps" is non-negative and small enough so that the
         // default NAN won't compare as equal to anything.
         assert maxUlps > 0 && maxUlps < NAN_GAP;
@@ -473,7 +473,7 @@ public final class MathUtils {
      * and equal elements
      * @since 1.2
      */
-    public static boolean equals(double[] x, double[] y) {
+    public static boolean equals(final double[] x, final double[] y) {
         if (x == null || y == null) {
             return !(x == null ^ y == null);
         }
@@ -768,7 +768,7 @@ public final class MathUtils {
      * @param value the value to be hashed
      * @return the hash code
      */
-    public static int hash(double value) {
+    public static int hash(final double value) {
         return new Double(value).hashCode();
     }
 
@@ -779,7 +779,7 @@ public final class MathUtils {
      * @return the hash code
      * @since 1.2
      */
-    public static int hash(double[] value) {
+    public static int hash(final double[] value) {
         return Arrays.hashCode(value);
     }
 
@@ -877,11 +877,11 @@ public final class MathUtils {
      *             value
      * @since 1.1
      */
-    public static int lcm(int a, int b) {
+    public static int lcm(final int a, final int b) {
         if (a==0 || b==0){
             return 0;
         }
-        int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
+        final int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
         if (lcm == Integer.MIN_VALUE) {
             throw MathRuntimeException.createArithmeticException(
                 "overflow: lcm({0}, {1}) is 2^31",
@@ -912,11 +912,11 @@ public final class MathUtils {
      * value
      * @since 2.1
      */
-    public static long lcm(long a, long b) {
+    public static long lcm(final long a, final long b) {
         if (a==0 || b==0){
             return 0;
         }
-        long lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
+        final long lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
         if (lcm == Long.MIN_VALUE){
             throw MathRuntimeException.createArithmeticException(
                 "overflow: lcm({0}, {1}) is 2^63",
@@ -941,7 +941,7 @@ public final class MathUtils {
      * @return the value of the logarithm - the number y such that base^y = x.
      * @since 1.2
      */
-    public static double log(double base, double x) {
+    public static double log(final double base, final double x) {
         return Math.log(x)/Math.log(base);
     }
 
@@ -955,8 +955,8 @@ public final class MathUtils {
      *         int
      * @since 1.1
      */
-    public static int mulAndCheck(int x, int y) {
-        long m = (long)x * (long)y;
+    public static int mulAndCheck(final int x, final int y) {
+        final long m = (long)x * (long)y;
         if (m < Integer.MIN_VALUE || m > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: mul");
         }
@@ -973,9 +973,9 @@ public final class MathUtils {
      *         long
      * @since 1.2
      */
-    public static long mulAndCheck(long a, long b) {
-        long ret;
-        String msg = "overflow: multiply";
+    public static long mulAndCheck(final long a, final long b) {
+        final long ret;
+        final String msg = "overflow: multiply";
         if (a > b) {
             // use symmetry to reduce boundary cases
             ret = mulAndCheck(b, a);
@@ -1035,7 +1035,7 @@ public final class MathUtils {
      * @return the next machine representable number in the specified direction
      * @since 1.2
      */
-    public static double nextAfter(double d, double direction) {
+    public static double nextAfter(final double d, final double direction) {
 
         // handling of some important special cases
         if (Double.isNaN(d) || Double.isInfinite(d)) {
@@ -1047,10 +1047,10 @@ public final class MathUtils {
         // are handled just as normal numbers
 
         // split the double in raw components
-        long bits     = Double.doubleToLongBits(d);
-        long sign     = bits & 0x8000000000000000L;
-        long exponent = bits & 0x7ff0000000000000L;
-        long mantissa = bits & 0x000fffffffffffffL;
+        final long bits     = Double.doubleToLongBits(d);
+        final long sign     = bits & 0x8000000000000000L;
+        final long exponent = bits & 0x7ff0000000000000L;
+        final long mantissa = bits & 0x000fffffffffffffL;
 
         if (d * (direction - d) >= 0) {
                 // we should increase the mantissa
@@ -1121,7 +1121,7 @@ public final class MathUtils {
      * @return a-2k&pi; with integer k and center-&pi; &lt;= a-2k&pi; &lt;= center+&pi;
      * @since 1.2
      */
-     public static double normalizeAngle(double a, double center) {
+     public static double normalizeAngle(final double a, final double center) {
          return a - TWO_PI * Math.floor((a + Math.PI - center) / TWO_PI);
      }
 
@@ -1146,7 +1146,7 @@ public final class MathUtils {
       * @throws IllegalArgumentException if the target sum is infinite or NaN
       * @since 2.1
       */
-     public static double[] normalizeArray(double[] values, double normalizedSum)
+     public static double[] normalizeArray(final double[] values, final double normalizedSum)
        throws ArithmeticException, IllegalArgumentException {
          if (Double.isInfinite(normalizedSum)) {
              throw MathRuntimeException.createIllegalArgumentException(
@@ -1158,7 +1158,7 @@ public final class MathUtils {
          }
          double sum = 0d;
          final int len = values.length;
-         double[] out = new double[len];
+         final double[] out = new double[len];
          for (int i = 0; i < len; i++) {
              if (Double.isInfinite(values[i])) {
                  throw MathRuntimeException.createArithmeticException(
@@ -1191,7 +1191,7 @@ public final class MathUtils {
      * @return the rounded value.
      * @since 1.1
      */
-    public static double round(double x, int scale) {
+    public static double round(final double x, final int scale) {
         return round(x, scale, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -1207,13 +1207,13 @@ public final class MathUtils {
      * @return the rounded value.
      * @since 1.1
      */
-    public static double round(double x, int scale, int roundingMethod) {
+    public static double round(final double x, final int scale, final int roundingMethod) {
         try {
             return new BigDecimal
                    (Double.toString(x))
                    .setScale(scale, roundingMethod)
                    .doubleValue();
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             if (Double.isInfinite(x)) {
                 return x;
             } else {
@@ -1231,7 +1231,7 @@ public final class MathUtils {
      * @return the rounded value.
      * @since 1.1
      */
-    public static float round(float x, int scale) {
+    public static float round(final float x, final int scale) {
         return round(x, scale, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -1247,9 +1247,9 @@ public final class MathUtils {
      * @return the rounded value.
      * @since 1.1
      */
-    public static float round(float x, int scale, int roundingMethod) {
-        float sign = indicator(x);
-        float factor = (float)Math.pow(10.0f, scale) * sign;
+    public static float round(final float x, final int scale, final int roundingMethod) {
+        final float sign = indicator(x);
+        final float factor = (float)Math.pow(10.0f, scale) * sign;
         return (float)roundUnscaled(x * factor, sign, roundingMethod) / factor;
     }
 
@@ -1265,8 +1265,8 @@ public final class MathUtils {
      * @return the rounded value.
      * @since 1.1
      */
-    private static double roundUnscaled(double unscaled, double sign,
-        int roundingMethod) {
+    private static double roundUnscaled(double unscaled, final double sign,
+        final int roundingMethod) {
         switch (roundingMethod) {
         case BigDecimal.ROUND_CEILING :
             if (sign == -1) {
@@ -1287,7 +1287,7 @@ public final class MathUtils {
             break;
         case BigDecimal.ROUND_HALF_DOWN : {
             unscaled = nextAfter(unscaled, Double.NEGATIVE_INFINITY);
-            double fraction = unscaled - Math.floor(unscaled);
+            final double fraction = unscaled - Math.floor(unscaled);
             if (fraction > 0.5) {
                 unscaled = Math.ceil(unscaled);
             } else {
@@ -1296,7 +1296,7 @@ public final class MathUtils {
             break;
         }
         case BigDecimal.ROUND_HALF_EVEN : {
-            double fraction = unscaled - Math.floor(unscaled);
+            final double fraction = unscaled - Math.floor(unscaled);
             if (fraction > 0.5) {
                 unscaled = Math.ceil(unscaled);
             } else if (fraction < 0.5) {
@@ -1314,7 +1314,7 @@ public final class MathUtils {
         }
         case BigDecimal.ROUND_HALF_UP : {
             unscaled = nextAfter(unscaled, Double.POSITIVE_INFINITY);
-            double fraction = unscaled - Math.floor(unscaled);
+            final double fraction = unscaled - Math.floor(unscaled);
             if (fraction >= 0.5) {
                 unscaled = Math.ceil(unscaled);
             } else {
@@ -1448,7 +1448,7 @@ public final class MathUtils {
      * @param x double value for which to find the hyperbolic sine
      * @return hyperbolic sine of x
      */
-    public static double sinh(double x) {
+    public static double sinh(final double x) {
         return (Math.exp(x) - Math.exp(-x)) / 2.0;
     }
 
@@ -1462,8 +1462,8 @@ public final class MathUtils {
      *         int
      * @since 1.1
      */
-    public static int subAndCheck(int x, int y) {
-        long s = (long)x - (long)y;
+    public static int subAndCheck(final int x, final int y) {
+        final long s = (long)x - (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
             throw new ArithmeticException("overflow: subtract");
         }
@@ -1480,9 +1480,9 @@ public final class MathUtils {
      *         long
      * @since 1.2
      */
-    public static long subAndCheck(long a, long b) {
-        long ret;
-        String msg = "overflow: subtract";
+    public static long subAndCheck(final long a, final long b) {
+        final long ret;
+        final String msg = "overflow: subtract";
         if (b == Long.MIN_VALUE) {
             if (a < 0) {
                 ret = a - b;
@@ -1623,7 +1623,7 @@ public final class MathUtils {
      * @return k<sup>e</sup>
      * @exception IllegalArgumentException if e is negative
      */
-    public static BigInteger pow(final BigInteger k, int e)
+    public static BigInteger pow(final BigInteger k, final int e)
         throws IllegalArgumentException {
 
         if (e < 0) {
@@ -1703,7 +1703,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>1</sub> distance between the two points
      */
-    public static double distance1(double[] p1, double[] p2) {
+    public static double distance1(final double[] p1, final double[] p2) {
         double sum = 0;
         for (int i = 0; i < p1.length; i++) {
             sum += Math.abs(p1[i] - p2[i]);
@@ -1718,7 +1718,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>1</sub> distance between the two points
      */
-    public static int distance1(int[] p1, int[] p2) {
+    public static int distance1(final int[] p1, final int[] p2) {
       int sum = 0;
       for (int i = 0; i < p1.length; i++) {
           sum += Math.abs(p1[i] - p2[i]);
@@ -1733,7 +1733,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>2</sub> distance between the two points
      */
-    public static double distance(double[] p1, double[] p2) {
+    public static double distance(final double[] p1, final double[] p2) {
         double sum = 0;
         for (int i = 0; i < p1.length; i++) {
             final double dp = p1[i] - p2[i];
@@ -1749,7 +1749,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>2</sub> distance between the two points
      */
-    public static double distance(int[] p1, int[] p2) {
+    public static double distance(final int[] p1, final int[] p2) {
       double sum = 0;
       for (int i = 0; i < p1.length; i++) {
           final double dp = p1[i] - p2[i];
@@ -1765,7 +1765,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>&infin;</sub> distance between the two points
      */
-    public static double distanceInf(double[] p1, double[] p2) {
+    public static double distanceInf(final double[] p1, final double[] p2) {
         double max = 0;
         for (int i = 0; i < p1.length; i++) {
             max = Math.max(max, Math.abs(p1[i] - p2[i]));
@@ -1780,7 +1780,7 @@ public final class MathUtils {
      * @param p2 the second point
      * @return the L<sub>&infin;</sub> distance between the two points
      */
-    public static int distanceInf(int[] p1, int[] p2) {
+    public static int distanceInf(final int[] p1, final int[] p2) {
         int max = 0;
         for (int i = 0; i < p1.length; i++) {
             max = Math.max(max, Math.abs(p1[i] - p2[i]));
@@ -1796,10 +1796,10 @@ public final class MathUtils {
      * @param strict Whether the order should be strict
      * @throws IllegalArgumentException if the array is not sorted.
      */
-    public static void checkOrder(double[] val, int dir, boolean strict) {
+    public static void checkOrder(final double[] val, final int dir, final boolean strict) {
         double previous = val[0];
 
-        int max = val.length;
+        final int max = val.length;
         for (int i = 1; i < max; i++) {
             if (dir > 0) {
                 if (strict) {

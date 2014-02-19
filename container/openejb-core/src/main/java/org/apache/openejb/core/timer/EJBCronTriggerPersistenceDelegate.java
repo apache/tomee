@@ -38,7 +38,7 @@ public class EJBCronTriggerPersistenceDelegate extends CronTriggerPersistenceDel
     }
 
     @Override
-    public boolean canHandleTriggerType(OperableTrigger trigger) {
+    public boolean canHandleTriggerType(final OperableTrigger trigger) {
         return trigger instanceof EJBCronTrigger;
     }
 
@@ -53,8 +53,8 @@ public class EJBCronTriggerPersistenceDelegate extends CronTriggerPersistenceDel
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                String cronExpr = rs.getString(COL_CRON_EXPRESSION);
-                String timeZoneId = rs.getString(COL_TIME_ZONE_ID);
+                final String cronExpr = rs.getString(COL_CRON_EXPRESSION);
+                final String timeZoneId = rs.getString(COL_TIME_ZONE_ID);
 
                 final String[] parts = cronExpr.split(EJBCronTrigger.DELIMITER);
                 try {
@@ -68,7 +68,7 @@ public class EJBCronTriggerPersistenceDelegate extends CronTriggerPersistenceDel
                             .second(parts[6])
                             .timezone(timeZoneId));
                     return new TriggerPropertyBundle(new EJBCronTriggerSceduleBuilder(cb), null, null);
-                } catch (EJBCronTrigger.ParseException e) {
+                } catch (final EJBCronTrigger.ParseException e) {
                     throw new IllegalStateException("Can't build the Trigger with key: '" + triggerKey + "' and statement: " + Util.rtp(SELECT_CRON_TRIGGER, tablePrefix, schedNameLiteral));
                 }
             }

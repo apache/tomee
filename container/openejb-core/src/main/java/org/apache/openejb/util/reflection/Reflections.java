@@ -29,7 +29,7 @@ public final class Reflections {
     public static Method findMethod(final String name, final Class<?> type, final Class<?>... args) {
         try {
             return type.getMethod(name, args);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalArgumentException("Can't find public method " + name + " in " + type.getName());
         }
     }
@@ -44,9 +44,9 @@ public final class Reflections {
                 acc = mtd.isAccessible();
                 mtd.setAccessible(true);
                 return mtd.invoke(obj, args);
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 // no-op
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalArgumentException(e);
             } finally {
                 if (mtd != null) {
@@ -64,7 +64,7 @@ public final class Reflections {
         while (clazz != null) {
             try {
                 final Field f = clazz.getDeclaredField(field);
-                boolean acc = f.isAccessible();
+                final boolean acc = f.isAccessible();
                 f.setAccessible(true);
                 try {
                     f.set(instance, value);
@@ -72,9 +72,9 @@ public final class Reflections {
                 } finally {
                     f.setAccessible(acc);
                 }
-            } catch (NoSuchFieldException nsfe) {
+            } catch (final NoSuchFieldException nsfe) {
                 // no-op
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalArgumentException(e);
             }
 
@@ -87,16 +87,16 @@ public final class Reflections {
         while (clazz != null) {
             try {
                 final Field f = clazz.getDeclaredField(field);
-                boolean acc = f.isAccessible();
+                final boolean acc = f.isAccessible();
                 f.setAccessible(true);
                 try {
                     return f.get(instance);
                 } finally {
                     f.setAccessible(acc);
                 }
-            } catch (NoSuchFieldException nsfe) {
+            } catch (final NoSuchFieldException nsfe) {
                 // no-op
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalArgumentException(e);
             }
 

@@ -94,7 +94,7 @@ public class AutoDeployer {
 
             assembler.createApplication(appInfo);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed Auto-Deployment of: " + appPath, e);
         }
 
@@ -134,7 +134,7 @@ public class AutoDeployer {
                             for (int i = 0; i < 3; i++) {
                                 try {
                                     Files.remove(delete);
-                                } catch (Exception e) {
+                                } catch (final Exception e) {
                                     if (i < 2) {
                                         //Try again as file IO is not a science
                                         Thread.sleep(100);
@@ -149,7 +149,7 @@ public class AutoDeployer {
 
                         logger.info("Completed Auto-Undeployment of: " + app.appId);
 
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         logger.error("Auto-Undeploy Failed: " + file.getAbsolutePath(), e);
                     }
                     break;
@@ -184,7 +184,7 @@ public class AutoDeployer {
         try {
             //Will block if scanning
             SEMAPHORE.acquire();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             //Ignore
         } finally {
             SEMAPHORE.release();
@@ -196,7 +196,7 @@ public class AutoDeployer {
 
         try {
             SEMAPHORE.acquire();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             logger.warning("AutoDeployer.start failed to obtain lock");
             return;
         }
@@ -211,7 +211,7 @@ public class AutoDeployer {
                 public void run() {
                     try {
                         scan();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         logger.error("Scan failed.", e);
                     }
                 }
@@ -250,7 +250,7 @@ public class AutoDeployer {
 
         try {
             SEMAPHORE.acquire();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             logger.warning("AutoDeployer.scan failed to obtain lock");
             return;
         }

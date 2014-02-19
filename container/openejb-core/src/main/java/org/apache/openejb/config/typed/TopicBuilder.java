@@ -41,17 +41,17 @@ public class TopicBuilder extends Resource {
 
     }
 
-    public TopicBuilder id(String id) {
+    public TopicBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public TopicBuilder withDestination(String destination) {
+    public TopicBuilder withDestination(final String destination) {
         this.destination = destination;
         return this;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(final String destination) {
         this.destination = destination;
     }
 

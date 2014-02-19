@@ -25,15 +25,15 @@ public class UnsupportedModuleTypeException extends OpenEJBException {
     public UnsupportedModuleTypeException() {
     }
 
-    public UnsupportedModuleTypeException(String message) {
+    public UnsupportedModuleTypeException(final String message) {
         super(message);
     }
 
-    public UnsupportedModuleTypeException(String message, Throwable rootCause) {
+    public UnsupportedModuleTypeException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public UnsupportedModuleTypeException(Throwable rootCause) {
+    public UnsupportedModuleTypeException(final Throwable rootCause) {
         super(rootCause);
     }
 }

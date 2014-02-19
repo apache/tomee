@@ -25,7 +25,7 @@ public class PortAddress {
     private final String address;
     private final String serviceEndpointInterface;
 
-    public PortAddress(String portId, QName serviceQName, QName portQName, String address, String serviceEndpointInterface) {
+    public PortAddress(final String portId, final QName serviceQName, final QName portQName, final String address, final String serviceEndpointInterface) {
         this.portId = portId;
         this.serviceQName = serviceQName;
         this.portQName = portQName;

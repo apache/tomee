@@ -57,33 +57,33 @@ public class EntityInstanceManager {
 
     private SecurityService securityService;
 
-    public EntityInstanceManager(EntityContainer container, SecurityService securityService, int poolSize) {
+    public EntityInstanceManager(final EntityContainer container, final SecurityService securityService, final int poolSize) {
         this.securityService = securityService;
         this.poolsize = poolSize;
         poolMap = new HashMap<Object,LinkedListStack>();// put size in later
 
-        BeanContext[] beanContexts = container.getBeanContexts();
-        for (BeanContext beanContext : beanContexts) {
+        final BeanContext[] beanContexts = container.getBeanContexts();
+        for (final BeanContext beanContext : beanContexts) {
             deploy(beanContext);
         }
     }
 
-    public void deploy(BeanContext beanContext) {
+    public void deploy(final BeanContext beanContext) {
         poolMap.put(beanContext.getDeploymentID(), new LinkedListStack(poolsize / 2));
         beanContext.set(EJBContext.class, createEntityContext());
     }
 
-    public void undeploy(BeanContext beanContext) {
+    public void undeploy(final BeanContext beanContext) {
         poolMap.remove(beanContext.getDeploymentID());
     }
 
-    public EntityBean obtainInstance(ThreadContext callContext) throws OpenEJBException {
+    public EntityBean obtainInstance(final ThreadContext callContext) throws OpenEJBException {
         // primary key is null if its a servicing a home methods (create, find, ejbHome)
-        Object primaryKey = callContext.getPrimaryKey();
-        TransactionPolicy txPolicy = callContext.getTransactionPolicy();
+        final Object primaryKey = callContext.getPrimaryKey();
+        final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
         if (callContext.getPrimaryKey() != null && txPolicy != null && txPolicy.isTransactionActive()) {
 
-            Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
+            final Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
             SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
 
             if (wrapper != null) {// if true, the requested bean instance is already enrolled in a transaction
@@ -129,7 +129,7 @@ public class EntityInstanceManager {
                 * Then the bean entity is being access by this transaction for the first time,
                 * so it needs to be enrolled in the transaction.
                 */
-                EntityBean bean = getPooledInstance(callContext);
+                final EntityBean bean = getPooledInstance(callContext);
                 wrapper = new SynchronizationWrapper(callContext.getBeanContext(), primaryKey, bean, false, key, txPolicy);
 
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
@@ -147,14 +147,14 @@ public class EntityInstanceManager {
                 txPolicy.registerSynchronization(wrapper);
 
                 loadingBean(bean, callContext);
-                Operation orginalOperation = callContext.getCurrentOperation();
+                final Operation orginalOperation = callContext.getCurrentOperation();
                 callContext.setCurrentOperation(Operation.LOAD);
                 try {
                     bean.ejbLoad();
-                } catch (NoSuchEntityException e) {
+                } catch (final NoSuchEntityException e) {
                     wrapper.disassociate();
                     throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey, e));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Exception encountered during ejbLoad():", e);
                     //djencks not sure about this dissociate call
                     wrapper.disassociate();
@@ -175,27 +175,27 @@ public class EntityInstanceManager {
         }
     }
 
-    protected void loadingBean(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
+    protected void loadingBean(final EntityBean bean, final ThreadContext callContext) throws OpenEJBException {
     }
 
-    protected void reusingBean(EntityBean bean, ThreadContext callContext) throws OpenEJBException {
+    protected void reusingBean(final EntityBean bean, final ThreadContext callContext) throws OpenEJBException {
     }
 
-    protected EntityBean getPooledInstance(ThreadContext callContext) throws OpenEJBException {
-        BeanContext beanContext = callContext.getBeanContext();
-        Stack methodReadyPool = poolMap.get(beanContext.getDeploymentID());
+    protected EntityBean getPooledInstance(final ThreadContext callContext) throws OpenEJBException {
+        final BeanContext beanContext = callContext.getBeanContext();
+        final Stack methodReadyPool = poolMap.get(beanContext.getDeploymentID());
         if (methodReadyPool == null) throw new SystemException("Invalid deployment id " + beanContext.getDeploymentID() + " for this container");
 
         EntityBean bean = (EntityBean) methodReadyPool.pop();
         if (bean == null) {
             try {
                 bean = (EntityBean) beanContext.getBeanClass().newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Bean instantiation failed for class " + beanContext.getBeanClass(), e);
                 throw new SystemException(e);
             }
 
-            Operation currentOp = callContext.getCurrentOperation();
+            final Operation currentOp = callContext.getCurrentOperation();
             callContext.setCurrentOperation(Operation.SET_CONTEXT);
 
             try {
@@ -210,7 +210,7 @@ public class EntityInstanceManager {
                 * to do.
                 */
                 bean.setEntityContext(createEntityContext());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 /*
                 * The EJB 1.1 specification does not specify how exceptions thrown by setEntityContext impact the
                 * transaction, if there is one.  In this case we choose the least disruptive operation, throwing an
@@ -235,7 +235,7 @@ public class EntityInstanceManager {
             * 3. Its being retrieved to service an ejbRemove() method.
             * See section 9.1.4 of the EJB 1.1 specification.
             */
-            Operation currentOp = callContext.getCurrentOperation();
+            final Operation currentOp = callContext.getCurrentOperation();
 
             callContext.setCurrentOperation(Operation.ACTIVATE);
             try {
@@ -246,9 +246,9 @@ public class EntityInstanceManager {
                 See EJB 1.1 specification, section 12.3.2
                 */
                 bean.ejbActivate();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.error("Encountered exception during call to ejbActivate()", e);
-                TransactionPolicy txPolicy = callContext.getTransactionPolicy();
+                final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
                 if (txPolicy != null && txPolicy.isTransactionActive()) {
                     txPolicy.setRollbackOnly(e);
                     throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbActivate() on the instance", e));
@@ -266,16 +266,16 @@ public class EntityInstanceManager {
         return new EntityContext(securityService);
     }
 
-    public void poolInstance(ThreadContext callContext, EntityBean bean, Object primaryKey) throws OpenEJBException {
+    public void poolInstance(final ThreadContext callContext, final EntityBean bean, final Object primaryKey) throws OpenEJBException {
         if (bean == null) {
             return;
         }
 
         // primary key is null if its a servicing a home methods (create, find, ejbHome)
-        TransactionPolicy txPolicy = callContext.getTransactionPolicy();
+        final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
         if (primaryKey != null && txPolicy != null && txPolicy.isTransactionActive()) {
 
-            Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
+            final Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
             SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
 
             if (wrapper != null) {
@@ -291,7 +291,7 @@ public class EntityInstanceManager {
                     * If the bean has been removed then the bean instance is no longer needed and can return to the methodReadyPool
                     * to service another identity.
                     */
-                    Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
+                    final Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
                     methodReadyPool.push(bean);
                 } else {
                     if (callContext.getCurrentOperation() == Operation.CREATE) {
@@ -327,7 +327,7 @@ public class EntityInstanceManager {
                 * method. In this case we need to call the bean instance's ejbPassivate before returning it to the pool per EJB 1.1
                 * Section 9.1.
                 */
-                Operation currentOp = callContext.getCurrentOperation();
+                final Operation currentOp = callContext.getCurrentOperation();
 
                 callContext.setCurrentOperation(Operation.PASSIVATE);
 
@@ -339,7 +339,7 @@ public class EntityInstanceManager {
                     See EJB 1.1 specification, section 12.3.2
                     */
                     bean.ejbPassivate();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     if (txPolicy.isTransactionActive()) {
                         txPolicy.setRollbackOnly(e);
                         throw new ApplicationException(new TransactionRolledbackException("Reflection exception thrown while attempting to call ejbPassivate() on the instance", e));
@@ -355,17 +355,17 @@ public class EntityInstanceManager {
             * method and is not still part of a tx.  While in the method ready pool the bean instance is not associated with a
             * primary key and may be used to service a request for any bean of the same class.
             */
-            Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
+            final Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
             methodReadyPool.push(bean);
         }
 
     }
 
-    public void freeInstance(ThreadContext callContext, EntityBean bean) throws SystemException {
+    public void freeInstance(final ThreadContext callContext, final EntityBean bean) throws SystemException {
 
         discardInstance(callContext, bean);
 
-        Operation currentOp = callContext.getCurrentOperation();
+        final Operation currentOp = callContext.getCurrentOperation();
         callContext.setCurrentOperation(Operation.UNSET_CONTEXT);
 
         try {
@@ -380,7 +380,7 @@ public class EntityInstanceManager {
             * to do.
             */
             bean.unsetEntityContext();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             /*
             * The EJB 1.1 specification does not specify how exceptions thrown by unsetEntityContext impact the
             * transaction, if there is one.  In this case we choose to do nothing since the instance is being disposed
@@ -394,9 +394,9 @@ public class EntityInstanceManager {
 
     }
 
-    public void discardInstance(ThreadContext callContext, EntityBean bean) throws SystemException {
-        Object primaryKey = callContext.getPrimaryKey();
-        TransactionPolicy txPolicy = callContext.getTransactionPolicy();
+    public void discardInstance(final ThreadContext callContext, final EntityBean bean) throws SystemException {
+        final Object primaryKey = callContext.getPrimaryKey();
+        final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
         if (primaryKey == null || txPolicy == null || !txPolicy.isTransactionActive()) {
             return;
         }
@@ -405,8 +405,8 @@ public class EntityInstanceManager {
         // especially important in the obtainInstance( ) method where a disassociated wrapper
         // in the txReadyPool is indicative of an entity bean that has been removed via
         // ejbRemove() rather than freed because of an error condition as is the case here.
-        Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
-        SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
+        final Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
+        final SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
         if (wrapper != null) {
             /*
              It's not possible to deregister a wrapper with the transaction,
@@ -433,7 +433,7 @@ public class EntityInstanceManager {
         private final Object deploymentId;
         private final Object primaryKey;
 
-        public Key(Object deploymentId, Object primaryKey) {
+        public Key(final Object deploymentId, final Object primaryKey) {
             if (deploymentId == null) throw new NullPointerException("deploymentId is null");
             if (primaryKey == null) throw new NullPointerException("primaryKey is null");
 
@@ -441,11 +441,11 @@ public class EntityInstanceManager {
             this.primaryKey = primaryKey;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Key key = (Key) o;
+            final Key key = (Key) o;
 
             return deploymentId.equals(key.deploymentId) && primaryKey.equals(key.primaryKey);
         }
@@ -479,7 +479,7 @@ public class EntityInstanceManager {
         private final Object primaryKey;
         private final TransactionPolicy txPolicy;
 
-        public SynchronizationWrapper(BeanContext beanContext, Object primaryKey, EntityBean bean, boolean available, Key readyPoolKey, TransactionPolicy txPolicy) {
+        public SynchronizationWrapper(final BeanContext beanContext, final Object primaryKey, final EntityBean bean, final boolean available, final Key readyPoolKey, final TransactionPolicy txPolicy) {
             if (bean == null) throw new IllegalArgumentException("bean is null");
             if (readyPoolKey == null) throw new IllegalArgumentException("key is null");
             if (beanContext == null) throw new IllegalArgumentException("deploymentInfo is null");
@@ -511,7 +511,7 @@ public class EntityInstanceManager {
             return available;
         }
 
-        public synchronized void setEntityBean(EntityBean ebean) {
+        public synchronized void setEntityBean(final EntityBean ebean) {
             available = true;
             bean = ebean;
         }
@@ -523,19 +523,19 @@ public class EntityInstanceManager {
 
         public void beforeCompletion() {
             if (associated) {
-                EntityBean bean;
+                final EntityBean bean;
                 synchronized (this) {
                     bean = this.bean;
                 }
 
-                ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
+                final ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
                 callContext.setCurrentOperation(Operation.STORE);
 
-                ThreadContext oldCallContext = ThreadContext.enter(callContext);
+                final ThreadContext oldCallContext = ThreadContext.enter(callContext);
 
                 try {
                     bean.ejbStore();
-                } catch (Exception re) {
+                } catch (final Exception re) {
                     logger.error("Exception occured during ejbStore()", re);
                     txPolicy.setRollbackOnly(re);
                 } finally {
@@ -544,7 +544,7 @@ public class EntityInstanceManager {
             }
         }
 
-        public void afterCompletion(Status status) {
+        public void afterCompletion(final Status status) {
             txPolicy.removeResource(readyPoolKey);
         }
     }

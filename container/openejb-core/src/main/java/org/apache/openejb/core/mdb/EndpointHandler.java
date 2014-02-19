@@ -69,7 +69,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     private State state = State.NONE;
     private Object instance;
 
-    public EndpointHandler(MdbContainer container, BeanContext deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
+    public EndpointHandler(final MdbContainer container, final BeanContext deployment, final MdbInstanceFactory instanceFactory, final XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceFactory = instanceFactory;
@@ -133,14 +133,14 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
 //
 //    }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 //        System.out.println("\n" +
 //                "***************************************\n" +
 //                "Endpoint invoked " + method + "\n" +
 //                "***************************************\n\n");
 
-        String methodName = method.getName();
-        Class<?>[] parameterTypes = method.getParameterTypes();
+        final String methodName = method.getName();
+        final Class<?>[] parameterTypes = method.getParameterTypes();
 
         if (method.getDeclaringClass() == Object.class) {
             if ("toString".equals(methodName) && parameterTypes.length == 0) {
@@ -165,13 +165,13 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             release();
             return null;
         } else {
-            Object value = deliverMessage(method, args);
+            final Object value = deliverMessage(method, args);
             return value;
         }
 //        } finally { logTx(); }
     }
 
-    public void beforeDelivery(Method method) throws ApplicationServerInternalException {
+    public void beforeDelivery(final Method method) throws ApplicationServerInternalException {
         // verify current state
         switch (state) {
             case RELEASED:
@@ -186,8 +186,8 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         // call beforeDelivery on the container
         try {
             container.beforeDelivery(deployment, instance, method, xaResource);
-        } catch (SystemException se) {
-            Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
+        } catch (final SystemException se) {
+            final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throw new ApplicationServerInternalException(throwable);
         }
 
@@ -195,7 +195,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         state = State.BEFORE_CALLED;
     }
 
-    public Object deliverMessage(Method method, Object[] args) throws Throwable {
+    public Object deliverMessage(final Method method, final Object[] args) throws Throwable {
 
         boolean callBeforeAfter = false;
 
@@ -204,7 +204,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             case NONE:
                 try {
                     beforeDelivery(method);
-                } catch (ApplicationServerInternalException e) {
+                } catch (final ApplicationServerInternalException e) {
                     throw (EJBException) new EJBException().initCause(e.getCause());
                 }
                 callBeforeAfter = true;
@@ -225,19 +225,19 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         try {
             // deliver the message
             value = container.invoke(instance, method, null, args);
-        } catch (SystemException se) {
+        } catch (final SystemException se) {
             throwable = se.getRootCause() != null ? se.getRootCause() : se;
             state = State.SYSTEM_EXCEPTION;
-        } catch (ApplicationException ae) {
+        } catch (final ApplicationException ae) {
             throwable = ae.getRootCause() != null ? ae.getRootCause() : ae;
         } finally {
             // if the adapter is not using before/after, we must call afterDelivery to clean up
             if (callBeforeAfter) {
                 try {
                     afterDelivery();
-                } catch (ApplicationServerInternalException e) {
+                } catch (final ApplicationServerInternalException e) {
                     throwable = throwable == null ? e.getCause() : throwable;
-                } catch (UnavailableException e) {
+                } catch (final UnavailableException e) {
                     throwable = throwable == null ? e : throwable;
                 }
             }
@@ -270,10 +270,10 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         boolean exceptionThrown = false;
         try {
             container.afterDelivery(instance);
-        } catch (SystemException se) {
+        } catch (final SystemException se) {
             exceptionThrown = true;
 
-            Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
+            final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throwable.printStackTrace();
             throw new ApplicationServerInternalException(throwable);
         } finally {
@@ -285,10 +285,10 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
     }
 
-    private void recreateInstance(boolean exceptionAlreadyThrown) throws UnavailableException {
+    private void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
         try {
             instance = instanceFactory.recreateInstance(instance);
-        } catch (UnavailableException e) {
+        } catch (final UnavailableException e) {
             // an error occured wile attempting to create the replacement instance
             // this endpoint is now failed
             state = State.RELEASED;
@@ -313,11 +313,11 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
     }
 
-    private boolean isValidException(Method method, Throwable throwable) {
+    private boolean isValidException(final Method method, final Throwable throwable) {
         if (throwable instanceof RuntimeException || throwable instanceof Error) return true;
 
-        Class<?>[] exceptionTypes = method.getExceptionTypes();
-        for (Class<?> exceptionType : exceptionTypes) {
+        final Class<?>[] exceptionTypes = method.getExceptionTypes();
+        for (final Class<?> exceptionType : exceptionTypes) {
             if (exceptionType.isInstance(throwable)) {
                 return true;
             }

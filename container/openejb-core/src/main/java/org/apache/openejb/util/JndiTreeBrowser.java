@@ -28,16 +28,16 @@ public final class JndiTreeBrowser {
     private Context context;
     private String path;
 
-    private JndiTreeBrowser(Context ctx, String name) {
+    private JndiTreeBrowser(final Context ctx, final String name) {
         path = name;
         context = ctx;
     }
 
-    private JndiTreeBrowser(Context ctx) {
+    private JndiTreeBrowser(final Context ctx) {
         this(ctx, ROOT);
     }
 
-    private JndiTreeBrowser(String name) throws NamingException {
+    private JndiTreeBrowser(final String name) throws NamingException {
         this(new InitialContext(), name);
     }
 
@@ -45,11 +45,11 @@ public final class JndiTreeBrowser {
         this(new InitialContext(), ROOT);
     }
 
-    private void runOnTree(JndiNodeWorker worker) throws NamingException {
-        NamingEnumeration<Binding> ne = context.listBindings(ROOT);
+    private void runOnTree(final JndiNodeWorker worker) throws NamingException {
+        final NamingEnumeration<Binding> ne = context.listBindings(ROOT);
         while (ne.hasMoreElements()) {
-            Binding current = ne.next();
-            Object obj = current.getObject();
+            final Binding current = ne.next();
+            final Object obj = current.getObject();
             worker.doWork(path, current.getName(), obj);
             if (obj instanceof Context) {
                 runOnJndiTree((Context) obj, worker,
@@ -58,16 +58,16 @@ public final class JndiTreeBrowser {
         }
     }
 
-    private void runOnJndiTree(Context ctx, JndiNodeWorker worker, String prefix)
+    private void runOnJndiTree(final Context ctx, final JndiNodeWorker worker, final String prefix)
             throws NamingException {
         new JndiTreeBrowser(ctx, prefix).runOnTree(worker);
     }
 
-    public static void runOnJndiTree(Context ctx, JndiNodeWorker worker) throws NamingException {
+    public static void runOnJndiTree(final Context ctx, final JndiNodeWorker worker) throws NamingException {
         new JndiTreeBrowser(ctx).runOnTree(worker);
     }
 
-    public static void log(Context ctx) throws NamingException {
+    public static void log(final Context ctx) throws NamingException {
         new JndiTreeBrowser(ctx).runOnTree(new LogJndiWorker(null));
     }
 
@@ -87,7 +87,7 @@ public final class JndiTreeBrowser {
         }
 
         @Override
-        public void doWork(String path, String name, Object obj) {
+        public void doWork(final String path, final String name, final Object obj) {
             final String complete = path + "/" + name;
             if (filter == null || complete.contains(filter)) {
                 System.out.println(complete);

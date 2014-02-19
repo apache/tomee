@@ -57,7 +57,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
     static {
         try {
             lib = SystemInstance.get().getHome().getDirectory("lib", false);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             //Ignore
         }
     }
@@ -97,10 +97,10 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
                 loadFromDir(dep, path, jarList);
 
-            } catch (Files.FileDoesNotExistException e) {
+            } catch (final Files.FileDoesNotExistException e) {
                 logger.warning("File error: <Deployments dir=\"" + dep.getDir() + "\"> - " + e.getMessage());
 
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 final String message = "Runtime error: <Deployments dir=\"" + dep.getDir() + "\"> - " + e.getMessage();
 
                 logger.error(message);
@@ -113,7 +113,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
                 loadFromFile(dep, path, jarList);
 
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 final String message = "<Deployments file=\"" + dep.getFile() + "\"> - " + e.getMessage();
                 logger.error(message);
                 throw new DeploymentsConfigurationException(message);
@@ -354,7 +354,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                     logger.info("Matched: " + url);
                 }
             }
-        } catch (IOException e1) {
+        } catch (final IOException e1) {
             e1.printStackTrace();
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
@@ -400,9 +400,9 @@ public class DeploymentsResolver implements DeploymentFilterable {
                         logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + file.getAbsolutePath());
                     }
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
-            } catch (UnknownModuleTypeException ignore) {
+            } catch (final UnknownModuleTypeException ignore) {
                 // no-op
             }
         }

@@ -25,16 +25,16 @@ public class StringTemplate {
     public static final Pattern PATTERN = Pattern.compile("(\\{)((\\.|\\w)+)(})");
     private final String template;
 
-    public StringTemplate(String template) {
+    public StringTemplate(final String template) {
         this.template = template;
     }
 
-    public String apply(Map<String, String> map) {
-        Matcher matcher = PATTERN.matcher(template);
-        StringBuffer buf = new StringBuffer();
+    public String apply(final Map<String, String> map) {
+        final Matcher matcher = PATTERN.matcher(template);
+        final StringBuffer buf = new StringBuffer();
  
         while (matcher.find()) {
-            String key = matcher.group(2);
+            final String key = matcher.group(2);
 
             if (key == null) throw new IllegalStateException("Key is null. Template '" + template + "'");
 

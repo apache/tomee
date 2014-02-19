@@ -47,23 +47,23 @@ public class StaticDESPasswordCipher implements PasswordCipher {
      * @throws RuntimeException
      *             in any case of error.
      */
-    public char[] encrypt(String plainPassword) {
+    public char[] encrypt(final String plainPassword) {
         if (null == plainPassword || plainPassword.length() == 0) {
             throw new IllegalArgumentException("plainPassword cannot be null nor empty.");
         }
 
-        byte[] plaintext = plainPassword.getBytes();
+        final byte[] plaintext = plainPassword.getBytes();
         try {
             // Get a 3DES Cipher object
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             // Set it into encryption mode
             cipher.init(Cipher.ENCRYPT_MODE, KEY);
 
             // Encrypt data
-            byte[] cipherText = cipher.doFinal(plaintext);
+            final byte[] cipherText = cipher.doFinal(plaintext);
             return new String(Base64.encodeBase64(cipherText)).toCharArray();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
@@ -73,25 +73,25 @@ public class StaticDESPasswordCipher implements PasswordCipher {
      * @throws RuntimeException
      *             in any case of error.
      */
-    public String decrypt(char[] encodedPassword) {
+    public String decrypt(final char[] encodedPassword) {
         if (null == encodedPassword || encodedPassword.length == 0) {
             throw new IllegalArgumentException("encodedPassword cannot be null nor empty.");
         }
 
         try {
-            byte[] cipherText = Base64.decodeBase64(
+            final byte[] cipherText = Base64.decodeBase64(
                     String.valueOf(encodedPassword).getBytes());
 
             // Get a 3DES Cipher object
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             // Set it into decryption mode
             cipher.init(Cipher.DECRYPT_MODE, KEY);
 
             // Decrypt data
-            String plainText = new String(cipher.doFinal(cipherText));
+            final String plainText = new String(cipher.doFinal(cipherText));
             return plainText;
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }
     }

@@ -32,7 +32,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
 
 
     @Override
-    public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
 
         final BeanContext beanContext = newContext.getBeanContext();
 
@@ -52,7 +52,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
     }
 
     @Override
-    public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
+    public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         if (exitedContext == null) return;
 
         final DestroyContext destroyContext = exitedContext.get(DestroyContext.class);
@@ -66,7 +66,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
         private final ContextsService contextsService;
         private final ThreadContext threadContext;
 
-        private DestroyContext(ContextsService contextsService, ThreadContext threadContext) {
+        private DestroyContext(final ContextsService contextsService, final ThreadContext threadContext) {
             this.contextsService = contextsService;
             this.threadContext = threadContext;
         }

@@ -37,33 +37,33 @@ public class Info {
     static {
         try {
             JAXB_CONTEXT = JAXBContext.newInstance(Info.class);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new OpenEJBRuntimeException("can't create jaxbcontext for Info class");
         }
     }
 
     public AppInfo appInfo;
 
-    public Info(AppInfo appInfo) {
+    public Info(final AppInfo appInfo) {
         this.appInfo = appInfo;
     }
 
     public Info() {
     }
 
-    public static void marshal(AppInfo appInfo) throws JAXBException {
+    public static void marshal(final AppInfo appInfo) throws JAXBException {
         marshal(appInfo, System.out);
     }
 
-    public static void marshal(AppInfo appInfo, OutputStream out) throws JAXBException {
+    public static void marshal(final AppInfo appInfo, final OutputStream out) throws JAXBException {
         marshaller().marshal(new Info(appInfo), out);
     }
 
-    public static void marshal(AppInfo appInfo, Writer out) throws JAXBException {
+    public static void marshal(final AppInfo appInfo, final Writer out) throws JAXBException {
         marshaller().marshal(new Info(appInfo), out);
     }
 
-    public static AppInfo unmarshal(InputStream in) throws JAXBException {
+    public static AppInfo unmarshal(final InputStream in) throws JAXBException {
         return ((Info) unmarshaller().unmarshal(in)).appInfo;
     }
 

@@ -26,11 +26,11 @@ import java.util.Properties;
  */
 public class Builders {
 
-    public static Properties getProperties(AbstractService service) {
+    public static Properties getProperties(final AbstractService service) {
         final ObjectMap map = new ObjectMap(service);
 
         final Properties properties = new Properties();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
             final Object value = entry.getValue();
             if (value != null) {
                 properties.put(entry.getKey(), value.toString());

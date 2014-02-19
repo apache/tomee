@@ -46,7 +46,7 @@ public class ColorFormatter extends SingleLineFormatter {
     }
 
     @Override
-    public synchronized String format(LogRecord record) {
+    public synchronized String format(final LogRecord record) {
         final boolean exception = record.getThrown() != null;
         final Ansi sbuf = prefix(record);
         sbuf.a(record.getLevel().getLocalizedName());
@@ -63,7 +63,7 @@ public class ColorFormatter extends SingleLineFormatter {
                 record.getThrown().printStackTrace(pw);
                 pw.close();
                 sbuf.a(sw.toString());
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 // no-op
             } finally {
                 suffix(sbuf, record);
@@ -75,7 +75,7 @@ public class ColorFormatter extends SingleLineFormatter {
     private Ansi.Color color(final String lvl, final String aDefault) {
         try {
             return Ansi.Color.valueOf(SystemInstance.get().getProperty(OPENEJB_LOG_COLOR_PREFIX + lvl, aDefault));
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             return Ansi.Color.valueOf(aDefault);
         }
     }

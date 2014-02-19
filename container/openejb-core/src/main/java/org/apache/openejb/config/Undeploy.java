@@ -50,12 +50,12 @@ public class Undeploy {
 
     private static final String defaultServerUrl = "ejbd://localhost:4201";
 
-    public static void main(String[] args) throws SystemExitException {
+    public static void main(final String[] args) throws SystemExitException {
 
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption(Undeploy.option("v", "version", "cmd.deploy.opt.version"));
         options.addOption(Undeploy.option("h", "help", "cmd.undeploy.opt.help")); // TODO this message doesn't exist
         options.addOption(Undeploy.option("s", "server-url", "url", "cmd.deploy.opt.server"));
@@ -64,7 +64,7 @@ public class Undeploy {
         try {
             // parse the command line arguments
             line = parser.parse(options, args);
-        } catch (ParseException exp) {
+        } catch (final ParseException exp) {
             Undeploy.help(options);
             throw new SystemExitException(-1);
         }
@@ -83,39 +83,39 @@ public class Undeploy {
             return;
         }
 
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-        String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
+        final String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
         p.put(Context.PROVIDER_URL, serverUrl);
 
         Deployer deployer = null;
         try {
-            InitialContext ctx = new InitialContext(p);
+            final InitialContext ctx = new InitialContext(p);
             deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
-        } catch (ServiceUnavailableException e) {
+        } catch (final ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(Undeploy.messages.format("cmd.deploy.serverOffline"));
             throw new SystemExitException(-1);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             System.out.println("DeployerEjb does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
             throw new SystemExitException(-2);
         }
 
         int exitCode = 0;
-        for (Object obj : line.getArgList()) {
-            String moduleId = (String) obj;
+        for (final Object obj : line.getArgList()) {
+            final String moduleId = (String) obj;
 
             try {
                 undeploy(moduleId, deployer);
-            } catch (DeploymentTerminatedException e) {
+            } catch (final DeploymentTerminatedException e) {
                 System.out.println(e.getMessage());
                 exitCode++;
-            } catch (UndeployException e) {
+            } catch (final UndeployException e) {
                 System.out.println(messages.format("cmd.undeploy.failed", moduleId));
                 e.printStackTrace(System.out);
                 exitCode++;
-            } catch (NoSuchApplicationException e) {
+            } catch (final NoSuchApplicationException e) {
                 // TODO make this message
                 System.out.println(messages.format("cmd.undeploy.noSuchModule", moduleId));
                 exitCode++;
@@ -127,21 +127,21 @@ public class Undeploy {
         }
     }
 
-    public static void undeploy(String moduleId, Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
+    public static void undeploy(final String moduleId, final Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
         // Treat moduleId as a file path, and see if there is a matching app to undeploy
         undeploy(moduleId, new File(moduleId), deployer);
     }
 
-    public static void undeploy(String moduleId, File file, Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
+    public static void undeploy(String moduleId, File file, final Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
         try {
             file = file.getCanonicalFile();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
 
         boolean undeployed = false;
         if (file != null) {
-            String path = file.getAbsolutePath();
+            final String path = file.getAbsolutePath();
             try {
                 deployer.undeploy(path);
                 undeployed = true;
@@ -149,7 +149,7 @@ public class Undeploy {
                 if (!delete(file)){
                     throw new DeploymentTerminatedException(messages.format("cmd.undeploy.cantDelete", file.getAbsolutePath()));
                 }
-            } catch (NoSuchApplicationException e) {
+            } catch (final NoSuchApplicationException e) {
                 // no-op
             }
         }
@@ -164,20 +164,20 @@ public class Undeploy {
         System.out.println(messages.format("cmd.undeploy.successful", moduleId));
     }
 
-    private static void help(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
+    private static void help(final Options options) {
+        final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("undeploy [options] <file> [<file>...]", "\n"+ Undeploy.i18n("cmd.undeploy.description"), options, "\n");
     }
 
-    private static Option option(String shortOpt, String longOpt, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withDescription(Undeploy.i18n(description)).create(shortOpt);
     }
 
-    private static Option option(String shortOpt, String longOpt, String argName, String description) {
+    private static Option option(final String shortOpt, final String longOpt, final String argName, final String description) {
         return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(Undeploy.i18n(description)).create(shortOpt);
     }
 
-    private static String i18n(String key) {
+    private static String i18n(final String key) {
         return Undeploy.messages.format(key);
     }
 
@@ -186,11 +186,11 @@ public class Undeploy {
 
         private static final long serialVersionUID = 1L;
 
-        public DeploymentTerminatedException(String message) {
+        public DeploymentTerminatedException(final String message) {
             super(message);
         }
 
-        public DeploymentTerminatedException(String message, Throwable cause) {
+        public DeploymentTerminatedException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }

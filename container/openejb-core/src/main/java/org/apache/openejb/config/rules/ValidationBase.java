@@ -39,16 +39,16 @@ import java.lang.reflect.Method;
 public abstract class ValidationBase implements ValidationRule {
     DeploymentModule module;
 
-    public void validate(AppModule appModule) {
+    public void validate(final AppModule appModule) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            for (EjbModule ejbModule : appModule.getEjbModules()) {
+            for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 Thread.currentThread().setContextClassLoader(ejbModule.getClassLoader());
 
                 module = ejbModule;
                 validate(ejbModule);
             }
-            for (ClientModule clientModule : appModule.getClientModules()) {
+            for (final ClientModule clientModule : appModule.getClientModules()) {
                 Thread.currentThread().setContextClassLoader(clientModule.getClassLoader());
 
                 module = clientModule;
@@ -59,68 +59,68 @@ public abstract class ValidationBase implements ValidationRule {
         }
     }
 
-    public void validate(ClientModule appModule) {
+    public void validate(final ClientModule appModule) {
     }
 
-    public void validate(EjbModule appModule) {
+    public void validate(final EjbModule appModule) {
     }
 
-    public void error(EnterpriseBean bean, String key, Object... details) {
+    public void error(final EnterpriseBean bean, final String key, final Object... details) {
         error(bean.getEjbName(), key, details);
     }
 
-    private void error(String componentName, String key, Object... details) {
+    private void error(final String componentName, final String key, final Object... details) {
         module.getValidation().error(componentName, key, details);
     }
 
-    public void fail(EnterpriseBean bean, String key, Object... details) {
+    public void fail(final EnterpriseBean bean, final String key, final Object... details) {
         fail(bean.getEjbName(), key, details);
     }
 
-    public void fail(String component, String key, Object... details) {
+    public void fail(final String component, final String key, final Object... details) {
         module.getValidation().fail(component, key, details);
     }
 
-    public void warn(EnterpriseBean bean, String key, Object... details) {
+    public void warn(final EnterpriseBean bean, final String key, final Object... details) {
         warn(bean.getEjbName(), key, details);
     }
 
-    protected void warn(String componentName, String key, Object... details) {
+    protected void warn(final String componentName, final String key, final Object... details) {
         module.getValidation().warn(componentName, key, details);
     }
 
-    public void missingMethod(ValidationContext set, EnterpriseBean bean, String key, String methodName, Class returnType, Class... paramTypes){
+    public void missingMethod(final ValidationContext set, final EnterpriseBean bean, final String key, final String methodName, final Class returnType, final Class... paramTypes){
         fail(bean, key, methodName, returnType.getName(), getParameters(paramTypes));
     }
 
-    public void ignoredMethodAnnotation(String annotationType, EnterpriseBean bean, String className, String methodName, String beanType) {
+    public void ignoredMethodAnnotation(final String annotationType, final EnterpriseBean bean, final String className, final String methodName, final String beanType) {
         warn(bean, "ignoredMethodAnnotation", annotationType, beanType, className, methodName);
     }
 
-    public void ignoredClassAnnotation(String annotationType, EnterpriseBean bean, String className, String beanType) {
+    public void ignoredClassAnnotation(final String annotationType, final EnterpriseBean bean, final String className, final String beanType) {
         warn(bean, "ignoredClassAnnotation", annotationType, beanType, className);
     }
 
-    public static boolean paramsMatch(Method methodA, Method methodB) {
+    public static boolean paramsMatch(final Method methodA, final Method methodB) {
         if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
             return false;
         }
 
         for (int i = 0; i < methodA.getParameterTypes().length; i++) {
-            Class<?> a = methodA.getParameterTypes()[i];
-            Class<?> b = methodB.getParameterTypes()[i];
+            final Class<?> a = methodA.getParameterTypes()[i];
+            final Class<?> b = methodB.getParameterTypes()[i];
             if (!a.equals(b)) return false;
         }
         return true;
     }
 
-    public String getParameters(Method method) {
-        Class[] params = method.getParameterTypes();
+    public String getParameters(final Method method) {
+        final Class[] params = method.getParameterTypes();
         return getParameters(params);
     }
 
-    public String getParameters(Class... params) {
-        StringBuilder paramString = new StringBuilder(512);
+    public String getParameters(final Class... params) {
+        final StringBuilder paramString = new StringBuilder(512);
 
         if (params.length > 0) {
             paramString.append(params[0].getName());
@@ -134,7 +134,7 @@ public abstract class ValidationBase implements ValidationRule {
         return paramString.toString();
     }
 
-    public String getParameters(MethodParams methodParams) {
+    public String getParameters(final MethodParams methodParams) {
         if(methodParams == null) {
             return "";
         } else {
@@ -142,20 +142,20 @@ public abstract class ValidationBase implements ValidationRule {
         }
     }
 
-    protected Class loadClass(String clazz) throws OpenEJBException {
-        ClassLoader cl = module.getClassLoader();
+    protected Class loadClass(final String clazz) throws OpenEJBException {
+        final ClassLoader cl = module.getClassLoader();
         try {
             return Classes.forName(clazz, cl);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
     }
 
-    public boolean isCmp(EnterpriseBean b) {
+    public boolean isCmp(final EnterpriseBean b) {
 
         if (b instanceof EntityBean) {
-            EntityBean entityBean = (EntityBean) b;
-            PersistenceType persistenceType = entityBean.getPersistenceType();
+            final EntityBean entityBean = (EntityBean) b;
+            final PersistenceType persistenceType = entityBean.getPersistenceType();
             return persistenceType == PersistenceType.CONTAINER;
         }
         return false;

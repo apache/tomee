@@ -77,7 +77,7 @@ public class AsynchronousPool {
             }
 
             return new FutureAdapter<Object>(future, asynchronousCancelled);
-        } catch (RejectedExecutionException e) {
+        } catch (final RejectedExecutionException e) {
             throw new EJBException("fail to allocate internal resource to execute the target task", e);
         }
     }
@@ -86,7 +86,7 @@ public class AsynchronousPool {
         executor.shutdown();
         try { // shouldn't really wait
             executor.awaitTermination(awaitDuration.getTime(), awaitDuration.getUnit());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             // no-op
         }
     }
@@ -181,7 +181,7 @@ public class AsynchronousPool {
 
             try {
                 object = target.get();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 handleException(e);
             }
 
@@ -198,7 +198,7 @@ public class AsynchronousPool {
 
             try {
                 object = target.get(timeout, unit);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 handleException(e);
             }
 

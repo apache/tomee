@@ -32,7 +32,7 @@ public class Connect {
             s = new Socket(host, port);
             s.getOutputStream().close();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
 
             if (tries < 2) {
 
@@ -44,7 +44,7 @@ public class Connect {
 
                     Thread.sleep(2000);
 
-                } catch (Exception e2) {
+                } catch (final Exception e2) {
 
                     e.printStackTrace();
 
@@ -59,7 +59,7 @@ public class Connect {
             if (s != null) {
                 try {
                     s.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     //Ignore
                 }
             }

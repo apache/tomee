@@ -31,11 +31,11 @@ public class OfferRejectedExecutionHandler implements RejectedExecutionHandler {
     private long timeout = 30;
     private TimeUnit seconds = TimeUnit.SECONDS;
 
-    public OfferRejectedExecutionHandler(Duration duration) {
+    public OfferRejectedExecutionHandler(final Duration duration) {
         this(duration.getTime(), duration.getUnit() == null ? TimeUnit.SECONDS : duration.getUnit());
     }
 
-    public OfferRejectedExecutionHandler(long timeout, TimeUnit timeUnit) {
+    public OfferRejectedExecutionHandler(final long timeout, final TimeUnit timeUnit) {
         if (timeout <= 0) throw new IllegalArgumentException("timeout must be greater than zero");
         if (timeUnit == null) throw new IllegalArgumentException("TimeUnit must not be null");
 
@@ -54,7 +54,7 @@ public class OfferRejectedExecutionHandler implements RejectedExecutionHandler {
             if (!tpe.getQueue().offer(r, timeout, seconds)) {
                 throw new RejectedExecutionException("Timeout waiting for executor slot: waited " + timeout + " " + seconds.toString().toLowerCase());
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new RejectedExecutionException("Interrupted waiting for executor slot");
         }
     }

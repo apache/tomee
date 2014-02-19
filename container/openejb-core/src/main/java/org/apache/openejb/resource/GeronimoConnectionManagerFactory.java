@@ -86,7 +86,7 @@ public class GeronimoConnectionManagerFactory   {
         return mcf;
     }
 
-    public void setMcf(ManagedConnectionFactory mcf) {
+    public void setMcf(final ManagedConnectionFactory mcf) {
         this.mcf = mcf;
     }
 
@@ -94,7 +94,7 @@ public class GeronimoConnectionManagerFactory   {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -102,7 +102,7 @@ public class GeronimoConnectionManagerFactory   {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -110,7 +110,7 @@ public class GeronimoConnectionManagerFactory   {
         return transactionManager;
     }
 
-    public void setTransactionManager(TransactionManager transactionManager) {
+    public void setTransactionManager(final TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -118,7 +118,7 @@ public class GeronimoConnectionManagerFactory   {
         return transactionSupport;
     }
 
-    public void setTransactionSupport(String transactionSupport) {
+    public void setTransactionSupport(final String transactionSupport) {
         this.transactionSupport = transactionSupport;
     }
 
@@ -126,7 +126,7 @@ public class GeronimoConnectionManagerFactory   {
         return pooling;
     }
 
-    public void setPooling(boolean pooling) {
+    public void setPooling(final boolean pooling) {
         this.pooling = pooling;
     }
 
@@ -134,7 +134,7 @@ public class GeronimoConnectionManagerFactory   {
         return partitionStrategy;
     }
 
-    public void setPartitionStrategy(String partitionStrategy) {
+    public void setPartitionStrategy(final String partitionStrategy) {
         this.partitionStrategy = partitionStrategy;
     }
 
@@ -142,7 +142,7 @@ public class GeronimoConnectionManagerFactory   {
         return poolMaxSize;
     }
 
-    public void setPoolMaxSize(int poolMaxSize) {
+    public void setPoolMaxSize(final int poolMaxSize) {
         this.poolMaxSize = poolMaxSize;
     }
 
@@ -150,7 +150,7 @@ public class GeronimoConnectionManagerFactory   {
         return poolMinSize;
     }
 
-    public void setPoolMinSize(int poolMinSize) {
+    public void setPoolMinSize(final int poolMinSize) {
         this.poolMinSize = poolMinSize;
     }
 
@@ -158,7 +158,7 @@ public class GeronimoConnectionManagerFactory   {
         return allConnectionsEqual;
     }
 
-    public void setAllConnectionsEqual(boolean allConnectionsEqual) {
+    public void setAllConnectionsEqual(final boolean allConnectionsEqual) {
         this.allConnectionsEqual = allConnectionsEqual;
     }
 
@@ -166,11 +166,11 @@ public class GeronimoConnectionManagerFactory   {
         return connectionMaxWaitMilliseconds;
     }
 
-    public void setConnectionMaxWaitMilliseconds(int connectionMaxWaitMilliseconds) {
+    public void setConnectionMaxWaitMilliseconds(final int connectionMaxWaitMilliseconds) {
         this.connectionMaxWaitMilliseconds = connectionMaxWaitMilliseconds;
     }
 
-    public void setConnectionMaxWaitTime(Duration connectionMaxWait) {
+    public void setConnectionMaxWaitTime(final Duration connectionMaxWait) {
         if (connectionMaxWait.getUnit() == null) {
             connectionMaxWait.setUnit(TimeUnit.MILLISECONDS);
         }
@@ -182,11 +182,11 @@ public class GeronimoConnectionManagerFactory   {
         return connectionMaxIdleMinutes;
     }
 
-    public void setConnectionMaxIdleMinutes(int connectionMaxIdleMinutes) {
+    public void setConnectionMaxIdleMinutes(final int connectionMaxIdleMinutes) {
         this.connectionMaxIdleMinutes = connectionMaxIdleMinutes;
     }
 
-    public void setConnectionMaxIdleTime(Duration connectionMaxIdle) {
+    public void setConnectionMaxIdleTime(final Duration connectionMaxIdle) {
         if (connectionMaxIdle.getUnit() == null) {
             connectionMaxIdle.setUnit(TimeUnit.MINUTES);
         }
@@ -198,7 +198,7 @@ public class GeronimoConnectionManagerFactory   {
         return validationInterval;
     }
 
-    public void setValidationInterval(int validationInterval) {
+    public void setValidationInterval(final int validationInterval) {
         this.validationInterval = validationInterval;
     }
 
@@ -211,16 +211,16 @@ public class GeronimoConnectionManagerFactory   {
     }
 
     public GenericConnectionManager create() {
-        PoolingSupport poolingSupport = createPoolingSupport();
+        final PoolingSupport poolingSupport = createPoolingSupport();
 
         ClassLoader classLoader = this.classLoader;
         if (classLoader == null) Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = getClass().getClassLoader();
         if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
 
-        TransactionSupport txSupport = createTransactionSupport();
+        final TransactionSupport txSupport = createTransactionSupport();
 
-        RecoverableTransactionManager tm;
+        final RecoverableTransactionManager tm;
         if (transactionManager instanceof RecoverableTransactionManager) {
             tm = (RecoverableTransactionManager) transactionManager;
         } else {
@@ -356,7 +356,7 @@ public class GeronimoConnectionManagerFactory   {
         }
 
         @Override
-        public void setTransactionTimeout(int i) throws SystemException {
+        public void setTransactionTimeout(final int i) throws SystemException {
             delegate.setTransactionTimeout(i);
         }
 
@@ -387,9 +387,9 @@ public class GeronimoConnectionManagerFactory   {
                 if (current instanceof AbstractSinglePoolConnectionInterceptor) {
                     try {
                         foundLock = (ReadWriteLock) AbstractSinglePoolConnectionInterceptor.class.getField("resizeLock").get(current);
-                    } catch (IllegalAccessException e) {
+                    } catch (final IllegalAccessException e) {
                         // no-op
-                    } catch (NoSuchFieldException e) {
+                    } catch (final NoSuchFieldException e) {
                         // no-op
                     }
                     break;
@@ -398,7 +398,7 @@ public class GeronimoConnectionManagerFactory   {
                 // look next
                 try {
                     current = (ConnectionInterceptor) Reflections.get(current, "next");
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     current = null;
                 }
             } while (current != null);
@@ -476,7 +476,7 @@ public class GeronimoConnectionManagerFactory   {
                                 stack.returnConnection(new ConnectionInfo(connections.get(invalid)), ConnectionReturnAction.DESTROY);
                             }
                         }
-                    } catch (ResourceException e) {
+                    } catch (final ResourceException e) {
                         log.error(e.getMessage(), e);
                     }
                 } finally {

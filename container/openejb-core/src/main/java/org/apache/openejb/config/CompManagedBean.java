@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class CompManagedBean extends ManagedBean {
-    public CompManagedBean(String name, Class<BeanContext.Comp> compClass) {
+    public CompManagedBean(final String name, final Class<BeanContext.Comp> compClass) {
         super(name, compClass);
     }
 
@@ -55,7 +55,7 @@ public class CompManagedBean extends ManagedBean {
 
     private static class NoExtendedKeyedCollection extends KeyedCollection<String, PersistenceContextRef> {
         @Override
-        public boolean add(PersistenceContextRef value) {
+        public boolean add(final PersistenceContextRef value) {
             if (!PersistenceContextType.EXTENDED.equals(value.getPersistenceContextType())
                     && !super.contains(value)) {
                 return super.add(value);
@@ -71,7 +71,7 @@ public class CompManagedBean extends ManagedBean {
         private static class NoExtendedMap implements Map<String, PersistenceContextRef> {
             private Map<String, PersistenceContextRef> delegate;
 
-            public NoExtendedMap(Map<String, PersistenceContextRef> map) {
+            public NoExtendedMap(final Map<String, PersistenceContextRef> map) {
                 delegate = map;
             }
 
@@ -86,22 +86,22 @@ public class CompManagedBean extends ManagedBean {
             }
 
             @Override
-            public boolean containsKey(Object key) {
+            public boolean containsKey(final Object key) {
                 return delegate.containsKey(key);
             }
 
             @Override
-            public boolean containsValue(Object value) {
+            public boolean containsValue(final Object value) {
                 return delegate.containsValue(value);
             }
 
             @Override
-            public PersistenceContextRef get(Object key) {
+            public PersistenceContextRef get(final Object key) {
                 return delegate.get(key);
             }
 
             @Override
-            public PersistenceContextRef put(String key, PersistenceContextRef value) {
+            public PersistenceContextRef put(final String key, final PersistenceContextRef value) {
                 if (!PersistenceContextType.EXTENDED.equals(value.getPersistenceContextType())
                         && !delegate.containsValue(key)) {
                     return delegate.put(key, value);
@@ -110,13 +110,13 @@ public class CompManagedBean extends ManagedBean {
             }
 
             @Override
-            public PersistenceContextRef remove(Object key) {
+            public PersistenceContextRef remove(final Object key) {
                 return delegate.remove(key);
             }
 
             @Override
-            public void putAll(Map<? extends String, ? extends PersistenceContextRef> m) {
-                for (Map.Entry<? extends String, ? extends PersistenceContextRef> entry : m.entrySet()) {
+            public void putAll(final Map<? extends String, ? extends PersistenceContextRef> m) {
+                for (final Map.Entry<? extends String, ? extends PersistenceContextRef> entry : m.entrySet()) {
                     put(entry.getKey(), entry.getValue());
                 }
             }

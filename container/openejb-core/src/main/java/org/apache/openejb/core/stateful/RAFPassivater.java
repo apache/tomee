@@ -72,7 +72,7 @@ public class RAFPassivater implements PassivationStrategy {
                 ras.write(bytes);
             }
             ras.close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new SystemException(e);
         }
     }
@@ -92,7 +92,7 @@ public class RAFPassivater implements PassivationStrategy {
             ras.readFully(bytes);
             ras.close();
             return Serializer.deserialize(bytes);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new SystemException(e);
         }
 

@@ -26,7 +26,7 @@ public class PersistenceUnitReference extends Reference {
 
     private EntityManagerFactory emf;
 
-    public PersistenceUnitReference(EntityManagerFactory emf) {
+    public PersistenceUnitReference(final EntityManagerFactory emf) {
         this.emf = emf;
     }
 

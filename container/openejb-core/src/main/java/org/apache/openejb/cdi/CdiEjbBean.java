@@ -64,12 +64,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
 
     private final BeanContext beanContext;
 
-    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, AnnotatedType<T> at) {
+    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at) {
         this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(at, webBeansContext));
         EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
-    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass, AnnotatedType<T> at, InjectionTargetFactoryImpl<T> factory) {
+    public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at, final InjectionTargetFactoryImpl<T> factory) {
         super(webBeansContext, toSessionType(beanContext.getComponentType()), at, new EJBBeanAttributesImpl<T>(beanContext,
                 BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build()), beanClass, factory);
         this.beanContext = beanContext;
@@ -81,7 +81,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         return this.beanContext;
     }
 
-    private static SessionBeanType toSessionType(BeanType beanType) {
+    private static SessionBeanType toSessionType(final BeanType beanType) {
         switch (beanType) {
         case SINGLETON:
             return SessionBeanType.SINGLETON;
@@ -128,13 +128,13 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         if (proxyInstance instanceof BeanContext.Removable) {
             try {
                 ((BeanContext.Removable) proxyInstance).$$remove();
-            } catch (NoSuchEJBException nsee) {
+            } catch (final NoSuchEJBException nsee) {
                 // no-op
-            } catch (UndeclaredThrowableException nsoe) {
+            } catch (final UndeclaredThrowableException nsoe) {
                 if (!(nsoe.getCause() instanceof NoSuchObjectException)) {
                     throw nsoe;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (!(e instanceof NoSuchObjectException)) {
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
@@ -155,23 +155,23 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
     }
 
     private List<Method> findRemove(final Class<?> beanClass, final Class<?> beanInterface) {
-        List<Method> toReturn = new ArrayList<Method>();
+        final List<Method> toReturn = new ArrayList<Method>();
 
         // Get all the public methods of the bean class and super class
-        Method[] methods = beanClass.getMethods();
+        final Method[] methods = beanClass.getMethods();
 
         // Search for methods annotated with @Remove
-        for (Method method : methods) {
-            Remove annotation = method.getAnnotation(Remove.class);
+        for (final Method method : methods) {
+            final Remove annotation = method.getAnnotation(Remove.class);
             if (annotation != null) {
                 // Get the corresponding method into the bean interface
-                Method interfaceMethod;
+                final Method interfaceMethod;
                 try {
                     interfaceMethod = beanInterface.getMethod(method.getName(), method.getParameterTypes());
                     toReturn.add(interfaceMethod);
-                } catch (SecurityException e) {
+                } catch (final SecurityException e) {
                     e.printStackTrace();
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     // The method can not be into the interface in which case we
                     // don't wonder of
                 }
@@ -226,7 +226,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
             return;
         }
 
-        Object ejbInstance = dependentSFSBToBeRemoved.remove(System.identityHashCode(instance));
+        final Object ejbInstance = dependentSFSBToBeRemoved.remove(System.identityHashCode(instance));
         if (ejbInstance != null) {
             destroyStatefulSessionBeanInstance((T) ejbInstance, cc);
         } else {
@@ -297,7 +297,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         }
 
         @Override
-        public InjectionTarget<T> createInjectionTarget(Bean<T> bean) {
+        public InjectionTarget<T> createInjectionTarget(final Bean<T> bean) {
             final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
             final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getCompleteInjectionTarget();
             if (!EjbInjectionTargetImpl.class.isInstance(it)) {
@@ -306,9 +306,9 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
             return it;
         }
 
-        protected Set<InjectionPoint> createInjectionPoints(Bean<T> bean) {
+        protected Set<InjectionPoint> createInjectionPoints(final Bean<T> bean) {
             final Set<InjectionPoint> injectionPoints = new HashSet<InjectionPoint>();
-            for (InjectionPoint injectionPoint: getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
+            for (final InjectionPoint injectionPoint: getWebBeansContext().getInjectionPointFactory().buildInjectionPoints(bean, getAnnotatedType())) {
                 injectionPoints.add(injectionPoint);
             }
             return injectionPoints;
@@ -327,7 +327,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker {
         private CdiEjbBean<T> bean;
         private InjectionTarget<T> delegate = null;
 
-        public EjbInjectionTargetImpl(AnnotatedType<T> annotatedType, Set<InjectionPoint> points, WebBeansContext webBeansContext) {
+        public EjbInjectionTargetImpl(final AnnotatedType<T> annotatedType, final Set<InjectionPoint> points, final WebBeansContext webBeansContext) {
             super(annotatedType, points, webBeansContext,
                     Collections.<AnnotatedMethod<?>>emptyList(), Collections.<AnnotatedMethod<?>>emptyList());
         }

@@ -28,25 +28,25 @@ import org.apache.openejb.jee.SessionBean;
  * @version $Rev$ $Date$
  */
 public class CheckPersistenceRefs extends ValidationBase {
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
 
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (bean instanceof SessionBean) {
-                SessionBean sessionBean = (SessionBean) bean;
+                final SessionBean sessionBean = (SessionBean) bean;
                 if (sessionBean.getSessionType() == null) {
                     continue; // skipping since we don't know here what is the type
                 }
             }
 
-            String beanType = getType(bean);
+            final String beanType = getType(bean);
             if (beanType.equals("Stateful")) {
                 continue; // skip statefuls and Comp ManagedBean
             }
 
-            for (PersistenceContextRef ref : bean.getPersistenceContextRef()) {
+            for (final PersistenceContextRef ref : bean.getPersistenceContextRef()) {
                 if (isExtented(ref)) {
                     String refName = ref.getName();
-                    String prefix = bean.getEjbClass() + "/";
+                    final String prefix = bean.getEjbClass() + "/";
                     if (refName.startsWith(prefix)) {
                         refName = refName.substring(prefix.length());
                     }
@@ -57,14 +57,14 @@ public class CheckPersistenceRefs extends ValidationBase {
         }
     }
 
-    private boolean isExtented(PersistenceContextRef ref) {
-        PersistenceContextType type = ref.getPersistenceContextType();
+    private boolean isExtented(final PersistenceContextRef ref) {
+        final PersistenceContextType type = ref.getPersistenceContextType();
         return type != null && type.equals(PersistenceContextType.EXTENDED);
     }
 
-    private String getType(EnterpriseBean bean) {
+    private String getType(final EnterpriseBean bean) {
         if (bean instanceof SessionBean) {
-            SessionBean sessionBean = (SessionBean) bean;
+            final SessionBean sessionBean = (SessionBean) bean;
             switch(sessionBean.getSessionType()){
                 case STATEFUL: return "Stateful";
                 case STATELESS: return "Stateless";

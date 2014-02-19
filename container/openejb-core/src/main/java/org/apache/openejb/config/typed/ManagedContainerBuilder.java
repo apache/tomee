@@ -38,7 +38,7 @@ public class ManagedContainerBuilder extends Container {
 
     }
 
-    public ManagedContainerBuilder id(String id) {
+    public ManagedContainerBuilder id(final String id) {
         setId(id);
         return this;
     }

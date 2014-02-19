@@ -33,12 +33,12 @@ public class DelegatePermissionCollection extends PermissionCollection {
     private PermissionCollection pc = getPermissionCollection();
 
     @Override
-    public void add(Permission permission) {
+    public void add(final Permission permission) {
         pc.add(permission);
     }
 
     @Override
-    public boolean implies(Permission permission) {
+    public boolean implies(final Permission permission) {
         return pc.implies(permission);
     }
 
@@ -54,7 +54,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
                             SystemInstance.get().getOptions().get(PERMISSION_COLLECTION_CLASS,
                                     FastPermissionCollection.class.getName()))
                     .newInstance();
-        } catch (Exception cnfe) {
+        } catch (final Exception cnfe) {
             // return new Permissions(); // the jdk implementation, it seems slow at least for startup up
             return new FastPermissionCollection();
         }
@@ -66,12 +66,12 @@ public class DelegatePermissionCollection extends PermissionCollection {
         private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<Permission, Boolean>();
 
         @Override
-        public synchronized void add(Permission permission) {
+        public synchronized void add(final Permission permission) {
             permissions.add(permission);
         }
 
         @Override
-        public synchronized boolean implies(Permission permission) {
+        public synchronized boolean implies(final Permission permission) {
             if (alreadyEvaluatedPermissions.containsKey(permission)) {
                 return alreadyEvaluatedPermissions.get(permission);
             }
@@ -82,7 +82,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
                 alreadyEvaluatedPermissions.clear();
             }
 
-            for (Permission perm : permissions) {
+            for (final Permission perm : permissions) {
                 if (perm.implies(permission)) {
                     alreadyEvaluatedPermissions.put(permission, true);
                     return true;

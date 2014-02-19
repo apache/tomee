@@ -128,11 +128,11 @@ public class AnnotationFinder {
                         final URL jarUrl = new URL("jar", "", location.toExternalForm().replace("%20", " ").replace("%23", "#") + "!/");
                         final JarURLConnection juc = (JarURLConnection) jarUrl.openConnection();
                         classNames.addAll(jar(juc.getJarFile()));
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         classNames.addAll(file(location));
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -161,9 +161,9 @@ public class AnnotationFinder {
         for (final String className : classNames) {
             try {
                 readClassDef(className, annotationVisitor);
-            } catch (NotFoundException e) {
+            } catch (final NotFoundException e) {
                 // no-op
-            } catch (FoundException e) {
+            } catch (final FoundException e) {
                 return true;
             }
         }
@@ -193,7 +193,7 @@ public class AnnotationFinder {
         File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             dir = new File(URLDecoder.decode(location.getPath()));
         }
         if (dir.getName().equals("META-INF")) {
@@ -302,7 +302,7 @@ public class AnnotationFinder {
             } else {
                 new Exception("Could not load " + className).printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -330,13 +330,13 @@ public class AnnotationFinder {
 
             try {
                 throw new NotFoundException();
-            } catch (NotFoundException e) {
+            } catch (final NotFoundException e) {
                 notFoundException = e;
             }
 
             try {
                 throw new FoundException();
-            } catch (FoundException e) {
+            } catch (final FoundException e) {
                 foundException = e;
             }
         }

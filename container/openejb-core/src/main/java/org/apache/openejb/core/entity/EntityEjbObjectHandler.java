@@ -39,7 +39,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     */
     private Object registryId;
 
-    public EntityEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public EntityEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
@@ -50,7 +50,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     * handler for the same bean identity so that they can removed together when one of the remove() operations
     * is called.
     */
-    public static Object getRegistryId(Container container, Object deploymentId, Object primaryKey) {
+    public static Object getRegistryId(final Container container, final Object deploymentId, final Object primaryKey) {
         return new RegistryId(container, deploymentId, primaryKey);
     }
 
@@ -61,22 +61,22 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return registryId;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         return primaryKey;
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
 
         if (args.length != 1) {
             throw new IllegalArgumentException("Expected one argument to isIdentical, but received " + args.length);
         }
 
-        Object that = args[0];
-        Object invocationHandler = ProxyManager.getInvocationHandler(that);
+        final Object that = args[0];
+        final Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
         if (invocationHandler instanceof EntityEjbObjectHandler) {
-            EntityEjbObjectHandler handler = (EntityEjbObjectHandler) invocationHandler;
+            final EntityEjbObjectHandler handler = (EntityEjbObjectHandler) invocationHandler;
 
             /*
             * The registry id is a compound key composed of the bean's primary key, deployment id, and
@@ -88,9 +88,9 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         return false;
     }
 
-    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
-        Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
+        final Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
         /* 
         * This operation takes care of invalidating all the EjbObjectProxyHanders associated with 
         * the same RegistryId. See this.createProxy().
@@ -112,7 +112,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         private final Object deploymentId;
         private final Object primaryKey;
 
-        public RegistryId(Container container, Object deploymentId, Object primaryKey) {
+        public RegistryId(final Container container, final Object deploymentId, final Object primaryKey) {
             if (container == null) throw new NullPointerException("container is null");
             if (deploymentId == null) throw new NullPointerException("deploymentId is null");
 
@@ -121,11 +121,11 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
             this.primaryKey = primaryKey;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            RegistryId that = (RegistryId) o;
+            final RegistryId that = (RegistryId) o;
 
             return containerId.equals(that.containerId) &&
                     deploymentId.equals(that.deploymentId) &&

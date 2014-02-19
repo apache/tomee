@@ -612,7 +612,7 @@ public final class ApplicationComposers {
                 }
                 serviceManager = new ServiceManagerProxy(false);
                 serviceManager.start();
-            } catch (ServiceManagerProxy.AlreadyStartedException e) {
+            } catch (final ServiceManagerProxy.AlreadyStartedException e) {
                 throw new OpenEJBRuntimeException(e);
             }
         }
@@ -650,7 +650,7 @@ public final class ApplicationComposers {
             processor.createInstance();
             try {
                 OWBInjector.inject(appContext.getBeanManager(), testInstance, null);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 // TODO handle this differently
                 // this is temporary till the injector can be rewritten
                 t.printStackTrace();
@@ -740,7 +740,7 @@ public final class ApplicationComposers {
 
             try {
                 assembler.destroyApplication(appInfo.path);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
 
@@ -752,7 +752,7 @@ public final class ApplicationComposers {
 
             try {
                 ScopeHelper.stopContexts(contextsService, servletContext, session);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
@@ -761,7 +761,7 @@ public final class ApplicationComposers {
 
             try {
                 serviceManager.stop();
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 // no-op
             }
         }
@@ -801,7 +801,7 @@ public final class ApplicationComposers {
                 return file.getParentFile().getAbsolutePath();
             }
             return url.toExternalForm();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return "";
         }
     }
@@ -836,7 +836,7 @@ public final class ApplicationComposers {
         final Class serviceManagerClass;
         try {
             serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.FilteredServiceManager");
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             final String msg = "Services filtering requires class 'org.apache.openejb.server.FilteredServiceManager' to be available.  " +
                                "Make sure you have the openejb-server-*.jar in your classpath.";
             throw new IllegalStateException(msg, e);
@@ -845,7 +845,7 @@ public final class ApplicationComposers {
         try {
             final Method initServiceManager = serviceManagerClass.getMethod("initServiceManager", String[].class);
             initServiceManager.invoke(null, new Object[]{services});
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed initializing FilteredServiceManager with services " + Arrays.toString(services), e);
         }
     }
@@ -856,7 +856,7 @@ public final class ApplicationComposers {
             Class.forName("sun.security.pkcs11.SunPKCS11", true, loader);
             Class.forName("sun.security.pkcs11.SunPKCS11$Descriptor", true, loader);
             Class.forName("sun.security.pkcs11.wrapper.PKCS11Exception", true, loader);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op: not an issue
         }
     }

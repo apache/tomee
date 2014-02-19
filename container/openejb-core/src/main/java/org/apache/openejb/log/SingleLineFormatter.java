@@ -25,7 +25,7 @@ public class SingleLineFormatter extends Formatter {
     private static final String SEP = System.getProperty("line.separator", "\n");
 
     @Override
-    public synchronized String format(LogRecord record) {
+    public synchronized String format(final LogRecord record) {
         final boolean exception = record.getThrown() != null;
         final StringBuilder sbuf = new StringBuilder();
         sbuf.append(record.getLevel().getLocalizedName());
@@ -39,7 +39,7 @@ public class SingleLineFormatter extends Formatter {
                 record.getThrown().printStackTrace(pw);
                 pw.close();
                 sbuf.append(sw.toString());
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 // no-op
             }
         }

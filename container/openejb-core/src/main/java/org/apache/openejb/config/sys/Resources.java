@@ -101,7 +101,7 @@ public class Resources {
         return this.jndiProvider;
     }
 
-    public void add(Object service) {
+    public void add(final Object service) {
         if (service instanceof Resource) {
             getResource().add((Resource) service);
         } else if (service instanceof Service) {

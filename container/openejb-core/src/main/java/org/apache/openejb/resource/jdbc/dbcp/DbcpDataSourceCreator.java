@@ -28,7 +28,7 @@ import java.util.Properties;
 // this one will probably not be used since dbcp has already the integration we need
 public class DbcpDataSourceCreator extends PoolDataSourceCreator {
     @Override
-    public DataSource pool(final String name, final DataSource ds, Properties properties) {
+    public DataSource pool(final String name, final DataSource ds, final Properties properties) {
         return build(DbcpDataSource.class, new DbcpDataSource(name, ds), properties);
     }
 

@@ -29,11 +29,11 @@ import java.util.List;
 public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
-    public SingletonEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public SingletonEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
-    public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {
+    public static Object createRegistryId(final Object primKey, final Object deployId, final Container contnr) {
         return "" + deployId + contnr.getContainerID();
     }
 
@@ -43,15 +43,15 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
         return registryId;
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         try {
-            EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
+            final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
             return new Boolean(deploymentID.equals(handler.deploymentID)); //NOPMD
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             return Boolean.FALSE;
         }
     }
@@ -60,7 +60,7 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
         // stateless can't be removed
     }
 
-    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         // stateless can't be removed
         return null;
     }

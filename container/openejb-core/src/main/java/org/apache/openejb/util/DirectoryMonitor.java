@@ -85,7 +85,7 @@ public class DirectoryMonitor {
             public void run() {
                 try {
                     scan();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     getLogger().error("Scan failed.", e);
                 }
             }

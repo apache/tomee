@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransactionPolicy {
     private Transaction clientTx;
 
-    public TxBeanManaged(TransactionManager transactionManager) throws SystemException {
+    public TxBeanManaged(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.BeanManaged, transactionManager);
 
         clientTx = suspendTransaction();
@@ -45,7 +45,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
     public Transaction getCurrentTransaction() {
         try {
             return getTransaction();
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             throw new IllegalStateException("Exception getting current transaction");
         }
     }
@@ -56,7 +56,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
 
     public SuspendedTransaction suspendUserTransaction() throws SystemException {
         // Get the transaction after the method invocation
-        Transaction currentTx = suspendTransaction();
+        final Transaction currentTx = suspendTransaction();
         if (currentTx == null) {
             return null;
         }
@@ -64,17 +64,17 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         return new JtaSuspendedTransaction(currentTx);
     }
 
-    public void resumeUserTransaction(SuspendedTransaction suspendedTransaction) throws SystemException {
+    public void resumeUserTransaction(final SuspendedTransaction suspendedTransaction) throws SystemException {
         if (suspendedTransaction == null) throw new NullPointerException("suspendedTransaction is null");
         
-        Transaction beanTransaction = ((JtaSuspendedTransaction) suspendedTransaction).transaction;
+        final Transaction beanTransaction = ((JtaSuspendedTransaction) suspendedTransaction).transaction;
         if (beanTransaction == null) {
             throw new SystemException("Bean transaction has already been resumed or destroyed");
         }
 
         try {
             resumeTransaction(beanTransaction);
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             suspendedTransaction.destroy();
             throw e;
         }
@@ -84,9 +84,9 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         try {
             // The Container must detect the case in which a transaction was started, but
             // not completed, in the business method, and handle it as follows:
-            Transaction currentTx = getTransaction();
+            final Transaction currentTx = getTransaction();
             if (currentTx != null) {
-                String message = "The EJB started a transaction but did not complete it.";
+                final String message = "The EJB started a transaction but did not complete it.";
 
                 /* [1] Log this as an application error ********/
                 logger.error(message);
@@ -94,7 +94,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
                 /* [2] Roll back the started transaction *******/
                 try {
                     rollbackTransaction(currentTx);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     // no-op
                 }
 
@@ -111,13 +111,13 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
     private static class JtaSuspendedTransaction implements SuspendedTransaction {
         private Transaction transaction;
 
-        public JtaSuspendedTransaction(Transaction transaction) {
+        public JtaSuspendedTransaction(final Transaction transaction) {
             if (transaction == null) throw new NullPointerException("transaction is null");
             this.transaction = transaction;
         }
 
         public void destroy() {
-            Transaction beanTransaction = transaction;
+            final Transaction beanTransaction = transaction;
             transaction = null;
             if (beanTransaction == null) {
                 return;
@@ -125,7 +125,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
 
             try {
                 beanTransaction.rollback();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Error rolling back suspended transaction for discarded stateful session bean instance");
             }
         }

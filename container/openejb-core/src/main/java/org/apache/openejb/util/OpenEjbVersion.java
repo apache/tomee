@@ -38,9 +38,9 @@ public final class OpenEjbVersion {
         Properties info = new Properties();
 
         try {
-            ResourceFinder finder = new ResourceFinder();
+            final ResourceFinder finder = new ResourceFinder();
             info = finder.findProperties("openejb-version.properties");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -78,7 +78,7 @@ public final class OpenEjbVersion {
         return version;
     }
 
-    public void print(PrintStream out) {
+    public void print(final PrintStream out) {
         out.println("Apache OpenEJB " + getVersion() + "    build: " + getDate() + "-" + getTime());
         out.println(getUrl());
     }

@@ -30,7 +30,7 @@ public class CountingLatch {
         this(0);
     }
 
-    public CountingLatch(int count) {
+    public CountingLatch(final int count) {
          this.sync = new Sync(count);
      }
 
@@ -38,7 +38,7 @@ public class CountingLatch {
          sync.acquireSharedInterruptibly(1);
      }
 
-     public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+     public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
          return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
      }
 
@@ -55,15 +55,15 @@ public class CountingLatch {
      }
 
      private static final class Sync extends AbstractQueuedSynchronizer {
-         private Sync(int count) {
+         private Sync(final int count) {
              setState(count);
          }
 
-         public boolean tryReleaseShared(int releases) {
+         public boolean tryReleaseShared(final int releases) {
              while (true) {
-                 int count = getState();
+                 final int count = getState();
 
-                 int next = count + releases;
+                 final int next = count + releases;
 
                  if (next < 0) return false;
 
@@ -73,7 +73,7 @@ public class CountingLatch {
              }
          }
 
-         public int tryAcquireShared(int acquires) {
+         public int tryAcquireShared(final int acquires) {
              return getState() == 0 ? 1: -1;
          }
 

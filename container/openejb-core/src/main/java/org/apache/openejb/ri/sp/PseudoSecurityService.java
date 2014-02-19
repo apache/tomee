@@ -34,32 +34,32 @@ public class PseudoSecurityService implements SecurityService {
         PseudoPolicyConfigurationFactory.install();
     }
 
-    public void init(Properties props) {
+    public void init(final Properties props) {
     }
 
-    public Object login(String user, String pass) throws LoginException {
+    public Object login(final String user, final String pass) throws LoginException {
         return null;
     }
 
-    public Object login(String securityRealm, String user, String pass) throws LoginException {
+    public Object login(final String securityRealm, final String user, final String pass) throws LoginException {
         return null;
     }
 
-    public Set<String> getLogicalRoles(Principal[] principals, Set<String> logicalRoles) {
+    public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
         return Collections.emptySet();
     }
 
-    public void associate(Object securityIdentity) throws LoginException {
+    public void associate(final Object securityIdentity) throws LoginException {
     }
 
     public Object disassociate() {
         return null;
     }
 
-    public void logout(Object securityIdentity) throws LoginException {
+    public void logout(final Object securityIdentity) throws LoginException {
     }
 
-    public boolean isCallerInRole(String role) {
+    public boolean isCallerInRole(final String role) {
         return false;
     }
 
@@ -67,11 +67,11 @@ public class PseudoSecurityService implements SecurityService {
         return null;
     }
 
-    public boolean isCallerAuthorized(Method method, InterfaceType type) {
+    public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
         return true;
     }
 
-    public void setState(Object o) {
+    public void setState(final Object o) {
         // no-op
     }
 

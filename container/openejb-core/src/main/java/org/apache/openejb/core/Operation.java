@@ -41,7 +41,7 @@ public enum Operation {
     private boolean callback;
 
 
-    Operation(boolean callback) {
+    Operation(final boolean callback) {
         this.callback = callback;
     }
 

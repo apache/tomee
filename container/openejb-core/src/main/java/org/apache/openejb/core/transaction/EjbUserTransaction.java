@@ -49,17 +49,17 @@ public class EjbUserTransaction implements UserTransaction, Serializable {
         getUserTransaction().setRollbackOnly();
     }
 
-    public void setTransactionTimeout(int i) throws SystemException {
+    public void setTransactionTimeout(final int i) throws SystemException {
         getUserTransaction().setTransactionTimeout(i);
     }
 
     private UserTransaction getUserTransaction() throws SystemException {
         // get UserTransaction from BeanTransactionEnvironment in ThreadContext
-        ThreadContext callContext = ThreadContext.getThreadContext();
+        final ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext != null) {
-            TransactionPolicy txPolicy = callContext.getTransactionPolicy();
+            final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
             if (txPolicy != null && txPolicy instanceof BeanTransactionPolicy) {
-                BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
+                final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                 return beanTxEnv.getUserTransaction();
             }
         }

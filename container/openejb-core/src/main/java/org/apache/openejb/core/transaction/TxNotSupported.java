@@ -43,7 +43,7 @@ import javax.transaction.TransactionManager;
 public class TxNotSupported extends JtaTransactionPolicy {
     private final Transaction clientTx;
 
-    public TxNotSupported(TransactionManager transactionManager) throws SystemException {
+    public TxNotSupported(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.NotSupported, transactionManager);
 
         clientTx = suspendTransaction();

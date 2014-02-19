@@ -38,15 +38,15 @@ public class RoutedDataSource implements DataSource {
         // no-op
     }
 
-    public RoutedDataSource(String router) {
+    public RoutedDataSource(final String router) {
         setRouter(router);
     }
 
-    public void setRouter(String router) {
-        Object o;
+    public void setRouter(final String router) {
+        final Object o;
         try {
             o = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(OPENEJB_RESOURCE_PREFIX + router);
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new IllegalArgumentException("Can't find router [" + router + "]", e);
         }
 
@@ -64,13 +64,13 @@ public class RoutedDataSource implements DataSource {
         return getTargetDataSource().getLogWriter();
     }
 
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    public void setLogWriter(final PrintWriter out) throws SQLException {
         if (getTargetDataSource() != null) {
             getTargetDataSource().setLogWriter(out);
         }
     }
 
-    public void setLoginTimeout(int seconds) throws SQLException {
+    public void setLoginTimeout(final int seconds) throws SQLException {
         if (getTargetDataSource() != null) {
             getTargetDataSource().setLoginTimeout(seconds);
         }
@@ -83,7 +83,7 @@ public class RoutedDataSource implements DataSource {
         return getTargetDataSource().getLoginTimeout();
     }
 
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
         if (getTargetDataSource() == null) {
             return null;
         }
@@ -98,7 +98,7 @@ public class RoutedDataSource implements DataSource {
         return (Logger) Reflections.invokeByReflection(getTargetDataSource(), "getParentLogger", new Class<?>[0], null);
     }
 
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         if (getTargetDataSource() == null) {
             return false;
         }
@@ -110,7 +110,7 @@ public class RoutedDataSource implements DataSource {
         return getTargetDataSource().getConnection();
     }
 
-    public Connection getConnection(String username, String password)
+    public Connection getConnection(final String username, final String password)
             throws SQLException {
         return getTargetDataSource().getConnection(username, password);
     }

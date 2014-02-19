@@ -61,7 +61,7 @@ public final class Extensions {
     public static Collection<Class<?>> findExtensions(final ResourceFinder finder) {
         try {
             return finder.findAvailableClasses("org.apache.openejb.extension");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Extension scanning of 'META-INF/org.apache.openejb.extension' files failed", e);
             return Collections.emptySet();
         }
@@ -71,7 +71,7 @@ public final class Extensions {
         try {
             final List<Class<?>> classes = finder.findAvailableClasses("org.apache.openejb.extension");
             addExtensions(classes);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Extension scanning of 'META-INF/org.apache.openejb.extension' files failed", e);
         }
     }

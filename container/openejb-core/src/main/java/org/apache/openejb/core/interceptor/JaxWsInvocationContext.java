@@ -29,7 +29,7 @@ import java.util.Map;
 public class JaxWsInvocationContext extends ReflectionInvocationContext {
     private final MessageContext messageContext;
 
-    public JaxWsInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, MessageContext messageContext, Object... parameters) {
+    public JaxWsInvocationContext(final Operation operation, final List<Interceptor> interceptors, final Object target, final Method method, final MessageContext messageContext, final Object... parameters) {
         super(operation, interceptors, target, method, parameters);
         this.messageContext = messageContext;
     }

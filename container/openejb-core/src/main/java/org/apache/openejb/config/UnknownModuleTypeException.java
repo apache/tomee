@@ -21,11 +21,11 @@ package org.apache.openejb.config;
  */
 public class UnknownModuleTypeException extends UnsupportedModuleTypeException {
 
-    public UnknownModuleTypeException(String message) {
+    public UnknownModuleTypeException(final String message) {
         super(message);
     }
 
-    public UnknownModuleTypeException(String message, Throwable rootCause) {
+    public UnknownModuleTypeException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 

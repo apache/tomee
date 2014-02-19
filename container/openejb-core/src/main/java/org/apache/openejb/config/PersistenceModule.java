@@ -47,7 +47,7 @@ public class PersistenceModule implements DeploymentModule {
         return rootUrl;
     }
 
-    public void setRootUrl(String rootUrl) {
+    public void setRootUrl(final String rootUrl) {
         this.rootUrl = rootUrl;
         this.uri = URLs.uri(rootUrl);
     }
@@ -56,7 +56,7 @@ public class PersistenceModule implements DeploymentModule {
         return persistence;
     }
 
-    public void setPersistence(Persistence persistence) {
+    public void setPersistence(final Persistence persistence) {
         this.persistence = persistence;
     }
 
@@ -113,7 +113,7 @@ public class PersistenceModule implements DeploymentModule {
         return false;
     }
 
-    public void setStandaloneModule(boolean isStandalone) {
+    public void setStandaloneModule(final boolean isStandalone) {
        //do nothing        
     }
 }

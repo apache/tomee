@@ -34,7 +34,7 @@ public class ObjectNameBuilder {
         this("default");
     }
 
-    public ObjectNameBuilder(String domain) {
+    public ObjectNameBuilder(final String domain) {
         map = new LinkedHashMap<String, String>();
         this.domain = domain;
     }
@@ -43,16 +43,16 @@ public class ObjectNameBuilder {
         return domain;
     }
 
-    public void setDomain(String domain) {
+    public void setDomain(final String domain) {
         this.domain = domain;
     }
 
     public ObjectName build() {
 
-        StringBuilder sb = new StringBuilder(domain + ":");
+        final StringBuilder sb = new StringBuilder(domain + ":");
 
         try {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
+            for (final Map.Entry<String, String> entry : map.entrySet()) {
                 String sv = entry.getValue();
 
                 if (null != sv) {
@@ -64,12 +64,12 @@ public class ObjectNameBuilder {
             sb.deleteCharAt(sb.lastIndexOf(","));
 
             return new ObjectName(sb.toString());
-        } catch (MalformedObjectNameException e) {
+        } catch (final MalformedObjectNameException e) {
             throw new IllegalStateException("Failed to build valid name for: " + sb.toString(), e);
         }
     }
 
-    public ObjectNameBuilder set(String key, String value) {
+    public ObjectNameBuilder set(final String key, final String value) {
         if (value == null || value.isEmpty()) {
             map.put(key, "<empty>");
         } else {
@@ -79,7 +79,7 @@ public class ObjectNameBuilder {
     }
 
     public ObjectNameBuilder copy() {
-        ObjectNameBuilder builder = new ObjectNameBuilder();
+        final ObjectNameBuilder builder = new ObjectNameBuilder();
         builder.domain = this.domain;
         builder.map.putAll(this.map);
         return builder;

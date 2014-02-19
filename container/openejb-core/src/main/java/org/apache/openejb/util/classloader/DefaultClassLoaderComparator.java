@@ -19,7 +19,7 @@ package org.apache.openejb.util.classloader;
 public class DefaultClassLoaderComparator implements ClassLoaderComparator {
     private final ClassLoader reference;
 
-    public DefaultClassLoaderComparator(ClassLoader reference) {
+    public DefaultClassLoaderComparator(final ClassLoader reference) {
         this.reference = reference;
     }
 

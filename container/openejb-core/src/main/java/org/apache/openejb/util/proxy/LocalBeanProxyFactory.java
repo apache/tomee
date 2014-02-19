@@ -56,7 +56,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         try {
             final Class proxyClass = createProxy(classToSubclass, classLoader, interfaces);
             return constructProxy(proxyClass, handler);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new InternalError("LocalBeanProxyFactory.newProxyInstance: " + Debug.printStackTrace(e));
         }
     }
@@ -70,9 +70,9 @@ public class LocalBeanProxyFactory implements Opcodes {
             } finally {
                 field.setAccessible(false);
             }
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -86,9 +86,9 @@ public class LocalBeanProxyFactory implements Opcodes {
             } finally {
                 field.setAccessible(false);
             }
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -106,7 +106,7 @@ public class LocalBeanProxyFactory implements Opcodes {
     private static Field getDeclaredField(final Class clazz, final String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             final String message = String.format("Proxy class does not contain expected field \"%s\": %s", fieldName, clazz.getName());
             throw new IllegalStateException(message, e);
         }
@@ -121,7 +121,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         try {
             return cl.loadClass(proxyName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
@@ -132,14 +132,14 @@ public class LocalBeanProxyFactory implements Opcodes {
 
             try { // Try it again, another thread may have beaten this one...
                 return cl.loadClass(proxyName);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
 
             final byte[] proxyBytes = generateProxy(classToProxy, classFileName, interfaces);
             return Unsafe.defineClass(classToProxy, proxyName, proxyBytes);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InternalError("LocalBeanProxyFactory.createProxy: " + Debug.printStackTrace(e));
         } finally {
             lock.unlock();
@@ -252,7 +252,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         visit(cw, method, proxyName, handlerName).visitEnd();
     }
 
-    public static MethodVisitor visit(ClassWriter cw, Method method, String proxyName, String handlerName) throws ProxyGenerationException {
+    public static MethodVisitor visit(final ClassWriter cw, final Method method, final String proxyName, final String handlerName) throws ProxyGenerationException {
         final Class<?> returnType = method.getReturnType();
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final Class<?>[] exceptionTypes = method.getExceptionTypes();
@@ -718,16 +718,16 @@ public class LocalBeanProxyFactory implements Opcodes {
                     public Class<?> run() {
                         try {
                             return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             try {
                                 return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
-                            } catch (ClassNotFoundException e1) {
+                            } catch (final ClassNotFoundException e1) {
                                 throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                             }
                         }
                     }
                 });
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
             }
 
@@ -738,7 +738,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                         final Field field = unsafeClass.getDeclaredField("theUnsafe");
                         field.setAccessible(true);
                         return field.get(null);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                     }
                 }
@@ -750,7 +750,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                         final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
                         mtd.setAccessible(true);
                         return mtd;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
                     }
                 }
@@ -762,7 +762,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                         final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
                         mtd.setAccessible(true);
                         return mtd;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
                     }
                 }
@@ -774,7 +774,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                         final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
                         mtd.setAccessible(true);
                         return mtd;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
                     }
                 }
@@ -786,7 +786,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                         final Method mtd = unsafeClass.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ClassLoader.class, ProtectionDomain.class);
                         mtd.setAccessible(true);
                         return mtd;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IllegalStateException("Cannot get sun.misc.Unsafe.defineClass", e);
                     }
                 }
@@ -796,9 +796,9 @@ public class LocalBeanProxyFactory implements Opcodes {
         private static Object allocateInstance(final Class clazz) {
             try {
                 return allocateInstance.invoke(unsafe, clazz);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new IllegalStateException("Failed to allocateInstance of Proxy class " + clazz.getName(), e);
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 final Throwable throwable = e.getTargetException() != null ? e.getTargetException() : e;
                 throw new IllegalStateException("Failed to allocateInstance of Proxy class " + clazz.getName(), throwable);
             }
@@ -808,13 +808,13 @@ public class LocalBeanProxyFactory implements Opcodes {
             final long offset;
             try {
                 offset = (Long) objectFieldOffset.invoke(unsafe, field);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Failed getting offset for: field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
             }
 
             try {
                 putObject.invoke(unsafe, object, offset, value);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Failed putting field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
             }
         }

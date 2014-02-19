@@ -32,7 +32,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
     private Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<String, Map<String, PortAddress>>();
     private Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
 
-    public synchronized void addPort(String serviceId, QName serviceQName, String portId, QName portQName, String portInterface, String address) throws OpenEJBException {
+    public synchronized void addPort(final String serviceId, final QName serviceQName, final String portId, final QName portQName, final String portInterface, final String address) throws OpenEJBException {
         if (serviceId == null) throw new NullPointerException("serviceId is null");
         if (serviceQName == null) throw new NullPointerException("serviceQName is null");
         if (portId == null) throw new NullPointerException("portId is null");
@@ -75,13 +75,13 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         ports.put(portId, portAddress);
     }
 
-    public synchronized void removePort(String serviceId, QName serviceQName, String portId, String portInterface) {
+    public synchronized void removePort(final String serviceId, final QName serviceQName, final String portId, final String portInterface) {
         if (serviceId == null) throw new NullPointerException("serviceId is null");
         if (serviceQName == null) throw new NullPointerException("serviceQName is null");
         if (portId == null) throw new NullPointerException("portId is null");
 
         // remove from portById
-        PortAddress portAddress = portsById.remove(portId);
+        final PortAddress portAddress = portsById.remove(portId);
         if (portAddress != null) {
             // port was not registered
             return;
@@ -119,12 +119,12 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         }
     }
 
-    public synchronized Set<PortAddress> getPorts(String id, QName serviceQName, String referenceClassName) {
+    public synchronized Set<PortAddress> getPorts(final String id, final QName serviceQName, final String referenceClassName) {
         if (serviceQName == null) throw new NullPointerException("serviceQName is null");
 
         // check if there is a port with the id
         if (id != null) {
-            PortAddress portAddress = portsById.get(id);
+            final PortAddress portAddress = portsById.get(id);
             if (portAddress != null) {
                 return Collections.singleton(portAddress);
             }
@@ -132,27 +132,27 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
 
         // check if there is a unique port with the specifiec interface
         if (referenceClassName != null) {
-            Map<String, PortAddress> interfacePorts = portsByInterface.get(referenceClassName);
+            final Map<String, PortAddress> interfacePorts = portsByInterface.get(referenceClassName);
             if (interfacePorts != null && interfacePorts.size() == 1) {
-                PortAddress portAddress = interfacePorts.values().iterator().next();
+                final PortAddress portAddress = interfacePorts.values().iterator().next();
                 return Collections.singleton(portAddress);
             }
         }
 
         // find matching ports by id
-        Map<String, PortAddress> ports = new TreeMap<String, PortAddress>();
+        final Map<String, PortAddress> ports = new TreeMap<String, PortAddress>();
         if (id != null) {
-            Map<String, PortAddress> idPorts = portsByServiceId.get(id);
+            final Map<String, PortAddress> idPorts = portsByServiceId.get(id);
             if (idPorts != null) ports.putAll(idPorts);
         }
 
         // find matching ports  by serviceQName
         if (ports.isEmpty()) {
-            Map<String, PortAddress> qnamePorts = portsByServiceQName.get(serviceQName);
+            final Map<String, PortAddress> qnamePorts = portsByServiceQName.get(serviceQName);
             if (qnamePorts != null) ports.putAll(qnamePorts);
         }
 
-        Set<PortAddress> portAddresses = new HashSet<PortAddress>(ports.values());
+        final Set<PortAddress> portAddresses = new HashSet<PortAddress>(ports.values());
         return portAddresses;
     }
 

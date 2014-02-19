@@ -26,43 +26,43 @@ public final class SafeToolkit {
     public static final Messages messages = new Messages("org.apache.openejb.util.resources");
     public static final HashMap codebases = new HashMap();
 
-    public static SafeToolkit getToolkit(String systemLocation) {
+    public static SafeToolkit getToolkit(final String systemLocation) {
         return new SafeToolkit(systemLocation);
     }
 
     private String systemLocation;
 
-    private SafeToolkit(String systemLocation) {
+    private SafeToolkit(final String systemLocation) {
         this.systemLocation = systemLocation;
     }
 
-    private Class forName(String className) throws OpenEJBException {
+    private Class forName(final String className) throws OpenEJBException {
         try {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             return loader.loadClass(className);
-        } catch (ClassNotFoundException cnfe) {
+        } catch (final ClassNotFoundException cnfe) {
             OpenEJBErrorHandler.classNotFound(systemLocation, className);
             return null;
         }
     }
 
-    public Object newInstance(String className) throws OpenEJBException {
+    public Object newInstance(final String className) throws OpenEJBException {
         return newInstance(forName(className));
     }
 
-    public Object newInstance(Class clazz) throws OpenEJBException {
+    public Object newInstance(final Class clazz) throws OpenEJBException {
         Object instance = null;
         try {
             instance = clazz.newInstance();
-        } catch (InstantiationException ie) {
+        } catch (final InstantiationException ie) {
             OpenEJBErrorHandler.classNotIntantiateable(systemLocation, clazz.getName());
-        } catch (IllegalAccessException iae) {
+        } catch (final IllegalAccessException iae) {
             OpenEJBErrorHandler.classNotAccessible(systemLocation, clazz.getName());
         }
 
-        catch (Throwable exception) {
+        catch (final Throwable exception) {
             exception.printStackTrace();
-            ClassLoader classLoader = clazz.getClassLoader();
+            final ClassLoader classLoader = clazz.getClassLoader();
             if (classLoader instanceof URLClassLoader) {
                 OpenEJBErrorHandler.classNotIntantiateableFromCodebaseForUnknownReason(systemLocation, clazz.getName(), getCodebase((URLClassLoader) classLoader),
                         exception.getClass().getName(), exception.getMessage());
@@ -74,9 +74,9 @@ public final class SafeToolkit {
 
     }
 
-    private static String getCodebase(URLClassLoader urlClassLoader) {
-        StringBuilder codebase = new StringBuilder();
-        URL[] urlList = urlClassLoader.getURLs();
+    private static String getCodebase(final URLClassLoader urlClassLoader) {
+        final StringBuilder codebase = new StringBuilder();
+        final URL[] urlList = urlClassLoader.getURLs();
         codebase.append(urlList[0].toString());
         for (int i = 1; i < urlList.length; ++i) {
             codebase.append(';');

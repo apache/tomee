@@ -22,15 +22,15 @@ public class ClassReference extends Reference {
 
     private final String className;
 
-    public ClassReference(String className) {
+    public ClassReference(final String className) {
         this.className = className;
     }
 
     public Object getObject() throws NamingException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             return classLoader.loadClass(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new NamingException("Erorr loading class: " + className);
         }
     }

@@ -47,7 +47,7 @@ class SaxOpenejb extends StackHandler {
     private final Openejb openejb = new Openejb();
 
     public static Openejb parse(final InputSource source) throws SAXException, ParserConfigurationException, IOException {
-        SAXParser parser = Saxs.factory().newSAXParser();
+        final SAXParser parser = Saxs.factory().newSAXParser();
         final SaxOpenejb sax = new SaxOpenejb();
         parser.parse(source, sax);
         return sax.openejb;
@@ -65,7 +65,7 @@ class SaxOpenejb extends StackHandler {
     public class Root extends DefaultHandler {
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             if (localName.equals("Container")) push(new ContainerElement());
             else if (localName.equals("JndiProvider")) push(new JndiProviderElement());
             else if (localName.equals("SecurityService")) push(new SecurityServiceElement());
@@ -86,7 +86,7 @@ class SaxOpenejb extends StackHandler {
     private class Document extends DefaultHandler {
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             if (localName.equals("openejb")) push(new Root());
             else if (localName.equals("tomee")) push(new Root());
             else throw new SAXException("Unsupported Element: " + localName);
@@ -99,7 +99,7 @@ class SaxOpenejb extends StackHandler {
         private final Deployments deployments = new Deployments();
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             deployments.setDir(attributes.getValue("dir"));
             deployments.setFile(attributes.getValue("jar"));
             deployments.setFile(attributes.getValue("file"));
@@ -108,7 +108,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
             openejb.getDeployments().add(deployments);
         }
     }
@@ -120,14 +120,14 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             final String ctype = attributes.getValue("ctype");
             if (ctype != null) service.setType(ctype);
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.getContainer().add(service);
             super.endElement(uri, localName, qName);
         }
@@ -147,7 +147,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.setSecurityService(service);
             super.endElement(uri, localName, qName);
         }
@@ -160,7 +160,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.setConnectionManager(service);
             super.endElement(uri, localName, qName);
         }
@@ -173,7 +173,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.setProxyFactory(service);
             super.endElement(uri, localName, qName);
         }
@@ -186,7 +186,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.setTransactionManager(service);
             super.endElement(uri, localName, qName);
         }
@@ -199,7 +199,7 @@ class SaxOpenejb extends StackHandler {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(final String uri, final String localName, final String qName) {
             openejb.getJndiProvider().add(service);
             super.endElement(uri, localName, qName);
         }
@@ -209,13 +209,13 @@ class SaxOpenejb extends StackHandler {
         private String path = null;
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             path = attributes.getValue("path");
             checkAttributes(attributes, "path");
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
             if (path != null) {
                 updatePath();
 
@@ -223,23 +223,23 @@ class SaxOpenejb extends StackHandler {
                 try {
                     final URL url = new URL(path);
                     is = url.openStream();
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     final File file = new File(path);
                     try {
                         is = new FileInputStream(file);
-                    } catch (FileNotFoundException e1) {
+                    } catch (final FileNotFoundException e1) {
                         throw new SAXException("specified path '" + path + "' is neither an url nor a file path", e);
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new SAXException(e);
                 }
 
                 try {
                     final Openejb importedOpenEJB = parse(new InputSource(is));
                     merge(openejb, importedOpenEJB);
-                } catch (ParserConfigurationException e) {
+                } catch (final ParserConfigurationException e) {
                     throw new SAXException(e);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new SAXException(e);
                 }
             }
@@ -253,12 +253,12 @@ class SaxOpenejb extends StackHandler {
 
         private void merge(final Openejb openejb, final Openejb importedOpenEJB) {
             if (importedOpenEJB.container != null) {
-                for (Container container : importedOpenEJB.container) {
+                for (final Container container : importedOpenEJB.container) {
                     openejb.add(container);
                 }
             }
             if (importedOpenEJB.jndiProvider != null) {
-                for (JndiProvider jndiProvider : importedOpenEJB.jndiProvider) {
+                for (final JndiProvider jndiProvider : importedOpenEJB.jndiProvider) {
                     openejb.add(jndiProvider);
                 }
             }
@@ -269,17 +269,17 @@ class SaxOpenejb extends StackHandler {
                 // do nothing, these are unique so i don't think importing it is a good idea
             }
             if (importedOpenEJB.connector != null) {
-                for (Connector connector : importedOpenEJB.connector) {
+                for (final Connector connector : importedOpenEJB.connector) {
                     openejb.add(connector);
                 }
             }
             if (importedOpenEJB.resource != null) {
-                for (Resource resource : importedOpenEJB.resource) {
+                for (final Resource resource : importedOpenEJB.resource) {
                     openejb.add(resource);
                 }
             }
             if (importedOpenEJB.deployments != null) {
-                for (Deployments deployment : importedOpenEJB.deployments) {
+                for (final Deployments deployment : importedOpenEJB.deployments) {
                     openejb.add(deployment);
                 }
             }

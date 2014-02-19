@@ -34,7 +34,7 @@ import java.util.Hashtable;
 
 public class javaURLContextFactory implements ObjectFactory {
 
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable env) throws NamingException {
+    public Object getObjectInstance(final Object obj, final Name name, final Context nameCtx, final Hashtable env) throws NamingException {
         return getContext();
     }
 
@@ -62,11 +62,11 @@ public class javaURLContextFactory implements ObjectFactory {
             return globalContext;
         }
 
-        BeanContext di = callContext.getBeanContext();
+        final BeanContext di = callContext.getBeanContext();
         if (di != null) {
             return di.getJndiEnc();
         } else {
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             return containerSystem.getJNDIContext();
         }
     }
@@ -83,7 +83,7 @@ public class javaURLContextFactory implements ObjectFactory {
             } catch (final NameNotFoundException nnfe) {
                 try {
                     return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
-                } catch (NameNotFoundException nnfe2) {
+                } catch (final NameNotFoundException nnfe2) {
                     // ignore, let it be thrown
                 }
                 throw nnfe;
@@ -91,10 +91,10 @@ public class javaURLContextFactory implements ObjectFactory {
         }
 
         @Override
-        public Object lookup(String name) throws NamingException {
+        public Object lookup(final String name) throws NamingException {
             try {
                 return super.lookup(name);
-            } catch (NameNotFoundException nnfe) {
+            } catch (final NameNotFoundException nnfe) {
                 try {
                     return SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup(name);
                 } catch (final NameNotFoundException nnfe2) {

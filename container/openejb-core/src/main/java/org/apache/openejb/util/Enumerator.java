@@ -26,7 +26,7 @@ public class Enumerator implements Serializable, Enumeration {
     private final List list;
     private int index;
 
-    public Enumerator(List list) {
+    public Enumerator(final List list) {
         this.list = list;
         index = 0;
     }

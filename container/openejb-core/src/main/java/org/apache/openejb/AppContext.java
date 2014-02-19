@@ -48,7 +48,7 @@ public class AppContext extends DeploymentContext {
     private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
     private final List<WebContext> webContexts = new ArrayList<WebContext>();
 
-    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
+    public AppContext(final String id, final SystemInstance systemInstance, final ClassLoader classLoader, final Context globalJndiContext, final Context appJndiContext, final boolean standaloneModule) {
         super(id, systemInstance.getOptions());
         this.classLoader = classLoader;
         this.systemInstance = systemInstance;
@@ -76,7 +76,7 @@ public class AppContext extends DeploymentContext {
         return webBeansContext;
     }
 
-    public void setWebBeansContext(WebBeansContext webBeansContext) {
+    public void setWebBeansContext(final WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
     }
 
@@ -89,7 +89,7 @@ public class AppContext extends DeploymentContext {
         return cdiEnabled;
     }
 
-    public void setCdiEnabled(boolean cdiEnabled) {
+    public void setCdiEnabled(final boolean cdiEnabled) {
         this.cdiEnabled = cdiEnabled;
     }
 

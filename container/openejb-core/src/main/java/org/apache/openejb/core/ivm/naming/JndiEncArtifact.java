@@ -38,7 +38,7 @@ import java.io.Serializable;
 public class JndiEncArtifact implements Serializable {
     String path = new String();
 
-    public JndiEncArtifact(IvmContext context) {
+    public JndiEncArtifact(final IvmContext context) {
         NameNode node = context.mynode;
         do {
             path = node.getAtomicName() + "/" + path;
@@ -47,15 +47,15 @@ public class JndiEncArtifact implements Serializable {
     }
 
     public Object readResolve() throws ObjectStreamException {
-        ThreadContext thrdCntx = ThreadContext.getThreadContext();
-        BeanContext deployment = thrdCntx.getBeanContext();
-        Context cntx = deployment.getJndiEnc();
+        final ThreadContext thrdCntx = ThreadContext.getThreadContext();
+        final BeanContext deployment = thrdCntx.getBeanContext();
+        final Context cntx = deployment.getJndiEnc();
         try {
-            Object obj = cntx.lookup(path);
+            final Object obj = cntx.lookup(path);
             if (obj == null)
                 throw new InvalidObjectException("JNDI ENC context reference could not be properly resolved when bean instance was activated");
             return obj;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw (InvalidObjectException)new InvalidObjectException("JNDI ENC context reference could not be properly resolved due to a JNDI exception, when bean instance was activated").initCause(e);
         }
     }

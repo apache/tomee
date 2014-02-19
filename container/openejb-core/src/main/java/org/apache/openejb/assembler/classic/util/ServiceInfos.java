@@ -48,7 +48,7 @@ public final class ServiceInfos {
 
         try {
             return build(services, find(services, id));
-        } catch (OpenEJBException e) {
+        } catch (final OpenEJBException e) {
             throw new OpenEJBRuntimeException(e);
         }
     }

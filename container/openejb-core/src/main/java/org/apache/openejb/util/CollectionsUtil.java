@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CollectionsUtil
 {
-    public static <T> List<T> safe(List<T> list)
+    public static <T> List<T> safe(final List<T> list)
     {
         if(list==null)
         {   return Collections.emptyList();

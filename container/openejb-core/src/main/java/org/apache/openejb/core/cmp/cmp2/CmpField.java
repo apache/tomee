@@ -25,7 +25,7 @@ public class CmpField {
     private final Type type;
     private final Method getter; 
 
-    public CmpField(String name, Type type, Method getter) {
+    public CmpField(final String name, final Type type, final Method getter) {
         this.name = name;
         this.type = type;
         this.getter = getter; 

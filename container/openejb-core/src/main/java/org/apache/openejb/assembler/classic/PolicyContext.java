@@ -30,7 +30,7 @@ public class PolicyContext {
     private final Map<String,PermissionCollection> rolePermissions = new HashMap<String,PermissionCollection>();
     private final String contextId;
 
-    public PolicyContext(String contextId) {
+    public PolicyContext(final String contextId) {
         this.contextId = contextId;
     }
 

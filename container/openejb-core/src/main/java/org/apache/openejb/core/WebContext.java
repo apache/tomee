@@ -61,7 +61,7 @@ public class WebContext {
         if (initialContext != null) return initialContext;
         try {
             initialContext = (Context) new InitialContext().lookup("java:");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new IllegalStateException(e);
         }
         return initialContext;
@@ -79,7 +79,7 @@ public class WebContext {
         this.initialContext = initialContext;
     }
 
-    public WebContext(AppContext appContext) {
+    public WebContext(final AppContext appContext) {
         this.appContext = appContext;
     }
 
@@ -87,7 +87,7 @@ public class WebContext {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -95,7 +95,7 @@ public class WebContext {
         return classLoader;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(final ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -107,7 +107,7 @@ public class WebContext {
         return jndiEnc;
     }
 
-    public void setJndiEnc(Context jndiEnc) {
+    public void setJndiEnc(final Context jndiEnc) {
         this.jndiEnc = jndiEnc;
     }
 
@@ -115,7 +115,7 @@ public class WebContext {
         return appContext;
     }
 
-    public Object newInstance(Class beanClass) throws OpenEJBException {
+    public Object newInstance(final Class beanClass) throws OpenEJBException {
 
         final WebBeansContext webBeansContext = getWebBeansContext();
         final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(beanClass, webBeansContext);
@@ -142,7 +142,7 @@ public class WebContext {
         final Object beanInstance = injectionProcessor.createInstance();
 
         if (webBeansContext != null) {
-            InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+            final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
             bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
             creatonalContexts.put(beanInstance, creationalContext);
@@ -208,7 +208,7 @@ public class WebContext {
                 final ConstructorInjectionBean<Object> beanDefinition = getConstructorInjectionBean(o.getClass(), webBeansContext);
                 final CreationalContext<Object> creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
 
-                InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
+                final InjectionTargetBean<Object> bean = InjectionTargetBean.class.cast(beanDefinition);
                 bean.getInjectionTarget().inject(beanInstance, creationalContext);
 
                 // if the bean is dependent simply cleanup the creational context once it is created
@@ -219,12 +219,12 @@ public class WebContext {
             }
 
             return beanInstance;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException(e);
         }
     }
 
-    public void setBindings(Map<String, Object> bindings) {
+    public void setBindings(final Map<String, Object> bindings) {
         this.bindings = bindings;
     }
 
@@ -232,7 +232,7 @@ public class WebContext {
         return bindings;
     }
 
-    public void setWebbeansContext(WebBeansContext webbeansContext) {
+    public void setWebbeansContext(final WebBeansContext webbeansContext) {
         this.webbeansContext = webbeansContext;
     }
 
@@ -240,7 +240,7 @@ public class WebContext {
         return webbeansContext;
     }
 
-    public void setContextRoot(String contextRoot) {
+    public void setContextRoot(final String contextRoot) {
         this.contextRoot = contextRoot;
     }
 

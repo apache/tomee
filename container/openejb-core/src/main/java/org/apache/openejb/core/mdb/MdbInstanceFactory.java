@@ -66,7 +66,7 @@ public class MdbInstanceFactory {
      * @param securityService the transaction manager for this container system
      * @param instanceLimit   the maximal number of instances or <= 0 if unlimited
      */
-    public MdbInstanceFactory(BeanContext beanContext, SecurityService securityService, int instanceLimit) throws OpenEJBException {
+    public MdbInstanceFactory(final BeanContext beanContext, final SecurityService securityService, final int instanceLimit) throws OpenEJBException {
         this.beanContext = beanContext;
         this.instanceLimit = instanceLimit;
         mdbContext = new MdbContext(securityService);
@@ -75,7 +75,7 @@ public class MdbInstanceFactory {
             final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", mdbContext);
             context.bind("comp/TimerService", new TimerServiceWrapper());
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext/TimerService", e);
         }
 
@@ -108,7 +108,7 @@ public class MdbInstanceFactory {
      * @throws UnavailableException if the instance limit has been exceeded or
      *                              if an exception occurs while creating the bean instance
      */
-    public Object createInstance(boolean ignoreInstanceCount) throws UnavailableException {
+    public Object createInstance(final boolean ignoreInstanceCount) throws UnavailableException {
         if (!ignoreInstanceCount) {
             synchronized (this) {
                 // check the instance limit
@@ -121,9 +121,9 @@ public class MdbInstanceFactory {
         }
 
         try {
-            Object bean = constructBean();
+            final Object bean = constructBean();
             return bean;
-        } catch (UnavailableException e) {
+        } catch (final UnavailableException e) {
             // decrement the instance count
             if (!ignoreInstanceCount) {
                 synchronized (this) {
@@ -143,7 +143,7 @@ public class MdbInstanceFactory {
      * @param instance             the bean instance to free
      * @param ignoredInstanceCount
      */
-    public void freeInstance(Instance instance, boolean ignoredInstanceCount) {
+    public void freeInstance(final Instance instance, final boolean ignoredInstanceCount) {
         if (instance == null) throw new NullPointerException("bean is null");
 
         // decrement the instance count
@@ -153,24 +153,24 @@ public class MdbInstanceFactory {
             }
         }
 
-        ThreadContext callContext = ThreadContext.getThreadContext();
+        final ThreadContext callContext = ThreadContext.getThreadContext();
         
-        Operation originalOperation = callContext == null ? null : callContext.getCurrentOperation();
-        BaseContext.State[] originalAllowedStates = callContext == null ? null : callContext.getCurrentAllowedStates();
+        final Operation originalOperation = callContext == null ? null : callContext.getCurrentOperation();
+        final BaseContext.State[] originalAllowedStates = callContext == null ? null : callContext.getCurrentAllowedStates();
 
         try {
             // call post destroy method
             if (callContext != null) {
                 callContext.setCurrentOperation(Operation.PRE_DESTROY);
             }
-            Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove") : null;
-            List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
+            final Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove") : null;
+            final List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
+            final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
             interceptorStack.invoke();
             if (instance.creationalContext != null) {
                 instance.creationalContext.release();
             }
-        } catch (Throwable re) {
+        } catch (final Throwable re) {
             MdbInstanceFactory.logger.error("The bean instance " + instance.bean + " threw a system exception:" + re, re);
         } finally {
             
@@ -188,24 +188,24 @@ public class MdbInstanceFactory {
      * @param bean the bean instance to discard
      * @return the new replacement bean instance
      */
-    public Object recreateInstance(Object bean) throws UnavailableException {
+    public Object recreateInstance(final Object bean) throws UnavailableException {
         if (bean == null) throw new NullPointerException("bean is null");
-        Object newBean = constructBean();
+        final Object newBean = constructBean();
         return newBean;
     }
 
     private Object constructBean() throws UnavailableException {
-        BeanContext beanContext = this.beanContext;
+        final BeanContext beanContext = this.beanContext;
 
-        ThreadContext callContext = new ThreadContext(beanContext, null, Operation.INJECTION);
-        ThreadContext oldContext = ThreadContext.enter(callContext);
+        final ThreadContext callContext = new ThreadContext(beanContext, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         try {
             final InstanceContext context = beanContext.newInstance();
 
             if (context.getBean() instanceof MessageDrivenBean) {
                 callContext.setCurrentOperation(Operation.CREATE);
-                Method create = beanContext.getCreateMethod();
+                final Method create = beanContext.getCreateMethod();
                 final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList(), new HashMap());
                 ejbCreate.invoke();
             }
@@ -215,7 +215,7 @@ public class MdbInstanceFactory {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
-            String message = "The bean instance threw a system exception:" + e;
+            final String message = "The bean instance threw a system exception:" + e;
             MdbInstanceFactory.logger.error(message, e);
             throw new UnavailableException(message, e);
         } finally {

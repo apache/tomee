@@ -21,7 +21,7 @@ import org.apache.openjpa.jdbc.kernel.TableJDBCSeq;
 public class PrefixTableJdbcSeq extends TableJDBCSeq {
     private String prefix;
 
-    public void setPrefix(String prefix) {
+    public void setPrefix(final String prefix) {
         this.prefix = prefix;
     }
 

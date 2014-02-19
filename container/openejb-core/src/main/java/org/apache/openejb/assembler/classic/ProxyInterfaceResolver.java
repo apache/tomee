@@ -26,15 +26,15 @@ import java.util.List;
  */
 public class ProxyInterfaceResolver {
 
-    public static List<Class> getInterfaces(Class implementation, Class mainInterface, List<Class> interfaces){
-        List<Class> valid = new ArrayList<Class>();
+    public static List<Class> getInterfaces(final Class implementation, final Class mainInterface, final List<Class> interfaces){
+        final List<Class> valid = new ArrayList<Class>();
         // The intended interface is safe to add
         if (mainInterface != null) {
             valid.add(mainInterface);
         }
 
         // Any interface the bean implements is safe (potentially)
-        for (Class interfce : interfaces) {
+        for (final Class interfce : interfaces) {
             if (interfce.isAssignableFrom(implementation)){
                 valid.add(interfce);
             }
@@ -69,9 +69,9 @@ public class ProxyInterfaceResolver {
         // a runtime exception and must be throwable via the proxy.
 
 
-        List<Class> remotes = new ArrayList<Class>();
-        List<Class> nonremotes = new ArrayList<Class>();
-        for (Class interfce : valid) {
+        final List<Class> remotes = new ArrayList<Class>();
+        final List<Class> nonremotes = new ArrayList<Class>();
+        for (final Class interfce : valid) {
             if (Remote.class.isAssignableFrom(interfce)){
                 remotes.add(interfce);
             } else {
@@ -96,23 +96,23 @@ public class ProxyInterfaceResolver {
         valid.add(mainInterface);
 
         // Track the method signatures of the interfaces we add
-        List<Signature> proxySignatures = getSignatures(mainInterface);
+        final List<Signature> proxySignatures = getSignatures(mainInterface);
 
 
         // Show affinity for the remote interfaces if the main
         // interface is a java.rmi.Remote
         if (Remote.class.isAssignableFrom(mainInterface)){
-            for (Class interfce : remotes) {
+            for (final Class interfce : remotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
-            for (Class interfce : nonremotes) {
+            for (final Class interfce : nonremotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
         } else {
-            for (Class interfce : nonremotes) {
+            for (final Class interfce : nonremotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
-            for (Class interfce : remotes) {
+            for (final Class interfce : remotes) {
                 addIfNotConflicting(interfce, valid, proxySignatures);
             }
         }
@@ -129,12 +129,12 @@ public class ProxyInterfaceResolver {
      * @param valid
      * @param proxySignatures
      */
-    private static void addIfNotConflicting(Class interfce, List<Class> valid, List<Signature> proxySignatures) {
+    private static void addIfNotConflicting(final Class interfce, final List<Class> valid, final List<Signature> proxySignatures) {
 
-        List<Signature> interfaceSigs = getSignatures(interfce);
+        final List<Signature> interfaceSigs = getSignatures(interfce);
 
 
-        for (Signature sig : interfaceSigs) {
+        for (final Signature sig : interfaceSigs) {
             // Contains will return true if the
             // method signature exits *and* has
             // a different throws clause
@@ -149,9 +149,9 @@ public class ProxyInterfaceResolver {
         proxySignatures.addAll(interfaceSigs);
     }
 
-    private static List<Signature> getSignatures(Class mainInterface) {
-        List<Signature> sigs = new ArrayList<Signature>();
-        for (Method method : mainInterface.getMethods()) {
+    private static List<Signature> getSignatures(final Class mainInterface) {
+        final List<Signature> sigs = new ArrayList<Signature>();
+        for (final Method method : mainInterface.getMethods()) {
             sigs.add(new Signature(mainInterface, method));
         }
         return sigs;
@@ -162,13 +162,13 @@ public class ProxyInterfaceResolver {
         private final Method method;
         private final String sig;
 
-        public Signature(Class clazz, Method method) {
+        public Signature(final Class clazz, final Method method) {
             this.clazz = clazz;
             this.method = method;
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append(method.getName());
             sb.append('(');
-            for (Class<?> type : method.getParameterTypes()) {
+            for (final Class<?> type : method.getParameterTypes()) {
                 sb.append(type.getName());
                 sb.append(',');
             }
@@ -182,7 +182,7 @@ public class ProxyInterfaceResolver {
 
         // This equals returns true only if the method signatures
         // are the same *and* one is remote and one is not
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
@@ -190,8 +190,8 @@ public class ProxyInterfaceResolver {
 
             if (!sig.equals(signature.sig)) return false;
 
-            boolean aIsRemote = Remote.class.isAssignableFrom(clazz);
-            boolean bIsRemote = Remote.class.isAssignableFrom(signature.clazz);
+            final boolean aIsRemote = Remote.class.isAssignableFrom(clazz);
+            final boolean bIsRemote = Remote.class.isAssignableFrom(signature.clazz);
 
             return !(aIsRemote == bIsRemote);
         }

@@ -27,24 +27,24 @@ import java.util.List;
 
 public class SingletonEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public SingletonEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public SingletonEjbHomeHandler(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
-    protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object findX(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new UnsupportedOperationException("Stateful beans may not have find methods");
     }
 
-    protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeByPrimaryKey(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object removeWithHandle(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object removeWithHandle(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         // stateless can't be removed
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    protected EjbObjectProxyHandler newEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         return new SingletonEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 

@@ -43,7 +43,7 @@ public final class ValidatorUtil {
     public static ValidatorFactory validatorFactory() {
         try {
             return (ValidatorFactory) new InitialContext().lookup("java:comp/ValidatorFactory");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             return proxy(ValidatorFactory.class, "java:comp/ValidatorFactory");
         }
     }
@@ -51,7 +51,7 @@ public final class ValidatorUtil {
     public static Validator validator() {
         try {
             return (Validator) new InitialContext().lookup("java:comp/Validator");
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             return proxy(Validator.class, "java:comp/Validator");
         }
     }
@@ -63,7 +63,7 @@ public final class ValidatorUtil {
         return t.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{t},
                 new InvocationHandler() {
                     @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                         if (Object.class.equals(method.getDeclaringClass())) {
                             return method.invoke(this);
                         }

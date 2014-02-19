@@ -120,7 +120,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             if (appContext.getClassLoader().equals(loader)) {
                 return appContext.getId();
             }
-            for (WebContext web : appContext.getWebContexts()) {
+            for (final WebContext web : appContext.getWebContexts()) {
                 if (web.getClassLoader().equals(loader)) {
                     return appContext.getId();
                 }
@@ -143,9 +143,9 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             } else {
                 return jndiContext.lookup("openejb/Resource/" + s);
             }
-        } catch (NameNotFoundException e) {
+        } catch (final NameNotFoundException e) {
             return jndiContext.lookup("java:module/" + Strings.lastPart(getClassName(), '.'));
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             throw (NamingException)new NamingException("could not look up " + s).initCause(e);
         }
     }

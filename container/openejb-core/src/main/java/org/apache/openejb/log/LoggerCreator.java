@@ -40,7 +40,7 @@ public class LoggerCreator implements Callable<Logger> {
         if (levelName != null) {
             try {
                 call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
@@ -53,7 +53,7 @@ public class LoggerCreator implements Callable<Logger> {
                 if (logger == null) {
                     try {
                         logger = Logger.getLogger(name);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         logger = Logger.getLogger(name); // try again
                     }
 
@@ -62,7 +62,7 @@ public class LoggerCreator implements Callable<Logger> {
                     final String levelName = p.getProperty("logging.level." + logger.getName());
                     if (levelName != null) {
                         final Level level = Level.parse(levelName);
-                        for (Handler handler : logger.getHandlers()) {
+                        for (final Handler handler : logger.getHandlers()) {
                             handler.setLevel(level);
                         }
                     }
@@ -109,7 +109,7 @@ public class LoggerCreator implements Callable<Logger> {
             final Logger l;
             try {
                 l = lc.call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 return;
             }
 

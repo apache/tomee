@@ -44,7 +44,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.core.cmp");
     private final ThreadLocal<MyTransaction> threadTransaction = new ThreadLocal<MyTransaction>();
 
-    public void init(Properties props) {
+    public void init(final Properties props) {
     }
 
     public TransactionManager getTransactionManager() {
@@ -56,7 +56,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
     }
 
     public int getStatus() {
-        MyTransaction tx = threadTransaction.get();
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             return Status.STATUS_NO_TRANSACTION;
         }
@@ -68,7 +68,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
     }
 
     public boolean getRollbackOnly() {
-        MyTransaction tx = threadTransaction.get();
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -76,7 +76,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
     }
 
     public void setRollbackOnly() {
-        MyTransaction tx = threadTransaction.get();
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -88,12 +88,12 @@ public class PseudoTransactionService implements TransactionService, Transaction
             throw new NotSupportedException("A transaction is already active");
         }
 
-        MyTransaction tx = new MyTransaction();
+        final MyTransaction tx = new MyTransaction();
         threadTransaction.set(tx);
     }
 
     public void commit() throws RollbackException {
-        MyTransaction tx = threadTransaction.get();
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -107,7 +107,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
 
 
     public void rollback() {
-        MyTransaction tx = threadTransaction.get();
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -123,20 +123,20 @@ public class PseudoTransactionService implements TransactionService, Transaction
         return threadTransaction.get();
     }
 
-    public void resume(Transaction tx) throws InvalidTransactionException {
+    public void resume(final Transaction tx) throws InvalidTransactionException {
         if (tx == null) {
             throw new InvalidTransactionException("Transaction is null");
         }
         if (!(tx instanceof MyTransaction)) {
             throw new InvalidTransactionException("Unknown transaction type " + tx.getClass().getName());
         }
-        MyTransaction myTransaction = (MyTransaction) tx;
+        final MyTransaction myTransaction = (MyTransaction) tx;
 
         if (threadTransaction.get() != null) {
             throw new IllegalStateException("A transaction is already active");
         }
 
-        int status = myTransaction.getStatus();
+        final int status = myTransaction.getStatus();
         if (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK) {
             throw new InvalidTransactionException("Expected transaction to be STATUS_ACTIVE or STATUS_MARKED_ROLLBACK, but was " + status);
         }
@@ -152,18 +152,18 @@ public class PseudoTransactionService implements TransactionService, Transaction
         return getStatus();
     }
 
-    public Object getResource(Object key) {
-        MyTransaction tx = threadTransaction.get();
+    public Object getResource(final Object key) {
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
 
-        Object value = tx.getResource(key);
+        final Object value = tx.getResource(key);
         return value;
     }
 
-    public void putResource(Object key, Object value) {
-        MyTransaction tx = threadTransaction.get();
+    public void putResource(final Object key, final Object value) {
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -171,8 +171,8 @@ public class PseudoTransactionService implements TransactionService, Transaction
         tx.putResource(key, value);
     }
 
-    public void registerInterposedSynchronization(Synchronization synchronization) {
-        MyTransaction tx = threadTransaction.get();
+    public void registerInterposedSynchronization(final Synchronization synchronization) {
+        final MyTransaction tx = threadTransaction.get();
         if (tx == null) {
             throw new IllegalStateException("No transaction active");
         }
@@ -180,7 +180,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
         tx.registerInterposedSynchronization(synchronization);
     }
 
-    public void setTransactionTimeout(int seconds) {
+    public void setTransactionTimeout(final int seconds) {
     }
 
     public class MyTransaction implements Transaction {
@@ -189,12 +189,12 @@ public class PseudoTransactionService implements TransactionService, Transaction
         private final Map<Object, Object> resources = new HashMap<Object,Object>();
         private int status = Status.STATUS_ACTIVE;
 
-        public boolean delistResource(XAResource xaRes, int flag) {
+        public boolean delistResource(final XAResource xaRes, final int flag) {
             xaResources.remove(xaRes);
             return true;
         }
 
-        public boolean enlistResource(XAResource xaRes) {
+        public boolean enlistResource(final XAResource xaRes) {
             xaResources.add(xaRes);
             return true;
         }
@@ -203,11 +203,11 @@ public class PseudoTransactionService implements TransactionService, Transaction
             return status;
         }
 
-        public void registerSynchronization(Synchronization synchronization) {
+        public void registerSynchronization(final Synchronization synchronization) {
             registeredSynchronizations.add(synchronization);
         }
 
-        public void registerInterposedSynchronization(Synchronization synchronization) {
+        public void registerInterposedSynchronization(final Synchronization synchronization) {
             registeredSynchronizations.add(synchronization);
         }
 
@@ -219,12 +219,12 @@ public class PseudoTransactionService implements TransactionService, Transaction
             status = Status.STATUS_MARKED_ROLLBACK;
         }
 
-        public Object getResource(Object key) {
+        public Object getResource(final Object key) {
             if (key == null) throw new NullPointerException("key is null");
             return resources.get(key);
         }
 
-        public void putResource(Object key, Object value) {
+        public void putResource(final Object key, final Object value) {
             if (key == null) throw new NullPointerException("key is null");
             if (value != null) {
                 resources.put(key, value);
@@ -241,7 +241,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
                 }
                 try {
                     doBeforeCompletion();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     rollback();
                     throw (RollbackException) new RollbackException().initCause(e);
                 }
@@ -265,43 +265,43 @@ public class PseudoTransactionService implements TransactionService, Transaction
         }
 
         private void doBeforeCompletion() {
-            for (Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
+            for (final Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
                 sync.beforeCompletion();
             }
         }
 
-        private void doAfterCompletion(int status) {
-            for (Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
+        private void doAfterCompletion(final int status) {
+            for (final Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
                 try {
                     sync.afterCompletion(status);
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     logger.warning("Synchronization afterCompletion threw a RuntimeException", e);
                 }
             }
         }
 
-        private void doXAResources(int status) {
-            for (XAResource xaRes : new ArrayList<XAResource>(xaResources)) {
+        private void doXAResources(final int status) {
+            for (final XAResource xaRes : new ArrayList<XAResource>(xaResources)) {
                 if (status == Status.STATUS_COMMITTED) {
                     try {
                         xaRes.commit(null, true);
-                    } catch (XAException e) {
+                    } catch (final XAException e) {
                         // no-op
                     }
                     try {
                         xaRes.end(null, XAResource.TMSUCCESS);
-                    } catch (XAException e) {
+                    } catch (final XAException e) {
                         // no-op
                     }
                 } else {
                     try {
                         xaRes.rollback(null);
-                    } catch (XAException e) {
+                    } catch (final XAException e) {
                         // no-op
                     }
                     try {
                         xaRes.end(null, XAResource.TMFAIL);
-                    } catch (XAException e) {
+                    } catch (final XAException e) {
                         // no-op
                     }
                 }

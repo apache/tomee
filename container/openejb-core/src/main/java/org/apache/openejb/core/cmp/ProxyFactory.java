@@ -33,13 +33,13 @@ public class ProxyFactory {
     private final Class localInterface;
     private final EntityEjbHomeHandler localHandler;
 
-    public ProxyFactory(BeanContext beanContext) {
+    public ProxyFactory(final BeanContext beanContext) {
         this.beanContext = beanContext;
         keyGenerator = beanContext.getKeyGenerator();
 
         remoteInterface = beanContext.getRemoteInterface();
         if (remoteInterface != null) {
-            EJBHome homeProxy = beanContext.getEJBHome();
+            final EJBHome homeProxy = beanContext.getEJBHome();
             remoteHandler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
         } else {
             remoteHandler = null;
@@ -47,30 +47,30 @@ public class ProxyFactory {
 
         localInterface = beanContext.getLocalInterface();
         if (localInterface != null) {
-            EJBLocalHome localHomeProxy = beanContext.getEJBLocalHome();
+            final EJBLocalHome localHomeProxy = beanContext.getEJBLocalHome();
             localHandler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(localHomeProxy);
         } else {
             localHandler = null;
         }
     }
 
-    public Object createRemoteProxy(EntityBean bean, RpcContainer container) {
+    public Object createRemoteProxy(final EntityBean bean, final RpcContainer container) {
         // The KeyGenerator creates a new primary key and populates its fields with the
         // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
-        Object primaryKey = keyGenerator.getPrimaryKey(bean);
+        final Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = remoteHandler.createProxy(primaryKey, beanContext.getRemoteInterface());
+        final Object proxy = remoteHandler.createProxy(primaryKey, beanContext.getRemoteInterface());
         return proxy;
     }
 
-    public Object createLocalProxy(EntityBean bean, RpcContainer container) {
+    public Object createLocalProxy(final EntityBean bean, final RpcContainer container) {
         // The KeyGenerator creates a new primary key and populates its fields with the
         // primary key fields of the bean instance.  Each deployment has its own KeyGenerator.
-        Object primaryKey = keyGenerator.getPrimaryKey(bean);
+        final Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = localHandler.createProxy(primaryKey, beanContext.getLocalInterface());
+        final Object proxy = localHandler.createProxy(primaryKey, beanContext.getLocalInterface());
         return proxy;
 
     }

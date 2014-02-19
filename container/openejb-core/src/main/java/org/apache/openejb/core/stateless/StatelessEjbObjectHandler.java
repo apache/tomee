@@ -56,7 +56,7 @@ public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
         try {
             final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
             return deploymentID.equals(handler.deploymentID);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             return Boolean.FALSE;
 
         }

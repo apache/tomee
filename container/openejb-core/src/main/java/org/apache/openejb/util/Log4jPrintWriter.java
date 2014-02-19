@@ -29,7 +29,7 @@ public class Log4jPrintWriter extends PrintWriter {
     private final Logger logger;
     private final Priority priority;
 
-    public Log4jPrintWriter(String category, Priority priority) {
+    public Log4jPrintWriter(final String category, final Priority priority) {
         super(System.err);
         logger = Logger.getLogger(category);
         this.priority = priority;
@@ -50,39 +50,39 @@ public class Log4jPrintWriter extends PrintWriter {
         }
     }
 
-    public void print(boolean b) {
+    public void print(final boolean b) {
         text.append(b);
     }
 
-    public void print(char c) {
+    public void print(final char c) {
         text.append(c);
     }
 
-    public void print(char[] s) {
+    public void print(final char[] s) {
         text.append(s);
     }
 
-    public void print(double d) {
+    public void print(final double d) {
         text.append(d);
     }
 
-    public void print(float f) {
+    public void print(final float f) {
         text.append(f);
     }
 
-    public void print(int i) {
+    public void print(final int i) {
         text.append(i);
     }
 
-    public void print(long l) {
+    public void print(final long l) {
         text.append(l);
     }
 
-    public void print(Object obj) {
+    public void print(final Object obj) {
         text.append(obj);
     }
 
-    public void print(String s) {
+    public void print(final String s) {
         text.append(s);
     }
 
@@ -92,47 +92,47 @@ public class Log4jPrintWriter extends PrintWriter {
         }
     }
 
-    public void println(boolean x) {
+    public void println(final boolean x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(char x) {
+    public void println(final char x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(char[] x) {
+    public void println(final char[] x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(double x) {
+    public void println(final double x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(float x) {
+    public void println(final float x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(int x) {
+    public void println(final int x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(long x) {
+    public void println(final long x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(Object x) {
+    public void println(final Object x) {
         text.append(x);
         flushLine();
     }
 
-    public void println(String x) {
+    public void println(final String x) {
         text.append(x);
         flushLine();
     }

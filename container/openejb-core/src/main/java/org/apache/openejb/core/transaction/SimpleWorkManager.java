@@ -43,48 +43,48 @@ public class SimpleWorkManager implements WorkManager {
      */
     private Executor executor;
 
-    public SimpleWorkManager(Executor executor) {
+    public SimpleWorkManager(final Executor executor) {
         if (executor == null) throw new NullPointerException("executor is null");
         this.executor = executor;
     }
 
-    public void doWork(Work work) throws WorkException {
+    public void doWork(final Work work) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         doWork(work, INDEFINITE, null, null);
     }
 
-    public void doWork(Work work, long startTimeout, ExecutionContext executionContext, WorkListener workListener) throws WorkException {
+    public void doWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         executeWork(WorkType.DO, work, startTimeout, executionContext, workListener);
     }
 
-    public long startWork(Work work) throws WorkException {
+    public long startWork(final Work work) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         return startWork(work, INDEFINITE, null, null);
     }
 
-    public long startWork(Work work, long startTimeout, ExecutionContext executionContext, WorkListener workListener) throws WorkException {
+    public long startWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         return executeWork(WorkType.START, work, startTimeout, executionContext, workListener);
     }
 
-    public void scheduleWork(Work work) throws WorkException {
+    public void scheduleWork(final Work work) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         scheduleWork(work, INDEFINITE, null, null);
     }
 
-    public void scheduleWork(Work work, long startTimeout, ExecutionContext executionContext, WorkListener workListener) throws WorkException {
+    public void scheduleWork(final Work work, final long startTimeout, final ExecutionContext executionContext, final WorkListener workListener) throws WorkException {
         if (work == null) throw new NullPointerException("work is null");
         executeWork(WorkType.SCHEDULE, work, startTimeout, executionContext, workListener);
     }
 
-    private long executeWork(WorkType workType, Work work, long startTimeout, ExecutionContext executionContext, WorkListener workListener) throws WorkException {
+    private long executeWork(final WorkType workType, final Work work, final long startTimeout, final ExecutionContext executionContext, WorkListener workListener) throws WorkException {
         // assure we have a work listener
         if (workListener == null) workListener = new LoggingWorkListener(workType);
 
         // reject work with an XID
         if (executionContext != null && executionContext.getXid() != null) {
-            WorkRejectedException workRejectedException = new WorkRejectedException("SimpleWorkManager can not import an XID", WorkException.TX_RECREATE_FAILED);
+            final WorkRejectedException workRejectedException = new WorkRejectedException("SimpleWorkManager can not import an XID", WorkException.TX_RECREATE_FAILED);
             workListener.workRejected(new WorkEvent(this, WorkEvent.WORK_REJECTED, work, workRejectedException));
             throw workRejectedException;
         }
@@ -93,21 +93,21 @@ public class SimpleWorkManager implements WorkManager {
         workListener.workAccepted(new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null));
 
         // execute work
-        Worker worker = new Worker(work, workListener, startTimeout);
+        final Worker worker = new Worker(work, workListener, startTimeout);
         executor.execute(worker);
 
         if (workType == WorkType.DO) {
             // wait for completion
             try {
                 worker.waitForCompletion();
-            } catch (InterruptedException e) {
-                WorkException workException = new WorkException("Work submission thread was interrupted", e);
+            } catch (final InterruptedException e) {
+                final WorkException workException = new WorkException("Work submission thread was interrupted", e);
                 workException.setErrorCode(WorkException.INTERNAL);
                 throw workException;
             }
 
             // if work threw an exception, rethrow it
-            WorkException workCompletedException = worker.getWorkException();
+            final WorkException workCompletedException = worker.getWorkException();
             if (workCompletedException != null) {
                 throw workCompletedException;
             }
@@ -115,14 +115,14 @@ public class SimpleWorkManager implements WorkManager {
             // wait for work to start
             try {
                 worker.waitForStart();
-            } catch (InterruptedException e) {
-                WorkException workException = new WorkException("Work submission thread was interrupted", e);
+            } catch (final InterruptedException e) {
+                final WorkException workException = new WorkException("Work submission thread was interrupted", e);
                 workException.setErrorCode(WorkException.INTERNAL);
                 throw workException;
             }
 
             // if work threw a rejection exception, rethrow it (it is the exception for timeout) 
-            WorkException workCompletedException = worker.getWorkException();
+            final WorkException workCompletedException = worker.getWorkException();
             if (workCompletedException instanceof WorkRejectedException) {
                 throw workCompletedException;
             }
@@ -141,7 +141,7 @@ public class SimpleWorkManager implements WorkManager {
         private long startDelay = UNKNOWN;
         private WorkException workException;
 
-        public Worker(Work work, WorkListener workListener, long startTimeout) {
+        public Worker(final Work work, final WorkListener workListener, final long startTimeout) {
             this.work = work;
             this.workListener = workListener;
             if (startTimeout <= 0) {
@@ -171,7 +171,7 @@ public class SimpleWorkManager implements WorkManager {
                 workException = null;
                 try {
                     work.run();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     workException = new WorkCompletedException(e);
                 } finally {
                     // notify listener that work completed (with an optional exception)
@@ -206,16 +206,16 @@ public class SimpleWorkManager implements WorkManager {
     private static final class LoggingWorkListener extends WorkAdapter {
         private final WorkType workType;
 
-        private LoggingWorkListener(WorkType workType) {
+        private LoggingWorkListener(final WorkType workType) {
             this.workType = workType;
         }
 
-        public void workRejected(WorkEvent event) {
+        public void workRejected(final WorkEvent event) {
             // Don't log doWork or startWork since exception is propagated to caller
             if (workType == WorkType.DO || workType == WorkType.START) {
                 return;
             }
-            WorkException exception = event.getException();
+            final WorkException exception = event.getException();
             if (exception != null) {
                 if (WorkException.START_TIMED_OUT.equals(exception.getErrorCode())) {
                     logger.error(exception.getMessage());
@@ -223,7 +223,7 @@ public class SimpleWorkManager implements WorkManager {
             }
         }
 
-        public void workCompleted(WorkEvent event) {
+        public void workCompleted(final WorkEvent event) {
             // Don't log doWork since exception is propagated to caller
             if (workType == WorkType.DO) {
                 return;

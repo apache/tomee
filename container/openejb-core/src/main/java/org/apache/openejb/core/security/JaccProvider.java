@@ -39,7 +39,7 @@ public abstract class JaccProvider {
         return jaccProvider;
     }
 
-    public static void set(JaccProvider provider) {
+    public static void set(final JaccProvider provider) {
         // todo add a security check
         jaccProvider = provider;
     }
@@ -72,12 +72,12 @@ public abstract class JaccProvider {
 
                     if (factoryClassName[0] == null)
                         throw new ClassNotFoundException("Property " + FACTORY_NAME + " not set");
-                    Thread currentThread = Thread.currentThread();
-                    ClassLoader tccl = currentThread.getContextClassLoader();
+                    final Thread currentThread = Thread.currentThread();
+                    final ClassLoader tccl = currentThread.getContextClassLoader();
                     return Class.forName(factoryClassName[0], true, tccl).newInstance();
                 }
             });
-        } catch (PrivilegedActionException pae) {
+        } catch (final PrivilegedActionException pae) {
             if (pae.getException() instanceof ClassNotFoundException) {
                 throw (ClassNotFoundException) pae.getException();
             } else if (pae.getException() instanceof InstantiationException) {
@@ -95,11 +95,11 @@ public abstract class JaccProvider {
             install();
         }
 
-        public PolicyConfiguration getPolicyConfiguration(String contextID, boolean remove) throws PolicyContextException {
+        public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
             return get().getPolicyConfiguration(contextID, remove);
         }
 
-        public boolean inService(String contextID) throws PolicyContextException {
+        public boolean inService(final String contextID) throws PolicyContextException {
             return get().inService(contextID);
         }
     }
@@ -110,7 +110,7 @@ public abstract class JaccProvider {
             install();
         }
 
-        public PermissionCollection getPermissions(CodeSource codesource) {
+        public PermissionCollection getPermissions(final CodeSource codesource) {
             return get().getPermissions(codesource);
         }
 
@@ -118,7 +118,7 @@ public abstract class JaccProvider {
             get().refresh();
         }
 
-        public boolean implies(ProtectionDomain domain, Permission permission) {
+        public boolean implies(final ProtectionDomain domain, final Permission permission) {
             return get().implies(domain, permission);
         }
     }

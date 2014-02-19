@@ -52,15 +52,15 @@ public class UriResolver {
     public UriResolver() {
     }
 
-    public UriResolver(String path) throws IOException {
+    public UriResolver(final String path) throws IOException {
         this("", path);
     }
 
-    public UriResolver(String baseUriStr, String uriStr) throws IOException {
+    public UriResolver(final String baseUriStr, final String uriStr) throws IOException {
         this(baseUriStr, uriStr, null);
     }
 
-    public UriResolver(String baseUriStr, String uriStr, Class calling) throws IOException {
+    public UriResolver(final String baseUriStr, final String uriStr, final Class calling) throws IOException {
         this.calling = calling != null ? calling : getClass();
         if (uriStr.startsWith("classpath:")) {
             tryClasspath(uriStr);
@@ -74,7 +74,7 @@ public class UriResolver {
     }
 
 
-    public void resolve(String baseUriStr, String uriStr, Class callingCls) throws IOException {
+    public void resolve(final String baseUriStr, final String uriStr, final Class callingCls) throws IOException {
         this.calling = callingCls != null ? callingCls : getClass();
         this.file = null;
         this.uri = null;
@@ -94,8 +94,8 @@ public class UriResolver {
 
 
 
-    private void tryFileSystem(String baseUriStr, String uriStr) throws IOException, MalformedURLException {
-        URI relative;
+    private void tryFileSystem(final String baseUriStr, final String uriStr) throws IOException, MalformedURLException {
+        final URI relative;
         File uriFile = new File(uriStr);
         uriFile = new File(uriFile.getAbsolutePath());
 
@@ -110,9 +110,9 @@ public class UriResolver {
             url = relative.toURL();
 
             try {
-                HttpURLConnection huc = (HttpURLConnection)url.openConnection();
+                final HttpURLConnection huc = (HttpURLConnection)url.openConnection();
 
-                String host = System.getProperty("http.proxyHost");
+                final String host = System.getProperty("http.proxyHost");
                 if (host != null) {
                     //comment out unused port to pass pmd check
                     /*String ports = System.getProperty("http.proxyPort");
@@ -121,16 +121,16 @@ public class UriResolver {
                         port = Integer.parseInt(ports);
                     }*/
 
-                    String username = System.getProperty("http.proxy.user");
-                    String password = System.getProperty("http.proxy.password");
+                    final String username = System.getProperty("http.proxy.user");
+                    final String password = System.getProperty("http.proxy.password");
 
                     if (username != null && password != null) {
-                        String encoded = new String(Base64.encodeBase64((username + ":" + password).getBytes()));
+                        final String encoded = new String(Base64.encodeBase64((username + ":" + password).getBytes()));
                         huc.setRequestProperty("Proxy-Authorization", "Basic " + encoded);
                     }
                 }
                 is =  huc.getInputStream();
-            } catch (ClassCastException ex) {
+            } catch (final ClassCastException ex) {
                 is = IO.read(url);
             }
         } else if (baseUriStr != null) {
@@ -158,7 +158,7 @@ public class UriResolver {
                         tryClasspath(base.toString().startsWith("file:")
                                      ? base.toString().substring(5) : base.toString());
                     }
-                } catch (Throwable th) {
+                } catch (final Throwable th) {
                     tryClasspath(base.toString().startsWith("file:")
                                  ? base.toString().substring(5) : base.toString());
                 }
@@ -168,7 +168,7 @@ public class UriResolver {
         if (uri != null && "file".equals(uri.getScheme())) {
             try {
                 file = new File(uri);
-            } catch (IllegalArgumentException iae) {
+            } catch (final IllegalArgumentException iae) {
                 file = URLs.toFile(uri.toURL());
                 if (!file.exists()) {
                     file = null;
@@ -180,7 +180,7 @@ public class UriResolver {
             uri = file.toURI();
             try {
                 is = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
                 throw new OpenEJBRuntimeException("File was deleted! " + uriStr, e);
             }
             url = file.toURI().toURL();
@@ -189,15 +189,15 @@ public class UriResolver {
         }
     }
 
-    private void tryJar(String baseStr, String uriStr) throws IOException {
-        int i = baseStr.indexOf('!');
+    private void tryJar(final String baseStr, final String uriStr) throws IOException {
+        final int i = baseStr.indexOf('!');
         if (i == -1) {
             tryFileSystem(baseStr, uriStr);
         }
 
-        String jarBase = baseStr.substring(0, i + 1);
-        String jarEntry = baseStr.substring(i + 1);
-        URI u = URLs.uri(jarEntry).resolve(uriStr);
+        final String jarBase = baseStr.substring(0, i + 1);
+        final String jarEntry = baseStr.substring(i + 1);
+        final URI u = URLs.uri(jarEntry).resolve(uriStr);
 
         tryJar(jarBase + u.toString());
 
@@ -212,7 +212,7 @@ public class UriResolver {
     }
 
     private void tryJar(String uriStr) throws IOException {
-        int i = uriStr.indexOf('!');
+        final int i = uriStr.indexOf('!');
         if (i == -1) {
             return;
         }
@@ -222,10 +222,10 @@ public class UriResolver {
             is = IO.read(url);
             try {
                 uri = url.toURI();
-            } catch (URISyntaxException ex) {
+            } catch (final URISyntaxException ex) {
                 // ignore
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             uriStr = uriStr.substring(i + 1);
             tryClasspath(uriStr);
         }
@@ -241,11 +241,11 @@ public class UriResolver {
         } else {
             try {
                 uri = url.toURI();
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 // processing the jar:file:/ type value
-                String urlStr = url.toString();
+                final String urlStr = url.toString();
                 if (urlStr.startsWith("jar:")) {
-                    int pos = urlStr.indexOf('!');
+                    final int pos = urlStr.indexOf('!');
                     if (pos != -1) {
                         uri = URLs.uri("classpath:" + urlStr.substring(pos + 1));
                     }
@@ -256,12 +256,12 @@ public class UriResolver {
         }
     }
 
-    private void tryRemote(String uriStr) throws IOException {
+    private void tryRemote(final String uriStr) throws IOException {
         try {
             url = new URL(URLEncoder.encode(uriStr, "UTF-8"));
             uri = URLs.uri(url.toString());
             is = IO.read(url);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // do nothing
         }
     }
@@ -302,7 +302,7 @@ public class UriResolver {
      * @param resourceName The name of the resource to load
      * @param callingClass The Class object of the calling object
      */
-    public static URL getResource(String resourceName, Class callingClass) {
+    public static URL getResource(final String resourceName, final Class callingClass) {
         URL url = Thread.currentThread().getContextClassLoader().getResource(resourceName);
 
         if (url == null) {
@@ -310,7 +310,7 @@ public class UriResolver {
         }
 
         if (url == null) {
-            ClassLoader cl = callingClass.getClassLoader();
+            final ClassLoader cl = callingClass.getClassLoader();
 
             if (cl != null) {
                 url = cl.getResource(resourceName);

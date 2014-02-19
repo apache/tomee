@@ -37,7 +37,7 @@ public class InstanceContext {
      */
     private Object instanceData;
 
-    public InstanceContext(BeanContext beanContext, Object bean, Map<String, Object> interceptors, CreationalContext creationalContext) {
+    public InstanceContext(final BeanContext beanContext, final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {
         this.beanContext = beanContext;
         this.bean = bean;
         this.interceptors = interceptors;
@@ -64,7 +64,7 @@ public class InstanceContext {
         return instanceData;
     }
 
-    public void setInstanceData(Object instanceData) {
+    public void setInstanceData(final Object instanceData) {
         this.instanceData = instanceData;
     }
 }

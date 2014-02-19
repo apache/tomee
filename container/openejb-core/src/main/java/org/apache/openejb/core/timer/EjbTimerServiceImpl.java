@@ -134,7 +134,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             boolean valid;
             try {
                 valid = !scheduler.isShutdown();
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 valid = false;
             }
             if (valid) {
@@ -193,7 +193,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                                     .requestRecovery(false)
                                                     .build();
                     thisScheduler.addJob(job, true);
-                } catch (SchedulerException e) {
+                } catch (final SchedulerException e) {
                     throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
                 }
 
@@ -343,7 +343,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         final Scheduler ds = SystemInstance.get().getComponent(Scheduler.class);
         try { // == is the faster way to test, we rely on name (key in quartz registry) only for serialization
             defaultScheduler = ds == scheduler || scheduler.getSchedulerName().equals(ds.getSchedulerName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op: default should be fine
         }
 
@@ -364,7 +364,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
                 try {
                     s.pauseAll();
-                } catch (SchedulerException e) {
+                } catch (final SchedulerException e) {
                     // no-op
                 }
 
@@ -384,7 +384,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 String n = "Unknown";
                 try {
                     n = s.getSchedulerName();
-                } catch (SchedulerException e) {
+                } catch (final SchedulerException e) {
                     log.warning("EjbTimerService scheduler has no name");
                 }
 
@@ -405,7 +405,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                             //Shutdown, but give running jobs a chance to complete.
                             //User scheduled jobs should really implement InterruptableJob
                             s.shutdown(true);
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             ex.set(e);
                             shutdownWait.countDown();
                         }
@@ -418,7 +418,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 boolean stopped = false;
                 try {
                     stopped = shutdownWait.await(timeout, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     //Ignore
                 }
 
@@ -433,7 +433,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                     //Force a shutdown without waiting for jobs to complete.
                                     s.shutdown(false);
                                     log.warning("Forced " + name + " shutdown - Jobs may be incomplete");
-                                } catch (Throwable e) {
+                                } catch (final Throwable e) {
                                     ex.set(e);
                                 }
                             }
@@ -445,11 +445,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         try {
                             //Give the forced shutdown a chance to complete
                             stopThread.join(timeout);
-                        } catch (InterruptedException e) {
+                        } catch (final InterruptedException e) {
                             //Ignore
                         }
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     ex.set(e);
                 }
 
@@ -457,7 +457,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     throw new OpenEJBRuntimeException("Unable to shutdown " + name + " scheduler", ex.get());
                 }
             }
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             //Ignore - This can only be a shutdown issue that we have no control over.
         }
     }
@@ -506,7 +506,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 if (!scheduler.isShutdown()) {
                     log.warning("Failed to schedule: " + timerData.getInfo());
                 }
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 //Ignore
             }
         }
@@ -533,7 +533,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 scheduler.unscheduleJob(triggerKey);
                 scheduler.scheduleJob(trigger);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //TODO Any other actions we could do ?
             log.error("Could not schedule timer " + timerData, e);
         }
@@ -557,7 +557,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public void addTimerData(final TimerData timerData) {
         try {
             timerStore.addTimerData(timerData);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Could not add timer of type " + timerData.getType().name() + " due to " + e.getMessage());
         }
     }
@@ -600,7 +600,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             final TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException(e);
         }
     }
@@ -630,7 +630,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                                                        timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException(e);
         }
     }
@@ -652,7 +652,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             final TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException(e);
         }
     }
@@ -684,7 +684,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                                                        timerConfig);
             initializeNewTimer(timerData);
             return timerData.getTimer();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException(e);
         }
     }
@@ -706,7 +706,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                                                        false);
             initializeNewTimer(timerData);
             return timerData.getTimer();
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             throw new EJBException(e);
         }
     }
@@ -754,7 +754,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 try {
                     timerStore.addTimerData(timerData);
                     timer = timerData.getTimer(); // TODO: replace memoryjobstore by the db one?
-                } catch (TimerStoreException e) {
+                } catch (final TimerStoreException e) {
                     // shouldn't occur
                 }
                 // return;
@@ -765,7 +765,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 if (transacted) {
                     try {
                         transactionManager.begin();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         log.warning("Exception occured while starting container transaction", e);
                         return;
                     }
@@ -789,22 +789,22 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                                      ejbTimeout,
                                      new Object[]{timer},
                                      timerData.getPrimaryKey());
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     retry = true;
                     // exception from a timer does not necessairly mean failure
                     log.warning("RuntimeException from ejbTimeout on " + deployment.getDeploymentID(), e);
                     try {
                         transactionManager.setRollbackOnly();
-                    } catch (SystemException e1) {
+                    } catch (final SystemException e1) {
                         log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
                     }
-                } catch (OpenEJBException e) {
+                } catch (final OpenEJBException e) {
                     retry = true;
                     log.warning("Exception from ejbTimeout on " + deployment.getDeploymentID(), e);
                     if (transacted) {
                         try {
                             transactionManager.setRollbackOnly();
-                        } catch (SystemException e1) {
+                        } catch (final SystemException e1) {
                             log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
                         }
                     }
@@ -821,16 +821,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                             // tx was marked rollback, so roll it back and retry.
                             transactionManager.rollback();
                         }
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         log.warning("Exception occured while completing container transaction", e);
                     }
                 }
             }
             log.warning("Failed to execute ejbTimeout on " + timerData.getDeploymentId() + " successfully within " + retryAttempts + " attempts");
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             log.warning("RuntimeException occured while calling ejbTimeout", e);
             throw e;
-        } catch (Error e) {
+        } catch (final Error e) {
             log.warning("Error occured while calling ejbTimeout", e);
             throw e;
         } finally {

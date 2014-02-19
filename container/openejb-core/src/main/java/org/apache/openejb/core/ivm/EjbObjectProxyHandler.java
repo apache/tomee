@@ -120,7 +120,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * The ire is thrown by the container system and propagated by
             * the server to the stub.
             */
-        } catch (InvalidateReferenceException ire) {
+        } catch (final InvalidateReferenceException ire) {
             invalidateAllHandlers(getRegistryId());
             exc = ire.getRootCause() != null ? ire.getRootCause() : new RemoteException("InvalidateReferenceException: " + ire);
             throw exc;
@@ -128,7 +128,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
-        } catch (ApplicationException ae) {
+        } catch (final ApplicationException ae) {
             exc = ae.getRootCause() != null ? ae.getRootCause() : ae;
             if (exc instanceof EJBAccessException) {
                 if (interfaceType.isBusiness()) {
@@ -148,12 +148,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
             */
-        } catch (SystemException se) {
+        } catch (final SystemException se) {
             invalidateReference();
             exc = se.getRootCause() != null ? se.getRootCause() : se;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
-        } catch (OpenEJBException oe) {
+        } catch (final OpenEJBException oe) {
             exc = oe.getRootCause() != null ? oe.getRootCause() : oe;
             logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Unknown Container Exception", oe.getRootCause());
@@ -164,7 +164,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                     if (null != retValue) {
                         try {
                             ret = retValue.toString();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             ret = "toString() failed on (" + e.getMessage() + ")";
                         }
                     }
@@ -277,7 +277,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
                     try {
                         return synchronizedBusinessMethod(interfce, method, args);
-                    } catch (ApplicationException ae) {
+                    } catch (final ApplicationException ae) {
 
                         logger.error("EjbObjectProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
 

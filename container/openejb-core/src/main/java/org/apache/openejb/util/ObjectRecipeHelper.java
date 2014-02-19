@@ -33,7 +33,7 @@ public final class ObjectRecipeHelper {
         final Properties props = SystemInstance.get().getProperties();
         final Map<String, Object> usedOnes = new HashMap<String, Object>();
 
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+        for (final Map.Entry<Object, Object> entry : props.entrySet()) {
             final String key = entry.getKey().toString();
             if (prefix != null && !key.startsWith(prefix)) {
                 continue;

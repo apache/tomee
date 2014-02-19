@@ -31,7 +31,7 @@ public class ProxyInfo {
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(BeanContext beanContext, Object primaryKey, List<Class> interfaces, InterfaceType proxyType, Class mainInterface) {
+    public ProxyInfo(final BeanContext beanContext, final Object primaryKey, final List<Class> interfaces, final InterfaceType proxyType, final Class mainInterface) {
         this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.proxyInterfaces = interfaces;
@@ -49,7 +49,7 @@ public class ProxyInfo {
      * @param depInfo
      * @param pk
      */
-    public ProxyInfo(BeanContext depInfo, Object pk) {
+    public ProxyInfo(final BeanContext depInfo, final Object pk) {
         this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN, null);
     }
 

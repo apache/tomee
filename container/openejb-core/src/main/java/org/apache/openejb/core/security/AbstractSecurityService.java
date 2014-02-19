@@ -289,7 +289,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
             securityContext.acc.checkPermission(new EJBMethodPermission(ejbName, name, method));
 
-        } catch (AccessControlException e) {
+        } catch (final AccessControlException e) {
             return false;
         }
         return true;
@@ -310,7 +310,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             // Hopefully it will be cached thereafter and ClassNotFoundExceptions thrown
             // from the equivalent call in JaccPermissionsBuilder can be avoided.
             PolicyConfigurationFactory.getPolicyConfigurationFactory();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + System.getProperty(providerKey), e);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
@@ -323,7 +323,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             final Policy policy = (Policy) policyClass.newInstance();
             policy.refresh();
             Policy.setPolicy(policy);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
         }
     }

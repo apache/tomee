@@ -42,7 +42,7 @@ public class LazyEjbReference extends Reference {
     private final URI moduleUri;
     private final boolean useCrossClassLoaderRef;
 
-    public LazyEjbReference(EjbResolver.Reference info, URI moduleUri, boolean useCrossClassLoaderRef) {
+    public LazyEjbReference(final EjbResolver.Reference info, final URI moduleUri, final boolean useCrossClassLoaderRef) {
         super();
         this.info = info;
         this.moduleUri = moduleUri;
@@ -54,28 +54,28 @@ public class LazyEjbReference extends Reference {
             return reference.getObject();
         }
 
-        SystemInstance systemInstance = SystemInstance.get();
+        final SystemInstance systemInstance = SystemInstance.get();
 
 
-        EjbResolver resolver = systemInstance.getComponent(EjbResolver.class);
+        final EjbResolver resolver = systemInstance.getComponent(EjbResolver.class);
 
-        String deploymentId = resolver.resolve(info, moduleUri);
+        final String deploymentId = resolver.resolve(info, moduleUri);
 
         if (deploymentId == null) {
             String key = "lazyEjbRefNotResolved";
             if (info.getHome() != null){
                 key += ".home";
             }
-            String message = messages.format(key, info.getName(), info.getEjbLink(), info.getHome(), info.getInterface());
+            final String message = messages.format(key, info.getName(), info.getEjbLink(), info.getHome(), info.getInterface());
             throw new NameNotFoundException(message);
         }
 
-        ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
+        final ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
 
-        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+        final BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
 
         if (beanContext == null) {
-            String message = messages.format("deploymentNotFound", info.getName(), deploymentId);
+            final String message = messages.format("deploymentNotFound", info.getName(), deploymentId);
             throw new NameNotFoundException(message);
         }
 
@@ -85,7 +85,7 @@ public class LazyEjbReference extends Reference {
             case REMOTE: type = InterfaceType.BUSINESS_REMOTE; break;
         }
 
-        String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
+        final String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
 
         if (useCrossClassLoaderRef && isRemote(beanContext)) {
             reference = new CrossClassLoaderJndiReference(jndiName);
@@ -96,12 +96,12 @@ public class LazyEjbReference extends Reference {
         return reference.getObject();
     }
 
-    private boolean isRemote(BeanContext beanContext) {
+    private boolean isRemote(final BeanContext beanContext) {
         switch(info.getRefType()){
             case REMOTE: return true;
             case LOCAL: return false;
             case UNKNOWN:{
-                for (Class clazz : beanContext.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
+                for (final Class clazz : beanContext.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
                     if (clazz.getName().equals(info.getInterface())) return true;
                 }
             }

@@ -61,15 +61,15 @@ public class EjbResolver {
 
     private final Scope scope;
 
-    public EjbResolver(EjbResolver parent, Scope scope, EjbJarInfo... ejbJars) {
+    public EjbResolver(final EjbResolver parent, final Scope scope, final EjbJarInfo... ejbJars) {
         this(parent, scope, Arrays.asList(ejbJars));
     }
 
-    public EjbResolver(EjbResolver parent, Scope scope, List<EjbJarInfo> ejbJars) {
+    public EjbResolver(final EjbResolver parent, final Scope scope, final List<EjbJarInfo> ejbJars) {
         this.scope = scope;
         this.parent = parent;
 
-        for (EjbJarInfo ejbJarInfo : ejbJars) {
+        for (final EjbJarInfo ejbJarInfo : ejbJars) {
             add(ejbJarInfo);
         }
     }
@@ -77,19 +77,19 @@ public class EjbResolver {
     /**
      * Possible syncronization issue here
      */
-    public void addAll(List<EjbJarInfo> ejbJars) {
-        for (EjbJarInfo ejbJarInfo : ejbJars) {
+    public void addAll(final List<EjbJarInfo> ejbJars) {
+        for (final EjbJarInfo ejbJarInfo : ejbJars) {
             add(ejbJarInfo);
         }
     }
 
-    public void add(EjbJarInfo ejbJarInfo) {
-        for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
+    public void add(final EjbJarInfo ejbJarInfo) {
+        for (final EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
             index(ejbJarInfo.moduleUri, bean);
         }
     }
 
-    private void index(URI moduleURI, EnterpriseBeanInfo bean) {
+    private void index(final URI moduleURI, final EnterpriseBeanInfo bean) {
         // All deployments: deploymentId -> bean
 
         deployments.put(bean.ejbDeploymentId, bean);
@@ -102,7 +102,7 @@ public class EjbResolver {
             addInterfaces(new Interfaces(bean.home, bean.remote, Type.REMOTE, bean.ejbDeploymentId));
             addInterfaces(new Interfaces(bean.remote, Type.REMOTE, bean.ejbDeploymentId));
         }
-        for (String businessRemote : bean.businessRemote) {
+        for (final String businessRemote : bean.businessRemote) {
             addInterfaces(new Interfaces(businessRemote, Type.REMOTE, bean.ejbDeploymentId));
         }
 
@@ -111,19 +111,19 @@ public class EjbResolver {
             addInterfaces(new Interfaces(bean.localHome, bean.local, Type.LOCAL, bean.ejbDeploymentId));
             addInterfaces(new Interfaces(bean.local, Type.LOCAL, bean.ejbDeploymentId));
         }
-        for (String businessLocal : bean.businessLocal) {
+        for (final String businessLocal : bean.businessLocal) {
             addInterfaces(new Interfaces(businessLocal, Type.LOCAL, bean.ejbDeploymentId));
         }
 
         if (bean.localbean) {
             addInterfaces(new Interfaces(bean.ejbClass, Type.LOCAL, bean.ejbDeploymentId));
-            for (String parent : bean.parents) {
+            for (final String parent : bean.parents) {
                 addInterfaces(new Interfaces(parent, Type.LOCAL, bean.ejbDeploymentId));
             }
         }
     }
 
-    private void addInterfaces(Interfaces interfaces) {
+    private void addInterfaces(final Interfaces interfaces) {
         List<Interfaces> similar = this.interfaces.get(interfaces);
         if (similar == null) {
             similar = new ArrayList<Interfaces>();
@@ -132,7 +132,7 @@ public class EjbResolver {
         similar.add(interfaces);
     }
 
-    private String resolveLink(String link, URI moduleUri) {
+    private String resolveLink(final String link, final URI moduleUri) {
         if (link == null || link.length() == 0) return null;
 
         String id = resolver.resolveLink(link, moduleUri);
@@ -142,7 +142,7 @@ public class EjbResolver {
         return id;
     }
 
-    private String resolveInterface(Reference ref) {
+    private String resolveInterface(final Reference ref) {
         String id = null;
 
         if (ref.getInterface() == null) {
@@ -152,10 +152,10 @@ public class EjbResolver {
             return null;
         }
 
-        List<Interfaces> matches = this.interfaces.get(new Interfaces(ref.getHome(), ref.getInterface()));
+        final List<Interfaces> matches = this.interfaces.get(new Interfaces(ref.getHome(), ref.getInterface()));
         if (matches != null && matches.size() > 0){
 
-            List<Interfaces> nameMatches = filter(matches, ref.getName());
+            final List<Interfaces> nameMatches = filter(matches, ref.getName());
             // Imply by name and type (local/remote)
             id = first(filter(nameMatches, ref.getRefType()));
             if (id == null){
@@ -179,15 +179,15 @@ public class EjbResolver {
         return id;
     }
 
-    private String first(List<Interfaces> list) {
+    private String first(final List<Interfaces> list) {
         if (list.size() == 0) return null;
         return list.get(0).getId();
     }
 
-    private List<Interfaces> filter(List<Interfaces> list, String name) {
-        String shortName = name.replaceAll(".*/", "");
-        List<Interfaces> matches = new ArrayList();
-        for (Interfaces entry : list) {
+    private List<Interfaces> filter(final List<Interfaces> list, final String name) {
+        final String shortName = name.replaceAll(".*/", "");
+        final List<Interfaces> matches = new ArrayList();
+        for (final Interfaces entry : list) {
             if (name.equalsIgnoreCase(entry.getId())){
                 matches.add(entry);
             } else if (shortName.equalsIgnoreCase(entry.getId())){
@@ -197,9 +197,9 @@ public class EjbResolver {
         return matches;
     }
 
-    private List<Interfaces> filter(List<Interfaces> list, Type type) {
-        List<Interfaces> matches = new ArrayList();
-        for (Interfaces entry : list) {
+    private List<Interfaces> filter(final List<Interfaces> list, final Type type) {
+        final List<Interfaces> matches = new ArrayList();
+        for (final Interfaces entry : list) {
             if (type == Type.UNKNOWN || type == entry.type){
                 matches.add(entry);
             }
@@ -207,7 +207,7 @@ public class EjbResolver {
         return matches;
     }
 
-    public Scope getScope(String deploymentId) {
+    public Scope getScope(final String deploymentId) {
         if (deployments.containsKey(deploymentId)) return scope;
 
         if (parent != null) return parent.getScope(deploymentId);
@@ -215,7 +215,7 @@ public class EjbResolver {
         return null;
     }
 
-    public EnterpriseBeanInfo getEnterpriseBeanInfo(String deploymentId) {
+    public EnterpriseBeanInfo getEnterpriseBeanInfo(final String deploymentId) {
         EnterpriseBeanInfo info = deployments.get(deploymentId);
         if (info == null && parent != null) {
             info = parent.getEnterpriseBeanInfo(deploymentId);
@@ -223,7 +223,7 @@ public class EjbResolver {
         return info;
     }
 
-    public String resolve(Reference ref, URI moduleUri) {
+    public String resolve(final Reference ref, final URI moduleUri) {
 
         if (ref.getMappedName() != null && !ref.getMappedName().equals("")) {
             return ref.getMappedName();
@@ -244,7 +244,7 @@ public class EjbResolver {
         private final String homeInterface;
         private final String objectInterface;
 
-        public Interfaces(String objectInterface, Type type, String id) {
+        public Interfaces(final String objectInterface, final Type type, final String id) {
             if (objectInterface == null) throw new NullPointerException("objectInterface is null");
             this.homeInterface = "<none>";
             this.objectInterface = objectInterface;
@@ -252,7 +252,7 @@ public class EjbResolver {
             this.id = id;
         }
 
-        public Interfaces(String homeInterface, String objectInterface, Type type, String id) {
+        public Interfaces(String homeInterface, final String objectInterface, final Type type, final String id) {
             if (homeInterface == null) homeInterface = "<none>";
             if (objectInterface == null) throw new NullPointerException("objectInterface is null");
             this.homeInterface = homeInterface;
@@ -261,7 +261,7 @@ public class EjbResolver {
             this.id = id;
         }
 
-        public Interfaces(String homeInterface, String objectInterface) {
+        public Interfaces(String homeInterface, final String objectInterface) {
             if (homeInterface == null) homeInterface = "<none>";
             if (objectInterface == null) throw new NullPointerException("objectInterface is null");
             this.homeInterface = homeInterface;
@@ -278,11 +278,11 @@ public class EjbResolver {
             return type;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Interfaces that = (Interfaces) o;
+            final Interfaces that = (Interfaces) o;
 
             return homeInterface.equals(that.homeInterface) && objectInterface.equals(that.objectInterface);
         }
@@ -294,10 +294,10 @@ public class EjbResolver {
             return result;
         }
 
-        public int compareTo(Object o) {
+        public int compareTo(final Object o) {
             if (this == o) return 0;
 
-            Interfaces that = (Interfaces) o;
+            final Interfaces that = (Interfaces) o;
             return toString().compareTo(that.toString());
         }
 

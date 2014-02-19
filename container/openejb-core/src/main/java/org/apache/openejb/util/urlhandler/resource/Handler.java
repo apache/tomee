@@ -27,7 +27,7 @@ import java.security.PrivilegedAction;
 
 public class Handler extends URLStreamHandler {
 
-    protected URLConnection openConnection(URL url) throws IOException {
+    protected URLConnection openConnection(final URL url) throws IOException {
         final String cln = url.getHost();
         final String resrce = url.getFile().substring(1);
         final URL realURL;
@@ -35,7 +35,7 @@ public class Handler extends URLStreamHandler {
             final ClassLoader cl = getContextClassLoader();
             try {
                 Class.forName(cln, true, cl);
-            } catch (ClassNotFoundException ex) {
+            } catch (final ClassNotFoundException ex) {
                 throw (IOException) new MalformedURLException("Class " + cln + " cannot be found (" + ex + ")").initCause(ex);
             }
             realURL = cl.getResource(resrce);

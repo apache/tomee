@@ -26,7 +26,7 @@ public class PersistenceContextReference extends Reference {
 
     private EntityManager em;
 
-    public PersistenceContextReference(EntityManager em) {
+    public PersistenceContextReference(final EntityManager em) {
         this.em = em;
     }
 

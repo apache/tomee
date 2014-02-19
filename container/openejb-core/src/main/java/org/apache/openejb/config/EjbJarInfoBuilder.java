@@ -116,31 +116,31 @@ public class EjbJarInfoBuilder {
     private final List<String> securityRoles = new ArrayList<String>();
 
 
-    public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
+    public EjbJarInfo buildInfo(final EjbModule jar) throws OpenEJBException {
         deploymentIds.clear();
         securityRoles.clear();
 
         final Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
-        int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
-        int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
+        final int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
+        final int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
         
         if (beansInEjbJar != beansDeployed) {
  
-            for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
+            for (final EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
                 if (!ejbds.containsKey(bean.getEjbName())){
                     ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarLocation());
                 }
             }
 
-            String message = messages.format("conf.0008", jar.getJarLocation(), "" + beansInEjbJar, "" + beansDeployed);
+            final String message = messages.format("conf.0008", jar.getJarLocation(), "" + beansInEjbJar, "" + beansDeployed);
             logger.warning(message);
             throw new OpenEJBException(message);
         }
         
-        Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
-        Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
+        final Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
+        final Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 
-        EjbJarInfo ejbJar = new EjbJarInfo();
+        final EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.path = jar.getJarLocation();
         ejbJar.moduleUri = jar.getModuleUri();
         ejbJar.moduleId = jar.getModuleId();
@@ -155,8 +155,8 @@ public class EjbJarInfoBuilder {
         ejbJar.properties.putAll(jar.getProperties());
         ejbJar.properties.putAll(jar.getOpenejbJar().getProperties());
 
-        for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
-            EnterpriseBeanInfo beanInfo;
+        for (final EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
+            final EnterpriseBeanInfo beanInfo;
             if (bean instanceof SessionBean) {
                 beanInfo = initSessionBean((SessionBean) bean, ejbJar, ejbds);
             } else if (bean instanceof EntityBean) {
@@ -169,7 +169,7 @@ public class EjbJarInfoBuilder {
             ejbJar.enterpriseBeans.add(beanInfo);
 
             if (deploymentIds.contains(beanInfo.ejbDeploymentId)) {
-                String message = messages.format("conf.0100", beanInfo.ejbDeploymentId, jar.getJarLocation(), beanInfo.ejbName);
+                final String message = messages.format("conf.0100", beanInfo.ejbDeploymentId, jar.getJarLocation(), beanInfo.ejbName);
                 logger.warning(message);
                 throw new OpenEJBException(message);
             }
@@ -206,7 +206,7 @@ public class EjbJarInfoBuilder {
             initMethodConcurrency(jar, ejbds, ejbJar);
             initApplicationExceptions(jar, ejbJar);
 
-            for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+            for (final EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                 resolveRoleLinks(bean, items.get(bean.ejbName));
             }
         }
@@ -233,43 +233,43 @@ public class EjbJarInfoBuilder {
         return ejbJar;
     }
 
-    private void initJndiNames(Map<String, EjbDeployment> ejbds, EnterpriseBeanInfo info) {
-        EjbDeployment deployment = ejbds.get(info.ejbName);
-        if (deployment != null) for (Jndi jndi : deployment.getJndi()) {
-            JndiNameInfo jndiNameInfo = new JndiNameInfo();
+    private void initJndiNames(final Map<String, EjbDeployment> ejbds, final EnterpriseBeanInfo info) {
+        final EjbDeployment deployment = ejbds.get(info.ejbName);
+        if (deployment != null) for (final Jndi jndi : deployment.getJndi()) {
+            final JndiNameInfo jndiNameInfo = new JndiNameInfo();
             jndiNameInfo.intrface = jndi.getInterface();
             jndiNameInfo.name = jndi.getName();
             info.jndiNamess.add(jndiNameInfo);
         }
     }
 
-    private void initRelationships(EjbModule jar, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
-        for (EjbRelation ejbRelation : jar.getEjbJar().getRelationships().getEjbRelation()) {
-            Iterator<EjbRelationshipRole> iterator = ejbRelation.getEjbRelationshipRole().iterator();
-            EjbRelationshipRole left = iterator.next();
-            EjbRelationshipRole right = iterator.next();
+    private void initRelationships(final EjbModule jar, final Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
+        for (final EjbRelation ejbRelation : jar.getEjbJar().getRelationships().getEjbRelation()) {
+            final Iterator<EjbRelationshipRole> iterator = ejbRelation.getEjbRelationshipRole().iterator();
+            final EjbRelationshipRole left = iterator.next();
+            final EjbRelationshipRole right = iterator.next();
 
             // left role info
-            CmrFieldInfo leftCmrFieldInfo = initRelationshipRole(left, right, infos);
-            CmrFieldInfo rightCmrFieldInfo = initRelationshipRole(right, left, infos);
+            final CmrFieldInfo leftCmrFieldInfo = initRelationshipRole(left, right, infos);
+            final CmrFieldInfo rightCmrFieldInfo = initRelationshipRole(right, left, infos);
             leftCmrFieldInfo.mappedBy = rightCmrFieldInfo;
             rightCmrFieldInfo.mappedBy = leftCmrFieldInfo;
         }
     }
 
-    private CmrFieldInfo initRelationshipRole(EjbRelationshipRole role, EjbRelationshipRole relatedRole, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
-        CmrFieldInfo cmrFieldInfo = new CmrFieldInfo();
+    private CmrFieldInfo initRelationshipRole(final EjbRelationshipRole role, final EjbRelationshipRole relatedRole, final Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
+        final CmrFieldInfo cmrFieldInfo = new CmrFieldInfo();
 
         // find the entityBeanInfo info for this role
-        String ejbName = role.getRelationshipRoleSource().getEjbName();
-        EnterpriseBeanInfo enterpriseBeanInfo = infos.get(ejbName);
+        final String ejbName = role.getRelationshipRoleSource().getEjbName();
+        final EnterpriseBeanInfo enterpriseBeanInfo = infos.get(ejbName);
         if (enterpriseBeanInfo == null) {
             throw new OpenEJBException("Relation role source ejb not found " + ejbName);
         }
         if (!(enterpriseBeanInfo instanceof EntityBeanInfo)) {
             throw new OpenEJBException("Relation role source ejb is not an entity bean " + ejbName);
         }
-        EntityBeanInfo entityBeanInfo = (EntityBeanInfo) enterpriseBeanInfo;
+        final EntityBeanInfo entityBeanInfo = (EntityBeanInfo) enterpriseBeanInfo;
         cmrFieldInfo.roleSource = entityBeanInfo;
 
         // RoleName: this may be null
@@ -289,15 +289,15 @@ public class EjbJarInfoBuilder {
                 cmrFieldInfo.fieldType = Collection.class.getName();
             }
         } else {
-            String relatedEjbName = relatedRole.getRelationshipRoleSource().getEjbName();
-            EnterpriseBeanInfo relatedEjb = infos.get(relatedEjbName);
+            final String relatedEjbName = relatedRole.getRelationshipRoleSource().getEjbName();
+            final EnterpriseBeanInfo relatedEjb = infos.get(relatedEjbName);
             if (relatedEjb == null) {
                 throw new OpenEJBException("Relation role source ejb not found " + relatedEjbName);
             }
             if (!(relatedEjb instanceof EntityBeanInfo)) {
                 throw new OpenEJBException("Relation role source ejb is not an entity bean " + relatedEjbName);
             }
-            EntityBeanInfo relatedEntity = (EntityBeanInfo) relatedEjb;
+            final EntityBeanInfo relatedEntity = (EntityBeanInfo) relatedEjb;
 
             relatedRole.getRelationshipRoleSource();
             cmrFieldInfo.fieldName = relatedEntity.abstractSchemaName + "_" + relatedRole.getCmrField().getCmrFieldName();
@@ -317,13 +317,13 @@ public class EjbJarInfoBuilder {
         return cmrFieldInfo;
     }
 
-    private void initInterceptors(EjbModule jar, EjbJarInfo ejbJar) throws OpenEJBException {
+    private void initInterceptors(final EjbModule jar, final EjbJarInfo ejbJar) throws OpenEJBException {
         if (jar.getEjbJar().getInterceptors().length == 0) return;
         if (jar.getEjbJar().getAssemblyDescriptor() == null) return;
         if (jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding() == null) return;
 
-        for (Interceptor s : jar.getEjbJar().getInterceptors()) {
-            InterceptorInfo info = new InterceptorInfo();
+        for (final Interceptor s : jar.getEjbJar().getInterceptors()) {
+            final InterceptorInfo info = new InterceptorInfo();
 
             info.clazz = s.getInterceptorClass();
 
@@ -344,8 +344,8 @@ public class EjbJarInfoBuilder {
             ejbJar.interceptors.add(info);
         }
 
-        for (InterceptorBinding binding : jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding()) {
-            InterceptorBindingInfo info = new InterceptorBindingInfo();
+        for (final InterceptorBinding binding : jar.getEjbJar().getAssemblyDescriptor().getInterceptorBinding()) {
+            final InterceptorBindingInfo info = new InterceptorBindingInfo();
             info.ejbName = binding.getEjbName();
             info.excludeClassInterceptors = binding.getExcludeClassInterceptors();
             info.excludeDefaultInterceptors = binding.getExcludeDefaultInterceptors();
@@ -360,10 +360,10 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initMethodTransactions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
-        List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
-        for (ContainerTransaction cTx : containerTransactions) {
-            MethodTransactionInfo info = new MethodTransactionInfo();
+    private void initMethodTransactions(final EjbModule jar, final Map ejbds, final EjbJarInfo ejbJarInfo) {
+        final List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
+        for (final ContainerTransaction cTx : containerTransactions) {
+            final MethodTransactionInfo info = new MethodTransactionInfo();
 
             info.description = cTx.getDescription();
             info.transAttribute = cTx.getTransAttribute().toString();
@@ -372,10 +372,10 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initMethodConcurrency(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
-        List<ContainerConcurrency> containerConcurrency = jar.getEjbJar().getAssemblyDescriptor().getContainerConcurrency();
-        for (ContainerConcurrency att : containerConcurrency) {
-            MethodConcurrencyInfo info = new MethodConcurrencyInfo();
+    private void initMethodConcurrency(final EjbModule jar, final Map ejbds, final EjbJarInfo ejbJarInfo) {
+        final List<ContainerConcurrency> containerConcurrency = jar.getEjbJar().getAssemblyDescriptor().getContainerConcurrency();
+        for (final ContainerConcurrency att : containerConcurrency) {
+            final MethodConcurrencyInfo info = new MethodConcurrencyInfo();
 
             info.description = att.getDescription();
             if (att.getLock() != null) {
@@ -388,35 +388,35 @@ public class EjbJarInfoBuilder {
         }
     }
     
-    private void copyConcurrentMethods(SessionBean bean, EjbJarInfo ejbJarInfo, Map ejbds) {
-        for (ConcurrentMethod method : bean.getConcurrentMethod()) {
-            MethodConcurrencyInfo info = new MethodConcurrencyInfo();
+    private void copyConcurrentMethods(final SessionBean bean, final EjbJarInfo ejbJarInfo, final Map ejbds) {
+        for (final ConcurrentMethod method : bean.getConcurrentMethod()) {
+            final MethodConcurrencyInfo info = new MethodConcurrencyInfo();
             
             if (method.getLock() != null) {
                 info.concurrencyAttribute = method.getLock().toString();
             }
             info.accessTimeout = toInfo(method.getAccessTimeout());
             
-            Method m = new Method(bean.getEjbName(), null, method.getMethod().getMethodName());
+            final Method m = new Method(bean.getEjbName(), null, method.getMethod().getMethodName());
             m.setMethodParams(method.getMethod().getMethodParams());            
             info.methods.add(getMethodInfo(m, ejbds));            
             ejbJarInfo.methodConcurrency.add(info);
         }
     }
 
-    private void copySchedules(List<Timer> timers, List<MethodScheduleInfo> scheduleInfos) {
-        Map<NamedMethod, MethodScheduleInfo> methodScheduleInfoMap = new HashMap<NamedMethod, MethodScheduleInfo>();
-        for (Timer timer : timers) {
-            NamedMethod timeoutMethod = timer.getTimeoutMethod();
+    private void copySchedules(final List<Timer> timers, final List<MethodScheduleInfo> scheduleInfos) {
+        final Map<NamedMethod, MethodScheduleInfo> methodScheduleInfoMap = new HashMap<NamedMethod, MethodScheduleInfo>();
+        for (final Timer timer : timers) {
+            final NamedMethod timeoutMethod = timer.getTimeoutMethod();
             MethodScheduleInfo methodScheduleInfo = methodScheduleInfoMap.get(timer.getTimeoutMethod());
             if (methodScheduleInfo == null) {
                 methodScheduleInfo = new MethodScheduleInfo();
                 methodScheduleInfoMap.put(timeoutMethod, methodScheduleInfo);
                 methodScheduleInfo.method = toInfo(timeoutMethod);
             }
-            ScheduleInfo scheduleInfo = new ScheduleInfo();
+            final ScheduleInfo scheduleInfo = new ScheduleInfo();
             //Copy TimerSchedule
-            TimerSchedule timerSchedule = timer.getSchedule();
+            final TimerSchedule timerSchedule = timer.getSchedule();
             if (timerSchedule != null) {
                 scheduleInfo.second = timerSchedule.getSecond();
                 scheduleInfo.minute = timerSchedule.getMinute();
@@ -445,9 +445,9 @@ public class EjbJarInfoBuilder {
         scheduleInfos.addAll(methodScheduleInfoMap.values());
     }
 
-    private void initApplicationExceptions(EjbModule jar, EjbJarInfo ejbJarInfo) {
-        for (ApplicationException applicationException : jar.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
-            ApplicationExceptionInfo info = new ApplicationExceptionInfo();
+    private void initApplicationExceptions(final EjbModule jar, final EjbJarInfo ejbJarInfo) {
+        for (final ApplicationException applicationException : jar.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
+            final ApplicationExceptionInfo info = new ApplicationExceptionInfo();
             info.exceptionClass = applicationException.getExceptionClass();
             info.rollback = applicationException.isRollback();
             info.inherited = applicationException.isInherited();
@@ -455,12 +455,12 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initSecurityRoles(EjbModule jar, EjbJarInfo ejbJarInfo) {
+    private void initSecurityRoles(final EjbModule jar, final EjbJarInfo ejbJarInfo) {
 
-        List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
+        final List<SecurityRole> roles = jar.getEjbJar().getAssemblyDescriptor().getSecurityRole();
 
-        for (SecurityRole sr : roles) {
-            SecurityRoleInfo info = new SecurityRoleInfo();
+        for (final SecurityRole sr : roles) {
+            final SecurityRoleInfo info = new SecurityRoleInfo();
 
             info.description = sr.getDescription();
             info.roleName = sr.getRoleName();
@@ -474,12 +474,12 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initMethodPermissions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
+    private void initMethodPermissions(final EjbModule jar, final Map ejbds, final EjbJarInfo ejbJarInfo) {
 
-        List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
+        final List<MethodPermission> methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getMethodPermission();
 
-        for (MethodPermission mp : methodPermissions) {
-            MethodPermissionInfo info = new MethodPermissionInfo();
+        for (final MethodPermission mp : methodPermissions) {
+            final MethodPermissionInfo info = new MethodPermissionInfo();
 
             info.description = mp.getDescription();
             info.roleNames.addAll(mp.getRoleName());
@@ -490,25 +490,25 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initExcludesList(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
+    private void initExcludesList(final EjbModule jar, final Map ejbds, final EjbJarInfo ejbJarInfo) {
 
-        ExcludeList methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getExcludeList();
+        final ExcludeList methodPermissions = jar.getEjbJar().getAssemblyDescriptor().getExcludeList();
 
-        for (Method excludedMethod : methodPermissions.getMethod()) {
+        for (final Method excludedMethod : methodPermissions.getMethod()) {
             ejbJarInfo.excludeList.add(getMethodInfo(excludedMethod, ejbds));
         }
     }
 
-    private void resolveRoleLinks(EnterpriseBeanInfo bean, JndiConsumer item) {
+    private void resolveRoleLinks(final EnterpriseBeanInfo bean, final JndiConsumer item) {
         if (!(item instanceof RemoteBean)) {
             return;
         }
 
-        RemoteBean rb = (RemoteBean) item;
+        final RemoteBean rb = (RemoteBean) item;
 
-        List<SecurityRoleRef> refs = rb.getSecurityRoleRef();
-        for (SecurityRoleRef ref : refs) {
-            SecurityRoleReferenceInfo info = new SecurityRoleReferenceInfo();
+        final List<SecurityRoleRef> refs = rb.getSecurityRoleRef();
+        for (final SecurityRoleRef ref : refs) {
+            final SecurityRoleReferenceInfo info = new SecurityRoleReferenceInfo();
 
             info.description = ref.getDescription();
             info.roleLink = ref.getRoleLink();
@@ -521,22 +521,22 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private List<MethodInfo> getMethodInfos(List<Method> ms, Map ejbds) {
+    private List<MethodInfo> getMethodInfos(final List<Method> ms, final Map ejbds) {
         if (ms == null) return Collections.emptyList();
 
-        List<MethodInfo> mi = new ArrayList<MethodInfo>(ms.size());
-        for (Method method : ms) {
-            MethodInfo methodInfo = getMethodInfo(method, ejbds);
+        final List<MethodInfo> mi = new ArrayList<MethodInfo>(ms.size());
+        for (final Method method : ms) {
+            final MethodInfo methodInfo = getMethodInfo(method, ejbds);
             mi.add(methodInfo);
         }
 
         return mi;
     }
 
-    private MethodInfo getMethodInfo(Method method, Map ejbds) {
-        MethodInfo methodInfo = new MethodInfo();
+    private MethodInfo getMethodInfo(final Method method, final Map ejbds) {
+        final MethodInfo methodInfo = new MethodInfo();
 
-        EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
+        final EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
 
         methodInfo.description = method.getDescription();
         methodInfo.ejbDeploymentId = d == null ?null:d.getDeploymentId();
@@ -551,19 +551,19 @@ public class EjbJarInfoBuilder {
             methodInfo.className = "*";
         }
 
-        MethodParams mp = method.getMethodParams();
+        final MethodParams mp = method.getMethodParams();
         if (mp != null) {
             methodInfo.methodParams = mp.getMethodParam();
         }
         return methodInfo;
     }
 
-    private EnterpriseBeanInfo initSessionBean(SessionBean s, EjbJarInfo ejbJar, Map m) throws OpenEJBException {
+    private EnterpriseBeanInfo initSessionBean(final SessionBean s, final EjbJarInfo ejbJar, final Map m) throws OpenEJBException {
         EnterpriseBeanInfo bean = null;
 
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
-            StatefulBeanInfo stateful = (StatefulBeanInfo) bean;
+            final StatefulBeanInfo stateful = (StatefulBeanInfo) bean;
 
             copyCallbacks(s.getPostActivate(), stateful.postActivate);
             copyCallbacks(s.getPrePassivate(), stateful.prePassivate);
@@ -572,15 +572,15 @@ public class EjbJarInfoBuilder {
             copyCallbacks(s.getBeforeCompletion(), stateful.beforeCompletion);
             copyCallbacks(s.getAfterCompletion(), stateful.afterCompletion);
 
-            for (InitMethod initMethod : s.getInitMethod()) {
-                InitMethodInfo init = new InitMethodInfo();
+            for (final InitMethod initMethod : s.getInitMethod()) {
+                final InitMethodInfo init = new InitMethodInfo();
                 init.beanMethod = toInfo(initMethod.getBeanMethod());
                 init.createMethod = toInfo(initMethod.getCreateMethod());
                 stateful.initMethods.add(init);
             }
 
-            for (RemoveMethod removeMethod : s.getRemoveMethod()) {
-                RemoveMethodInfo remove = new RemoveMethodInfo();
+            for (final RemoveMethod removeMethod : s.getRemoveMethod()) {
+                final RemoveMethodInfo remove = new RemoveMethodInfo();
                 remove.beanMethod = toInfo(removeMethod.getBeanMethod());
                 remove.retainIfException = removeMethod.getRetainIfException();
                 stateful.removeMethods.add(remove);
@@ -590,7 +590,7 @@ public class EjbJarInfoBuilder {
 
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
-            ManagedBeanInfo managed = (ManagedBeanInfo) bean;
+            final ManagedBeanInfo managed = (ManagedBeanInfo) bean;
             if (s instanceof ManagedBean) { // this way we support managed beans in ejb-jar.xml (not in the spec but can be useful)
                 managed.hidden = ((ManagedBean) s).isHidden();
             } else {
@@ -600,8 +600,8 @@ public class EjbJarInfoBuilder {
             copyCallbacks(s.getPostActivate(), managed.postActivate);
             copyCallbacks(s.getPrePassivate(), managed.prePassivate);
 
-            for (RemoveMethod removeMethod : s.getRemoveMethod()) {
-                RemoveMethodInfo remove = new RemoveMethodInfo();
+            for (final RemoveMethod removeMethod : s.getRemoveMethod()) {
+                final RemoveMethodInfo remove = new RemoveMethodInfo();
                 remove.beanMethod = toInfo(removeMethod.getBeanMethod());
                 remove.retainIfException = removeMethod.getRetainIfException();
                 managed.removeMethods.add(remove);
@@ -609,7 +609,7 @@ public class EjbJarInfoBuilder {
 
         } else if (s.getSessionType() == SessionType.SINGLETON) {
             bean = new SingletonBeanInfo();
-            ConcurrencyManagementType type = s.getConcurrencyManagementType();
+            final ConcurrencyManagementType type = s.getConcurrencyManagementType();
             bean.concurrencyType = type != null ? type.toString() : ConcurrencyManagementType.CONTAINER.toString();
             bean.loadOnStartup = s.getInitOnStartup();
 
@@ -641,7 +641,7 @@ public class EjbJarInfoBuilder {
         bean.asynchronousClasses.addAll(s.getAsynchronousClasses());
 
 
-        EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
+        final EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
                     + s.getEjbName()
@@ -650,7 +650,7 @@ public class EjbJarInfoBuilder {
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
 
-        Icon icon = s.getIcon();
+        final Icon icon = s.getIcon();
         bean.largeIcon = icon == null ? null : icon.getLargeIcon();
         bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = s.getDescription();
@@ -665,7 +665,7 @@ public class EjbJarInfoBuilder {
         bean.parents.addAll(s.getParents());
         bean.businessLocal.addAll(s.getBusinessLocal());
         bean.businessRemote.addAll(s.getBusinessRemote());
-        TransactionType txType = s.getTransactionType();
+        final TransactionType txType = s.getTransactionType();
         bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
@@ -677,9 +677,9 @@ public class EjbJarInfoBuilder {
         return bean;
     }
 
-    private void copyAsynchronous(List<AsyncMethod> methods, List<NamedMethodInfo> methodInfos) {
-        for (AsyncMethod asyncMethod : methods) {
-            NamedMethodInfo info = new NamedMethodInfo();
+    private void copyAsynchronous(final List<AsyncMethod> methods, final List<NamedMethodInfo> methodInfos) {
+        for (final AsyncMethod asyncMethod : methods) {
+            final NamedMethodInfo info = new NamedMethodInfo();
             info.methodName = asyncMethod.getMethodName();
             if (asyncMethod.getMethodParams() != null) {
                 info.methodParams = asyncMethod.getMethodParams().getMethodParam();
@@ -688,17 +688,17 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private TimeoutInfo toInfo(Timeout timeout) {
+    private TimeoutInfo toInfo(final Timeout timeout) {
         if (timeout == null) return null;
         
-        TimeoutInfo accessTimeout = new TimeoutInfo();
+        final TimeoutInfo accessTimeout = new TimeoutInfo();
         accessTimeout.time = timeout.getTimeout();
         accessTimeout.unit = timeout.getUnit().toString();
         return accessTimeout;
     }
     
-    private EnterpriseBeanInfo initMessageBean(MessageDrivenBean mdb, Map m) throws OpenEJBException {
-        MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
+    private EnterpriseBeanInfo initMessageBean(final MessageDrivenBean mdb, final Map m) throws OpenEJBException {
+        final MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
         bean.timeoutMethod = toInfo(mdb.getTimeoutMethod());
         copyCallbacks(mdb.getAroundTimeout(),bean.aroundTimeout);
@@ -709,7 +709,7 @@ public class EjbJarInfoBuilder {
 
         copySchedules(mdb.getTimer(), bean.methodScheduleInfos);
 
-        EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
+        final EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
                     + mdb.getEjbName()
@@ -718,14 +718,14 @@ public class EjbJarInfoBuilder {
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
 
-        Icon icon = mdb.getIcon();
+        final Icon icon = mdb.getIcon();
         bean.largeIcon = icon == null ? null : icon.getLargeIcon();
         bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = mdb.getDescription();
         bean.displayName = mdb.getDisplayName();
         bean.ejbClass = mdb.getEjbClass();
         bean.ejbName = mdb.getEjbName();
-        TransactionType txType = mdb.getTransactionType();
+        final TransactionType txType = mdb.getTransactionType();
         bean.transactionType = txType != null ?txType.toString(): TransactionType.CONTAINER.toString();
         bean.properties.putAll(d.getProperties());
 
@@ -735,7 +735,7 @@ public class EjbJarInfoBuilder {
             bean.mdbInterface = "javax.jms.MessageListener";
         }
 
-        ResourceLink resourceLink = d.getResourceLink("openejb/destination");
+        final ResourceLink resourceLink = d.getResourceLink("openejb/destination");
         if (resourceLink != null) {
             bean.destinationId = resourceLink.getResId();
         }
@@ -744,11 +744,11 @@ public class EjbJarInfoBuilder {
             bean.activationProperties.put("destinationType", mdb.getMessageDestinationType());
         }
 
-        ActivationConfig activationConfig = mdb.getActivationConfig();
+        final ActivationConfig activationConfig = mdb.getActivationConfig();
         if (activationConfig != null) {
-            for (ActivationConfigProperty property : activationConfig.getActivationConfigProperty()) {
-                String name = property.getActivationConfigPropertyName();
-                String value = property.getActivationConfigPropertyValue();
+            for (final ActivationConfigProperty property : activationConfig.getActivationConfigProperty()) {
+                final String name = property.getActivationConfigPropertyName();
+                final String value = property.getActivationConfigPropertyValue();
                 bean.activationProperties.put(name, value);
             }
         }
@@ -756,10 +756,10 @@ public class EjbJarInfoBuilder {
         return bean;
     }
 
-    private NamedMethodInfo toInfo(NamedMethod method) {
+    private NamedMethodInfo toInfo(final NamedMethod method) {
         if (method == null) return null;
 
-        NamedMethodInfo info = new NamedMethodInfo();
+        final NamedMethodInfo info = new NamedMethodInfo();
 
         info.methodName = method.getMethodName();
 
@@ -770,19 +770,19 @@ public class EjbJarInfoBuilder {
         return info;
     }
 
-    private void copyCallbacks(List<? extends CallbackMethod> from, List<CallbackInfo> to) {
-        for (CallbackMethod callback : from) {
-            CallbackInfo info = new CallbackInfo();
+    private void copyCallbacks(final List<? extends CallbackMethod> from, final List<CallbackInfo> to) {
+        for (final CallbackMethod callback : from) {
+            final CallbackInfo info = new CallbackInfo();
             info.className = callback.getClassName();
             info.method = callback.getMethodName();
             to.add(info);
         }
     }
 
-    private EnterpriseBeanInfo initEntityBean(EntityBean e, Map m) throws OpenEJBException {
-        EntityBeanInfo bean = new EntityBeanInfo();
+    private EnterpriseBeanInfo initEntityBean(final EntityBean e, final Map m) throws OpenEJBException {
+        final EntityBeanInfo bean = new EntityBeanInfo();
 
-        EjbDeployment d = (EjbDeployment) m.get(e.getEjbName());
+        final EjbDeployment d = (EjbDeployment) m.get(e.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
                     + e.getEjbName()
@@ -791,7 +791,7 @@ public class EjbJarInfoBuilder {
         bean.ejbDeploymentId = d.getDeploymentId();
         bean.containerId = d.getContainerId();
 
-        Icon icon = e.getIcon();
+        final Icon icon = e.getIcon();
         bean.largeIcon = icon == null ? null : icon.getLargeIcon();
         bean.smallIcon = icon == null ? null : icon.getSmallIcon();
         bean.description = e.getDescription();
@@ -811,7 +811,7 @@ public class EjbJarInfoBuilder {
         bean.reentrant = e.getReentrant() + "";
         bean.properties.putAll(d.getProperties());
 
-        CmpVersion cmpVersion = e.getCmpVersion();
+        final CmpVersion cmpVersion = e.getCmpVersion();
         if (e.getPersistenceType() == PersistenceType.CONTAINER) {
             if (cmpVersion != null && cmpVersion == CmpVersion.CMP1){
                 bean.cmpVersion = 1;
@@ -820,42 +820,42 @@ public class EjbJarInfoBuilder {
             }
         }
 
-        List<CmpField> cmpFields = e.getCmpField();
-        for (CmpField cmpField : cmpFields) {
+        final List<CmpField> cmpFields = e.getCmpField();
+        for (final CmpField cmpField : cmpFields) {
             bean.cmpFieldNames.add(cmpField.getFieldName());
         }
 
         if (bean.persistenceType.equalsIgnoreCase("Container")) {
-            for (Query q : e.getQuery()) {
-                QueryInfo query = new QueryInfo();
+            for (final Query q : e.getQuery()) {
+                final QueryInfo query = new QueryInfo();
                 query.queryStatement = q.getEjbQl().trim();
 
-                MethodInfo method = new MethodInfo();
+                final MethodInfo method = new MethodInfo();
                 method.ejbName = bean.ejbName;
                 method.className = "*";
 
-                QueryMethod qm = q.getQueryMethod();
+                final QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
                 if (qm.getMethodParams() != null) {
                     method.methodParams = qm.getMethodParams().getMethodParam();
                 }
                 query.method = method;
-                ResultTypeMapping resultType = q.getResultTypeMapping();
+                final ResultTypeMapping resultType = q.getResultTypeMapping();
                 if (ResultTypeMapping.REMOTE.equals(resultType)) {
                     query.remoteResultType = true;
                 }
                 bean.queries.add(query);
             }
 
-            for (org.apache.openejb.jee.oejb3.Query q : d.getQuery()) {
-                QueryInfo query = new QueryInfo();
+            for (final org.apache.openejb.jee.oejb3.Query q : d.getQuery()) {
+                final QueryInfo query = new QueryInfo();
                 query.description = q.getDescription();
                 query.queryStatement = q.getObjectQl().trim();
 
-                MethodInfo method = new MethodInfo();
+                final MethodInfo method = new MethodInfo();
                 method.ejbName = bean.ejbName;
                 method.className = "*";
-                org.apache.openejb.jee.oejb3.QueryMethod qm = q.getQueryMethod();
+                final org.apache.openejb.jee.oejb3.QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
                 if (qm.getMethodParams() != null) {
                     method.methodParams = qm.getMethodParams().getMethodParam();

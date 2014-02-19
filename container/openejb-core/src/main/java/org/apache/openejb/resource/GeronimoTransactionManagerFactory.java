@@ -46,23 +46,23 @@ public class GeronimoTransactionManagerFactory {
     private static final int DEFAULT_BUFFER_SIZE = 32;
 
     public static GeronimoTransactionManager create(Integer defaultTransactionTimeoutSeconds, // Deprecated, use defaultTransactionTimeout
-                                                    Duration defaultTransactionTimeout,
-                                                    boolean txRecovery,
-                                                    byte[] tmId,
-                                                    String bufferClassName,
-                                                    int bufferSizeKb,
-                                                    boolean checksumEnabled,
-                                                    boolean adler32Checksum,
+                                                    final Duration defaultTransactionTimeout,
+                                                    final boolean txRecovery,
+                                                    final byte[] tmId,
+                                                    final String bufferClassName,
+                                                    final int bufferSizeKb,
+                                                    final boolean checksumEnabled,
+                                                    final boolean adler32Checksum,
                                                     Integer flushSleepTimeMilliseconds, // Deprecated, use flushSleepTime
-                                                    Duration flushSleepTime,
-                                                    String logFileDir,
-                                                    String logFileExt,
-                                                    String logFileName,
-                                                    int maxBlocksPerFile,
-                                                    int maxBuffers,
-                                                    int maxLogFiles,
-                                                    int minBuffers,
-                                                    int threadsWaitingForceThreshold) throws Exception {
+                                                    final Duration flushSleepTime,
+                                                    final String logFileDir,
+                                                    final String logFileExt,
+                                                    final String logFileName,
+                                                    final int maxBlocksPerFile,
+                                                    final int maxBuffers,
+                                                    final int maxLogFiles,
+                                                    final int minBuffers,
+                                                    final int threadsWaitingForceThreshold) throws Exception {
 
         if (flushSleepTime.getUnit() == null) {
             flushSleepTime.setUnit(TimeUnit.MILLISECONDS);
@@ -113,7 +113,7 @@ public class GeronimoTransactionManagerFactory {
     }
 
     public static class GeronimoXAResourceWrapper implements XAResourceWrapper {
-        public XAResource wrap(XAResource xaResource, String name) {
+        public XAResource wrap(final XAResource xaResource, final String name) {
             return new WrapperNamedXAResource(xaResource, name);
         }
     }

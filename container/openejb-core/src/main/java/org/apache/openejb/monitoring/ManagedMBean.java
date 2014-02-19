@@ -69,20 +69,20 @@ public class ManagedMBean implements DynamicMBean {
     private MBeanParameterInfo excludeInfo;
     private MBeanParameterInfo includeInfo;
 
-    public ManagedMBean(Object managed) {
+    public ManagedMBean(final Object managed) {
         this(managed, "");
 
         try {
-            Method method = this.getClass().getMethod("setAttributesFilter", String.class, String.class);
+            final Method method = this.getClass().getMethod("setAttributesFilter", String.class, String.class);
 
-            String description = "Filters the attributes that show up in the MBeanInfo." +
+            final String description = "Filters the attributes that show up in the MBeanInfo." +
                     "  The exclude is applied first, then any attributes that match the " +
                     "include are re-added.  It may be required to disconnect and reconnect " +
                     "the JMX console to force a refresh of the MBeanInfo";
 
             excludeInfo = new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"" + excludes.pattern() + "\"");
             includeInfo = new MBeanParameterInfo("includeRegex", "java.lang.String", "\"" + includes.pattern() + "\"");
-            MBeanOperationInfo filterOperation = new MBeanOperationInfo("FilterAttributes", description, new MBeanParameterInfo[]{
+            final MBeanOperationInfo filterOperation = new MBeanOperationInfo("FilterAttributes", description, new MBeanParameterInfo[]{
                     excludeInfo,
                     includeInfo,
             }, "void", 3);
@@ -90,20 +90,20 @@ public class ManagedMBean implements DynamicMBean {
             operationsMap.put(filterOperation.getName(), new MethodMember(method, this, ""));
 
             filterAttributes = true;
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    ManagedMBean(Object managed, String prefix) {
+    ManagedMBean(final Object managed, final String prefix) {
         scan(managed, prefix);
 
-        for (Member member : attributesMap.values()) {
+        for (final Member member : attributesMap.values()) {
             attributes.add(new MBeanAttributeInfo(member.getName(), member.getType().getName(), "", true, false, false));
         }
 
-        for (Member member : operationsMap.values()) {
-            MBeanOperationInfo op = new MBeanOperationInfo("", ((MethodMember) member).getter);
+        for (final Member member : operationsMap.values()) {
+            final MBeanOperationInfo op = new MBeanOperationInfo("", ((MethodMember) member).getter);
             operations.add(new MBeanOperationInfo(member.getName(), "", op.getSignature(), op.getReturnType(), op.getImpact()));
         }
         filterAttributes = true;
@@ -111,33 +111,33 @@ public class ManagedMBean implements DynamicMBean {
         includeInfo = new MBeanParameterInfo("includeRegex", "java.lang.String", "\"" + includes.pattern() + "\"");
     }
 
-    private void sortAttributes(List<MBeanAttributeInfo> attributes) {
+    private void sortAttributes(final List<MBeanAttributeInfo> attributes) {
         Collections.sort(attributes, new Comparator<MBeanAttributeInfo>() {
-            public int compare(MBeanAttributeInfo o1, MBeanAttributeInfo o2) {
+            public int compare(final MBeanAttributeInfo o1, final MBeanAttributeInfo o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
     }
 
-    private void sortOperations(List<MBeanOperationInfo> operations) {
+    private void sortOperations(final List<MBeanOperationInfo> operations) {
         Collections.sort(operations, new Comparator<MBeanOperationInfo>() {
-            public int compare(MBeanOperationInfo o1, MBeanOperationInfo o2) {
+            public int compare(final MBeanOperationInfo o1, final MBeanOperationInfo o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
     }
 
-    private void scan(Object target, String prefix) {
-        ClassFinder finder = new ClassFinder(Classes.ancestors(target.getClass()));
+    private void scan(final Object target, final String prefix) {
+        final ClassFinder finder = new ClassFinder(Classes.ancestors(target.getClass()));
 
-        List<Field> fields = finder.findAnnotatedFields(Managed.class);
-        for (Field field : fields) {
+        final List<Field> fields = finder.findAnnotatedFields(Managed.class);
+        for (final Field field : fields) {
             attribute(new FieldMember(field, target, prefix));
         }
 
-        List<Method> managed = finder.findAnnotatedMethods(Managed.class);
-        for (Method method : managed) {
-            MethodMember member = new MethodMember(method, target, prefix);
+        final List<Method> managed = finder.findAnnotatedMethods(Managed.class);
+        for (final Method method : managed) {
+            final MethodMember member = new MethodMember(method, target, prefix);
             if (!method.getName().matches("(get|is)([A-Z_].*|)")) {
                 operationsMap.put(member.getName(), member);
             } else {
@@ -145,24 +145,24 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        List<Method> collections = finder.findAnnotatedMethods(ManagedCollection.class);
-        for (Method method : collections) {
+        final List<Method> collections = finder.findAnnotatedMethods(ManagedCollection.class);
+        for (final Method method : collections) {
             dynamic.add(new MethodMember(method, target, prefix));
         }
     }
 
-    private void attribute(Member member) {
-        Class<?> type = member.getType();
+    private void attribute(final Member member) {
+        final Class<?> type = member.getType();
 
-        Managed managed = type.getAnnotation(Managed.class);
+        final Managed managed = type.getAnnotation(Managed.class);
         if (managed != null) {
             try {
                 String s = "";
                 if (managed.append()) s = member.getName();
                 scan(member.get(), s);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (final InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {
@@ -170,47 +170,47 @@ public class ManagedMBean implements DynamicMBean {
         }
     }
 
-    public Object getAttribute(String s) throws AttributeNotFoundException, MBeanException, ReflectionException {
+    public Object getAttribute(final String s) throws AttributeNotFoundException, MBeanException, ReflectionException {
         try {
-            Member member = attributesMap.get(s);
+            final Member member = attributesMap.get(s);
 
             if (member == null) throw new AttributeNotFoundException(s);
 
             return member.get();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new ReflectionException(e);
         }
     }
 
-    public void setAttribute(Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
+    public void setAttribute(final Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
     }
 
-    public AttributeList getAttributes(String[] strings) {
-        AttributeList list = new AttributeList(strings.length);
-        for (String attribute : strings) {
+    public AttributeList getAttributes(final String[] strings) {
+        final AttributeList list = new AttributeList(strings.length);
+        for (final String attribute : strings) {
             try {
                 list.add(new Attribute(attribute, getAttribute(attribute)));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
         return list;
     }
 
-    public AttributeList setAttributes(AttributeList attributeList) {
+    public AttributeList setAttributes(final AttributeList attributeList) {
         return new AttributeList();
     }
 
-    public Object invoke(String operation, Object[] args, String[] types) throws MBeanException, ReflectionException {
-        MethodMember member = operationsMap.get(operation);
-        Method method = member.getter;
+    public Object invoke(final String operation, final Object[] args, final String[] types) throws MBeanException, ReflectionException {
+        final MethodMember member = operationsMap.get(operation);
+        final Method method = member.getter;
 
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             Object value = args[i];
-            Class<?> expectedType = method.getParameterTypes()[i];
+            final Class<?> expectedType = method.getParameterTypes()[i];
             if (value instanceof String && expectedType != Object.class) {
-                String stringValue = (String) value;
+                final String stringValue = (String) value;
                 value = PropertyEditors.getValue(expectedType, stringValue);
             }
             args[i] = value;
@@ -218,41 +218,41 @@ public class ManagedMBean implements DynamicMBean {
 
         try {
             return method.invoke(member.target, args);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new ReflectionException((Exception)e.getCause());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ReflectionException(e);
         }
     }
 
     public MBeanInfo getMBeanInfo() {
 
-        List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>(this.attributes);
-        List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>(this.operations);
+        final List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>(this.attributes);
+        final List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>(this.operations);
 
-        for (Member member : dynamic) {
+        for (final Member member : dynamic) {
             try {
-                ManagedCollection managedCollection = member.getAnnotation(ManagedCollection.class);
-                Collection collection = (Collection) member.get();
-                for (Object o : collection) {
+                final ManagedCollection managedCollection = member.getAnnotation(ManagedCollection.class);
+                final Collection collection = (Collection) member.get();
+                for (final Object o : collection) {
                     try {
-                        Field field = o.getClass().getDeclaredField(managedCollection.key());
+                        final Field field = o.getClass().getDeclaredField(managedCollection.key());
                         field.setAccessible(true);
-                        Object key = field.get(o);
-                        ManagedMBean bean = new ManagedMBean(o, key.toString());
-                        for (MBeanAttributeInfo info : bean.getMBeanInfo().getAttributes()) {
+                        final Object key = field.get(o);
+                        final ManagedMBean bean = new ManagedMBean(o, key.toString());
+                        for (final MBeanAttributeInfo info : bean.getMBeanInfo().getAttributes()) {
                             attributes.add(info);
                         }
-                        for (MBeanOperationInfo info : bean.getMBeanInfo().getOperations()) {
+                        for (final MBeanOperationInfo info : bean.getMBeanInfo().getOperations()) {
                             operations.add(info);
                         }
                         attributesMap.putAll(bean.attributesMap);
                         operationsMap.putAll(bean.operationsMap);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         e.printStackTrace();
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
@@ -261,9 +261,9 @@ public class ManagedMBean implements DynamicMBean {
         sortAttributes(attributes);
 
         if (filterAttributes) {
-            Iterator<MBeanAttributeInfo> iterator = attributes.iterator();
+            final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();
             while (iterator.hasNext()) {
-                MBeanAttributeInfo info = iterator.next();
+                final MBeanAttributeInfo info = iterator.next();
                 if (includes.matcher(info.getName()).matches()) continue;
                 if (excludes.matcher(info.getName()).matches()) iterator.remove();
             }
@@ -280,11 +280,11 @@ public class ManagedMBean implements DynamicMBean {
 
         try {
             // Set the current value as the description
-            Field field = MBeanFeatureInfo.class.getDeclaredField("description");
+            final Field field = MBeanFeatureInfo.class.getDeclaredField("description");
             field.setAccessible(true);
             field.set(includeInfo, "\"" + includes.pattern() + "\"");
             field.set(excludeInfo, "\"" + excludes.pattern() + "\"");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Oh well, we tried
         }
     }
@@ -315,7 +315,7 @@ public class ManagedMBean implements DynamicMBean {
         private final Object target;
         private final String prefix;
 
-        public MethodMember(Method getter, Object target, String prefix) {
+        public MethodMember(final Method getter, final Object target, final String prefix) {
             getter.setAccessible(true);
             this.getter = getter;
             this.target = target;
@@ -330,7 +330,7 @@ public class ManagedMBean implements DynamicMBean {
             return getter.getDeclaringClass();
         }
 
-        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
             return getter.getAnnotation(annotationClass);
         }
 
@@ -340,9 +340,9 @@ public class ManagedMBean implements DynamicMBean {
          * @return
          */
         public String getName() {
-            String method = getter.getName();
+            final String method = getter.getName();
 
-            StringBuilder name = new StringBuilder(method);
+            final StringBuilder name = new StringBuilder(method);
             
             // remove 'get'
             if (method.matches("get([A-Z].*|)")) name.delete(0, 3);
@@ -374,7 +374,7 @@ public class ManagedMBean implements DynamicMBean {
         private final Object target;
         private final String prefix;
 
-        public FieldMember(Field field, Object target, String prefix) {
+        public FieldMember(final Field field, final Object target, final String prefix) {
             field.setAccessible(true);
             this.field = field;
             this.target = target;
@@ -393,12 +393,12 @@ public class ManagedMBean implements DynamicMBean {
             return field.getDeclaringClass();
         }
 
-        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
             return field.getAnnotation(annotationClass);
         }
 
         public String getName() {
-            StringBuilder name = new StringBuilder(field.getName());
+            final StringBuilder name = new StringBuilder(field.getName());
 
             name.setCharAt(0, Character.toUpperCase(name.charAt(0)));
 
@@ -414,7 +414,7 @@ public class ManagedMBean implements DynamicMBean {
             return unwrap(field.get(target));
         }
 
-        public Class<?> unwrap(Class<?> clazz) {
+        public Class<?> unwrap(final Class<?> clazz) {
             if (clazz == AtomicInteger.class) {
                 return int.class;
             } else if (clazz == AtomicBoolean.class) {
@@ -428,7 +428,7 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        public Object unwrap(Object clazz) {
+        public Object unwrap(final Object clazz) {
             if (clazz instanceof AtomicInteger) {
                 return ((AtomicInteger) clazz).get();
             } else if (clazz instanceof AtomicBoolean) {

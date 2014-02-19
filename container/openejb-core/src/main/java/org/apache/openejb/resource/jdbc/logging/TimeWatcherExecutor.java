@@ -25,7 +25,7 @@ public final class TimeWatcherExecutor {
         // no-op
     }
 
-    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, boolean watch) {
+    public static TimerWatcherResult execute(final Method mtd, final Object instance, final Object[] args, final boolean watch) {
         final long start = (watch) ? System.nanoTime() : 0;
 
         try {
@@ -34,11 +34,11 @@ public final class TimeWatcherExecutor {
 
             return new TimerWatcherResult(start, result, null);
 
-        } catch (InvocationTargetException ite) {
+        } catch (final InvocationTargetException ite) {
 
             return new TimerWatcherResult(start, null, ite.getCause());
 
-        } catch (Throwable throwable) {
+        } catch (final Throwable throwable) {
 
             return new TimerWatcherResult(start, null, throwable);
         }
@@ -49,13 +49,13 @@ public final class TimeWatcherExecutor {
         private final Throwable throwable;
         private final long duration;
 
-        public TimerWatcherResult(long start, final Object result, final Throwable throwable) {
+        public TimerWatcherResult(final long start, final Object result, final Throwable throwable) {
             this.duration = (start == 0) ? 0 : TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
             this.result = result;
             this.throwable = throwable;
         }
 
-        public String format(String query) {
+        public String format(final String query) {
             String message = query + " --> " + this.getDuration() + "ms";
 
             if (throwable != null) {

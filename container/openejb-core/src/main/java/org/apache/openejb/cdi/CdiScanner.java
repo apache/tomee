@@ -270,7 +270,7 @@ public class CdiScanner implements ScannerService {
     private boolean addErrors(final StringBuilder errors, final String msg, final List<String> list) {
         if (!list.isEmpty()) {
             errors.append("[ ").append(msg).append(" --> ");
-            for (String s : list) {
+            for (final String s : list) {
                 errors.append(s).append(" ");
             }
             errors.append("]");
@@ -294,12 +294,12 @@ public class CdiScanner implements ScannerService {
      * @param classLoader classloader to (try to) load it from
      * @return the loaded class if possible, or null if loading fails.
      */
-    private Class load(String className, ClassLoader classLoader) {
+    private Class load(final String className, final ClassLoader classLoader) {
         try {
             return classLoader.loadClass(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             return null;
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             return null;
         }
     }

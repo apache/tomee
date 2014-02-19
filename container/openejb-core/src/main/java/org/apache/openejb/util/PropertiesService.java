@@ -68,14 +68,14 @@ public class PropertiesService {
      * @return previous property value or null if the value hasn't been assigned
      *         yet
      */
-    public String setProperty(String name, String value) {
+    public String setProperty(final String name, final String value) {
         if (passOn) {
             System.setProperty(name, value);
         }
         return (String) props.setProperty(name, value);
     }
 
-    public String getProperty(String name) {
+    public String getProperty(final String name) {
         return (String) props.get(name);
     }
 
@@ -87,11 +87,11 @@ public class PropertiesService {
      *            property name
      * @return true if property keyed by name is set; false otherwise
      */
-    public boolean isSet(String name) {
+    public boolean isSet(final String name) {
         return props.containsKey(name);
     }
 
-    public void putAll(Properties props) {
+    public void putAll(final Properties props) {
         props.putAll(props);
     }
     
@@ -103,7 +103,7 @@ public class PropertiesService {
         return passOn;
     }
 
-    public void setPassOn(boolean passOn) {
+    public void setPassOn(final boolean passOn) {
         this.passOn = passOn;
     }
 
@@ -111,7 +111,7 @@ public class PropertiesService {
         return queryEnvOnInit;
     }
 
-    public void setQueryEnvOnInit(boolean queryEnvOnInit) {
+    public void setQueryEnvOnInit(final boolean queryEnvOnInit) {
         this.queryEnvOnInit = queryEnvOnInit;
     }
 }

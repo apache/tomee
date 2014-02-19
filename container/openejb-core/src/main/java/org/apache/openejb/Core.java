@@ -90,7 +90,7 @@ public class Core {
             public void run() {
                 try {
                     ServiceUtils.getServiceProviders();
-                } catch (OpenEJBException e) {
+                } catch (final OpenEJBException e) {
                     // no-op
                 }
             }
@@ -104,7 +104,7 @@ public class Core {
         try { // logging classes should be loaded before any other classes so do it here synchronously
             Class.forName("org.apache.openejb.util.Logger", true, loader);
             Class.forName("org.apache.openejb.util.JuliLogStreamFactory", true, loader);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 
@@ -123,7 +123,7 @@ public class Core {
                     for (int c = offset; c < max; c++) {
                         try {
                             Class.forName(classes[c], true, loader);
-                        } catch (Throwable e) {
+                        } catch (final Throwable e) {
                             // no-op
                         }
                     }
@@ -137,7 +137,7 @@ public class Core {
             preloadServiceProviders.join();
             preloadMessages.join();
             semaphore.acquire(permits);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.interrupted();
         }
     }

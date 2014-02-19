@@ -32,42 +32,42 @@ import java.util.Enumeration;
  */
 public class ConfUtils {
 
-    public static URL getConfResource(String name) {
+    public static URL getConfResource(final String name) {
         URL resource = getResource(name);
 
         if (!EnvProps.extractConfigurationFiles()) return resource;
 
         try {
 
-            File loginConfig = ConfUtils.install(resource, name);
+            final File loginConfig = ConfUtils.install(resource, name);
 
             if (loginConfig != null){
                 resource = loginConfig.toURI().toURL();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // no-op
         }
 
         return resource;
     }
 
-    public static URL getResource(String name) {
+    public static URL getResource(final String name) {
         Enumeration<URL> resources = null;
         try {
             resources = Thread.currentThread().getContextClassLoader().getResources(name);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // DMB: Not sure why this version of getResource doesn't require checking
             // for IOException, but no matter.  Perhpas it may succeed where the other fails.
             return Thread.currentThread().getContextClassLoader().getResource(name);
         }
 
-        URL resource = select(resources);
+        final URL resource = select(resources);
         return resource;
     }
 
-    private static URL select(Enumeration<URL> enumeration) {
+    private static URL select(final Enumeration<URL> enumeration) {
         if (enumeration == null) return null;
-        ArrayList<URL> urls = Collections.list(enumeration);
+        final ArrayList<URL> urls = Collections.list(enumeration);
         if (urls.size() == 0) return null;
         if (urls.size() == 1) return urls.get(0);
 
@@ -77,17 +77,17 @@ public class ConfUtils {
         return urls.get(0);
     }
 
-    public static File install(String source, String name) throws IOException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL resource = cl.getResource(source);
+    public static File install(final String source, final String name) throws IOException {
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        final URL resource = cl.getResource(source);
         return install(resource, name, false);
     }
 
-    public static File install(URL resource, String name) throws IOException {
+    public static File install(final URL resource, final String name) throws IOException {
         return install(resource, name, false);
     }
 
-    public static File install(URL resource, String name, boolean overwrite) throws IOException {
+    public static File install(final URL resource, final String name, final boolean overwrite) throws IOException {
         if (resource == null) {
             return null;
         }

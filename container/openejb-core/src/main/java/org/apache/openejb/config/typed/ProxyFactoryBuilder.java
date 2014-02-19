@@ -36,7 +36,7 @@ public class ProxyFactoryBuilder extends ProxyFactory {
 
     }
 
-    public ProxyFactoryBuilder id(String id) {
+    public ProxyFactoryBuilder id(final String id) {
         setId(id);
         return this;
     }

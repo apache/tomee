@@ -46,11 +46,11 @@ public class ActiveMQFactory {
                 try {
                     tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
                     brokerPrefix = "amq5factory:";
-                } catch (Throwable t1) {
+                } catch (final Throwable t1) {
                     try {
                         tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
                         brokerPrefix = "amq4factory:";
-                    } catch (Throwable t2) {
+                    } catch (final Throwable t2) {
                         throw new OpenEJBRuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
                     }
                 }
@@ -59,27 +59,27 @@ public class ActiveMQFactory {
 
                 try {
                     instance = clazz.newInstance();
-                } catch (InstantiationException e) {
+                } catch (final InstantiationException e) {
                     throw new OpenEJBRuntimeException("Unable to create ActiveMQFactory instance", e);
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                     throw new OpenEJBRuntimeException("Unable to access ActiveMQFactory instance", e);
                 }
 
                 try {
                     setThreadProperties = clazz.getDeclaredMethod("setThreadProperties", new Class[]{Properties.class});
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     throw new OpenEJBRuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
                 }
 
                 try {
                     createBroker = clazz.getDeclaredMethod("createBroker", new Class[]{URI.class});
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     throw new OpenEJBRuntimeException("Unable to create ActiveMQFactory createBroker method", e);
                 }
 
                 try {
                     getBrokers = clazz.getDeclaredMethod("getBrokers", (Class[]) null);
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     throw new OpenEJBRuntimeException("Unable to create ActiveMQFactory createBroker method", e);
                 }
             }
@@ -104,11 +104,11 @@ public class ActiveMQFactory {
 
         try {
             setThreadProperties.invoke(instance, p);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new OpenEJBRuntimeException("ActiveMQFactory.setThreadProperties.IllegalAccessException", e);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new OpenEJBRuntimeException("ActiveMQFactory.setThreadProperties.IllegalArgumentException", e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new OpenEJBRuntimeException("ActiveMQFactory.setThreadProperties.InvocationTargetException", e);
         }
     }
@@ -119,11 +119,11 @@ public class ActiveMQFactory {
 
         try {
             return (BrokerService) createBroker.invoke(instance, brokerURI);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalArgumentException", e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new Exception("ActiveMQFactory.createBroker.InvocationTargetException", e);
         }
     }
@@ -142,11 +142,11 @@ public class ActiveMQFactory {
         try {
             //noinspection unchecked
             return (Collection<BrokerService>) getBrokers.invoke(instance, (Object[]) null);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalArgumentException", e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new Exception("ActiveMQFactory.createBroker.InvocationTargetException", e);
         }
     }

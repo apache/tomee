@@ -35,7 +35,7 @@ public class InternalSecurityInterceptor {
         }
 
         final SecurityService<?> ss = SystemInstance.get().getComponent(Assembler.class).getSecurityService();
-        for (String role : ROLES) {
+        for (final String role : ROLES) {
             if (ss.isCallerInRole(role)) {
                 return ic.proceed();
             }

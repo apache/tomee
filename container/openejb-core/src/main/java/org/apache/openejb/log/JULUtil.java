@@ -32,9 +32,9 @@ public final class JULUtil {
         final String propLevel = SystemInstance.get().getProperty(OPENEJB_LOG_LEVEL, DEFAULT_LOG_LEVEL).toUpperCase();
         try {
             return (Level) Level.class.getDeclaredField(propLevel).get(null);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             return Level.INFO;
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             return Level.INFO;
         }
     }

@@ -24,15 +24,15 @@ import java.lang.reflect.Field;
 public class SimpleKeyGenerator extends AbstractKeyGenerator {
     private final Field pkField;
 
-    public SimpleKeyGenerator(Class beanClass, String pkField) throws OpenEJBException {
+    public SimpleKeyGenerator(final Class beanClass, final String pkField) throws OpenEJBException {
         this.pkField = getField(beanClass, pkField);
         if (!isValidPkField(this.pkField)) {
             throw new OpenEJBException("Invalid primray key field: " + pkField);
         }
     }
 
-    public Object getPrimaryKey(EntityBean bean) {
-        Object value = getFieldValue(pkField, bean);
+    public Object getPrimaryKey(final EntityBean bean) {
+        final Object value = getFieldValue(pkField, bean);
         return value;
     }
 }

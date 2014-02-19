@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "Connector")
 public class Connector extends AbstractService {
-    public Connector(String id) {
+    public Connector(final String id) {
         super(id);
     }
 
-    public Connector(String id, String type, String provider) {
+    public Connector(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

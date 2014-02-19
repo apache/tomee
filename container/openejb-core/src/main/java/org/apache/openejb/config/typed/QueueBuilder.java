@@ -41,17 +41,17 @@ public class QueueBuilder extends Resource {
 
     }
 
-    public QueueBuilder id(String id) {
+    public QueueBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public QueueBuilder withDestination(String destination) {
+    public QueueBuilder withDestination(final String destination) {
         this.destination = destination;
         return this;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(final String destination) {
         this.destination = destination;
     }
 

@@ -113,7 +113,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * bias will be corrected and is equivalent to using the argumentless
      * constructor
      */
-    public Variance(boolean isBiasCorrected) {
+    public Variance(final boolean isBiasCorrected) {
         moment = new SecondMoment();
         this.isBiasCorrected = isBiasCorrected;
     }
@@ -127,7 +127,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @param m2 the SecondMoment (Third or Fourth moments work
      * here as well.)
      */
-    public Variance(boolean isBiasCorrected, SecondMoment m2) {
+    public Variance(final boolean isBiasCorrected, final SecondMoment m2) {
         incMoment = false;
         this.moment = m2;
         this.isBiasCorrected = isBiasCorrected;
@@ -139,7 +139,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      *
      * @param original the {@code Variance} instance to copy
      */
-    public Variance(Variance original) {
+    public Variance(final Variance original) {
         copy(original, this);
     }
 
@@ -248,8 +248,8 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
             if (length == 1) {
                 var = 0.0;
             } else if (length > 1) {
-                Mean mean = new Mean();
-                double m = mean.evaluate(values, begin, length);
+                final Mean mean = new Mean();
+                final double m = mean.evaluate(values, begin, length);
                 var = evaluate(values, m, begin, length);
             }
         }
@@ -308,8 +308,8 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
             if (length == 1) {
                 var = 0.0;
             } else if (length > 1) {
-                Mean mean = new Mean();
-                double m = mean.evaluate(values, weights, begin, length);
+                final Mean mean = new Mean();
+                final double m = mean.evaluate(values, weights, begin, length);
                 var = evaluate(values, weights, m, begin, length);
             }
         }
@@ -401,7 +401,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
                     accum += dev * dev;
                     accum2 += dev;
                 }
-                double len = length;
+                final double len = length;
                 if (isBiasCorrected) {
                     var = (accum - accum2 * accum2 / len) / (len - 1.0);
                 } else {
@@ -574,7 +574,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     /**
      * @param biasCorrected The isBiasCorrected to set.
      */
-    public void setBiasCorrected(boolean biasCorrected) {
+    public void setBiasCorrected(final boolean biasCorrected) {
         this.isBiasCorrected = biasCorrected;
     }
 
@@ -583,7 +583,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      */
     @Override
     public Variance copy() {
-        Variance result = new Variance();
+        final Variance result = new Variance();
         copy(this, result);
         return result;
     }
@@ -597,7 +597,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @param dest Variance to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Variance source, Variance dest) {
+    public static void copy(final Variance source, final Variance dest) {
         dest.moment = source.moment.copy();
         dest.isBiasCorrected = source.isBiasCorrected;
         dest.incMoment = source.incMoment;

@@ -28,7 +28,7 @@ public class JuliLogStream implements LogStream {
     protected final AtomicBoolean debug = new AtomicBoolean(false);
     protected final AtomicBoolean info = new AtomicBoolean(false);
 
-    public JuliLogStream(LogCategory logCategory) {
+    public JuliLogStream(final LogCategory logCategory) {
         logger = new LoggerCreator(logCategory.getName());
     }
 
@@ -36,11 +36,11 @@ public class JuliLogStream implements LogStream {
         return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.SEVERE);
     }
 
-    public void fatal(String message) {
+    public void fatal(final String message) {
         log(Level.SEVERE, message, null);
     }
 
-    public void fatal(String message, Throwable t) {
+    public void fatal(final String message, final Throwable t) {
         log(Level.SEVERE, message, t);
     }
 
@@ -48,11 +48,11 @@ public class JuliLogStream implements LogStream {
         return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.SEVERE);
     }
 
-    public void error(String message) {
+    public void error(final String message) {
         log(Level.SEVERE, message, null);
     }
 
-    public void error(String message, Throwable t) {
+    public void error(final String message, final Throwable t) {
         log(Level.SEVERE, message, t);
     }
 
@@ -60,11 +60,11 @@ public class JuliLogStream implements LogStream {
         return LoggerCreator.Get.exec(logger, debug, info).isLoggable(Level.WARNING);
     }
 
-    public void warn(String message) {
+    public void warn(final String message) {
         log(Level.WARNING, message, null);
     }
 
-    public void warn(String message, Throwable t) {
+    public void warn(final String message, final Throwable t) {
         log(Level.WARNING, message, t);
     }
 
@@ -73,11 +73,11 @@ public class JuliLogStream implements LogStream {
         return info.get();
     }
 
-    public void info(String message) {
+    public void info(final String message) {
         log(Level.INFO, message, null);
     }
 
-    public void info(String message, Throwable t) {
+    public void info(final String message, final Throwable t) {
         log(Level.INFO, message, t);
     }
 
@@ -86,18 +86,18 @@ public class JuliLogStream implements LogStream {
         return debug.get();
     }
 
-    public void debug(String message) {
+    public void debug(final String message) {
         log(Level.FINE, message, null);
     }
 
-    public void debug(String message, Throwable t) {
+    public void debug(final String message, final Throwable t) {
         log(Level.FINE, message, t);
     }
 
-    private void log(Level level, String message, Throwable t) {
+    private void log(final Level level, final String message, final Throwable t) {
         final Logger log = LoggerCreator.Get.exec(logger, debug, info);
         if (log.isLoggable(level)) {
-            LogRecord logRecord = new OpenEJBLogRecord(level, message);
+            final LogRecord logRecord = new OpenEJBLogRecord(level, message);
             if (t != null) logRecord.setThrown(t);
             log.log(logRecord);
         }
@@ -121,7 +121,7 @@ public class JuliLogStream implements LogStream {
         // If the source method and source class has been inited
         private transient boolean sourceInited;
 
-        public OpenEJBLogRecord(Level level, String message) {
+        public OpenEJBLogRecord(final Level level, final String message) {
             super(level, message);
             sourceInited = false;
         }
@@ -142,7 +142,7 @@ public class JuliLogStream implements LogStream {
          * @param sourceClassName
          *            the name of the class that issued the logging call
          */
-        public void setSourceClassName(String sourceClassName) {
+        public void setSourceClassName(final String sourceClassName) {
             sourceInited = true;
             this.sourceClassName = sourceClassName;
         }
@@ -162,7 +162,7 @@ public class JuliLogStream implements LogStream {
          *
          * @param sourceMethodName the name of the method that issued the logging call
          */
-        public void setSourceMethodName(String sourceMethodName) {
+        public void setSourceMethodName(final String sourceMethodName) {
             sourceInited = true;
             this.sourceMethodName = sourceMethodName;
         }
@@ -173,7 +173,7 @@ public class JuliLogStream implements LogStream {
         private void initSource() {
             if (!sourceInited) {
                 // search back up the stack for the first use of the OpenEJB Logger
-                StackTraceElement[] elements = new Throwable().getStackTrace();
+                final StackTraceElement[] elements = new Throwable().getStackTrace();
                 int i = 0;
                 String current = null;
                 for (; i < elements.length; i++) {

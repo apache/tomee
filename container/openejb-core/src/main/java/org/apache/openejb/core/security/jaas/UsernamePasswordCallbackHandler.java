@@ -31,23 +31,23 @@ public class UsernamePasswordCallbackHandler implements CallbackHandler {
     private final String username;
     private final String password;
 
-    public UsernamePasswordCallbackHandler(String username, String password) {
+    public UsernamePasswordCallbackHandler(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
 
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
-            Callback callback = callbacks[i];
+            final Callback callback = callbacks[i];
             if (callback instanceof PasswordCallback) {
-                PasswordCallback passwordCallback = (PasswordCallback) callback;
+                final PasswordCallback passwordCallback = (PasswordCallback) callback;
                 if (password == null) {
                     passwordCallback.setPassword(null);
                 } else {
                     passwordCallback.setPassword(password.toCharArray());
                 }
             } else if (callback instanceof NameCallback) {
-                NameCallback nameCallback = (NameCallback) callback;
+                final NameCallback nameCallback = (NameCallback) callback;
                 if (username == null) {
                     nameCallback.setName(null);
                 } else {

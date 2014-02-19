@@ -53,7 +53,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
             // They should have a chance to perform any special
             // boot-time code that they may need.
             login("", "");
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             //Ignore
         }
     }
@@ -70,7 +70,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
 
         try {
             System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm(), "UTF8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm()));
         }
     }

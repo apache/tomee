@@ -22,7 +22,7 @@ public class ObjectReference extends Reference {
 
     private Object obj;
 
-    public ObjectReference(Object obj) {
+    public ObjectReference(final Object obj) {
         this.obj = obj;
     }
 

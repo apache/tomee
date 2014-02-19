@@ -44,7 +44,7 @@ public class PostCreateGenerator {
      *                  other generation steps, we're implementing additional
      *                  stages of the process.
      */
-    public PostCreateGenerator(Class beanClass, ClassWriter cw) {
+    public PostCreateGenerator(final Class beanClass, final ClassWriter cw) {
         this.beanClass = beanClass;
         this.cw = cw;
     }
@@ -60,13 +60,13 @@ public class PostCreateGenerator {
     public void generate() {
         // ok, scan the class for the ejbCreate methods and check to see if 
         // we need to provide an ejbPostCreate implementation. 
-        for (Method ejbCreate : beanClass.getMethods()) {
+        for (final Method ejbCreate : beanClass.getMethods()) {
             if (!ejbCreate.getName().startsWith("ejbCreate")) 
             {
                 continue;
             }
 
-            StringBuilder ejbPostCreateName = new StringBuilder(ejbCreate.getName());
+            final StringBuilder ejbPostCreateName = new StringBuilder(ejbCreate.getName());
             ejbPostCreateName.replace(0, "ejbC".length(), "ejbPostC");
 
             // if there is a concrete method here, we just skip this. 
@@ -89,11 +89,11 @@ public class PostCreateGenerator {
      * @return true if the method exists and is NOT abstract.  Returns 
      *         false if the method is not found or IS abstract.
      */
-    private boolean hasMethod(Class beanClass, String name, Class... args) {
+    private boolean hasMethod(final Class beanClass, final String name, final Class... args) {
         try {
-            Method method = beanClass.getMethod(name, args);
+            final Method method = beanClass.getMethod(name, args);
             return !Modifier.isAbstract(method.getModifiers());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return false;
         }
     }
@@ -108,9 +108,9 @@ public class PostCreateGenerator {
      * @param ejbCreate The matching ejbCreate method.  The post create method
      *                  will match this one in terms of method signature.
      */
-    public void createEjbPostCreate(String ejbPostCreateName, Method ejbCreate) {
-        String methodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getArgumentTypes(ejbCreate));
-        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, ejbPostCreateName, methodDescriptor, null, null);
+    public void createEjbPostCreate(final String ejbPostCreateName, final Method ejbCreate) {
+        final String methodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getArgumentTypes(ejbCreate));
+        final MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, ejbPostCreateName, methodDescriptor, null, null);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, ejbCreate.getParameterTypes().length + 1);

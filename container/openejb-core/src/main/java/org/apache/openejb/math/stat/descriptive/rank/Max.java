@@ -62,7 +62,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      *
      * @param original the {@code Max} instance to copy
      */
-    public Max(Max original) {
+    public Max(final Max original) {
         copy(original, this);
     }
 
@@ -142,7 +142,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      */
     @Override
     public Max copy() {
-        Max result = new Max();
+        final Max result = new Max();
         copy(this, result);
         return result;
     }
@@ -155,7 +155,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      * @param dest Max to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Max source, Max dest) {
+    public static void copy(final Max source, final Max dest) {
         dest.n = source.n;
         dest.value = source.value;
     }

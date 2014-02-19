@@ -38,36 +38,36 @@ import java.util.Properties;
 public class ConvertDataSourceDefinitions implements DynamicDeployer {
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        List<JndiConsumer> jndiConsumers = collectConsumers(appModule);
+        final List<JndiConsumer> jndiConsumers = collectConsumers(appModule);
 
         final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<String, DataSource>();
 
-        for (JndiConsumer consumer : jndiConsumers) {
+        for (final JndiConsumer consumer : jndiConsumers) {
             if (consumer == null) continue;
 
             dataSources.addAll(consumer.getDataSource());
         }
 
-        for (DataSource dataSource : dataSources) {
+        for (final DataSource dataSource : dataSources) {
             appModule.getResources().add(toResource(dataSource));
         }
         return appModule;
     }
 
 
-    private Resource toResource(DataSource datasource) {
+    private Resource toResource(final DataSource datasource) {
         String name = datasource.getName();
         name = name.replaceFirst("java:comp/env/", "");
         name = name.replaceFirst("java:", "");
 
-        Resource def = new Resource(name, javax.sql.DataSource.class.getName());
+        final Resource def = new Resource(name, javax.sql.DataSource.class.getName());
 
         def.setJndi(datasource.getName().replaceFirst("java:", ""));
         def.setType("javax.sql.DataSource");
 
-        Properties p = def.getProperties();
+        final Properties p = def.getProperties();
         put(p, "JtaManaged", datasource.getTransactional());
         put(p, "InitialSize", datasource.getInitialPoolSize());
         put(p, "DefaultIsolationLevel", datasource.getIsolationLevel());
@@ -94,7 +94,7 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         return def;
     }
 
-    private String rawDefinition(DataSource d) {
+    private String rawDefinition(final DataSource d) {
         try {
             final Properties p = new Properties();
 
@@ -118,13 +118,13 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             p.store(out, "");
             return new String(out.toByteArray());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBRuntimeException(String.format("Cannot canonicalize the @DataSourceDefinition %s as a properties string", d.getName()));
         }
     }
 
-    private void setProperties(DataSource d, Properties p) {
-        for (Property property : d.getProperty()) {
+    private void setProperties(final DataSource d, final Properties p) {
+        for (final Property property : d.getProperty()) {
 
             final String key = property.getName();
             final String value = property.getValue();
@@ -133,30 +133,30 @@ public class ConvertDataSourceDefinitions implements DynamicDeployer {
         }
     }
 
-    private static void put(Properties properties, String key, Object value) {
+    private static void put(final Properties properties, final String key, final Object value) {
         if (key == null) return;
         if (value == null) return;
 
         properties.put(key, PropertyPlaceHolderHelper.value(value + ""));
     }
 
-    private List<JndiConsumer> collectConsumers(AppModule appModule) {
+    private List<JndiConsumer> collectConsumers(final AppModule appModule) {
 
         final List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
 
-        for (ClientModule module : appModule.getClientModules()) {
+        for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();
             if (consumer == null) continue;
             jndiConsumers.add(consumer);
         }
 
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             final JndiConsumer consumer = webModule.getWebApp();
             if (consumer == null) continue;
             jndiConsumers.add(consumer);
         }
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 

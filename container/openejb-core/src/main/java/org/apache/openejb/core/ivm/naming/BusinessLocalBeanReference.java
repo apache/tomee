@@ -27,7 +27,7 @@ public class BusinessLocalBeanReference extends Reference {
 
     private final BeanContext.BusinessLocalBeanHome businessHome;
 
-    public BusinessLocalBeanReference(BeanContext.BusinessLocalBeanHome localBeanHome) {
+    public BusinessLocalBeanReference(final BeanContext.BusinessLocalBeanHome localBeanHome) {
         this.businessHome = localBeanHome;
     }
 

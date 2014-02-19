@@ -24,12 +24,12 @@ import javax.transaction.TransactionManager;
 public class JtaTransactionPolicyFactory implements TransactionPolicyFactory {
     private final TransactionManager transactionManager;
 
-    public JtaTransactionPolicyFactory(TransactionManager transactionManager) {
+    public JtaTransactionPolicyFactory(final TransactionManager transactionManager) {
         if (transactionManager == null) throw new NullPointerException("transactionManager is null");
         this.transactionManager = transactionManager;
     }
 
-    public TransactionPolicy createTransactionPolicy(TransactionType type) throws SystemException, ApplicationException {
+    public TransactionPolicy createTransactionPolicy(final TransactionType type) throws SystemException, ApplicationException {
         switch (type) {
             case Required:
                 return new TxRequired(transactionManager);

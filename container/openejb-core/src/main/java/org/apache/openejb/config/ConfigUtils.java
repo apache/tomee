@@ -42,7 +42,7 @@ public class ConfigUtils {
     /**
      * TODO: It should always be assumed that the path input param is a URL or URL-convertible
      */
-    public static String searchForConfiguration(String rawPath) throws OpenEJBException {
+    public static String searchForConfiguration(final String rawPath) throws OpenEJBException {
         File file;
         if (rawPath != null) {
             for (final String path : deducePaths(rawPath)) {
@@ -63,9 +63,9 @@ public class ConfigUtils {
                     if (file != null && file.exists() && file.isFile()) {
                         return file.getAbsolutePath();
                     }
-                } catch (FileNotFoundException ignored) {
+                } catch (final FileNotFoundException ignored) {
                     // no-op
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
 
@@ -77,9 +77,9 @@ public class ConfigUtils {
                     if (file != null && file.exists() && file.isFile()) {
                         return file.getAbsolutePath();
                     }
-                } catch (FileNotFoundException ignored) {
+                } catch (final FileNotFoundException ignored) {
                     // no-op
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     // no-op
                 }
 
@@ -91,7 +91,7 @@ public class ConfigUtils {
                     new URL(path);
                     // it's so return it unchanged
                     return path;
-                } catch (MalformedURLException ignored) {
+                } catch (final MalformedURLException ignored) {
                     // no-op
                 }
             }
@@ -130,10 +130,10 @@ public class ConfigUtils {
                  *     the openejb-x.x.x.jar
                  */
 
-                File confDir = SystemInstance.get().getConf(null);
+                final File confDir = SystemInstance.get().getConf(null);
 
                 if (confDir != null && confDir.exists()) {
-                    File config = new File(confDir, "openejb.xml");
+                    final File config = new File(confDir, "openejb.xml");
                     logger.info("Cannot find the configuration file [conf/openejb.xml].  Creating one at "+config.getAbsolutePath());
                     file = createConfig(config);
                 } else {
@@ -141,7 +141,7 @@ public class ConfigUtils {
                 }
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             throw new OpenEJBException("Could not locate config file: ", e);
         }
@@ -156,31 +156,31 @@ public class ConfigUtils {
         return new String[] { path };
     }
 
-    public static File createConfig(File config) throws IOException {
-        ResourceFinder finder = new ResourceFinder("");
-        URL defaultConfig = finder.find("default.openejb.conf");
+    public static File createConfig(final File config) throws IOException {
+        final ResourceFinder finder = new ResourceFinder("");
+        final URL defaultConfig = finder.find("default.openejb.conf");
 
         IO.copy(IO.read(defaultConfig), config);
 
         return config;
     }
 
-    public static boolean addDeploymentEntryToConfig(String jarLocation, Openejb config) {
-        File jar = new File(jarLocation);
+    public static boolean addDeploymentEntryToConfig(final String jarLocation, final Openejb config) {
+        final File jar = new File(jarLocation);
 
         /* Check to see if the entry is already listed */
-        for (Deployments d : config.getDeployments()) {
+        for (final Deployments d : config.getDeployments()) {
 
             if (d.getFile() != null) {
                 try {
-                    File target = SystemInstance.get().getBase().getFile(d.getFile(), false);
+                    final File target = SystemInstance.get().getBase().getFile(d.getFile(), false);
 
                     /* 
                      * If the jar entry is already there, no need 
                      * to add it to the config or go any futher.
                      */
                     if (jar.equals(target)) return false;
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 
                      * just add this jars path explicitly.
@@ -188,8 +188,8 @@ public class ConfigUtils {
                 }
             } else if (d.getDir() != null) {
                 try {
-                    File target = SystemInstance.get().getBase().getFile(d.getDir(), false);
-                    File jarDir = jar.getAbsoluteFile().getParentFile();
+                    final File target = SystemInstance.get().getBase().getFile(d.getDir(), false);
+                    final File jarDir = jar.getAbsoluteFile().getParentFile();
 
                     /* 
                      * If a dir entry is already there, the jar
@@ -198,7 +198,7 @@ public class ConfigUtils {
                      * any futher.
                      */
                     if (jarDir != null && jarDir.equals(target)) return false;
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     /* No handling needed.  If there is a problem
                      * resolving a config file path, it is better to 
                      * just add this jars path explicitly.
@@ -208,7 +208,7 @@ public class ConfigUtils {
         }
 
         /* Create a new Deployments entry */
-        Deployments dep = JaxbOpenejb.createDeployments();
+        final Deployments dep = JaxbOpenejb.createDeployments();
         dep.setFile(jarLocation);
         config.getDeployments().add(dep);
         return true;

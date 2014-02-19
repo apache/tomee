@@ -29,7 +29,7 @@ import java.util.List;
 
 public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
-    public StatefulEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public StatefulEjbObjectHandler(final BeanContext beanContext, final Object pk, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
@@ -37,22 +37,22 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         return new RegistryId(container, deploymentID, primaryKey);
     }
 
-    protected Object getPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object getPrimaryKey(final Method method, final Object[] args, final Object proxy) throws Throwable {
         throw new RemoteException("Session objects are private resources and do not have primary keys");
     }
 
-    protected Object isIdentical(Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
 
         if (args.length != 1) {
             throw new IllegalArgumentException("Expected one argument to isIdentical, but received " + args.length);
         }
 
-        Object that = args[0];
-        Object invocationHandler = ProxyManager.getInvocationHandler(that);
+        final Object that = args[0];
+        final Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
         if (invocationHandler instanceof StatefulEjbObjectHandler) {
-            StatefulEjbObjectHandler handler = (StatefulEjbObjectHandler) invocationHandler;
+            final StatefulEjbObjectHandler handler = (StatefulEjbObjectHandler) invocationHandler;
 
             /*
             * The registry id is a compound key composed of the bean's primary key, deployment id, and
@@ -65,9 +65,9 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         return false;
     }
 
-    protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
+    protected Object remove(final Class interfce, final Method method, final Object[] args, final Object proxy) throws Throwable {
         checkAuthorization(method);
-        Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
+        final Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
 
         invalidateAllHandlers(getRegistryId());
         return value;
@@ -80,7 +80,7 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         private final Object deploymentId;
         private final Object primaryKey;
 
-        public RegistryId(Container container, Object deploymentId, Object primaryKey) {
+        public RegistryId(final Container container, final Object deploymentId, final Object primaryKey) {
             if (container == null) throw new NullPointerException("container is null");
             if (deploymentId == null) throw new NullPointerException("deploymentId is null");
 
@@ -89,11 +89,11 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
             this.primaryKey = primaryKey;
         }
 
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            RegistryId that = (RegistryId) o;
+            final RegistryId that = (RegistryId) o;
 
             return containerId.equals(that.containerId) &&
                     deploymentId.equals(that.deploymentId) &&

@@ -58,11 +58,11 @@ public class StatsInterceptor {
     private Monitor monitor;
     private final boolean enabled;
 
-    public StatsInterceptor(Class<?> componentClass) {
+    public StatsInterceptor(final Class<?> componentClass) {
 
         monitor = componentClass.getAnnotation(Monitor.class);
-        ClassFinder finder = new ClassFinder(componentClass);
-        for (Method method : finder.findAnnotatedMethods(Monitor.class)) {
+        final ClassFinder finder = new ClassFinder(componentClass);
+        for (final Method method : finder.findAnnotatedMethods(Monitor.class)) {
             map.put(method, new Stats(method, monitor));
         }
         enabled = monitor != null || map.size() > 0;
@@ -95,7 +95,7 @@ public class StatsInterceptor {
 //    private Method $n() throws NoSuchMethodException { return this.getClass().getMethod(\"$n\"); } @$n public void $n(InvocationContext invocationContext) throws Exception { record(invocationContext, $n()); }
 
     @AroundInvoke
-    public Object invoke(InvocationContext invocationContext) throws Exception {
+    public Object invoke(final InvocationContext invocationContext) throws Exception {
         return record(invocationContext, null);
     }
 
@@ -104,7 +104,7 @@ public class StatsInterceptor {
     }
 
     @PostConstruct
-    public void PostConstruct(InvocationContext invocationContext) throws Exception {
+    public void PostConstruct(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, PostConstruct());
     }
 
@@ -113,7 +113,7 @@ public class StatsInterceptor {
     }
 
     @PreDestroy
-    public void PreDestroy(InvocationContext invocationContext) throws Exception {
+    public void PreDestroy(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, PreDestroy());
     }
 
@@ -122,7 +122,7 @@ public class StatsInterceptor {
     }
 
     @PostActivate
-    public void PostActivate(InvocationContext invocationContext) throws Exception {
+    public void PostActivate(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, PostActivate());
     }
 
@@ -131,7 +131,7 @@ public class StatsInterceptor {
     }
 
     @PrePassivate
-    public void PrePassivate(InvocationContext invocationContext) throws Exception {
+    public void PrePassivate(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, PrePassivate());
     }
 
@@ -140,7 +140,7 @@ public class StatsInterceptor {
     }
 
     @AroundTimeout
-    public void AroundTimeout(InvocationContext invocationContext) throws Exception {
+    public void AroundTimeout(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, AroundTimeout());
     }
 
@@ -149,7 +149,7 @@ public class StatsInterceptor {
     }
 
     @AfterBegin
-    public void AfterBegin(InvocationContext invocationContext) throws Exception {
+    public void AfterBegin(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, AfterBegin());
     }
 
@@ -158,7 +158,7 @@ public class StatsInterceptor {
     }
 
     @BeforeCompletion
-    public void BeforeCompletion(InvocationContext invocationContext) throws Exception {
+    public void BeforeCompletion(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, BeforeCompletion());
     }
 
@@ -167,15 +167,15 @@ public class StatsInterceptor {
     }
 
     @AfterCompletion
-    public void AfterCompletion(InvocationContext invocationContext) throws Exception {
+    public void AfterCompletion(final InvocationContext invocationContext) throws Exception {
         record(invocationContext, AfterCompletion());
     }
 
-    private Object record(InvocationContext invocationContext, Method callback) throws Exception {
+    private Object record(final InvocationContext invocationContext, final Method callback) throws Exception {
         invocations.incrementAndGet();
 
-        Stats stats = enabled ? stats(invocationContext, callback): null;
-        long start = System.nanoTime();
+        final Stats stats = enabled ? stats(invocationContext, callback): null;
+        final long start = System.nanoTime();
         try{
             return invocationContext.proceed();
         } finally {
@@ -186,12 +186,12 @@ public class StatsInterceptor {
         }
     }
 
-    private long millis(long nanos) {
+    private long millis(final long nanos) {
         return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
     }
 
-    private Stats stats(InvocationContext invocationContext, Method callback) {
-        Method method = callback == null? invocationContext.getMethod(): callback;
+    private Stats stats(final InvocationContext invocationContext, final Method callback) {
+        final Method method = callback == null? invocationContext.getMethod(): callback;
 
         Stats stats = map.get(method);
         if (stats == null) {
@@ -213,18 +213,18 @@ public class StatsInterceptor {
         // Used as the prefix for the MBeanAttributeInfo
         private final String method;
 
-        public Stats(Method method, Monitor classAnnotation) {
-            Monitor methodAnnotation = method.getAnnotation(Monitor.class);
+        public Stats(final Method method, final Monitor classAnnotation) {
+            final Monitor methodAnnotation = method.getAnnotation(Monitor.class);
 
-            int window = methodAnnotation != null ? methodAnnotation.sample() : classAnnotation != null ? classAnnotation.sample() : 2000;
+            final int window = methodAnnotation != null ? methodAnnotation.sample() : classAnnotation != null ? classAnnotation.sample() : 2000;
 
             this.samples = new SynchronizedDescriptiveStatistics(window);
-            String s = ",";
+            final String s = ",";
 
-            StringBuilder sb = new StringBuilder(method.getName());
+            final StringBuilder sb = new StringBuilder(method.getName());
             sb.append("(");
-            Class<?>[] params = method.getParameterTypes();
-            for (Class<?> clazz : params) {
+            final Class<?>[] params = method.getParameterTypes();
+            for (final Class<?> clazz : params) {
                 sb.append(clazz.getSimpleName());
                 sb.append(s);
             }
@@ -235,7 +235,7 @@ public class StatsInterceptor {
         }
 
         @Managed
-        public void setSampleSize(int i) {
+        public void setSampleSize(final int i) {
             samples.setWindowSize(i);
         }
 
@@ -344,7 +344,7 @@ public class StatsInterceptor {
             return samples.getValues();
         }
 
-        public void record(long time) {
+        public void record(final long time) {
             count.incrementAndGet();
             samples.addValue(time);
         }

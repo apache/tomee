@@ -103,17 +103,17 @@ public class DataSourceBuilder extends Resource {
 
     }
 
-    public DataSourceBuilder id(String id) {
+    public DataSourceBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public DataSourceBuilder withServiceId(String serviceId) {
+    public DataSourceBuilder withServiceId(final String serviceId) {
         this.serviceId = serviceId;
         return this;
     }
 
-    public void setServiceId(String serviceId) {
+    public void setServiceId(final String serviceId) {
         this.serviceId = serviceId;
     }
 
@@ -121,12 +121,12 @@ public class DataSourceBuilder extends Resource {
         return serviceId;
     }
 
-    public DataSourceBuilder withDefinition(String definition) {
+    public DataSourceBuilder withDefinition(final String definition) {
         this.definition = definition;
         return this;
     }
 
-    public void setDefinition(String definition) {
+    public void setDefinition(final String definition) {
         this.definition = definition;
     }
 
@@ -134,12 +134,12 @@ public class DataSourceBuilder extends Resource {
         return definition;
     }
 
-    public DataSourceBuilder withJtaManaged(boolean jtaManaged) {
+    public DataSourceBuilder withJtaManaged(final boolean jtaManaged) {
         this.jtaManaged = jtaManaged;
         return this;
     }
 
-    public void setJtaManaged(boolean jtaManaged) {
+    public void setJtaManaged(final boolean jtaManaged) {
         this.jtaManaged = jtaManaged;
     }
 
@@ -147,12 +147,12 @@ public class DataSourceBuilder extends Resource {
         return jtaManaged;
     }
 
-    public DataSourceBuilder withJdbcDriver(String jdbcDriver) {
+    public DataSourceBuilder withJdbcDriver(final String jdbcDriver) {
         this.jdbcDriver = jdbcDriver;
         return this;
     }
 
-    public void setJdbcDriver(String jdbcDriver) {
+    public void setJdbcDriver(final String jdbcDriver) {
         this.jdbcDriver = jdbcDriver;
     }
 
@@ -160,12 +160,12 @@ public class DataSourceBuilder extends Resource {
         return jdbcDriver;
     }
 
-    public DataSourceBuilder withJdbcUrl(URI jdbcUrl) {
+    public DataSourceBuilder withJdbcUrl(final URI jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
         return this;
     }
 
-    public void setJdbcUrl(URI jdbcUrl) {
+    public void setJdbcUrl(final URI jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
     }
 
@@ -173,12 +173,12 @@ public class DataSourceBuilder extends Resource {
         return jdbcUrl;
     }
 
-    public DataSourceBuilder withUserName(String userName) {
+    public DataSourceBuilder withUserName(final String userName) {
         this.userName = userName;
         return this;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 
@@ -186,12 +186,12 @@ public class DataSourceBuilder extends Resource {
         return userName;
     }
 
-    public DataSourceBuilder withPassword(String password) {
+    public DataSourceBuilder withPassword(final String password) {
         this.password = password;
         return this;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -199,12 +199,12 @@ public class DataSourceBuilder extends Resource {
         return password;
     }
 
-    public DataSourceBuilder withPasswordCipher(String passwordCipher) {
+    public DataSourceBuilder withPasswordCipher(final String passwordCipher) {
         this.passwordCipher = passwordCipher;
         return this;
     }
 
-    public void setPasswordCipher(String passwordCipher) {
+    public void setPasswordCipher(final String passwordCipher) {
         this.passwordCipher = passwordCipher;
     }
 
@@ -212,12 +212,12 @@ public class DataSourceBuilder extends Resource {
         return passwordCipher;
     }
 
-    public DataSourceBuilder withConnectionProperties(String connectionProperties) {
+    public DataSourceBuilder withConnectionProperties(final String connectionProperties) {
         this.connectionProperties = connectionProperties;
         return this;
     }
 
-    public void setConnectionProperties(String connectionProperties) {
+    public void setConnectionProperties(final String connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
 
@@ -225,12 +225,12 @@ public class DataSourceBuilder extends Resource {
         return connectionProperties;
     }
 
-    public DataSourceBuilder withDefaultAutoCommit(boolean defaultAutoCommit) {
+    public DataSourceBuilder withDefaultAutoCommit(final boolean defaultAutoCommit) {
         this.defaultAutoCommit = defaultAutoCommit;
         return this;
     }
 
-    public void setDefaultAutoCommit(boolean defaultAutoCommit) {
+    public void setDefaultAutoCommit(final boolean defaultAutoCommit) {
         this.defaultAutoCommit = defaultAutoCommit;
     }
 
@@ -238,12 +238,12 @@ public class DataSourceBuilder extends Resource {
         return defaultAutoCommit;
     }
 
-    public DataSourceBuilder withDefaultReadOnly(String defaultReadOnly) {
+    public DataSourceBuilder withDefaultReadOnly(final String defaultReadOnly) {
         this.defaultReadOnly = defaultReadOnly;
         return this;
     }
 
-    public void setDefaultReadOnly(String defaultReadOnly) {
+    public void setDefaultReadOnly(final String defaultReadOnly) {
         this.defaultReadOnly = defaultReadOnly;
     }
 
@@ -251,12 +251,12 @@ public class DataSourceBuilder extends Resource {
         return defaultReadOnly;
     }
 
-    public DataSourceBuilder withInitialSize(int initialSize) {
+    public DataSourceBuilder withInitialSize(final int initialSize) {
         this.initialSize = initialSize;
         return this;
     }
 
-    public void setInitialSize(int initialSize) {
+    public void setInitialSize(final int initialSize) {
         this.initialSize = initialSize;
     }
 
@@ -264,12 +264,12 @@ public class DataSourceBuilder extends Resource {
         return initialSize;
     }
 
-    public DataSourceBuilder withMaxActive(int maxActive) {
+    public DataSourceBuilder withMaxActive(final int maxActive) {
         this.maxActive = maxActive;
         return this;
     }
 
-    public void setMaxActive(int maxActive) {
+    public void setMaxActive(final int maxActive) {
         this.maxActive = maxActive;
     }
 
@@ -277,12 +277,12 @@ public class DataSourceBuilder extends Resource {
         return maxActive;
     }
 
-    public DataSourceBuilder withMaxIdle(int maxIdle) {
+    public DataSourceBuilder withMaxIdle(final int maxIdle) {
         this.maxIdle = maxIdle;
         return this;
     }
 
-    public void setMaxIdle(int maxIdle) {
+    public void setMaxIdle(final int maxIdle) {
         this.maxIdle = maxIdle;
     }
 
@@ -290,12 +290,12 @@ public class DataSourceBuilder extends Resource {
         return maxIdle;
     }
 
-    public DataSourceBuilder withMinIdle(int minIdle) {
+    public DataSourceBuilder withMinIdle(final int minIdle) {
         this.minIdle = minIdle;
         return this;
     }
 
-    public void setMinIdle(int minIdle) {
+    public void setMinIdle(final int minIdle) {
         this.minIdle = minIdle;
     }
 
@@ -303,12 +303,12 @@ public class DataSourceBuilder extends Resource {
         return minIdle;
     }
 
-    public DataSourceBuilder withMaxWaitTime(Duration maxWaitTime) {
+    public DataSourceBuilder withMaxWaitTime(final Duration maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
         return this;
     }
 
-    public void setMaxWaitTime(Duration maxWaitTime) {
+    public void setMaxWaitTime(final Duration maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
     }
 
@@ -316,20 +316,20 @@ public class DataSourceBuilder extends Resource {
         return maxWaitTime;
     }
 
-    public DataSourceBuilder withMaxWaitTime(long time, TimeUnit unit) {
+    public DataSourceBuilder withMaxWaitTime(final long time, final TimeUnit unit) {
         return withMaxWaitTime(new Duration(time, unit));
     }
 
-    public void setMaxWaitTime(long time, TimeUnit unit) {
+    public void setMaxWaitTime(final long time, final TimeUnit unit) {
         setMaxWaitTime(new Duration(time, unit));
     }
 
-    public DataSourceBuilder withValidationQuery(String validationQuery) {
+    public DataSourceBuilder withValidationQuery(final String validationQuery) {
         this.validationQuery = validationQuery;
         return this;
     }
 
-    public void setValidationQuery(String validationQuery) {
+    public void setValidationQuery(final String validationQuery) {
         this.validationQuery = validationQuery;
     }
 
@@ -337,12 +337,12 @@ public class DataSourceBuilder extends Resource {
         return validationQuery;
     }
 
-    public DataSourceBuilder withTestOnBorrow(boolean testOnBorrow) {
+    public DataSourceBuilder withTestOnBorrow(final boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
         return this;
     }
 
-    public void setTestOnBorrow(boolean testOnBorrow) {
+    public void setTestOnBorrow(final boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
     }
 
@@ -350,12 +350,12 @@ public class DataSourceBuilder extends Resource {
         return testOnBorrow;
     }
 
-    public DataSourceBuilder withTestOnReturn(boolean testOnReturn) {
+    public DataSourceBuilder withTestOnReturn(final boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
         return this;
     }
 
-    public void setTestOnReturn(boolean testOnReturn) {
+    public void setTestOnReturn(final boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
     }
 
@@ -363,12 +363,12 @@ public class DataSourceBuilder extends Resource {
         return testOnReturn;
     }
 
-    public DataSourceBuilder withTestWhileIdle(boolean testWhileIdle) {
+    public DataSourceBuilder withTestWhileIdle(final boolean testWhileIdle) {
         this.testWhileIdle = testWhileIdle;
         return this;
     }
 
-    public void setTestWhileIdle(boolean testWhileIdle) {
+    public void setTestWhileIdle(final boolean testWhileIdle) {
         this.testWhileIdle = testWhileIdle;
     }
 
@@ -376,12 +376,12 @@ public class DataSourceBuilder extends Resource {
         return testWhileIdle;
     }
 
-    public DataSourceBuilder withTimeBetweenEvictionRuns(Duration timeBetweenEvictionRuns) {
+    public DataSourceBuilder withTimeBetweenEvictionRuns(final Duration timeBetweenEvictionRuns) {
         this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
         return this;
     }
 
-    public void setTimeBetweenEvictionRuns(Duration timeBetweenEvictionRuns) {
+    public void setTimeBetweenEvictionRuns(final Duration timeBetweenEvictionRuns) {
         this.timeBetweenEvictionRuns = timeBetweenEvictionRuns;
     }
 
@@ -389,20 +389,20 @@ public class DataSourceBuilder extends Resource {
         return timeBetweenEvictionRuns;
     }
 
-    public DataSourceBuilder withTimeBetweenEvictionRuns(long time, TimeUnit unit) {
+    public DataSourceBuilder withTimeBetweenEvictionRuns(final long time, final TimeUnit unit) {
         return withTimeBetweenEvictionRuns(new Duration(time, unit));
     }
 
-    public void setTimeBetweenEvictionRuns(long time, TimeUnit unit) {
+    public void setTimeBetweenEvictionRuns(final long time, final TimeUnit unit) {
         setTimeBetweenEvictionRuns(new Duration(time, unit));
     }
 
-    public DataSourceBuilder withNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
+    public DataSourceBuilder withNumTestsPerEvictionRun(final int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
         return this;
     }
 
-    public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
+    public void setNumTestsPerEvictionRun(final int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
     }
 
@@ -410,12 +410,12 @@ public class DataSourceBuilder extends Resource {
         return numTestsPerEvictionRun;
     }
 
-    public DataSourceBuilder withMinEvictableIdleTime(Duration minEvictableIdleTime) {
+    public DataSourceBuilder withMinEvictableIdleTime(final Duration minEvictableIdleTime) {
         this.minEvictableIdleTime = minEvictableIdleTime;
         return this;
     }
 
-    public void setMinEvictableIdleTime(Duration minEvictableIdleTime) {
+    public void setMinEvictableIdleTime(final Duration minEvictableIdleTime) {
         this.minEvictableIdleTime = minEvictableIdleTime;
     }
 
@@ -423,20 +423,20 @@ public class DataSourceBuilder extends Resource {
         return minEvictableIdleTime;
     }
 
-    public DataSourceBuilder withMinEvictableIdleTime(long time, TimeUnit unit) {
+    public DataSourceBuilder withMinEvictableIdleTime(final long time, final TimeUnit unit) {
         return withMinEvictableIdleTime(new Duration(time, unit));
     }
 
-    public void setMinEvictableIdleTime(long time, TimeUnit unit) {
+    public void setMinEvictableIdleTime(final long time, final TimeUnit unit) {
         setMinEvictableIdleTime(new Duration(time, unit));
     }
 
-    public DataSourceBuilder withPoolPreparedStatements(boolean poolPreparedStatements) {
+    public DataSourceBuilder withPoolPreparedStatements(final boolean poolPreparedStatements) {
         this.poolPreparedStatements = poolPreparedStatements;
         return this;
     }
 
-    public void setPoolPreparedStatements(boolean poolPreparedStatements) {
+    public void setPoolPreparedStatements(final boolean poolPreparedStatements) {
         this.poolPreparedStatements = poolPreparedStatements;
     }
 
@@ -444,12 +444,12 @@ public class DataSourceBuilder extends Resource {
         return poolPreparedStatements;
     }
 
-    public DataSourceBuilder withMaxOpenPreparedStatements(int maxOpenPreparedStatements) {
+    public DataSourceBuilder withMaxOpenPreparedStatements(final int maxOpenPreparedStatements) {
         this.maxOpenPreparedStatements = maxOpenPreparedStatements;
         return this;
     }
 
-    public void setMaxOpenPreparedStatements(int maxOpenPreparedStatements) {
+    public void setMaxOpenPreparedStatements(final int maxOpenPreparedStatements) {
         this.maxOpenPreparedStatements = maxOpenPreparedStatements;
     }
 
@@ -457,12 +457,12 @@ public class DataSourceBuilder extends Resource {
         return maxOpenPreparedStatements;
     }
 
-    public DataSourceBuilder withAccessToUnderlyingConnectionAllowed(boolean accessToUnderlyingConnectionAllowed) {
+    public DataSourceBuilder withAccessToUnderlyingConnectionAllowed(final boolean accessToUnderlyingConnectionAllowed) {
         this.accessToUnderlyingConnectionAllowed = accessToUnderlyingConnectionAllowed;
         return this;
     }
 
-    public void setAccessToUnderlyingConnectionAllowed(boolean accessToUnderlyingConnectionAllowed) {
+    public void setAccessToUnderlyingConnectionAllowed(final boolean accessToUnderlyingConnectionAllowed) {
         this.accessToUnderlyingConnectionAllowed = accessToUnderlyingConnectionAllowed;
     }
 
@@ -470,12 +470,12 @@ public class DataSourceBuilder extends Resource {
         return accessToUnderlyingConnectionAllowed;
     }
 
-    public DataSourceBuilder withIgnoreDefaultValues(boolean ignoreDefaultValues) {
+    public DataSourceBuilder withIgnoreDefaultValues(final boolean ignoreDefaultValues) {
         this.ignoreDefaultValues = ignoreDefaultValues;
         return this;
     }
 
-    public void setIgnoreDefaultValues(boolean ignoreDefaultValues) {
+    public void setIgnoreDefaultValues(final boolean ignoreDefaultValues) {
         this.ignoreDefaultValues = ignoreDefaultValues;
     }
 

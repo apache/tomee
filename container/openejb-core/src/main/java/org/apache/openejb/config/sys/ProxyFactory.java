@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 @XmlRootElement(name = "ProxyFactory")
 public class ProxyFactory extends AbstractService {
-    public ProxyFactory(String id) {
+    public ProxyFactory(final String id) {
         super(id);
     }
 
-    public ProxyFactory(String id, String type, String provider) {
+    public ProxyFactory(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

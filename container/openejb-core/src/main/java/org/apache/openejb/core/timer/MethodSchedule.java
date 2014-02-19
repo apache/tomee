@@ -30,7 +30,7 @@ public class MethodSchedule {
 
     private final List<ScheduleData> schedules;
 
-    public MethodSchedule(Method method, List<ScheduleData> schedules) {
+    public MethodSchedule(final Method method, final List<ScheduleData> schedules) {
         this.method = method;
         this.schedules = schedules;
     }

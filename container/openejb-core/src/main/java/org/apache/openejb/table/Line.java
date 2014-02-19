@@ -28,7 +28,7 @@ public class Line {
     private String[] columns;
     private String cr = System.getProperty("line.separator");
 
-    public Line(String... columns) {
+    public Line(final String... columns) {
         this.columns = columns;
     }
 
@@ -40,11 +40,11 @@ public class Line {
         print(max, out, false);
     }
 
-    public void print(final int[] max, final PrintStream out, boolean header) {
+    public void print(final int[] max, final PrintStream out, final boolean header) {
         final StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < max.length; i++) {
             sb.append(EMPTY_CHAR);
-            int spaces = max[i] - columns[i].length();
+            final int spaces = max[i] - columns[i].length();
             for (int k = 0; k < spaces / 2; k++) {
                 sb.append(EMPTY_CHAR);
             }

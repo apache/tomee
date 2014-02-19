@@ -36,7 +36,7 @@ public class InitialContextBuilder extends JndiProvider {
 
     }
 
-    public InitialContextBuilder id(String id) {
+    public InitialContextBuilder id(final String id) {
         setId(id);
         return this;
     }

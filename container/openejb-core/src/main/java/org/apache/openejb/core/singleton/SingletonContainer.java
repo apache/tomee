@@ -254,7 +254,7 @@ public class SingletonContainer implements RpcContainer {
                                                                                    instance.interceptors);
                     returnValue = interceptorStack.invoke(args);
                 }
-            } catch (Throwable e) {// handle reflection exception
+            } catch (final Throwable e) {// handle reflection exception
                 final ExceptionType type = beanContext.getExceptionType(e);
                 if (type == ExceptionType.SYSTEM) {
                     /* System Exception ****************************/
@@ -311,7 +311,7 @@ public class SingletonContainer implements RpcContainer {
             // try to get a lock within the specified period. 
             try {
                 lockAcquired = lock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException("Unable to get " +
                                                                                               (read ? "read" : "write") +
                                                                                               " lock within specified time on '" +

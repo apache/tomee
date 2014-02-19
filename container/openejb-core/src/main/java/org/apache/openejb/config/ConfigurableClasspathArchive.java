@@ -50,7 +50,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         this(loader, false, urls);
     }
 
-    public ConfigurableClasspathArchive(final ClassLoader loader, boolean forceDescriptor, final Iterable<URL> urls) {
+    public ConfigurableClasspathArchive(final ClassLoader loader, final boolean forceDescriptor, final Iterable<URL> urls) {
         this(new FakeModule(loader), forceDescriptor, urls);
     }
 
@@ -58,27 +58,27 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
         this(new FakeModule(loader), Arrays.asList(url));
     }
 
-    public ConfigurableClasspathArchive(final Module module, boolean forceDescriptor, final Iterable<URL> urls) {
+    public ConfigurableClasspathArchive(final Module module, final boolean forceDescriptor, final Iterable<URL> urls) {
         super(archive(module, urls, forceDescriptor));
     }
 
-    public static List<Archive> archive(final Module module, final Iterable<URL> urls, boolean forceDescriptor) {
+    public static List<Archive> archive(final Module module, final Iterable<URL> urls, final boolean forceDescriptor) {
         final List<Archive> archives = new ArrayList<Archive>();
-        for (URL location : urls) {
+        for (final URL location : urls) {
             try {
                 archives.add(archive(module, location, forceDescriptor));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignored
             }
         }
         return archives;
     }
 
-    public static Archive archive(final Module module, final URL location, boolean forceDescriptor) {
+    public static Archive archive(final Module module, final URL location, final boolean forceDescriptor) {
         final ClassLoader loader = module.getClassLoader();
         final String name = "META-INF/" + name();
         try {
-            URL scanXml = new URLClassLoader(new URL[] { location }, new EmptyResourcesClassLoader()).getResource(name);
+            final URL scanXml = new URLClassLoader(new URL[] { location }, new EmptyResourcesClassLoader()).getResource(name);
             if (scanXml == null && !forceDescriptor) {
                 return ClasspathArchive.archive(loader, location);
             } else if (scanXml == null) {
@@ -96,7 +96,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
                 return  packageArchive;
             }
             return classesArchive;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (forceDescriptor) {
                 return new ClassesArchive();
             }
@@ -117,7 +117,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
 
     private static Filter filters(final Set<String> packageNames) {
         final List<Filter> filters = new ArrayList<Filter>();
-        for (String packageName : packageNames) {
+        for (final String packageName : packageNames) {
             filters.add(new PackageFilter(packageName));
         }
         return new FilterList(filters);
@@ -126,7 +126,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     public static Archive classesArchive(final Set<String> packages, final Set<String> classnames, final ClassLoader loader) {
         Class<?>[] classes = new Class<?>[classnames.size()];
         int i = 0;
-        for (String clazz : classnames) {
+        for (final String clazz : classnames) {
             // skip classes managed by package filtering
             if (packages != null && clazzInPackage(packages, clazz)) {
                 continue;
@@ -134,7 +134,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
 
             try {
                 classes[i++] = loader.loadClass(clazz);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // ignored
             }
         }
@@ -149,7 +149,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     private static boolean clazzInPackage(final Collection<String> packagename, final String clazz) {
-        for (String str : packagename) {
+        for (final String str : packagename) {
             if (clazz.startsWith(str)) {
                 return true;
             }

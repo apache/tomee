@@ -20,7 +20,7 @@ package org.apache.openejb.config.provider;
 * @version $Rev$ $Date$
 */
 public class MalformedProviderNameException extends IllegalArgumentException {
-    public MalformedProviderNameException(String s) {
+    public MalformedProviderNameException(final String s) {
         super(s);
     }
 }

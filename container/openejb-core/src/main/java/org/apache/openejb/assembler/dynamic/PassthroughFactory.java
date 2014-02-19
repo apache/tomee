@@ -21,11 +21,11 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import java.util.Properties;
 
 public class PassthroughFactory {
-    public static Object create(Object object) {
+    public static Object create(final Object object) {
         return object;
     }
 
-    public static void add(ServiceInfo info, Object object) {
+    public static void add(final ServiceInfo info, final Object object) {
         info.className = PassthroughFactory.class.getName();
         info.constructorArgs.add("object");
         info.factoryMethod = "create";

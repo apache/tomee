@@ -28,15 +28,15 @@ public class InternalErrorException extends RuntimeException {
         super();
     }
 
-    public InternalErrorException(String message) {
+    public InternalErrorException(final String message) {
         super(message);
     }
 
-    public InternalErrorException(String message, Throwable cause) {
+    public InternalErrorException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public InternalErrorException(Throwable cause) {
+    public InternalErrorException(final Throwable cause) {
         super(cause);
     }
 }

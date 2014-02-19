@@ -48,12 +48,12 @@ public class CheckClassLoading extends ValidationBase {
     protected AppModule appModule;
 
     @Override
-    public void validate(AppModule appModule) {
+    public void validate(final AppModule appModule) {
         this.appModule = appModule;
         module = appModule;
         check(appModule.getClassLoader());
 
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             module = webModule;
             validate(webModule);
         }
@@ -62,12 +62,12 @@ public class CheckClassLoading extends ValidationBase {
 
     private void check(final ClassLoader classLoader) {
         UrlSet set;
-        UrlSet openejbSet;
+        final UrlSet openejbSet;
         try {
             openejbSet = new UrlSet(OpenEJB.class.getClassLoader());
             set = new UrlSet(classLoader);
             set = set.exclude(openejbSet);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             warn(module.getModuleId() + " application", e.getMessage());
             return;
         }
@@ -78,22 +78,22 @@ public class CheckClassLoading extends ValidationBase {
         final Classes fcl = new Classes(currentUrls.toArray(new URL[currentUrls.size()]));
         final Classes scl = new Classes(parentUrls.toArray(new URL[parentUrls.size()]));
         final Collection<DiffItem> diffs = intersection(fcl, scl);
-        for (DiffItem diff : diffs) {
+        for (final DiffItem diff : diffs) {
             warn(module.getModuleId() + " application", diff.toScreen());
         }
     }
 
-    private void validate(WebModule webModule) {
+    private void validate(final WebModule webModule) {
         check(webModule.getClassLoader());
     }
 
     @Override
-    public void validate(ClientModule clientModule) {
+    public void validate(final ClientModule clientModule) {
         check(clientModule.getClassLoader());
     }
 
     @Override
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
         check(ejbModule.getClassLoader());
     }
 
@@ -111,26 +111,26 @@ public class CheckClassLoading extends ValidationBase {
 
             // for all archives list all files
             // all is sorted by the natural String order
-            for (URL archive : urls) {
+            for (final URL archive : urls) {
                 try {
                     final File file = URLs.toFile(archive);
                     final List<String> files = JarUtil.listFiles(file, CLASS_EXTENSION);
                     Collections.sort(files);
                     fileByArchive.put(file.getName(), files);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // ignored
                 }
             }
         }
     }
 
-    public static Collection<DiffItem> intersection(Classes cl1, Classes cl2) {
+    public static Collection<DiffItem> intersection(final Classes cl1, final Classes cl2) {
         final List<DiffItem> diff = new ArrayList<DiffItem>();
-        for (Map.Entry<String, Collection<String>> entry1 : cl1.fileByArchive.entrySet()) {
-            for (Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
-                Collection<String> v1 = entry1.getValue();
-                Collection<String> v2 = entry2.getValue();
-                Collection<String> inter = CollectionUtils.intersection(v1, v2);
+        for (final Map.Entry<String, Collection<String>> entry1 : cl1.fileByArchive.entrySet()) {
+            for (final Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
+                final Collection<String> v1 = entry1.getValue();
+                final Collection<String> v2 = entry2.getValue();
+                final Collection<String> inter = CollectionUtils.intersection(v1, v2);
 
                 if (inter.size() == 0) {
                     continue;
@@ -160,19 +160,19 @@ public class CheckClassLoading extends ValidationBase {
             // no-op
         }
 
-        public static List<String> listFiles(File archive, String[] extensions) throws IOException {
+        public static List<String> listFiles(final File archive, final String[] extensions) throws IOException {
             if (!archive.exists() || !archive.isFile()) {
                 throw new IllegalArgumentException(archive.getPath() + " is not a file");
             }
 
-            List<String> files = new ArrayList<String>();
+            final List<String> files = new ArrayList<String>();
 
-            JarFile file = new JarFile(archive);
-            Enumeration<JarEntry> entries = file.entries();
+            final JarFile file = new JarFile(archive);
+            final Enumeration<JarEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String name = entry.getName();
-                for (String ext : extensions) {
+                final JarEntry entry = entries.nextElement();
+                final String name = entry.getName();
+                for (final String ext : extensions) {
                     if (name.endsWith(ext)) {
                         if (CLASS_EXT.equals(ext)) {
                             files.add(name.replace("/", "."));
@@ -193,7 +193,7 @@ public class CheckClassLoading extends ValidationBase {
         private String file1;
         private String file2;
 
-        public DiffItem(Collection<String> files, String file1, String file2) {
+        public DiffItem(final Collection<String> files, final String file1, final String file2) {
             this.files = files;
             this.file1 = file1;
             this.file2 = file2;
@@ -218,7 +218,7 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     public static class ContainingItem extends DiffItem {
-        public ContainingItem(Collection<String> inter, String dir1, String dir2) {
+        public ContainingItem(final Collection<String> inter, final String dir1, final String dir2) {
             super(inter, dir1, dir2);
         }
 
@@ -229,7 +229,7 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     public static class IncludedItem extends DiffItem {
-        public IncludedItem(Collection<String> files, String file1, String file2) {
+        public IncludedItem(final Collection<String> files, final String file1, final String file2) {
             super(files, file1, file2);
         }
 
@@ -240,7 +240,7 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     public static class SameItem extends DiffItem {
-        public SameItem(Collection<String> files, String file1, String file2) {
+        public SameItem(final Collection<String> files, final String file1, final String file2) {
             super(files, file1, file2);
         }
 
@@ -267,9 +267,9 @@ public class CheckClassLoading extends ValidationBase {
         }
 
         @Override
-        public int compare(DiffItem o1, DiffItem o2) {
-            int index1 = ORDER.get(o1.getClass());
-            int index2 = ORDER.get(o2.getClass());
+        public int compare(final DiffItem o1, final DiffItem o2) {
+            final int index1 = ORDER.get(o1.getClass());
+            final int index2 = ORDER.get(o2.getClass());
             if (index1 == index2) {
                 return o1.getFile1().compareTo(o1.getFile1());
             }

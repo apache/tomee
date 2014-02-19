@@ -32,7 +32,7 @@ public class PojoExternalization extends PojoSerialization implements Externaliz
         super();
     }
 
-    public PojoExternalization(Object object) {
+    public PojoExternalization(final Object object) {
         super(object);
     }
 
@@ -40,11 +40,11 @@ public class PojoExternalization extends PojoSerialization implements Externaliz
         return super.readResolve();
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         read(in);
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(final ObjectOutput out) throws IOException {
         write(out);
     }
 }

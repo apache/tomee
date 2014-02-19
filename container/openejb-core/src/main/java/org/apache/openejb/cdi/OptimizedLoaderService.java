@@ -45,17 +45,17 @@ public class OptimizedLoaderService implements LoaderService {
         this(new DefaultLoaderService());
     }
 
-    public OptimizedLoaderService(LoaderService loaderService) {
+    public OptimizedLoaderService(final LoaderService loaderService) {
         this.loaderService = loaderService;
     }
 
     @Override
-    public <T> List<T> load(Class<T> serviceType) {
+    public <T> List<T> load(final Class<T> serviceType) {
         return load(serviceType, Thread.currentThread().getContextClassLoader());
     }
 
     @Override
-    public <T> List<T> load(Class<T> serviceType, ClassLoader classLoader) {
+    public <T> List<T> load(final Class<T> serviceType, final ClassLoader classLoader) {
         // ServiceLoader is expensive (can take up to a half second).  This is an optimization
         if (OpenWebBeansPlugin.class.equals(serviceType)) return loadWebBeansPlugins(classLoader);
 
@@ -64,10 +64,10 @@ public class OptimizedLoaderService implements LoaderService {
         if (Extension.class.equals(serviceType)) {
             final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
             if (additional != null) {
-                for (String name : additional) {
+                for (final String name : additional) {
                     try {
                         list.add((T) classLoader.loadClass(name).newInstance());
-                    } catch (Exception ignored) {
+                    } catch (final Exception ignored) {
                         // no-op
                     }
                 }
@@ -85,7 +85,7 @@ public class OptimizedLoaderService implements LoaderService {
                 "org.apache.webbeans.jsf.plugin.OpenWebBeansJsfPlugin"
         };
 
-        List<T> list = new ArrayList<T>();
+        final List<T> list = new ArrayList<T>();
         for (final String name : knownPlugins) {
             final Class<T> clazz;
             try {

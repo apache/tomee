@@ -90,7 +90,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     public SimpleCache() {
     }
 
-    public SimpleCache(CacheListener<V> listener, PassivationStrategy passivator, int capacity, int bulkPassivate, Duration timeOut) {
+    public SimpleCache(final CacheListener<V> listener, final PassivationStrategy passivator, final int capacity, final int bulkPassivate, final Duration timeOut) {
         this.listener = listener;
         this.passivator = passivator;
         this.capacity = capacity;
@@ -126,8 +126,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     private synchronized void initScheduledExecutorService() {
         if (executor == null) {
             executor = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-                public Thread newThread(Runnable runable) {
-                    Thread t = new Thread(runable, "Stateful cache");
+                public Thread newThread(final Runnable runable) {
+                    final Thread t = new Thread(runable, "Stateful cache");
                     t.setDaemon(true);
                     return t;
                 }
@@ -139,7 +139,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return listener;
     }
 
-    public synchronized void setListener(CacheListener<V> listener) {
+    public synchronized void setListener(final CacheListener<V> listener) {
         this.listener = listener;
     }
 
@@ -147,11 +147,11 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return passivator;
     }
 
-    public synchronized void setPassivator(PassivationStrategy passivator) {
+    public synchronized void setPassivator(final PassivationStrategy passivator) {
         this.passivator = passivator;
     }
 
-    public synchronized void setPassivator(Class<? extends PassivationStrategy> passivatorClass) throws Exception {
+    public synchronized void setPassivator(final Class<? extends PassivationStrategy> passivatorClass) throws Exception {
         this.passivator = passivatorClass.newInstance();
     }
 
@@ -159,12 +159,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return capacity;
     }
 
-    public synchronized void setCapacity(int capacity) {
+    public synchronized void setCapacity(final int capacity) {
         this.capacity = capacity;
     }
 
     // Old configurations use "PoolSize" to configure max cache size
-    public synchronized void setPoolSize(int capacity) {
+    public synchronized void setPoolSize(final int capacity) {
         this.capacity = capacity;
     }
 
@@ -172,7 +172,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return bulkPassivate;
     }
 
-    public synchronized void setBulkPassivate(int bulkPassivate) {
+    public synchronized void setBulkPassivate(final int bulkPassivate) {
         this.bulkPassivate = bulkPassivate;
     }
 
@@ -196,7 +196,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         this.timeOut = ms(timeOut, TimeUnit.MINUTES);
     }
 
-    public void setScheduledExecutorService(ScheduledExecutorService executor) {
+    public void setScheduledExecutorService(final ScheduledExecutorService executor) {
         this.executor = executor;
     }
     
@@ -212,7 +212,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         return frequency;
     }
     
-    public void add(K key, V value) {
+    public void add(final K key, final V value) {
         // find the existing entry
         Entry entry = cache.get(key);
         if (entry != null) {
@@ -233,7 +233,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         cache.put(key, entry);
     }
 
-    public V checkOut(K key, boolean loadEntryIfNotFound) throws Exception {
+    public V checkOut(final K key, final boolean loadEntryIfNotFound) throws Exception {
         // attempt (up to 10 times) to obtain the entry from the cache
         for (int i = 0; i < 10; i++) {
             // find the entry
@@ -280,16 +280,16 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         }
 
         // something is really messed up with this entry, try to cleanup before throwing an exception
-        Entry entry = cache.remove(key);
+        final Entry entry = cache.remove(key);
         if (entry != null) {
             lru.remove(entry);
         }
         throw new OpenEJBRuntimeException("Cache is corrupted: the entry " + key + " in the Map 'cache' is in state PASSIVATED");
     }
 
-    public void checkIn(K key) {
+    public void checkIn(final K key) {
         // find the entry
-        Entry entry = cache.get(key);
+        final Entry entry = cache.get(key);
         if (entry == null) {
             return;
         }
@@ -329,9 +329,9 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         }
     }
 
-    public V remove(K key) {
+    public V remove(final K key) {
         // find the entry
-        Entry entry = cache.get(key);
+        final Entry entry = cache.get(key);
         if (entry == null) {
             return null;
         }
@@ -354,9 +354,9 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         }
     }
 
-    public void removeAll(CacheFilter<V> filter) {
-        for (Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext();) {
-            Entry entry = iterator.next();
+    public void removeAll(final CacheFilter<V> filter) {
+        for (final Iterator<Entry> iterator = cache.values().iterator(); iterator.hasNext();) {
+            final Entry entry = iterator.next();
 
             entry.lock.lock();
             try {
@@ -378,14 +378,14 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     }
 
     public void processLRU() {
-        CacheListener<V> listener = this.getListener();
+        final CacheListener<V> listener = this.getListener();
 
         // check for timed out entries
         // go through all lru entries since even though entries are in
         // least recently used order they might have different timeouts.
-        Iterator<Entry> iterator = lru.iterator();
+        final Iterator<Entry> iterator = lru.iterator();
         while (iterator.hasNext()) {
-            Entry entry = iterator.next();
+            final Entry entry = iterator.next();
             entry.lock.lock();
             try {
                 switch (entry.getState()) {
@@ -414,7 +414,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     if (listener != null) {
                         try {
                             listener.timedOut(entry.getValue());
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             logger.error("An unexpected exception occured from timedOut callback", e);
                         }
                     }
@@ -427,13 +427,13 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         // if there are to many beans in the lru, shink is by on bulkPassivate size
         // bulkPassivate size is just an estimate, as locked or timed out beans are skipped
         if (lru.size() >= getCapacity()) {
-            Map<K, V> valuesToStore = new LinkedHashMap<K, V>();
-            List<Entry> entries = new ArrayList<Entry>();
+            final Map<K, V> valuesToStore = new LinkedHashMap<K, V>();
+            final List<Entry> entries = new ArrayList<Entry>();
 
             int bulkPassivate = getBulkPassivate();
             if (bulkPassivate < 1) bulkPassivate = 1;
             for (int i = 0; i < bulkPassivate; i++) {
-                Entry entry = lru.poll();
+                final Entry entry = lru.poll();
                 if (entry == null) {
                     // lru is empty
                     break;
@@ -474,7 +474,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         if (listener != null) {
                             try {
                                 listener.timedOut(entry.getValue());
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 logger.error("An unexpected exception occured from timedOut callback", e);
                             }
                         }
@@ -495,7 +495,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                 try {
                     storeEntries(valuesToStore);
                 } finally {
-                    for (Entry entry : entries) {
+                    for (final Entry entry : entries) {
                         // release the extra passivation lock
                         entry.lock.unlock();
                     }
@@ -504,8 +504,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         }
     }
 
-    private Entry loadEntry(K key) throws Exception {
-        PassivationStrategy passivator = getPassivator();
+    private Entry loadEntry(final K key) throws Exception {
+        final PassivationStrategy passivator = getPassivator();
         if (passivator == null) {
             return null;
         }
@@ -513,7 +513,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         V value = null;
         try {
             value = (V) passivator.activate(key);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("An unexpected exception occured while reading entries from disk", e);
         }
 
@@ -521,24 +521,24 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             return null;
         }
 
-        CacheListener<V> listener = this.getListener();
+        final CacheListener<V> listener = this.getListener();
         if (listener != null) {
             listener.afterLoad(value);
         }
-        Entry entry = new Entry(key, value, EntryState.AVAILABLE);
+        final Entry entry = new Entry(key, value, EntryState.AVAILABLE);
         cache.put(key, entry);
         return entry;
     }
 
-    private void storeEntries(Map<K, V> entriesToStore) {
-        CacheListener<V> listener = this.getListener();
-        for (Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<K, V> entry = iterator.next();
+    private void storeEntries(final Map<K, V> entriesToStore) {
+        final CacheListener<V> listener = this.getListener();
+        for (final Iterator<Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
+            final Map.Entry<K, V> entry = iterator.next();
 
             if (listener != null) {
                 try {
                     listener.beforeStore(entry.getValue());
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     iterator.remove();
                     logger.error("An unexpected exception occured from beforeStore callback", e);
                 }
@@ -546,14 +546,14 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
         }
 
-        PassivationStrategy passivator = getPassivator();
+        final PassivationStrategy passivator = getPassivator();
         if (passivator == null) {
             return;
         }
 
         try {
             passivator.passivate(entriesToStore);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("An unexpected exception occured while writting the entries to disk", e);
         }
     }
@@ -570,13 +570,13 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         private long lastAccess;
         private long timeOut;
 
-        private Entry(K key, V value, EntryState state) {
+        private Entry(final K key, final V value, final EntryState state) {
             this.key = key;
             this.value = value;
             this.state = state;
             
             if (value instanceof Cache.TimeOut) {
-                Duration duration = ((Cache.TimeOut) value).getTimeOut();
+                final Duration duration = ((Cache.TimeOut) value).getTimeOut();
                 this.timeOut = duration != null ? duration.getTime(TimeUnit.MILLISECONDS) : getTimeOut();
             } else {
                 this.timeOut = getTimeOut();
@@ -600,7 +600,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             return state;
         }
 
-        private void setState(EntryState state) {
+        private void setState(final EntryState state) {
             assertLockHeld();
             this.state = state;
         }
@@ -613,7 +613,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             } else if (timeOut == 0) {
                 return true;
             } else {
-                long now = System.currentTimeMillis();
+                final long now = System.currentTimeMillis();
                 return now - lastAccess > timeOut;
             }
         }

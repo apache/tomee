@@ -41,7 +41,7 @@ import javax.transaction.TransactionManager;
 public class TxSupports extends JtaTransactionPolicy {
     private final Transaction clientTx;
 
-    public TxSupports(TransactionManager transactionManager) throws SystemException {
+    public TxSupports(final TransactionManager transactionManager) throws SystemException {
         super(TransactionType.Supports, transactionManager);
 
         clientTx = getTransaction();

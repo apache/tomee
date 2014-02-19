@@ -32,11 +32,11 @@ public final class W3CEndpointReference extends EndpointReference {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
-    public W3CEndpointReference(Source source) {
+    public W3CEndpointReference(final Source source) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
-    public void writeTo(Result result) {
+    public void writeTo(final Result result) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }    
 }

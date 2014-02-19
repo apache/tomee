@@ -40,7 +40,7 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     private final Operation operation;
 
-    public ReflectionInvocationContext(Operation operation, List<Interceptor> interceptors, Object target, Method method, Object... parameters) {
+    public ReflectionInvocationContext(final Operation operation, final List<Interceptor> interceptors, final Object target, final Method method, final Object... parameters) {
         if (operation == null) throw new NullPointerException("operation is null");
         if (interceptors == null) throw new NullPointerException("interceptors is null");
         if (target == null) throw new NullPointerException("target is null");
@@ -94,7 +94,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         return m;
     }
 
-    public void setParameters(Object[] parameters) {
+    public void setParameters(final Object[] parameters) {
         if (operation.isCallback() && !operation.equals(Operation.TIMEOUT)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
@@ -103,8 +103,8 @@ public class ReflectionInvocationContext implements InvocationContext {
             throw new IllegalArgumentException("Expected " + this.parameters.length + " parameters, but only got " + parameters.length + " parameters");
         }
         for (int i = 0; i < parameters.length; i++) {
-            Object parameter = parameters[i];
-            Class<?> parameterType = parameterTypes[i];
+            final Object parameter = parameters[i];
+            final Class<?> parameterType = parameterTypes[i];
 
             if (parameter == null) {
                 if (parameterType.isPrimitive()) {
@@ -113,8 +113,8 @@ public class ReflectionInvocationContext implements InvocationContext {
                 }
             } else {            
                 //check that types are applicable
-                Class<?> actual = Classes.deprimitivize(parameterType);
-                Class<?> given  = Classes.deprimitivize(parameter.getClass());
+                final Class<?> actual = Classes.deprimitivize(parameterType);
+                final Class<?> given  = Classes.deprimitivize(parameter.getClass());
 
                 if (!actual.isAssignableFrom(given)) {
                     throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
@@ -131,9 +131,9 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     private Invocation next() {
         if (interceptors.hasNext()) {
-            Interceptor interceptor = interceptors.next();
-            Object nextInstance = interceptor.getInstance();
-            Method nextMethod = interceptor.getMethod();
+            final Interceptor interceptor = interceptors.next();
+            final Object nextInstance = interceptor.getInstance();
+            final Method nextMethod = interceptor.getMethod();
 
             if (nextMethod.getParameterTypes().length == 1 && nextMethod.getParameterTypes()[0] == InvocationContext.class) {
                 return new InterceptorInvocation(nextInstance, nextMethod, this);
@@ -143,7 +143,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         } else if (method != null) {
             //EJB 3.1, it is allowed that timeout method does not have parameter Timer.class,
             //However, while invoking the timeout method, the timer value is passed, as it is also required by InnvocationContext.getTimer() method
-            Object[] methodParameters;
+            final Object[] methodParameters;
             if (operation.equals(Operation.TIMEOUT) && method.getParameterTypes().length == 0) {
                 methodParameters = new Object[0];
             } else {
@@ -160,9 +160,9 @@ public class ReflectionInvocationContext implements InvocationContext {
         // out so stepping through a large stack in a debugger can be done quickly.
         // Simply put one break point on 'next.invoke()' or one inside that method.
         try {
-            Invocation next = next();
+            final Invocation next = next();
             return next.invoke();
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw unwrapInvocationTargetException(e);
         }
     }
@@ -172,14 +172,14 @@ public class ReflectionInvocationContext implements InvocationContext {
         private final Object[] args;
         private final Object target;
 
-        public Invocation(Object target, Method method, Object[] args) {
+        public Invocation(final Object target, final Method method, final Object[] args) {
             this.target = target;
             this.method = method;
             this.args = args;
         }
         public Object invoke() throws Exception {
             
-            Object value = method.invoke(target, args);
+            final Object value = method.invoke(target, args);
             return value;
         }
 
@@ -190,13 +190,13 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     private static class BeanInvocation extends Invocation {
-        public BeanInvocation(Object target, Method method, Object[] args) {
+        public BeanInvocation(final Object target, final Method method, final Object[] args) {
             super(target, method, args);
         }
     }
 
     private static class InterceptorInvocation extends Invocation {
-        public InterceptorInvocation(Object target, Method method, InvocationContext invocationContext) {
+        public InterceptorInvocation(final Object target, final Method method, final InvocationContext invocationContext) {
             super(target, method, new Object[] {invocationContext});
         }
     }
@@ -204,7 +204,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     private static class LifecycleInvocation extends Invocation {
         private final InvocationContext invocationContext;
 
-        public LifecycleInvocation(Object target, Method method, InvocationContext invocationContext, Object[] args) {
+        public LifecycleInvocation(final Object target, final Method method, final InvocationContext invocationContext, final Object[] args) {
             super(target, method, args);
             this.invocationContext = invocationContext;
         }
@@ -214,7 +214,7 @@ public class ReflectionInvocationContext implements InvocationContext {
             super.invoke();
 
             // we need to call proceed so callbacks in subclasses get invoked
-            Object value = invocationContext.proceed();
+            final Object value = invocationContext.proceed();
             return value;
         }
     }
@@ -238,8 +238,8 @@ public class ReflectionInvocationContext implements InvocationContext {
      * @return the cause of the exception
      * @throws AssertionError if the cause is not an Exception or Error.
      */
-    private Exception unwrapInvocationTargetException(InvocationTargetException e) {
-        Throwable cause = e.getCause();
+    private Exception unwrapInvocationTargetException(final InvocationTargetException e) {
+        final Throwable cause = e.getCause();
         if (cause == null) {
             return e;
         } else if (cause instanceof Exception) {
@@ -252,7 +252,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public String toString() {
-        String methodName = method != null ? method.getName(): null;
+        final String methodName = method != null ? method.getName(): null;
 
         return "InvocationContext(operation=" + operation + ", target="+target.getClass().getName()+", method="+methodName+")";
     }

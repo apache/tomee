@@ -26,19 +26,19 @@ public class LinkedListStack implements Stack {
 
     private int size;
 
-    public LinkedListStack(int initialSize) {
+    public LinkedListStack(final int initialSize) {
         for (int i = 0; i < initialSize; i++)
             vacantEntries = new LinkedEntry(null, vacantEntries);
     }
 
-    public synchronized Object push(Object object) {
+    public synchronized Object push(final Object object) {
         /* Take an entry from the vacant list and move it to the occupied list. */
 
         if (vacantEntries == null)
             occupiedEntries = new LinkedEntry(object, occupiedEntries);
         else {
 
-            LinkedEntry entry = vacantEntries;
+            final LinkedEntry entry = vacantEntries;
 
             vacantEntries = vacantEntries.next;
 
@@ -51,12 +51,12 @@ public class LinkedListStack implements Stack {
     public synchronized Object pop() throws EmptyStackException {
         /* Take an entry from the occupied list and move it to the vacant list. */
 
-        LinkedEntry entry = occupiedEntries;
+        final LinkedEntry entry = occupiedEntries;
         if (entry == null) return null;
 
         occupiedEntries = occupiedEntries.next;
 
-        Object value = entry.value;
+        final Object value = entry.value;
         vacantEntries = entry.set(null, vacantEntries);
         --size;
         return value;
@@ -71,11 +71,11 @@ public class LinkedListStack implements Stack {
         LinkedEntry next;
         Object value;
 
-        LinkedEntry(Object value, LinkedEntry next) {
+        LinkedEntry(final Object value, final LinkedEntry next) {
             set(value, next);
         }
 
-        LinkedEntry set(Object value, LinkedEntry next) {
+        LinkedEntry set(final Object value, final LinkedEntry next) {
             this.next = next;
             this.value = value;
             return this;

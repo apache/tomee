@@ -41,15 +41,15 @@ public class ConnectorModule extends Module implements DeploymentModule {
 
     private IAnnotationFinder finder;
     
-    public ConnectorModule(Connector connector) {
+    public ConnectorModule(final Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
 
-    public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
+    public ConnectorModule(final Connector connector, final ClassLoader classLoader, final String jarLocation, final String moduleId) {
         this.connector = connector;
         setClassLoader(classLoader);
 
-        File file = jarLocation == null ? null : new File(jarLocation);
+        final File file = jarLocation == null ? null : new File(jarLocation);
         this.id = new ID(null, connector, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
     }
@@ -78,7 +78,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
         return connector;
     }
 
-    public void setConnector(Connector connector) {
+    public void setConnector(final Connector connector) {
         this.connector = connector;
     }
 
@@ -106,7 +106,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
         return finder;
     }
 
-    public void setFinder(IAnnotationFinder finder) {
+    public void setFinder(final IAnnotationFinder finder) {
         this.finder = finder;
     }
 }

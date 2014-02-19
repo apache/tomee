@@ -63,14 +63,14 @@ public class ScriptLoginModule implements LoginModule {
         public final String pass;
         public final Set<String> groups = new HashSet<String>();
 
-        private UserData(String user, String pass) {
+        private UserData(final String user, final String pass) {
             this.user = user;
             this.pass = pass;
         }
     }
 
     @Override
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String, ?> sharedState, final Map<String, ?> options) {
         this.options = options;
         this.subject = subject;
         this.callbackHandler = callbackHandler;
@@ -83,9 +83,9 @@ public class ScriptLoginModule implements LoginModule {
         callbacks[1] = new PasswordCallback("Password: ", false);
         try {
             this.callbackHandler.handle(callbacks);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new LoginException(ioe.getMessage());
-        } catch (UnsupportedCallbackException uce) {
+        } catch (final UnsupportedCallbackException uce) {
             throw new LoginException(uce.getMessage() + " not available to obtain information from user");
         }
 
@@ -101,7 +101,7 @@ public class ScriptLoginModule implements LoginModule {
         return new UserData(user, password);
     }
 
-    private File getScriptFile(String path) {
+    private File getScriptFile(final String path) {
         if (path == null  || "".equals(path)) {
             final File result = new File(System.getProperty("openejb.home"), "conf/loginscript.js");
             if (result.exists()) {
@@ -117,7 +117,7 @@ public class ScriptLoginModule implements LoginModule {
             if (result.exists()) {
                 return result;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // no-op
         }
 
@@ -154,7 +154,7 @@ public class ScriptLoginModule implements LoginModule {
         final String scriptText;
         try {
             scriptText = new Scanner(script).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new LoginException("Invalid login script URI.");
         }
 
@@ -175,7 +175,7 @@ public class ScriptLoginModule implements LoginModule {
         final List<String> myGroups;
         try {
             myGroups = (List) engine.eval(scriptText, newContext);
-        } catch (ScriptException e) {
+        } catch (final ScriptException e) {
             throw new LoginException("Cannot execute login script. Msg: " + e.getMessage());
         }
         this.userData.groups.addAll(myGroups);
@@ -187,7 +187,7 @@ public class ScriptLoginModule implements LoginModule {
     public boolean commit() throws LoginException {
         this.principals.add(new UserPrincipal(this.userData.user));
 
-        for (String myGroup : this.userData.groups) {
+        for (final String myGroup : this.userData.groups) {
             principals.add(new GroupPrincipal(myGroup));
         }
 

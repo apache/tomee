@@ -47,11 +47,11 @@ public class ProviderManager {
     private final Map<ID, ServiceProvider> providers = new LinkedHashMap<ID, ServiceProvider>();
     private final ProviderLoader loader;
 
-    public ProviderManager(ProviderLoader loader) {
+    public ProviderManager(final ProviderLoader loader) {
         this.loader = loader;
     }
 
-    public ServiceProvider get(String namespace, String name) {
+    public ServiceProvider get(final String namespace, final String name) {
         final ID id = new ID(namespace, name);
         return getProvider(id, new LinkedHashSet<ID>());
     }
@@ -60,7 +60,7 @@ public class ProviderManager {
         return new ArrayList<ServiceProvider>(providers.values());
     }
 
-    public void register(String namespace, ServiceProvider provider) {
+    public void register(final String namespace, final ServiceProvider provider) {
         if (provider == null) throw new IllegalArgumentException("provider cannot be null");
 
         final ID id = new ID(namespace, provider.getId());
@@ -78,14 +78,14 @@ public class ProviderManager {
 
             { // load
                 final ArrayList<ServiceProvider> list = new ArrayList<ServiceProvider>(loader.load(namespace));
-                for (ServiceProvider provider : list) {
+                for (final ServiceProvider provider : list) {
                     register(namespace, provider);
                 }
             }
         }
 
         final List<ServiceProvider> providers = new ArrayList<ServiceProvider>();
-        for (Map.Entry<ID, ServiceProvider> entry : this.providers.entrySet()) {
+        for (final Map.Entry<ID, ServiceProvider> entry : this.providers.entrySet()) {
             if (entry.getKey().getNamespace().equals(namespace)) {
                 providers.add(entry.getValue());
             }
@@ -94,7 +94,7 @@ public class ProviderManager {
         return providers;
     }
 
-    private void register(ID id, ServiceProvider provider, Set<ID> seen) {
+    private void register(final ID id, final ServiceProvider provider, final Set<ID> seen) {
         if (providers.containsKey(id)) return;
 
         if (provider.getParent() != null) {
@@ -116,7 +116,7 @@ public class ProviderManager {
         providers.put(id, provider);
     }
 
-    private void inherit(ServiceProvider child, ServiceProvider parent) {
+    private void inherit(final ServiceProvider child, final ServiceProvider parent) {
 
         if (n(child.getClassName())) child.setClassName(parent.getClassName());
         if (n(child.getConstructor())) child.setConstructor(parent.getConstructor());
@@ -144,11 +144,11 @@ public class ProviderManager {
         }
     }
 
-    private boolean n(String s) {
+    private boolean n(final String s) {
         return s == null || s.length() == 0;
     }
 
-    private ServiceProvider getProvider(ID id, final Set<ID> seen) {
+    private ServiceProvider getProvider(final ID id, final Set<ID> seen) {
         if (seen.contains(id)) throw new ProviderCircularReferenceException(seen);
         seen.add(id);
 
@@ -169,7 +169,7 @@ public class ProviderManager {
         return null;
     }
 
-    private void validate(ID id, ServiceProvider provider) {
+    private void validate(final ID id, final ServiceProvider provider) {
         id.validate();
 
         if (provider.getService() == null) {

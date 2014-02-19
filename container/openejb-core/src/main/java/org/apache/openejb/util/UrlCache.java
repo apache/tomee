@@ -91,7 +91,7 @@ public class UrlCache {
                     // push the manifest classpath on the stack (make sure to maintain the order)
                     final List<URL> manifestClassPath = getManifestClassPath(url, file);
                     locationStack.addAll(0, manifestClassPath);
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     // invalid cache file - this should never happen
                     logger.error("Error caching url. Original jar file will be used which may result in a file lock: url=" + url, e);
                     cachedUrls.add(url);
@@ -147,7 +147,7 @@ public class UrlCache {
         final URL keyUrl;
         try {
             keyUrl = file.toURI().toURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             return null;
         }
         if (appCache.containsKey(keyUrl)) {
@@ -181,7 +181,7 @@ public class UrlCache {
             sourceFile = sourceFile.getAbsoluteFile();
             try {
                 url = sourceFile.toURI().toURL();
-            } catch (MalformedURLException ignored) {
+            } catch (final MalformedURLException ignored) {
                 // no-op
             }
         }
@@ -215,7 +215,7 @@ public class UrlCache {
         try {
             try {
                 cacheFile = File.createTempFile(prefix, suffix, cacheDir);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 final File tmp = new File("tmp");
                 if (!tmp.exists() && !tmp.mkdirs()) {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -225,7 +225,7 @@ public class UrlCache {
             }
             cacheFile.deleteOnExit();
             success = JarExtractor.copyRecursively(sourceFile, cacheFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             success = false;
         }
 
@@ -269,18 +269,18 @@ public class UrlCache {
             // build the urls...
             // the class-path attribute is space delimited
             final LinkedList<URL> classPathUrls = new LinkedList<URL>();
-            for (StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens(); ) {
+            for (final StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens(); ) {
                 final String entry = tokenizer.nextToken();
                 try {
                     // the class path entry is relative to the resource location code source
                     final URL entryUrl = new URL(codeSource, entry);
                     classPathUrls.addLast(entryUrl);
-                } catch (MalformedURLException ignored) {
+                } catch (final MalformedURLException ignored) {
                     // most likely a poorly named entry
                 }
             }
             return classPathUrls;
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             // error opening the manifest
             return Collections.emptyList();
         }
@@ -319,7 +319,7 @@ public class UrlCache {
             if (SystemInstance.get().getConf(null).exists()) {
                 try {
                     dir = openejbBase.getDirectory("temp");
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     //Ignore
                 }
             }
@@ -343,7 +343,7 @@ public class UrlCache {
 
             return dir;
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBRuntimeException(e);
         }
     }
@@ -404,7 +404,7 @@ public class UrlCache {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             }
         }
@@ -414,7 +414,7 @@ public class UrlCache {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 // no-op
             }
         }

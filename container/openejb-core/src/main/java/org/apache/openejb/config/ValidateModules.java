@@ -27,7 +27,7 @@ import org.apache.openejb.loader.SystemInstance;
 public class ValidateModules implements DynamicDeployer {
     public static final String OPENEJB_CHECK_CLASSLOADER = "openejb.check.classloader";
 
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         final AppValidator validator;
         if (!SystemInstance.get().getOptions().get(OPENEJB_CHECK_CLASSLOADER, false)) {
             validator = new AppValidator();

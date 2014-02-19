@@ -20,7 +20,7 @@ import org.apache.openejb.loader.SystemInstance;
 
 public class DerbyDataSourcePlugin implements DataSourcePlugin {
     @Override
-    public String updatedUrl(String dataSourceUrl) {
+    public String updatedUrl(final String dataSourceUrl) {
         System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
         return dataSourceUrl;
     }

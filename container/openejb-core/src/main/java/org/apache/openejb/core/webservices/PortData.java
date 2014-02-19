@@ -45,7 +45,7 @@ public class PortData implements PortInfo {
         return portId;
     }
 
-    public void setPortId(String portId) {
+    public void setPortId(final String portId) {
         this.portId = portId;
     }
 
@@ -53,7 +53,7 @@ public class PortData implements PortInfo {
         return serviceName;
     }
 
-    public void setServiceName(QName serviceName) {
+    public void setServiceName(final QName serviceName) {
         this.serviceName = serviceName;
     }
 
@@ -61,7 +61,7 @@ public class PortData implements PortInfo {
         return portName;
     }
 
-    public void setPortName(QName portName) {
+    public void setPortName(final QName portName) {
         this.portName = portName;
     }
 
@@ -69,7 +69,7 @@ public class PortData implements PortInfo {
         return bindingId;
     }
 
-    public void setBindingID(String bindingId) {
+    public void setBindingID(final String bindingId) {
         this.bindingId = bindingId;
     }
 
@@ -77,7 +77,7 @@ public class PortData implements PortInfo {
         return wsdlUrl;
     }
 
-    public void setWsdlUrl(URL wsdlUrl) {
+    public void setWsdlUrl(final URL wsdlUrl) {
         this.wsdlUrl = wsdlUrl;
     }
 
@@ -93,7 +93,7 @@ public class PortData implements PortInfo {
         return mtomEnabled;
     }
 
-    public void setMtomEnabled(boolean mtomEnabled) {
+    public void setMtomEnabled(final boolean mtomEnabled) {
         this.mtomEnabled = mtomEnabled;
     }
 
@@ -101,7 +101,7 @@ public class PortData implements PortInfo {
         return wsdlPort;
     }
 
-    public void setWsdlPort(QName wsdlPort) {
+    public void setWsdlPort(final QName wsdlPort) {
         this.wsdlPort = wsdlPort;
     }
 
@@ -109,7 +109,7 @@ public class PortData implements PortInfo {
         return wsdlService;
     }
 
-    public void setWsdlService(QName wsdlService) {
+    public void setWsdlService(final QName wsdlService) {
         this.wsdlService = wsdlService;
     }
 
@@ -117,11 +117,11 @@ public class PortData implements PortInfo {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(final String location) {
         this.location = location;
     }
 
-    public void setSecure(boolean secure) {
+    public void setSecure(final boolean secure) {
         this.secure = secure;
     }
 
@@ -133,7 +133,7 @@ public class PortData implements PortInfo {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties = properties;
     }
     

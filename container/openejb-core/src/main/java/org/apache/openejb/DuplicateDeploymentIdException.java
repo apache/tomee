@@ -23,15 +23,15 @@ public class DuplicateDeploymentIdException extends OpenEJBException {
     public DuplicateDeploymentIdException() {
     }
 
-    public DuplicateDeploymentIdException(String message) {
+    public DuplicateDeploymentIdException(final String message) {
         super(message);
     }
 
-    public DuplicateDeploymentIdException(String message, Throwable rootCause) {
+    public DuplicateDeploymentIdException(final String message, final Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public DuplicateDeploymentIdException(Throwable rootCause) {
+    public DuplicateDeploymentIdException(final Throwable rootCause) {
         super(rootCause);
     }
 }

@@ -43,23 +43,23 @@ public final class JaxWsUtils {
     private JaxWsUtils() {
     }
 
-    public static QName getPortType(Class<?> seiClass) {
-        WebService webService = seiClass.getAnnotation(WebService.class);
+    public static QName getPortType(final Class<?> seiClass) {
+        final WebService webService = seiClass.getAnnotation(WebService.class);
         if (webService != null) {
             String localName = webService.name();
             if (localName == null || localName.length() == 0) {
                 localName = seiClass.getSimpleName();
             }
-            String namespace = webService.targetNamespace();
+            final String namespace = webService.targetNamespace();
             return new QName(getNamespace(seiClass, namespace), localName);
         }
         return null;
     }
 
-    public static String getBindingURI(String token) {
+    public static String getBindingURI(final String token) {
         if (token != null) {
             if (token.startsWith("##")) {
-                String uri = BINDING_MAP.get(token);
+                final String uri = BINDING_MAP.get(token);
                 if (uri == null) {
                     throw new IllegalArgumentException("Unsupported binding token: " + token);
                 }
@@ -70,20 +70,20 @@ public final class JaxWsUtils {
         return BINDING_MAP.get("##SOAP11_HTTP");
     }
 
-    public static boolean isWebService(Class clazz) {
+    public static boolean isWebService(final Class clazz) {
         return (clazz.isAnnotationPresent(WebService.class) || clazz.isAnnotationPresent(WebServiceProvider.class)) && isProperWebService(clazz);
     }
 
-    private static boolean isProperWebService(Class clazz) {
-        int modifiers = clazz.getModifiers();
+    private static boolean isProperWebService(final Class clazz) {
+        final int modifiers = clazz.getModifiers();
         return Modifier.isPublic(modifiers) && !Modifier.isFinal(modifiers) && !Modifier.isAbstract(modifiers);
     }
 
-    public static String getServiceName(Class clazz) {
+    public static String getServiceName(final Class clazz) {
         return getServiceQName(clazz).getLocalPart();
     }
 
-    private static String getServiceName(Class clazz, String name) {
+    private static String getServiceName(final Class clazz, final String name) {
         if (name == null || name.trim().length() == 0) {
             return clazz.getSimpleName() + "Service";
         } else {
@@ -91,7 +91,7 @@ public final class JaxWsUtils {
         }
     }
 
-    private static String getPortName(Class clazz, String name, String portName) {
+    private static String getPortName(final Class clazz, final String name, final String portName) {
         if (portName == null || portName.trim().length() == 0) {
             if (name == null || name.trim().length() == 0) {
                 return clazz.getSimpleName() + "Port";
@@ -103,9 +103,9 @@ public final class JaxWsUtils {
         }
     }
 
-    private static String getNamespace(Class clazz, String namespace) {
+    private static String getNamespace(final Class clazz, final String namespace) {
         if (namespace == null || namespace.trim().length() == 0) {
-            Package pkg = clazz.getPackage();
+            final Package pkg = clazz.getPackage();
             if (pkg == null) {
                 return null;
             } else {
@@ -116,12 +116,12 @@ public final class JaxWsUtils {
         }
     }
 
-    private static String getNamespace(String packageName) {
+    private static String getNamespace(final String packageName) {
         if (packageName == null || packageName.length() == 0) {
             return null;
         }
-        StringTokenizer tokenizer = new StringTokenizer(packageName, ".");
-        String[] tokens;
+        final StringTokenizer tokenizer = new StringTokenizer(packageName, ".");
+        final String[] tokens;
         if (tokenizer.countTokens() == 0) {
             tokens = new String[0];
         } else {
@@ -130,7 +130,7 @@ public final class JaxWsUtils {
                 tokens[i] = tokenizer.nextToken();
             }
         }
-        StringBuilder namespace = new StringBuilder("http://");
+        final StringBuilder namespace = new StringBuilder("http://");
         String dot = "";
         for (int i = 0; i < tokens.length; i++) {
             if (i == 1) {
@@ -142,37 +142,37 @@ public final class JaxWsUtils {
         return namespace.toString();
     }
 
-    private static QName getServiceQName(Class clazz, String namespace, String name) {
+    private static QName getServiceQName(final Class clazz, final String namespace, final String name) {
         return new QName(getNamespace(clazz, namespace), getServiceName(clazz, name));
     }
 
-    public static QName getServiceQName(Class<?> clazz) {
-        WebService webService = clazz.getAnnotation(WebService.class);
+    public static QName getServiceQName(final Class<?> clazz) {
+        final WebService webService = clazz.getAnnotation(WebService.class);
         if (webService != null) {
             return getServiceQName(clazz, webService.targetNamespace(), webService.serviceName());
         }
-        WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
+        final WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
             return getServiceQName(clazz, webServiceProvider.targetNamespace(), webServiceProvider.serviceName());
         }
-        WebServiceClient webServiceClient = clazz.getAnnotation(WebServiceClient.class);
+        final WebServiceClient webServiceClient = clazz.getAnnotation(WebServiceClient.class);
         if (webServiceClient != null) {
             return getServiceQName(clazz, webServiceClient.targetNamespace(), webServiceClient.name());
         }
         throw new IllegalArgumentException("The " + clazz.getName() + " is not annotated");
     }
 
-    private static QName getPortQName(Class<?> clazz, String namespace, String name, String portName) {
+    private static QName getPortQName(final Class<?> clazz, final String namespace, final String name, final String portName) {
         return new QName(getNamespace(clazz, namespace), getPortName(clazz, name, portName));
     }
 
-    public static QName getPortQName(Class<?> clazz) {
-        WebService webService = clazz.getAnnotation(WebService.class);
+    public static QName getPortQName(final Class<?> clazz) {
+        final WebService webService = clazz.getAnnotation(WebService.class);
         if (webService != null) {
             return getPortQName(clazz, webService.targetNamespace(), webService.name(), webService.portName());
         }
 
-        WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
+        final WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
             return getPortQName(clazz, webServiceProvider.targetNamespace(), null, webServiceProvider.portName());
         }
@@ -180,22 +180,22 @@ public final class JaxWsUtils {
         throw new IllegalArgumentException("The " + clazz.getName() + " is not annotated");
     }
 
-    public static String getName(Class<?> clazz) {
-        WebService webService = clazz.getAnnotation(WebService.class);
+    public static String getName(final Class<?> clazz) {
+        final WebService webService = clazz.getAnnotation(WebService.class);
         if (webService != null) {
-            String sei = webService.endpointInterface();
+            final String sei = webService.endpointInterface();
             if (sei != null && sei.trim().length() != 0) {
                 try {
-                    Class seiClass = clazz.getClassLoader().loadClass(sei.trim());
+                    final Class seiClass = clazz.getClassLoader().loadClass(sei.trim());
                     return getNameFromInterface(seiClass);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     throw new OpenEJBRuntimeException("Unable to load SEI class: " + sei, e);
                 }
             }
             return getName(clazz, webService.name());
         }
 
-        WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
+        final WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
             return clazz.getName();
         }
@@ -203,15 +203,15 @@ public final class JaxWsUtils {
         throw new IllegalArgumentException("The " + clazz.getName() + " is not annotated");
     }
 
-    private static String getNameFromInterface(Class<?> intf) {
-        WebService webService = intf.getAnnotation(WebService.class);
+    private static String getNameFromInterface(final Class<?> intf) {
+        final WebService webService = intf.getAnnotation(WebService.class);
         if (webService != null) {
             return getName(intf, webService.name());
         }
         throw new IllegalArgumentException("The " + intf.getName() + " is not annotated");
     }
 
-    private static String getName(Class clazz, String name) {
+    private static String getName(final Class clazz, String name) {
         if (name != null) {
             name = name.trim();
             if (name.length() > 0) {
@@ -221,22 +221,22 @@ public final class JaxWsUtils {
         return clazz.getSimpleName();
     }
 
-    private static String getWsdlLocation(Class<?> clazz) {
-        WebService webService = clazz.getAnnotation(WebService.class);
+    private static String getWsdlLocation(final Class<?> clazz) {
+        final WebService webService = clazz.getAnnotation(WebService.class);
         if (webService != null) {
             String wsdlLocation = webService.wsdlLocation().trim();
             if (wsdlLocation.length() == 0) wsdlLocation = null;
             return wsdlLocation;
         }
 
-        WebServiceClient webServiceClient = clazz.getAnnotation(WebServiceClient.class);
+        final WebServiceClient webServiceClient = clazz.getAnnotation(WebServiceClient.class);
         if (webServiceClient != null) {
             String wsdlLocation = webServiceClient.wsdlLocation().trim();
             if (wsdlLocation.length() == 0) wsdlLocation = null;
             return wsdlLocation;
         }
 
-        WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
+        final WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
             String wsdlLocation = webServiceProvider.wsdlLocation().trim();
             if (wsdlLocation.length() == 0) wsdlLocation = null;
@@ -246,7 +246,7 @@ public final class JaxWsUtils {
         return null;
     }
 
-    public static String getServiceInterface(Class<?> clazz) {
+    public static String getServiceInterface(final Class<?> clazz) {
         WebService webService = clazz.getAnnotation(WebService.class);
         String endpointInterface = null;
         if (webService != null && webService.endpointInterface() != null) {
@@ -260,7 +260,7 @@ public final class JaxWsUtils {
         }
 
         // if the bean implements only one WebService class, that is the SEI
-        for (Class<?> intf : clazz.getInterfaces()) {
+        for (final Class<?> intf : clazz.getInterfaces()) {
             // interface MUST also have a @WebService
             webService = intf.getAnnotation(WebService.class);
             if (webService != null) {
@@ -277,31 +277,31 @@ public final class JaxWsUtils {
         return endpointInterface;
     }
 
-    public static String getServiceWsdlLocation(Class<?> clazz, ClassLoader loader) {
-        String wsdlLocation = getWsdlLocation(clazz);
+    public static String getServiceWsdlLocation(final Class<?> clazz, final ClassLoader loader) {
+        final String wsdlLocation = getWsdlLocation(clazz);
         if (wsdlLocation != null && !wsdlLocation.equals("")) {
             return wsdlLocation;
         }
 
-        String serviceInterfaceClassName = getServiceInterface(clazz);
+        final String serviceInterfaceClassName = getServiceInterface(clazz);
         if (serviceInterfaceClassName != null && !serviceInterfaceClassName.equals("")) {
             try {
-                Class serviceInterfaceClass = loader.loadClass(serviceInterfaceClassName);
+                final Class serviceInterfaceClass = loader.loadClass(serviceInterfaceClassName);
                 return getWsdlLocation(serviceInterfaceClass);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // no-op
             }
         }
         return null;
     }
 
-    public static boolean containsWsdlLocation(Class<?> clazz, ClassLoader loader) {
-        String wsdlLocSEIFromAnnotation = getServiceWsdlLocation(clazz, loader);
+    public static boolean containsWsdlLocation(final Class<?> clazz, final ClassLoader loader) {
+        final String wsdlLocSEIFromAnnotation = getServiceWsdlLocation(clazz, loader);
         return wsdlLocSEIFromAnnotation != null && !wsdlLocSEIFromAnnotation.equals("");
     }
 
-    public static String getBindingUriFromAnn(Class<?> clazz) {
-        BindingType bindingType = clazz.getAnnotation(BindingType.class);
+    public static String getBindingUriFromAnn(final Class<?> clazz) {
+        final BindingType bindingType = clazz.getAnnotation(BindingType.class);
         if (bindingType != null) {
             return bindingType.value();
         }

@@ -46,11 +46,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "Container")
 public class Container extends AbstractService {
 
-    public Container(String id) {
+    public Container(final String id) {
         super(id);
     }
 
-    public Container(String id, String type, String provider) {
+    public Container(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 
@@ -75,7 +75,7 @@ public class Container extends AbstractService {
      *              {@link String }
      */
     @XmlAttribute
-    public void setCtype(String value) {
+    public void setCtype(final String value) {
         setType(value);
     }
 }

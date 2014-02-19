@@ -38,42 +38,42 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public void persist(Object entity) {
+    public void persist(final Object entity) {
         delegate.persist(entity);
     }
 
     @Override
-    public <T> T merge(T entity) {
+    public <T> T merge(final T entity) {
         return delegate.merge(entity);
     }
 
     @Override
-    public void remove(Object entity) {
+    public void remove(final Object entity) {
         delegate.remove(entity);
     }
 
     @Override
-    public <T> T find(Class<T> entityClass, Object primaryKey) {
+    public <T> T find(final Class<T> entityClass, final Object primaryKey) {
         return delegate.find(entityClass, primaryKey);
     }
 
     @Override
-    public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final Map<String, Object> properties) {
         return delegate.find(entityClass, primaryKey, properties);
     }
 
     @Override
-    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode) {
         return delegate.find(entityClass, primaryKey, lockMode);
     }
 
     @Override
-    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode, final Map<String, Object> properties) {
         return delegate.find(entityClass, primaryKey, lockMode, properties);
     }
 
     @Override
-    public <T> T getReference(Class<T> entityClass, Object primaryKey) {
+    public <T> T getReference(final Class<T> entityClass, final Object primaryKey) {
         return delegate.getReference(entityClass, primaryKey);
     }
 
@@ -83,7 +83,7 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public void setFlushMode(FlushModeType flushMode) {
+    public void setFlushMode(final FlushModeType flushMode) {
         delegate.setFlushMode(flushMode);
     }
 
@@ -93,32 +93,32 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public void lock(Object entity, LockModeType lockMode) {
+    public void lock(final Object entity, final LockModeType lockMode) {
         delegate.lock(entity, lockMode);
     }
 
     @Override
-    public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+    public void lock(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         delegate.lock(entity, lockMode, properties);
     }
 
     @Override
-    public void refresh(Object entity) {
+    public void refresh(final Object entity) {
         delegate.refresh(entity);
     }
 
     @Override
-    public void refresh(Object entity, Map<String, Object> properties) {
+    public void refresh(final Object entity, final Map<String, Object> properties) {
         delegate.refresh(entity, properties);
     }
 
     @Override
-    public void refresh(Object entity, LockModeType lockMode) {
+    public void refresh(final Object entity, final LockModeType lockMode) {
         delegate.refresh(entity, lockMode);
     }
 
     @Override
-    public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+    public void refresh(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         delegate.refresh(entity, lockMode, properties);
     }
 
@@ -128,22 +128,22 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public void detach(Object entity) {
+    public void detach(final Object entity) {
         delegate.detach(entity);
     }
 
     @Override
-    public boolean contains(Object entity) {
+    public boolean contains(final Object entity) {
         return delegate.contains(entity);
     }
 
     @Override
-    public LockModeType getLockMode(Object entity) {
+    public LockModeType getLockMode(final Object entity) {
         return delegate.getLockMode(entity);
     }
 
     @Override
-    public void setProperty(String propertyName, Object value) {
+    public void setProperty(final String propertyName, final Object value) {
         delegate.setProperty(propertyName, value);
     }
 
@@ -153,42 +153,42 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public Query createQuery(String qlString) {
+    public Query createQuery(final String qlString) {
         return delegate.createQuery(qlString);
     }
 
     @Override
-    public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+    public <T> TypedQuery<T> createQuery(final CriteriaQuery<T> criteriaQuery) {
         return new CriteriaLogQuery(delegate.createQuery(criteriaQuery), level);
     }
 
     @Override
-    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
+    public <T> TypedQuery<T> createQuery(final String qlString, final Class<T> resultClass) {
         return delegate.createQuery(qlString, resultClass);
     }
 
     @Override
-    public Query createNamedQuery(String name) {
+    public Query createNamedQuery(final String name) {
         return delegate.createNamedQuery(name);
     }
 
     @Override
-    public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
+    public <T> TypedQuery<T> createNamedQuery(final String name, final Class<T> resultClass) {
         return delegate.createNamedQuery(name, resultClass);
     }
 
     @Override
-    public Query createNativeQuery(String sqlString) {
+    public Query createNativeQuery(final String sqlString) {
         return delegate.createNativeQuery(sqlString);
     }
 
     @Override
-    public Query createNativeQuery(String sqlString, Class resultClass) {
+    public Query createNativeQuery(final String sqlString, final Class resultClass) {
         return delegate.createNativeQuery(sqlString, resultClass);
     }
 
     @Override
-    public Query createNativeQuery(String sqlString, String resultSetMapping) {
+    public Query createNativeQuery(final String sqlString, final String resultSetMapping) {
         return delegate.createNativeQuery(sqlString, resultSetMapping);
     }
 
@@ -198,7 +198,7 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
-    public <T> T unwrap(Class<T> cls) {
+    public <T> T unwrap(final Class<T> cls) {
         return delegate.unwrap(cls);
     }
 

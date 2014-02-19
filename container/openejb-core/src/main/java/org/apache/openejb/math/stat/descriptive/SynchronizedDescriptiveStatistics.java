@@ -45,7 +45,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * Construct an instance with finite window
      * @param window the finite window size.
      */
-    public SynchronizedDescriptiveStatistics(int window) {
+    public SynchronizedDescriptiveStatistics(final int window) {
         super(window);
     }
 
@@ -54,7 +54,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      *
      * @param original the {@code SynchronizedDescriptiveStatistics} instance to copy
      */
-    public SynchronizedDescriptiveStatistics(SynchronizedDescriptiveStatistics original) {
+    public SynchronizedDescriptiveStatistics(final SynchronizedDescriptiveStatistics original) {
         copy(original, this);
     }
 
@@ -62,7 +62,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void addValue(double v) {
+    public synchronized void addValue(final double v) {
         super.addValue(v);
     }
 
@@ -70,7 +70,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized double apply(UnivariateStatistic stat) {
+    public synchronized double apply(final UnivariateStatistic stat) {
         return super.apply(stat);
     }
 
@@ -86,7 +86,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized double getElement(int index) {
+    public synchronized double getElement(final int index) {
         return super.getElement(index);
     }
 
@@ -126,7 +126,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setWindowSize(int windowSize) {
+    public synchronized void setWindowSize(final int windowSize) {
         super.setWindowSize(windowSize);
     }
 
@@ -146,7 +146,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      */
     @Override
     public synchronized SynchronizedDescriptiveStatistics copy() {
-        SynchronizedDescriptiveStatistics result =
+        final SynchronizedDescriptiveStatistics result =
             new SynchronizedDescriptiveStatistics();
         copy(this, result);
         return result;
@@ -161,8 +161,8 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * @param dest SynchronizedDescriptiveStatistics to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(SynchronizedDescriptiveStatistics source,
-            SynchronizedDescriptiveStatistics dest) {
+    public static void copy(final SynchronizedDescriptiveStatistics source,
+            final SynchronizedDescriptiveStatistics dest) {
         synchronized (source) {
             synchronized (dest) {
                 DescriptiveStatistics.copy(source, dest);

@@ -85,7 +85,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**Manages unused conversations*/
     private ScheduledExecutorService service = null;
 
-    public OpenEJBLifecycle(WebBeansContext webBeansContext)
+    public OpenEJBLifecycle(final WebBeansContext webBeansContext)
     {
         this.webBeansContext = webBeansContext;
         beforeInitApplication(null);
@@ -108,7 +108,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public void startApplication(Object startupObject)
+    public void startApplication(final Object startupObject)
     {
         if (startupObject instanceof ServletContextEvent) {
             startServletContext((ServletContext) getServletContext(startupObject)); // TODO: check it is relevant
@@ -118,13 +118,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             return;
         }
 
-        StartupObject stuff = (StartupObject) startupObject;
+        final StartupObject stuff = (StartupObject) startupObject;
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 
         // Initalize Application Context
         logger.info("OpenWebBeans Container is starting...");
 
-        long begin = System.currentTimeMillis();
+        final long begin = System.currentTimeMillis();
 
         try {
             Thread.currentThread().setContextClassLoader(stuff.getClassLoader());
@@ -137,7 +137,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             webBeansContext.getPluginLoader().startUp();
 
             //Get Plugin
-            CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
+            final CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
             final AppContext appContext = stuff.getAppContext();
             if (stuff.getWebContext() == null) {
@@ -152,7 +152,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             cdiPlugin.configureDeployments(stuff.getBeanContexts());
 
             //Resournce Injection Service
-            CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
+            final CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
             injectionService.setAppContext(stuff.getAppContext());
 
             //Deploy the beans
@@ -181,7 +181,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
                 //Deploy bean from XML. Also configures deployments, interceptors, decorators.
                 deployer.deploy(scannerService);
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 Assembler.logger.error("CDI Beans module deployment failed", e1);
                 throw new OpenEJBRuntimeException(e1);
             } finally {
@@ -213,7 +213,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public void stopApplication(Object endObject)
+    public void stopApplication(final Object endObject)
     {
         logger.debug("OpenWebBeans Container is stopping.");
 
@@ -259,7 +259,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             logger.error("An error occured while stopping the container.", e);
         }
@@ -299,17 +299,17 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public void initApplication(Properties properties)
+    public void initApplication(final Properties properties)
     {
         afterInitApplication(properties);
     }
 
-    protected void beforeInitApplication(Properties properties)
+    protected void beforeInitApplication(final Properties properties)
     {
         //Do nothing as default
     }
 
-    protected void afterInitApplication(Properties properties) {
+    protected void afterInitApplication(final Properties properties) {
         //Do nothing as default
     }
 
@@ -323,29 +323,29 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         service = initializeServletContext(servletContext, webBeansContext);
     }
 
-    public static ScheduledExecutorService initializeServletContext(final ServletContext servletContext, WebBeansContext context) {
-        String strDelay = context.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
-        long delay = Long.parseLong(strDelay);
+    public static ScheduledExecutorService initializeServletContext(final ServletContext servletContext, final WebBeansContext context) {
+        final String strDelay = context.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
+        final long delay = Long.parseLong(strDelay);
 
         final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
-            public Thread newThread(Runnable runable) {
-                Thread t = new Thread(runable, "OwbConversationCleaner-" + servletContext.getContextPath());
+            public Thread newThread(final Runnable runable) {
+                final Thread t = new Thread(runable, "OwbConversationCleaner-" + servletContext.getContextPath());
                 t.setDaemon(true);
                 return t;
             }
         });
         executorService.scheduleWithFixedDelay(new ConversationCleaner(context), delay, delay, TimeUnit.MILLISECONDS);
 
-        ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
-        ELResolver resolver = elAdaptor.getOwbELResolver();
+        final ELAdaptor elAdaptor = context.getService(ELAdaptor.class);
+        final ELResolver resolver = elAdaptor.getOwbELResolver();
         //Application is configured as JSP
         if (context.getOpenWebBeansConfiguration().isJspApplication()) {
             logger.debug("Application is configured as JSP. Adding EL Resolver.");
 
-            JspFactory factory = JspFactory.getDefaultFactory();
+            final JspFactory factory = JspFactory.getDefaultFactory();
             if (factory != null) {
-                JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
+                final JspApplicationContext applicationCtx = factory.getJspApplicationContext(servletContext);
                 applicationCtx.addELResolver(resolver);
             } else {
                 logger.debug("Default JspFactory instance was not found");
@@ -367,7 +367,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     {
         private final WebBeansContext webBeansContext;
 
-        private ConversationCleaner(WebBeansContext webBeansContext) {
+        private ConversationCleaner(final WebBeansContext webBeansContext) {
             this.webBeansContext = webBeansContext;
         }
 
@@ -378,11 +378,11 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         }
     }
 
-    protected void afterStopApplication(Object stopObject) throws Exception
+    protected void afterStopApplication(final Object stopObject) throws Exception
     {
 
         //Clear the resource injection service
-        ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
+        final ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
         if(injectionServices != null)
         {
             injectionServices.clear();
@@ -407,12 +407,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         return object;
     }
 
-    protected void beforeStartApplication(Object startupObject)
+    protected void beforeStartApplication(final Object startupObject)
     {
         //Do nothing as default
     }
 
-    protected void beforeStopApplication(Object stopObject) throws Exception
+    protected void beforeStopApplication(final Object stopObject) throws Exception
     {
         if(service != null)
         {

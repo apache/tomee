@@ -59,26 +59,26 @@ public class PojoSerialization implements Serializable {
                 public Class<?> run() {
                     try {
                         return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         try {
                             return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
-                        } catch (ClassNotFoundException e1) {
+                        } catch (final ClassNotFoundException e1) {
                             throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                         }
                     }
                 }
             });
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
         }
 
         unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
-                    Field field = unsafeClass.getDeclaredField("theUnsafe");
+                    final Field field = unsafeClass.getDeclaredField("theUnsafe");
                     field.setAccessible(true);
                     return field.get(null);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                 }
             }
@@ -86,10 +86,10 @@ public class PojoSerialization implements Serializable {
         allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
                 }
             }
@@ -97,10 +97,10 @@ public class PojoSerialization implements Serializable {
         objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
                 }
             }
@@ -108,10 +108,10 @@ public class PojoSerialization implements Serializable {
         putInt = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putInt", e);
                 }
             }
@@ -119,10 +119,10 @@ public class PojoSerialization implements Serializable {
         putLong = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putLong", e);
                 }
             }
@@ -130,10 +130,10 @@ public class PojoSerialization implements Serializable {
         putShort = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putShort", e);
                 }
             }
@@ -141,10 +141,10 @@ public class PojoSerialization implements Serializable {
         putChar = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putChar", e);
                 }
             }
@@ -152,10 +152,10 @@ public class PojoSerialization implements Serializable {
         putByte = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putByte", e);
                 }
             }
@@ -163,10 +163,10 @@ public class PojoSerialization implements Serializable {
         putFloat = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putFloat", e);
                 }
             }
@@ -174,10 +174,10 @@ public class PojoSerialization implements Serializable {
         putDouble = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putDouble", e);
                 }
             }
@@ -185,10 +185,10 @@ public class PojoSerialization implements Serializable {
         putBoolean = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putBoolean", e);
                 }
             }
@@ -196,10 +196,10 @@ public class PojoSerialization implements Serializable {
         putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
             public Method run() {
                 try {
-                    Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
+                    final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
                     mtd.setAccessible(true);
                     return mtd;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
                 }
             }
@@ -212,15 +212,15 @@ public class PojoSerialization implements Serializable {
     public PojoSerialization() {
     }
 
-    public PojoSerialization(Object object) {
+    public PojoSerialization(final Object object) {
         this.object = object;
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         write(out);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         read(in);
     }
 
@@ -228,16 +228,16 @@ public class PojoSerialization implements Serializable {
         return object;
     }
 
-    protected void read(ObjectInput in) throws IOException, ClassNotFoundException {
+    protected void read(final ObjectInput in) throws IOException, ClassNotFoundException {
         byte b = in.readByte();
         if (b != CLASS) throw new IOException("Expected 'CLASS' byte " + CLASS + ", got: " + b);
 
         Class clazz = (Class) in.readObject();
 
-        Object object;
+        final Object object;
         try {
             object = allocateInstance.invoke(unsafe, clazz);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw (IOException) new IOException("Cannot construct " + clazz.getName()).initCause(e);
         }
 
@@ -245,12 +245,12 @@ public class PojoSerialization implements Serializable {
             b = in.readByte();
             switch (b) {
                 case FIELD: {
-                    String fieldName = in.readUTF();
-                    Object value = in.readObject();
+                    final String fieldName = in.readUTF();
+                    final Object value = in.readObject();
                     Field field = null;
                     try {
                         field = clazz.getDeclaredField(fieldName);
-                    } catch (NoSuchFieldException e) {
+                    } catch (final NoSuchFieldException e) {
                         throw (IOException) new IOException("Cannot find field " + fieldName).initCause(e);
                     }
                     setValue(field, object, value);
@@ -266,20 +266,20 @@ public class PojoSerialization implements Serializable {
         this.object = object;
     }
 
-    protected void write(ObjectOutput out) throws IOException {
-        List<Class> classes = new ArrayList<Class>();
+    protected void write(final ObjectOutput out) throws IOException {
+        final List<Class> classes = new ArrayList<Class>();
         Class c = object.getClass();
         while (c != null && !c.equals(Object.class)) {
             classes.add(c);
             c = c.getSuperclass();
         }
 
-        for (Class clazz : classes) {
+        for (final Class clazz : classes) {
             out.writeByte(CLASS);
             out.writeObject(clazz);
 
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
+            final Field[] fields = clazz.getDeclaredFields();
+            for (final Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers())) continue;
                 if (Modifier.isTransient(field.getModifiers())) continue;
                 field.setAccessible(true);
@@ -287,7 +287,7 @@ public class PojoSerialization implements Serializable {
                 out.writeUTF(field.getName());
                 try {
                     out.writeObject(field.get(object));
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                     throw (IOException) new IOException("Cannot write field " + field.getName()).initCause(e);
                 }
             }
@@ -295,15 +295,15 @@ public class PojoSerialization implements Serializable {
         out.writeByte(DONE);
     }
 
-    private void setValue(Field field, Object object, Object value) {
-        long offset;
+    private void setValue(final Field field, final Object object, final Object value) {
+        final long offset;
         try {
             offset = (Long) objectFieldOffset.invoke(unsafe, field);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed getting offset for: field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
         }
 
-        Class type = field.getType();
+        final Class type = field.getType();
         try {
             if (type.isPrimitive()) {
                 if (type.equals(Integer.TYPE)) {
@@ -328,7 +328,7 @@ public class PojoSerialization implements Serializable {
             } else {
                 putObject.invoke(unsafe, object, offset, value);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }

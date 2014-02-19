@@ -43,7 +43,7 @@ public class MEJBBean {
     MBeanServer mbeanServer;
 
     public MEJBBean() {
-        List mbeanServers = MBeanServerFactory.findMBeanServer(null);
+        final List mbeanServers = MBeanServerFactory.findMBeanServer(null);
         if (mbeanServers.size() > 0) {
             mbeanServer = (MBeanServer) mbeanServers.get(0);
         } else {
@@ -51,11 +51,11 @@ public class MEJBBean {
         }
     }
 
-    public Object getAttribute(ObjectName objectName, String string) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+    public Object getAttribute(final ObjectName objectName, final String string) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
         return mbeanServer.getAttribute(objectName, string);
     }
 
-    public AttributeList getAttributes(ObjectName objectName, String[] strings) throws InstanceNotFoundException, ReflectionException {
+    public AttributeList getAttributes(final ObjectName objectName, final String[] strings) throws InstanceNotFoundException, ReflectionException {
         return mbeanServer.getAttributes(objectName, strings);
     }
 
@@ -67,27 +67,27 @@ public class MEJBBean {
         return mbeanServer.getMBeanCount();
     }
 
-    public MBeanInfo getMBeanInfo(ObjectName objectName) throws IntrospectionException, InstanceNotFoundException, ReflectionException {
+    public MBeanInfo getMBeanInfo(final ObjectName objectName) throws IntrospectionException, InstanceNotFoundException, ReflectionException {
         return mbeanServer.getMBeanInfo(objectName);
     }
 
-    public Object invoke(ObjectName objectName, String string, Object[] objects, String[] strings) throws InstanceNotFoundException, MBeanException, ReflectionException {
+    public Object invoke(final ObjectName objectName, final String string, final Object[] objects, final String[] strings) throws InstanceNotFoundException, MBeanException, ReflectionException {
         return mbeanServer.invoke(objectName, string, objects, strings);
     }
 
-    public boolean isRegistered(ObjectName objectName) {
+    public boolean isRegistered(final ObjectName objectName) {
         return mbeanServer.isRegistered(objectName);
     }
 
-    public Set queryNames(ObjectName objectName, QueryExp queryExp) {
+    public Set queryNames(final ObjectName objectName, final QueryExp queryExp) {
         return mbeanServer.queryNames(objectName, queryExp);
     }
 
-    public void setAttribute(ObjectName objectName, Attribute attribute) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
+    public void setAttribute(final ObjectName objectName, final Attribute attribute) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
         mbeanServer.setAttribute(objectName, attribute);
     }
 
-    public AttributeList setAttributes(ObjectName objectName, AttributeList attributeList) throws InstanceNotFoundException, ReflectionException {
+    public AttributeList setAttributes(final ObjectName objectName, final AttributeList attributeList) throws InstanceNotFoundException, ReflectionException {
         return mbeanServer.setAttributes(objectName, attributeList);
     }
 

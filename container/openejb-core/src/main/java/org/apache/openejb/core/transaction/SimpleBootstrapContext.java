@@ -29,12 +29,12 @@ public class SimpleBootstrapContext implements BootstrapContext {
     private final WorkManager workManager;
     private final XATerminator xaTerminator;
 
-    public SimpleBootstrapContext(WorkManager workManager) {
+    public SimpleBootstrapContext(final WorkManager workManager) {
         this.workManager = workManager;
         xaTerminator = null;
     }
 
-    public SimpleBootstrapContext(WorkManager workManager, XATerminator xaTerminator) {
+    public SimpleBootstrapContext(final WorkManager workManager, final XATerminator xaTerminator) {
         this.workManager = workManager;
         this.xaTerminator = xaTerminator;
     }
@@ -59,9 +59,9 @@ public class SimpleBootstrapContext implements BootstrapContext {
         return null;
     }
 
-    public boolean isContextSupported(Class<? extends WorkContext> cls) {
+    public boolean isContextSupported(final Class<? extends WorkContext> cls) {
         if (workManager instanceof GeronimoWorkManager) {
-            GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
+            final GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
             return geronimoWorkManager.isContextSupported(cls);
         }
         

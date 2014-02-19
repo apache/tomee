@@ -32,10 +32,10 @@ public class EjbTimeoutJob implements Job {
     public static final String TIMER_DATA = "TIMER_DATA";
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
-        EjbTimerServiceImpl ejbTimerService = (EjbTimerServiceImpl) jobDataMap.get(EJB_TIMERS_SERVICE);
-        TimerData timerData = (TimerData) jobDataMap.get(TIMER_DATA);
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
+        final EjbTimerServiceImpl ejbTimerService = (EjbTimerServiceImpl) jobDataMap.get(EJB_TIMERS_SERVICE);
+        final TimerData timerData = (TimerData) jobDataMap.get(TIMER_DATA);
         ejbTimerService.ejbTimeout(timerData);
     }
 }

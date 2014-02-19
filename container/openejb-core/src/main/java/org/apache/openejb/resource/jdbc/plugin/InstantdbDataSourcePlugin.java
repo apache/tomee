@@ -26,18 +26,18 @@ import java.io.IOException;
 public class InstantdbDataSourcePlugin implements DataSourcePlugin {
 
     @Override
-    public String updatedUrl(String jdbcUrl) {
+    public String updatedUrl(final String jdbcUrl) {
         // jdbc:idb:conf/instantdb.properties
-        String prefix = "jdbc:idb:";
-        int index = jdbcUrl.indexOf(prefix);
+        final String prefix = "jdbc:idb:";
+        final int index = jdbcUrl.indexOf(prefix);
         if (index == -1){
             return jdbcUrl;
         }
 
-        String confFile = jdbcUrl.substring(index + prefix.length());
+        final String confFile = jdbcUrl.substring(index + prefix.length());
 
-        File base = SystemInstance.get().getBase().getDirectory();
-        File file = new File(base, confFile);
+        final File base = SystemInstance.get().getBase().getDirectory();
+        final File file = new File(base, confFile);
 
 
         if (file.exists()) {
@@ -52,10 +52,10 @@ public class InstantdbDataSourcePlugin implements DataSourcePlugin {
         }
 
         try {
-            ResourceFinder finder = new ResourceFinder("");
-            String defaultProperties = finder.findString("default.instantdb.properties");
+            final ResourceFinder finder = new ResourceFinder("");
+            final String defaultProperties = finder.findString("default.instantdb.properties");
             IO.copy(defaultProperties.getBytes(), file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // TODO; Handle this
             e.printStackTrace();
         }

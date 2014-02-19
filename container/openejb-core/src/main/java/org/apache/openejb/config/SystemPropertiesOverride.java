@@ -32,14 +32,14 @@ import java.util.Properties;
 public class SystemPropertiesOverride implements DynamicDeployer {
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         final Properties properties = new Properties();
 
-        for (Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
+        for (final Map.Entry<Object, Object> entry : SystemInstance.get().getProperties().entrySet()) {
             final String key = entry.getKey().toString();
 
-            for (String prefix : Arrays.asList("openejb.", "tomee.")) {
+            for (final String prefix : Arrays.asList("openejb.", "tomee.")) {
                 if (key.startsWith(prefix)) {
                     final String property = key.substring(prefix.length());
                     properties.put(property, entry.getValue());

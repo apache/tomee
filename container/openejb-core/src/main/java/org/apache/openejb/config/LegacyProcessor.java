@@ -37,17 +37,17 @@ import static org.apache.openejb.jee.SessionType.STATEFUL;
 public class LegacyProcessor implements DynamicDeployer {
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            ClassLoader classLoader = ejbModule.getClassLoader();
-            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            final ClassLoader classLoader = ejbModule.getClassLoader();
+            for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 if (bean.getEjbClass() == null) continue;
 
                 try {
-                    Class<?> clazz = classLoader.loadClass(bean.getEjbClass());
+                    final Class<?> clazz = classLoader.loadClass(bean.getEjbClass());
 
                     process(clazz, bean);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     // skip, we'll get this in validation
                 }
             }
@@ -56,24 +56,24 @@ public class LegacyProcessor implements DynamicDeployer {
         return appModule;
     }
 
-    public static void process(Class<?> clazz, EnterpriseBean bean) {
+    public static void process(final Class<?> clazz, final EnterpriseBean bean) {
 
         if (bean instanceof SessionBean) {
-            SessionBean sessionBean = (SessionBean) bean;
+            final SessionBean sessionBean = (SessionBean) bean;
 
             if (sessionBean.getSessionType() == STATEFUL && SessionSynchronization.class.isAssignableFrom(clazz)) {
                 try {
                     sessionBean.getAfterBegin().add(new LifecycleCallback(clazz.getMethod("afterBegin")));
                     sessionBean.getBeforeCompletion().add(new LifecycleCallback(clazz.getMethod("beforeCompletion")));
                     sessionBean.getAfterCompletion().add(new LifecycleCallback(clazz.getMethod("afterCompletion", boolean.class)));
-                } catch (NoSuchMethodException e) {
+                } catch (final NoSuchMethodException e) {
                     //Ignore, should never happen
                 }
             }
 
             if (javax.ejb.SessionBean.class.isAssignableFrom(clazz)) {
                 final ResourceEnvRef ref = new ResourceEnvRef("javax.ejb.SessionBean/sessionContext", SessionContext.class);
-                InjectionTarget target = new InjectionTarget();
+                final InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(clazz);
                 target.setInjectionTargetName("sessionContext");
                 ref.getInjectionTarget().add(target);
@@ -83,11 +83,11 @@ public class LegacyProcessor implements DynamicDeployer {
         }
 
         if (bean instanceof MessageDrivenBean) {
-            MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
+            final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
 
             if (javax.ejb.MessageDrivenBean.class.isAssignableFrom(clazz)) {
                 final ResourceEnvRef ref = new ResourceEnvRef("javax.ejb.MessageDrivenBean/messageDrivenContext", MessageDrivenContext.class);
-                InjectionTarget target = new InjectionTarget();
+                final InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(clazz);
                 target.setInjectionTargetName("messageDrivenContext");
                 ref.getInjectionTarget().add(target);

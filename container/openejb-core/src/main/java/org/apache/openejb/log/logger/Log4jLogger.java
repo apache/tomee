@@ -55,9 +55,9 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         //older versions of log4j don't have TRACE, use debug
         org.apache.log4j.Level t = org.apache.log4j.Level.DEBUG;
         try {
-            Field f = org.apache.log4j.Level.class.getField("TRACE");
+            final Field f = org.apache.log4j.Level.class.getField("TRACE");
             t = (org.apache.log4j.Level)f.get(null);
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             //ignore, assume old version of log4j
         }
         TRACE = t;
@@ -73,34 +73,34 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         TO_LOG4J.put(Level.OFF,     org.apache.log4j.Level.OFF);
     }
 
-    public Log4jLogger(String name, String resourceBundleName) {
+    public Log4jLogger(final String name, final String resourceBundleName) {
         super(name, resourceBundleName);
         log = LogManager.getLogger(name);
     }
 
     public Level getLevel() {
-        org.apache.log4j.Level l = log.getEffectiveLevel();
+        final org.apache.log4j.Level l = log.getEffectiveLevel();
         if (l != null) {
             return fromL4J(l);
         }
         return null;
     }
 
-    public void setLevel(Level newLevel) throws SecurityException {
+    public void setLevel(final Level newLevel) throws SecurityException {
         log.setLevel(TO_LOG4J.get(newLevel));
     }
 
-    public synchronized void addHandler(Handler handler) throws SecurityException {
+    public synchronized void addHandler(final Handler handler) throws SecurityException {
         log.addAppender(new HandlerWrapper(handler));
     }
-    public synchronized void removeHandler(Handler handler) throws SecurityException {
+    public synchronized void removeHandler(final Handler handler) throws SecurityException {
         log.removeAppender("HandlerWrapper-" + handler.hashCode());
     }
     public synchronized Handler[] getHandlers() {
-        List<Handler> ret = new ArrayList<Handler>();
-        Enumeration<?> en = log.getAllAppenders();
+        final List<Handler> ret = new ArrayList<Handler>();
+        final Enumeration<?> en = log.getAllAppenders();
         while (en.hasMoreElements()) {
-            Appender ap = (Appender)en.nextElement();
+            final Appender ap = (Appender)en.nextElement();
             if (ap instanceof HandlerWrapper) {
                 ret.add(((HandlerWrapper)ap).getHandler());
             }
@@ -108,7 +108,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         return ret.toArray(new Handler[ret.size()]);
     }
 
-    protected void internalLogFormatted(String msg, LogRecord record) {
+    protected void internalLogFormatted(final String msg, final LogRecord record) {
         log.log(AbstractDelegatingLogger.class.getName(),
                 TO_LOG4J.get(record.getLevel()),
                 msg,
@@ -116,7 +116,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
     }
 
 
-    private Level fromL4J(org.apache.log4j.Level l) {
+    private Level fromL4J(final org.apache.log4j.Level l) {
         Level l2 = null;
         switch (l.toInt()) {
             case org.apache.log4j.Level.ALL_INT:
@@ -152,7 +152,7 @@ public class Log4jLogger extends AbstractDelegatingLogger {
     private class HandlerWrapper extends AppenderSkeleton {
         Handler handler;
 
-        public HandlerWrapper(Handler h) {
+        public HandlerWrapper(final Handler h) {
             handler = h;
             name = "HandlerWrapper-" + h.hashCode();
         }
@@ -162,14 +162,14 @@ public class Log4jLogger extends AbstractDelegatingLogger {
         }
 
         @Override
-        protected void append(LoggingEvent event) {
-            LogRecord lr = new LogRecord(fromL4J(event.getLevel()),
+        protected void append(final LoggingEvent event) {
+            final LogRecord lr = new LogRecord(fromL4J(event.getLevel()),
                     event.getMessage().toString());
             lr.setLoggerName(event.getLoggerName());
             if (event.getThrowableInformation() != null) {
                 lr.setThrown(event.getThrowableInformation().getThrowable());
             }
-            String rbname = getResourceBundleName();
+            final String rbname = getResourceBundleName();
             if (rbname != null) {
                 lr.setResourceBundleName(rbname);
                 lr.setResourceBundle(getResourceBundle());
@@ -191,8 +191,8 @@ public class Log4jLogger extends AbstractDelegatingLogger {
             return TO_LOG4J.get(handler.getLevel());
         }
         @Override
-        public boolean isAsSevereAsThreshold(Priority priority) {
-            Priority p = getThreshold();
+        public boolean isAsSevereAsThreshold(final Priority priority) {
+            final Priority p = getThreshold();
             return p == null || priority.isGreaterOrEqual(p);
         }
     }

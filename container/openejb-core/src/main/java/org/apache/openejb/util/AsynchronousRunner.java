@@ -29,7 +29,7 @@ public class AsynchronousRunner {
 
     private final Executor executor;
 
-    public AsynchronousRunner(Executor executor) {
+    public AsynchronousRunner(final Executor executor) {
         this.executor = executor;
     }
 
@@ -41,9 +41,9 @@ public class AsynchronousRunner {
      * @param arguments The invocation arguments
      * @return A {@link Future} containing the method return value
      */
-    public Future<Object> runAsync(Object object, Method method, Object... arguments) {
-        Callable<Object> callable = new MethodInvoker(object, method, arguments);
-        FutureTask<Object> futureTask = new FutureTask<Object>(callable);
+    public Future<Object> runAsync(final Object object, final Method method, final Object... arguments) {
+        final Callable<Object> callable = new MethodInvoker(object, method, arguments);
+        final FutureTask<Object> futureTask = new FutureTask<Object>(callable);
         executor.execute(futureTask);
         return futureTask;
     }
@@ -58,7 +58,7 @@ public class AsynchronousRunner {
         private Method method;
         private Object[] arguments;
 
-        public MethodInvoker(Object object, Method method, Object[] arguments) {
+        public MethodInvoker(final Object object, final Method method, final Object[] arguments) {
             this.object = object;
             this.method = method;
             this.arguments = arguments;

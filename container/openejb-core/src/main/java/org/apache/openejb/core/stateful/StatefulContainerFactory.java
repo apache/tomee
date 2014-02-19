@@ -36,7 +36,7 @@ public class StatefulContainerFactory {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(final Object id) {
         this.id = id;
     }
 
@@ -44,7 +44,7 @@ public class StatefulContainerFactory {
         return securityService;
     }
 
-    public void setSecurityService(SecurityService securityService) {
+    public void setSecurityService(final SecurityService securityService) {
         this.securityService = securityService;
     }
 
@@ -52,7 +52,7 @@ public class StatefulContainerFactory {
         return accessTimeout;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -60,31 +60,31 @@ public class StatefulContainerFactory {
         return cache;
     }
 
-    public void setCache(Cache<Object, Instance> cache) {
+    public void setCache(final Cache<Object, Instance> cache) {
         this.cache = cache;
     }
 
-    public void setCache(String s) {
+    public void setCache(final String s) {
         properties.put("Cache", s);
     }
 
-    public void setPassivator(String s) {
+    public void setPassivator(final String s) {
         properties.put("Passivator", s);
     }
 
-    public void setTimeOut(String s) {
+    public void setTimeOut(final String s) {
         properties.put("TimeOut", s);
     }
 
-    public void setCapacity(String s) {
+    public void setCapacity(final String s) {
         properties.put("Capacity", s);
     }
 
-    public void setBulkPassivate(String s) {
+    public void setBulkPassivate(final String s) {
         properties.put("BulkPassivate", s);
     }
 
-    public void setFrequency(String s) {
+    public void setFrequency(final String s) {
         properties.put("Frequency", s);
     }
     
@@ -92,7 +92,7 @@ public class StatefulContainerFactory {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(final Properties properties) {
         this.properties.putAll(properties);
     }
 
@@ -123,7 +123,7 @@ public class StatefulContainerFactory {
         }
 
         // build the object recipe
-        ObjectRecipe serviceRecipe = new ObjectRecipe((String) cache);
+        final ObjectRecipe serviceRecipe = new ObjectRecipe((String) cache);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         serviceRecipe.allow(Option.NAMED_PARAMETERS);
@@ -144,9 +144,9 @@ public class StatefulContainerFactory {
         this.cache = (Cache<Object, Instance>) cache;
     }
 
-    private Object getProperty(String name) {
-        for (Entry<Object, Object> entry : properties.entrySet()) {
-            Object key = entry.getKey();
+    private Object getProperty(final String name) {
+        for (final Entry<Object, Object> entry : properties.entrySet()) {
+            final Object key = entry.getKey();
             if (key instanceof String && name.equalsIgnoreCase((String) key)) {
                 return entry.getValue();
             }

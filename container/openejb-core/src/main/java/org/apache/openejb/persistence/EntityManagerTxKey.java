@@ -21,11 +21,11 @@ import javax.persistence.EntityManagerFactory;
 public class EntityManagerTxKey {
     private final EntityManagerFactory entityManagerFactory;
 
-    public EntityManagerTxKey(EntityManagerFactory entityManagerFactory) {
+    public EntityManagerTxKey(final EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }

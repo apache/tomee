@@ -63,7 +63,7 @@ public class InterceptorData {
 
     private final Map<Class<?>, Object> data = new HashMap<Class<?>, Object>();
 
-    public InterceptorData(Class clazz) {
+    public InterceptorData(final Class clazz) {
         this.clazz = clazz;
     }
 
@@ -107,7 +107,7 @@ public class InterceptorData {
         return aroundTimeout;
     }
 
-    public Set<Method> getMethods(Operation operation) {
+    public Set<Method> getMethods(final Operation operation) {
         switch(operation) {
             case BUSINESS: return getAroundInvoke();
             case BUSINESS_WS: return getAroundInvoke();
@@ -124,7 +124,7 @@ public class InterceptorData {
         return Collections.EMPTY_SET;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -143,7 +143,7 @@ public class InterceptorData {
         CACHE.put(clazz, scan(clazz));
     }
 
-    public static InterceptorData scan(Class<?> clazz) {
+    public static InterceptorData scan(final Class<?> clazz) {
         final InterceptorData model = CACHE.get(clazz);
         if (model != null) {
             final InterceptorData data = new InterceptorData(clazz);
@@ -175,10 +175,10 @@ public class InterceptorData {
         return data;
     }
 
-    private static void add(ClassFinder finder, Set<Method> methods, Class<? extends Annotation> annotation) {
+    private static void add(final ClassFinder finder, final Set<Method> methods, final Class<? extends Annotation> annotation) {
 
         final List<Method> annotatedMethods = finder.findAnnotatedMethods(annotation);
-        for (Method method : annotatedMethods) {
+        for (final Method method : annotatedMethods) {
             SetAccessible.on(method);
             methods.add(method);
         }

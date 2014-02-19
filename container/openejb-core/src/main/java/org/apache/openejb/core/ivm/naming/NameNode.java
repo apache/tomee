@@ -37,7 +37,7 @@ public class NameNode implements Serializable {
     private Object myObject;
     private transient IvmContext myContext;
     private boolean unbound;
-    public NameNode(NameNode parent, ParsedName name, Object obj, NameNode parentTree) {
+    public NameNode(final NameNode parent, final ParsedName name, final Object obj, final NameNode parentTree) {
         atomicName = name.getComponent();
         atomicHash = name.getComponentHashCode();
         this.parent = parent;
@@ -52,7 +52,7 @@ public class NameNode implements Serializable {
         }
     }
 
-    void setMyContext(IvmContext myContext) {
+    void setMyContext(final IvmContext myContext) {
         this.myContext = myContext;
     }
 
@@ -66,17 +66,17 @@ public class NameNode implements Serializable {
         }
     }
 
-    public Object resolve(ParsedName name) throws NameNotFoundException {
-        int compareResult = name.compareTo(atomicHash);
+    public Object resolve(final ParsedName name) throws NameNotFoundException {
+        final int compareResult = name.compareTo(atomicHash);
         NameNotFoundException n = null;
-        int pos = name.getPos();
+        final int pos = name.getPos();
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             // hashcodes and String valuse are equal
             if (name.next()) {
                 if (subTree != null) {
                     try {
                         return subTree.resolve(name);
-                    } catch (NameNotFoundException e) {
+                    } catch (final NameNotFoundException e) {
                         n = e;
                     }
                 }
@@ -97,11 +97,11 @@ public class NameNode implements Serializable {
         }
         if (myObject instanceof Federation) {
             name.reset(pos);
-            String nameInContext = name.remaining().path();
+            final String nameInContext = name.remaining().path();
             Federation f = null;
-            for (Context c: (Federation)myObject) {
+            for (final Context c: (Federation)myObject) {
                 try {
-                    Object o = c.lookup(nameInContext);
+                    final Object o = c.lookup(nameInContext);
                     if (o instanceof Context) {
                         if (f == null) {
                             f = new Federation();
@@ -110,12 +110,12 @@ public class NameNode implements Serializable {
                     } else {
                         return o;
                     }
-                } catch (NamingException e) {
+                } catch (final NamingException e) {
                     //ignore
                 }
             }
             if (f != null) {
-                NameNode node = new NameNode(null, new ParsedName(""), f, null);
+                final NameNode node = new NameNode(null, new ParsedName(""), f, null);
                 return new IvmContext(node);
             }
         }
@@ -123,8 +123,8 @@ public class NameNode implements Serializable {
         throw new NameNotFoundException("Cannot resolve " + name);
     }
 
-    public void bind(ParsedName name, Object obj) throws NameAlreadyBoundException {
-        int compareResult = name.compareTo(atomicHash);
+    public void bind(final ParsedName name, final Object obj) throws NameAlreadyBoundException {
+        final int compareResult = name.compareTo(atomicHash);
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             if (name.next()) {
                 if (myObject != null && !(myObject instanceof Federation)) {
@@ -169,7 +169,7 @@ public class NameNode implements Serializable {
         }
     }
 
-    public void tree(String indent, PrintStream out){
+    public void tree(final String indent, final PrintStream out){
         out.println(atomicName + " @ " + atomicHash + (myObject != null ? " [" + myObject + "]" : ""));
 
         if (grtrTree != null) {
@@ -187,7 +187,7 @@ public class NameNode implements Serializable {
     }
 
 
-    public int compareTo(int otherHash) {
+    public int compareTo(final int otherHash) {
         if (atomicHash == otherHash)
             return 0;
         else if (atomicHash > otherHash)
@@ -196,7 +196,7 @@ public class NameNode implements Serializable {
             return -1;
     }
 
-    private void bind(NameNode node) {
+    private void bind(final NameNode node) {
         int compareResult = node.compareTo(atomicHash);
 
         // This seems to be needed because of an inbalanced way
@@ -236,8 +236,8 @@ public class NameNode implements Serializable {
         }
     }
 
-    public void unbind(ParsedName name) throws NameAlreadyBoundException {
-        int compareResult = name.compareTo(atomicHash);
+    public void unbind(final ParsedName name) throws NameAlreadyBoundException {
+        final int compareResult = name.compareTo(atomicHash);
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             if (name.next()) {
                 if (subTree != null) {
@@ -259,7 +259,7 @@ public class NameNode implements Serializable {
         }
     }
 
-    private void unbind(NameNode node) {
+    private void unbind(final NameNode node) {
         if (subTree == node) {
             subTree = null;
         } else if (grtrTree == node){
@@ -270,7 +270,7 @@ public class NameNode implements Serializable {
         rebalance(this, node);
     }
 
-    private void rebalance(NameNode tree, NameNode node) {
+    private void rebalance(final NameNode tree, final NameNode node) {
         if (node.subTree != null) {
             tree.bind(node.subTree);
         }
@@ -286,7 +286,7 @@ public class NameNode implements Serializable {
         prune(this);
     }
 
-    private void prune(NameNode until) {
+    private void prune(final NameNode until) {
         if (subTree != null) {
             subTree.prune(until);
         }
@@ -308,7 +308,7 @@ public class NameNode implements Serializable {
         return hasChildren(this);
     }
 
-    private boolean hasChildren(NameNode node) {
+    private boolean hasChildren(final NameNode node) {
         if (subTree != null && subTree.hasChildren(node)) return true;
         if (grtrTree != null && grtrTree.hasChildren(node)) return true;
         if (lessTree != null && lessTree.hasChildren(node)) return true;
@@ -331,13 +331,13 @@ public class NameNode implements Serializable {
         }
     }
 
-    public IvmContext createSubcontext(ParsedName name) throws NameAlreadyBoundException {
+    public IvmContext createSubcontext(final ParsedName name) throws NameAlreadyBoundException {
         try {
             bind(name, null);
             name.reset();
             return (IvmContext) resolve(name);
         }
-        catch (NameNotFoundException exception) {
+        catch (final NameNotFoundException exception) {
             exception.printStackTrace();
             throw new OpenEJBRuntimeException(exception);
         }

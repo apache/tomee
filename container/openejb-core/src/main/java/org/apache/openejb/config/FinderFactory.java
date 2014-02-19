@@ -49,40 +49,40 @@ public class FinderFactory {
     public static final String FORCE_LINK = "openejb.finder.force.link";
 
     private static FinderFactory get() {
-        FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
+        final FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
         return factory != null ? factory: FinderFactory.factory;
     }
 
-    public static IAnnotationFinder createFinder(DeploymentModule module) throws Exception {
+    public static IAnnotationFinder createFinder(final DeploymentModule module) throws Exception {
         return get().create(module);
     }
 
-    public static AnnotationFinder getFinder(ClassLoader classLoader, URL url) {
+    public static AnnotationFinder getFinder(final ClassLoader classLoader, final URL url) {
         return newFinder(ClasspathArchive.archive(classLoader, url));
     }
 
-    public IAnnotationFinder create(DeploymentModule module) throws Exception {
+    public IAnnotationFinder create(final DeploymentModule module) throws Exception {
         final AnnotationFinder finder;
         if (module instanceof WebModule) {
-            WebModule webModule = (WebModule) module;
+            final WebModule webModule = (WebModule) module;
             final AnnotationFinder annotationFinder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
             enableFinderOptions(annotationFinder);
             finder = annotationFinder;
         } else if (module instanceof ConnectorModule) {
-            ConnectorModule connectorModule = (ConnectorModule) module;
+            final ConnectorModule connectorModule = (ConnectorModule) module;
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries())).link();
         } else if (module instanceof AppModule) {
             final Collection<URL> urls = NewLoaderLogic.applyBuiltinExcludes(new UrlSet(AppModule.class.cast(module).getAdditionalLibraries())).getUrls();
             finder = newFinder(new WebappAggregatedArchive(module.getClassLoader(), module.getAltDDs(), urls));
         } else if (module.getJarLocation() != null) {
-            String location = module.getJarLocation();
-            File file = new File(location);
+            final String location = module.getJarLocation();
+            final File file = new File(location);
 
             URL url;
             if (file.exists()) {
                 url = file.toURI().toURL();
 
-                File webInfClassesFolder = new File(file, "WEB-INF/classes"); // is it possible?? normally no
+                final File webInfClassesFolder = new File(file, "WEB-INF/classes"); // is it possible?? normally no
                 if (webInfClassesFolder.exists() && webInfClassesFolder.isDirectory()) {
                     url = webInfClassesFolder.toURI().toURL();
                 }
@@ -119,7 +119,7 @@ public class FinderFactory {
     public static final class DebugArchive implements Archive {
         private final Archive archive;
 
-        private DebugArchive(Archive archive) {
+        private DebugArchive(final Archive archive) {
             this.archive = archive;
         }
 
@@ -129,12 +129,12 @@ public class FinderFactory {
         }
 
         @Override
-        public InputStream getBytecode(String s) throws IOException, ClassNotFoundException {
+        public InputStream getBytecode(final String s) throws IOException, ClassNotFoundException {
             return archive.getBytecode(s);
         }
 
         @Override
-        public Class<?> loadClass(String s) throws ClassNotFoundException {
+        public Class<?> loadClass(final String s) throws ClassNotFoundException {
             try {
                 return archive.loadClass(s);
             } catch (final ClassNotFoundException e) {
@@ -144,7 +144,7 @@ public class FinderFactory {
         }
     }
 
-    public static AnnotationFinder enableFinderOptions(AnnotationFinder annotationFinder) {
+    public static AnnotationFinder enableFinderOptions(final AnnotationFinder annotationFinder) {
         if (annotationFinder.hasMetaAnnotations()) {
             annotationFinder.enableMetaAnnotations();
         }
@@ -153,7 +153,7 @@ public class FinderFactory {
         return annotationFinder;
     }
 
-    private static void enableSubclassing(AnnotationFinder annotationFinder) {
+    private static void enableSubclassing(final AnnotationFinder annotationFinder) {
         if (enableFindSubclasses()) {
             // for @HandleTypes we need interface impl, impl of abstract classes too
             annotationFinder.enableFindSubclasses();
@@ -171,7 +171,7 @@ public class FinderFactory {
         try { // since Tomcat 7.0.47
             FinderFactory.class.getClassLoader().loadClass("javax.websocket.Endpoint");
             return true;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return false;
         }
     }
@@ -180,7 +180,7 @@ public class FinderFactory {
         try {
             FinderFactory.class.getClassLoader().loadClass("org.apache.openejb.server.rest.RsRegistry");
             return true;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return false;
         }
     }
@@ -188,12 +188,12 @@ public class FinderFactory {
     public static class ModuleLimitedFinder implements IAnnotationFinder {
         private final IAnnotationFinder delegate;
 
-        public ModuleLimitedFinder(IAnnotationFinder delegate) {
+        public ModuleLimitedFinder(final IAnnotationFinder delegate) {
             this.delegate = delegate;
         }
 
         @Override
-        public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
+        public boolean isAnnotationPresent(final Class<? extends Annotation> annotation) {
             return delegate.isAnnotationPresent(annotation);
         }
 
@@ -203,15 +203,15 @@ public class FinderFactory {
         }
 
         @Override
-        public List<Package> findAnnotatedPackages(Class<? extends Annotation> annotation) {
+        public List<Package> findAnnotatedPackages(final Class<? extends Annotation> annotation) {
             return delegate.findAnnotatedPackages(annotation);
         }
 
         @Override
-        public List<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotation) {
+        public List<Class<?>> findAnnotatedClasses(final Class<? extends Annotation> annotation) {
             try {
                 return filter(delegate.findAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
-            } catch (TypeNotPresentException tnpe) {
+            } catch (final TypeNotPresentException tnpe) {
                 throw handleException(tnpe, annotation);
             }
         }
@@ -221,75 +221,75 @@ public class FinderFactory {
                 final Method mtd = AnnotationFinder.class.getDeclaredMethod("getAnnotationInfos", String.class);
                 mtd.setAccessible(true);
                 final List<?> infos = (List<?>) mtd.invoke(delegate);
-                for (Object info : infos) {
+                for (final Object info : infos) {
                     if (info instanceof AnnotationFinder.ClassInfo) {
                         final AnnotationFinder.ClassInfo classInfo = (AnnotationFinder.ClassInfo) info;
                         try {
                             // can throw the exception
                             classInfo.get().isAnnotationPresent(annotation);
-                        } catch (TypeNotPresentException tnpe2) {
+                        } catch (final TypeNotPresentException tnpe2) {
                             throw new OpenEJBRuntimeException("Missing type for annotation " + annotation.getName() + " on class " + classInfo.getName(), tnpe2);
-                        } catch (ThreadDeath ignored) {
+                        } catch (final ThreadDeath ignored) {
                             // no-op
                         }
                     }
                 }
-            } catch (Throwable th) {
+            } catch (final Throwable th) {
                 // no-op
             }
             return tnpe;
         }
 
         @Override
-        public List<Class<?>> findInheritedAnnotatedClasses(Class<? extends Annotation> annotation) {
+        public List<Class<?>> findInheritedAnnotatedClasses(final Class<? extends Annotation> annotation) {
             return filter(delegate.findInheritedAnnotatedClasses(annotation), new ClassPredicate<Object>(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Method> findAnnotatedMethods(Class<? extends Annotation> annotation) {
+        public List<Method> findAnnotatedMethods(final Class<? extends Annotation> annotation) {
             return filter(delegate.findAnnotatedMethods(annotation), new MethodPredicate(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Constructor> findAnnotatedConstructors(Class<? extends Annotation> annotation) {
+        public List<Constructor> findAnnotatedConstructors(final Class<? extends Annotation> annotation) {
             return filter(delegate.findAnnotatedConstructors(annotation), new ConstructorPredicate(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Field> findAnnotatedFields(Class<? extends Annotation> annotation) {
+        public List<Field> findAnnotatedFields(final Class<? extends Annotation> annotation) {
             return filter(delegate.findAnnotatedFields(annotation), new FieldPredicate(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Class<?>> findClassesInPackage(String packageName, boolean recursive) {
+        public List<Class<?>> findClassesInPackage(final String packageName, final boolean recursive) {
             return filter(delegate.findClassesInPackage(packageName, recursive), new ClassPredicate<Object>(getAnnotatedClassNames()));
         }
 
         @Override
-        public <T> List<Class<? extends T>> findSubclasses(Class<T> clazz) {
+        public <T> List<Class<? extends T>> findSubclasses(final Class<T> clazz) {
             return filter(delegate.findSubclasses(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
         }
 
         @Override
-        public <T> List<Class<? extends T>> findImplementations(Class<T> clazz) {
+        public <T> List<Class<? extends T>> findImplementations(final Class<T> clazz) {
             return filter(delegate.findImplementations(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Annotated<Method>> findMetaAnnotatedMethods(Class<? extends Annotation> annotation) {
+        public List<Annotated<Method>> findMetaAnnotatedMethods(final Class<? extends Annotation> annotation) {
             return filter(delegate.findMetaAnnotatedMethods(annotation), new AnnotatedMethodPredicate(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Annotated<Field>> findMetaAnnotatedFields(Class<? extends Annotation> annotation) {
+        public List<Annotated<Field>> findMetaAnnotatedFields(final Class<? extends Annotation> annotation) {
             return filter(delegate.findMetaAnnotatedFields(annotation), new AnnotatedFieldPredicate(getAnnotatedClassNames()));
         }
 
         @Override
-        public List<Annotated<Class<?>>> findMetaAnnotatedClasses(Class<? extends Annotation> annotation) {
+        public List<Annotated<Class<?>>> findMetaAnnotatedClasses(final Class<? extends Annotation> annotation) {
             try {
                 return filter(delegate.findMetaAnnotatedClasses(annotation), new AnnotatedClassPredicate(getAnnotatedClassNames()));
-            } catch (TypeNotPresentException tnpe) {
+            } catch (final TypeNotPresentException tnpe) {
                 throw handleException(tnpe, annotation);
             }
         }
@@ -301,7 +301,7 @@ public class FinderFactory {
 
         private static <T> List<T> filter(final List<T> list, final Predicate<T> predicate) {
             final List<T> ts = new ArrayList<T>();
-            for (T t : list) {
+            for (final T t : list) {
                 if (predicate.accept(t)) {
                     ts.add(t);
                 }
@@ -320,7 +320,7 @@ public class FinderFactory {
                 accepted = list;
             }
 
-            protected boolean accept(T t) {
+            protected boolean accept(final T t) {
                 return accepted.contains(name(t));
             }
 
@@ -333,7 +333,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Class<? extends T> aClass) {
+            protected String name(final Class<? extends T> aClass) {
                 return aClass.getName();
             }
         }
@@ -344,7 +344,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Method method) {
+            protected String name(final Method method) {
                 return method.getDeclaringClass().getName();
             }
         }
@@ -355,7 +355,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Field field) {
+            protected String name(final Field field) {
                 return field.getDeclaringClass().getName();
             }
         }
@@ -366,7 +366,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Constructor constructor) {
+            protected String name(final Constructor constructor) {
                 return constructor.getDeclaringClass().getName();
             }
         }
@@ -377,7 +377,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Annotated<Class<?>> aClass) {
+            protected String name(final Annotated<Class<?>> aClass) {
                 return aClass.get().getName();
             }
         }
@@ -388,7 +388,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Annotated<Method> method) {
+            protected String name(final Annotated<Method> method) {
                 return method.get().getDeclaringClass().getName();
             }
         }
@@ -399,7 +399,7 @@ public class FinderFactory {
             }
 
             @Override
-            protected String name(Annotated<Field> field) {
+            protected String name(final Annotated<Field> field) {
                 return field.get().getDeclaringClass().getName();
             }
         }

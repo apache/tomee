@@ -30,8 +30,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class WsBuilder {
-    public static PortData toPortData(PortInfo port, Collection<Injection> injections, URL baseUrl, ClassLoader classLoader) throws OpenEJBException {
-        PortData portData = new PortData();
+    public static PortData toPortData(final PortInfo port, final Collection<Injection> injections, final URL baseUrl, final ClassLoader classLoader) throws OpenEJBException {
+        final PortData portData = new PortData();
         portData.setPortId(port.portId);
         if (port.serviceName != null && port.serviceName.length() != 0) {
             portData.setServiceName(QName.valueOf(port.serviceName));
@@ -54,24 +54,24 @@ public class WsBuilder {
         return portData;
     }
 
-    public static List<HandlerChainData> toHandlerChainData(List<HandlerChainInfo> chains, ClassLoader classLoader) throws OpenEJBException {
-        List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
-        for (HandlerChainInfo handlerChain : chains) {
-            List<HandlerData> handlers = new ArrayList<HandlerData>();
-            for (HandlerInfo handler : handlerChain.handlers) {
+    public static List<HandlerChainData> toHandlerChainData(final List<HandlerChainInfo> chains, final ClassLoader classLoader) throws OpenEJBException {
+        final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
+        for (final HandlerChainInfo handlerChain : chains) {
+            final List<HandlerData> handlers = new ArrayList<HandlerData>();
+            for (final HandlerInfo handler : handlerChain.handlers) {
                 try {
-                    Class<?> handlerClass = classLoader.loadClass(handler.handlerClass);
-                    HandlerData handlerData = new HandlerData(handlerClass);
+                    final Class<?> handlerClass = classLoader.loadClass(handler.handlerClass);
+                    final HandlerData handlerData = new HandlerData(handlerClass);
                     handlerData.getInitParams().putAll(handler.initParams);
                     handlerData.getSoapHeaders().addAll(handler.soapHeaders);
                     handlerData.getSoapRoles().addAll(handler.soapRoles);
                     handlers.add(handlerData);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     throw new OpenEJBException("Could not load handler class "+ handler.handlerClass);
                 }
             }
 
-            HandlerChainData handlerChainData = new HandlerChainData(handlerChain.serviceNamePattern,
+            final HandlerChainData handlerChainData = new HandlerChainData(handlerChain.serviceNamePattern,
                     handlerChain.portNamePattern,
                     handlerChain.protocolBindings,
                     handlers);
@@ -81,12 +81,12 @@ public class WsBuilder {
         return handlerChains;
     }
 
-    public static URL getWsdlURL(String wsdlFile, URL baseUrl, ClassLoader classLoader) {
+    public static URL getWsdlURL(final String wsdlFile, final URL baseUrl, final ClassLoader classLoader) {
         URL wsdlURL = null;
         if (wsdlFile != null && wsdlFile.length() > 0) {
             try {
                 wsdlURL = new URL(wsdlFile);
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 // Not a URL, try as a resource
                 wsdlURL = classLoader.getResource(wsdlFile);
 
@@ -95,7 +95,7 @@ public class WsBuilder {
                     // configurationBaseUrl
                     try {
                         wsdlURL = new URL(baseUrl, wsdlFile);
-                    } catch (MalformedURLException ee) {
+                    } catch (final MalformedURLException ee) {
                         // ignore
                     }
                 }

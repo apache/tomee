@@ -29,11 +29,11 @@ public class IntraVmArtifact implements Externalizable {
     
     private static final Handles staticHandles = new Handles() {
         @Override
-        public synchronized int add(Object obj) {
+        public synchronized int add(final Object obj) {
             return super.add(obj);
         }
         @Override
-        public synchronized Object get(int id) {
+        public synchronized Object get(final int id) {
             return super.get(id);
         }
     };
@@ -50,36 +50,36 @@ public class IntraVmArtifact implements Externalizable {
     private int instanceHandle;
     private boolean staticArtifact;
 
-    public IntraVmArtifact(Object obj) {
+    public IntraVmArtifact(final Object obj) {
         this(obj, false);
     }
 
-    public IntraVmArtifact(Object obj, boolean storeStatically) {
+    public IntraVmArtifact(final Object obj, final boolean storeStatically) {
         this.staticArtifact = storeStatically;
-        Handles handles = getHandles(storeStatically);
+        final Handles handles = getHandles(storeStatically);
         instanceHandle = handles.add(obj);
     }
 
-    private static Handles getHandles(boolean staticArtifact) {
+    private static Handles getHandles(final boolean staticArtifact) {
         return staticArtifact ? staticHandles : threadHandles.get();
     }
 
     public IntraVmArtifact() {
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeBoolean(staticArtifact);
         out.write(instanceHandle);        
     }
 
-    public void readExternal(ObjectInput in) throws IOException {
+    public void readExternal(final ObjectInput in) throws IOException {
         staticArtifact = in.readBoolean();
         instanceHandle = in.read();        
     }
 
     protected Object readResolve() throws ObjectStreamException {
-        Handles handles = getHandles(staticArtifact);
-        Object artifact = handles.get(instanceHandle);
+        final Handles handles = getHandles(staticArtifact);
+        final Object artifact = handles.get(instanceHandle);
         if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
         return artifact;
     }
@@ -87,14 +87,14 @@ public class IntraVmArtifact implements Externalizable {
     private static class Handles {
         private List<Object> list = new ArrayList<Object>();
         
-        public int add(Object obj) {
-            int id = list.size();
+        public int add(final Object obj) {
+            final int id = list.size();
             list.add(obj);
             return id;
         }
         
-        public Object get(int id) {
-            Object obj = list.get(id);
+        public Object get(final int id) {
+            final Object obj = list.get(id);
             // todo WHY?
             if (list.size() == id + 1) {
                 list.clear();

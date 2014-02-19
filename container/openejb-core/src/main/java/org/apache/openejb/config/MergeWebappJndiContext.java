@@ -47,12 +47,12 @@ import java.util.Map;
 public class MergeWebappJndiContext implements DynamicDeployer {
 
     @Override
-    public AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        for (WebModule webModule : appModule.getWebModules()) {
+        for (final WebModule webModule : appModule.getWebModules()) {
             if (webModule.getFinder() == null) continue;
 
-            for (EjbModule ejbModule : appModule.getEjbModules()) {
+            for (final EjbModule ejbModule : appModule.getEjbModules()) {
                 // If they are the same module, they'll have the same finder
                 if (ejbModule.getFinder() != webModule.getFinder()) continue;
 
@@ -63,12 +63,12 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         return appModule;
     }
 
-    private void merge(EjbModule ejbModule, WebModule webModule) {
+    private void merge(final EjbModule ejbModule, final WebModule webModule) {
         final JndiConsumer webApp = webModule.getWebApp();
 
         final EjbJar ejbJar = ejbModule.getEjbJar();
 
-        for (EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
             merge(bean.getEnvEntryMap(), webApp.getEnvEntryMap());
             merge(bean.getEjbRefMap(), webApp.getEjbRefMap());
             merge(bean.getEjbLocalRefMap(), webApp.getEjbLocalRefMap());
@@ -87,7 +87,7 @@ public class MergeWebappJndiContext implements DynamicDeployer {
 
         final SessionBean aggregator = new SessionBean(); // easy way to get a JndiConsumer
 
-        for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
+        for (final EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
             aggregator.getEnvEntryMap().putAll(a.getEnvEntryMap());
             aggregator.getEjbRefMap().putAll(a.getEjbRefMap());
             aggregator.getEjbLocalRefMap().putAll(a.getEjbLocalRefMap());
@@ -99,7 +99,7 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             aggregator.getPersistenceUnitRefMap().putAll(a.getPersistenceUnitRefMap());
         }
 
-        for (EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
+        for (final EnterpriseBean a : ejbJar.getEnterpriseBeans()) {
             copy(aggregator.getEnvEntryMap(), a.getEnvEntryMap());
             copy(aggregator.getEjbRefMap(), a.getEjbRefMap());
             copy(aggregator.getEjbLocalRefMap(), a.getEjbLocalRefMap());
@@ -118,13 +118,13 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     /**
      * Bidirectional a-b merge
      */
-    private <R extends JndiReference> void merge(Map<String, R> a, Map<String, R> b) {
+    private <R extends JndiReference> void merge(final Map<String, R> a, final Map<String, R> b) {
         copy(a, b);
         copy(b, a);
     }
 
-    private <R extends JndiReference> void copy(Map<String, R> from, Map<String, R> to) {
-        for (R a : from.values()) {
+    private <R extends JndiReference> void copy(final Map<String, R> from, final Map<String, R> to) {
+        for (final R a : from.values()) {
 
             if (isPrivateReference(a)) continue;
 
@@ -159,34 +159,34 @@ public class MergeWebappJndiContext implements DynamicDeployer {
         }
     }
 
-    private static <R extends JndiReference> boolean isExtendedPersistenceContext(R b) {
+    private static <R extends JndiReference> boolean isExtendedPersistenceContext(final R b) {
         return b instanceof PersistenceContextRef
                 && PersistenceContextType.EXTENDED.equals(((PersistenceContextRef) b).getPersistenceContextType());
     }
 
-    private <R extends JndiReference> boolean isPrivateReference(R a) {
+    private <R extends JndiReference> boolean isPrivateReference(final R a) {
         if (!isResourceRef(a)) return false;
 
-        Class[] types = {EJBContext.class, EntityContext.class, SessionContext.class, MessageDrivenContext.class, UserTransaction.class};
+        final Class[] types = {EJBContext.class, EntityContext.class, SessionContext.class, MessageDrivenContext.class, UserTransaction.class};
 
-        for (Class type : types) {
+        for (final Class type : types) {
             if (type.getName().equals(a.getType())) return true;
         }
 
         return false;
     }
 
-    private <R extends JndiReference> boolean isResourceRef(R a) {
+    private <R extends JndiReference> boolean isResourceRef(final R a) {
         return a instanceof ResourceRef || a instanceof ResourceEnvRef;
     }
 
-    private <R extends JndiReference> void mergeUserTransaction(Map<String, R> from, Map<String, R> to, JndiConsumer consumer) {
+    private <R extends JndiReference> void mergeUserTransaction(final Map<String, R> from, final Map<String, R> to, final JndiConsumer consumer) {
         if (consumer instanceof EnterpriseBean) {
             final EnterpriseBean enterpriseBean = (EnterpriseBean) consumer;
             if (enterpriseBean.getTransactionType() != TransactionType.BEAN) return;
         }
 
-        for (R a : from.values()) {
+        for (final R a : from.values()) {
 
             if (!UserTransaction.class.getName().equals(a.getType())) continue;
 

@@ -42,13 +42,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection to be obtained
      * @param key the unique id of the connection manager
      */
-    public void setEnvironment(ConnectionInfo connectionInfo, String key) {
+    public void setEnvironment(final ConnectionInfo connectionInfo, final String key) {
         ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
         while (reference != null) {
             reference.clear();
             references.remove(reference.managedConnectionInfo);
 
-            ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
+            final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
             reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
             reference = (ProxyPhantomReference) referenceQueue.poll();
         }
@@ -61,7 +61,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection that was obtained
      * @param reassociate should always be false
      */
-    public void handleObtained(ConnectionTrackingInterceptor interceptor, ConnectionInfo connectionInfo, boolean reassociate) throws ResourceException {
+    public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (!reassociate) {
             proxyConnection(interceptor, connectionInfo);
         }
@@ -75,14 +75,14 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection that was released
      * @param action ignored
      */
-    public void handleReleased(ConnectionTrackingInterceptor interceptor, ConnectionInfo connectionInfo, ConnectionReturnAction action) {
-        PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
+    public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
+        final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
         if (phantomReference != null) {
             phantomReference.clear();
         }
     }
 
-    private void proxyConnection(ConnectionTrackingInterceptor interceptor, ConnectionInfo connectionInfo) throws ResourceException {
+    private void proxyConnection(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo) throws ResourceException {
         // if this connection already has a proxy no need to create another
         if (connectionInfo.getConnectionProxy() != null) return;
 
@@ -92,13 +92,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
         }
 
         try {
-            Object handle = connectionInfo.getConnectionHandle();
-            ConnectionInvocationHandler invocationHandler = new ConnectionInvocationHandler(handle);
-            Object proxy = Proxy.newProxyInstance(handle.getClass().getClassLoader(), handle.getClass().getInterfaces(), invocationHandler);
+            final Object handle = connectionInfo.getConnectionHandle();
+            final ConnectionInvocationHandler invocationHandler = new ConnectionInvocationHandler(handle);
+            final Object proxy = Proxy.newProxyInstance(handle.getClass().getClassLoader(), handle.getClass().getInterfaces(), invocationHandler);
             connectionInfo.setConnectionProxy(proxy);
-            ProxyPhantomReference reference = new ProxyPhantomReference(interceptor, connectionInfo.getManagedConnectionInfo(), invocationHandler, referenceQueue);
+            final ProxyPhantomReference reference = new ProxyPhantomReference(interceptor, connectionInfo.getManagedConnectionInfo(), invocationHandler, referenceQueue);
             references.put(connectionInfo.getManagedConnectionInfo(), reference);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new ResourceException("Unable to construct connection proxy", e);
         }
     }
@@ -106,11 +106,11 @@ public class AutoConnectionTracker implements ConnectionTracker {
     public static class ConnectionInvocationHandler implements InvocationHandler {
         private final Object handle;
 
-        public ConnectionInvocationHandler(Object handle) {
+        public ConnectionInvocationHandler(final Object handle) {
             this.handle = handle;
         }
 
-        public Object invoke(Object object, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object object, final Method method, final Object[] args) throws Throwable {
             if (method.getDeclaringClass() == Object.class) {
                 if (method.getName().equals("finalize")) {
                     // ignore the handle will get called if it implemented the method
@@ -122,11 +122,11 @@ public class AutoConnectionTracker implements ConnectionTracker {
             }
 
             try {
-                Object value = method.invoke(handle, args);
+                final Object value = method.invoke(handle, args);
                 return value;
-            } catch (InvocationTargetException ite) {
+            } catch (final InvocationTargetException ite) {
                 // catch InvocationTargetExceptions and turn them into the target exception (if there is one)
-                Throwable t = ite.getTargetException();
+                final Throwable t = ite.getTargetException();
                 if (t != null) {
                     throw t;
                 }
@@ -140,10 +140,10 @@ public class AutoConnectionTracker implements ConnectionTracker {
         private ManagedConnectionInfo managedConnectionInfo;
 
         @SuppressWarnings({"unchecked"})
-        public ProxyPhantomReference(ConnectionTrackingInterceptor interceptor,
-                ManagedConnectionInfo managedConnectionInfo,
-                ConnectionInvocationHandler handler,
-                ReferenceQueue referenceQueue) {
+        public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
+                final ManagedConnectionInfo managedConnectionInfo,
+                final ConnectionInvocationHandler handler,
+                final ReferenceQueue referenceQueue) {
             super(handler, referenceQueue);
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;

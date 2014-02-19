@@ -37,16 +37,16 @@ import static org.apache.openejb.util.Join.join;
  * @version $Rev$ $Date$
  */
 public class CheckAssemblyBindings extends ValidationBase {
-    public void validate(EjbModule ejbModule) {
+    public void validate(final EjbModule ejbModule) {
         checkUnusedInterceptors(ejbModule);
-        Map<String, EnterpriseBean> ejbsByName = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
+        final Map<String, EnterpriseBean> ejbsByName = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
-        AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
+        final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
 
         if (assembly == null) return;
 
-        for (InterceptorBinding binding : assembly.getInterceptorBinding()) {
-            List<String> interceptorClasses = binding.getInterceptorClass();
+        for (final InterceptorBinding binding : assembly.getInterceptorBinding()) {
+            final List<String> interceptorClasses = binding.getInterceptorClass();
             if (binding.getInterceptorOrder() != null){
                 interceptorClasses.addAll(binding.getInterceptorOrder().getInterceptorClass());
             }
@@ -62,8 +62,8 @@ public class CheckAssemblyBindings extends ValidationBase {
             }
         }
 
-        for (MethodPermission permission : assembly.getMethodPermission()) {
-            for (Method method : permission.getMethod()) {
+        for (final MethodPermission permission : assembly.getMethodPermission()) {
+            for (final Method method : permission.getMethod()) {
                 if (method.getEjbName() == null) {
                     fail("MethodPermission", "methodPermission.ejbNameRequired", method.getMethodName(), join(",", permission.getRoleName()));
                 } else if (method.getEjbName().equals("*")) { //NOPMD
@@ -74,8 +74,8 @@ public class CheckAssemblyBindings extends ValidationBase {
             }
         }
 
-        for (ContainerTransaction transaction : assembly.getContainerTransaction()) {
-            for (Method method : transaction.getMethod()) {
+        for (final ContainerTransaction transaction : assembly.getContainerTransaction()) {
+            for (final Method method : transaction.getMethod()) {
                 if (method.getEjbName() == null) {
                     fail("ContainerTransaction", "containerTransaction.ejbNameRequired", method.getMethodName(), transaction.getTransAttribute());
                 } else if (method.getEjbName().equals("*")) { //NOPMD
@@ -86,26 +86,26 @@ public class CheckAssemblyBindings extends ValidationBase {
             }
         }
     }
-    private void checkUnusedInterceptors(EjbModule ejbModule) {
-        AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
-        Interceptor[] interceptorsArray = ejbModule.getEjbJar().getInterceptors();
-        List<Interceptor> interceptors = Arrays.asList(interceptorsArray);
-        Set<String> interceptorClassNames = new HashSet<String>(interceptors.size());
-        for (Interceptor interceptor : interceptors) {
+    private void checkUnusedInterceptors(final EjbModule ejbModule) {
+        final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
+        final Interceptor[] interceptorsArray = ejbModule.getEjbJar().getInterceptors();
+        final List<Interceptor> interceptors = Arrays.asList(interceptorsArray);
+        final Set<String> interceptorClassNames = new HashSet<String>(interceptors.size());
+        for (final Interceptor interceptor : interceptors) {
             interceptorClassNames.add(interceptor.getInterceptorClass());
         }
-        Set<String> interceptorClassNamesUsedInBindings = new HashSet<String>();
-        for (InterceptorBinding binding : assembly.getInterceptorBinding()) {
-            List<String> interceptorClass = binding.getInterceptorClass();
+        final Set<String> interceptorClassNamesUsedInBindings = new HashSet<String>();
+        for (final InterceptorBinding binding : assembly.getInterceptorBinding()) {
+            final List<String> interceptorClass = binding.getInterceptorClass();
             interceptorClassNamesUsedInBindings.addAll(interceptorClass);
         }
-        Set<String> unusedInterceptors = new HashSet<String>();
-        for (String clazz : interceptorClassNames) {
+        final Set<String> unusedInterceptors = new HashSet<String>();
+        for (final String clazz : interceptorClassNames) {
             if (!interceptorClassNamesUsedInBindings.contains(clazz)) {
                 unusedInterceptors.add(clazz);
             }
         }
-        for (String clazz : unusedInterceptors) {
+        for (final String clazz : unusedInterceptors) {
             warn("Interceptors", "interceptor.unused", clazz);
         }
     }

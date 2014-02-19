@@ -37,7 +37,7 @@ public class AppContextConfigDeployer implements DynamicDeployer {
     private final EnvEntriesPropertiesDeployer envEntriesDeployer;
     private final BeanProperties beanPropertiesDeployer;
 
-    public AppContextConfigDeployer(final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer, BeanProperties beanProperties) {
+    public AppContextConfigDeployer(final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer, final BeanProperties beanProperties) {
         envEntriesDeployer = envEntriesPropertiesDeployer;
         beanPropertiesDeployer = beanProperties;
     }
@@ -50,7 +50,7 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         // parse files once since it is application scoped (we don't want duplicates)
         final Set<String> alreadyParsed = new HashSet<String>();
 
-        for (DeploymentModule module : deploymentModule) {
+        for (final DeploymentModule module : deploymentModule) {
             final Object o = module.getAltDDs().get(CONFIG_NAME);
             if (o instanceof URL) {
                 final URL url = (URL) o;
@@ -72,11 +72,11 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         try {
             is = IO.read(url);
             SaxAppCtxConfig.parse(appModule, new InputSource(is), envEntriesDeployer, beanPropertiesDeployer); // work directly on the module/deployer, avoid temp objects
-        } catch (SAXException e) {
+        } catch (final SAXException e) {
             throw new OpenEJBException("can't parse " + url.toExternalForm(), e);
-        } catch (ParserConfigurationException e) {
+        } catch (final ParserConfigurationException e) {
             throw new OpenEJBException("can't configure the parser for " + url.toExternalForm(), e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBException("can't read " + url.toExternalForm(), e);
         } finally {
             IO.close(is);

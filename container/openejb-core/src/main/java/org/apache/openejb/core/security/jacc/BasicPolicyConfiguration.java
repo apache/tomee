@@ -44,7 +44,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     protected PermissionCollection unchecked = null;
     protected PermissionCollection excluded = null;
 
-    protected BasicPolicyConfiguration(String contextID) {
+    protected BasicPolicyConfiguration(final String contextID) {
         this.contextID = contextID;
         this.state = OPEN;
     }
@@ -53,20 +53,20 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         return contextID;
     }
 
-    public boolean implies(ProtectionDomain domain, Permission permission) {
+    public boolean implies(final ProtectionDomain domain, final Permission permission) {
 
         if (excluded != null && excluded.implies(permission)) return false;
 
         if (unchecked != null && unchecked.implies(permission)) return true;
 
-        Principal[] principals = domain.getPrincipals();
+        final Principal[] principals = domain.getPrincipals();
         if (principals.length == 0) return false;
 
-        RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
-        Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
+        final RoleResolver roleResolver = SystemInstance.get().getComponent(RoleResolver.class);
+        final Set<String> roles = roleResolver.getLogicalRoles(principals, rolePermissionsMap.keySet());
 
-        for (String role : roles) {
-            PermissionCollection permissions = rolePermissionsMap.get(role);
+        for (final String role : roles) {
+            final PermissionCollection permissions = rolePermissionsMap.get(role);
 
             if (permissions != null && permissions.implies(permission)) return true;
         }
@@ -74,16 +74,16 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         return false;
     }
 
-    public void addToRole(String roleName, PermissionCollection permissions) throws PolicyContextException {
+    public void addToRole(final String roleName, final PermissionCollection permissions) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
-        Enumeration e = permissions.elements();
+        final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
             addToRole(roleName, (Permission) e.nextElement());
         }
     }
 
-    public void addToRole(String roleName, Permission permission) throws PolicyContextException {
+    public void addToRole(final String roleName, final Permission permission) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
         PermissionCollection permissions = rolePermissionsMap.get(roleName);
@@ -94,16 +94,16 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         permissions.add(permission);
     }
 
-    public void addToUncheckedPolicy(PermissionCollection permissions) throws PolicyContextException {
+    public void addToUncheckedPolicy(final PermissionCollection permissions) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
-        Enumeration e = permissions.elements();
+        final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
             addToUncheckedPolicy((Permission) e.nextElement());
         }
     }
 
-    public void addToUncheckedPolicy(Permission permission) throws PolicyContextException {
+    public void addToUncheckedPolicy(final Permission permission) throws PolicyContextException {
         if (state != OPEN) {
             throw new UnsupportedOperationException("Not in an open state");
         }
@@ -115,16 +115,16 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         unchecked.add(permission);
     }
 
-    public void addToExcludedPolicy(PermissionCollection permissions) throws PolicyContextException {
+    public void addToExcludedPolicy(final PermissionCollection permissions) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
-        Enumeration e = permissions.elements();
+        final Enumeration e = permissions.elements();
         while (e.hasMoreElements()) {
             addToExcludedPolicy((Permission) e.nextElement());
         }
     }
 
-    public void addToExcludedPolicy(Permission permission) throws PolicyContextException {
+    public void addToExcludedPolicy(final Permission permission) throws PolicyContextException {
         if (state != OPEN) {
             throw new UnsupportedOperationException("Not in an open state");
         }
@@ -136,7 +136,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         excluded.add(permission);
     }
 
-    public void removeRole(String roleName) throws PolicyContextException {
+    public void removeRole(final String roleName) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
 
         rolePermissionsMap.remove(roleName);
@@ -154,7 +154,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         excluded = null;
     }
 
-    public void linkConfiguration(PolicyConfiguration link) throws PolicyContextException {
+    public void linkConfiguration(final PolicyConfiguration link) throws PolicyContextException {
         if (state != OPEN) throw new UnsupportedOperationException("Not in an open state");
     }
 
@@ -176,7 +176,7 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
     //spec p. 31 3.1.7 on the effects of remove:
     //If the getPolicyConfiguration method  is used, the value true should be passed as the second
     //  argument to cause the  corresponding policy statements to be deleted from the context.
-    public void open(boolean remove) {
+    public void open(final boolean remove) {
         if (remove) {
             rolePermissionsMap.clear();
             unchecked = null;

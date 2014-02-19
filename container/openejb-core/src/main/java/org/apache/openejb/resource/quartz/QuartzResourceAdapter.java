@@ -92,7 +92,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
 
                 try {
                     QuartzResourceAdapter.this.scheduler.set(StdSchedulerFactory.getDefaultScheduler());
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     QuartzResourceAdapter.this.ex.set(e);
                     return;
                 }
@@ -107,7 +107,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
 
                     QuartzResourceAdapter.this.scheduler.get().start();
 
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     QuartzResourceAdapter.this.ex.set(e);
                     signal.countDown();
                 }
@@ -120,7 +120,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
         boolean started = false;
         try {
             started = signal.await(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             //Ignore
         }
 
@@ -185,7 +185,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
                         //Shutdown, but give running jobs a chance to complete.
                         //User scheduled jobs should really implement InterruptableJob
                         s.shutdown(true);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         QuartzResourceAdapter.this.ex.set(e);
                         shutdownWait.countDown();
                     }
@@ -198,7 +198,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
             boolean stopped = false;
             try {
                 stopped = shutdownWait.await(timeout, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //Ignore
             }
 
@@ -213,7 +213,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
                                 //Force a shutdown without waiting for jobs to complete.
                                 s.shutdown(false);
                                 Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Forced Quartz stop - Jobs may be incomplete");
-                            } catch (Throwable e) {
+                            } catch (final Throwable e) {
                                 QuartzResourceAdapter.this.ex.set(e);
                             }
                         }
@@ -225,11 +225,11 @@ public class QuartzResourceAdapter implements ResourceAdapter {
                     try {
                         //Give the forced shutdown a chance to complete
                         stopThread.join(timeout);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         //Ignore
                     }
                 }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 ex.set(e);
             }
         }
@@ -264,7 +264,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
             jobDataMap.put(Data.class.getName(), new Data(job));
 
             s.scheduleJob(spec.getDetail(), spec.getTrigger());
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             throw new ResourceException("Failed to schedule job", e);
         }
     }
@@ -283,7 +283,7 @@ public class QuartzResourceAdapter implements ResourceAdapter {
             spec = (JobSpec) activationSpec;
             s.deleteJob(spec.jobKey());
 
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             throw new IllegalStateException("Failed to delete job", e);
         } finally {
             if (null != spec) {
@@ -319,18 +319,18 @@ public class QuartzResourceAdapter implements ResourceAdapter {
 
                 job.execute(execution);
 
-            } catch (NoSuchMethodException e) {
+            } catch (final NoSuchMethodException e) {
                 throw new IllegalStateException(e);
-            } catch (ResourceException e) {
+            } catch (final ResourceException e) {
                 ex = new JobExecutionException(e);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 ex = new JobExecutionException(new Exception(t));
             } finally {
 
                 if (null != endpoint) {
                     try {
                         endpoint.afterDelivery();
-                    } catch (ResourceException e) {
+                    } catch (final ResourceException e) {
                         ex = new JobExecutionException(e);
                     }
                 }

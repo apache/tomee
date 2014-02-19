@@ -62,7 +62,7 @@ public class MemoryTimerStore implements TimerStore {
         try {
             final TimerDataView tasks = getTasks();
             return tasks.getTasks().get(timerId);
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             return null;
         }
     }
@@ -72,7 +72,7 @@ public class MemoryTimerStore implements TimerStore {
         try {
             final TimerDataView tasks = getTasks();
             return new ArrayList<TimerData>(tasks.getTasks().values());
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             return Collections.emptySet();
         }
     }
@@ -125,7 +125,7 @@ public class MemoryTimerStore implements TimerStore {
     public void removeTimer(final long id) {
         try {
             getTasks().removeTimerData(id);
-        } catch (TimerStoreException e) {
+        } catch (final TimerStoreException e) {
             log.warning("Unable to remove timer data from memory store", e);
         }
     }
@@ -142,7 +142,7 @@ public class MemoryTimerStore implements TimerStore {
             if (transaction != null) {
                 status = transaction.getStatus();
             }
-        } catch (SystemException e) {
+        } catch (final SystemException e) {
             // no-op
         }
 
@@ -209,9 +209,9 @@ public class MemoryTimerStore implements TimerStore {
             try {
                 transaction.registerSynchronization(this);
                 tansactionReference = new WeakReference<Transaction>(transaction);
-            } catch (RollbackException e) {
+            } catch (final RollbackException e) {
                 throw new TimerStoreException("Transaction has been rolled back");
-            } catch (SystemException e) {
+            } catch (final SystemException e) {
                 throw new TimerStoreException("Error registering transaction synchronization callback");
             }
         }

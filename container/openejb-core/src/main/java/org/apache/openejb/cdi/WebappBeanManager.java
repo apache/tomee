@@ -43,7 +43,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     private final WebappWebBeansContext webappCtx;
     private Set<Bean<?>> deploymentBeans;
 
-    public WebappBeanManager(WebappWebBeansContext ctx) {
+    public WebappBeanManager(final WebappWebBeansContext ctx) {
         super(ctx);
         webappCtx = ctx;
         deploymentBeans = super.getBeans(); // use the parent one while starting
@@ -64,7 +64,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T event, EventMetadata metadata) {
+    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadata metadata) {
         final Class<?> eventClass = event.getClass();
         if(ClassUtil.isDefinitionContainsTypeVariables(ClassUtil.getClass(metadata.getType()))) {
             throw new IllegalArgumentException("Event type can not contain type variables. Event class is : " + eventClass);
@@ -81,48 +81,48 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public Object getInjectableReference(InjectionPoint injectionPoint, CreationalContext<?> ctx) {
+    public Object getInjectableReference(final InjectionPoint injectionPoint, final CreationalContext<?> ctx) {
         try {
             return super.getInjectableReference(injectionPoint, ctx);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             return getParentBm().getInjectableReference(injectionPoint, ctx);
         }
     }
 
     @Override
-    public <T> CreationalContextImpl<T> createCreationalContext(Contextual<T> contextual) {
+    public <T> CreationalContextImpl<T> createCreationalContext(final Contextual<T> contextual) {
         try {
             return super.createCreationalContext(contextual);
-        } catch (RuntimeException e) { // can happen?
+        } catch (final RuntimeException e) { // can happen?
             try {
                 return getParentBm().createCreationalContext(contextual);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public boolean isNormalScope(Class<? extends Annotation> annotationType) {
+    public boolean isNormalScope(final Class<? extends Annotation> annotationType) {
         try {
             return super.isNormalScope(annotationType);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().isNormalScope(annotationType);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public boolean isPassivatingScope(Class<? extends Annotation> annotationType) {
+    public boolean isPassivatingScope(final Class<? extends Annotation> annotationType) {
         try {
             return super.isPassivatingScope(annotationType);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().isPassivatingScope(annotationType);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
@@ -130,26 +130,26 @@ public class WebappBeanManager extends BeanManagerImpl {
 
 
     @Override
-    public boolean isQualifier(Class<? extends Annotation> annotationType) {
+    public boolean isQualifier(final Class<? extends Annotation> annotationType) {
         try {
             return super.isQualifier(annotationType);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().isQualifier(annotationType);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public boolean isInterceptorBinding(Class<? extends Annotation> annotationType) {
+    public boolean isInterceptorBinding(final Class<? extends Annotation> annotationType) {
         try {
             return super.isInterceptorBinding(annotationType);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().isInterceptorBinding(annotationType);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
@@ -157,39 +157,39 @@ public class WebappBeanManager extends BeanManagerImpl {
 
 
     @Override
-    public boolean isStereotype(Class<? extends Annotation> annotationType) {
+    public boolean isStereotype(final Class<? extends Annotation> annotationType) {
         try {
             return super.isStereotype(annotationType);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().isStereotype(annotationType);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public Set<Annotation> getInterceptorBindingDefinition(Class<? extends Annotation> qualifier) {
+    public Set<Annotation> getInterceptorBindingDefinition(final Class<? extends Annotation> qualifier) {
         try {
             return super.getInterceptorBindingDefinition(qualifier);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().getInterceptorBindingDefinition(qualifier);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public Context getContext(Class<? extends Annotation> scope) {
+    public Context getContext(final Class<? extends Annotation> scope) {
         try {
             return super.getContext(scope);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().getContext(scope);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
@@ -201,33 +201,33 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public <T> AnnotatedType<T> createAnnotatedType(Class<T> type) {
+    public <T> AnnotatedType<T> createAnnotatedType(final Class<T> type) {
         try {
             return super.createAnnotatedType(type);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().createAnnotatedType(type);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public <T> InjectionTarget<T> createInjectionTarget(AnnotatedType<T> type) {
+    public <T> InjectionTarget<T> createInjectionTarget(final AnnotatedType<T> type) {
         try {
             return super.createInjectionTarget(type);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             try {
                 return getParentBm().createInjectionTarget(type);
-            } catch (RuntimeException ignored) {
+            } catch (final RuntimeException ignored) {
                 throw e;
             }
         }
     }
 
     @Override
-    public ExpressionFactory wrapExpressionFactory(ExpressionFactory expressionFactory) {
+    public ExpressionFactory wrapExpressionFactory(final ExpressionFactory expressionFactory) {
         return super.wrapExpressionFactory(expressionFactory);
     }
 

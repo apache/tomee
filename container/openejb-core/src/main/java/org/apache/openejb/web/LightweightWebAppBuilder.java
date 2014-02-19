@@ -87,7 +87,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             removeServletMethod = utilClass.getMethod("removeServlet", String.class, WebContext.class);
             addFilterMethod = utilClass.getMethod("addFilter", String.class, WebContext.class, String.class, FilterConfig.class);
             removeFilterMethod = utilClass.getMethod("removeFilter", String.class, WebContext.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.info("Web features will not be available, add openejb-http if you need them");
         }
     }
@@ -105,7 +105,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             throw new OpenEJBRuntimeException("Can't find app context for " + appInfo.appId);
         }
 
-        for (WebAppInfo webAppInfo : appInfo.webApps) {
+        for (final WebAppInfo webAppInfo : appInfo.webApps) {
             final Set<Injection> injections = new HashSet<Injection>(appContext.getInjections());
             injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
@@ -139,7 +139,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             servletContextEvents.put(webAppInfo, sce);
 
             // listeners
-            for (ListenerInfo listener : webAppInfo.listeners) {
+            for (final ListenerInfo listener : webAppInfo.listeners) {
                 final Class<?> clazz = webContext.getClassLoader().loadClass(listener.classname);
                 final Object instance = webContext.newInstance(clazz);
                 if (ServletContextListener.class.isInstance(instance)) {
@@ -163,34 +163,34 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             }
 
             // register filters
-            for (FilterInfo info : webAppInfo.filters) {
-                for (String mapping : info.mappings) {
+            for (final FilterInfo info : webAppInfo.filters) {
+                for (final String mapping : info.mappings) {
                     final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, info.initParams);
                     try {
                         addFilterMethod.invoke(null, info.classname, webContext, mapping, config);
                         deployedWebObjects.filterMappings.add(mapping);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOGGER.warning(e.getMessage(), e);
                     }
                 }
             }
-            for (ClassListInfo info : webAppInfo.webAnnotatedClasses) {
+            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
-                for (String filterPath : info.list) {
+                for (final String filterPath : info.list) {
                     final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, filterPath);
                     final WebFilter annotation = clazz.getAnnotation(WebFilter.class);
                     if (annotation != null) {
                         final Properties initParams = new Properties();
-                        for (WebInitParam param : annotation.initParams()) {
+                        for (final WebInitParam param : annotation.initParams()) {
                             initParams.put(param.name(), param.value());
                         }
 
                         final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
-                        for (String mapping : annotation.urlPatterns()) {
+                        for (final String mapping : annotation.urlPatterns()) {
                             try {
                                 addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
                                 deployedWebObjects.filterMappings.add(mapping);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 LOGGER.warning(e.getMessage(), e);
                             }
                         }
@@ -204,11 +204,11 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             }
 
             // register servlets
-            for (ServletInfo info : webAppInfo.servlets) {
+            for (final ServletInfo info : webAppInfo.servlets) {
                 if ("true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
                     // skip jaxrs servlets
                     boolean skip = false;
-                    for (ParamValueInfo pvi : info.initParams) {
+                    for (final ParamValueInfo pvi : info.initParams) {
                         if ("javax.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
                             skip = true;
                         }
@@ -223,7 +223,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                             if (Application.class.isAssignableFrom(classLoader.loadClass(info.servletName))) {
                                 continue;
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // no-op
                         }
                     }
@@ -235,27 +235,27 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 }
 
                 // deploy
-                for (String mapping : info.mappings) {
+                for (final String mapping : info.mappings) {
                     try {
                         addServletMethod.invoke(null, info.servletClass, webContext, mapping);
                         deployedWebObjects.mappings.add(mapping);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOGGER.warning(e.getMessage(), e);
                     }
                 }
             }
 
-            for (ClassListInfo info : webAppInfo.webAnnotatedClasses) {
+            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 final String url = info.name;
-                for (String servletPath : info.list) {
+                for (final String servletPath : info.list) {
                     final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, servletPath);
                     final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
                     if (annotation != null) {
-                        for (String mapping : annotation.urlPatterns()) {
+                        for (final String mapping : annotation.urlPatterns()) {
                             try {
                                 addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
                                 deployedWebObjects.mappings.add(mapping);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 LOGGER.warning(e.getMessage(), e);
                             }
                         }
@@ -275,7 +275,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
         try { // in WEB-INF/classes
             return loader.loadClass(className(classname));
-        } catch (ClassNotFoundException cnfe) { // in a dependency (jar)
+        } catch (final ClassNotFoundException cnfe) { // in a dependency (jar)
             return loader.loadClass(className(path.substring(path.indexOf("!") + 2)));
         }
     }
@@ -286,31 +286,31 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
     @Override
     public void undeployWebApps(final AppInfo appInfo) throws Exception {
-        for (WebAppInfo webAppInfo : appInfo.webApps) {
+        for (final WebAppInfo webAppInfo : appInfo.webApps) {
             final DeployedWebObjects context = servletDeploymentInfo.remove(webAppInfo);
             final ServletContextEvent sce = servletContextEvents.remove(webAppInfo);
             final List<Object> listenerInstances = listeners.remove(webAppInfo);
 
             if (addServletMethod != null) {
-                for (String mapping : context.mappings) {
+                for (final String mapping : context.mappings) {
                     try {
                         removeServletMethod.invoke(null, mapping, context.webContext);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // no-op
                     }
                 }
 
-                for (String mapping : context.filterMappings) {
+                for (final String mapping : context.filterMappings) {
                     try {
                         removeFilterMethod.invoke(null, mapping, context.webContext);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // no-op
                     }
                 }
             }
 
             if (listenerInstances != null) {
-                for (Object instance : listenerInstances) {
+                for (final Object instance : listenerInstances) {
                     if (ServletContextListener.class.isInstance(instance)) {
                         ((ServletContextListener) instance).contextDestroyed(sce);
                     }
@@ -348,7 +348,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         public Object lookup(final String name) throws NamingException {
             try {
                 return delegate.lookup(name);
-            } catch (NameNotFoundException nnfe) {
+            } catch (final NameNotFoundException nnfe) {
                 return bindings.get(name);
             }
         }

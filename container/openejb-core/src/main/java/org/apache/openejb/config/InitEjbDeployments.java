@@ -42,18 +42,18 @@ public class InitEjbDeployments implements DynamicDeployer {
     private static final String DEPLOYMENT_ID_FORMAT = "openejb.deploymentId.format";
 
     public InitEjbDeployments() {
-        String format = SystemInstance.get().getOptions().get(DEPLOYMENT_ID_FORMAT, "{ejbName}");
+        final String format = SystemInstance.get().getOptions().get(DEPLOYMENT_ID_FORMAT, "{ejbName}");
         this.deploymentIdTemplate = new StringTemplate(format);
     }
 
-    public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
+    public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        Set<String> abstractSchemaNames = new HashSet<String>();
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+        final Set<String> abstractSchemaNames = new HashSet<String>();
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
+            for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 if (isCmpEntity(bean)) {
-                    EntityBean entity = (EntityBean) bean;
-                    String name = entity.getAbstractSchemaName();
+                    final EntityBean entity = (EntityBean) bean;
+                    final String name = entity.getAbstractSchemaName();
                     if (name != null) {
                         abstractSchemaNames.add(name);
                     }
@@ -62,10 +62,10 @@ public class InitEjbDeployments implements DynamicDeployer {
         }
 
 
-        Map<String, String> contextData = new HashMap<String, String>();
+        final Map<String, String> contextData = new HashMap<String, String>();
         contextData.put("appId", appModule.getModuleId());
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
+        for (final EjbModule ejbModule : appModule.getEjbModules()) {
             contextData.put("ejbJarId", ejbModule.getModuleId());
             deploy(ejbModule, contextData, abstractSchemaNames);
         }
@@ -73,15 +73,15 @@ public class InitEjbDeployments implements DynamicDeployer {
         return appModule;
     }
 
-    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+    public EjbModule deploy(final EjbModule ejbModule) throws OpenEJBException {
         return deploy(ejbModule, new HashMap<String,String>(), new HashSet<String>());
     }
 
-    private EjbModule deploy(EjbModule ejbModule, Map<String, String> contextData, Set<String> abstractSchemaNames) throws OpenEJBException {
+    private EjbModule deploy(final EjbModule ejbModule, final Map<String, String> contextData, final Set<String> abstractSchemaNames) throws OpenEJBException {
         contextData.put("moduleId", ejbModule.getModuleId());
         contextData.put("moduleUri", ejbModule.getModuleUri().toString());
 
-        OpenejbJar openejbJar;
+        final OpenejbJar openejbJar;
         if (ejbModule.getOpenejbJar() != null) {
             openejbJar = ejbModule.getOpenejbJar();
         } else {
@@ -91,16 +91,16 @@ public class InitEjbDeployments implements DynamicDeployer {
 
         StringTemplate deploymentIdTemplate = this.deploymentIdTemplate;
         if (openejbJar.getProperties().containsKey(DEPLOYMENT_ID_FORMAT)) {
-            String format = openejbJar.getProperties().getProperty(DEPLOYMENT_ID_FORMAT);
+            final String format = openejbJar.getProperties().getProperty(DEPLOYMENT_ID_FORMAT);
             logger.info("Using " + DEPLOYMENT_ID_FORMAT + " '" + format + "'");
             deploymentIdTemplate = new StringTemplate(format);
         }
 
 
-        for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+        for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             StringTemplate template = deploymentIdTemplate;
 
-            org.apache.openejb.api.EjbDeployment annotation = getEjbDeploymentAnnotation(ejbModule, bean);
+            final org.apache.openejb.api.EjbDeployment annotation = getEjbDeploymentAnnotation(ejbModule, bean);
 
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
             if (ejbDeployment == null) {
@@ -135,7 +135,7 @@ public class InitEjbDeployments implements DynamicDeployer {
             }
 
             if (isCmpEntity(bean)) {
-                EntityBean entity = (EntityBean) bean;
+                final EntityBean entity = (EntityBean) bean;
                 if (entity.getAbstractSchemaName() == null) {
                     String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
 
@@ -157,11 +157,11 @@ public class InitEjbDeployments implements DynamicDeployer {
         return ejbModule;
     }
 
-    private org.apache.openejb.api.EjbDeployment getEjbDeploymentAnnotation(EjbModule ejbModule, EnterpriseBean bean) {
+    private org.apache.openejb.api.EjbDeployment getEjbDeploymentAnnotation(final EjbModule ejbModule, final EnterpriseBean bean) {
         try {
-            Class<?> beanClass = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
+            final Class<?> beanClass = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
             return beanClass.getAnnotation(org.apache.openejb.api.EjbDeployment.class);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // this should never happen, the class has already been loaded a ton of times by this point
             // unfortunately we have some unit tests that prevent us from throwing an exception just in case
             // Those are OpenEjb2ConversionTest and SunCmpConversionTest
@@ -169,21 +169,21 @@ public class InitEjbDeployments implements DynamicDeployer {
         }
     }
 
-    private boolean isDefined(String s) {
+    private boolean isDefined(final String s) {
         return s != null && !"".equals(s);
     }
 
-    private static boolean isCmpEntity(EnterpriseBean bean) {
+    private static boolean isCmpEntity(final EnterpriseBean bean) {
         return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
 
-    private String formatDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
+    private String formatDeploymentId(final EnterpriseBean bean, final Map<String, String> contextData, final StringTemplate template) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
         contextData.put("ejbClass", bean.getEjbClass());
 
         // we don't have the ejb class object (only the string name) so we have
         // to extract the simple name from the FQN of the class
-        int simpleNameIdx = bean.getEjbClass().lastIndexOf(".");
+        final int simpleNameIdx = bean.getEjbClass().lastIndexOf(".");
         contextData.put("ejbClass.simpleName", bean.getEjbClass().substring(simpleNameIdx + 1));
 
         contextData.put("ejbName", bean.getEjbName());

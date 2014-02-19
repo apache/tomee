@@ -44,18 +44,18 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public abstract class BaseSessionContext extends BaseContext implements SessionContext {
-    protected BaseSessionContext(SecurityService securityService) {
+    protected BaseSessionContext(final SecurityService securityService) {
         super(securityService);
     }
 
-    public BaseSessionContext(SecurityService securityService, UserTransaction userTransaction) {
+    public BaseSessionContext(final SecurityService securityService, final UserTransaction userTransaction) {
         super(securityService, userTransaction);
     }
 
     public boolean wasCancelCalled() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
-        Method runningMethod = threadContext.get(Method.class);
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
+        final Method runningMethod = threadContext.get(Method.class);
         if (di.isAsynchronous(runningMethod)) {
             if(runningMethod.getReturnType() == void.class) {
                 throw new IllegalStateException("Current running method " + runningMethod.getName() + " is an asynchronous method, but its return type is void :" + di.getDestinationId());
@@ -67,8 +67,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
         check(Call.getEJBLocalObject);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
 
         if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
 
@@ -77,8 +77,8 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
     public EJBObject getEJBObject() throws IllegalStateException {
         check(Call.getEJBObject);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        BeanContext di = threadContext.getBeanContext();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext di = threadContext.getBeanContext();
         if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
 
         return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, di.getRemoteInterface());
@@ -86,13 +86,13 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
     public MessageContext getMessageContext() throws IllegalStateException {
         check(Call.getMessageContext);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        MessageContext messageContext = threadContext.get(MessageContext.class);
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final MessageContext messageContext = threadContext.get(MessageContext.class);
         if (messageContext == null) throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
         return messageContext;
     }
 
-    public Object getBusinessObject(Class interfce) {
+    public Object getBusinessObject(final Class interfce) {
         check(Call.getBusinessObject);
         if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
 
@@ -111,7 +111,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         }
 
         try {
-            EjbObjectProxyHandler handler;
+            final EjbObjectProxyHandler handler;
             switch(di.getComponentType()){
                 case STATEFUL: {
                     handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
@@ -142,7 +142,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
                 return LocalBeanProxyFactory.newProxyInstance(di.getClassLoader(), handler, di.getBeanClass(), interfaces.toArray(new Class<?>[interfaces.size()]));
             } else {
-                List<Class> interfaces = new ArrayList<Class>();
+                final List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
                 interfaces.add(Serializable.class);
                 interfaces.add(IntraVmProxy.class);
@@ -151,16 +151,16 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 }
                 return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
             }
-        } catch (IllegalAccessException iae) {
+        } catch (final IllegalAccessException iae) {
             throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
         }
     }
 
     public Class getInvokedBusinessInterface() {
         check(Call.getInvokedBusinessInterface);
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        Class invokedInterface = threadContext.getInvokedInterface();
-        InterfaceType type = threadContext.getBeanContext().getInterfaceType(invokedInterface);
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final Class invokedInterface = threadContext.getInvokedInterface();
+        final InterfaceType type = threadContext.getBeanContext().getInterfaceType(invokedInterface);
         if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
 
         if (invokedInterface == null){

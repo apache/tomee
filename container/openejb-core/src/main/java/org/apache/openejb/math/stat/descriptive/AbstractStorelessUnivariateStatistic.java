@@ -121,7 +121,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if values is null
      * @see StorelessUnivariateStatistic#incrementAll(double[])
      */
-    public void incrementAll(double[] values) {
+    public void incrementAll(final double[] values) {
         if (values == null) {
             throw MathRuntimeException.createIllegalArgumentException("input values array is null");
         }
@@ -140,9 +140,9 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if values is null
      * @see StorelessUnivariateStatistic#incrementAll(double[], int, int)
      */
-    public void incrementAll(double[] values, int begin, int length) {
+    public void incrementAll(final double[] values, final int begin, final int length) {
         if (test(values, begin, length)) {
-            int k = begin + length;
+            final int k = begin + length;
             for (int i = begin; i < k; i++) {
                 increment(values[i]);
             }
@@ -157,7 +157,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @return true if object returns the same value as this
      */
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this ) {
             return true;
         }

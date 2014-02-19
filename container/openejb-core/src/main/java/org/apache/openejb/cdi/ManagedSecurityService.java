@@ -45,7 +45,7 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
     }
 
     @Override
-    public <T> Constructor<T> doPrivilegedGetConstructor(Class<T> clazz, Class<?>... parameterTypes) {
+    public <T> Constructor<T> doPrivilegedGetConstructor(final Class<T> clazz, final Class<?>... parameterTypes) {
         return delegate.doPrivilegedGetConstructor(clazz, parameterTypes);
     }
 

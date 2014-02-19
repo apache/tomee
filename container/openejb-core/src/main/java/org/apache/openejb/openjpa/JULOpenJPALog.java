@@ -66,56 +66,56 @@ public class JULOpenJPALog  implements Log {
     }
 
     @Override
-    public void trace(Object o) {
+    public void trace(final Object o) {
         if (isTraceEnabled()) {
             logger().log(record(o, Level.FINEST));
         }
     }
 
     @Override
-    public void trace(Object o, Throwable t) {
+    public void trace(final Object o, final Throwable t) {
         if (isTraceEnabled()) {
             logger().log(record(o, t, Level.FINEST));
         }
     }
 
     @Override
-    public void info(Object o) {
+    public void info(final Object o) {
         logger().log(record(o, Level.INFO));
     }
 
     @Override
-    public void info(Object o, Throwable t) {
+    public void info(final Object o, final Throwable t) {
         logger().log(record(o, t, Level.INFO));
     }
 
     @Override
-    public void warn(Object o) {
+    public void warn(final Object o) {
         logger().log(record(o, Level.WARNING));
     }
 
     @Override
-    public void warn(Object o, Throwable t) {
+    public void warn(final Object o, final Throwable t) {
         logger().log(record(o, t, Level.WARNING));
     }
 
     @Override
-    public void error(Object o) {
+    public void error(final Object o) {
         logger().log(record(o.toString(), Level.SEVERE));
     }
 
     @Override
-    public void error(Object o, Throwable t) {
+    public void error(final Object o, final Throwable t) {
         logger().log(record(o, t, Level.SEVERE));
     }
 
     @Override
-    public void fatal(Object o) {
+    public void fatal(final Object o) {
         logger().log(record(o, Level.SEVERE));
     }
 
     @Override
-    public void fatal(Object o, Throwable t) {
+    public void fatal(final Object o, final Throwable t) {
         logger().log(record(o, t, Level.SEVERE));
     }
 

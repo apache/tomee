@@ -21,15 +21,15 @@ public class ProxyGenerationException extends Exception {
     public ProxyGenerationException() {
     }
 
-    public ProxyGenerationException(String message) {
+    public ProxyGenerationException(final String message) {
         super(message);
     }
 
-    public ProxyGenerationException(Throwable cause) {
+    public ProxyGenerationException(final Throwable cause) {
         super(cause);
     }
 
-    public ProxyGenerationException(String message, Throwable cause) {
+    public ProxyGenerationException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

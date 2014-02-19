@@ -82,7 +82,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      *
      * @param original the {@code Kurtosis} instance to copy
      */
-    public Kurtosis(Kurtosis original) {
+    public Kurtosis(final Kurtosis original) {
         copy(original, this);
     }
 
@@ -106,11 +106,11 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
     public double getResult() {
         double kurtosis = Double.NaN;
         if (moment.getN() > 3) {
-            double variance = moment.m2 / (moment.n - 1);
+            final double variance = moment.m2 / (moment.n - 1);
                 if (moment.n <= 3 || variance < 10E-20) {
                     kurtosis = 0.0;
                 } else {
-                    double n = moment.n;
+                    final double n = moment.n;
                     kurtosis =
                         (n * (n + 1) * moment.m4 -
                                 3 * moment.m2 * moment.m2 * (n - 1)) /
@@ -166,10 +166,10 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
         if (test(values, begin, length) && length > 3) {
 
             // Compute the mean and standard deviation
-            Variance variance = new Variance();
+            final Variance variance = new Variance();
             variance.incrementAll(values, begin, length);
-            double mean = variance.moment.m1;
-            double stdDev = Math.sqrt(variance.getResult());
+            final double mean = variance.moment.m1;
+            final double stdDev = Math.sqrt(variance.getResult());
 
             // Sum the ^4 of the distance from the mean divided by the
             // standard deviation
@@ -180,11 +180,11 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
             accum3 /= Math.pow(stdDev, 4.0d);
 
             // Get N
-            double n0 = length;
+            final double n0 = length;
 
-            double coefficientOne =
+            final double coefficientOne =
                 n0 * (n0 + 1) / ((n0 - 1) * (n0 - 2) * (n0 - 3));
-            double termTwo =
+            final double termTwo =
                 3 * Math.pow(n0 - 1, 2.0) / ((n0 - 2) * (n0 - 3));
 
             // Calculate kurtosis
@@ -198,7 +198,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      */
     @Override
     public Kurtosis copy() {
-        Kurtosis result = new Kurtosis();
+        final Kurtosis result = new Kurtosis();
         copy(this, result);
         return result;
     }
@@ -211,7 +211,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic implements Se
      * @param dest Kurtosis to copy to
      * @throws NullPointerException if either source or dest is null
      */
-    public static void copy(Kurtosis source, Kurtosis dest) {
+    public static void copy(final Kurtosis source, final Kurtosis dest) {
         dest.moment = source.moment.copy();
         dest.incMoment = source.incMoment;
     }

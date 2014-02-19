@@ -47,17 +47,17 @@ public class MessageDrivenContainerBuilder extends Container {
 
     }
 
-    public MessageDrivenContainerBuilder id(String id) {
+    public MessageDrivenContainerBuilder id(final String id) {
         setId(id);
         return this;
     }
 
-    public MessageDrivenContainerBuilder withResourceAdapter(String resourceAdapter) {
+    public MessageDrivenContainerBuilder withResourceAdapter(final String resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
         return this;
     }
 
-    public void setResourceAdapter(String resourceAdapter) {
+    public void setResourceAdapter(final String resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
@@ -65,12 +65,12 @@ public class MessageDrivenContainerBuilder extends Container {
         return resourceAdapter;
     }
 
-    public MessageDrivenContainerBuilder withMessageListenerInterface(String messageListenerInterface) {
+    public MessageDrivenContainerBuilder withMessageListenerInterface(final String messageListenerInterface) {
         this.messageListenerInterface = messageListenerInterface;
         return this;
     }
 
-    public void setMessageListenerInterface(String messageListenerInterface) {
+    public void setMessageListenerInterface(final String messageListenerInterface) {
         this.messageListenerInterface = messageListenerInterface;
     }
 
@@ -78,12 +78,12 @@ public class MessageDrivenContainerBuilder extends Container {
         return messageListenerInterface;
     }
 
-    public MessageDrivenContainerBuilder withActivationSpecClass(String activationSpecClass) {
+    public MessageDrivenContainerBuilder withActivationSpecClass(final String activationSpecClass) {
         this.activationSpecClass = activationSpecClass;
         return this;
     }
 
-    public void setActivationSpecClass(String activationSpecClass) {
+    public void setActivationSpecClass(final String activationSpecClass) {
         this.activationSpecClass = activationSpecClass;
     }
 
@@ -91,12 +91,12 @@ public class MessageDrivenContainerBuilder extends Container {
         return activationSpecClass;
     }
 
-    public MessageDrivenContainerBuilder withInstanceLimit(int instanceLimit) {
+    public MessageDrivenContainerBuilder withInstanceLimit(final int instanceLimit) {
         this.instanceLimit = instanceLimit;
         return this;
     }
 
-    public void setInstanceLimit(int instanceLimit) {
+    public void setInstanceLimit(final int instanceLimit) {
         this.instanceLimit = instanceLimit;
     }
 

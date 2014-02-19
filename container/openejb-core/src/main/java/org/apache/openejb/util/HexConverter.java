@@ -29,9 +29,9 @@ public final class HexConverter {
      * @param bytes an array of bytes
      * @return hexadecimal string representation of the first argument
      */
-    public static String bytesToHex(byte[] bytes) {
-        StringBuilder buf = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes) {
+    public static String bytesToHex(final byte[] bytes) {
+        final StringBuilder buf = new StringBuilder(bytes.length * 2);
+        for (final byte b : bytes) {
             buf.append(String.format("%02X", b));
         }
         return buf.toString();
@@ -43,12 +43,12 @@ public final class HexConverter {
      * @param hexString a hexadecimal representation of a byte array
      * @return an array of bytes created from the input
      */
-    public static byte[] hexToBytes(String hexString) {
+    public static byte[] hexToBytes(final String hexString) {
         if (hexString.length() % 2 != 0) {
             throw new IllegalArgumentException("Invalid number of digits: input must be a string of hexadecimal digit pairs");
         }
 
-        byte[] bytes = new byte[hexString.length() / 2];
+        final byte[] bytes = new byte[hexString.length() / 2];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) Integer.parseInt(hexString.substring(i * 2, i * 2 + 2), 16);
         }

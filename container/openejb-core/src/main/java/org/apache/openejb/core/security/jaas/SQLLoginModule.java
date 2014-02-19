@@ -98,14 +98,14 @@ public class SQLLoginModule implements LoginModule {
     private final Set<String> groups = new HashSet<String>();
     private final Set<Principal> allPrincipals = new HashSet<Principal>();
 
-    public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+    public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.handler = callbackHandler;
 
-        for (Object key : options.keySet()) {
-            Option option = Option.findByName((String) key);
+        for (final Object key : options.keySet()) {
+            final Option option = Option.findByName((String) key);
             if (option != null) {
-                String value = (String) options.get(key);
+                final String value = (String) options.get(key);
                 optionsMap.put(option, value.trim());
             } else {
                 log.warning("Ignoring option: {0}. Not supported.", key);
@@ -122,7 +122,7 @@ public class SQLLoginModule implements LoginModule {
             // Check if the digest algorithm is available
             try {
                 MessageDigest.getInstance(digest);
-            } catch (NoSuchAlgorithmException e) {
+            } catch (final NoSuchAlgorithmException e) {
                 initError(e, "Digest algorithm %s is not available.", digest);
             }
 
@@ -132,18 +132,18 @@ public class SQLLoginModule implements LoginModule {
         }
 
         if (optionsMap.containsKey(Option.DATABASE_POOL_NAME)) {
-            String dataSourceName = optionsMap.get(Option.DATABASE_POOL_NAME);
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final String dataSourceName = optionsMap.get(Option.DATABASE_POOL_NAME);
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             try {
                 dataSource = (DataSource) containerSystem.getJNDIContext().lookup("openejb/Resource/" + dataSourceName);
-            } catch (NamingException e) {
+            } catch (final NamingException e) {
                 initError(e, "Data source %s not found.", dataSourceName);
             }
         } else if (optionsMap.containsKey(Option.CONNECTION_URL)) {
             connectionURL = optionsMap.get(Option.CONNECTION_URL);
-            String user = optionsMap.get(Option.USER);
-            String password = optionsMap.get(Option.PASSWORD);
-            String driverName = optionsMap.get(Option.DRIVER);
+            final String user = optionsMap.get(Option.USER);
+            final String password = optionsMap.get(Option.PASSWORD);
+            final String driverName = optionsMap.get(Option.DRIVER);
             properties = new Properties();
 
             if (user != null) {
@@ -155,12 +155,12 @@ public class SQLLoginModule implements LoginModule {
             }
 
             if (driverName != null) {
-                ClassLoader cl = getClass().getClassLoader();
+                final ClassLoader cl = getClass().getClassLoader();
                 try {
                     driver = (Driver) cl.loadClass(driverName).newInstance();
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     initError(e, "Driver class %s is not available. Perhaps you need to add it as a dependency in your deployment plan?", driverName);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     initError(e, "Unable to load, instantiate, register driver %s: %s", driverName, e.getMessage());
                 }
             }
@@ -169,8 +169,8 @@ public class SQLLoginModule implements LoginModule {
         }
     }
 
-    private void initError(Exception e, String format, Object... args) {
-        String message = String.format(format, args);
+    private void initError(final Exception e, final String format, final Object... args) {
+        final String message = String.format(format, args);
         log.error("Initialization failed. {0}", message);
         throw new IllegalArgumentException(message, e);
     }
@@ -184,16 +184,16 @@ public class SQLLoginModule implements LoginModule {
      */
     public boolean login() throws LoginException {
         loginSucceeded = false;
-        Callback[] callbacks = new Callback[2];
+        final Callback[] callbacks = new Callback[2];
 
         callbacks[0] = new NameCallback("User name");
         callbacks[1] = new PasswordCallback("Password", false);
 
         try {
             handler.handle(callbacks);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw (LoginException) new LoginException().initCause(ioe);
-        } catch (UnsupportedCallbackException uce) {
+        } catch (final UnsupportedCallbackException uce) {
             throw (LoginException) new LoginException().initCause(uce);
         }
 
@@ -205,11 +205,11 @@ public class SQLLoginModule implements LoginModule {
             throw new FailedLoginException();
         }
 
-        char[] provided = ((PasswordCallback) callbacks[1]).getPassword();
+        final char[] provided = ((PasswordCallback) callbacks[1]).getPassword();
         cbPassword = provided == null ? null : new String(provided);
 
         try {
-            Connection conn;
+            final Connection conn;
             if (dataSource != null) {
                 conn = dataSource.getConnection();
             } else if (driver != null) {
@@ -221,17 +221,17 @@ public class SQLLoginModule implements LoginModule {
             try {
                 PreparedStatement statement = conn.prepareStatement(userSelect);
                 try {
-                    int count = statement.getParameterMetaData().getParameterCount();
+                    final int count = statement.getParameterMetaData().getParameterCount();
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    ResultSet result = statement.executeQuery();
+                    final ResultSet result = statement.executeQuery();
 
                     try {
                         boolean found = false;
                         while (result.next()) {
-                            String userName = result.getString(1);
-                            String userPassword = result.getString(2);
+                            final String userName = result.getString(1);
+                            final String userPassword = result.getString(2);
 
                             if (cbUsername.equals(userName)) {
                                 found = true;
@@ -254,16 +254,16 @@ public class SQLLoginModule implements LoginModule {
 
                 statement = conn.prepareStatement(groupSelect);
                 try {
-                    int count = statement.getParameterMetaData().getParameterCount();
+                    final int count = statement.getParameterMetaData().getParameterCount();
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    ResultSet result = statement.executeQuery();
+                    final ResultSet result = statement.executeQuery();
 
                     try {
                         while (result.next()) {
-                            String userName = result.getString(1);
-                            String groupName = result.getString(2);
+                            final String userName = result.getString(1);
+                            final String groupName = result.getString(2);
 
                             if (cbUsername.equals(userName)) {
                                 groups.add(groupName);
@@ -278,19 +278,19 @@ public class SQLLoginModule implements LoginModule {
             } finally {
                 conn.close();
             }
-        } catch (LoginException e) {
+        } catch (final LoginException e) {
             // Clear out the private state
             cbUsername = null;
             cbPassword = null;
             groups.clear();
             throw e;
-        } catch (SQLException sqle) {
+        } catch (final SQLException sqle) {
             // Clear out the private state
             cbUsername = null;
             cbPassword = null;
             groups.clear();
             throw (LoginException) new LoginException("SQL error").initCause(sqle);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Clear out the private state
             cbUsername = null;
             cbPassword = null;
@@ -312,7 +312,7 @@ public class SQLLoginModule implements LoginModule {
             if (cbUsername != null) {
                 allPrincipals.add(new UserPrincipal(cbUsername));
             }
-            for (String group : groups) {
+            for (final String group : groups) {
                 allPrincipals.add(new GroupPrincipal(group));
             }
             subject.getPrincipals().addAll(allPrincipals);
@@ -359,7 +359,7 @@ public class SQLLoginModule implements LoginModule {
      * @param provided User provided password in clear text
      * @return true If the password is correct
      */
-    private boolean checkPassword(String real, String provided) {
+    private boolean checkPassword(final String real, final String provided) {
         if (real == null && provided == null) {
             return true;
         }
@@ -376,15 +376,15 @@ public class SQLLoginModule implements LoginModule {
 
         try {
             // Digest the user provided password
-            MessageDigest md = MessageDigest.getInstance(digest);
-            byte[] data = md.digest(provided.getBytes());
+            final MessageDigest md = MessageDigest.getInstance(digest);
+            final byte[] data = md.digest(provided.getBytes());
 
             if (encoding == null || "hex".equalsIgnoreCase(encoding)) {
                 return real.equalsIgnoreCase(HexConverter.bytesToHex(data));
             } else if ("base64".equalsIgnoreCase(encoding)) {
                 return real.equals(new String(Base64.encodeBase64(data)));
             }
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             // Should not occur.  Availability of algorithm has been checked at initialization
             log.error("Should not occur.  Availability of algorithm has been checked at initialization.", e);
         }
@@ -404,12 +404,12 @@ public class SQLLoginModule implements LoginModule {
 
         public final String name;
 
-        private Option(String name) {
+        private Option(final String name) {
             this.name = name;
         }
 
-        public static Option findByName(String name) {
-            for (Option opt : values()) {
+        public static Option findByName(final String name) {
+            for (final Option opt : values()) {
                 if (opt.name.equals(name))
                     return opt;
             }

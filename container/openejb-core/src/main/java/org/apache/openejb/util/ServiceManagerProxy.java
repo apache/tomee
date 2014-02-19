@@ -33,7 +33,7 @@ public class ServiceManagerProxy {
 
 
     public class AlreadyStartedException extends Exception {
-        public AlreadyStartedException(String s) {
+        public AlreadyStartedException(final String s) {
             super(s);
         }
     }
@@ -42,18 +42,18 @@ public class ServiceManagerProxy {
         this(true);
     }
 
-    public ServiceManagerProxy(boolean checkAlreadyStarted) throws AlreadyStartedException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    public ServiceManagerProxy(final boolean checkAlreadyStarted) throws AlreadyStartedException {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         try {
             serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.ServiceManager");
-        } catch (ClassNotFoundException e) {
-            String msg = "Enabling option '" + LocalInitialContext.OPENEJB_EMBEDDED_REMOTABLE + "' requires class 'org.apache.openejb.server.ServiceManager' to be available.  Make sure you have the openejb-server-*.jar in your classpath and at least one protocol implementation such as openejb-ejbd-*.jar.";
+        } catch (final ClassNotFoundException e) {
+            final String msg = "Enabling option '" + LocalInitialContext.OPENEJB_EMBEDDED_REMOTABLE + "' requires class 'org.apache.openejb.server.ServiceManager' to be available.  Make sure you have the openejb-server-*.jar in your classpath and at least one protocol implementation such as openejb-ejbd-*.jar.";
             throw new IllegalStateException(msg, e);
         }
 
-        Method get = getMethod("get");
-        Method getManager = getMethod("getManager");
+        final Method get = getMethod("get");
+        final Method getManager = getMethod("getManager");
 
         if (checkAlreadyStarted && invoke(get, null) != null) throw new AlreadyStartedException("Server services already started");
 
@@ -61,26 +61,26 @@ public class ServiceManagerProxy {
 
         logger.info("Initializing network services");
 
-        Method init = getMethod("init");
+        final Method init = getMethod("init");
 
         invoke(init, serviceManager);
     }
 
-    private Method getMethod(String name, Class... parameterTypes) {
+    private Method getMethod(final String name, final Class... parameterTypes) {
         try {
             return serviceManagerClass.getMethod(name, parameterTypes);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Cannot load the ServiceManager", e);
         }
     }
 
 
-    private Object invoke(Method method, Object obj, Object... args) {
+    private Object invoke(final Method method, final Object obj, final Object... args) {
         try {
             return method.invoke(obj, args);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException(e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw new IllegalStateException("Failed executing ServiceManager." + method.getName(), e.getCause());
         }
     }
@@ -89,7 +89,7 @@ public class ServiceManagerProxy {
 
         logger.info("Initializing network services");
 
-        Method start = getMethod("start", boolean.class);
+        final Method start = getMethod("start", boolean.class);
 
         invoke(start, serviceManager, false);
     }
@@ -97,7 +97,7 @@ public class ServiceManagerProxy {
     public void stop() {
         logger.info("Stopping network services");
 
-        Method stop = getMethod("stop");
+        final Method stop = getMethod("stop");
 
         invoke(stop, serviceManager);
     }

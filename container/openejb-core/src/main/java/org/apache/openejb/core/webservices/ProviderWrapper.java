@@ -313,7 +313,7 @@ public class ProviderWrapper extends Provider {
                 if (portRef.getServiceEndpointInterface() != null) {
                     try {
                         intf = proxy.getClass().getClassLoader().loadClass(portRef.getServiceEndpointInterface());
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // no-op
                     }
                 }
@@ -366,19 +366,19 @@ public class ProviderWrapper extends Provider {
                     if (provider != null) {
                         return provider;
                     }
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                     // no-op
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             // no-op
                         }
                     }
                 }
             }
-        } catch (Exception ingored) {
+        } catch (final Exception ingored) {
             // no-op
         }
 
@@ -394,7 +394,7 @@ public class ProviderWrapper extends Provider {
                 if (provider != null) {
                     return provider;
                 }
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
                 // no-op
             }
         }
@@ -427,7 +427,7 @@ public class ProviderWrapper extends Provider {
             try {
                 final Class<? extends Provider> clazz = classLoader.loadClass(providerClass).asSubclass(Provider.class);
                 return clazz.newInstance();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warning("Unable to construct provider implementation " + providerClass, e);
             }
         }
@@ -443,7 +443,7 @@ public class ProviderWrapper extends Provider {
                 File tempFile = null;
                 try {
                     tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     final File tmp = new File("tmp");
                     if (!tmp.exists() && !tmp.mkdirs()) {
                         throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
@@ -456,7 +456,7 @@ public class ProviderWrapper extends Provider {
                 out.write(ProviderWrapper.class.getName().getBytes());
                 out.close();
                 PROVIDER_URL = tempFile.toURI().toURL();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new OpenEJBRuntimeException("Cound not create openejb-jaxws-provider file");
             }
         }
@@ -499,9 +499,9 @@ public class ProviderWrapper extends Provider {
         }
         try {
             return method.invoke(delegate, args);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new WebServiceException(e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             if (e.getCause() != null) {
                 throw new WebServiceException(e.getCause());
             }
@@ -533,7 +533,7 @@ public class ProviderWrapper extends Provider {
                     List.class,
                     String.class,
                     List.class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         createW3CEndpointReference = method;
@@ -544,7 +544,7 @@ public class ProviderWrapper extends Provider {
                     EndpointReference.class,
                     Class.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         providerGetPort = method;
@@ -552,7 +552,7 @@ public class ProviderWrapper extends Provider {
         method = null;
         try {
             method = Provider.class.getMethod("readEndpointReference", Source.class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         readEndpointReference = method;
@@ -565,7 +565,7 @@ public class ProviderWrapper extends Provider {
                     JAXBContext.class,
                     Service.Mode.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         createDispatchReferenceJaxB = method;
@@ -577,7 +577,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     Service.Mode.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         createDispatchReferenceClass = method;
@@ -589,7 +589,7 @@ public class ProviderWrapper extends Provider {
                     JAXBContext.class,
                     Service.Mode.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         createDispatchJaxBContext = method;
@@ -601,7 +601,7 @@ public class ProviderWrapper extends Provider {
                     Class.class,
                     Service.Mode.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         createDispatchInterface = method;
@@ -612,7 +612,7 @@ public class ProviderWrapper extends Provider {
                     EndpointReference.class,
                     Class.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         serviceGetPortByEndpointReference = method;
@@ -623,7 +623,7 @@ public class ProviderWrapper extends Provider {
                     QName.class,
                     Class.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         serviceGetPortByQName = method;
@@ -633,7 +633,7 @@ public class ProviderWrapper extends Provider {
             method = ServiceDelegate.class.getMethod("getPort",
                     Class.class,
                     WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             // no-op
         }
         serviceGetPortByInterface = method;

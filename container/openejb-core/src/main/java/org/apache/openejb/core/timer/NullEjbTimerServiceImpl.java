@@ -36,37 +36,37 @@ public class NullEjbTimerServiceImpl implements EjbTimerService {
     
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, NullEjbTimerServiceImpl.class);
 
-    public Timer createTimer(Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig) {
+    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final ScheduleExpression schedule, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method or auto-started task");
         return null;
     }
 
-    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig) {
+    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;   
     }
 
-    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig) {
+    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;    
     }
 
-    public Timer createTimer(Object primaryKey, Method timeoutMethod, long initialDuration, long intervalDuration, TimerConfig timerConfig) {
+    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long initialDuration, final long intervalDuration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;    
     }
 
-    public Timer createTimer(Object primaryKey, Method timeoutMethod, long duration, TimerConfig timerConfig) {
+    public Timer createTimer(final Object primaryKey, final Method timeoutMethod, final long duration, final TimerConfig timerConfig) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;    
     }
 
-    public Timer getTimer(long id) {
+    public Timer getTimer(final long id) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;   
     }
 
-    public Collection<Timer> getTimers(Object primaryKey) {
+    public Collection<Timer> getTimers(final Object primaryKey) {
         log.error("Null ! TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
         return null;    
     }

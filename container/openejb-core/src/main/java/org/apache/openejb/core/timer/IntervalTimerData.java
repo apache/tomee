@@ -36,7 +36,7 @@ public class IntervalTimerData extends TimerData {
 
     private final Date initialExpiration;
 
-    public IntervalTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, Date initialExpiration, long intervalDuration) {
+    public IntervalTimerData(final long id, final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final TimerConfig timerConfig, final Date initialExpiration, final long intervalDuration) {
         super(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig);
         this.initialExpiration = initialExpiration;
         this.intervalDuration = intervalDuration;
@@ -57,8 +57,8 @@ public class IntervalTimerData extends TimerData {
 
     @Override
     public AbstractTrigger<?> initializeTrigger() {
-        SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
-        Date startTime = new Date(initialExpiration.getTime());
+        final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl();
+        final Date startTime = new Date(initialExpiration.getTime());
         simpleTrigger.setStartTime(startTime);
         simpleTrigger.setRepeatInterval(intervalDuration);
         simpleTrigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);

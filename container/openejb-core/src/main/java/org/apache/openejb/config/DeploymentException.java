@@ -23,15 +23,15 @@ public class DeploymentException extends Exception {
     public DeploymentException() {
     }
 
-    public DeploymentException(String message) {
+    public DeploymentException(final String message) {
         super(message);
     }
 
-    public DeploymentException(String message, Throwable cause) {
+    public DeploymentException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public DeploymentException(Throwable cause) {
+    public DeploymentException(final Throwable cause) {
         super(cause);
     }
 }

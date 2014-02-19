@@ -72,11 +72,11 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private final String unitName;
     private final Logger logger;
 
-    public JtaEntityManager(JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, String unitName) {
+    public JtaEntityManager(final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final String unitName) {
         this(unitName, registry, entityManagerFactory, properties, false);
     }
     
-    public JtaEntityManager(String unitName, JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, boolean extended) {
+    public JtaEntityManager(final String unitName, final JtaEntityManagerRegistry registry, final EntityManagerFactory entityManagerFactory, final Map properties, final boolean extended) {
         if (registry == null) throw new NullPointerException("registry is null");
         if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
         this.unitName = unitName;
@@ -112,7 +112,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
      * for the operation and then closed.
      * @param entityManager the entity manager to close if non-extended and a transaction is not active
      */
-    void closeIfNoTx(EntityManager entityManager) {
+    void closeIfNoTx(final EntityManager entityManager) {
         if (!extended && !isTransactionActive()) {
             entityManager.close();
             logger.debug("Closed EntityManager(unit=" + unitName + ", hashCode=" + entityManager.hashCode() + ")");
@@ -122,7 +122,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     public EntityManager getDelegate() {
         final Timer timer = Op.getDelegate.start(this);
         try {
-            EntityManager em = getEntityManager();
+            final EntityManager em = getEntityManager();
             em.getDelegate(); // exception if not open etc... to respect the spec
             return em;
         } finally {
@@ -130,7 +130,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public void persist(Object entity) {
+    public void persist(final Object entity) {
         assertTransactionActive();
         final Timer timer = Op.persist.start(this);
         try {
@@ -140,7 +140,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T merge(T entity) {
+    public <T>T merge(final T entity) {
         assertTransactionActive();
         final Timer timer = Op.merge.start(this);
         try {
@@ -150,7 +150,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public void remove(Object entity) {
+    public void remove(final Object entity) {
         assertTransactionActive();
         final Timer timer = Op.remove.start(this);
         try {
@@ -160,8 +160,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T find(Class<T> entityClass, Object primaryKey) {
-        EntityManager entityManager = getEntityManager();
+    public <T>T find(final Class<T> entityClass, final Object primaryKey) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.find.start(this);
             try {
@@ -174,8 +174,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public <T>T getReference(Class<T> entityClass, Object primaryKey) {
-        EntityManager entityManager = getEntityManager();
+    public <T>T getReference(final Class<T> entityClass, final Object primaryKey) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getReference.start(this);
             try {
@@ -198,8 +198,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public void setFlushMode(FlushModeType flushMode) {
-        EntityManager entityManager = getEntityManager();
+    public void setFlushMode(final FlushModeType flushMode) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.setFlushMode.start(this);
             try {
@@ -213,7 +213,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     public FlushModeType getFlushMode() {
-        EntityManager entityManager = getEntityManager();
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getFlushMode.start(this);
             try {
@@ -226,7 +226,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public void lock(Object entity, LockModeType lockMode) {
+    public void lock(final Object entity, final LockModeType lockMode) {
         assertTransactionActive();
         final Timer timer = Op.lock.start(this);
         try {
@@ -236,7 +236,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public void refresh(Object entity) {
+    public void refresh(final Object entity) {
         assertTransactionActive();
         final Timer timer = Op.refresh.start(this);
         try {
@@ -258,7 +258,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public boolean contains(Object entity) {
+    public boolean contains(final Object entity) {
         final Timer timer = Op.contains.start(this);
         try {
             return !(!extended && !isTransactionActive()) && getEntityManager().contains(entity);
@@ -267,7 +267,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public Query createQuery(String qlString) {
+    public Query createQuery(final String qlString) {
         final Timer timer = Op.createQuery.start(this);
         try {
             return proxyIfNoTx(CREATE_QUERY_FROM_NAME, qlString);
@@ -276,7 +276,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public Query createNamedQuery(String name) {
+    public Query createNamedQuery(final String name) {
         final Timer timer = Op.createNamedQuery.start(this);
         try {
             return proxyIfNoTx(CREATE_NAMED_QUERY_FROM_NAME, name);
@@ -285,7 +285,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public Query createNativeQuery(String sqlString) {
+    public Query createNativeQuery(final String sqlString) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
             return proxyIfNoTx(CREATE_NATIVE_FROM_NAME, sqlString);
@@ -294,7 +294,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public Query createNativeQuery(String sqlString, Class resultClass) {
+    public Query createNativeQuery(final String sqlString, final Class resultClass) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
             return proxyIfNoTx(CREATE_NATIVE_FROM_NAME_CLASS, sqlString, resultClass);
@@ -303,7 +303,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    public Query createNativeQuery(String sqlString, String resultSetMapping) {
+    public Query createNativeQuery(final String sqlString, final String resultSetMapping) {
         final Timer timer = Op.createNativeQuery.start(this);
         try {
             return proxyIfNoTx(CREATE_NATIVE_FROM_NAME_MAPPING, sqlString, resultSetMapping);
@@ -312,26 +312,26 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
-    private Query proxyIfNoTx(Method method, Object... args) {
+    private Query proxyIfNoTx(final Method method, final Object... args) {
         if (!extended && !isTransactionActive()) {
             return new JtaQuery(getEntityManager(), this, method, args);
         }
         return createQuery(Query.class, getEntityManager(), method, args);
     }
     
-    private <T> TypedQuery<T> typedProxyIfNoTx(Method method, Object... args) {
+    private <T> TypedQuery<T> typedProxyIfNoTx(final Method method, final Object... args) {
         if (!extended && !isTransactionActive()) {
             return new JtaTypedQuery<T>(getEntityManager(), this, method, args);
         }
         return createQuery(TypedQuery.class, getEntityManager(), method, args);
     }
 
-    <T> T createQuery(final Class<T> expected, final EntityManager entityManager, final Method method, Object... args) {
+    <T> T createQuery(final Class<T> expected, final EntityManager entityManager, final Method method, final Object... args) {
         try {
             return expected.cast(method.invoke(entityManager, args));
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException(e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable t = e.getCause();
             if (RuntimeException.class.isInstance(t)) {
                 throw RuntimeException.class.cast(t);
@@ -368,7 +368,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#createNamedQuery(java.lang.String, java.lang.Class)
      */
-    public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
+    public <T> TypedQuery<T> createNamedQuery(final String name, final Class<T> resultClass) {
         final Timer timer = Op.createNamedQuery.start(this);
         try {
             return typedProxyIfNoTx(CREATE_NAMED_QUERY_FROM_NAME_CLASS, name, resultClass);
@@ -379,7 +379,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#createQuery(javax.persistence.criteria.CriteriaQuery)
      */
-    public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+    public <T> TypedQuery<T> createQuery(final CriteriaQuery<T> criteriaQuery) {
         final Timer timer = Op.createQuery.start(this);
         try {
             return typedProxyIfNoTx(CREATE_QUERY_FROM_CRITERIA, criteriaQuery);
@@ -390,7 +390,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#createQuery(java.lang.String, java.lang.Class)
      */
-    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
+    public <T> TypedQuery<T> createQuery(final String qlString, final Class<T> resultClass) {
         final Timer timer = Op.createQuery.start(this);
         try {
             return typedProxyIfNoTx(CREATE_QUERY_FROM_NAME_CLASS, qlString, resultClass);
@@ -401,7 +401,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#detach(java.lang.Object)
      */
-    public void detach(Object entity) {
+    public void detach(final Object entity) {
         final Timer timer = Op.detach.start(this);
         try {
             if (!extended && isTransactionActive()) {
@@ -414,8 +414,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, java.util.Map)
      */
-    public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
-        EntityManager entityManager = getEntityManager();
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final Map<String, Object> properties) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.find.start(this);
             try {
@@ -430,8 +430,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType)
      */
-    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
-        EntityManager entityManager = getEntityManager();
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.find.start(this);
             try {
@@ -446,8 +446,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
-    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
-        EntityManager entityManager = getEntityManager();
+    public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode, final Map<String, Object> properties) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.find.start(this);
             try {
@@ -468,7 +468,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#getLockMode(java.lang.Object)
      */
-    public LockModeType getLockMode(Object entity) {
+    public LockModeType getLockMode(final Object entity) {
         assertTransactionActive();
         final Timer timer = Op.getLockMode.start(this);
         try {
@@ -481,7 +481,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
      * @see javax.persistence.EntityManager#getMetamodel()
      */
     public Metamodel getMetamodel() {
-        EntityManager entityManager = getEntityManager();
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getMetamodel.start(this);
             try {
@@ -497,7 +497,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
      * @see javax.persistence.EntityManager#getProperties()
      */
     public Map<String, Object> getProperties() {
-        EntityManager entityManager = getEntityManager();
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getProperties.start(this);
             try {
@@ -513,7 +513,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
      * @see javax.persistence.EntityManager#getCriteriaBuilder()
      */
     public CriteriaBuilder getCriteriaBuilder() {
-        EntityManager entityManager = getEntityManager();
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.getCriteriaBuilder.start(this);
             try {
@@ -528,7 +528,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#lock(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
-    public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+    public void lock(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         assertTransactionActive();
         final Timer timer = Op.lock.start(this);
         try {
@@ -540,7 +540,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
      */
-    public void refresh(Object entity, Map<String, Object> properties) {
+    public void refresh(final Object entity, final Map<String, Object> properties) {
         assertTransactionActive();
         final Timer timer = Op.refresh.start(this);
         try {
@@ -552,7 +552,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType)
      */
-    public void refresh(Object entity, LockModeType lockMode) {
+    public void refresh(final Object entity, final LockModeType lockMode) {
         assertTransactionActive();
         final Timer timer = Op.refresh.start(this);
         try {
@@ -564,7 +564,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
      */
-    public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+    public void refresh(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         assertTransactionActive();
         final Timer timer = Op.refresh.start(this);
         try {
@@ -576,8 +576,8 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#setProperty(java.lang.String, java.lang.Object)
      */
-    public void setProperty(String name, Object value) {
-        EntityManager entityManager = getEntityManager();
+    public void setProperty(final String name, final Object value) {
+        final EntityManager entityManager = getEntityManager();
         try {
             final Timer timer = Op.setProperty.start(this);
             try {
@@ -592,7 +592,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     /* (non-Javadoc)
      * @see javax.persistence.EntityManager#unwrap(java.lang.Class)
      */
-    public <T> T unwrap(Class<T> cls) {
+    public <T> T unwrap(final Class<T> cls) {
         return getEntityManager().unwrap(cls);
     }
 
@@ -601,7 +601,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
         private final Op operation;
         private final JtaEntityManager em;
 
-        public Timer(Op operation, JtaEntityManager em) {
+        public Timer(final Op operation, final JtaEntityManager em) {
             this.operation = operation;
             this.em = em;
         }
@@ -618,7 +618,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private static enum Op {
         clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate;
 
-        public Timer start(JtaEntityManager em) {
+        public Timer start(final JtaEntityManager em) {
             return new Timer(this, em);
         }
     }

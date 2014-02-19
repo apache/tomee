@@ -36,7 +36,7 @@ public class HsqldbDataSourcePlugin implements DataSourcePlugin {
         // make an absolute file
         File file = new File(path);
         if (!file.isAbsolute()) {
-            File base = SystemInstance.get().getBase().getDirectory();
+            final File base = SystemInstance.get().getBase().getDirectory();
             file = new File(base, path);
         }
 

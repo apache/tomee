@@ -39,32 +39,32 @@ public class EjbJarBuilder {
     private final Properties props;
     private AppContext context;
 
-    public EjbJarBuilder(Properties props, AppContext context) {
+    public EjbJarBuilder(final Properties props, final AppContext context) {
         this.props = props;
         this.context = context;
     }
 
     public HashMap<String, BeanContext> build(final EjbJarInfo ejbJar, final Collection<Injection> appInjections, final ClassLoader classLoader) throws OpenEJBException {
-        InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
-        List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
+        final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
+        final List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
         moduleInjections.addAll(appInjections);
-        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader)
+        final Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader)
             .build(JndiEncBuilder.JndiScope.module);
 
-        HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
+        final HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
 
-        ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader);
+        final ModuleContext moduleContext = new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader);
         moduleContext.getProperties().putAll(ejbJar.properties);
-        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
+        final InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
-        MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
+        final MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
         
-        for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
+        for (final EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(moduleContext.getClassLoader());
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, moduleContext, moduleInjections);
-                BeanContext bean = deploymentBuilder.build();
+                final EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, moduleContext, moduleInjections);
+                final BeanContext bean = deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(bean, ejbInfo);
 
@@ -73,12 +73,12 @@ public class EjbJarBuilder {
                 deployments.put(ejbInfo.ejbDeploymentId, bean);
 
                 // TODO: replace with get() on application context or parent
-                Container container = (Container) props.get(ejbInfo.containerId);
+                final Container container = (Container) props.get(ejbInfo.containerId);
 
                 if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + bean.getDeploymentID());
                 // Don't deploy to the container, yet. That will be done by deploy() once Assembler as finished configuring the DeploymentInfo
                 bean.setContainer(container);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw new OpenEJBException("Error building bean '" + ejbInfo.ejbName + "'.  Exception: " + e.getClass() + ": " + e.getMessage(), e);
             } finally {
                 Thread.currentThread().setContextClassLoader(loader);

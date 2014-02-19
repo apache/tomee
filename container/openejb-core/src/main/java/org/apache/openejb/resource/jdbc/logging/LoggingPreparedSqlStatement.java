@@ -93,7 +93,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
                         try {
                             str += param.value.toString();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             if (param.value == null) {
                                 str += "null";
                             } else {
@@ -124,19 +124,19 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
     private void logDebug() {
         try {
             LOGGER.info("SQL " +sql);
-            for (Parameter parameter : parameters) {
+            for (final Parameter parameter : parameters) {
                 logParam(parameter);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void logParam(Parameter parameter) throws SQLException {
+    private void logParam(final Parameter parameter) throws SQLException {
         logParam(this.delegate.getParameterMetaData(), parameter);
     }
 
-    private void logParam(ParameterMetaData md, Parameter parameter) throws SQLException {
+    private void logParam(final ParameterMetaData md, final Parameter parameter) throws SQLException {
         final int i = parameter.key;
         final String format = String.format(" - PARAM  index=%s, type%s, typeName=%s, className=%s, nullable=%s, mode=%s, precision=%s, value=%s",
                 i,
@@ -158,7 +158,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
         private final int key;
         private final Object value;
 
-        public Parameter(String type, int batchIdx, int key, Object value) {
+        public Parameter(final String type, final int batchIdx, final int key, final Object value) {
             this.type = type;
             this.batchIndex = batchIdx;
             this.key = key;
@@ -167,7 +167,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
         @Override
         public int compareTo(final Parameter o) {
-            int comp = batchIndex - o.batchIndex;
+            final int comp = batchIndex - o.batchIndex;
             if (comp == 0) {
                 return key - o.key;
             }

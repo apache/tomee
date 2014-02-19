@@ -31,7 +31,7 @@ public class WsdlResolver implements WSDLLocator {
     private String importedUri;
     private InputSource inputSource;
 
-    public WsdlResolver(String baseURI, InputSource is) {
+    public WsdlResolver(final String baseURI, final InputSource is) {
         this.baseUri = baseURI;
         inputSource = is;
     }
@@ -48,23 +48,23 @@ public class WsdlResolver implements WSDLLocator {
         return importedUri;
     }
 
-    public InputSource getImportInputSource(String parent, String importLocation) {
+    public InputSource getImportInputSource(final String parent, final String importLocation) {
         this.baseUri = parent;
-        URL parentUrl;
+        final URL parentUrl;
         try {
             parentUrl = new URL(parent);
-            URL importUrl = new URL(parentUrl, importLocation);
+            final URL importUrl = new URL(parentUrl, importLocation);
             if (importUrl != null && !importUrl.getProtocol().startsWith("file")) {
-                URLConnection con = importUrl.openConnection();
+                final URLConnection con = importUrl.openConnection();
                 con.setUseCaches(false);
                 inputSource = new InputSource(con.getInputStream());
             } else {
-                File file = new File(importUrl.toURI());
+                final File file = new File(importUrl.toURI());
                 if (file.exists()) {
-                    UriResolver resolver = new UriResolver(parent.toString(), importLocation);
+                    final UriResolver resolver = new UriResolver(parent.toString(), importLocation);
                     inputSource = new InputSource(resolver.getInputStream());
                 } else {
-                    UriResolver resolver = new UriResolver(importLocation);
+                    final UriResolver resolver = new UriResolver(importLocation);
                     if (resolver.isResolved()) {
                         inputSource = new InputSource(resolver.getInputStream());
                     }
@@ -72,11 +72,11 @@ public class WsdlResolver implements WSDLLocator {
             }
             importedUri = importUrl.toURI().toString();
 
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             //
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             //
-        } catch (IOException e) {
+        } catch (final IOException e) {
             //
 
         }
@@ -88,7 +88,7 @@ public class WsdlResolver implements WSDLLocator {
         if (inputSource.getByteStream() != null) {
             try {
                 inputSource.getByteStream().close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 //
             }
         }

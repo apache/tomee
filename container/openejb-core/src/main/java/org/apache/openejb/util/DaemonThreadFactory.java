@@ -32,7 +32,7 @@ public class DaemonThreadFactory implements ThreadFactory {
     private final ThreadGroup group;
     private AtomicInteger ids = new AtomicInteger(0);
 
-    public DaemonThreadFactory(Object... name) {
+    public DaemonThreadFactory(final Object... name) {
         this.name = join(" ", name).trim();
         final SecurityManager securityManager = System.getSecurityManager();
         if (securityManager != null) {
@@ -42,21 +42,21 @@ public class DaemonThreadFactory implements ThreadFactory {
         }
     }
 
-    public DaemonThreadFactory(Class... clazz) {
+    public DaemonThreadFactory(final Class... clazz) {
         this(asStrings(clazz));
     }
 
-    private static Object[] asStrings(Class[] clazz) {
+    private static Object[] asStrings(final Class[] clazz) {
         final String[] strings = new String[clazz.length];
         int i = 0;
-        for (Class c : clazz) {
+        for (final Class c : clazz) {
             strings[i++] = c.getSimpleName();
         }
         return strings;
     }
 
     @Override
-    public Thread newThread(Runnable runnable) {
+    public Thread newThread(final Runnable runnable) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(ParentClassLoaderFinder.Helper.get());
         try {

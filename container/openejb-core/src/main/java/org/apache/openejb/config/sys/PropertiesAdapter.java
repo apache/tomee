@@ -27,14 +27,14 @@ import java.util.Properties;
  * Converts a java.util.Properties object to a String in the XML file.
  */
 public class PropertiesAdapter extends XmlAdapter<String, Properties> {
-    public Properties unmarshal(String s) throws Exception {
+    public Properties unmarshal(final String s) throws Exception {
         return IO.readProperties(IO.read(s), new SuperProperties());
     }
 
-    public String marshal(Properties properties) throws Exception {
+    public String marshal(final Properties properties) throws Exception {
         if (properties == null) return null;
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
 
         String string = new String(out.toByteArray());

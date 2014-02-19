@@ -124,7 +124,7 @@ public class CleanEnvEntries implements DynamicDeployer {
             final EjbJar ejbJar = module.getEjbJar();
             if (ejbJar == null) continue;
 
-            for (EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
+            for (final EnterpriseBean consumer : ejbJar.getEnterpriseBeans()) {
                 fillInMissingType(consumer, module);
             }
         }
@@ -211,14 +211,14 @@ public class CleanEnvEntries implements DynamicDeployer {
 
     }
 
-    private Class<?> getType(ClassLoader loader, InjectionTarget target) {
+    private Class<?> getType(final ClassLoader loader, final InjectionTarget target) {
         try {
             final Class<?> clazz = loader.loadClass(target.getInjectionTargetClass());
 
             try {
                 final Field field = clazz.getDeclaredField(target.getInjectionTargetName());
                 return field.getType();
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 // no-op
             }
 
@@ -226,7 +226,7 @@ public class CleanEnvEntries implements DynamicDeployer {
             final String bestName = "set" + StringUtils.capitalize(target.getInjectionTargetName());
             final String name = "set" + target.getInjectionTargetName().toLowerCase();
             Class<?> found = null;
-            for (Method method : clazz.getDeclaredMethods()) {
+            for (final Method method : clazz.getDeclaredMethods()) {
                 if (method.getParameterTypes().length == 1) {
                     if (method.getName().equals(bestName)) {
                         return method.getParameterTypes()[0];
@@ -240,7 +240,7 @@ public class CleanEnvEntries implements DynamicDeployer {
                 return found;
             }
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             // no-op
         }
 

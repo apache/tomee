@@ -49,11 +49,11 @@ public class JndiProvider extends AbstractService {
         type = InitialContext.class.getName();
     }
 
-    public JndiProvider(String id) {
+    public JndiProvider(final String id) {
         super(id);
     }
 
-    public JndiProvider(String id, String type, String provider) {
+    public JndiProvider(final String id, final String type, final String provider) {
         super(id, type, provider);
     }
 

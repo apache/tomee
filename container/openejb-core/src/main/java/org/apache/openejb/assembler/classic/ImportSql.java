@@ -55,7 +55,7 @@ public class ImportSql {
 
         try {
             imports = cl.getResources(IMPORT_FILE_PREFIX.concat(resource).concat(IMPORT_FILE_EXTENSION));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new OpenEJBRuntimeException("can't look for init sql script", e);
         }
     }
@@ -65,18 +65,18 @@ public class ImportSql {
     }
 
     public void doImport() {
-        Statement statement;
+        final Statement statement;
         if (hasSomethingToImport()) {
             Connection connection = null;
             try {
                 connection = dataSource.getConnection();
                 statement = connection.createStatement();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 LOGGER.error("can't create a statement, import scripts will be ignored", e);
                 if (connection != null) {
                     try {
                         connection.close();
-                    } catch (SQLException ignored) {
+                    } catch (final SQLException ignored) {
                         // no-op
                     }
                 }
@@ -93,7 +93,7 @@ public class ImportSql {
             } finally {
                 try {
                     connection.close();
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     // ignored
                 }
                 done = true;
@@ -105,7 +105,7 @@ public class ImportSql {
         final BufferedReader bufferedReader;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(script.openStream())));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("can't open " + script.toExternalForm(), e);
             return;
         }
@@ -135,11 +135,11 @@ public class ImportSql {
                         LOGGER.warning(warnings.getMessage());
                         warnings = warnings.getNextWarning();
                     }
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     LOGGER.error("error importing script " + script.toExternalForm(), e);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("can't import " + script.toExternalForm(), e);
         }
     }

@@ -31,21 +31,21 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 public class DynamicProxyImplFactory {
-    public static boolean isKnownDynamicallyImplemented(Class<?> clazz) {
+    public static boolean isKnownDynamicallyImplemented(final Class<?> clazz) {
         final Annotated<Class<?>> metaClass = new MetaAnnotatedClass(clazz);
         return clazz.isInterface()
                 && (metaClass.getAnnotation(PersistenceContext.class) != null
                 || metaClass.getAnnotation(Proxy.class) != null);
     }
 
-    public static Object newProxy(BeanContext context, InvocationHandler invocationHandler) {
+    public static Object newProxy(final BeanContext context, final InvocationHandler invocationHandler) {
         if (QueryProxy.class.isInstance(invocationHandler)) {
             EntityManager em = null;
             for (final Injection injection : context.getInjections()) {
                 if (QueryProxy.class.equals(injection.getTarget())) {
                     try {
                         em = (EntityManager) context.getJndiEnc().lookup(injection.getJndiName());
-                    } catch (NamingException e) {
+                    } catch (final NamingException e) {
                         throw new OpenEJBRuntimeException("a dynamic bean should reference at least one correct PersistenceContext", e);
                     }
                 }
@@ -58,7 +58,7 @@ public class DynamicProxyImplFactory {
 
         try {
             return ProxyManager.newProxyInstance(context.getBeanClass(), new Handler(invocationHandler));
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new OpenEJBRuntimeException("illegal access", e);
         }
     }
@@ -76,7 +76,7 @@ public class DynamicProxyImplFactory {
     private static final class Handler implements InvocationHandler {
         private InvocationHandler handler;
 
-        private Handler(InvocationHandler handler) {
+        private Handler(final InvocationHandler handler) {
             this.handler = handler;
         }
 
@@ -85,7 +85,7 @@ public class DynamicProxyImplFactory {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return handler.invoke(proxy, method, args);
         }
     }

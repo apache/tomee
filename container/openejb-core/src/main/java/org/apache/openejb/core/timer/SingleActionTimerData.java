@@ -33,7 +33,7 @@ public class SingleActionTimerData extends TimerData {
 
     private final Date expiration;
 
-    public SingleActionTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, Date expiration) {
+    public SingleActionTimerData(final long id, final EjbTimerServiceImpl timerService, final String deploymentId, final Object primaryKey, final Method timeoutMethod, final TimerConfig timerConfig, final Date expiration) {
         super(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig);
         this.expiration = expiration;
     }

@@ -27,13 +27,13 @@ import javax.naming.NamingException;
 public class SystemComponentReference extends Reference {
     private final Class<? extends Object> type;
 
-    public SystemComponentReference(Class<? extends Object> type) {
+    public SystemComponentReference(final Class<? extends Object> type) {
         if (type == null) throw new NullPointerException("type is null");
         this.type = type;
     }
 
     public Object getObject() throws NamingException {
-        Object component = SystemInstance.get().getComponent(type);
+        final Object component = SystemInstance.get().getComponent(type);
         if (component == null) {
             throw new NameNotFoundException("No " + type.getSimpleName() + " registered with the OpenEJB system");
         }

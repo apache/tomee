@@ -36,9 +36,9 @@ public final class CommandHelper {
 
     public static Lines listEJBs(final String cr) throws Exception {
         final ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        Lines lines = new Lines(cr);
+        final Lines lines = new Lines(cr);
         lines.add(new Line("Name", "Class", "Interface Type", "Bean Type"));
-        for (BeanContext bc : cs.deployments()) {
+        for (final BeanContext bc : cs.deployments()) {
             if (bc.isHidden()) {
                 continue;
             }

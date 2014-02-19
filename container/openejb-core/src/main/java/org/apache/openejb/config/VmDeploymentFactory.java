@@ -37,22 +37,22 @@ public class VmDeploymentFactory implements DeploymentFactory {
         return "3.1.1";
     }
 
-    public boolean handlesURI(String uri) {
-        URI fullUri = URLs.uri(uri);
+    public boolean handlesURI(final String uri) {
+        final URI fullUri = URLs.uri(uri);
         return URI_SCHEME.equals(fullUri.getScheme());
     }
 
-    public DeploymentManager getDisconnectedDeploymentManager(String uri) throws DeploymentManagerCreationException {
+    public DeploymentManager getDisconnectedDeploymentManager(final String uri) throws DeploymentManagerCreationException {
         if (!handlesURI(uri)) {
             throw new DeploymentManagerCreationException("Invalid URI: " + uri);
         }
 
-        VmDeploymentManager deploymentManager = new VmDeploymentManager();
+        final VmDeploymentManager deploymentManager = new VmDeploymentManager();
         deploymentManager.release();
         return deploymentManager;
     }
 
-    public DeploymentManager getDeploymentManager(String uri, String username, String password) throws DeploymentManagerCreationException {
+    public DeploymentManager getDeploymentManager(final String uri, final String username, final String password) throws DeploymentManagerCreationException {
         return new VmDeploymentManager();
     }
 }

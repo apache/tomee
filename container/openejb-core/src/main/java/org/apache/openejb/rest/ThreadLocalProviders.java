@@ -31,22 +31,22 @@ public class ThreadLocalProviders extends AbstractRestThreadLocalProxy<Providers
     }
 
     @Override
-    public <T> ContextResolver<T> getContextResolver(Class<T> rawType, MediaType mediaType) {
+    public <T> ContextResolver<T> getContextResolver(final Class<T> rawType, final MediaType mediaType) {
         return get().getContextResolver(rawType, mediaType);
     }
 
     @Override
-    public <T extends Throwable> ExceptionMapper<T> getExceptionMapper(Class<T> rawType) {
+    public <T extends Throwable> ExceptionMapper<T> getExceptionMapper(final Class<T> rawType) {
         return get().getExceptionMapper(rawType);
     }
 
     @Override
-    public <T> MessageBodyReader<T> getMessageBodyReader(Class<T> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public <T> MessageBodyReader<T> getMessageBodyReader(final Class<T> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
         return get().getMessageBodyReader(rawType, genericType, annotations, mediaType);
     }
 
     @Override
-    public <T> MessageBodyWriter<T> getMessageBodyWriter(Class<T> rawType, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public <T> MessageBodyWriter<T> getMessageBodyWriter(final Class<T> rawType, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
         return get().getMessageBodyWriter(rawType, genericType, annotations, mediaType);
     }
 }

@@ -20,15 +20,15 @@ public class EntityManagerAlreadyRegisteredException extends Exception {
     public EntityManagerAlreadyRegisteredException() {
     }
 
-    public EntityManagerAlreadyRegisteredException(String message) {
+    public EntityManagerAlreadyRegisteredException(final String message) {
         super(message);
     }
 
-    public EntityManagerAlreadyRegisteredException(String message, Throwable cause) {
+    public EntityManagerAlreadyRegisteredException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public EntityManagerAlreadyRegisteredException(Throwable cause) {
+    public EntityManagerAlreadyRegisteredException(final Throwable cause) {
         super(cause);
     }
 }
