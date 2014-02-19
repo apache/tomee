@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<HttpServletRequest>
-    implements HttpServletRequest {
+        implements HttpServletRequest {
 
     protected ThreadLocalHttpServletRequest() {
         super(HttpServletRequest.class);
@@ -52,7 +52,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public Object getAttribute(String string) {
+    public Object getAttribute(final String string) {
         return get().getAttribute(string);
     }
 
@@ -112,7 +112,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public String getParameter(String string) {
+    public String getParameter(final String string) {
         return get().getParameter(string);
     }
 
@@ -122,7 +122,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public String[] getParameterValues(String string) {
+    public String[] getParameterValues(final String string) {
         return get().getParameterValues(string);
     }
 
@@ -142,7 +142,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public String getRealPath(String string) {
+    public String getRealPath(final String string) {
         return get().getRealPath(string);
     }
 
@@ -162,7 +162,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public RequestDispatcher getRequestDispatcher(String string) {
+    public RequestDispatcher getRequestDispatcher(final String string) {
         return get().getRequestDispatcher(string);
     }
 
@@ -202,17 +202,17 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public void removeAttribute(String string) {
+    public void removeAttribute(final String string) {
         get().removeAttribute(string);
     }
 
     @Override
-    public void setAttribute(String string, Object object) {
+    public void setAttribute(final String string, final Object object) {
         get().setAttribute(string, object);
     }
 
     @Override
-    public void setCharacterEncoding(String string) throws UnsupportedEncodingException {
+    public void setCharacterEncoding(final String string) throws UnsupportedEncodingException {
         get().setCharacterEncoding(string);
     }
 
@@ -222,12 +222,12 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+    public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         return get().startAsync(servletRequest, servletResponse);
     }
 
     @Override
-    public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+    public boolean authenticate(final HttpServletResponse httpServletResponse) throws IOException, ServletException {
         return get().authenticate(httpServletResponse);
     }
 
@@ -247,12 +247,12 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public long getDateHeader(String s) {
+    public long getDateHeader(final String s) {
         return get().getDateHeader(s);
     }
 
     @Override
-    public String getHeader(String s) {
+    public String getHeader(final String s) {
         return get().getHeader(s);
     }
 
@@ -262,12 +262,12 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public Enumeration<String> getHeaders(String s) {
+    public Enumeration<String> getHeaders(final String s) {
         return get().getHeaders(s);
     }
 
     @Override
-    public int getIntHeader(String s) {
+    public int getIntHeader(final String s) {
         return get().getIntHeader(s);
     }
 
@@ -277,7 +277,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public Part getPart(String s) throws IOException, ServletException {
+    public Part getPart(final String s) throws IOException, ServletException {
         return get().getPart(s);
     }
 
@@ -332,7 +332,7 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public HttpSession getSession(boolean b) {
+    public HttpSession getSession(final boolean b) {
         return get().getSession(b);
     }
 
@@ -362,12 +362,12 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
-    public boolean isUserInRole(String s) {
+    public boolean isUserInRole(final String s) {
         return get().isUserInRole(s);
     }
 
     @Override
-    public void login(String s, String s1) throws ServletException {
+    public void login(final String s, final String s1) throws ServletException {
         get().login(s, s1);
     }
 
