@@ -199,6 +199,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings({"UnusedDeclaration", "UnqualifiedFieldAccess", "UnqualifiedMethodAccess"})
@@ -1217,8 +1218,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(JNDIService.class, new OpenEJBJndiService());
             services.put(AppContext.class, appContext);
             services.put(TransactionService.class, new OpenEJBTransactionService());
-            services.put(ContextsService.class, new CdiAppContextsService(webBeansContext, true));
-            services.put(ResourceInjectionService.class, new CdiResourceInjectionService(webBeansContext));
+            services.put(ContextsService.class, new CdiAppContextsService(null, true));
+            services.put(ResourceInjectionService.class, new CdiResourceInjectionService(null));
             services.put(ScannerService.class, new CdiScanner());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             services.put(LoaderService.class, new OptimizedLoaderService());
@@ -1452,9 +1453,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         } else if (ExecutorService.class.isInstance(object)) {
             ExecutorService.class.cast(object).shutdown();
-        } else if (DataSource.class.isInstance(object)) { //NOPMD
-            //no-op. Just don't log the debug message below.
-        } else if (logger.isDebugEnabled()) {
+        } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
             logger.debug("Not processing resource on destroy: " + className);
         }
 
@@ -1644,12 +1643,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            if (appContext != null) {
-                for (final WebContext webContext : appContext.getWebContexts()) {
-                    containerSystem.removeWebContext(webContext);
-                }
-                TldScanner.forceCompleteClean(classLoader);
+            for (final WebContext webContext : appContext.getWebContexts()) {
+                containerSystem.removeWebContext(webContext);
             }
+            TldScanner.forceCompleteClean(classLoader);
 
             // Clear out naming for all components first
             for (final BeanContext deployment : deployments) {
@@ -2177,7 +2174,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // BootstrapContext: wraps the WorkMananger and XATerminator
             final BootstrapContext bootstrapContext;
             if (transactionManager instanceof GeronimoTransactionManager) {
-                bootstrapContext = new GeronimoBootstrapContext((GeronimoWorkManager) workManager,
+                bootstrapContext = new GeronimoBootstrapContext(GeronimoWorkManager.class.cast(workManager),
                         (GeronimoTransactionManager) transactionManager,
                         (GeronimoTransactionManager) transactionManager);
             } else if (transactionManager instanceof XATerminator) {
@@ -2628,7 +2625,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
 
-        private static boolean logged = false;
+        private static final AtomicBoolean logged = new AtomicBoolean(false);
 
         private final Map<String, List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>>();
 
@@ -2646,9 +2643,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                     transformers.add(classFileTransformer);
                 }
-            } else if (!logged) {
+            } else if (!logged.getAndSet(true)) {
                 logger.warning("assembler.noAgent");
-                logged = true;
             }
         }
 
