@@ -30,6 +30,7 @@ import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -233,8 +234,20 @@ public class LazyStopWebappClassLoader extends WebappClassLoader {
         return !SystemInstance.get().getOptions().get(TOMEE_WEBAPP_FIRST, true);
     }
 
+    @Override
+    public InputStream getResourceAsStream(final String name) {
+        if (!isStarted()) {
+            return null;
+        }
+        return super.getResourceAsStream(name);
+    }
 
+    @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
+        if (!isStarted()) {
+            return null;
+        }
+
         if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
             final Collection<URL> list = new ArrayList<URL>(Collections.list(super.getResources(name)));
             final Iterator<URL> it = list.iterator();
