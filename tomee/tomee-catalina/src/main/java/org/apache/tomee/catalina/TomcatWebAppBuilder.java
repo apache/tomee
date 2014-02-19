@@ -1802,8 +1802,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     private boolean isUnDeployable(final ContextInfo contextInfo) {
-        return contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null && contextInfo.appInfo.webAppAlone
-                && getAssembler().getDeployedApplications().contains(contextInfo.appInfo);
+        return contextInfo.appInfo != null && contextInfo.deployer == null && contextInfo.appInfo.webAppAlone;
     }
 
     /**
@@ -1830,23 +1829,29 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         }
 
         final ContextInfo contextInfo = getContextInfo(standardContext);
-        if (isUnDeployable(contextInfo)) {
+        boolean destroyFromTomcat = contextInfo != null && getAssembler().getDeployedApplications().contains(contextInfo.appInfo);
+        if (destroyFromTomcat && isUnDeployable(contextInfo)) {
+            contextInfo.appInfo.properties.setProperty("tomee.destroying", "true");
             try {
                 getAssembler().destroyApplication(contextInfo.appInfo.path);
             } catch (final Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
+        } else {
+            destroyFromTomcat = false;
         }
 
         NamingUtil.cleanUpContextResource(standardContext);
 
         if (old != null) {
-            try {
-                old.internalStop();
-            } catch (final LifecycleException e) {
-                logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
+            if (destroyFromTomcat) {
+                try {
+                    old.internalStop();
+                } catch (final LifecycleException e) {
+                    logger.error("error stopping classloader of webapp " + standardContext.getName(), e);
+                }
+                ClassLoaderUtil.cleanOpenJPACache(old);
             }
-            ClassLoaderUtil.cleanOpenJPACache(old);
             instanceManagers.remove(old);
         } else if (standardContext.getLoader() != null && standardContext.getLoader().getClassLoader() != null) {
             instanceManagers.remove(standardContext.getLoader().getClassLoader());
