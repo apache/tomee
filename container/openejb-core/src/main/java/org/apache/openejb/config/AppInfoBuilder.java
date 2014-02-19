@@ -41,6 +41,7 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.event.BeforeAppInfoBuilderEvent;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.Service;
@@ -115,6 +116,10 @@ class AppInfoBuilder {
     }
 
     public AppInfo build(final AppModule appModule) throws OpenEJBException {
+        // send an event so that it becomes pretty easy at this step to dynamically change the module description
+        // before going into the info tree. Pretty easy to hack on portability issues.
+        SystemInstance.get().fireEvent(new BeforeAppInfoBuilderEvent(appModule));
+
         final AppInfo appInfo = new AppInfo();
         appInfo.appId = appModule.getModuleId();
         appInfo.path = appModule.getJarLocation();
